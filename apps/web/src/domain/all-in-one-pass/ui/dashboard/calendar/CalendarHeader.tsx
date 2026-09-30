@@ -9,6 +9,7 @@ interface Props {
   filters: Record<PassParticipationStatus, boolean>;
   onPrev: () => void;
   onNext: () => void;
+  onToday: () => void;
   onToggle: (k: PassParticipationStatus) => void;
 }
 
@@ -19,6 +20,7 @@ export default function CalendarHeader({
   filters,
   onPrev,
   onNext,
+  onToday,
   onToggle,
 }: Props) {
   return (
@@ -30,7 +32,9 @@ export default function CalendarHeader({
         <span className="text-small20 min-w-[190.3px] font-bold">
           {windowStart.format('YYYY.MM.DD')} ~ {windowEnd.format('MM.DD')}
         </span>
-        <Calendar size={18} className="text-neutral-40" />
+        <button type="button" aria-label="오늘로 가기" onClick={onToday}>
+          <Calendar size={18} className="text-neutral-40" />
+        </button>
         <button type="button" aria-label="다음 주" onClick={onNext}>
           <ChevronRight size={20} className="text-neutral-40" />
         </button>

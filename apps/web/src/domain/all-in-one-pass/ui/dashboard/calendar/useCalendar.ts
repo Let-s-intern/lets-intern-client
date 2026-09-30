@@ -78,6 +78,11 @@ export function useCalendar(events: PassCalendarEvent[]) {
       setFilters((f) => ({ ...f, [k]: !f[k] })),
     goPrevWeek: () => setWindowStart((w) => w.subtract(7, 'day')),
     goNextWeek: () => setWindowStart((w) => w.add(7, 'day')),
+    /** 오늘로 복귀 — 조회 창·선택일 모두 오늘 기준 */
+    goToday: () => {
+      setWindowStart(weekStartOf(today));
+      setSelected(today);
+    },
     bars,
     barLaneOf,
     pointsByDate,

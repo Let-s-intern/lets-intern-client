@@ -23,6 +23,7 @@ export default function DashboardCalendar({ events }: Props) {
         filters={cal.filters}
         onPrev={cal.goPrevWeek}
         onNext={cal.goNextWeek}
+        onToday={cal.goToday}
         onToggle={cal.toggleFilter}
       />
 

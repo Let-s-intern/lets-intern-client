@@ -60,6 +60,15 @@ export function useMobileCalendar({ events, periodStart, periodEnd }: Params) {
     );
   }, [periodStart, periodEnd, today]);
 
+  // 선택일이 속한 주 인덱스 찾기
+  const weekIndexOf = (d: Day) =>
+    weeks.findIndex((w) => !d.isBefore(w[0]) && !d.isAfter(w[6]));
+
+  // 주간 리본에서 현재 보이는 주 (스와이프/화살표로 이동)
+  const [weekIndex, setWeekIndex] = useState(() =>
+    Math.max(0, weekIndexOf(today)),
+  );
+
   // 모델 계산 대상 날짜 + 캡 (뷰별)
   const days = useMemo(
     () => (view === 'month' ? monthWeeks : weeks).flat(),
@@ -98,27 +107,57 @@ export function useMobileCalendar({ events, periodStart, periodEnd }: Params) {
     view,
     setView: (v: CalendarView) => {
       if (v === 'month') setMonthAnchor(selected.startOf('month'));
+      else {
+        const idx = weekIndexOf(selected);
+        if (idx >= 0) setWeekIndex(idx);
+      }
       setView(v);
     },
     selected,
     setSelected,
-    /** 날짜 피커 확정 — 선택일 이동 + 기준 달 동기화 */
+    /** 날짜 피커 확정 — 선택일 이동 + 기준 달/주 동기화 */
     jumpTo: (d: Day) => {
-      setSelected(d.startOf('day'));
-      setMonthAnchor(d.startOf('month'));
+      const day = d.startOf('day');
+      setSelected(day);
+      setMonthAnchor(day.startOf('month'));
+      const idx = weekIndexOf(day);
+      if (idx >= 0) setWeekIndex(idx);
+    },
+    /** 오늘로 복귀 — 선택일·기준 달·주 모두 오늘로 */
+    goToday: () => {
+      setSelected(today);
+      setMonthAnchor(today.startOf('month'));
+      const idx = weekIndexOf(today);
+      if (idx >= 0) setWeekIndex(idx);
     },
     filters,
     toggleFilter: (k: PassParticipationStatus) =>
       setFilters((f) => ({ ...f, [k]: !f[k] })),
+    // 월간
     monthAnchor,
     monthWeeks,
-    weeks,
-    goPrevMonth: () =>
-      canPrevMonth && setMonthAnchor((m) => m.subtract(1, 'month')),
-    goNextMonth: () =>
-      canNextMonth && setMonthAnchor((m) => m.add(1, 'month')),
+    goPrevMonth: () => {
+      if (!canPrevMonth) return;
+      const m = monthAnchor.subtract(1, 'month');
+      setMonthAnchor(m);
+      setSelected(m.startOf('month')); // 목록도 새 달로 따라감
+    },
+    goNextMonth: () => {
+      if (!canNextMonth) return;
+      const m = monthAnchor.add(1, 'month');
+      setMonthAnchor(m);
+      setSelected(m.startOf('month'));
+    },
     canPrevMonth,
     canNextMonth,
+    // 주간
+    weeks,
+    weekIndex,
+    setWeekIndex,
+    goPrevWeek: () => setWeekIndex((i) => Math.max(0, i - 1)),
+    goNextWeek: () => setWeekIndex((i) => Math.min(weeks.length - 1, i + 1)),
+    canPrevWeek: weekIndex > 0,
+    canNextWeek: weekIndex < weeks.length - 1,
     ...model,
     selectedEvents,
     periodStart,

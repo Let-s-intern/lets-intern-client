@@ -33,7 +33,16 @@ export default function DashboardCalendarMobile({
 }: Props) {
   const cal = useMobileCalendar({ events, periodStart, periodEnd });
   const [pickerOpen, setPickerOpen] = useState(false);
-  const headerMonth = cal.view === 'month' ? cal.monthAnchor : cal.selected;
+
+  // 헤더 월·이동은 뷰별로 (월간=기준 달 / 주간=보이는 주)
+  const isMonth = cal.view === 'month';
+  const headerDay = isMonth
+    ? cal.monthAnchor
+    : (cal.weeks[cal.weekIndex]?.[3] ?? cal.selected);
+  const goPrev = isMonth ? cal.goPrevMonth : cal.goPrevWeek;
+  const goNext = isMonth ? cal.goNextMonth : cal.goNextWeek;
+  const canPrev = isMonth ? cal.canPrevMonth : cal.canPrevWeek;
+  const canNext = isMonth ? cal.canNextMonth : cal.canNextWeek;
 
   return (
     <section className="flex flex-col gap-3">
@@ -45,46 +54,41 @@ export default function DashboardCalendarMobile({
         )}
       >
         <div className="flex items-center gap-1">
-          {cal.view === 'month' && (
-            <button
-              type="button"
-              aria-label="이전 달"
-              disabled={!cal.canPrevMonth}
-              onClick={cal.goPrevMonth}
-            >
-              <ChevronLeft
-                size={20}
-                className={
-                  cal.canPrevMonth ? 'text-neutral-40' : 'text-neutral-80'
-                }
-              />
-            </button>
-          )}
           <button
             type="button"
-            onClick={() => setPickerOpen(true)}
-            className="flex items-center gap-1.5"
+            aria-label={isMonth ? '이전 달' : '이전 주'}
+            disabled={!canPrev}
+            onClick={goPrev}
           >
+            <ChevronLeft
+              size={20}
+              className={canPrev ? 'text-neutral-40' : 'text-neutral-80'}
+            />
+          </button>
+          <button type="button" onClick={() => setPickerOpen(true)}>
             <span className="text-xsmall16 text-neutral-0 min-w-[69px] font-bold">
-              {headerMonth.format('YYYY.MM.')}
+              {headerDay.format('YYYY.MM.')}
             </span>
+          </button>
+          <button
+            type="button"
+            aria-label="오늘로 가기"
+            onClick={cal.goToday}
+            className="px-0.5"
+          >
             <Calendar size={16} className="text-neutral-40" />
           </button>
-          {cal.view === 'month' && (
-            <button
-              type="button"
-              aria-label="다음 달"
-              disabled={!cal.canNextMonth}
-              onClick={cal.goNextMonth}
-            >
-              <ChevronRight
-                size={20}
-                className={
-                  cal.canNextMonth ? 'text-neutral-40' : 'text-neutral-80'
-                }
-              />
-            </button>
-          )}
+          <button
+            type="button"
+            aria-label={isMonth ? '다음 달' : '다음 주'}
+            disabled={!canNext}
+            onClick={goNext}
+          >
+            <ChevronRight
+              size={20}
+              className={canNext ? 'text-neutral-40' : 'text-neutral-80'}
+            />
+          </button>
         </div>
 
         <div className="flex items-center gap-1">
