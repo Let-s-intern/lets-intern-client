@@ -12,7 +12,6 @@ interface Props {
 
 /**
  * 썸네일 업로드. 파일을 S3 로 업로드하고 반환된 URL 을 onChange 로 넘긴다.
- * TODO: 백엔드에 MEMBERSHIP FileType 추가되면 type 을 교체(현재 CHALLENGE 임시 사용).
  */
 export default function ThumbnailUpload({ value, onChange, className }: Props) {
   const [isUploading, setIsUploading] = useState(false);
@@ -22,7 +21,7 @@ export default function ThumbnailUpload({ value, onChange, className }: Props) {
     if (!file) return;
     setIsUploading(true);
     try {
-      const url = await uploadFile({ file, type: 'CHALLENGE' });
+      const url = await uploadFile({ file, type: 'MEMBERSHIP' });
       onChange(url);
     } catch (err) {
       console.error(err);
