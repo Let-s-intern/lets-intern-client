@@ -20,6 +20,7 @@ export const createInitialPassInput = (): PassFormInput => ({
   externalLinks: [],
   detailContent: null,
   benefits: [],
+  faqList: [],
 });
 
 interface Props {
@@ -63,8 +64,11 @@ export default function PassForm({ input, patch }: Props) {
         benefits={input.benefits}
         onChange={(benefits) => patch({ benefits })}
       />
-      {/* FAQ는 전 멤버십 공통(글로벌)이라 폼과 무관하게 자체 관리 */}
-      <FaqSection />
+      {/* FAQ: 공통 풀 관리(/faq) + 이 패스에 노출할 항목 체크 선택 */}
+      <FaqSection
+        selectedIds={input.faqList}
+        onChange={(faqList) => patch({ faqList })}
+      />
     </div>
   );
 }

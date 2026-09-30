@@ -29,7 +29,7 @@ export const membershipListItemSchema = z.object({
   applicationCount: z.number().nullish(),
   periodDays: z.number().nullish(),
   isVisible: z.boolean(),
-  createdAt: z.string().nullish(), // BE 추가 예정(현재 미제공)
+  createDate: z.string().nullish(),
 });
 export type MembershipListItem = z.infer<typeof membershipListItemSchema>;
 
