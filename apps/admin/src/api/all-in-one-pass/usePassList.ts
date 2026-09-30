@@ -80,7 +80,9 @@ export const useDuplicateAllInOnePassMutation = ({
   useMutation({
     mutationFn: async (id: number) => {
       const detailRes = await axios.get(`/admin/membership/${id}`);
-      const input = toFormInput(membershipDetailSchema.parse(detailRes.data.data));
+      const input = toFormInput(
+        membershipDetailSchema.parse(detailRes.data.data),
+      );
       const body = toCreateDto({ ...input, title: `${input.title} (복제)` });
       const res = await axios.post('/admin/membership', body);
       return res.data;

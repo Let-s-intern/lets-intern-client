@@ -4,7 +4,7 @@ import FaqModal from '@/domain/all-in-one-pass/ui/faq/FaqModal';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { Faq, ProgramTypeEnum } from '@/schema';
 import { CategoryTabs } from '@letscareer/ui';
-import { Button } from '@mui/material';
+import { Button, Checkbox } from '@mui/material';
 import { Pencil } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { FaPlus, FaTrashCan } from 'react-icons/fa6';
@@ -150,10 +150,9 @@ export default function FaqSection({ selectedIds, onChange }: Props) {
               key={faq.id}
               className="border-neutral-80 flex overflow-hidden rounded-md border"
             >
-              <label className="border-neutral-80 flex shrink-0 cursor-pointer items-center justify-center border-r px-4">
-                <input
-                  type="checkbox"
-                  className="accent-primary h-4 w-4 cursor-pointer"
+              <label className="border-neutral-80 hover:bg-neutral-95 flex shrink-0 cursor-pointer items-center justify-center border-r px-2 transition-colors">
+                <Checkbox
+                  size="small"
                   checked={selectedIds.includes(faq.id)}
                   onChange={(e) => toggle(faq.id, e.target.checked)}
                 />
