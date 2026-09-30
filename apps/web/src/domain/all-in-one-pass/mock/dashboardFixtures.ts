@@ -112,7 +112,7 @@ export const calendarFixtures: PassCalendarEvent[] = [
     url: null,
   },
   {
-    id: 6,
+    id: 10,
     type: 'MILESTONE',
     programType: null,
     title: '일반 일정2',
@@ -123,7 +123,7 @@ export const calendarFixtures: PassCalendarEvent[] = [
     url: null,
   },
   {
-    id: 6,
+    id: 11,
     type: 'MILESTONE',
     programType: null,
     title: '일반 일정3',
