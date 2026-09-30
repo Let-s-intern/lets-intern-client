@@ -1,3 +1,4 @@
+import OutlinedButton from '@/common/button/OutlinedButton';
 import SolidButton from '@/common/button/SolidButton';
 import BaseBottomSheet from '@/common/sheet/BaseBottomSheet';
 import dayjs from '@/lib/dayjs';
@@ -168,13 +169,12 @@ export default function PassDatePickerSheet({
       </div>
 
       <div className="mt-4 flex gap-3">
-        <button
-          type="button"
+        <OutlinedButton
           onClick={onClose}
-          className="text-primary border-primary text-xsmall16 flex-1 rounded-md border py-3 font-medium"
+          className="text-xsmall16 flex-1 py-3 font-medium"
         >
           취소
-        </button>
+        </OutlinedButton>
         <SolidButton
           onClick={handleConfirm}
           className="text-xsmall16 flex-1 py-3"
