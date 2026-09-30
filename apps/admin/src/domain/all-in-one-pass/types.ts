@@ -66,7 +66,8 @@ export interface PassFormInput {
   detailContent: string | null;
   // 1.6 혜택
   benefits: PassBenefit[];
-  // 1.7 FAQ는 전 멤버십 공통(글로벌)이라 폼에 포함하지 않는다(FaqSection이 /faq로 직접 관리).
+  // 1.7 FAQ: 참고.질문/답변은 전 멤버십 공통 풀(/faq, type=MEMBERSHIP)에서 관리
+  faqList: number[];
 }
 
 /** 1:1 LIVE 멘토링 쿠폰 할인 방식 (전액 / 할인율% / 금액원) */
