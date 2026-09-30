@@ -17,6 +17,10 @@ export const BAR_AREA_H = 162;
 /** 날짜 타일 전체 높이 = 숫자 영역 + 막대 영역 */
 export const CELL_HEIGHT = 248;
 
+/** 모바일 월간: 한 칸 최대 4행(3개 + 배지). 초과 시 3개 + +N */
+export const MONTH_MAX_ROWS = 4;
+export const MONTH_VISIBLE_ITEMS = 3;
+
 export const FILTER_LABEL: Record<PassParticipationStatus, string> = {
   BEFORE: '참여 전',
   IN_PROGRESS: '참여 중',
