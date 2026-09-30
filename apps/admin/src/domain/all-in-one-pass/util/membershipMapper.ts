@@ -97,7 +97,7 @@ export const toListItem = (vo: MembershipListItem): AllInOnePassListItem => ({
   isVisible: vo.isVisible,
   currentApplicantCount: vo.applicationCount ?? 0,
   maxApplicantCount: null, // BE 미제공(정원 개념 없음)
-  createdAt: vo.createdAt ?? '', // BE 추가 예정
+  createdAt: vo.createDate ?? '',
 });
 
 // ── 상세 → 폼 ─────────────────────────────────────────
@@ -132,6 +132,8 @@ export const toFormInput = (detail: MembershipDetail): PassFormInput => {
       link: b.link ?? '',
       coupon: null, // 멘토링 쿠폰은 혜택과 별개
     })),
+    // 이 패스에 연결된(노출) FAQ id — 체크박스 prefill
+    faqList: detail.faqList.map((f) => f.id),
   };
 };
 
@@ -166,10 +168,10 @@ export const toCreateDto = (input: PassFormInput) => ({
   isVisible: false, // 개설 시 기본 비노출
   benefitList: input.benefits.map(benefitToDto),
   planList: input.plans.map(planToDto),
-  // FAQ는 글로벌이라 멤버십 생성 payload에 포함하지 않음(/faq로 별도 관리)
+  faqList: input.faqList.map((faqId) => ({ faqId })), // 이 패스에 노출할 공통 FAQ
 });
 
-/** 수정 요청 body (basic만 — 서버 PATCH가 plan/benefit/faq 미포함) */
+/** 수정 요청 body (basic + faqList. plan/benefit은 각자 독립 엔드포인트) */
 export const toUpdateDto = (input: PassFormInput) => ({
   title: input.title,
   introduction: input.shortDescription || null,
@@ -178,4 +180,5 @@ export const toUpdateDto = (input: PassFormInput) => ({
   deadline: input.purchaseEndDate,
   periodDays: input.passDays,
   thumbnail: input.thumbnailUrl,
+  faqList: input.faqList.map((faqId) => ({ faqId })),
 });
