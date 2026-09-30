@@ -21,7 +21,7 @@ interface Props {
 /** U-1 캘린더 우측 패널 — 선택일의 프로그램/일정 목록 (내부 스크롤) */
 export default function DayProgramList({ date, events }: Props) {
   return (
-    <div className="border-neutral-80 rounded-xs flex w-full flex-col md:w-[312px] md:border">
+    <div className="border-neutral-80 rounded-xs flex min-h-[60vh] w-full flex-col md:min-h-0 md:w-[312px] md:border">
       <div className="border-neutral-80 flex items-center justify-between px-0 py-2 md:border-b md:px-4 md:pb-3 md:pt-4">
         <span className="text-small18 text-neutral-0 font-bold">
           {date.format('M월 D일')} 프로그램
@@ -36,7 +36,7 @@ export default function DayProgramList({ date, events }: Props) {
           해당 일자에 일정이 없습니다.
         </p>
       ) : (
-        <ul className="custom-scrollbar flex max-h-[480px] flex-col overflow-y-auto px-0 md:px-4">
+        <ul className="custom-scrollbar flex max-h-[60vh] flex-col overflow-y-auto px-0 md:max-h-[480px] md:px-4">
           {events.map((ev) => (
             <li
               key={ev.id}
