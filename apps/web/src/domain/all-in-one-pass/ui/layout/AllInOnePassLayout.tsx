@@ -38,7 +38,7 @@ const AllInOnePassLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-6rem)]">
-      <div className="mx-auto flex flex-col md:w-[1120px] md:flex-row md:pt-12">
+      <div className="mx-auto flex flex-col md:mb-16 md:w-[1120px] md:flex-row md:pb-16 md:pt-12">
         <AllInOnePassNavBar />
         <div className="min-w-0 flex-1">{children}</div>
       </div>
