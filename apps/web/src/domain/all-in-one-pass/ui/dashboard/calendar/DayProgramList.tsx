@@ -34,15 +34,22 @@ const STATUS_BADGE: Record<PassParticipationStatus, string> = {
 interface Props {
   date: Day;
   events: NormalizedCalendarEvent[];
+  stickyTop?: number;
 }
 
-/** U-1 캘린더 우측 패널 — 선택일의 프로그램/일정 목록 (내부 스크롤) */
-export default function DayProgramList({ date, events }: Props) {
+/** U-1 캘린더 우측 패널 — 선택일의 프로그램/일정 목록 */
+export default function DayProgramList({ date, events, stickyTop }: Props) {
   const router = useRouter();
 
   return (
-    <div className="border-neutral-80 rounded-xs flex min-h-[60vh] w-full flex-col md:min-h-0 md:w-[312px] md:border">
-      <div className="border-neutral-80 flex items-center justify-between px-0 py-2 md:border-b md:px-4 md:pb-3 md:pt-4">
+    <div className="border-neutral-80 rounded-xs flex min-h-[260px] w-full flex-col md:min-h-0 md:w-[312px] md:border">
+      <div
+        className={clsx(
+          'border-neutral-80 flex items-center justify-between px-0 py-2 md:border-b md:px-4 md:pb-3 md:pt-4',
+          stickyTop != null && 'sticky z-10 bg-white',
+        )}
+        style={stickyTop != null ? { top: stickyTop } : undefined}
+      >
         <span className="text-small18 text-neutral-0 font-bold">
           {date.format('M월 D일')} 프로그램
         </span>
@@ -56,7 +63,7 @@ export default function DayProgramList({ date, events }: Props) {
           해당 일자에 일정이 없습니다.
         </p>
       ) : (
-        <ul className="custom-scrollbar flex max-h-[60vh] flex-col overflow-y-auto px-0 md:h-[480px] md:px-4">
+        <ul className="custom-scrollbar flex flex-col px-0 md:h-[480px] md:overflow-y-auto md:px-4">
           {events.map((ev) => {
             // 챌린지: 참여(challengeApplicationId 있음) 여부로 상세↔대시보드 분기
             const enrolled = ev.challengeApplicationId != null;

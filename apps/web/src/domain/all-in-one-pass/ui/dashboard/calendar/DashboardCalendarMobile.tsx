@@ -4,7 +4,7 @@ import { FULL_NAVBAR_HEIGHT_OFFSET } from '@/common/layout/header/NavBar';
 import { twMerge } from '@/lib/twMerge';
 import clsx from 'clsx';
 import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { PassCalendarEvent } from '../../../types';
 import DayProgramList from './DayProgramList';
 import MobileMonthGrid from './MobileMonthGrid';
@@ -33,6 +33,20 @@ export default function DashboardCalendarMobile({
 }: Props) {
   const cal = useMobileCalendar({ events, periodStart, periodEnd });
   const [pickerOpen, setPickerOpen] = useState(false);
+
+  // 달력 블록 높이를 측정해 목록 헤더 sticky 오프셋 계산 (주간/월간마다 높이 다름)
+  const calRef = useRef<HTMLDivElement>(null);
+  const [calH, setCalH] = useState(0);
+  useEffect(() => {
+    const el = calRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => setCalH(el.offsetHeight));
+    ro.observe(el);
+    setCalH(el.offsetHeight);
+    return () => ro.disconnect();
+  }, []);
+  // NavBar(84) + 헤더(52) + 달력 높이 → 목록 헤더가 달력 바로 아래에 고정
+  const listHeaderTop = 136 + calH;
 
   // 헤더 월·이동은 뷰별로 (월간=기준 달 / 주간=보이는 주)
   const isMonth = cal.view === 'month';
@@ -93,20 +107,20 @@ export default function DashboardCalendarMobile({
 
         <div className="flex items-center gap-1">
           {(['week', 'month'] as const).map((v: CalendarView) => (
-            <button
-              key={v}
-              type="button"
-              onClick={() => cal.setView(v)}
-              className={clsx(
-                'text-xsmall14 rounded-xxs px-2 py-1',
-                cal.view === v
-                  ? 'bg-neutral-90 text-neutral-20'
-                  : 'text-neutral-40',
-              )}
-            >
-              {v === 'week' ? '주간' : '월간'}
-            </button>
-          ))}
+              <button
+                key={v}
+                type="button"
+                onClick={() => cal.setView(v)}
+                className={clsx(
+                  'text-xsmall14 rounded-xxs px-2 py-1',
+                  cal.view === v
+                    ? 'bg-neutral-90 text-neutral-20'
+                    : 'text-neutral-40',
+                )}
+              >
+                {v === 'week' ? '주간' : '월간'}
+              </button>
+            ))}
         </div>
       </div>
 
@@ -142,7 +156,10 @@ export default function DashboardCalendarMobile({
       </div>
 
       {/* 달력 (sticky — 헤더 바로 아래: 84px + 헤더 높이 52px) */}
-      <div className="sticky top-[136px] z-20 -mx-5 bg-white px-5 pb-3">
+      <div
+        ref={calRef}
+        className="sticky top-[136px] z-20 -mx-5 bg-white px-5 pb-3"
+      >
         {cal.view === 'month' ? (
           <MobileMonthGrid cal={cal} />
         ) : (
@@ -150,7 +167,11 @@ export default function DashboardCalendarMobile({
         )}
       </div>
 
-      <DayProgramList date={cal.selected} events={cal.selectedEvents} />
+      <DayProgramList
+        date={cal.selected}
+        events={cal.selectedEvents}
+        stickyTop={listHeaderTop}
+      />
 
       <PassDatePickerSheet
         isOpen={pickerOpen}
