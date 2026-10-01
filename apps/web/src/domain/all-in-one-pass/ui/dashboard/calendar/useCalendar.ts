@@ -5,6 +5,7 @@ import { deriveCalendar } from './calendarModel';
 import {
   Day,
   MAX_ROWS,
+  normalizeEvents,
   overlapsDay,
   VISIBLE_ITEMS,
   weekStartOf,
@@ -36,13 +37,19 @@ export function useCalendar(events: PassCalendarEvent[]) {
   );
   const days = useMemo(() => weeks.flat(), [weeks]);
 
+  // 챌린지 status 를 challengeApplicationId + endDate 로 파생
+  const normalized = useMemo(
+    () => normalizeEvents(events, today),
+    [events, today],
+  );
+
   const { bars, barLaneOf, pointsByDate, badgeByDate } = useMemo(
     () =>
-      deriveCalendar(events, filters, days, {
+      deriveCalendar(normalized, filters, days, {
         maxRows: MAX_ROWS,
         visibleItems: VISIBLE_ITEMS,
       }),
-    [events, filters, days],
+    [normalized, filters, days],
   );
 
   const mainMonthKey = useMemo(() => {
@@ -57,13 +64,13 @@ export function useCalendar(events: PassCalendarEvent[]) {
   // 우측 패널: 선택일에 걸치는 일정 전부 (필터 반영). 유형 무관 시작 시각 순
   const selectedEvents = useMemo(
     () =>
-      events
+      normalized
         .filter((e) => (e.status ? filters[e.status] : true))
         .filter((e) => overlapsDay(e, selected))
         .sort(
           (a, b) => dayjs(a.startDate).valueOf() - dayjs(b.startDate).valueOf(),
         ),
-    [events, filters, selected],
+    [normalized, filters, selected],
   );
 
   return {

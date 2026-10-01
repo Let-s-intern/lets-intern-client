@@ -1,7 +1,14 @@
+'use client';
+
 import SolidButton from '@/common/button/SolidButton';
 import dayjs from '@/lib/dayjs';
+import clsx from 'clsx';
 import { ChevronRight } from 'lucide-react';
-import type { PassCalendarEvent } from '../../../types';
+import { useRouter } from 'next/navigation';
+import type {
+  NormalizedCalendarEvent,
+  PassParticipationStatus,
+} from '../../../types';
 
 type Day = ReturnType<typeof dayjs>;
 
@@ -13,13 +20,26 @@ const TYPE_LABEL: Record<string, string> = {
   LIVE_MENTORING: '멘토링',
 };
 
+const STATUS_LABEL: Record<PassParticipationStatus, string> = {
+  BEFORE: '참여 전',
+  IN_PROGRESS: '참여 중',
+  DONE: '참여 완료',
+};
+const STATUS_BADGE: Record<PassParticipationStatus, string> = {
+  IN_PROGRESS: 'bg-primary-10 text-primary',
+  BEFORE: 'border-neutral-80 text-primary border',
+  DONE: 'bg-neutral-90 text-neutral-40',
+};
+
 interface Props {
   date: Day;
-  events: PassCalendarEvent[];
+  events: NormalizedCalendarEvent[];
 }
 
 /** U-1 캘린더 우측 패널 — 선택일의 프로그램/일정 목록 (내부 스크롤) */
 export default function DayProgramList({ date, events }: Props) {
+  const router = useRouter();
+
   return (
     <div className="border-neutral-80 rounded-xs flex min-h-[60vh] w-full flex-col md:min-h-0 md:w-[312px] md:border">
       <div className="border-neutral-80 flex items-center justify-between px-0 py-2 md:border-b md:px-4 md:pb-3 md:pt-4">
@@ -38,13 +58,31 @@ export default function DayProgramList({ date, events }: Props) {
       ) : (
         <ul className="custom-scrollbar flex max-h-[60vh] flex-col overflow-y-auto px-0 md:h-[480px] md:px-4">
           {events.map((ev) => {
-            // 챌린지는 항상, 마일스톤은 링크 있을 때만 상세(>) 노출. 세미나는 숨김
+            // 챌린지: 참여(challengeApplicationId 있음) 여부로 상세↔대시보드 분기
+            const enrolled = ev.challengeApplicationId != null;
+            const detailHref =
+              ev.programId != null
+                ? `/program/challenge/${ev.programId}`
+                : undefined;
+            const dashboardHref =
+              enrolled && ev.programId != null
+                ? `/challenge/${ev.challengeApplicationId}/${ev.programId}`
+                : undefined;
+            // 챌린지는 상세(programId) 있을 때, 마일스톤은 url 있을 때만 상세(>) 노출
             const showChevron =
-              ev.type === 'CHALLENGE' || (ev.type === 'MILESTONE' && !!ev.url);
+              (ev.type === 'CHALLENGE' && detailHref != null) ||
+              (ev.type === 'MILESTONE' && !!ev.url);
             // 세미나 참여 버튼: 시작 10분 전부터 활성화
             const seminarOpen =
               ev.type === 'SEMINAR' &&
               !dayjs().isBefore(dayjs(ev.startDate).subtract(10, 'minute'));
+
+            const onChevron = () => {
+              if (ev.type === 'CHALLENGE' && detailHref) router.push(detailHref);
+              else if (ev.type === 'MILESTONE' && ev.url)
+                window.open(ev.url, '_blank', 'noopener,noreferrer');
+            };
+
             return (
               <li
                 key={ev.id}
@@ -53,13 +91,12 @@ export default function DayProgramList({ date, events }: Props) {
                 <div className="flex items-center gap-2">
                   {ev.status && (
                     <span
-                      className={
-                        ev.status === 'IN_PROGRESS'
-                          ? 'bg-primary-10 text-primary text-xxsmall12 rounded-[3px] px-2 py-1 font-medium'
-                          : 'border-neutral-80 text-primary text-xxsmall12 rounded-[3px] border px-2 py-1 font-medium'
-                      }
+                      className={clsx(
+                        'text-xxsmall12 rounded-[3px] px-2 py-1 font-medium',
+                        STATUS_BADGE[ev.status],
+                      )}
                     >
-                      {ev.status === 'IN_PROGRESS' ? '참여 중' : '참여 전'}
+                      {STATUS_LABEL[ev.status]}
                     </span>
                   )}
                   <span className="text-xxsmall12 text-neutral-40">
@@ -72,13 +109,14 @@ export default function DayProgramList({ date, events }: Props) {
                     {ev.title}
                   </span>
                   {showChevron && (
-                    <a
-                      href={ev.url ?? undefined}
+                    <button
+                      type="button"
                       aria-label="상세 보기"
                       className="shrink-0"
+                      onClick={onChevron}
                     >
                       <ChevronRight size={20} className="text-neutral-30" />
-                    </a>
+                    </button>
                   )}
                 </div>
                 <div className="flex flex-col gap-1">
@@ -109,9 +147,17 @@ export default function DayProgramList({ date, events }: Props) {
                     )}
                   </p>
                 </div>
+
                 {ev.type === 'CHALLENGE' && (
-                  <SolidButton size="sm" className="text-xsmall14 w-full">
-                    {ev.status === 'IN_PROGRESS' ? '대시보드 입장' : '참여하기'}
+                  <SolidButton
+                    size="sm"
+                    className="text-xsmall14 w-full"
+                    onClick={() => {
+                      const href = enrolled ? dashboardHref : detailHref;
+                      if (href) router.push(href);
+                    }}
+                  >
+                    {enrolled ? '대시보드 입장' : '참여하기'}
                   </SolidButton>
                 )}
                 {ev.type === 'SEMINAR' && (

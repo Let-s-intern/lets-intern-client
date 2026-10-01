@@ -52,8 +52,8 @@ export const calendarFixtures: PassCalendarEvent[] = [
     description: CHALLENGE_DESC,
     startDate: '2026-09-21T00:00:00',
     endDate: '2026-10-03T23:59:59',
-    status: 'IN_PROGRESS',
-    url: 'https://www.letscareer.co.kr/program/challenge/420/%5B%EC%9D%B8%ED%84%B4%C2%B7%EC%8B%A4%EB%AC%B4-%EA%B2%BD%ED%97%98%EC%9E%90-ver.%5D-%EA%B8%B0%ED%95%84%EC%BD%94-%EA%B2%BD%ED%97%98%EC%A0%95%EB%A6%AC-%EC%B1%8C%EB%A6%B0%EC%A7%80-33%EA%B8%B0',
+    programId: 420,
+    challengeApplicationId: 3001, // 참여 → 오늘이 기간 내라 '참여 중'
   },
   {
     id: 2,
@@ -63,8 +63,8 @@ export const calendarFixtures: PassCalendarEvent[] = [
     description: CHALLENGE_DESC,
     startDate: '2026-09-28T00:00:00',
     endDate: '2026-09-30T23:59:59',
-    status: 'IN_PROGRESS',
-    url: 'https://www.letscareer.co.kr/program/challenge/422/260921-%ED%85%8C%EC%8A%A4%ED%8A%B8-%EC%B1%8C%EB%A6%B0%EC%A7%80_%EC%9E%84%ED%98%B8%EC%A0%95',
+    programId: 422,
+    challengeApplicationId: 3002, // 참여 → 오늘이 종료일 지나 '참여 완료'
   },
   {
     id: 3,
@@ -74,8 +74,8 @@ export const calendarFixtures: PassCalendarEvent[] = [
     description: CHALLENGE_DESC,
     startDate: '2026-09-30T00:00:00',
     endDate: '2026-10-08T23:59:59',
-    status: 'BEFORE',
-    url: null,
+    programId: 423,
+    challengeApplicationId: null, // 미참여 → '참여 전'
   },
   {
     id: 4,
@@ -85,8 +85,8 @@ export const calendarFixtures: PassCalendarEvent[] = [
     description: CHALLENGE_DESC,
     startDate: '2026-10-05T00:00:00',
     endDate: '2026-10-16T23:59:59',
-    status: 'BEFORE',
-    url: null,
+    programId: 424,
+    challengeApplicationId: null, // 미참여 → '참여 전'
   },
   {
     id: 5,
@@ -96,7 +96,6 @@ export const calendarFixtures: PassCalendarEvent[] = [
     description: '현직자에게 직접 듣는 취업 노하우.',
     startDate: '2026-09-30T19:00:00',
     endDate: null,
-    status: null,
     url: 'https://letscareer.co.kr',
   },
   // 10/1 — 오버플로(8개 초과) 확인용 묶음
@@ -108,7 +107,6 @@ export const calendarFixtures: PassCalendarEvent[] = [
     description: null,
     startDate: '2026-10-01T09:00:00',
     endDate: null,
-    status: null,
     url: null,
   },
   {
@@ -119,7 +117,6 @@ export const calendarFixtures: PassCalendarEvent[] = [
     description: null,
     startDate: '2026-10-01T11:30:00',
     endDate: null,
-    status: null,
     url: null,
   },
   {
@@ -130,7 +127,6 @@ export const calendarFixtures: PassCalendarEvent[] = [
     description: null,
     startDate: '2026-10-01T16:00:00',
     endDate: null,
-    status: null,
     url: null,
   },
   {
@@ -141,7 +137,6 @@ export const calendarFixtures: PassCalendarEvent[] = [
     description: null,
     startDate: '2026-10-01T14:00:00',
     endDate: null,
-    status: null,
     url: 'https://letscareer.co.kr',
   },
   ...Array.from({ length: 2 }, (_, i) => ({
@@ -152,7 +147,6 @@ export const calendarFixtures: PassCalendarEvent[] = [
     description: null,
     startDate: '2026-10-01T10:00:00',
     endDate: null,
-    status: null,
     url: null,
   })),
 ];

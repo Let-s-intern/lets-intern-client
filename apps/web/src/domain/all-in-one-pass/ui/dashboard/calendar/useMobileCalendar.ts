@@ -6,6 +6,7 @@ import {
   Day,
   MONTH_MAX_ROWS,
   MONTH_VISIBLE_ITEMS,
+  normalizeEvents,
   overlapsDay,
   weekStartOf,
 } from './calendarUtils';
@@ -73,26 +74,32 @@ export function useMobileCalendar({ events, periodStart, periodEnd }: Params) {
     () => (view === 'month' ? monthWeeks : weeks).flat(),
     [view, monthWeeks, weeks],
   );
+  // 챌린지 status 를 challengeApplicationId + endDate 로 파생
+  const normalized = useMemo(
+    () => normalizeEvents(events, today),
+    [events, today],
+  );
+
   // 주간·월간 동일: 4개까지 표시, 5개 이상이면 3개 + +N
   const model = useMemo(
     () =>
-      deriveCalendar(events, filters, days, {
+      deriveCalendar(normalized, filters, days, {
         maxRows: MONTH_MAX_ROWS,
         visibleItems: MONTH_VISIBLE_ITEMS,
       }),
-    [events, filters, days],
+    [normalized, filters, days],
   );
 
   // 하단 목록: 선택일에 걸치는 일정 전부 (필터 반영). 유형 무관 시작 시각 순
   const selectedEvents = useMemo(
     () =>
-      events
+      normalized
         .filter((e) => (e.status ? filters[e.status] : true))
         .filter((e) => overlapsDay(e, selected))
         .sort(
           (a, b) => dayjs(a.startDate).valueOf() - dayjs(b.startDate).valueOf(),
         ),
-    [events, filters, selected],
+    [normalized, filters, selected],
   );
 
   // 월 이동 경계 (패스 기간 내)

@@ -1,5 +1,6 @@
 import dayjs from '@/lib/dayjs';
 import type {
+  NormalizedCalendarEvent,
   PassCalendarEvent,
   PassParticipationStatus,
 } from '../../../types';
@@ -27,6 +28,34 @@ export const FILTER_LABEL: Record<PassParticipationStatus, string> = {
   DONE: '참여 완료',
 };
 
+/**
+ * 챌린지 참여 상태 파생(FE). BE는 challengeApplicationId(팩트)만 주고, 중/완료는 시점 의존이라
+ * 여기서 계산한다.
+ * - challengeApplicationId == null → BEFORE(참여 전)
+ * - 오늘이 종료일(일 단위)을 지남 → DONE(참여 완료)
+ * - 그 외 → IN_PROGRESS(참여 중)
+ */
+export const challengeStatus = (
+  e: PassCalendarEvent,
+  today: Day,
+): PassParticipationStatus => {
+  if (e.challengeApplicationId == null) return 'BEFORE';
+  if (today.isAfter(dayjs(e.endDate ?? e.startDate).startOf('day'))) {
+    return 'DONE';
+  }
+  return 'IN_PROGRESS';
+};
+
+/** 이벤트 목록 정규화 — 챌린지 status를 파생값으로 채움(세미나·마일스톤은 그대로) */
+export const normalizeEvents = (
+  events: PassCalendarEvent[],
+  today: Day,
+): NormalizedCalendarEvent[] =>
+  events.map((e) => ({
+    ...e,
+    status: e.type === 'CHALLENGE' ? challengeStatus(e, today) : null,
+  }));
+
 export const eventStart = (e: PassCalendarEvent) =>
   dayjs(e.startDate).startOf('day');
 export const eventEnd = (e: PassCalendarEvent) =>
@@ -42,7 +71,7 @@ export const colOf = (d: Day) => ((d.day() + 6) % 7) + 1;
  * 노출 우선순위: 참여중 챌린지 > 세미나 > 마일스톤/기타 > 참여가능 챌린지 > 참여이력 챌린지.
  * 동일 순위면 진행기간 짧은 순 → 시작 빠른 순.
  */
-export const priority = (e: PassCalendarEvent): number => {
+export const priority = (e: NormalizedCalendarEvent): number => {
   if (e.type === 'CHALLENGE') {
     if (e.status === 'IN_PROGRESS') return 0;
     if (e.status === 'BEFORE') return 3; // 참여가능
@@ -63,7 +92,10 @@ export const overlapsDay = (e: PassCalendarEvent, d: Day) =>
   !eventStart(e).isAfter(d) && !eventEnd(e).isBefore(d);
 
 /** 노출 우선순위 정렬: priority → 진행기간 짧은 순 → 시작 빠른 순 */
-export const compareEvents = (a: PassCalendarEvent, b: PassCalendarEvent) =>
+export const compareEvents = (
+  a: NormalizedCalendarEvent,
+  b: NormalizedCalendarEvent,
+) =>
   priority(a) - priority(b) ||
   durationMs(a) - durationMs(b) ||
   eventStart(a).valueOf() - eventStart(b).valueOf();
