@@ -5,6 +5,7 @@ import dayjs from '@/lib/dayjs';
 import clsx from 'clsx';
 import { ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useEffect, useRef } from 'react';
 import type {
   NormalizedCalendarEvent,
   PassCalendarEventType,
@@ -40,9 +41,30 @@ interface Props {
 /** U-1 캘린더 우측 패널 — 선택일의 프로그램/일정 목록 */
 export default function DayProgramList({ date, events, stickyTop }: Props) {
   const router = useRouter();
+  const rootRef = useRef<HTMLDivElement>(null);
+  const ulRef = useRef<HTMLUListElement>(null);
+
+  // 날짜 변경 시 목록을 최상단으로 리셋 (이전 스크롤 위치 유지 방지)
+  const dateKey = date.valueOf();
+  useEffect(() => {
+    if (stickyTop != null) {
+      // 모바일: 페이지 스크롤 — 목록 상단이 sticky 헤더 위치에 오도록 (아래로는 안 끌어내림)
+      const el = rootRef.current;
+      if (!el) return;
+      const top = el.getBoundingClientRect().top + window.scrollY - stickyTop;
+      if (window.scrollY > top) window.scrollTo({ top: Math.max(0, top) });
+    } else if (ulRef.current) {
+      // 데스크탑: 내부 스크롤 리셋
+      ulRef.current.scrollTop = 0;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dateKey]);
 
   return (
-    <div className="border-neutral-80 rounded-xs flex min-h-[260px] w-full flex-col md:min-h-0 md:w-[312px] md:border">
+    <div
+      ref={rootRef}
+      className="border-neutral-80 rounded-xs flex min-h-[260px] w-full flex-col md:min-h-0 md:w-[312px] md:border"
+    >
       <div
         className={clsx(
           'border-neutral-80 flex items-center justify-between px-0 py-2 md:border-b md:px-4 md:pb-3 md:pt-4',
@@ -63,7 +85,10 @@ export default function DayProgramList({ date, events, stickyTop }: Props) {
           해당 일자에 일정이 없습니다.
         </p>
       ) : (
-        <ul className="custom-scrollbar flex flex-col px-0 md:h-[480px] md:overflow-y-auto md:px-4">
+        <ul
+          ref={ulRef}
+          className="custom-scrollbar flex flex-col px-0 md:h-[480px] md:overflow-y-auto md:px-4"
+        >
           {events.map((ev) => {
             // 챌린지: 참여(challengeApplicationId 있음) 여부로 상세↔대시보드 분기
             const enrolled = ev.challengeApplicationId != null;
