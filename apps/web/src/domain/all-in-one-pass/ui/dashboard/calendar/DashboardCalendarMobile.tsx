@@ -13,6 +13,9 @@ import PassDatePickerSheet from './PassDatePickerSheet';
 import { FILTER_LABEL } from './calendarUtils';
 import { CalendarView, useMobileCalendar } from './useMobileCalendar';
 
+/** 이 높이(px) 미만 화면에선 월간 뷰 히든처리 */
+const MONTH_MIN_HEIGHT = 820;
+
 interface Props {
   events: PassCalendarEvent[];
   /** 패스 기간 — 월 이동 경계 및 날짜 피커 노출 범위 */
@@ -47,6 +50,21 @@ export default function DashboardCalendarMobile({
   }, []);
   // NavBar(84) + 헤더(52) + 달력 높이 → 목록 헤더가 달력 바로 아래에 고정
   const listHeaderTop = 136 + calH;
+
+  // 화면 높이가 낮으면 월간 뷰 숨김 (월간 그리드가 안 들어감)
+  const [viewportH, setViewportH] = useState<number | null>(null);
+  useEffect(() => {
+    const update = () => setViewportH(window.innerHeight);
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+  const monthAllowed = viewportH == null || viewportH >= MONTH_MIN_HEIGHT;
+  // 월간인데 화면이 낮아지면 주간으로 강제 전환
+  useEffect(() => {
+    if (!monthAllowed && cal.view === 'month') cal.setView('week');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [monthAllowed, cal.view]);
 
   // 헤더 월·이동은 뷰별로 (월간=기준 달 / 주간=보이는 주)
   const isMonth = cal.view === 'month';
@@ -106,7 +124,9 @@ export default function DashboardCalendarMobile({
         </div>
 
         <div className="flex items-center gap-1">
-          {(['week', 'month'] as const).map((v: CalendarView) => (
+          {(['week', 'month'] as const)
+            .filter((v) => v !== 'month' || monthAllowed) // 낮은 화면: 월간 숨김
+            .map((v: CalendarView) => (
               <button
                 key={v}
                 type="button"
