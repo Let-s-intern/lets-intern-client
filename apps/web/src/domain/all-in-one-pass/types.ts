@@ -77,11 +77,10 @@ export type PassParticipationStatus = 'BEFORE' | 'IN_PROGRESS' | 'DONE';
 export interface PassCalendarEvent {
   id: number;
   type: PassCalendarEventType;
-  programType: PassProgramType | null; // 카드 "프로그램 종류" 뱃지 (챌린지 등)
   title: string;
   description: string | null;
   startDate: string; // ISO
-  endDate: string | null; // CHALLENGE 막대 종료; 단일일 칩은 null
+  endDate: string | null; // 종료 시각 — 챌린지 막대 종료 / 세미나·마일스톤 기간 종료(버튼 활성 판정)
   /** 세미나·마일스톤 외부 링크. 챌린지는 id로 URL 조립하므로 없음 */
   url?: string | null;
   /** 챌린지 상세(`/program/challenge/{id}`)·대시보드 URL 구성용 (BE 팩트) */

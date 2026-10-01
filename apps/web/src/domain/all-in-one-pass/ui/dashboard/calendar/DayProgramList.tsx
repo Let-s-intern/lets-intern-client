@@ -7,17 +7,17 @@ import { ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import type {
   NormalizedCalendarEvent,
+  PassCalendarEventType,
   PassParticipationStatus,
 } from '../../../types';
 
 type Day = ReturnType<typeof dayjs>;
 
-const TYPE_LABEL: Record<string, string> = {
+/** 캘린더 유형 라벨 (프로그램 종류 아님 — 어드민 캘린더 유형) */
+const TYPE_LABEL: Record<PassCalendarEventType, string> = {
   CHALLENGE: '챌린지',
-  GUIDEBOOK: '가이드북',
-  VOD: 'VOD',
-  LIVE: '세미나',
-  LIVE_MENTORING: '멘토링',
+  SEMINAR: '세미나',
+  MILESTONE: '기타 일정',
 };
 
 const STATUS_LABEL: Record<PassParticipationStatus, string> = {
@@ -72,13 +72,16 @@ export default function DayProgramList({ date, events }: Props) {
             const showChevron =
               (ev.type === 'CHALLENGE' && detailHref != null) ||
               (ev.type === 'MILESTONE' && !!ev.url);
-            // 세미나 참여 버튼: 시작 10분 전부터 활성화
+            // 세미나 참여 버튼: 시작 10분 전 ~ 종료 시각 사이에만 활성화
+            const now = dayjs();
             const seminarOpen =
               ev.type === 'SEMINAR' &&
-              !dayjs().isBefore(dayjs(ev.startDate).subtract(10, 'minute'));
+              !now.isBefore(dayjs(ev.startDate).subtract(10, 'minute')) &&
+              (!ev.endDate || !now.isAfter(dayjs(ev.endDate)));
 
             const onChevron = () => {
-              if (ev.type === 'CHALLENGE' && detailHref) router.push(detailHref);
+              if (ev.type === 'CHALLENGE' && detailHref)
+                router.push(detailHref);
               else if (ev.type === 'MILESTONE' && ev.url)
                 window.open(ev.url, '_blank', 'noopener,noreferrer');
             };
@@ -100,7 +103,7 @@ export default function DayProgramList({ date, events }: Props) {
                     </span>
                   )}
                   <span className="text-xxsmall12 text-neutral-40">
-                    {ev.programType ? TYPE_LABEL[ev.programType] : '일정'}
+                    {TYPE_LABEL[ev.type]}
                   </span>
                 </div>
 
@@ -132,6 +135,13 @@ export default function DayProgramList({ date, events }: Props) {
                         <span>일시</span>
                         <span>
                           {dayjs(ev.startDate).format('YY.MM.DD HH:mm')}
+                          {ev.endDate &&
+                            (dayjs(ev.endDate).isSame(
+                              dayjs(ev.startDate),
+                              'day',
+                            )
+                              ? ` ~ ${dayjs(ev.endDate).format('HH:mm')}`
+                              : ` ~ ${dayjs(ev.endDate).format('YY.MM.DD HH:mm')}`)}
                         </span>
                       </>
                     ) : (
