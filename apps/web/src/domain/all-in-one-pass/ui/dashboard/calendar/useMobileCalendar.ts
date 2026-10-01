@@ -3,7 +3,6 @@ import { useMemo, useState } from 'react';
 import type { PassCalendarEvent, PassParticipationStatus } from '../../../types';
 import { deriveCalendar } from './calendarModel';
 import {
-  compareEvents,
   Day,
   MONTH_MAX_ROWS,
   MONTH_VISIBLE_ITEMS,
@@ -84,13 +83,15 @@ export function useMobileCalendar({ events, periodStart, periodEnd }: Params) {
     [events, filters, days],
   );
 
-  // 하단 목록: 선택일에 걸치는 일정 전부 (필터 반영, 우선순위 순)
+  // 하단 목록: 선택일에 걸치는 일정 전부 (필터 반영). 유형 무관 시작 시각 순
   const selectedEvents = useMemo(
     () =>
       events
         .filter((e) => (e.status ? filters[e.status] : true))
         .filter((e) => overlapsDay(e, selected))
-        .sort(compareEvents),
+        .sort(
+          (a, b) => dayjs(a.startDate).valueOf() - dayjs(b.startDate).valueOf(),
+        ),
     [events, filters, selected],
   );
 

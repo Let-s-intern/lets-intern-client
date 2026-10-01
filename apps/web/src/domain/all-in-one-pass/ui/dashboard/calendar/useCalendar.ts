@@ -3,7 +3,6 @@ import { useMemo, useState } from 'react';
 import type { PassCalendarEvent, PassParticipationStatus } from '../../../types';
 import { deriveCalendar } from './calendarModel';
 import {
-  compareEvents,
   Day,
   MAX_ROWS,
   overlapsDay,
@@ -55,13 +54,15 @@ export function useCalendar(events: PassCalendarEvent[]) {
     return [...counts].sort((a, b) => b[1] - a[1])[0][0];
   }, [days]);
 
-  // 우측 패널: 선택일에 걸치는 일정 전부 (필터 반영, 우선순위 순, 오버플로와 무관)
+  // 우측 패널: 선택일에 걸치는 일정 전부 (필터 반영). 유형 무관 시작 시각 순
   const selectedEvents = useMemo(
     () =>
       events
         .filter((e) => (e.status ? filters[e.status] : true))
         .filter((e) => overlapsDay(e, selected))
-        .sort(compareEvents),
+        .sort(
+          (a, b) => dayjs(a.startDate).valueOf() - dayjs(b.startDate).valueOf(),
+        ),
     [events, filters, selected],
   );
 

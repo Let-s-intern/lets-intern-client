@@ -36,7 +36,7 @@ export default function DayProgramList({ date, events }: Props) {
           해당 일자에 일정이 없습니다.
         </p>
       ) : (
-        <ul className="custom-scrollbar flex max-h-[60vh] flex-col overflow-y-auto px-0 md:max-h-[480px] md:px-4">
+        <ul className="custom-scrollbar flex max-h-[60vh] flex-col overflow-y-auto px-0 md:h-[480px] md:px-4">
           {events.map((ev) => (
             <li
               key={ev.id}
@@ -73,18 +73,29 @@ export default function DayProgramList({ date, events }: Props) {
                 )}
 
                 <p className="text-xxsmall12 text-neutral-40 flex gap-1 tracking-tight">
-                  <span>진행기간</span>
-                  <span>
-                    {dayjs(ev.startDate).format('YY.MM.DD')}
-                    {ev.endDate
-                      ? ` ~ ${dayjs(ev.endDate).format('YY.MM.DD')}`
-                      : ''}
-                  </span>
+                  {ev.type === 'SEMINAR' || ev.type === 'MILESTONE' ? (
+                    <>
+                      <span>일시</span>
+                      <span>
+                        {dayjs(ev.startDate).format('YY.MM.DD HH:mm')}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <span>진행기간</span>
+                      <span>
+                        {dayjs(ev.startDate).format('YY.MM.DD')}
+                        {ev.endDate
+                          ? ` ~ ${dayjs(ev.endDate).format('YY.MM.DD')}`
+                          : ''}
+                      </span>
+                    </>
+                  )}
                 </p>
               </div>
               {ev.type === 'CHALLENGE' && (
                 <SolidButton size="sm" className="text-xsmall14 w-full">
-                  참여하기
+                  {ev.status === 'IN_PROGRESS' ? '대시보드 입장' : '참여하기'}
                 </SolidButton>
               )}
             </li>
