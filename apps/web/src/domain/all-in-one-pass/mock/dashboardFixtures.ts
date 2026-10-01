@@ -53,7 +53,7 @@ export const calendarFixtures: PassCalendarEvent[] = [
     startDate: '2026-09-21T00:00:00',
     endDate: '2026-10-03T23:59:59',
     status: 'IN_PROGRESS',
-    url: null,
+    url: 'https://www.letscareer.co.kr/program/challenge/420/%5B%EC%9D%B8%ED%84%B4%C2%B7%EC%8B%A4%EB%AC%B4-%EA%B2%BD%ED%97%98%EC%9E%90-ver.%5D-%EA%B8%B0%ED%95%84%EC%BD%94-%EA%B2%BD%ED%97%98%EC%A0%95%EB%A6%AC-%EC%B1%8C%EB%A6%B0%EC%A7%80-33%EA%B8%B0',
   },
   {
     id: 2,
@@ -64,7 +64,7 @@ export const calendarFixtures: PassCalendarEvent[] = [
     startDate: '2026-09-28T00:00:00',
     endDate: '2026-09-30T23:59:59',
     status: 'IN_PROGRESS',
-    url: null,
+    url: 'https://www.letscareer.co.kr/program/challenge/422/260921-%ED%85%8C%EC%8A%A4%ED%8A%B8-%EC%B1%8C%EB%A6%B0%EC%A7%80_%EC%9E%84%ED%98%B8%EC%A0%95',
   },
   {
     id: 3,

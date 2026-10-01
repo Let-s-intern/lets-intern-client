@@ -9,7 +9,7 @@ const TYPE_LABEL: Record<string, string> = {
   CHALLENGE: '챌린지',
   GUIDEBOOK: '가이드북',
   VOD: 'VOD',
-  LIVE: '무료 세미나',
+  LIVE: '세미나',
   LIVE_MENTORING: '멘토링',
 };
 
@@ -37,69 +37,99 @@ export default function DayProgramList({ date, events }: Props) {
         </p>
       ) : (
         <ul className="custom-scrollbar flex max-h-[60vh] flex-col overflow-y-auto px-0 md:h-[480px] md:px-4">
-          {events.map((ev) => (
-            <li
-              key={ev.id}
-              className="border-neutral-80 flex flex-col gap-3 border-b px-4 py-5 last:border-b-0"
-            >
-              <div className="flex items-center gap-2">
-                {ev.status && (
-                  <span
-                    className={
-                      ev.status === 'IN_PROGRESS'
-                        ? 'bg-primary-10 text-primary text-xxsmall12 rounded-[3px] px-2 py-1 font-medium'
-                        : 'border-neutral-80 text-primary text-xxsmall12 rounded-[3px] border px-2 py-1 font-medium'
-                    }
-                  >
-                    {ev.status === 'IN_PROGRESS' ? '참여 중' : '참여 전'}
-                  </span>
-                )}
-                <span className="text-xxsmall12 text-neutral-40">
-                  {ev.programType ? TYPE_LABEL[ev.programType] : '일정'}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-xsmall16 text-neutral-0 truncate font-bold">
-                  {ev.title}
-                </span>
-                <ChevronRight size={20} className="text-neutral-30 shrink-0" />
-              </div>
-              <div className="flex flex-col gap-1">
-                {ev.description && (
-                  <p className="text-xxsmall12 text-neutral-30 line-clamp-2 font-normal">
-                    {ev.description}
-                  </p>
-                )}
-
-                <p className="text-xxsmall12 text-neutral-40 flex gap-1 tracking-tight">
-                  {ev.type === 'SEMINAR' || ev.type === 'MILESTONE' ? (
-                    <>
-                      <span>일시</span>
-                      <span>
-                        {dayjs(ev.startDate).format('YY.MM.DD HH:mm')}
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <span>진행기간</span>
-                      <span>
-                        {dayjs(ev.startDate).format('YY.MM.DD')}
-                        {ev.endDate
-                          ? ` ~ ${dayjs(ev.endDate).format('YY.MM.DD')}`
-                          : ''}
-                      </span>
-                    </>
+          {events.map((ev) => {
+            // 챌린지는 항상, 마일스톤은 링크 있을 때만 상세(>) 노출. 세미나는 숨김
+            const showChevron =
+              ev.type === 'CHALLENGE' || (ev.type === 'MILESTONE' && !!ev.url);
+            // 세미나 참여 버튼: 시작 10분 전부터 활성화
+            const seminarOpen =
+              ev.type === 'SEMINAR' &&
+              !dayjs().isBefore(dayjs(ev.startDate).subtract(10, 'minute'));
+            return (
+              <li
+                key={ev.id}
+                className="border-neutral-80 flex flex-col gap-3 border-b px-4 py-5 last:border-b-0"
+              >
+                <div className="flex items-center gap-2">
+                  {ev.status && (
+                    <span
+                      className={
+                        ev.status === 'IN_PROGRESS'
+                          ? 'bg-primary-10 text-primary text-xxsmall12 rounded-[3px] px-2 py-1 font-medium'
+                          : 'border-neutral-80 text-primary text-xxsmall12 rounded-[3px] border px-2 py-1 font-medium'
+                      }
+                    >
+                      {ev.status === 'IN_PROGRESS' ? '참여 중' : '참여 전'}
+                    </span>
                   )}
-                </p>
-              </div>
-              {ev.type === 'CHALLENGE' && (
-                <SolidButton size="sm" className="text-xsmall14 w-full">
-                  {ev.status === 'IN_PROGRESS' ? '대시보드 입장' : '참여하기'}
-                </SolidButton>
-              )}
-            </li>
-          ))}
+                  <span className="text-xxsmall12 text-neutral-40">
+                    {ev.programType ? TYPE_LABEL[ev.programType] : '일정'}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xsmall16 text-neutral-0 truncate font-bold">
+                    {ev.title}
+                  </span>
+                  {showChevron && (
+                    <a
+                      href={ev.url ?? undefined}
+                      aria-label="상세 보기"
+                      className="shrink-0"
+                    >
+                      <ChevronRight size={20} className="text-neutral-30" />
+                    </a>
+                  )}
+                </div>
+                <div className="flex flex-col gap-1">
+                  {ev.description && (
+                    <p className="text-xxsmall12 text-neutral-30 line-clamp-2 font-normal">
+                      {ev.description}
+                    </p>
+                  )}
+
+                  <p className="text-xxsmall12 text-neutral-40 flex gap-1 tracking-tight">
+                    {ev.type === 'SEMINAR' || ev.type === 'MILESTONE' ? (
+                      <>
+                        <span>일시</span>
+                        <span>
+                          {dayjs(ev.startDate).format('YY.MM.DD HH:mm')}
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <span>진행기간</span>
+                        <span>
+                          {dayjs(ev.startDate).format('YY.MM.DD')}
+                          {ev.endDate
+                            ? ` ~ ${dayjs(ev.endDate).format('YY.MM.DD')}`
+                            : ''}
+                        </span>
+                      </>
+                    )}
+                  </p>
+                </div>
+                {ev.type === 'CHALLENGE' && (
+                  <SolidButton size="sm" className="text-xsmall14 w-full">
+                    {ev.status === 'IN_PROGRESS' ? '대시보드 입장' : '참여하기'}
+                  </SolidButton>
+                )}
+                {ev.type === 'SEMINAR' && (
+                  <SolidButton
+                    size="sm"
+                    disabled={!seminarOpen}
+                    onClick={() =>
+                      ev.url &&
+                      window.open(ev.url, '_blank', 'noopener,noreferrer')
+                    }
+                    className="text-xsmall14 w-full"
+                  >
+                    참여하기
+                  </SolidButton>
+                )}
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>
