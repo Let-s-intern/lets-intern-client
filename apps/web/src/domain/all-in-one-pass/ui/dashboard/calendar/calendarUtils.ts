@@ -39,16 +39,17 @@ export const weekStartOf = (d: Day) =>
 export const colOf = (d: Day) => ((d.day() + 6) % 7) + 1;
 
 /**
- * 노출 우선순위: 참여중 챌린지 > 세미나/유형(마일스톤) > 참여가능 챌린지 > 참여이력 챌린지.
+ * 노출 우선순위: 참여중 챌린지 > 세미나 > 마일스톤/기타 > 참여가능 챌린지 > 참여이력 챌린지.
  * 동일 순위면 진행기간 짧은 순 → 시작 빠른 순.
  */
 export const priority = (e: PassCalendarEvent): number => {
   if (e.type === 'CHALLENGE') {
     if (e.status === 'IN_PROGRESS') return 0;
-    if (e.status === 'BEFORE') return 2;
-    return 3; // DONE
+    if (e.status === 'BEFORE') return 3; // 참여가능
+    return 4; // 참여완료(DONE)
   }
-  return 1;
+  if (e.type === 'SEMINAR') return 1;
+  return 2; // MILESTONE 등 기타 유형
 };
 export const durationMs = (e: PassCalendarEvent) =>
   eventEnd(e).valueOf() - eventStart(e).valueOf();
