@@ -32,9 +32,15 @@ export default function MentorNoticeManagement() {
   const { data: challengeData } = useGetChallengeList({
     pageable: { size: 1000, page: 1 },
   });
-  // 버전 있는 챌린지는 버전 행이 여러 개라 챌린지 하나로 모은다
+  // 버전 있는 챌린지는 버전 행이 여러 개라 챌린지 하나로 모으고, 버전 제목 대신 챌린지 제목을 보인다
   const challengeList = useMemo(
-    () => uniqueChallengesById(challengeData?.programList ?? []),
+    () =>
+      uniqueChallengesById(challengeData?.programList ?? []).map(
+        ({ id, title, challengeTitle }) => ({
+          id,
+          title: challengeTitle ?? title,
+        }),
+      ),
     [challengeData],
   );
   const [formChallengeId, setFormChallengeId] = useState('');

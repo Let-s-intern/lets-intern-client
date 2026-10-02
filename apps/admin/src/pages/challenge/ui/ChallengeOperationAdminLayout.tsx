@@ -134,10 +134,10 @@ const Actions = ({ openModal }: { openModal: () => void }) => {
         <option key="change" value="">
           챌린지 변경
         </option>
-        {/* 버전 있는 챌린지는 버전 행이 여러 개라 챌린지 하나로 모은다 */}
+        {/* 버전 있는 챌린지는 버전 행이 여러 개라 챌린지 하나로 모으고, 버전 제목 대신 챌린지 제목을 보인다 */}
         {uniqueChallengesById(data?.programList ?? []).map((program) => (
           <option key={program.id} value={program.id}>
-            {program.title}
+            {program.challengeTitle ?? program.title}
           </option>
         ))}
       </select>
@@ -184,7 +184,7 @@ const ChallengeDashBoardModal = ({
   const { programId } = useParams();
 
   const [selectedId, setSelectedId] = useState<number | null>(null);
-  // 버전 있는 챌린지는 버전 행이 여러 개라 챌린지 하나로 모은다
+  // 버전 있는 챌린지는 버전 행이 여러 개라 챌린지 하나로 모으고, 버전 제목 대신 챌린지 제목을 보인다
   const challenges = uniqueChallengesById(challengeList?.programList ?? []);
 
   const handleClickCopy = async () => {
@@ -211,7 +211,9 @@ const ChallengeDashBoardModal = ({
               }}
             >
               <Checkbox checked={selectedId === challenge.id} />
-              <span>{`[${challenge.id}] ${challenge.title}`}</span>
+              <span>
+                {`[${challenge.id}] ${challenge.challengeTitle ?? challenge.title}`}
+              </span>
             </li>
           ))}
         </ul>

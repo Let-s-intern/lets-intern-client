@@ -128,6 +128,8 @@ export const challengeListItemSchema = z.object({
   // 버전 있는 챌린지는 GET /challenge 가 버전마다 한 행을 준다. 버전 행의 제목은 버전 노출 제목
   challengeVersionId: z.number().nullable().optional(),
   title: z.string().nullable().optional(),
+  // 버전 행이어도 챌린지 원래 제목. 챌린지 단위로 보여 줄 때 쓴다
+  challengeTitle: z.string().nullable().optional(),
   shortDesc: z.string().nullable().optional(),
   thumbnail: z.string().nullable().optional(),
   startDate: z.string().nullable().optional(),
