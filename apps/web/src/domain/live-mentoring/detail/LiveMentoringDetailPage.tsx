@@ -5,6 +5,11 @@ import {
   useLiveMentorSlotsQuery,
 } from '@/api/live-mentoring/liveMentoring';
 import type { LiveMentorDetail } from '@/api/live-mentoring/liveMentoringSchema';
+import {
+  mentorDetailQueryOptions,
+  mentorStatsQueryOptions,
+} from '@/api/mentor/mentor';
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -18,9 +23,9 @@ import { DetailFaqSection, DetailProcessSection } from './DetailFixedSections';
 import DetailHero from './DetailHero';
 import DetailCTAButtons from './DetailCTAButtons';
 import DetailMentoringIntroSection from './DetailMentoringIntroSection';
+import DetailMentorReviewSection from './DetailMentorReviewSection';
 import DetailPainSection from './DetailPainSection';
 import DetailPlanSection from './DetailPlanSection';
-import DetailPortfolioBeforeAfterSection from './DetailPortfolioBeforeAfterSection';
 import DetailNavigation, {
   LM_DIFFERENT_ID,
   LM_FAQ_ID,
@@ -62,7 +67,7 @@ type LiveMentoringDetailPageTemplate = LiveMentorDetail['template'];
  * 시안 0~10 순서로 렌더한다.
  * - 0~5 : 멘토가 상세 페이지 설정에서 편집한 template 콘텐츠
  * - 6·7·9·10 : 운영 확정 마케팅 콘텐츠 → 시안 이미지 그대로 (`DetailFixedSections`)
- * - 8 : 후기 (노출 여부·대상만 멘토가 고름)
+ * - 후기 : 멘토 프로필과 같은 멘토 전체 후기 (결과 사례 바로 아래)
  *
  * 하단 CTA 를 누르면 신청 시트가 열린다. 시트 상태를 페이지가 들고 있는 이유는
  * 히어로의 플랜 카드도 같은 시트를 열기 때문이다.
@@ -76,6 +81,15 @@ const LiveMentoringDetailPage = ({
   // 상세 응답에는 기간도 슬롯도 없다. 진행기간은 예약 가능 슬롯에서 만든다.
   // 상세와 굳이 하나로 합치지 않는다 — 슬롯 조회가 늦거나 실패해도 본문은 그대로 뜬다.
   const { data: slots } = useLiveMentorSlotsQuery(mentorId);
+  /*
+    후기 섹션은 멘토 후기 API 로 따로, 상세보다 늦게 뜬다. 상단 탭은 화면에 올라온
+    섹션만 고르므로 후기 조회가 끝나기 전에 고르면 후기가 있어도 「후기」 탭이 빠진다.
+    같은 쿼리를 구독해 끝날 때까지 탭 고르기를 미룬다 — 캐시를 공유해 요청은 늘지 않는다.
+  */
+  const reviewListQuery = useQuery(mentorDetailQueryOptions(mentorId));
+  const reviewStatsQuery = useQuery(mentorStatsQueryOptions(mentorId));
+  const isReviewSettled =
+    !reviewListQuery.isPending && !reviewStatsQuery.isPending;
   const applySheet = useApplySheetState();
   const router = useRouter();
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
@@ -148,11 +162,6 @@ const LiveMentoringDetailPage = ({
     period?.beginning.slice(0, 10) ?? null,
     period?.deadline.slice(0, 10) ?? null,
   );
-  const shownReviews = template.reviews.visible
-    ? detail.reviews.filter((r) =>
-        template.reviews.selectedReviewIds.includes(r.reviewId),
-      )
-    : [];
 
   return (
     /*
@@ -172,7 +181,9 @@ const LiveMentoringDetailPage = ({
         앵커 네비는 미리보기에서 그리지 않는다. 프레임 안에서는 이동을 막아 두어
         눌러도 아무 일이 없고, 좁은 화면에서 자리만 차지해 정작 볼 본문이 밀린다.
       */}
-      {isPreview ? null : <DetailNavigation isReady={!isLoading} />}
+      {isPreview ? null : (
+        <DetailNavigation isReady={!isLoading && isReviewSettled} />
+      )}
 
       {/* 시안 0-2 · 취업 준비, 혼자 하기 막막하셨나요? */}
       <DetailPainSection careers={detail.profile.careers} />
@@ -479,44 +490,14 @@ const LiveMentoringDetailPage = ({
         </DetailSection>
       )}
 
-      {/* 결과 사례 세팅 여부와 무관하게 항상 노출 */}
-      <DetailPortfolioBeforeAfterSection />
+      {/* 후기 — 멘토 프로필과 같은 멘토 전체 후기. 없거나 조회에 실패하면 섹션째 빠진다 */}
+      <DetailMentorReviewSection id={LM_REVIEW_ID} mentorId={mentorId} />
 
       {/* 시안 6 · 플랜 */}
       <DetailPlanSection durationPrices={detail.durationPrices} />
 
       {/* 시안 7 · 진행 프로세스 */}
       <DetailProcessSection period={periodLabel} />
-
-      {/* 시안 8 · 후기 (노출 여부·대상만 멘토가 고름) */}
-      {shownReviews.length > 0 && (
-        <DetailSection
-          id={LM_REVIEW_ID}
-          label="후기"
-          title={`${detail.reviewCount}명이 만족한 렛츠커리어 수강생의 솔직한 멘토링 후기`}
-          subtitle="이미 피드백을 경험한 수강생분들의 솔직한 후기를 확인해보세요!"
-        >
-          <ul className="grid grid-cols-1 gap-5 md:grid-cols-3">
-            {shownReviews.map((r) => (
-              <li
-                key={r.reviewId}
-                className="border-neutral-85 flex flex-col gap-3 rounded-md border p-5"
-              >
-                <div className="text-neutral-40 text-xxsmall12 flex items-center gap-2">
-                  <span className="text-primary font-semibold">
-                    ★ {r.score}
-                  </span>
-                  <span>{r.menteeName}</span>
-                  <span className="ml-auto">{r.createdAt}</span>
-                </div>
-                <p className="text-neutral-20 text-xsmall14 leading-relaxed">
-                  {r.content}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </DetailSection>
-      )}
 
       {/* 시안 10 · 자주 묻는 질문 */}
       <DetailFaqSection id={LM_FAQ_ID} />
