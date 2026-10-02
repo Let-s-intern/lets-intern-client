@@ -14,6 +14,7 @@ import type { Swiper as SwiperType } from 'swiper';
 import 'swiper/css';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import MissionCalendarItem from './MissionCalendarItem';
+import { getFocusSlideIndex } from './utils/getFocusSlideIndex';
 
 interface Props {
   className?: string;
@@ -60,15 +61,14 @@ const MissionCalendar = ({ schedules, todayTh, isDone }: Props) => {
   const focusTodayMission = (swiper: SwiperType) => {
     if (targetTh === null) return;
 
-    const startsFromZero = schedules[0]?.missionInfo?.th === 0;
-    const visibleCount = swiper.slidesPerViewDynamic();
-    const visibleLimit = startsFromZero ? visibleCount - 1 : visibleCount;
+    const slideIndex = getFocusSlideIndex(
+      schedules,
+      targetTh,
+      swiper.slidesPerViewDynamic(),
+    );
+    if (slideIndex === null) return;
 
-    if (targetTh <= visibleLimit) return;
-
-    const rawIndex = startsFromZero ? targetTh : targetTh - 1;
-    const centeredIndex = Math.max(rawIndex - Math.floor(visibleCount / 2), 0);
-    swiper.slideTo(centeredIndex, 0);
+    swiper.slideTo(slideIndex, 0);
   };
 
   // wrapperEl 을 의존성에 둔다. swiper 가 준비되기 전 첫 렌더에서는 아래 effect 가

@@ -56,17 +56,23 @@ export function getBlogPathname({
   return `/blog/${id}/${encodeURIComponent(getBlogSlug(title))}`;
 }
 
+/** 버전이 있는 챌린지면 title 에 버전 노출 제목을, challengeVersionId 에 버전 id 를 넘긴다 */
 export function getProgramPathname({
   programType,
   title,
   id,
+  challengeVersionId,
 }: {
   programType?: ProgramType | null;
   title?: string | null;
   id?: string | number | null;
+  challengeVersionId?: number | null;
 }) {
   const slug = (title?.replace(/[ /]/g, '-') || '').toLowerCase();
-  return `/program/${programType}/${id}/${encodeURIComponent(slug)}`;
+  const pathname = `/program/${programType}/${id}/${encodeURIComponent(slug)}`;
+  return challengeVersionId == null
+    ? pathname
+    : `${pathname}?version=${challengeVersionId}`;
 }
 
 export function getBlogTitle({

@@ -17,9 +17,11 @@ import PricePlanBottomSheet from '../PricePlanBottomSheet';
 const ChallengeCTAButtons = ({
   challenge,
   challengeId,
+  challengeVersionId,
 }: {
   challenge: ChallengeIdPrimitive;
   challengeId: string;
+  challengeVersionId: number | null;
 }) => {
   const { isLoggedIn } = useAuthStore();
   const router = useRouter();
@@ -111,6 +113,7 @@ const ChallengeCTAButtons = ({
         isOpen={isOpen}
         challenge={challenge}
         challengeId={challengeId}
+        challengeVersionId={challengeVersionId}
         onClose={() => setIsOpen(false)}
       />
     </>

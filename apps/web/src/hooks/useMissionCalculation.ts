@@ -75,16 +75,19 @@ export const useMissionCalculation = () => {
   /**
    * 나의 기록장에서 기본으로 열 미션.
    *
-   * 오늘 회차가 있으면 그 회차다. 없으면 가장 최근에 마감된 회차를 연다.
+   * 오늘 회차가 있으면 서버가 고른 오늘 미션이다. 회차 번호로 찾지 않는 것은 한 회차에
+   * 미션이 둘일 수 있어서다(경험정리 EXPERIENCE_1/2 쌍). 그 미션이 편성에 없거나 오늘 회차가
+   * 없으면 가장 최근에 마감된 회차를 연다.
    * 예전에는 schedules 의 마지막 항목으로 떨어뜨렸는데, 그건 대개 보너스 미션이라
    * 새벽에 나의 기록장을 열면 보너스 미션이 선택되어 있었다.
    */
   const todayMissionId = useMemo(() => {
     if (todayTh !== null) {
-      const todayId = schedules.find(
-        (schedule) => schedule.missionInfo.th === todayTh,
-      )?.missionInfo.id;
-      if (todayId) return todayId;
+      const todayId = myDailyMission?.dailyMission?.id;
+      const isInSchedules = schedules.some(
+        (schedule) => schedule.missionInfo.id === todayId,
+      );
+      if (todayId != null && isInSchedules) return todayId;
     }
 
     const now = dayjs();
@@ -106,7 +109,7 @@ export const useMissionCalculation = () => {
       )[0];
 
     return firstUpcoming?.missionInfo.id ?? -1;
-  }, [schedules, todayTh]);
+  }, [schedules, todayTh, myDailyMission?.dailyMission?.id]);
 
   return {
     todayTh,

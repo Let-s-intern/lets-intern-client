@@ -84,6 +84,7 @@ describe('미션 edit 저장 가드 (1.3)', () => {
       missionTemplatesOptions: [],
       additionalContentsList: [],
       essentialContentsList: [],
+      challengeVersionList: [],
       lateScore: 5,
       score: 10,
       th: 1,

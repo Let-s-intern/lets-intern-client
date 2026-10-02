@@ -8,6 +8,7 @@ import { useIsAdminQuery } from '@/api/user/user';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import BaseModal from '@/common/modal/BaseModal';
 import { useAdminCurrentChallenge } from '@/context/CurrentAdminChallengeProvider';
+import { uniqueChallengesById } from '@/domain/admin/challenge/version/utils/uniqueChallengesById';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import useMentorAccessControl from '@/hooks/useMentorAccessControl';
 import dayjs from '@/lib/dayjs';
@@ -133,9 +134,10 @@ const Actions = ({ openModal }: { openModal: () => void }) => {
         <option key="change" value="">
           챌린지 변경
         </option>
-        {data?.programList.map((program) => (
+        {/* 버전 있는 챌린지는 버전 행이 여러 개라 챌린지 하나로 모으고, 버전 제목 대신 챌린지 제목을 보인다 */}
+        {uniqueChallengesById(data?.programList ?? []).map((program) => (
           <option key={program.id} value={program.id}>
-            {program.title}
+            {program.challengeTitle ?? program.title}
           </option>
         ))}
       </select>
@@ -182,6 +184,8 @@ const ChallengeDashBoardModal = ({
   const { programId } = useParams();
 
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  // 버전 있는 챌린지는 버전 행이 여러 개라 챌린지 하나로 모으고, 버전 제목 대신 챌린지 제목을 보인다
+  const challenges = uniqueChallengesById(challengeList?.programList ?? []);
 
   const handleClickCopy = async () => {
     const yes = confirm('복제하시겠습니까?');
@@ -198,7 +202,7 @@ const ChallengeDashBoardModal = ({
           대시보드를 복제할 챌린지를 선택해주세요
         </p>
         <ul className="flex h-[600px] flex-col gap-1 overflow-y-auto">
-          {challengeList?.programList.map((challenge) => (
+          {challenges.map((challenge) => (
             <li
               key={challenge.id}
               className="w-fit cursor-pointer"
@@ -207,7 +211,9 @@ const ChallengeDashBoardModal = ({
               }}
             >
               <Checkbox checked={selectedId === challenge.id} />
-              <span>{`[${challenge.id}] ${challenge.title}`}</span>
+              <span>
+                {`[${challenge.id}] ${challenge.challengeTitle ?? challenge.title}`}
+              </span>
             </li>
           ))}
         </ul>

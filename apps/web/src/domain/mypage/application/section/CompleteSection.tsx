@@ -11,12 +11,15 @@ interface CompleteSectionProps {
   /** 같은 구간의 1대1 라이브 멘토링. 프로그램과 한 목록으로 보인다(LC-3301). */
   mentoringList: MyLiveMentoringApplication[];
   onMentoringQuestionClick: (applicationId: number) => void;
+  /** 버전 `변경` 을 누른 신청 id. 모달은 ApplicationContent 가 연다. */
+  onVersionChangeClick?: (applicationId: number) => void;
 }
 
 const CompleteSection = ({
   applicationList,
   mentoringList,
   onMentoringQuestionClick,
+  onVersionChangeClick,
 }: CompleteSectionProps) => {
   const [showMore, setShowMore] = useState(false);
   const isDesktop = useMediaQuery('(min-width:768px)');
@@ -46,6 +49,7 @@ const CompleteSection = ({
               <NewApplicationCard
                 key={application.id}
                 application={application}
+                onVersionChangeClick={onVersionChangeClick}
               />
             ))}
             {viewMentoringList.map((application) => (

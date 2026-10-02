@@ -3,6 +3,7 @@ import {
   useAdminMissionsOfCurrentChallenge,
   useMissionsOfCurrentChallengeRefetch,
 } from '@/context/CurrentAdminChallengeProvider';
+import { isMissionVersionLocked } from '@/domain/admin/challenge/version/utils/missionVersion';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import dayjs from '@/lib/dayjs';
 import {
@@ -18,10 +19,23 @@ import axios from '@/utils/axios';
 import { END_OF_SECONDS } from '@/utils/constants';
 import { GridApiCommunity } from '@mui/x-data-grid/internals';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 import { useCallback, useMemo, useState } from 'react';
 
 // 페이지네이션된 /mission-template/admin 에서 전체 템플릿을 한 번에 받기 위한 큰 페이지 크기.
 const ALL_TEMPLATES_PAGE_SIZE = 1000;
+
+// 서버 불변식 위반(MISSION_VERSION_OVERLAP 등)은 응답 message 에 회차·미션·버전이 담겨 온다
+const toErrorMessage = (error: Error) =>
+  (isAxiosError<{ message?: string }>(error) &&
+    error.response?.data?.message) ||
+  String(error);
+
+const toVersionIdList = (mission: Pick<Mission, 'challengeVersionList'>) =>
+  mission.challengeVersionList.map((version) => version.challengeVersionId);
+
+const isSameVersionIdList = (a: number[], b: number[]) =>
+  a.length === b.length && a.every((id) => b.includes(id));
 
 export const useMissionOperations = (
   apiRef: React.RefObject<GridApiCommunity>,
@@ -38,7 +52,7 @@ export const useMissionOperations = (
       return axios.post(`/mission/${currentChallenge?.id}`, mission);
     },
     onError(error) {
-      setSnackbar('미션 생성에 실패했습니다. ' + error);
+      setSnackbar('미션 생성에 실패했습니다. ' + toErrorMessage(error));
     },
   });
 
@@ -48,7 +62,7 @@ export const useMissionOperations = (
       return axios.patch(`/mission/${id}`, payload);
     },
     onError(error) {
-      setSnackbar('미션 수정에 실패했습니다. ' + error);
+      setSnackbar('미션 수정에 실패했습니다. ' + toErrorMessage(error));
     },
   });
 
@@ -129,6 +143,16 @@ export const useMissionOperations = (
           )?.title
         : undefined;
 
+      // 잠긴 미션(경험정리, 0·99·100 회차)은 셀에 보이는 대로 공통으로 보낸다
+      const versionIdList = isMissionVersionLocked(row)
+        ? []
+        : toVersionIdList(row);
+      // 수정에서 버전 셀을 건드리지 않았으면 null 로 보내 서버가 대상 버전을 그대로 둔다
+      const originalMission = missions?.find((m) => m.id === row.id);
+      const isVersionUnchanged =
+        originalMission !== undefined &&
+        isSameVersionIdList(toVersionIdList(originalMission), versionIdList);
+
       switch (action) {
         case 'create':
           if (!row.missionTemplateId) {
@@ -150,6 +174,7 @@ export const useMissionOperations = (
               row.essentialContentsList
                 ?.map((c) => c?.id)
                 .filter((id): id is number => Boolean(id)) || [],
+            challengeVersionIdList: versionIdList,
             lateScore: row.lateScore,
             missionTemplateId: row.missionTemplateId,
             score: row.score,
@@ -187,6 +212,7 @@ export const useMissionOperations = (
               row.essentialContentsList
                 ?.map((c) => c?.id)
                 .filter((id): id is number => Boolean(id)) || [],
+            challengeVersionIdList: isVersionUnchanged ? null : versionIdList,
             id: row.id,
             lateScore: row.lateScore,
             missionTemplateId: row.missionTemplateId,
@@ -230,6 +256,7 @@ export const useMissionOperations = (
       apiRef,
       createMissionMutation,
       deleteMission,
+      missions,
       refetchMissions,
       setSnackbar,
       updateMission,
@@ -256,6 +283,7 @@ export const useMissionOperations = (
       missionType: null,
       challengeOptionCode: '',
       challengeOptionId: -1,
+      challengeVersionList: [],
     });
   }, []);
 

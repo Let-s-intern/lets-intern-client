@@ -51,6 +51,7 @@ const useFeedbackMissionRows = (): Row[] => {
           id: item.id,
           title: item.title,
           th: item.th,
+          challengeVersionList: item.challengeVersionList,
           startDate: item.startDate,
           endDate: item.endDate,
           challengeOptionCode: item.challengeOptionCode,

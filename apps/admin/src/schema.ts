@@ -125,7 +125,11 @@ export type ProgramAdminClassification = z.infer<
 
 export const challengeListItemSchema = z.object({
   id: z.number(),
+  // 버전 있는 챌린지는 GET /challenge 가 버전마다 한 행을 준다. 버전 행의 제목은 버전 노출 제목
+  challengeVersionId: z.number().nullable().optional(),
   title: z.string().nullable().optional(),
+  // 버전 행이어도 챌린지 원래 제목. 챌린지 단위로 보여 줄 때 쓴다
+  challengeTitle: z.string().nullable().optional(),
   shortDesc: z.string().nullable().optional(),
   thumbnail: z.string().nullable().optional(),
   startDate: z.string().nullable().optional(),
@@ -290,6 +294,20 @@ export const challengePriceInfoSchema = z.object({
 
 export type ChallengePriceInfo = z.infer<typeof challengePriceInfoSchema>;
 
+const challengeVersionSchema = z.object({
+  challengeVersionId: z.number(),
+  title: z.string(),
+  sortOrder: z.number(),
+  // 노출 필드. 서버가 비어 있는 값을 챌린지 값으로 채워 준다. 서버 배포 전 응답에는 없다
+  programTitle: z.string().nullable().optional(),
+  shortDesc: z.string().nullable().optional(),
+  thumbnail: z.string().nullable().optional(),
+  desktopThumbnail: z.string().nullable().optional(),
+  description: z.string().nullable().optional(),
+});
+
+export type ChallengeVersion = z.infer<typeof challengeVersionSchema>;
+
 export const getChallengeIdPrimitiveSchema = z.object({
   title: z.string().optional(),
   shortDesc: z.string().optional(),
@@ -320,6 +338,11 @@ export const getChallengeIdPrimitiveSchema = z.object({
     .optional(),
   priceInfo: z.array(challengePriceInfoSchema),
   faqInfo: z.array(faq),
+  // 버전 없는 챌린지와 서버 배포 전 응답은 필드가 없다. 빈 배열로 통일한다.
+  versionList: z
+    .array(challengeVersionSchema)
+    .nullish()
+    .transform((val) => val ?? []),
 });
 
 export type ChallengeIdPrimitive = z.infer<
@@ -344,6 +367,23 @@ export const getChallengeIdSchema = getChallengeIdPrimitiveSchema.transform(
 );
 
 export type ChallengeIdSchema = z.infer<typeof getChallengeIdSchema>;
+
+/** 챌린지 생성·수정 요청의 버전 항목. 새로 추가하는 버전은 challengeVersionId 가 null */
+export type ChallengeVersionReq = {
+  challengeVersionId: number | null;
+  title: string;
+  sortOrder: number;
+  /** 목록 카드·상세 제목. 필수 */
+  programTitle: string;
+  /** 비우면 챌린지 한 줄 설명 */
+  shortDesc: string | null;
+  /** 모바일 썸네일. 필수 */
+  thumbnail: string;
+  /** 비우면 버전 모바일 썸네일 */
+  desktopThumbnail: string | null;
+  /** 상세 본문(챌린지 desc 와 같은 JSON). 비우면 챌린지 본문 */
+  description: string | null;
+};
 
 /** POST /api/v1/challenge 챌린지 생성 */
 export type CreateChallengeReq = {
@@ -378,6 +418,8 @@ export type CreateChallengeReq = {
   faqInfo: {
     faqId: number;
   }[];
+  // 생략하면 버전 없음
+  versionInfo?: ChallengeVersionReq[];
 };
 
 /** PATCH /api/v1/challenge/{challengeId} 챌린지 수정 */
@@ -413,6 +455,8 @@ export type UpdateChallengeReq = {
   faqInfo?: {
     faqId: number;
   }[];
+  // 생략·null 은 변경 없음, 목록은 전체 동기화 (빠진 버전은 삭제)
+  versionInfo?: ChallengeVersionReq[] | null;
 };
 
 export type ChallengePriceReq = {
@@ -967,6 +1011,13 @@ export const missionAdmin = z
               .or(z.null()),
           )
           .or(z.null()),
+        // 대상 버전. 공통 미션과 서버 배포 전 응답은 빈 배열
+        challengeVersionList: z
+          .array(
+            z.object({ challengeVersionId: z.number(), title: z.string() }),
+          )
+          .nullish()
+          .transform((val) => val ?? []),
       }),
     ),
   })
@@ -1191,6 +1242,8 @@ const postMissionIdReq = z.object({
   missionType: MissionTypeEnum,
   essentialContentsIdList: z.array(z.number()),
   additionalContentsIdList: z.array(z.number()),
+  // null·빈 배열은 공통 미션
+  challengeVersionIdList: z.array(z.number()).nullable().optional(),
 });
 
 export type CreateMissionReq = z.infer<typeof postMissionIdReq>;
@@ -1207,6 +1260,8 @@ const patchMissionIdReq = z.object({
   missionType: MissionTypeEnum.optional(),
   essentialContentsIdList: z.array(z.number()).optional(),
   additionalContentsIdList: z.array(z.number()).optional(),
+  // null 은 변경 없음, 빈 배열은 공통으로, 값이 있으면 그 버전들로 교체
+  challengeVersionIdList: z.array(z.number()).nullable().optional(),
 });
 
 export type UpdateMissionReq = z.infer<typeof patchMissionIdReq>;
@@ -1758,6 +1813,19 @@ export const challengeApplicationsSchema = z
           originalPrice: z.number().nullable().optional(),
           challengeMentorId: z.number().nullable().optional(),
           challengeMentorName: z.string().nullable().optional(),
+          // 버전 없는 신청과 서버 배포 전 응답은 필드가 없다
+          challengeVersionId: z
+            .number()
+            .nullish()
+            .transform((val) => val ?? null),
+          challengeVersionTitle: z
+            .string()
+            .nullish()
+            .transform((val) => val ?? null),
+          mentorReassignmentRequired: z
+            .boolean()
+            .nullish()
+            .transform((val) => val ?? false),
           // 플랜 변경 차액 합계와, 그중 결제 키가 없어 환불 완료 기록 전인 금액 (설계안 D12).
           // 플랜을 바꾸지 않은 신청과 서버 배포 전 응답은 필드가 없다
           additionalPaidAmount: z

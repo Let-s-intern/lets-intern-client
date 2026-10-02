@@ -2,6 +2,7 @@
 
 import { useGetUserProgramQuery } from '@/api/program';
 import dayjs from '@/lib/dayjs';
+import { getProgramPathname } from '@/utils/url';
 import { useMemo } from 'react';
 import {
   getBadgeText,
@@ -68,10 +69,19 @@ const ActiveProgramSection = () => {
           programs={filteredData.map((program) => ({
             thumbnail: program.programInfo.thumbnail ?? '',
             title: program.programInfo.title ?? '',
-            url: getProgramUrl({
-              type: program.programInfo.programType,
-              programId: program.programInfo.id ?? undefined,
-            }),
+            // 버전 행은 버전 상세 URL 로 보낸다. 같은 챌린지의 버전 카드가 여러 장이다
+            url:
+              program.programInfo.challengeVersionId != null
+                ? getProgramPathname({
+                    programType: 'challenge',
+                    id: program.programInfo.id,
+                    title: program.programInfo.title,
+                    challengeVersionId: program.programInfo.challengeVersionId,
+                  })
+                : getProgramUrl({
+                    type: program.programInfo.programType,
+                    programId: program.programInfo.id ?? undefined,
+                  }),
             duration: getDuration({
               type: program.programInfo.programType,
               startDate: program.programInfo.startDate ?? '',

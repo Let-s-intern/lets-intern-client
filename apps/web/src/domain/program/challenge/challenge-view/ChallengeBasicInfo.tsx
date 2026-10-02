@@ -14,16 +14,18 @@ import {
   formatFullDateTime,
   formatFullDateTimeWithOutYear,
 } from '@/utils/formatDateString';
-import { getProgramPathname } from '@/utils/url';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { CSSProperties, useMemo } from 'react';
 import { LuCalendarDays } from 'react-icons/lu';
 import ChallengePriceInfoContent from './ChallengePriceInfoContent';
-// [임시] LC-3213 — 버전이 데이터로 들어오면 이 import 와 아래 rightSlot 전달을 지운다.
-import ChallengeVersionTag, {
-  extractChallengeVersionLabel,
-} from './ChallengeVersionTag';
+import {
+  getActiveChallengePathname,
+  getActiveChallengeTag,
+  isActiveChallengeSelected,
+  sortActiveChallenges,
+} from '../utils/activeChallengeRadio';
+import ChallengeVersionTag from './ChallengeVersionTag';
 import RadioButton from './RadioButton';
 
 const {
@@ -52,6 +54,9 @@ const ChallengeBasicInfo = ({
   activeChallengeList: ActiveChallengeType[] | undefined;
 }) => {
   const router = useRouter();
+  // 상세 page 가 version 파라미터를 검증한 뒤 렌더하므로 그대로 믿는다
+  const versionParam = useSearchParams().get('version');
+  const currentVersionId = versionParam ? Number(versionParam) : null;
 
   const styles = useMemo(() => {
     switch (challenge.challengeType) {
@@ -112,16 +117,8 @@ const ChallengeBasicInfo = ({
     }
   }, [challenge.challengeType]);
 
-  const handleClickActiveChallenge = (challenge: {
-    id: number;
-    title: string;
-  }) => {
-    const href = getProgramPathname({
-      programType: 'challenge',
-      ...challenge,
-    });
-
-    router.push(href);
+  const handleClickActiveChallenge = (activeChallenge: ActiveChallengeType) => {
+    router.push(getActiveChallengePathname(activeChallenge));
   };
 
   const activeOnly =
@@ -186,24 +183,24 @@ const ChallengeBasicInfo = ({
               {challengeId !== undefined &&
                 activeChallengeList !== undefined &&
                 activeChallengeList.length > 0 &&
-                activeChallengeList
-                  .sort((a, b) =>
-                    dayjs(a.startDate).isAfter(b.startDate) ? 1 : -1,
-                  )
-                  .map((activeChallenge, index) => {
-                    // [임시] LC-3213 — 같은 날 두 버전이 열리면 날짜만으로는 구분이
-                    // 안 돼 제목 앞 대괄호를 태그로 보여준다. 비교 대상이 하나뿐이면
-                    // 붙이지 않는다. 자세한 배경은 ChallengeVersionTag.tsx 참고.
+                sortActiveChallenges(activeChallengeList).map(
+                  (activeChallenge) => {
+                    // 같은 날 여러 버전이 열리면 날짜만으로는 구분이 안 돼 태그를 붙인다.
+                    // 비교 대상이 하나뿐이면 붙이지 않는다.
                     const versionLabel =
                       activeChallengeList.length > 1
-                        ? extractChallengeVersionLabel(activeChallenge.title)
+                        ? getActiveChallengeTag(activeChallenge)
                         : null;
 
                     return (
                       <RadioButton
-                        key={index}
+                        key={`${activeChallenge.id}-${activeChallenge.challengeVersionId ?? ''}`}
                         color={styles.basicInfoStyle.color}
-                        checked={activeChallenge.id === Number(challengeId)}
+                        checked={isActiveChallengeSelected(
+                          activeChallenge,
+                          Number(challengeId),
+                          currentVersionId,
+                        )}
                         label={formatFullDate(dayjs(activeChallenge.startDate))}
                         onClick={() =>
                           handleClickActiveChallenge(activeChallenge)
@@ -218,7 +215,8 @@ const ChallengeBasicInfo = ({
                         }
                       />
                     );
-                  })}
+                  },
+                )}
             </div>
           </div>
         )}
