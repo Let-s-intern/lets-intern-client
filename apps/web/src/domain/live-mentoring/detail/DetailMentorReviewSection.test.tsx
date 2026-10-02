@@ -121,9 +121,7 @@ describe('DetailMentorReviewSection', () => {
     fireEvent.click(screen.getByRole('button', { name: '더보기' }));
     expect(shownReviews()).toHaveLength(10);
 
-    fireEvent.change(screen.getByRole('combobox', { name: '후기 정렬' }), {
-      target: { value: 'LATEST' },
-    });
+    fireEvent.click(screen.getByRole('radio', { name: '최신순' }));
     expect(shownReviews()).toEqual([
       '후기 12',
       '후기 11',
