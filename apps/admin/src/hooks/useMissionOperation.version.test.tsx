@@ -158,6 +158,15 @@ describe('미션 저장 요청의 대상 버전 (6.2)', () => {
     expect(payload.challengeVersionIdList).toEqual([]);
   });
 
+  it('회차를 OT(0)로 바꾼 미션은 남은 버전을 빼고 공통으로 보낸다', async () => {
+    mocks.missions = [{ id: 42, challengeVersionList: [STUDENT] }];
+    const row = { ...createRow([STUDENT]), th: 0, missionType: 'OT' } as Row;
+    await runAction('edit', row);
+
+    const payload = await lastPatchPayload();
+    expect(payload.challengeVersionIdList).toEqual([]);
+  });
+
   it('공통 미션을 공통 그대로 수정하면 null 로 보낸다', async () => {
     mocks.missions = [{ id: 42, challengeVersionList: [] }];
     await runAction('edit', createRow([]));

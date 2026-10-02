@@ -3,6 +3,7 @@ import {
   useAdminMissionsOfCurrentChallenge,
   useMissionsOfCurrentChallengeRefetch,
 } from '@/context/CurrentAdminChallengeProvider';
+import { isMissionVersionLocked } from '@/domain/admin/challenge/version/utils/missionVersion';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import dayjs from '@/lib/dayjs';
 import {
@@ -135,7 +136,10 @@ export const useMissionOperations = (
           )?.title
         : undefined;
 
-      const versionIdList = toVersionIdList(row);
+      // 잠긴 미션(경험정리, 0·99·100 회차)은 셀에 보이는 대로 공통으로 보낸다
+      const versionIdList = isMissionVersionLocked(row)
+        ? []
+        : toVersionIdList(row);
       // 수정에서 버전 셀을 건드리지 않았으면 null 로 보내 서버가 대상 버전을 그대로 둔다
       const originalMission = missions?.find((m) => m.id === row.id);
       const isVersionUnchanged =

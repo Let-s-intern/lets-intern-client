@@ -1,9 +1,12 @@
 import { useGetChallengeOptions } from '@/api/challenge/challengeOption';
-import MissionContentsVersionDialog from '@/domain/admin/challenge/mission-contents/MissionContentsVersionDialog';
+import {
+  formatMissionVersions,
+  isMissionVersionLocked,
+} from '@/domain/admin/challenge/version/utils/missionVersion';
 import SelectFormControl from '@/domain/admin/program/ui/form/SelectFormControl';
 import { useUpdateMissionOption } from '@/hooks/useUpdateMissionOption';
 import dayjs from '@/lib/dayjs';
-import { ChallengeVersion, MissionContentsReq } from '@/schema';
+import { ChallengeVersion } from '@/schema';
 import { Row } from '@/types/interface';
 import {
   BONUS_MISSION_TH,
@@ -161,108 +164,83 @@ function RemoveAlertDialog({
   );
 }
 
-type ContentsField = 'essentialContentsList' | 'additionalContentsList';
-
-/** 버전 있는 챌린지의 자료 요약. 예: `공통: 자료A · 대학생: 자료B` */
-const summarizeVersionContents = (
-  list: Row[ContentsField],
-  versions: ChallengeVersion[],
-) =>
-  (list ?? [])
-    .flatMap((contents) => {
-      if (!contents) return [];
-      const versionTitle =
-        contents.challengeVersionId === null
-          ? '공통'
-          : versions.find(
-              (version) =>
-                version.challengeVersionId === contents.challengeVersionId,
-            )?.title;
-      return [`${versionTitle}: ${contents.title}`];
-    })
-    .join(' · ');
-
-/** 버전 있는 챌린지의 자료 편집 셀. 요약을 누르면 버전별 자료 다이얼로그를 연다 */
-function VersionContentsEditCell({
+/** 미션 대상 버전 편집 셀. 비우면 공통이고, 잠긴 미션(V13)은 공통으로 고정한다 */
+function MissionVersionEditCell({
   params,
-  field,
   versions,
 }: {
   params: GridRenderEditCellParams<Row>;
-  field: ContentsField;
   versions: ChallengeVersion[];
 }) {
-  const [open, setOpen] = useState(false);
-  const isEssential = field === 'essentialContentsList';
-  const contentsOptions = isEssential
-    ? params.row.essentialContentsOptions
-    : params.row.additionalContentsOptions;
-  const list = params.row[field] ?? [];
-  const summary = summarizeVersionContents(list, versions);
+  if (isMissionVersionLocked(params.row)) {
+    return <span className="px-2 text-gray-400">공통</span>;
+  }
 
-  const handleSave = (value: MissionContentsReq[]) => {
-    params.api.setEditCellValue({
-      id: params.id,
-      field,
-      value: value.map(({ contentsId, challengeVersionId }) => ({
-        id: contentsId,
-        title:
-          contentsOptions.find((option) => option.id === contentsId)?.title ??
-          '',
-        link: '',
-        missionContentsId: null,
-        challengeVersionId,
-      })),
-    });
-    setOpen(false);
-  };
+  const selectedIds = params.row.challengeVersionList.map(
+    (version) => version.challengeVersionId,
+  );
 
   return (
-    // 다이얼로그는 포털이라 DOM 은 셀 밖이지만 React 이벤트는 셀까지 올라온다.
-    // 막지 않으면 다이얼로그 안의 Enter·Escape 가 행 편집을 끝낸다
-    <div
-      className="w-full"
-      onKeyDown={(e) => {
-        if (!e.currentTarget.contains(e.target as Node)) {
-          e.stopPropagation();
-        }
+    <Select
+      multiple
+      displayEmpty
+      fullWidth
+      size="small"
+      value={selectedIds}
+      renderValue={() => formatMissionVersions(params.row.challengeVersionList)}
+      onChange={(e) => {
+        const ids = e.target.value as number[];
+        params.api.setEditCellValue({
+          id: params.id,
+          field: 'challengeVersionList',
+          value: versions
+            .filter((version) => ids.includes(version.challengeVersionId))
+            .map(({ challengeVersionId, title }) => ({
+              challengeVersionId,
+              title,
+            })),
+        });
       }}
     >
-      <button
-        type="button"
-        className="w-full truncate text-left"
-        onClick={() => setOpen(true)}
-      >
-        {summary || <span className="text-gray-400">클릭하여 편집</span>}
-      </button>
-      <MissionContentsVersionDialog
-        open={open}
-        th={params.row.th}
-        type={isEssential ? 'ESSENTIAL' : 'ADDITIONAL'}
-        versions={versions}
-        contentsOptions={contentsOptions}
-        initialValue={list.flatMap((contents) =>
-          contents
-            ? [
-                {
-                  contentsId: contents.id,
-                  challengeVersionId: contents.challengeVersionId,
-                },
-              ]
-            : [],
-        )}
-        onClose={() => setOpen(false)}
-        onSave={handleSave}
-      />
-    </div>
+      {versions.map((version) => (
+        <MenuItem
+          key={version.challengeVersionId}
+          value={version.challengeVersionId}
+        >
+          <Checkbox
+            checked={selectedIds.includes(version.challengeVersionId)}
+          />
+          {version.title}
+        </MenuItem>
+      ))}
+    </Select>
   );
 }
 
 export const getMissionColumns = (
   versions: ChallengeVersion[] = [],
 ): GridColDef<Row>[] => {
-  // 버전 있는 챌린지만 자료 셀을 버전별 요약·다이얼로그로 바꾼다. 없으면 기존 셀 그대로
-  const hasVersions = versions.length > 0;
+  // 버전 없는 챌린지는 버전 컬럼을 숨긴다
+  const versionColumns: GridColDef<Row>[] =
+    versions.length > 0
+      ? [
+          {
+            field: 'challengeVersionList',
+            headerName: '버전',
+            width: 160,
+            editable: true,
+            sortable: false,
+            valueFormatter(_, row) {
+              return formatMissionVersions(row.challengeVersionList);
+            },
+            renderEditCell(params) {
+              return (
+                <MissionVersionEditCell params={params} versions={versions} />
+              );
+            },
+          },
+        ]
+      : [];
 
   return [
     {
@@ -468,6 +446,7 @@ export const getMissionColumns = (
         );
       },
     },
+    ...versionColumns,
     {
       field: 'startDate',
       headerName: '공개일',
@@ -538,9 +517,6 @@ export const getMissionColumns = (
       width: 160,
       editable: true,
       valueFormatter(_, row) {
-        if (hasVersions) {
-          return summarizeVersionContents(row.essentialContentsList, versions);
-        }
         return `${
           row.essentialContentsList?.[0]?.id
             ? `(${row.essentialContentsList?.[0]?.id}) `
@@ -555,15 +531,6 @@ export const getMissionColumns = (
         );
       },
       renderEditCell(params) {
-        if (hasVersions) {
-          return (
-            <VersionContentsEditCell
-              params={params}
-              field="essentialContentsList"
-              versions={versions}
-            />
-          );
-        }
         return (
           <select
             className="w-full"
@@ -595,9 +562,6 @@ export const getMissionColumns = (
       width: 200,
       editable: true,
       valueFormatter(_, row) {
-        if (hasVersions) {
-          return summarizeVersionContents(row.additionalContentsList, versions);
-        }
         return row.additionalContentsList
           ?.map((item) => `(${item?.id}) ${item?.title}`)
           .join(', ');
@@ -610,15 +574,6 @@ export const getMissionColumns = (
         );
       },
       renderEditCell(params) {
-        if (hasVersions) {
-          return (
-            <VersionContentsEditCell
-              params={params}
-              field="additionalContentsList"
-              versions={versions}
-            />
-          );
-        }
         return (
           <FormControl fullWidth>
             <InputLabel id="additionalContentsList-label">
