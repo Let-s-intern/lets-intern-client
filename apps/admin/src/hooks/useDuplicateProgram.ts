@@ -8,6 +8,8 @@ import {
   usePostLiveMutation,
   usePostVodMutation,
 } from '@/api/program';
+import { toVersionDrafts } from '@/domain/admin/program/challenge/utils/toVersionDrafts';
+import { toVersionInfoPayload } from '@/domain/admin/program/challenge/utils/toVersionInfoPayload';
 import {
   buildCreateGuidebookReq,
   guidebookToFormInput,
@@ -78,11 +80,11 @@ export const challengeToCreateInput = (
     // 복제본은 새 챌린지라 버전을 새로 만든다 (D4). 버전 없는 챌린지는 필드를 보내지 않는다
     versionInfo:
       challenge.versionList.length > 0
-        ? challenge.versionList.map(({ title, sortOrder }) => ({
-            challengeVersionId: null,
-            title,
-            sortOrder,
-          }))
+        ? toVersionInfoPayload(
+            toVersionDrafts(challenge.versionList, challenge.desc).map(
+              (draft) => ({ ...draft, challengeVersionId: null }),
+            ),
+          )
         : undefined,
   };
 };

@@ -5,10 +5,23 @@ import ChallengeVersionSection, {
   ChallengeVersionDraft,
 } from '../ChallengeVersionSection';
 
+const draft = (
+  challengeVersionId: number | null,
+  title: string,
+): ChallengeVersionDraft => ({
+  challengeVersionId,
+  title,
+  programTitle: '',
+  shortDesc: null,
+  thumbnail: '',
+  desktopThumbnail: null,
+  description: null,
+});
+
 const versions: ChallengeVersionDraft[] = [
-  { challengeVersionId: 1, title: '대학생' },
-  { challengeVersionId: 2, title: '인턴 경력' },
-  { challengeVersionId: null, title: '이직자' },
+  draft(1, '대학생'),
+  draft(2, '인턴 경력'),
+  draft(null, '이직자'),
 ];
 
 const renderSection = (initial: ChallengeVersionDraft[] = versions) => {
@@ -33,10 +46,7 @@ describe('ChallengeVersionSection', () => {
 
     fireEvent.click(screen.getByRole('button', { name: '버전 추가' }));
 
-    expect(onChange).toHaveBeenCalledWith([
-      ...versions,
-      { challengeVersionId: null, title: '' },
-    ]);
+    expect(onChange).toHaveBeenCalledWith([...versions, draft(null, '')]);
   });
 
   it('제목을 입력하면 그 행의 제목만 바꾼다', () => {
@@ -48,7 +58,7 @@ describe('ChallengeVersionSection', () => {
 
     expect(onChange).toHaveBeenCalledWith([
       versions[0],
-      { challengeVersionId: 2, title: '직장인' },
+      draft(2, '직장인'),
       versions[2],
     ]);
   });
@@ -108,11 +118,7 @@ describe('ChallengeVersionSection', () => {
   });
 
   it('제목이 비었거나 공백뿐인 행에만 에러를 표시한다', () => {
-    renderSection([
-      { challengeVersionId: 1, title: '대학생' },
-      { challengeVersionId: null, title: '' },
-      { challengeVersionId: null, title: '   ' },
-    ]);
+    renderSection([draft(1, '대학생'), draft(null, ''), draft(null, '   ')]);
 
     const inputs = screen.getAllByLabelText('버전 제목');
     expect(inputs[0]).not.toHaveAttribute('aria-invalid', 'true');

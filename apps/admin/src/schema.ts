@@ -294,6 +294,12 @@ const challengeVersionSchema = z.object({
   challengeVersionId: z.number(),
   title: z.string(),
   sortOrder: z.number(),
+  // 노출 필드. 서버가 비어 있는 값을 챌린지 값으로 채워 준다. 서버 배포 전 응답에는 없다
+  programTitle: z.string().nullable().optional(),
+  shortDesc: z.string().nullable().optional(),
+  thumbnail: z.string().nullable().optional(),
+  desktopThumbnail: z.string().nullable().optional(),
+  description: z.string().nullable().optional(),
 });
 
 export type ChallengeVersion = z.infer<typeof challengeVersionSchema>;
@@ -363,6 +369,16 @@ export type ChallengeVersionReq = {
   challengeVersionId: number | null;
   title: string;
   sortOrder: number;
+  /** 목록 카드·상세 제목. 필수 */
+  programTitle: string;
+  /** 비우면 챌린지 한 줄 설명 */
+  shortDesc: string | null;
+  /** 모바일 썸네일. 필수 */
+  thumbnail: string;
+  /** 비우면 버전 모바일 썸네일 */
+  desktopThumbnail: string | null;
+  /** 상세 본문(챌린지 desc 와 같은 JSON). 비우면 챌린지 본문 */
+  description: string | null;
 };
 
 /** POST /api/v1/challenge 챌린지 생성 */

@@ -10,7 +10,7 @@ import ChallengeVersionSection, {
   ChallengeVersionDraft,
 } from '@/domain/admin/program/challenge/ChallengeVersionSection';
 import {
-  getVersionTitleError,
+  getVersionInfoError,
   toVersionInfoPayload,
 } from '@/domain/admin/program/challenge/utils/toVersionInfoPayload';
 import ChallengePrice from '@/domain/admin/program/challenge/ChallengePrice';
@@ -167,9 +167,9 @@ const ChallengeCreate: React.FC = () => {
   }, []);
 
   const onClickSave = useCallback(async () => {
-    const versionTitleError = getVersionTitleError(versions);
-    if (versionTitleError) {
-      snackbar(versionTitleError);
+    const versionInfoError = getVersionInfoError(versions);
+    if (versionInfoError) {
+      snackbar(versionInfoError);
       return;
     }
 

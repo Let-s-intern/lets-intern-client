@@ -21,9 +21,10 @@ import ChallengeVersionSection, {
   ChallengeVersionDraft,
 } from '@/domain/admin/program/challenge/ChallengeVersionSection';
 import {
-  getVersionTitleError,
+  getVersionInfoError,
   toVersionInfoPayload,
 } from '@/domain/admin/program/challenge/utils/toVersionInfoPayload';
+import { toVersionDrafts } from '@/domain/admin/program/challenge/utils/toVersionDrafts';
 import ChallengePrice from '@/domain/admin/program/challenge/ChallengePrice';
 import ProgramBestReview from '@/domain/admin/program/ProgramBestReview';
 import ChallengeBlogReviewSection from '@/domain/admin/program/ChallengeBlogReviewSection';
@@ -233,9 +234,9 @@ const ChallengeEdit: React.FC = () => {
     }
 
     if (versionDrafts) {
-      const versionTitleError = getVersionTitleError(versionDrafts);
-      if (versionTitleError) {
-        snackbar(versionTitleError);
+      const versionInfoError = getVersionInfoError(versionDrafts);
+      if (versionInfoError) {
+        snackbar(versionInfoError);
         return;
       }
     }
@@ -588,10 +589,7 @@ const ChallengeEdit: React.FC = () => {
         <ChallengeVersionSection
           versions={
             versionDrafts ??
-            challenge.versionList.map(({ challengeVersionId, title }) => ({
-              challengeVersionId,
-              title,
-            }))
+            toVersionDrafts(challenge.versionList, challenge.desc)
           }
           onChange={setVersionDrafts}
         />

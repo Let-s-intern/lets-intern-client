@@ -4,13 +4,20 @@ import { Button, TextField, Typography } from '@mui/material';
 import { FaArrowDown, FaArrowUp } from 'react-icons/fa';
 import { FaTrashCan } from 'react-icons/fa6';
 
-/** 새로 추가한 버전은 challengeVersionId 가 null */
-export type ChallengeVersionDraft = Pick<
-  ChallengeVersionReq,
-  'challengeVersionId' | 'title'
->;
+/** 새로 추가한 버전은 challengeVersionId 가 null. 순서는 배열 순서라 sortOrder 는 없다 */
+export type ChallengeVersionDraft = Omit<ChallengeVersionReq, 'sortOrder'>;
 
 const TITLE_MAX_LENGTH = 50;
+
+const emptyVersion: ChallengeVersionDraft = {
+  challengeVersionId: null,
+  title: '',
+  programTitle: '',
+  shortDesc: null,
+  thumbnail: '',
+  desktopThumbnail: null,
+  description: null,
+};
 
 const inputLabelProps = {
   shrink: true,
@@ -27,7 +34,7 @@ interface Props {
 
 function ChallengeVersionSection({ versions, onChange }: Props) {
   const handleAdd = () => {
-    onChange([...versions, { challengeVersionId: null, title: '' }]);
+    onChange([...versions, emptyVersion]);
   };
 
   const handleTitleChange = (index: number, title: string) => {

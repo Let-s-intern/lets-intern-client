@@ -16,20 +16,58 @@ const baseChallenge = {
 };
 
 describe('challengeToCreateInput - 버전 복사 (D4)', () => {
-  it('원본 버전을 id 없이 제목·순서만 옮긴다', () => {
+  it('원본 버전을 id 없이 제목·순서·노출 필드까지 옮긴다', () => {
     const challenge = getChallengeIdSchema.parse({
       ...baseChallenge,
+      desc: '{"challenge":true}',
       versionList: [
-        { challengeVersionId: 11, title: '대학생', sortOrder: 0 },
-        { challengeVersionId: 12, title: '이직자', sortOrder: 1 },
+        {
+          challengeVersionId: 11,
+          title: '대학생',
+          sortOrder: 0,
+          programTitle: '대학생 챌린지',
+          shortDesc: '대학생 설명',
+          thumbnail: 'm1.png',
+          desktopThumbnail: 'd1.png',
+          description: '{"version":11}',
+        },
+        {
+          challengeVersionId: 12,
+          title: '이직자',
+          sortOrder: 1,
+          programTitle: '이직자 챌린지',
+          shortDesc: '이직자 설명',
+          thumbnail: 'm2.png',
+          desktopThumbnail: 'd2.png',
+          // 서버가 비어 있는 본문을 챌린지 본문으로 채워 준 값
+          description: '{"challenge":true}',
+        },
       ],
     });
 
     const result = challengeToCreateInput(challenge);
 
     expect(result.versionInfo).toEqual([
-      { challengeVersionId: null, title: '대학생', sortOrder: 0 },
-      { challengeVersionId: null, title: '이직자', sortOrder: 1 },
+      {
+        challengeVersionId: null,
+        title: '대학생',
+        sortOrder: 0,
+        programTitle: '대학생 챌린지',
+        shortDesc: '대학생 설명',
+        thumbnail: 'm1.png',
+        desktopThumbnail: 'd1.png',
+        description: '{"version":11}',
+      },
+      {
+        challengeVersionId: null,
+        title: '이직자',
+        sortOrder: 1,
+        programTitle: '이직자 챌린지',
+        shortDesc: '이직자 설명',
+        thumbnail: 'm2.png',
+        desktopThumbnail: 'd2.png',
+        description: null,
+      },
     ]);
   });
 
