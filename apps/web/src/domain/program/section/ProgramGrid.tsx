@@ -14,6 +14,7 @@ import LoadingContainer from '@/common/loading/LoadingContainer';
 import MuiPagination from '@/common/pagination/MuiPagination';
 import EmptyCardList from '@/domain/program/programs/card/EmptyCardList';
 import ProgramCard from '@/domain/program/programs/card/ProgramCard';
+import { getProgramCardKey } from '@/domain/program/programs/card/programCardIdentity';
 import FreeMagnetSection from '@/domain/program/section/FreeMagnetSection';
 import { IPageable } from '@/types/interface';
 
@@ -96,7 +97,7 @@ const ProgramGrid = ({
       <section className="grid grid-cols-2 gap-x-5 gap-y-8 md:grid-cols-4 md:gap-x-5 md:gap-y-11 xl:grid-cols-4">
         {firstSection.map((program) => (
           <ProgramCard
-            key={program.programInfo.programType + program.programInfo.id}
+            key={getProgramCardKey(program.programInfo)}
             program={program}
           />
         ))}
@@ -108,7 +109,7 @@ const ProgramGrid = ({
         <section className="grid grid-cols-2 gap-x-5 gap-y-8 md:grid-cols-4 md:gap-5">
           {secondSection.map((program) => (
             <ProgramCard
-              key={program.programInfo.programType + program.programInfo.id}
+              key={getProgramCardKey(program.programInfo)}
               program={program}
             />
           ))}
