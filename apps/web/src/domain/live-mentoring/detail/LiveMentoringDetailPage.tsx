@@ -20,7 +20,6 @@ import DetailCTAButtons from './DetailCTAButtons';
 import DetailMentoringIntroSection from './DetailMentoringIntroSection';
 import DetailPainSection from './DetailPainSection';
 import DetailPlanSection from './DetailPlanSection';
-import DetailPortfolioBeforeAfterSection from './DetailPortfolioBeforeAfterSection';
 import DetailNavigation, {
   LM_DIFFERENT_ID,
   LM_FAQ_ID,
@@ -478,9 +477,6 @@ const LiveMentoringDetailPage = ({
           </ul>
         </DetailSection>
       )}
-
-      {/* 결과 사례 세팅 여부와 무관하게 항상 노출 */}
-      <DetailPortfolioBeforeAfterSection />
 
       {/* 시안 6 · 플랜 */}
       <DetailPlanSection durationPrices={detail.durationPrices} />
