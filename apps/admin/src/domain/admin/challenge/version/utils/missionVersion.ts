@@ -25,3 +25,12 @@ export const formatMissionVersions = (
   challengeVersionList.length === 0
     ? '공통'
     : challengeVersionList.map((version) => version.title).join(' · ');
+
+/** 운영 화면 회차 라벨. 공통이면 `3회차`, 버전 미션이면 `3회차 (대학생 · 직장인)` */
+export const formatMissionRoundLabel = ({
+  th,
+  challengeVersionList,
+}: Pick<Mission, 'th' | 'challengeVersionList'>) =>
+  challengeVersionList.length === 0
+    ? `${th}회차`
+    : `${th}회차 (${formatMissionVersions(challengeVersionList)})`;

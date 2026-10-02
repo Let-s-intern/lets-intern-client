@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  formatMissionRoundLabel,
   formatMissionVersions,
   isMissionVersionLocked,
 } from '../missionVersion';
@@ -35,5 +36,34 @@ describe('formatMissionVersions', () => {
         { challengeVersionId: 2, title: 'B' },
       ]),
     ).toBe('A · B');
+  });
+});
+
+describe('formatMissionRoundLabel', () => {
+  it('공통 미션은 회차만 표시한다', () => {
+    expect(formatMissionRoundLabel({ th: 3, challengeVersionList: [] })).toBe(
+      '3회차',
+    );
+  });
+
+  it('단일 버전 미션은 회차 옆에 버전명을 붙인다', () => {
+    expect(
+      formatMissionRoundLabel({
+        th: 3,
+        challengeVersionList: [{ challengeVersionId: 1, title: '대학생' }],
+      }),
+    ).toBe('3회차 (대학생)');
+  });
+
+  it('여러 버전 미션은 버전명을 모두 붙인다', () => {
+    expect(
+      formatMissionRoundLabel({
+        th: 3,
+        challengeVersionList: [
+          { challengeVersionId: 1, title: '대학생' },
+          { challengeVersionId: 2, title: '직장인' },
+        ],
+      }),
+    ).toBe('3회차 (대학생 · 직장인)');
   });
 });

@@ -9,12 +9,14 @@ import LineTableBodyRow, {
   ItemWithStatus,
 } from '@/domain/admin/challenge/ui/lineTable/LineTableBodyRow';
 import LineTableHead from '@/domain/admin/challenge/ui/lineTable/LineTableHead';
+import { formatMissionRoundLabel } from '@/domain/admin/challenge/version/utils/missionVersion';
 import { Mission } from '@/schema';
 import { TABLE_CONTENT } from '@/utils/convert';
 import React, { useMemo, useState } from 'react';
 
 type Row = Mission &
   ItemWithStatus & {
+    roundLabel: string; // 회차: 버전 미션이면 버전명을 붙인다
     currentAttendance: string; // 제출현황: n(제출)/m(전체)
   };
 
@@ -43,6 +45,7 @@ const ChallengeOperationAttendances = () => {
       missions?.map((mission) => {
         return {
           ...mission,
+          roundLabel: formatMissionRoundLabel(mission),
           currentAttendance: `${mission.attendanceCount ?? 0}(제출)/${mission.applicationCount ?? 0}(전체)`,
         };
       }) ?? []
@@ -63,7 +66,7 @@ const ChallengeOperationAttendances = () => {
               <LineTableBodyRow<Row>
                 editable={false}
                 attrNames={[
-                  'th',
+                  'roundLabel',
                   'missionTag',
                   'startDate',
                   'endDate',
