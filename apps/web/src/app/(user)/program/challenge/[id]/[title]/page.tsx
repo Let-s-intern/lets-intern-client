@@ -119,7 +119,11 @@ const Page = async ({
       ) : (
         <ChallengeView challenge={challenge} />
       )}
-      <ChallengeCTAButtons challenge={challenge} challengeId={id} />
+      <ChallengeCTAButtons
+        challenge={challenge}
+        challengeId={id}
+        challengeVersionId={route.version?.challengeVersionId ?? null}
+      />
     </>
   );
 };

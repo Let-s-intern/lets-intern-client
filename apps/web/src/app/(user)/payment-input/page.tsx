@@ -19,8 +19,11 @@ import MotiveAnswerSection from '@/domain/program/program-detail/apply/section/M
 import PaymentSubmitSection from '@/domain/program/program-detail/apply/section/PaymentSubmitSection';
 import PriceSection from '@/domain/program/program-detail/apply/section/PriceSection';
 import UserInputSection from '@/domain/program/program-detail/apply/section/UserInputSection';
-import VersionSelectSection from '@/domain/program/program-detail/apply/section/VersionSelectSection';
-import { isVersionSelectRequired } from '@/domain/program/program-detail/apply/utils/challengeVersion';
+import AppliedVersionSection from '@/domain/program/program-detail/apply/section/AppliedVersionSection';
+import {
+  getAppliedVersionTitle,
+  isVersionSelectRequired,
+} from '@/domain/program/program-detail/apply/utils/challengeVersion';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
 import { UserInfo } from '@/lib/order';
 import { ChallengePriceInfo } from '@/schema';
@@ -104,7 +107,7 @@ const PaymentInputContent = () => {
         (challengeBasicPriceInfo?.discount ?? 0)
       : Infinity;
 
-  // 챌린지 버전 (LC-3247). 선택한 가격이 LIGHT 면 버전을 묻지 않는다 (설계안 D1)
+  // 챌린지 버전 (LC-3247). 상세 페이지의 버전으로 고정돼 들어온다. LIGHT 면 버전이 없다 (설계안 D1)
   const versionList =
     program && 'versionList' in program ? program.versionList : [];
   const selectedPlanType =
@@ -118,7 +121,11 @@ const PaymentInputContent = () => {
     selectedPlanType,
   );
   const challengeVersionId = programApplicationData.challengeVersionId ?? null;
-  const isVersionMissing = isVersionRequired && challengeVersionId === null;
+  const appliedVersionTitle = getAppliedVersionTitle(
+    versionList,
+    selectedPlanType,
+    challengeVersionId,
+  );
 
   /**
    * 쿠폰 섹션 노출 여부
@@ -222,7 +229,7 @@ const PaymentInputContent = () => {
 
   // 약관 동의 가드·흔들림은 PaymentSubmitSection이 담당한다(동의 시에만 호출됨).
   const onPaymentClick = useCallback(async () => {
-    // 버전을 묻지 않는 신청(LIGHT 등)은 앞서 고른 값이 남아 있어도 비워서 보낸다
+    // 버전이 들어가지 않는 신청(LIGHT 등)은 남아 있는 값이 있어도 비워서 보낸다
     setProgramApplicationForm({
       challengeVersionId: isVersionRequired ? challengeVersionId : null,
     });
@@ -402,14 +409,8 @@ const PaymentInputContent = () => {
 
       <hr className="bg-neutral-95 my-10 block h-2 border-none" />
 
-      {isVersionRequired && (
-        <VersionSelectSection
-          versionList={versionList}
-          selectedVersionId={challengeVersionId}
-          onSelect={(id) =>
-            setProgramApplicationForm({ challengeVersionId: id })
-          }
-        />
+      {appliedVersionTitle && (
+        <AppliedVersionSection versionTitle={appliedVersionTitle} />
       )}
 
       {!programApplicationData.isFree && (
@@ -489,8 +490,7 @@ const PaymentInputContent = () => {
       <PaymentSubmitSection
         onSubmit={onPaymentClick}
         buttonText={buttonText}
-        disabled={!isFormValid || isVersionMissing}
-        notice={isVersionMissing ? '버전을 선택해주세요' : undefined}
+        disabled={!isFormValid}
       />
     </div>
   );

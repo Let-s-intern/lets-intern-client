@@ -9,7 +9,11 @@ jest.mock('next/navigation', () => ({
   useSearchParams: () => new URLSearchParams(),
 }));
 
-const setProgramApplicationForm = jest.fn();
+// 실제 스토어처럼 넘긴 값만 덮어쓰는 상태를 둔다. 남아 있던 값이 덮이는지 보기 위해서다
+let storeState: Record<string, unknown> = {};
+const setProgramApplicationForm = jest.fn((params: Record<string, unknown>) => {
+  storeState = { ...storeState, ...params };
+});
 jest.mock('@/store/useProgramStore', () => ({
   __esModule: true,
   default: () => ({ setProgramApplicationForm }),
@@ -86,11 +90,15 @@ function makeChallenge(
   } as unknown as ChallengeIdPrimitive;
 }
 
-function renderSheet(challenge: ChallengeIdPrimitive) {
+function renderSheet(
+  challenge: ChallengeIdPrimitive,
+  challengeVersionId: number | null = null,
+) {
   render(
     <PricePlanBottomSheet
       challenge={challenge}
       challengeId="406"
+      challengeVersionId={challengeVersionId}
       isOpen
       onClose={jest.fn()}
     />,
@@ -104,45 +112,53 @@ const VERSIONS = [
 
 beforeEach(() => {
   pushMock.mockReset();
-  setProgramApplicationForm.mockReset();
+  setProgramApplicationForm.mockClear();
+  storeState = {};
 });
 
-describe('PricePlanBottomSheet — 버전 선택 (LC-3247)', () => {
-  it('버전이 있는 챌린지는 플랜 선택 위에 버전 선택을 먼저 보이고, 고르기 전에는 신청하기가 비활성이다', () => {
-    renderSheet(makeChallenge(VERSIONS));
+describe('PricePlanBottomSheet — 버전 고정 (LC-3247)', () => {
+  it('버전을 고르는 UI 없이 신청하기가 활성이다', () => {
+    renderSheet(makeChallenge(VERSIONS), 11);
 
-    const versionHeading = screen.getByText('챌린지 버전 선택 (필수)');
-    const planHeading = screen.getByText('챌린지 플랜 선택 (필수)');
+    expect(screen.queryByText('챌린지 버전 선택 (필수)')).toBeNull();
     expect(
-      versionHeading.compareDocumentPosition(planHeading) &
-        Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy();
-    expect(screen.getByRole('button', { name: '신청하기' })).toBeDisabled();
+      screen.queryByRole('radio', { name: '인턴·실무 경험자 Ver.' }),
+    ).toBeNull();
+    expect(screen.getByRole('button', { name: '신청하기' })).toBeEnabled();
   });
 
-  it('버전을 고르고 신청하면 고른 버전을 신청 정보에 담아 신청 입력으로 간다', () => {
-    renderSheet(makeChallenge(VERSIONS));
+  it('들어온 페이지의 버전을 신청 정보에 담는다. 스토어에 다른 버전이 남아 있어도 덮어쓴다', () => {
+    // 다른 챌린지 상세에서 고른 버전이 남아 있는 상태
+    storeState = { challengeVersionId: 99 };
+    renderSheet(makeChallenge(VERSIONS), 11);
 
-    fireEvent.click(
-      screen.getByRole('radio', { name: '인턴·실무 경험자 Ver.' }),
-    );
     fireEvent.click(screen.getByRole('button', { name: '신청하기' }));
 
     expect(setProgramApplicationForm).toHaveBeenCalledWith(
       expect.objectContaining({ priceId: 2, challengeVersionId: 11 }),
     );
+    expect(storeState.challengeVersionId).toBe(11);
     expect(pushMock).toHaveBeenCalledWith('/payment-input');
   });
 
-  it('버전을 골라도 안내 문구가 그대로 있어 시트 높이가 바뀌지 않는다', () => {
-    renderSheet(makeChallenge(VERSIONS));
-    const note = '버전은 신청 후 한 번만 변경할 수 있어요.';
+  it('LIGHT 플랜이면 버전 페이지여도 버전을 비운다', () => {
+    const challenge = makeChallenge(VERSIONS);
+    challenge.priceInfo.push({
+      ...PRICE_BASE,
+      priceId: 4,
+      challengePricePlanType: 'LIGHT',
+      title: '라이트 플랜',
+    } as unknown as ChallengeIdPrimitive['priceInfo'][number]);
+    storeState = { challengeVersionId: 11 };
+    renderSheet(challenge, 11);
 
-    expect(screen.getByText(note)).toBeInTheDocument();
-    fireEvent.click(
-      screen.getByRole('radio', { name: '대학생·무경력자 Ver.' }),
+    // LIGHT 가 있으면 기본 선택이 LIGHT 다
+    fireEvent.click(screen.getByRole('button', { name: '신청하기' }));
+
+    expect(setProgramApplicationForm).toHaveBeenCalledWith(
+      expect.objectContaining({ challengeVersionId: null }),
     );
-    expect(screen.getByText(note)).toBeInTheDocument();
+    expect(storeState.challengeVersionId).toBeNull();
   });
 
   it('이용료가 0원이어도 옵션 금액이 있는 플랜은 유료 신청으로 담는다', () => {
@@ -167,10 +183,9 @@ describe('PricePlanBottomSheet — 버전 선택 (LC-3247)', () => {
     );
   });
 
-  it('버전이 없는 챌린지는 버전 선택 없이 신청하고 버전을 비운다', () => {
+  it('버전이 없는 챌린지는 버전을 비워 신청한다', () => {
     renderSheet(makeChallenge([]));
 
-    expect(screen.queryByText('챌린지 버전 선택 (필수)')).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: '신청하기' }));
 
     expect(setProgramApplicationForm).toHaveBeenCalledWith(
