@@ -7,6 +7,12 @@ import ChallengePmView from '@/domain/program/challenge/ChallengePmView';
 import ChallengePortfolioView from '@/domain/program/challenge/ChallengePortfolioView';
 import ChallengeView from '@/domain/program/challenge/ChallengeView';
 import dayjs from '@/lib/dayjs';
+import {
+  applyChallengeVersion,
+  DetailSearchParams,
+  findChallengeVersion,
+  resolveChallengeDetailRoute,
+} from '@/domain/program/challenge/utils/challengeVersionRoute';
 import { isDeprecatedProgram } from '@/lib/isDeprecatedProgram';
 import {
   getCanonicalSiteUrl,
@@ -19,17 +25,23 @@ import { redirect } from 'next/navigation';
 // SSR 메타데이터 생성
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<DetailSearchParams>;
 }): Promise<Metadata> {
-  const { id } = await params;
-  const program = await fetchChallengeData(id);
+  const [{ id }, query] = await Promise.all([params, searchParams]);
+  const challenge = await fetchChallengeData(id);
+  // 버전 페이지면 title·description·og:image·canonical 이 버전 값이다
+  const version = findChallengeVersion(challenge.versionList, query.version);
+  const program = applyChallengeVersion(challenge, version);
   const url =
     getCanonicalSiteUrl() +
     getProgramPathname({
       id,
       programType: 'challenge',
       title: program.title,
+      challengeVersionId: version?.challengeVersionId,
     });
   const title = getChallengeTitle(program);
 
@@ -56,38 +68,38 @@ const MARKETING_ID_THRESHOLD = process.env.NODE_ENV === 'development' ? 11 : 75;
 
 const Page = async ({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string; title: string }>;
+  searchParams: Promise<DetailSearchParams>;
 }) => {
-  const { id, title: _title } = await params;
+  const [{ id, title: _title }, query] = await Promise.all([
+    params,
+    searchParams,
+  ]);
 
-  const [challenge] = await Promise.all([fetchChallengeData(id)]);
+  const fetchedChallenge = await fetchChallengeData(id);
 
-  const isDeprecated = isDeprecatedProgram(challenge);
+  const isDeprecated = isDeprecatedProgram(fetchedChallenge);
 
   if (isDeprecated) {
     redirect(`/program/old/challenge/${id}`);
   }
 
-  // 올바른 경로 생성
-  const correctPathname = getProgramPathname({
-    id,
-    programType: 'challenge',
-    title: challenge.title,
+  // 버전 파라미터·슬러그 판정. 맞지 않으면 올바른 경로로 리다이렉트(쿼리 보존)
+  const route = resolveChallengeDetailRoute({
+    challengeId: id,
+    challengeTitle: fetchedChallenge.title,
+    versionList: fetchedChallenge.versionList,
+    slug: _title || '',
+    searchParams: query,
   });
-
-  // 슬러그 비교 및 리디렉션
-  const correctSlug = (
-    challenge.title?.replace(/[ /]/g, '-') || ''
-  ).toLowerCase();
-  let currentSlug = _title || '';
-  try {
-    currentSlug = decodeURIComponent(currentSlug);
-  } catch {}
-  currentSlug = currentSlug.toLowerCase();
-  if (currentSlug !== correctSlug) {
-    redirect(correctPathname);
+  if (route.type === 'redirect') {
+    redirect(route.url);
   }
+
+  // 버전 값을 덮는 곳은 여기 한 곳이다. View 는 이 사본만 받는다
+  const challenge = applyChallengeVersion(fetchedChallenge, route.version);
 
   return (
     <>
