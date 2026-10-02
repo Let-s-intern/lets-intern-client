@@ -98,6 +98,10 @@ export const activeChallengeSchema = z.object({
   deadline: z.string(),
   startDate: z.string(),
   endDate: z.string(),
+  // 버전 행이면 버전 값, 버전 없는 챌린지면 null (LC-3247)
+  challengeVersionId: z.number().nullable().optional(),
+  versionTitle: z.string().nullable().optional(),
+  programTitle: z.string().nullable().optional(),
 });
 
 export type ActiveChallengeType = z.infer<typeof activeChallengeSchema>;
@@ -342,6 +346,12 @@ export const getChallengeIdPrimitiveSchema = z.object({
         challengeVersionId: z.number(),
         title: z.string(),
         sortOrder: z.number(),
+        // 노출 필드. 비어 있으면 서버가 챌린지 값으로 채워 내려준다
+        programTitle: z.string().nullable().optional(),
+        shortDesc: z.string().nullable().optional(),
+        thumbnail: z.string().nullable().optional(),
+        desktopThumbnail: z.string().nullable().optional(),
+        description: z.string().nullable().optional(),
       }),
     )
     .nullable()
@@ -2188,6 +2198,8 @@ const programInfoSchema = z.object({
   endDate: z.string().nullable().optional(),
   beginning: z.string().nullable().optional(),
   deadline: z.string().nullable().optional(),
+  // 버전 행이면 버전 id. 같은 챌린지의 버전 카드가 여러 장 나온다 (LC-3247)
+  challengeVersionId: z.number().nullable().optional(),
 });
 
 /** GET /api/v1/program */
