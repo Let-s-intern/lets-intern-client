@@ -157,6 +157,11 @@ describe('대시보드 VersionChangeModal', () => {
     expect(
       screen.getByText(/이직자 버전으로 변경하면 다시 변경하기 어려워요/),
     ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /버전을 바꾸면 이후 회차 미션이 바뀝니다\. 이미 제출한 미션은 그대로 남습니다/,
+      ),
+    ).toBeInTheDocument();
 
     // 모달에도 취소가 있어 알럿 안에서만 찾는다
     const alert = screen.getByText('버전을 변경할까요?')

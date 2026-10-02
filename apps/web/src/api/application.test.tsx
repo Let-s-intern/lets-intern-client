@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Query, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 
 import { getChallengeIdPrimitiveSchema } from '@/schema';
@@ -212,7 +212,7 @@ describe('usePatchApplicationVersionMutation', () => {
     });
   });
 
-  it('성공하면 버전·마이페이지 신청·데일리 미션·미션 상세를 무효화한다', async () => {
+  it('성공하면 버전·마이페이지 신청·데일리 미션·미션 상세·피드백 목록을 무효화한다', async () => {
     axiosPatch.mockResolvedValue({ data: { data: null } });
     const client = newClient();
     const invalidateQueries = jest.spyOn(client, 'invalidateQueries');
@@ -226,13 +226,56 @@ describe('usePatchApplicationVersionMutation', () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     expect(
-      invalidateQueries.mock.calls.map(([filters]) => filters?.queryKey),
+      invalidateQueries.mock.calls
+        .map(([filters]) => filters?.queryKey)
+        .filter(Boolean),
     ).toEqual([
       ['useApplicationVersionQueryKey'],
       ['useMypageApplicationsQueryKey'],
       ['useChallengeDailyMission'],
       ['useChallengeMissionAttendanceInfo'],
+      ['liveFeedbackList'],
+      ['writtenFeedbackList'],
     ]);
+  });
+
+  // 키는 CurrentChallengeProvider(일정·미션 목록)와 대시보드 page.tsx(점수)에서 옮겼다.
+  // 일정·미션은 URL 의 문자열 id, 점수는 숫자 id 라 둘 다 맞아야 한다.
+  it('성공하면 일정·미션 목록 3종·점수 쿼리를 무효화하고, 다른 키는 그대로 둔다', async () => {
+    axiosPatch.mockResolvedValue({ data: { data: null } });
+    const client = newClient();
+    const invalidateQueries = jest.spyOn(client, 'invalidateQueries');
+
+    const { result } = renderHook(() => usePatchApplicationVersionMutation(), {
+      wrapper: createWrapper(client),
+    });
+
+    result.current.mutate({ applicationId: 7, challengeVersionId: 2 });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    const predicates = invalidateQueries.mock.calls
+      .map(([filters]) => filters?.predicate)
+      .filter((predicate) => predicate !== undefined);
+    expect(predicates).toHaveLength(1);
+    const matches = (queryKey: unknown[]) =>
+      predicates[0]!({ queryKey } as unknown as Query);
+
+    expect(matches(['challenge', '42', 'schedule'])).toBe(true);
+    expect(
+      matches(['challenge', '42', 'missions', 'submitted', undefined]),
+    ).toBe(true);
+    expect(
+      matches(['challenge', '42', 'missions', 'remaining', undefined]),
+    ).toBe(true);
+    expect(matches(['challenge', '42', 'missions', 'absent', undefined])).toBe(
+      true,
+    );
+    expect(matches(['challenge', 42, 'score'])).toBe(true);
+
+    expect(matches(['challenge', '42'])).toBe(false);
+    expect(matches(['challenge', '42', 'application'])).toBe(false);
+    expect(matches(['admin', 'challenge', 42, 'missions'])).toBe(false);
   });
 
   it('실패하면 무효화하지 않는다', async () => {

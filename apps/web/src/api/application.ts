@@ -411,6 +411,9 @@ export const useApplicationVersionQuery = (
   });
 };
 
+/** ['challenge', id, 여기] 꼴 키 중 버전이 바뀌면 달라지는 것 */
+const VERSION_DEPENDENT_CHALLENGE_QUERIES = ['schedule', 'missions', 'score'];
+
 /** PATCH /api/v1/application/{applicationId}/version 참여자 버전 변경 */
 export const usePatchApplicationVersionMutation = () => {
   const client = useQueryClient();
@@ -434,10 +437,20 @@ export const usePatchApplicationVersionMutation = () => {
       client.invalidateQueries({
         queryKey: mypageApplicationsQueryOptions.queryKey,
       });
-      // 서버가 공통 + 내 버전 자료만 주므로 미션 자료를 다시 받는다.
+      // 서버가 공통 미션 + 내 버전 미션만 주므로 버전이 바뀌면 미션이 걸린 응답을 다시 받는다.
       // 'useChallengeDailyMission' 은 challenge.ts useChallengeMyDailyMission 의 키다
       client.invalidateQueries({ queryKey: ['useChallengeDailyMission'] });
       client.invalidateQueries({ queryKey: [ChallengeMissionQueryKey] });
+      // 일정·미션 목록 3종(CurrentChallengeProvider)과 점수(대시보드 page.tsx)다.
+      // 키의 두 번째 칸이 URL 문자열 id 와 숫자 id 로 섞여 있어 세 번째 칸으로 고른다
+      client.invalidateQueries({
+        predicate: ({ queryKey }) =>
+          queryKey[0] === 'challenge' &&
+          VERSION_DEPENDENT_CHALLENGE_QUERIES.includes(queryKey[2] as string),
+      });
+      // 피드백 목록(api/feedback/feedback.ts)
+      client.invalidateQueries({ queryKey: ['liveFeedbackList'] });
+      client.invalidateQueries({ queryKey: ['writtenFeedbackList'] });
     },
   });
 };

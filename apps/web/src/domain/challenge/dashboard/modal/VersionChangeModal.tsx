@@ -163,7 +163,7 @@ const VersionChangeModal = ({
           onCancel={() => setIsConfirmOpen(false)}
         >
           <p className="text-xsmall14 text-neutral-20 whitespace-pre-line text-center">
-            {`버전은 한 번만 바꿀 수 있어요.\n${selectedTitle ?? '선택한'} 버전으로 변경하면 다시 변경하기 어려워요.`}
+            {`버전을 바꾸면 이후 회차 미션이 바뀝니다. 이미 제출한 미션은 그대로 남습니다.\n${selectedTitle ?? '선택한'} 버전으로 변경하면 다시 변경하기 어려워요.`}
           </p>
         </AlertModal>
       )}
