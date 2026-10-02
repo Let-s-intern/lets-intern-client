@@ -125,6 +125,8 @@ export type ProgramAdminClassification = z.infer<
 
 export const challengeListItemSchema = z.object({
   id: z.number(),
+  // 버전 있는 챌린지는 GET /challenge 가 버전마다 한 행을 준다. 버전 행의 제목은 버전 노출 제목
+  challengeVersionId: z.number().nullable().optional(),
   title: z.string().nullable().optional(),
   shortDesc: z.string().nullable().optional(),
   thumbnail: z.string().nullable().optional(),

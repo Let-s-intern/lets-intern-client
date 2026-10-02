@@ -9,6 +9,7 @@ import {
 import { useQueryClient } from '@tanstack/react-query';
 import { useAdminChallengeMentorListQuery } from '@/api/mentor/mentor';
 import { useGetChallengeList } from '@/api/challenge/challenge';
+import { uniqueChallengesById } from '@/domain/admin/challenge/version/utils/uniqueChallengesById';
 import type { ChallengeMentorGuideItem } from '@/api/challenge-mentor-guide/challengeMentorGuideSchema';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { DataGrid } from '@mui/x-data-grid';
@@ -31,6 +32,11 @@ export default function MentorNoticeManagement() {
   const { data: challengeData } = useGetChallengeList({
     pageable: { size: 1000, page: 1 },
   });
+  // 버전 있는 챌린지는 버전 행이 여러 개라 챌린지 하나로 모은다
+  const challengeList = useMemo(
+    () => uniqueChallengesById(challengeData?.programList ?? []),
+    [challengeData],
+  );
   const [formChallengeId, setFormChallengeId] = useState('');
   const { data: mentorData } = useAdminChallengeMentorListQuery(
     formChallengeId || undefined,
@@ -135,11 +141,11 @@ export default function MentorNoticeManagement() {
 
   const challengeMap = useMemo(() => {
     const map = new Map<number, string>();
-    for (const p of challengeData?.programList ?? []) {
+    for (const p of challengeList) {
       map.set(p.id, p.title ?? '');
     }
     return map;
-  }, [challengeData]);
+  }, [challengeList]);
 
   const mentorMap = useMemo(() => {
     const map = new Map<number, string>();
@@ -201,7 +207,7 @@ export default function MentorNoticeManagement() {
         open={modalState.open}
         mode={modalState.open ? modalState.mode : 'create'}
         initialForm={modalInitialForm}
-        challengeList={challengeData?.programList ?? []}
+        challengeList={challengeList}
         mentorList={mentorData?.mentorList ?? []}
         onClose={closeModal}
         onSubmit={handleSubmit}
