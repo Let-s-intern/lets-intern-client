@@ -174,25 +174,71 @@ const SLOTS = [
   },
 ];
 
+/** 후기 섹션이 쓰는 멘토 프로필 API 응답 — `GET /mentor/{mentorId}`. */
+const MENTOR_PROFILE = {
+  mentorInfo: {
+    mentorId: 3,
+    nickname: '포폴메이커',
+    description: null,
+    profileImgUrl: null,
+    corpImgUrl: null,
+    company: null,
+    job: null,
+  },
+  careerList: [],
+  proceedingProgramList: [],
+  postProgramList: [],
+  reviewList: [
+    {
+      score: 5,
+      programTitle: '포트폴리오 챌린지',
+      review: '멘토 전체 후기 본문',
+      createDate: '2026-06-01T10:00:00',
+    },
+  ],
+};
+
+/** `GET /mentor/{mentorId}/stats` 응답. */
+const MENTOR_STATS = {
+  feedbackMenteeCount: 30,
+  reviewCount: 17,
+  averageScore: 4.5,
+};
+
 /**
- * 상세와 슬롯은 별개의 API 다. URL 로 갈라 응답한다.
+ * 상세·슬롯·멘토 프로필·멘토 통계는 별개의 API 다. URL 로 갈라 응답한다.
  * 상세 응답에는 기간이 없어 진행기간은 슬롯에서만 나온다.
  */
-function mockApis(detailResponse: unknown, slots: unknown[] = SLOTS) {
-  axiosGet.mockImplementation((url: string) =>
-    url.endsWith('/slots')
-      ? Promise.resolve({ data: { data: { liveMentoringSlotList: slots } } })
-      : Promise.resolve(detailResponse),
-  );
+function mockApis(
+  detailResponse: unknown,
+  slots: unknown[] = SLOTS,
+  mentorProfile: unknown = MENTOR_PROFILE,
+) {
+  axiosGet.mockImplementation((url: string) => {
+    if (url.endsWith('/slots')) {
+      return Promise.resolve({
+        data: { data: { liveMentoringSlotList: slots } },
+      });
+    }
+    if (url === '/mentor/3/stats') {
+      return Promise.resolve({ data: { data: MENTOR_STATS } });
+    }
+    if (url === '/mentor/3') {
+      return mentorProfile === null
+        ? Promise.reject(new Error('500'))
+        : Promise.resolve({ data: { data: mentorProfile } });
+    }
+    return Promise.resolve(detailResponse);
+  });
 }
 
-function renderDetail() {
+function renderDetail(props: { isPreview?: boolean } = {}) {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false, gcTime: 0 } },
   });
   return render(
     <QueryClientProvider client={client}>
-      <LiveMentoringDetailPage mentorId="3" />
+      <LiveMentoringDetailPage mentorId="3" {...props} />
     </QueryClientProvider>,
   );
 }
@@ -239,14 +285,34 @@ describe('LiveMentoringDetailPage', () => {
     expect(screen.getAllByText('60,000원').length).toBeGreaterThan(0);
   });
 
-  it('노출 선택된 후기만 보여주고, 경력 줄을 노출한다', async () => {
+  /*
+    후기는 멘토가 고른 몇 개(상세 응답의 reviews)가 아니라 멘토 프로필과 같은
+    멘토 전체 후기다. 자리는 결과 사례 바로 아래, 플랜 위.
+  */
+  it('멘토 전체 후기를 결과 사례 아래·플랜 위에 보여주고, 경력 줄을 노출한다', async () => {
     mockApis(detail());
     renderDetail();
 
-    await waitFor(() =>
-      expect(screen.getByText('좋았어요')).toBeInTheDocument(),
+    const review = await screen.findByText('멘토 전체 후기 본문');
+    expect(screen.getByText('17개의 후기')).toBeInTheDocument();
+    expect(axiosGet).toHaveBeenCalledWith('/mentor/3');
+    expect(axiosGet).toHaveBeenCalledWith('/mentor/3/stats');
+    // 상세 응답의 멘토 선택 후기는 더 이상 그리지 않는다
+    expect(screen.queryByText('좋았어요')).not.toBeInTheDocument();
+    expect(
+      screen.getByText('✓ 경험 연결').compareDocumentPosition(review) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      review.compareDocumentPosition(
+        screen.getByText('내게 알맞은 구성을 선택할 수 있어요!'),
+      ) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    // 상단 앵커의 「후기」가 이 섹션으로 온다
+    expect(review.closest('section')).toHaveAttribute(
+      'id',
+      'live-mentoring-review',
     );
-    expect(screen.queryByText('선택안됨')).not.toBeInTheDocument();
     // 소속 줄과 경력 줄 양쪽에 나타난다
     expect(screen.getAllByText(/카카오/).length).toBeGreaterThan(0);
   });
@@ -265,21 +331,26 @@ describe('LiveMentoringDetailPage', () => {
     expect(screen.queryByText('서류 완성도 UP!')).not.toBeInTheDocument();
   });
 
-  it('후기 노출 off 면 후기 섹션을 렌더하지 않는다', async () => {
-    mockApis(
-      detail({
-        template: {
-          ...(detail().data.data.template as object),
-          reviews: { visible: false, selectedReviewIds: [10] },
-        },
-      }),
-    );
+  it('멘토 후기 조회에 실패하면 후기 섹션만 빠지고 상세는 그대로 뜬다', async () => {
+    mockApis(detail(), SLOTS, null);
     renderDetail();
 
     await waitFor(() =>
       expect(screen.getByText('멘토 자기소개 본문')).toBeInTheDocument(),
     );
-    expect(screen.queryByText('멘티 후기')).not.toBeInTheDocument();
+    await waitFor(() => expect(axiosGet).toHaveBeenCalledWith('/mentor/3'));
+    expect(screen.queryByText('17개의 후기')).not.toBeInTheDocument();
+    expect(
+      document.getElementById('live-mentoring-review'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('미리보기에서도 멘토 전체 후기 섹션을 보여준다', async () => {
+    mockApis(detail());
+    renderDetail({ isPreview: true });
+
+    expect(await screen.findByText('멘토 전체 후기 본문')).toBeInTheDocument();
+    expect(screen.getByText('17개의 후기')).toBeInTheDocument();
   });
 
   it('히어로에 상품명·평점·멘티 수와 고를 수 있는 플랜을 보여준다', async () => {

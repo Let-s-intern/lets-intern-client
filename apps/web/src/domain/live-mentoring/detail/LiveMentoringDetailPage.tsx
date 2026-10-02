@@ -18,6 +18,7 @@ import { DetailFaqSection, DetailProcessSection } from './DetailFixedSections';
 import DetailHero from './DetailHero';
 import DetailCTAButtons from './DetailCTAButtons';
 import DetailMentoringIntroSection from './DetailMentoringIntroSection';
+import DetailMentorReviewSection from './DetailMentorReviewSection';
 import DetailPainSection from './DetailPainSection';
 import DetailPlanSection from './DetailPlanSection';
 import DetailNavigation, {
@@ -61,7 +62,7 @@ type LiveMentoringDetailPageTemplate = LiveMentorDetail['template'];
  * 시안 0~10 순서로 렌더한다.
  * - 0~5 : 멘토가 상세 페이지 설정에서 편집한 template 콘텐츠
  * - 6·7·9·10 : 운영 확정 마케팅 콘텐츠 → 시안 이미지 그대로 (`DetailFixedSections`)
- * - 8 : 후기 (노출 여부·대상만 멘토가 고름)
+ * - 후기 : 멘토 프로필과 같은 멘토 전체 후기 (결과 사례 바로 아래)
  *
  * 하단 CTA 를 누르면 신청 시트가 열린다. 시트 상태를 페이지가 들고 있는 이유는
  * 히어로의 플랜 카드도 같은 시트를 열기 때문이다.
@@ -147,11 +148,6 @@ const LiveMentoringDetailPage = ({
     period?.beginning.slice(0, 10) ?? null,
     period?.deadline.slice(0, 10) ?? null,
   );
-  const shownReviews = template.reviews.visible
-    ? detail.reviews.filter((r) =>
-        template.reviews.selectedReviewIds.includes(r.reviewId),
-      )
-    : [];
 
   return (
     /*
@@ -478,41 +474,14 @@ const LiveMentoringDetailPage = ({
         </DetailSection>
       )}
 
+      {/* 후기 — 멘토 프로필과 같은 멘토 전체 후기. 없거나 조회에 실패하면 섹션째 빠진다 */}
+      <DetailMentorReviewSection id={LM_REVIEW_ID} mentorId={mentorId} />
+
       {/* 시안 6 · 플랜 */}
       <DetailPlanSection durationPrices={detail.durationPrices} />
 
       {/* 시안 7 · 진행 프로세스 */}
       <DetailProcessSection period={periodLabel} />
-
-      {/* 시안 8 · 후기 (노출 여부·대상만 멘토가 고름) */}
-      {shownReviews.length > 0 && (
-        <DetailSection
-          id={LM_REVIEW_ID}
-          label="후기"
-          title={`${detail.reviewCount}명이 만족한 렛츠커리어 수강생의 솔직한 멘토링 후기`}
-          subtitle="이미 피드백을 경험한 수강생분들의 솔직한 후기를 확인해보세요!"
-        >
-          <ul className="grid grid-cols-1 gap-5 md:grid-cols-3">
-            {shownReviews.map((r) => (
-              <li
-                key={r.reviewId}
-                className="border-neutral-85 flex flex-col gap-3 rounded-md border p-5"
-              >
-                <div className="text-neutral-40 text-xxsmall12 flex items-center gap-2">
-                  <span className="text-primary font-semibold">
-                    ★ {r.score}
-                  </span>
-                  <span>{r.menteeName}</span>
-                  <span className="ml-auto">{r.createdAt}</span>
-                </div>
-                <p className="text-neutral-20 text-xsmall14 leading-relaxed">
-                  {r.content}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </DetailSection>
-      )}
 
       {/* 시안 10 · 자주 묻는 질문 */}
       <DetailFaqSection id={LM_FAQ_ID} />
