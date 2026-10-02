@@ -6,7 +6,7 @@ import {
 import SelectFormControl from '@/domain/admin/program/ui/form/SelectFormControl';
 import { useUpdateMissionOption } from '@/hooks/useUpdateMissionOption';
 import dayjs from '@/lib/dayjs';
-import { ChallengeVersion } from '@/schema';
+import { ChallengeVersion, Mission } from '@/schema';
 import { Row } from '@/types/interface';
 import {
   BONUS_MISSION_TH,
@@ -164,6 +164,30 @@ function RemoveAlertDialog({
   );
 }
 
+const TH_TO_MISSION_TYPE_MAP = {
+  100: 'BONUS',
+  99: 'POOL',
+  0: 'OT',
+} as const;
+
+/**
+ * 회차를 바꿀 때의 미션 타입. 0·99·100 은 OT·인재풀·보너스로 바꾸고,
+ * 그 밖의 양수 회차는 기본(null)으로 되돌리되 경험정리 타입은 유지한다
+ */
+export const getMissionTypeForTh = (
+  th: number | null,
+  currentType: Mission['missionType'],
+): Mission['missionType'] => {
+  if (th === null || th < 0) return currentType;
+  if (th in TH_TO_MISSION_TYPE_MAP) {
+    return TH_TO_MISSION_TYPE_MAP[th as keyof typeof TH_TO_MISSION_TYPE_MAP];
+  }
+  if (currentType === 'EXPERIENCE_1' || currentType === 'EXPERIENCE_2') {
+    return currentType;
+  }
+  return null;
+};
+
 /** 미션 대상 버전 편집 셀. 비우면 공통이고, 잠긴 미션(V13)은 공통으로 고정한다 */
 function MissionVersionEditCell({
   params,
@@ -311,6 +335,9 @@ export const getMissionColumns = (
       headerName: '회차',
       editable: true,
       width: 70,
+      // 같은 회차의 버전별 미션이 붙어 보이도록 회차가 같으면 id 순
+      sortComparator: (th1, th2, params1, params2) =>
+        th1 - th2 || Number(params1.id) - Number(params2.id),
       renderEditCell(params) {
         return (
           <input
@@ -327,34 +354,11 @@ export const getMissionColumns = (
                 value,
               });
 
-              const TH_TO_MISSION_TYPE_MAP = {
-                100: 'BONUS',
-                99: 'POOL',
-                0: 'OT',
-              };
-
-              if (value !== null && value in TH_TO_MISSION_TYPE_MAP) {
-                params.api.setEditCellValue({
-                  id: params.id,
-                  field: 'missionType',
-                  value:
-                    TH_TO_MISSION_TYPE_MAP[
-                      value as keyof typeof TH_TO_MISSION_TYPE_MAP
-                    ],
-                });
-              } else if (
-                value !== null &&
-                value > 0 &&
-                value !== TALENT_POOL_MISSION_TH &&
-                value !== BONUS_MISSION_TH
-              ) {
-                // 1~n회차(일반)로 변경 시 missionType null로 (일반 템플릿)
-                params.api.setEditCellValue({
-                  id: params.id,
-                  field: 'missionType',
-                  value: null,
-                });
-              }
+              params.api.setEditCellValue({
+                id: params.id,
+                field: 'missionType',
+                value: getMissionTypeForTh(value, params.row.missionType),
+              });
             }}
             onKeyDown={(e) => {
               if (e.key === 'Backspace' || e.key === 'Delete') {

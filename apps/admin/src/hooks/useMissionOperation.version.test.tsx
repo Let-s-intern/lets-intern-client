@@ -11,6 +11,7 @@ type VersionItem = { challengeVersionId: number; title: string };
 const mocks = vi.hoisted(() => ({
   patch: vi.fn().mockResolvedValue({ data: {} }),
   post: vi.fn().mockResolvedValue({ data: {} }),
+  snackbar: vi.fn(),
   // 서버가 준 미션 목록. 수정 시 버전 변경 여부를 이 값과 비교한다
   missions: [] as { id: number; challengeVersionList: VersionItem[] }[],
 }));
@@ -49,7 +50,7 @@ vi.mock('@/context/CurrentAdminChallengeProvider', () => ({
 }));
 
 vi.mock('@/hooks/useAdminSnackbar', () => ({
-  useAdminSnackbar: () => ({ snackbar: vi.fn() }),
+  useAdminSnackbar: () => ({ snackbar: mocks.snackbar }),
 }));
 
 import { useMissionOperations } from './useMissionOperation';
@@ -111,6 +112,7 @@ const lastPostPayload = async () => {
 afterEach(() => {
   mocks.patch.mockClear();
   mocks.post.mockClear();
+  mocks.snackbar.mockClear();
   mocks.missions = [];
 });
 
@@ -173,5 +175,27 @@ describe('미션 저장 요청의 대상 버전 (6.2)', () => {
 
     const payload = await lastPatchPayload();
     expect(payload.challengeVersionIdList).toBeNull();
+  });
+});
+
+describe('미션 저장 실패 메시지 (6.4)', () => {
+  it('서버 불변식 에러 메시지를 스낵바에 그대로 보여 준다', async () => {
+    const message = '3회차 미션 "자기소개서" 와 대상 버전(대학생)이 겹칩니다.';
+    mocks.patch.mockRejectedValueOnce({
+      isAxiosError: true,
+      response: {
+        status: 409,
+        data: { code: 'MISSION_VERSION_OVERLAP', message },
+      },
+    });
+    mocks.missions = [{ id: 42, challengeVersionList: [] }];
+
+    await expect(runAction('edit', createRow([STUDENT]))).rejects.toBeDefined();
+
+    await waitFor(() =>
+      expect(mocks.snackbar).toHaveBeenCalledWith(
+        '미션 수정에 실패했습니다. ' + message,
+      ),
+    );
   });
 });

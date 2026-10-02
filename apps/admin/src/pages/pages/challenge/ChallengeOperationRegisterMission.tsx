@@ -63,7 +63,7 @@ const ChallengeOperationRegisterMission = () => {
         apiRef={apiRef}
         editMode="row"
         initialState={{
-          sorting: { sortModel: [{ field: 'id', sort: 'desc' }] },
+          sorting: { sortModel: [{ field: 'th', sort: 'asc' }] },
         }}
         slots={{
           toolbar: ChallengeOperationRegisterMissionToolbar,

@@ -19,10 +19,17 @@ import axios from '@/utils/axios';
 import { END_OF_SECONDS } from '@/utils/constants';
 import { GridApiCommunity } from '@mui/x-data-grid/internals';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 import { useCallback, useMemo, useState } from 'react';
 
 // 페이지네이션된 /mission-template/admin 에서 전체 템플릿을 한 번에 받기 위한 큰 페이지 크기.
 const ALL_TEMPLATES_PAGE_SIZE = 1000;
+
+// 서버 불변식 위반(MISSION_VERSION_OVERLAP 등)은 응답 message 에 회차·미션·버전이 담겨 온다
+const toErrorMessage = (error: Error) =>
+  (isAxiosError<{ message?: string }>(error) &&
+    error.response?.data?.message) ||
+  String(error);
 
 const toVersionIdList = (mission: Pick<Mission, 'challengeVersionList'>) =>
   mission.challengeVersionList.map((version) => version.challengeVersionId);
@@ -45,7 +52,7 @@ export const useMissionOperations = (
       return axios.post(`/mission/${currentChallenge?.id}`, mission);
     },
     onError(error) {
-      setSnackbar('미션 생성에 실패했습니다. ' + error);
+      setSnackbar('미션 생성에 실패했습니다. ' + toErrorMessage(error));
     },
   });
 
@@ -55,7 +62,7 @@ export const useMissionOperations = (
       return axios.patch(`/mission/${id}`, payload);
     },
     onError(error) {
-      setSnackbar('미션 수정에 실패했습니다. ' + error);
+      setSnackbar('미션 수정에 실패했습니다. ' + toErrorMessage(error));
     },
   });
 

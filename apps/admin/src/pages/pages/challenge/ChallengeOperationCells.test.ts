@@ -2,7 +2,10 @@ import { describe, expect, it } from 'vitest';
 
 import { Row } from '@/types/interface';
 
-import { getMissionColumns } from './ChallengeOperationCells';
+import {
+  getMissionColumns,
+  getMissionTypeForTh,
+} from './ChallengeOperationCells';
 
 const getMissionNameFormatter = () => {
   const column = getMissionColumns().find(
@@ -43,5 +46,35 @@ describe('미션명 컬럼 표시값', () => {
     const result = formatter(null, row, {} as never, {} as never);
 
     expect(result).toBe('(7) 템플릿 미션');
+  });
+});
+
+describe('회차 변경 시 미션 타입 (6.4)', () => {
+  it.each([
+    [0, 'OT'],
+    [99, 'POOL'],
+    [100, 'BONUS'],
+  ] as const)('%i 회차는 기존대로 %s 로 바꾼다', (th, expected) => {
+    expect(getMissionTypeForTh(th, null)).toBe(expected);
+    expect(getMissionTypeForTh(th, 'EXPERIENCE_1')).toBe(expected);
+  });
+
+  it.each(['EXPERIENCE_1', 'EXPERIENCE_2'] as const)(
+    '일반 회차로 바꿔도 %s 타입은 유지한다',
+    (missionType) => {
+      expect(getMissionTypeForTh(3, missionType)).toBe(missionType);
+    },
+  );
+
+  it.each(['OT', 'POOL', 'BONUS'] as const)(
+    '일반 회차로 바꾸면 %s 타입은 기본(null)으로 되돌린다',
+    (missionType) => {
+      expect(getMissionTypeForTh(3, missionType)).toBeNull();
+    },
+  );
+
+  it('회차를 비우거나 음수면 타입을 바꾸지 않는다', () => {
+    expect(getMissionTypeForTh(null, 'EXPERIENCE_2')).toBe('EXPERIENCE_2');
+    expect(getMissionTypeForTh(-1, 'OT')).toBe('OT');
   });
 });
