@@ -6,7 +6,9 @@ import { renderHook } from '@testing-library/react';
 // context 는 react-query 로 서버를 부르므로 훅 입력만 목으로 주입한다.
 const mockContext = {
   schedules: [] as Schedule[],
-  myDailyMission: null as { dailyMission: { th: number } | null } | null,
+  myDailyMission: null as {
+    dailyMission: { id: number; th: number } | null;
+  } | null,
 };
 
 jest.mock('@/context/CurrentChallengeProvider', () => ({
@@ -26,15 +28,23 @@ import { useMissionCalculation } from './useMissionCalculation';
 const setup = ({
   schedules = buildChallengeSchedules(),
   todayThFromServer = null as number | null,
+  todayMissionIdFromServer,
 }: {
   schedules?: Schedule[];
   todayThFromServer?: number | null;
+  /** 서버가 고른 오늘 미션 id. 생략하면 픽스처 규칙(th + 1000)을 따른다. */
+  todayMissionIdFromServer?: number;
 } = {}) => {
   mockContext.schedules = schedules;
   mockContext.myDailyMission =
     todayThFromServer === null
       ? { dailyMission: null }
-      : { dailyMission: { th: todayThFromServer } };
+      : {
+          dailyMission: {
+            id: todayMissionIdFromServer ?? todayThFromServer + 1000,
+            th: todayThFromServer,
+          },
+        };
 
   return renderHook(() => useMissionCalculation()).result;
 };
@@ -134,6 +144,78 @@ describe('todayMissionId', () => {
     const { current } = setup({ todayThFromServer: 99 });
 
     expect(current.todayMissionId).toBe(1003);
+  });
+});
+
+// V6: 2회차 경험정리는 같은 th 에 공통 미션 2개(EXPERIENCE_1/2)가 온다.
+// th 첫 일치로 고르면 서버가 고른 미션과 다른 쪽이 열릴 수 있다.
+describe('todayMissionId - 같은 회차에 미션이 둘일 때', () => {
+  const experiencePairSchedules = () => [
+    buildSchedule({ th: 1, day: 0 }),
+    buildSchedule({ th: 2, id: 2021, day: 1 }),
+    buildSchedule({ th: 2, id: 2022, day: 1 }),
+    buildSchedule({ th: 3, day: 2 }),
+  ];
+
+  it('서버가 준 오늘 미션 id 를 고른다 (th 첫 일치가 아니다)', () => {
+    freezeAt(noonOfMission(2));
+    const { current } = setup({
+      schedules: experiencePairSchedules(),
+      todayThFromServer: 2,
+      todayMissionIdFromServer: 2022,
+    });
+
+    expect(current.todayMissionId).toBe(2022);
+  });
+
+  it('서버 미션이 편성에 없으면 마감된 회차로 떨어진다', () => {
+    freezeAt(noonOfMission(2));
+    const { current } = setup({
+      schedules: experiencePairSchedules(),
+      todayThFromServer: 2,
+      todayMissionIdFromServer: 9999,
+    });
+
+    expect(current.todayMissionId).toBe(1001);
+  });
+});
+
+// E7: 버전 B 에는 4회차가 없다. 마지막 판정은 회차 번호가 아니라 배열 끝을 본다.
+describe('isLastMissionSubmitted - 회차가 빠진 편성', () => {
+  const withMissingRound = (attendance?: typeof submittedAttendance) =>
+    [1, 2, 3, 5].map((th, day) =>
+      buildSchedule({
+        th,
+        day,
+        attendance: th === 5 ? attendance : submittedAttendance,
+      }),
+    );
+
+  it('마지막 회차(5)를 냈으면 참이다', () => {
+    freezeAt(noonOfMission(4));
+    const { current } = setup({
+      schedules: withMissingRound(submittedAttendance),
+    });
+
+    expect(current.isLastMissionSubmitted).toBe(true);
+  });
+
+  it('마지막 회차(5)를 안 냈으면 거짓이다', () => {
+    freezeAt(noonOfMission(4));
+    const { current } = setup({ schedules: withMissingRound() });
+
+    expect(current.isLastMissionSubmitted).toBe(false);
+  });
+
+  it('빠진 회차 뒤에 보너스가 있으면 마지막 정규 회차와 보너스를 함께 본다', () => {
+    freezeAt(noonOfMission(4));
+    const schedules = [
+      ...withMissingRound(submittedAttendance),
+      buildSchedule({ th: 100, day: 4 }),
+    ];
+    const { current } = setup({ schedules });
+
+    expect(current.isLastMissionSubmitted).toBe(false);
   });
 });
 
