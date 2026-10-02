@@ -345,6 +345,31 @@ describe('LiveMentoringDetailPage', () => {
     ).not.toBeInTheDocument();
   });
 
+  it('후기가 있으면 상단 탭에 「후기」가 있다 — 후기 조회가 상세보다 늦어도 빠지지 않는다', async () => {
+    mockApis(detail());
+    renderDetail();
+
+    await screen.findByText('17개의 후기');
+    const nav = within(screen.getByRole('navigation'));
+    expect(nav.getByRole('button', { name: '후기' })).toBeInTheDocument();
+  });
+
+  it('후기가 하나도 없으면 후기 섹션과 상단 「후기」 탭이 모두 없다', async () => {
+    mockApis(detail(), SLOTS, { ...MENTOR_PROFILE, reviewList: [] });
+    renderDetail();
+
+    await waitFor(() =>
+      expect(screen.getByText('멘토 자기소개 본문')).toBeInTheDocument(),
+    );
+    await waitFor(() => expect(axiosGet).toHaveBeenCalledWith('/mentor/3'));
+    const nav = within(await screen.findByRole('navigation'));
+    expect(await nav.findByRole('button', { name: 'FAQ' })).toBeInTheDocument();
+    expect(nav.queryByRole('button', { name: '후기' })).not.toBeInTheDocument();
+    expect(
+      document.getElementById('live-mentoring-review'),
+    ).not.toBeInTheDocument();
+  });
+
   it('미리보기에서도 멘토 전체 후기 섹션을 보여준다', async () => {
     mockApis(detail());
     renderDetail({ isPreview: true });

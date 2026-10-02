@@ -5,6 +5,11 @@ import {
   useLiveMentorSlotsQuery,
 } from '@/api/live-mentoring/liveMentoring';
 import type { LiveMentorDetail } from '@/api/live-mentoring/liveMentoringSchema';
+import {
+  mentorDetailQueryOptions,
+  mentorStatsQueryOptions,
+} from '@/api/mentor/mentor';
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -76,6 +81,15 @@ const LiveMentoringDetailPage = ({
   // 상세 응답에는 기간도 슬롯도 없다. 진행기간은 예약 가능 슬롯에서 만든다.
   // 상세와 굳이 하나로 합치지 않는다 — 슬롯 조회가 늦거나 실패해도 본문은 그대로 뜬다.
   const { data: slots } = useLiveMentorSlotsQuery(mentorId);
+  /*
+    후기 섹션은 멘토 후기 API 로 따로, 상세보다 늦게 뜬다. 상단 탭은 화면에 올라온
+    섹션만 고르므로 후기 조회가 끝나기 전에 고르면 후기가 있어도 「후기」 탭이 빠진다.
+    같은 쿼리를 구독해 끝날 때까지 탭 고르기를 미룬다 — 캐시를 공유해 요청은 늘지 않는다.
+  */
+  const reviewListQuery = useQuery(mentorDetailQueryOptions(mentorId));
+  const reviewStatsQuery = useQuery(mentorStatsQueryOptions(mentorId));
+  const isReviewSettled =
+    !reviewListQuery.isPending && !reviewStatsQuery.isPending;
   const applySheet = useApplySheetState();
   const router = useRouter();
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
@@ -167,7 +181,9 @@ const LiveMentoringDetailPage = ({
         앵커 네비는 미리보기에서 그리지 않는다. 프레임 안에서는 이동을 막아 두어
         눌러도 아무 일이 없고, 좁은 화면에서 자리만 차지해 정작 볼 본문이 밀린다.
       */}
-      {isPreview ? null : <DetailNavigation isReady={!isLoading} />}
+      {isPreview ? null : (
+        <DetailNavigation isReady={!isLoading && isReviewSettled} />
+      )}
 
       {/* 시안 0-2 · 취업 준비, 혼자 하기 막막하셨나요? */}
       <DetailPainSection careers={detail.profile.careers} />
