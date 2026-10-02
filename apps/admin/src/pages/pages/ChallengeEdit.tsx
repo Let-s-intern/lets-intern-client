@@ -468,6 +468,7 @@ const ChallengeEdit: React.FC = () => {
             className="row-start-1 row-end-3"
             defaultValue={challenge}
             setInput={setInput}
+            hasVersions={(versionDrafts ?? challenge.versionList).length > 0}
           />
           <ImageUpload
             label="모바일 썸네일 이미지 업로드"

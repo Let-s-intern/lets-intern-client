@@ -367,6 +367,7 @@ const ChallengeCreate: React.FC = () => {
               })),
             }}
             setInput={setInput}
+            hasVersions={versions.length > 0}
           />
           <ImageUpload
             label="모바일 썸네일 이미지 업로드"
