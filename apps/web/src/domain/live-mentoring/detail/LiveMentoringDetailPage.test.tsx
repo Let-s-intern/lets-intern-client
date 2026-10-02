@@ -265,6 +265,32 @@ describe('LiveMentoringDetailPage', () => {
     expect(screen.queryByText('서류 완성도 UP!')).not.toBeInTheDocument();
   });
 
+  const PORTFOLIO_BEFORE_AFTER_TITLE =
+    '논리적이고 구조적으로 작성하는 방법에 대해 확실하게 알려드립니다';
+
+  it('포트폴리오 Before/After 고정 섹션은 결과 사례 바로 아래에 온다', async () => {
+    mockApis(detail());
+    renderDetail();
+
+    const fixedTitle = await screen.findByText(PORTFOLIO_BEFORE_AFTER_TITLE);
+    expect(
+      screen.getByText('✓ 경험 연결').compareDocumentPosition(fixedTitle) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it('결과 사례를 세팅하지 않아도 포트폴리오 Before/After 는 보인다', async () => {
+    const detailData = detail();
+    detailData.data.data.template.results.visible = false;
+    mockApis(detailData);
+    renderDetail();
+
+    expect(
+      await screen.findByText(PORTFOLIO_BEFORE_AFTER_TITLE),
+    ).toBeInTheDocument();
+    expect(screen.queryByText('✓ 경험 연결')).not.toBeInTheDocument();
+  });
+
   it('후기 노출 off 면 후기 섹션을 렌더하지 않는다', async () => {
     mockApis(
       detail({
