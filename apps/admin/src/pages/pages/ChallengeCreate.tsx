@@ -458,7 +458,12 @@ const ChallengeCreate: React.FC = () => {
         />
       </section>
       <section className="pb-8 pt-4">
-        <ChallengeVersionSection versions={versions} onChange={setVersions} />
+        <ChallengeVersionSection
+          versions={versions}
+          onChange={setVersions}
+          challengeType={input.challengeType}
+          challengeContent={content}
+        />
       </section>
       {isFreeTemplate ? (
         <>

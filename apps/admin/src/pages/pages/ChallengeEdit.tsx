@@ -592,6 +592,8 @@ const ChallengeEdit: React.FC = () => {
             toVersionDrafts(challenge.versionList, challenge.desc)
           }
           onChange={setVersionDrafts}
+          challengeType={input.challengeType}
+          challengeContent={content}
         />
       </section>
 
