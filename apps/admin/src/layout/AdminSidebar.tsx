@@ -58,6 +58,23 @@ const navData = [
     ],
   },
   {
+    title: '올인원패스 관리',
+    itemList: [
+      {
+        name: '올인원패스 개설',
+        url: '/all-in-one-pass',
+      },
+      {
+        name: '공지/가이드 관리',
+        url: '/all-in-one-pass/notices',
+      },
+      {
+        name: '회고 관리',
+        url: '/all-in-one-pass/retrospectives',
+      },
+    ],
+  },
+  {
     // 다른 그룹과 달리 "관리"를 붙이지 않는다. 이 그룹은 읽기 전용 조회고,
     // 이용 이력은 결제가 아니라 행동이라 결제 그룹 아래에 두면 분류가 어긋난다.
     title: '히스토리',
@@ -208,7 +225,7 @@ export const AdminSidebar = () => {
             {/* 통계(PostHog 임베드) 드롭다운은 나가기 바로 위에 둔다. */}
             {navSection.title === '나가기' && <StatsEmbedSection />}
             <div>
-              <div className="flex items-center justify-between border-b border-b-neutral-600 pb-3 pl-4 pr-8">
+              <div className="flex items-center justify-between border-b border-b-neutral-600 px-4 pb-3">
                 <h3 className="text-xsmall16 font-medium">
                   {navSection.title}
                 </h3>

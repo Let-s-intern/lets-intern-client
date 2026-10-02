@@ -9,6 +9,28 @@ const Stats = lazy(() => import('./pages/pages/Stats'));
 const Programs = lazy(() => import('./pages/pages/program/Programs'));
 const ChallengeCreate = lazy(() => import('./pages/pages/ChallengeCreate'));
 const ChallengeEdit = lazy(() => import('./pages/pages/ChallengeEdit'));
+const AllInOnePassList = lazy(
+  () => import('./pages/pages/all-in-one-pass/AllInOnePassList'),
+);
+const AllInOnePassCreate = lazy(
+  () => import('./pages/pages/all-in-one-pass/AllInOnePassCreate'),
+);
+const AllInOnePassEdit = lazy(
+  () => import('./pages/pages/all-in-one-pass/AllInOnePassEdit'),
+);
+const AllInOnePassUsers = lazy(
+  () => import('./pages/pages/all-in-one-pass/AllInOnePassUsers'),
+);
+const AllInOnePassNotices = lazy(
+  () => import('./pages/pages/all-in-one-pass/AllInOnePassNotices'),
+);
+const AllInOnePassRetrospectives = lazy(
+  () => import('./pages/pages/all-in-one-pass/AllInOnePassRetrospectives'),
+);
+const AllInOnePassRetrospectiveResponses = lazy(
+  () =>
+    import('./pages/pages/all-in-one-pass/AllInOnePassRetrospectiveResponses'),
+);
 const LiveCreate = lazy(() => import('./pages/pages/LiveCreate'));
 const LiveEdit = lazy(() => import('./pages/pages/LiveEdit'));
 const VodCreate = lazy(() => import('./pages/pages/VodCreate'));
@@ -285,6 +307,34 @@ export const router = createBrowserRouter([
       {
         path: '/challenge/:challengeId/edit',
         element: withSuspense(<ChallengeEdit />),
+      },
+      {
+        path: '/all-in-one-pass',
+        element: withSuspense(<AllInOnePassList />),
+      },
+      {
+        path: '/all-in-one-pass/create',
+        element: withSuspense(<AllInOnePassCreate />),
+      },
+      {
+        path: '/all-in-one-pass/:passId/edit',
+        element: withSuspense(<AllInOnePassEdit />),
+      },
+      {
+        path: '/all-in-one-pass/:passId/users',
+        element: withSuspense(<AllInOnePassUsers />),
+      },
+      {
+        path: '/all-in-one-pass/notices',
+        element: withSuspense(<AllInOnePassNotices />),
+      },
+      {
+        path: '/all-in-one-pass/retrospectives',
+        element: withSuspense(<AllInOnePassRetrospectives />),
+      },
+      {
+        path: '/all-in-one-pass/retrospectives/:retrospectiveId/responses',
+        element: withSuspense(<AllInOnePassRetrospectiveResponses />),
       },
       { path: '/live/create', element: withSuspense(<LiveCreate />) },
       { path: '/live/:liveId/edit', element: withSuspense(<LiveEdit />) },

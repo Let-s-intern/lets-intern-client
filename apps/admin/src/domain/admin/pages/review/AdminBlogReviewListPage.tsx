@@ -137,7 +137,9 @@ export default function AdminBlogReviewListPage() {
       editable: true,
       sortable: false,
       type: 'singleSelect',
-      valueOptions: Object.values(ProgramTypeEnum.exclude(['VOD']).enum),
+      valueOptions: Object.values(
+        ProgramTypeEnum.exclude(['VOD', 'MEMBERSHIP']).enum,
+      ),
     },
     {
       field: 'programTitle',
