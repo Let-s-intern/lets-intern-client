@@ -17,6 +17,8 @@ export interface PatchMissionReq {
   // 버전 있는 챌린지만 보낸다. 보내면 서버는 위 id 목록 대신 이 값을 쓴다
   essentialContents?: MissionContentsReq[];
   additionalContents?: MissionContentsReq[];
+  // null 은 변경 없음, 빈 배열은 공통으로, 값이 있으면 그 버전들로 교체
+  challengeVersionIdList?: number[] | null;
 }
 export interface PostDocumentReq {
   attendanceId?: number;

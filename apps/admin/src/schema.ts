@@ -997,6 +997,13 @@ export const missionAdmin = z
               .or(z.null()),
           )
           .or(z.null()),
+        // 대상 버전. 공통 미션과 서버 배포 전 응답은 빈 배열
+        challengeVersionList: z
+          .array(
+            z.object({ challengeVersionId: z.number(), title: z.string() }),
+          )
+          .nullish()
+          .transform((val) => val ?? []),
       }),
     ),
   })
@@ -1232,6 +1239,8 @@ const postMissionIdReq = z.object({
   // 버전 있는 챌린지만 보낸다. 보내면 서버는 위 id 목록 대신 이 값을 쓴다
   essentialContents: z.array(missionContentsReq).optional(),
   additionalContents: z.array(missionContentsReq).optional(),
+  // null·빈 배열은 공통 미션
+  challengeVersionIdList: z.array(z.number()).nullable().optional(),
 });
 
 export type CreateMissionReq = z.infer<typeof postMissionIdReq>;
@@ -1251,6 +1260,8 @@ const patchMissionIdReq = z.object({
   // 버전 있는 챌린지만 보낸다. 보내면 서버는 위 id 목록 대신 이 값을 쓴다
   essentialContents: z.array(missionContentsReq).optional(),
   additionalContents: z.array(missionContentsReq).optional(),
+  // null 은 변경 없음, 빈 배열은 공통으로, 값이 있으면 그 버전들로 교체
+  challengeVersionIdList: z.array(z.number()).nullable().optional(),
 });
 
 export type UpdateMissionReq = z.infer<typeof patchMissionIdReq>;

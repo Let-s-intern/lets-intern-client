@@ -285,6 +285,7 @@ export const useMissionOperations = (
       missionType: null,
       challengeOptionCode: '',
       challengeOptionId: -1,
+      challengeVersionList: [],
     });
   }, []);
 
