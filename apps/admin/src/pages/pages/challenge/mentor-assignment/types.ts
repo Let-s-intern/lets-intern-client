@@ -14,6 +14,8 @@ export interface MentorAssignmentRow {
   wishJob: string;
   wishCompany: string;
   pricePlanType: string;
+  /** 신청 버전명. 버전 없는 신청은 null */
+  versionTitle: string | null;
   matchedMentorId: number | null;
   mentorReassignmentRequired: boolean;
 }

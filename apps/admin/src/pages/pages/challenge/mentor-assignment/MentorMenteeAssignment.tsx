@@ -35,6 +35,13 @@ const columns: GridColDef<MentorAssignmentRow>[] = [
     },
   },
   {
+    // 멘토를 버전별로 매칭하기 위해 신청 버전을 보여준다
+    field: 'versionTitle',
+    headerName: '버전',
+    width: 100,
+    renderCell: (params) => params.row.versionTitle ?? '-',
+  },
+  {
     field: 'name',
     headerName: '이름',
     width: 100,

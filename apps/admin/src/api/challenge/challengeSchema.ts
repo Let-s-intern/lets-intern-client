@@ -44,6 +44,13 @@ export const challengeMissionFeedbackListSchema = z.object({
           .number()
           .nullish()
           .transform((v) => v ?? 0),
+        // 미션 대상 버전. 공통 미션과 서버가 아직 내려주지 않는 응답은 빈 배열
+        challengeVersionList: z
+          .array(
+            z.object({ challengeVersionId: z.number(), title: z.string() }),
+          )
+          .nullish()
+          .transform((v) => v ?? []),
       }),
     )
     .nullish()

@@ -17,6 +17,7 @@ const row = (
   wishJob: '-',
   wishCompany: '-',
   pricePlanType: 'STANDARD',
+  versionTitle: null,
   matchedMentorId: 10,
   mentorReassignmentRequired,
 });
