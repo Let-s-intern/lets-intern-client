@@ -6,7 +6,6 @@ import {
   adminLiveMentoringParticipantListSchema,
   adminLiveMentoringReservationListSchema,
   type LiveMentoringAttendanceStatus,
-  type LiveMentoringStatus,
 } from './liveMentoringSchema';
 
 /**
@@ -24,8 +23,8 @@ export const ADMIN_LIVE_MENTORING_QUERY_KEY = [
 ] as const;
 
 export interface UseAdminLiveMentoringListParams {
-  /** 상태 필터. 생략하면 전체 조회. */
-  status?: LiveMentoringStatus;
+  /** 열린 개설이 있는 상품만(true)·없는 상품만(false). 생략하면 전체 조회. */
+  opened?: boolean;
   /**
    * 1-based 페이지 번호.
    * 서버가 `spring.data.web.pageable.one-indexed-parameters: true` 라 첫 페이지는 1 이다
@@ -37,15 +36,15 @@ export interface UseAdminLiveMentoringListParams {
 
 /** GET /admin/live-mentoring — 상품 목록. 공개 목록과 달리 기간·노출 조건을 걸지 않는다. */
 export const useAdminLiveMentoringListQuery = ({
-  status,
+  opened,
   page = 1,
   size = 20,
 }: UseAdminLiveMentoringListParams = {}) => {
   return useQuery({
-    queryKey: [...ADMIN_LIVE_MENTORING_QUERY_KEY, { status, page, size }],
+    queryKey: [...ADMIN_LIVE_MENTORING_QUERY_KEY, { opened, page, size }],
     queryFn: async () => {
       const res = await axios.get(ADMIN_PATH, {
-        params: { status, page, size },
+        params: { opened, page, size },
       });
       return adminLiveMentoringListSchema.parse(res.data.data);
     },

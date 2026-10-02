@@ -9,6 +9,7 @@ import OutlinedButton from '@/common/button/OutlinedButton';
 import SolidButton from '@/common/button/SolidButton';
 import BaseModal from '@/common/modal/BaseModal';
 import dayjs from '@/lib/dayjs';
+import { getCouponDiscountAmount } from '@/utils/couponDiscount';
 import { useEffect, useRef, useState } from 'react';
 
 interface CouponSelectModalProps {
@@ -18,13 +19,27 @@ interface CouponSelectModalProps {
   currentCouponId: number | null;
   coupons: CouponItem[];
   maxAmount?: number;
+  salePrice?: number;
 }
 
 const formatDate = (dateStr: string) =>
   dayjs(dateStr).format('YYYY년 MM월 DD일');
 
-const getDiscountValue = (discount: number) =>
-  discount === -1 ? Infinity : discount;
+const couponWonAmount = (
+  coupon: CouponItem,
+  salePrice: number | undefined,
+  maxAmount: number,
+) =>
+  coupon.discount === -1
+    ? Infinity
+    : Math.min(
+        getCouponDiscountAmount({
+          discount: coupon.discount,
+          discountType: coupon.discountType,
+          salePrice,
+        }),
+        maxAmount,
+      );
 
 const CouponSelectModal = ({
   isOpen,
@@ -33,6 +48,7 @@ const CouponSelectModal = ({
   currentCouponId,
   coupons,
   maxAmount = Infinity,
+  salePrice,
 }: CouponSelectModalProps) => {
   const [selectedId, setSelectedId] = useState<number | null>(currentCouponId);
   const [registerCode, setRegisterCode] = useState('');
@@ -59,7 +75,8 @@ const CouponSelectModal = ({
 
   const sortedCoupons = [...coupons].sort((a, b) => {
     const discountDiff =
-      getDiscountValue(b.discount) - getDiscountValue(a.discount);
+      couponWonAmount(b, salePrice, maxAmount) -
+      couponWonAmount(a, salePrice, maxAmount);
     if (discountDiff !== 0) return discountDiff;
     return new Date(a.endDate).getTime() - new Date(b.endDate).getTime();
   });
@@ -79,7 +96,7 @@ const CouponSelectModal = ({
       ? maxAmount === Infinity
         ? null
         : maxAmount
-      : Math.min(selectedCoupon.discount, maxAmount)
+      : couponWonAmount(selectedCoupon, salePrice, maxAmount)
     : 0;
 
   const handleApply = () => {
@@ -204,7 +221,9 @@ const CouponSelectModal = ({
                     <p className="text-xsmall16 md:text-small18 font-bold">
                       {coupon.discount === -1
                         ? '전액 할인'
-                        : `${coupon.discount.toLocaleString()}원`}
+                        : coupon.discountType === 'RATE'
+                          ? `${coupon.discount}% 할인`
+                          : `${coupon.discount.toLocaleString()}원`}
                     </p>
                     <p className="text-xsmall16 font-semibold">{coupon.name}</p>
                     <p className="md:text-xsmall14 text-neutral-30 text-xxsmall12 tracking-tighter md:tracking-tight">

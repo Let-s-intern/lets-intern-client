@@ -37,6 +37,17 @@ export interface AdminVoLiveSpec {
   menteeBadge: LiveBadge | null;
 }
 
+/**
+ * 진리표가 읽는 값만 모은 입력.
+ *
+ * 챌린지 행은 `FeedbackAdminVo` 를 그대로 넘기고, 1대1 행은 예약 상태 enum 이 달라
+ * `reservationRow.ts` 의 `toLiveSpecInput` 으로 옮겨서 넘긴다.
+ */
+export type LiveSpecInput = Pick<
+  FeedbackAdminVo,
+  'status' | 'startDate' | 'endDate' | 'mentorStatus' | 'menteeStatus'
+>;
+
 type SessionPhase = 'before' | 'during' | 'after';
 
 const BADGE = {
@@ -88,7 +99,7 @@ export function attendanceLabel(
  *           그 외(미참여/미체크) → '미참여'
  */
 export function resolveAdminVoLiveSpec(
-  vo: FeedbackAdminVo,
+  vo: LiveSpecInput,
   now: Date,
 ): AdminVoLiveSpec {
   if (vo.status === 'CANCELED') {

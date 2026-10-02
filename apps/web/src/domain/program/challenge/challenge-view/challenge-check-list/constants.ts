@@ -53,7 +53,7 @@ export const PERSONAL_STATEMENT_CHECK_LIST = [
       ],
     ],
     solution: [
-      '→ 오픈카톡방 실시간 소감 및 작업물 공유와',
+      '→ 슬랙 채널 실시간 소감 및 작업물 공유와',
       '미션 동기부여 페이백으로 강제성 제공',
     ],
   },
@@ -106,7 +106,7 @@ export const PERSONAL_STATEMENT_LARGE_CORP_CHECK_LIST = [
       ],
     ],
     solution: [
-      '→ 오픈카톡방 실시간 소감 및 작업물 공유와',
+      '→ 슬랙 채널 실시간 소감 및 작업물 공유와',
       '미션 동기부여로 강제성 제공',
     ],
   },
@@ -162,7 +162,7 @@ export const PORTFOLIO_CHECK_LIST = [
       ],
     ],
     solution: [
-      '→ 오픈카톡방 실시간 소감 및 작업물 공유와',
+      '→ 슬랙 채널 실시간 소감 및 작업물 공유와',
       '미션 동기부여 페이백으로 강제성 제공',
     ],
   },
@@ -269,7 +269,7 @@ export const getCareerStartCheckList = (
         ],
       ],
       solution: [
-        '→ 오픈카톡방 실시간 소감 및 작업물 공유와',
+        '→ 슬랙 채널 실시간 소감 및 작업물 공유와',
         '미션 동기부여 페이백으로 강제성 제공',
       ],
     },
@@ -303,7 +303,7 @@ export const EXPERIENCE_SUMMARY_CHECK_LIST = [
       ['처음에는 의욕이 넘쳤는데 결국 중간에', '포기하게 돼요.'],
     ],
     solution: [
-      '→ 오픈카톡방 실시간 소감 및 작업물 공유와',
+      '→ 슬랙 채널 실시간 소감 및 작업물 공유와',
       '미션 동기부여 페이백으로 강제성 부여',
     ],
   },

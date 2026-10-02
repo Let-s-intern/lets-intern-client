@@ -2,100 +2,125 @@
    PricePlanBottomSheet(앱 컴포넌트)에 위임하므로 복사 시트 CSS 는 제거됨. */
 
 /* ===================== 하단 고정 신청 바 ===================== */
+/* 개편 시안 — 어두운 알약 하나가 떠 있고 오른쪽 끝에 주황 버튼이 붙는다.
+   색은 시안에서 뽑았다: 바탕 #1C2033, 제목 #F6B58F, 버튼 #E0773A → #D54F02. */
 .membership-root .apply-bar {
   position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
   z-index: 60;
   margin: 0 auto;
-  max-width: 1000px;
+  max-width: 1080px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  padding: 14px 20px;
-  background: rgba(255, 255, 255, 0.82);
-  backdrop-filter: blur(10px);
-  border-top: 1px solid #e7e9f0;
-}
-@media (min-width: 1024px) {
-  .membership-root .apply-bar {
-    bottom: 16px;
-    border-radius: 14px;
-    border: 1px solid #e7e9f0;
-    box-shadow: 0 12px 40px rgba(20, 22, 31, 0.16);
-  }
+  gap: 16px;
+  padding: 14px 14px 14px 24px;
+  border-radius: 18px;
+  background: #1c2033;
+  box-shadow: 0 16px 40px rgba(12, 14, 26, 0.32);
 }
 .membership-root .apply-bar-info {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
   min-width: 0;
 }
 .membership-root .apply-bar-title {
   font-weight: 800;
-  font-size: 15px;
-  color: #14161f;
+  font-size: 17px;
+  color: #f6b58f;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.membership-root .apply-bar-deadline {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--g600, #4b4f5a);
+.membership-root .apply-bar-sub {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #d5d8e4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .membership-root .apply-bar-right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 18px;
   flex: 0 0 auto;
 }
+/* 숫자는 흰색으로 크게, 단위는 회색으로 작게 — 남은 시간이 숫자로 먼저 읽힌다 */
 .membership-root .apply-bar-count {
   display: flex;
   align-items: baseline;
-  gap: 4px;
-  font-weight: 700;
-  color: #14161f;
+  gap: 3px;
+  font-weight: 800;
+  font-size: 17px;
+  color: #ffffff;
   white-space: nowrap;
 }
 .membership-root .apply-bar-count .unit {
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 600;
-  color: var(--g500, #8b909e);
+  color: #9aa0b5;
 }
 .membership-root .apply-bar-count .left {
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 600;
-  color: var(--g500, #8b909e);
-  margin-left: 2px;
+  color: #9aa0b5;
+  margin-left: 4px;
 }
 .membership-root .apply-bar-btn {
   flex: 0 0 auto;
   border: none;
   cursor: pointer;
-  border-radius: 10px;
-  padding: 13px 26px;
+  border-radius: 12px;
+  padding: 15px 28px;
   font-weight: 800;
-  font-size: 15px;
+  font-size: 16px;
   color: #fff;
-  background: linear-gradient(90deg, #4769ff 0%, #6a4bff 100%);
-  box-shadow: 0 6px 18px rgba(71, 105, 255, 0.32);
+  background: linear-gradient(90deg, #e0773a 0%, #d54f02 100%);
   transition: transform 0.12s ease;
 }
 .membership-root .apply-bar-btn:hover {
   transform: translateY(-1px);
 }
-@media (max-width: 600px) {
-  .membership-root .apply-bar-count {
-    display: none;
-  }
-  .membership-root .apply-bar-btn {
-    padding: 12px 18px;
-    font-size: 14px;
+.membership-root .apply-bar-btn:disabled {
+  cursor: default;
+  opacity: 0.6;
+  transform: none;
+}
+/* 좁은 화면에서는 부제와 카운트다운을 접고 버튼을 한 줄 아래로 내린다 */
+@media (max-width: 767px) {
+  .membership-root .apply-bar {
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 16px;
   }
   .membership-root .apply-bar-title {
+    font-size: 15px;
+    white-space: normal;
+  }
+  .membership-root .apply-bar-sub {
+    display: none;
+  }
+  .membership-root .apply-bar-right {
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .membership-root .apply-bar-count {
+    font-size: 14px;
+  }
+  .membership-root .apply-bar-count .unit,
+  .membership-root .apply-bar-count .left {
+    font-size: 11px;
+  }
+  .membership-root .apply-bar-btn {
+    padding: 13px 18px;
     font-size: 14px;
   }
 }

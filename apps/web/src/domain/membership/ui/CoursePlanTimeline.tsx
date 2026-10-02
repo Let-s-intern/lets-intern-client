@@ -1,99 +1,123 @@
-import { useRef, type CSSProperties } from 'react';
+import { Fragment } from 'react';
 import {
-  FLOW_CHIPS,
-  FLOW_LABEL,
-  MONTH_GROUPS,
-  type MonthGroup,
-  WEEKS,
-  type WeekItem,
+  COURSE_TAG_LABEL,
+  type CoursePlanTypeId,
+  PRESTART_SEMINAR,
+  WEEK_FLOW,
+  WEEK_PLANS,
+  type WeekPlan,
+  type WeekSupport,
+  weekMonth,
+  weekPhase,
 } from '../data/coursePlan';
-import CarouselDots from './CarouselDots';
-import { useCarouselDots } from '@letscareer/hooks';
 
-// 주차 번호 표기. 12·13 묶음이면 "12·13".
-function weekNo(item: WeekItem): string {
-  const head = String(item.week).padStart(2, '0');
-  if (item.weekEnd === undefined) return head;
-  return `${head}·${item.weekEnd}`;
-}
+// 클래스 접두사를 cpw- 로 둔다. membership-legacy 의 같은 이름 CSS 파일이 옛 wk-* 규칙을
+// 그대로 갖고 있어, 두 화면을 오가면 같은 이름 규칙이 섞일 수 있다.
 
-function WeekCard({ item }: { item: WeekItem }) {
+function FlowOverview() {
   return (
-    <article className="wk-card">
-      <div className="wk-top">
-        <span className="wk-no">{weekNo(item)}</span>
-        <span className="wk-wk">WEEK</span>
-        {item.isChallenge && <span className="wk-ch">챌린지</span>}
-      </div>
-      <p className="wk-card-title">{item.title}</p>
-      <p className="wk-card-desc">{item.desc}</p>
-    </article>
-  );
-}
-
-// 월 블록 — 헤더(큰 숫자·타이틀·서브·배지) + 액센트 라인 + 4열 카드 그리드.
-// --m-accent 등 월별 색은 래퍼에 인라인 변수로 주입(시안 그대로).
-function MonthBlock({ group }: { group: MonthGroup }) {
-  const weeks = WEEKS.filter((week) => week.month === group.month);
-  const style = {
-    '--m-accent': group.accent,
-    '--m-badge-bg': group.badgeBg,
-    '--m-badge-fg': group.badgeFg,
-  } as CSSProperties;
-
-  return (
-    <section className="wk-month" style={style}>
-      <div className="wk-mhead">
-        <div className="wk-mtitle">
-          <span className="wk-mon">{group.month}</span>
-          <div className="wk-mtitle-txt">
-            <b>{group.title}</b>
-            <span className="wk-msub">{group.sub}</span>
-          </div>
-        </div>
-        <span className="wk-badge">{group.badge}</span>
-      </div>
-      <div className="wk-line" />
-      <div className="wk-cards">
-        {weeks.map((week) => (
-          <WeekCard item={week} key={week.week} />
+    <section className="cpw-flow" aria-labelledby="cpw-flow-label">
+      <p className="cpw-flow-label" id="cpw-flow-label">
+        10주 흐름 한눈에 보기
+      </p>
+      <ol className="cpw-flow-list">
+        {WEEK_FLOW.map((phase) => (
+          <li className="cpw-flow-item" data-phase={phase.id} key={phase.id}>
+            <span className="cpw-flow-range">{phase.range}</span>
+            <strong className="cpw-flow-title">{phase.title}</strong>
+            <span className="cpw-flow-desc">{phase.desc}</span>
+          </li>
         ))}
-      </div>
+      </ol>
     </section>
   );
 }
 
-export default function CoursePlanTimeline() {
-  // 모바일에서 .wk-track 은 가로 scroll-snap 트랙이 된다(CSS). 월(月) 블록이 슬라이드.
-  const trackRef = useRef<HTMLDivElement>(null);
-  const { activeIndex, scrollToSlide } = useCarouselDots(trackRef);
-
+/** 1주차보다 앞선 세미나 한 줄. 「시작 전」은 고정 문구다 */
+function PrestartRow() {
   return (
-    <div className="wk-timeline">
-      <CarouselDots
-        count={MONTH_GROUPS.length}
-        activeIndex={activeIndex}
-        onSelect={scrollToSlide}
-        label="월 넘기기"
-        itemLabel={(i) => MONTH_GROUPS[i].month}
-      />
-      <div className="wk-track" ref={trackRef}>
-        {MONTH_GROUPS.map((group) => (
-          <MonthBlock group={group} key={group.month} />
-        ))}
-      </div>
+    <p className="cpw-prestart">
+      <strong className="cpw-prestart-label">
+        {PRESTART_SEMINAR.whenNote}
+      </strong>
+      <span>
+        {PRESTART_SEMINAR.when} ·{' '}
+        <span className="cpw-prestart-title">{PRESTART_SEMINAR.title}</span> (
+        {PRESTART_SEMINAR.desc})
+      </span>
+    </p>
+  );
+}
 
-      <div className="wk-flow">
-        <p>
-          <strong className="wk-flow-label">{FLOW_LABEL}</strong>
-          {FLOW_CHIPS.map((chip, i) => (
-            <span className="wk-flow-chip" key={chip}>
-              {i > 0 && <span className="wk-flow-arrow"> → </span>}
-              {chip}
-            </span>
+function SupportItem({ support }: { support: WeekSupport }) {
+  return (
+    <li className="cpw-support" data-tag={support.tag}>
+      <span className="cpw-support-tag">
+        {COURSE_TAG_LABEL[support.tag]}
+        {support.when && ` · ${support.when}`}
+      </span>
+      <strong className="cpw-support-title">{support.title}</strong>
+      {support.speaker && (
+        <span className="cpw-support-speaker">{support.speaker}</span>
+      )}
+    </li>
+  );
+}
+
+function WeekCard({ plan }: { plan: WeekPlan }) {
+  return (
+    // 왼쪽 막대 색은 월이 아니라 구간(주차 번호)을 따른다
+    <article className="cpw-week" data-phase={weekPhase(plan.week)}>
+      <div className="cpw-week-when">
+        <span className="cpw-week-no">{plan.week}주차</span>
+        {/* 시안은 끝 날짜를 「– 9.27 일」로 다음 줄에 둔다 */}
+        <span className="cpw-week-range">
+          {plan.range.replace(' – ', '\n– ')}
+        </span>
+      </div>
+      <div className="cpw-week-body">
+        <h6 className="cpw-week-title">{plan.title}</h6>
+        <ul className="cpw-week-todos">
+          {plan.todos.map((todo) => (
+            <li key={todo}>{todo}</li>
           ))}
+        </ul>
+        <p className="cpw-week-output">
+          이번 주 산출물 · <strong>{plan.output}</strong>
         </p>
       </div>
+      <div className="cpw-week-supports">
+        <p className="cpw-supports-label">렛츠커리어가 함께합니다</p>
+        <ul className="cpw-support-list">
+          {plan.supports.map((support) => (
+            <SupportItem support={support} key={support.tag + support.title} />
+          ))}
+        </ul>
+      </div>
+    </article>
+  );
+}
+
+export default function CoursePlanTimeline({
+  type,
+}: {
+  type: CoursePlanTypeId;
+}) {
+  return (
+    <div className="cpw">
+      <FlowOverview />
+      {WEEK_PLANS[type].map((plan) => {
+        const month = weekMonth(plan.week);
+        const startsMonth =
+          plan.week === 1 || month !== weekMonth(plan.week - 1);
+        return (
+          <Fragment key={plan.week}>
+            {startsMonth && <h5 className="cpw-month">{month}</h5>}
+            {plan.week === 1 && <PrestartRow />}
+            <WeekCard plan={plan} />
+          </Fragment>
+        );
+      })}
     </div>
   );
 }

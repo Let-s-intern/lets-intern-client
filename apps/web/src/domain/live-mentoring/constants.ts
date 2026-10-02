@@ -24,6 +24,15 @@ import type { LiveMentorSort } from '@/api/live-mentoring/liveMentoring';
 export const SHOW_LIVE_MENTORING_NAV = false;
 
 /**
+ * 메인 헤더(GNB)에만 1:1 LIVE 멘토링과 렛츠커리어 멘토를 먼저 연다.
+ *
+ * 헤더 링크의 목적지인 `/program?catalog=mentoring` 목록과 카탈로그 「멘토링」 탭도
+ * 이 값을 본다. 열지 않으면 헤더 링크가 일반 프로그램 목록으로 떨어진다.
+ * 사이드 메뉴·푸터·카테고리 드롭다운·마이페이지는 `SHOW_LIVE_MENTORING_NAV` 를 그대로 본다.
+ */
+export const SHOW_LIVE_MENTORING_HEADER_NAV = true;
+
+/**
  * 카테고리 한글 라벨 매핑.
  * 공유 스키마에는 enum 값만 존재하므로 라벨은 UI 레이어(web 도메인)에서 정의한다.
  * (mentor 앱 `pages/live-mentoring/constants.ts` 와 동일 규칙 — 앱별 중복 허용)
@@ -32,6 +41,9 @@ export const CATEGORY_LABELS: Record<LiveMentoringCategory, string> = {
   PERSONAL_STATEMENT: '자기소개서',
   RESUME: '이력서',
   PORTFOLIO: '포트폴리오',
+  CAREER_COFFEE_CHAT: '커리어 커피챗',
+  INTERVIEW: '면접 준비, 모의 면접',
+  EXPERIENCE: '경험 정리',
 };
 
 /** 필터 사이드바에 노출할 카테고리 순서. */
@@ -39,6 +51,9 @@ export const CATEGORY_FILTER_ORDER: LiveMentoringCategory[] = [
   'PERSONAL_STATEMENT',
   'RESUME',
   'PORTFOLIO',
+  'CAREER_COFFEE_CHAT',
+  'INTERVIEW',
+  'EXPERIENCE',
 ];
 
 /**

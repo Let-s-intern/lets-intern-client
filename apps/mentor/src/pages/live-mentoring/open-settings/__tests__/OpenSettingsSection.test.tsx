@@ -201,19 +201,19 @@ describe('OpenSettingsSection — 대표 경력 지정(전용 API 로 즉시 저
 });
 
 describe('OpenSettingsSection — 진행시간(다중) → 최저가', () => {
-  it('초기 30분이면 35,000원을 표기한다', () => {
+  it('초기 30분이면 39,000원을 표기한다', () => {
     renderPage({ durations: [30] });
-    expect(screen.getAllByText('35,000원').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('39,000원').length).toBeGreaterThan(0);
   });
 
   it('여러 진행시간이면 최저가, 하나만 남기면 그 가격으로 갱신된다', () => {
     renderPage({ durations: [30] });
 
     fireEvent.click(screen.getByRole('button', { name: '60분' }));
-    expect(screen.getAllByText('35,000원').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('39,000원').length).toBeGreaterThan(0);
 
     fireEvent.click(screen.getByRole('button', { name: '30분' }));
-    expect(screen.getAllByText('60,000원').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('69,000원').length).toBeGreaterThan(0);
   });
 
   it('가격 입력 UI(number/text 가격 필드)가 없다', () => {
@@ -315,6 +315,39 @@ describe('OpenSettingsSection — 저장(제목·타입·진행시간)', () => {
     const payload = saveMock.mock.calls[0][0] as LiveMentoringSettingsUpdate;
     expect(payload.categories).toEqual(['PERSONAL_STATEMENT', 'RESUME']);
     expect(payload.durations).toEqual(baseSettings.durations);
+  });
+
+  // LC-3336 — 유형이 6개로 늘었고, 동시 선택 상한은 원래 없다.
+  it('타입 선택지 6개를 모두 고르면 6개 전부 payload 에 담긴다', async () => {
+    renderPage({ categories: ['PERSONAL_STATEMENT'] });
+
+    const typeSection = screen
+      .getByRole('heading', { name: '타입 (다중 선택)' })
+      .closest('section') as HTMLElement;
+    const options = within(typeSection).getAllByRole('button');
+    expect(options.map((option) => option.textContent)).toEqual([
+      '자기소개서',
+      '이력서',
+      '포트폴리오',
+      '커리어 커피챗',
+      '면접 준비, 모의 면접',
+      '경험 정리',
+    ]);
+
+    options
+      .filter((option) => option.getAttribute('aria-pressed') === 'false')
+      .forEach((option) => fireEvent.click(option));
+    await 저장_버튼을_누른다();
+
+    const payload = saveMock.mock.calls[0][0] as LiveMentoringSettingsUpdate;
+    expect(payload.categories).toEqual([
+      'PERSONAL_STATEMENT',
+      'RESUME',
+      'PORTFOLIO',
+      'CAREER_COFFEE_CHAT',
+      'INTERVIEW',
+      'EXPERIENCE',
+    ]);
   });
 
   it('진행시간만 바꿔도 저장이 나간다', async () => {

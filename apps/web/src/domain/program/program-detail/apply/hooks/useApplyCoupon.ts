@@ -1,6 +1,8 @@
-import { ApiError } from '@letscareer/api';
-import axios from '@/utils/axios';
+import { CouponDiscountType } from '@/api/coupon/coupon';
 import { ICouponForm } from '@/types/interface';
+import axios from '@/utils/axios';
+import { getCouponDiscountAmount } from '@/utils/couponDiscount';
+import { ApiError } from '@letscareer/api';
 import { useState } from 'react';
 
 const ERROR_MESSAGES: Record<string, string> = {
@@ -14,10 +16,16 @@ const ERROR_MESSAGES: Record<string, string> = {
 interface Params {
   programType: string;
   maxAmount: number;
+  salePrice?: number;
   setCoupon: (coupon: ICouponForm) => void;
 }
 
-export function useApplyCoupon({ programType, maxAmount, setCoupon }: Params) {
+export function useApplyCoupon({
+  programType,
+  maxAmount,
+  salePrice,
+  setCoupon,
+}: Params) {
   const [applyError, setApplyError] = useState<string | null>(null);
 
   const applyCoupon = async (code: string) => {
@@ -26,13 +34,19 @@ export function useApplyCoupon({ programType, maxAmount, setCoupon }: Params) {
       const res = await axios.get('/coupon', {
         params: { code, programType: programType.toUpperCase() },
       });
-      const { couponId, discount } = res.data.data as {
+      const { couponId, discount, discountType } = res.data.data as {
         couponId: number;
         discount: number;
+        discountType?: CouponDiscountType;
       };
+      const amount = getCouponDiscountAmount({
+        discount,
+        discountType,
+        salePrice,
+      });
       setCoupon({
         id: couponId,
-        price: discount === -1 ? maxAmount : Math.min(discount, maxAmount),
+        price: discount === -1 ? maxAmount : Math.min(amount, maxAmount),
       });
     } catch (error) {
       const errorCode = (error as ApiError).code;

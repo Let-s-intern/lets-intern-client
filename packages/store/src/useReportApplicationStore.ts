@@ -13,6 +13,7 @@ export interface ReportApplication {
   couponId: number | null;
   couponCode: string;
   couponDiscount: number;
+  couponDiscountType?: 'AMOUNT' | 'RATE';
   paymentKey: string | null;
   orderId: string | null;
   amount: number | null;

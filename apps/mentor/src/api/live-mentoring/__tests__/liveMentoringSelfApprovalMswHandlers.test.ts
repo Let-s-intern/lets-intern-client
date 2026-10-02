@@ -56,8 +56,8 @@ describe('POST /mentor/live-mentoring/openings — 자가승인 개설', () => {
     );
     expect(opened).toHaveLength(1);
     expect(opened[0].durationPrices).toEqual([
-      { duration: 30, price: 35000 },
-      { duration: 60, price: 60000 },
+      { duration: 30, price: 39000 },
+      { duration: 60, price: 69000 },
     ]);
     // 개설 이력에도 모집 기간은 더 이상 실리지 않는다.
     expect(opened[0]).not.toHaveProperty('feedbackStartDate');

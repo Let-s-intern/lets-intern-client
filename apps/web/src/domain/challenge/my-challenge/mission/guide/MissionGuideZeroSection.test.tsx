@@ -163,4 +163,42 @@ describe('MissionGuideZeroSection 미션 자료 열람 기록', () => {
     expect(openSpy).toHaveBeenCalledWith('https://a', '_blank');
     expect(postMock).not.toHaveBeenCalled();
   });
+
+  it('미션 템플릿을 열면 TEMPLATE 으로 기록하고 contentId 는 넣지 않는다', async () => {
+    renderSection({ templateLink: 'https://t' });
+    await clickLink('미션 템플릿');
+
+    expect(openSpy).toHaveBeenCalledWith('https://t', '_blank');
+    expect(openSpy.mock.invocationCallOrder[0]).toBeLessThan(
+      postMock.mock.invocationCallOrder[0],
+    );
+    expect(lastBody()).toEqual({
+      challengeId: 12,
+      missionId: 34,
+      contentType: 'TEMPLATE',
+      contentTitle: '미션 템플릿',
+    });
+  });
+
+  it('templateLink 가 없으면 미션 템플릿 버튼이 없다', () => {
+    renderSection({ templateLink: null });
+
+    expect(
+      screen.queryByRole('button', { name: /미션 템플릿/ }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('templateLink 와 vodLink 가 모두 있으면 미션 템플릿 버튼과 OT 영상이 함께 보인다', () => {
+    renderSection({
+      templateLink: 'https://t',
+      vodLink: 'https://www.youtube.com/watch?v=abc123',
+    });
+
+    expect(
+      screen.getByRole('button', { name: /미션 템플릿/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'OT 영상' }),
+    ).toBeInTheDocument();
+  });
 });

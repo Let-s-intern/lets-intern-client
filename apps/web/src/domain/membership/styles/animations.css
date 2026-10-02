@@ -15,7 +15,12 @@
 
 /* scroll reveal */
 @media (prefers-reduced-motion: no-preference) {
-  .membership-root .rv {
+  /*
+   * 기본값은 **보이는 상태**다. 자바스크립트가 `rv-armed` 를 붙인 뒤에야 숨는다.
+   * 예전에는 `.rv` 자체가 opacity:0 이라, 관찰자가 발화하지 않는 환경(백그라운드 탭,
+   * 일부 인앱 브라우저)에서 섹션이 통째로 빈 화면으로 남았다.
+   */
+  .membership-root .rv.rv-armed {
     opacity: 0;
     transform: translateY(26px);
     transition:
@@ -23,14 +28,14 @@
       transform 0.6s cubic-bezier(0.25, 0.6, 0.3, 1);
     transition-delay: var(--rvd, 0s);
   }
-  .membership-root .rv.in {
+  .membership-root .rv.rv-armed.in {
     opacity: 1;
     transform: none;
   }
-  .membership-root .pcard.feat.rv {
+  .membership-root .pcard.feat.rv.rv-armed {
     transform: translateY(12px);
   }
-  .membership-root .pcard.feat.rv.in {
+  .membership-root .pcard.feat.rv.rv-armed.in {
     transform: translateY(-14px);
   }
   /* hero entrance (class-triggered; always ends visible) */
@@ -131,5 +136,39 @@
   }
   .membership-root .bar > i {
     transition: width 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+/* 진단 결과 막대 — 결과가 나타날 때 0 에서 점수까지 늘어난다 (PRD 4.5).
+   최종 폭은 인라인 스타일이 들고 있고 여기서는 시작점만 0 으로 되돌린다. 그래서
+   prefers-reduced-motion 에서는 이 블록이 통째로 빠져 곧장 최종 폭으로 그려진다. */
+@media (prefers-reduced-motion: no-preference) {
+  .membership-root .checkup-bar-fill {
+    animation: checkupBarGrow 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @keyframes checkupBarGrow {
+    from {
+      width: 0;
+    }
+  }
+}
+
+/* 합격 사례 — 왼쪽으로 끊김 없이 흐른다.
+   목록을 두 벌 이어 붙이고 한 벌 폭(50%)만큼 밀면 원위치라 이음매가 보이지 않는다.
+   목록 수가 바뀌어도 폭은 % 라 그대로 맞는다. 마우스를 올리면 멈춘다. */
+@media (prefers-reduced-motion: no-preference) {
+  .membership-root .marquee-track {
+    animation: marqueeLeft 40s linear infinite;
+  }
+  .membership-root .marquee:hover .marquee-track {
+    animation-play-state: paused;
+  }
+  @keyframes marqueeLeft {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
   }
 }

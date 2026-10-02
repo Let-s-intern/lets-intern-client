@@ -52,7 +52,7 @@ describe('PlanOptionRadioGroup', () => {
     ).toBeInTheDocument();
   });
 
-  it('추천 뱃지는 첫 선택지에만 있다', () => {
+  it('추천 뱃지는 가장 높은 플랜인 마지막 선택지에만 있다', () => {
     render(
       <PlanOptionRadioGroup
         options={options}
@@ -62,8 +62,8 @@ describe('PlanOptionRadioGroup', () => {
     );
 
     const [first, second] = screen.getAllByRole('radio');
-    expect(within(cardOf(first)).getByText('추천')).toBeInTheDocument();
-    expect(within(cardOf(second)).queryByText('추천')).not.toBeInTheDocument();
+    expect(within(cardOf(first)).queryByText('추천')).not.toBeInTheDocument();
+    expect(within(cardOf(second)).getByText('추천')).toBeInTheDocument();
   });
 
   it('선택한 플랜만 aria-checked 이고 카드·금액이 강조된다', () => {

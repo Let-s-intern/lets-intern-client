@@ -4,6 +4,8 @@ import { useState } from 'react';
 
 import axios from '@/utils/axios';
 
+export type CouponDiscountType = 'AMOUNT' | 'RATE';
+
 export interface CouponItem {
   couponId: number;
   couponType: 'PARTNERSHIP' | 'EVENT' | 'GRADE';
@@ -11,6 +13,7 @@ export interface CouponItem {
   name: string;
   code: string;
   discount: number;
+  discountType?: CouponDiscountType;
   time: number;
   remainTime: number;
   startDate: string;

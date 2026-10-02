@@ -3,6 +3,8 @@
 import { useUserQuery } from '@/api/user/user';
 import BackHeader from '@/common/header/BackHeader';
 import LoadingContainer from '@/common/loading/LoadingContainer';
+import { generateOrderId } from '@/lib/order';
+import { challengePricePlanToText } from '@/utils/convert';
 import { loadTossPayments } from '@tosspayments/tosspayments-sdk';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -99,14 +101,17 @@ const PlanUpgradePaymentContent = ({
     setErrorMessage(null);
 
     const planSearch = `plan=${option.planType}`;
-    const orderName =
-      `${upgrade.challengeTitle ?? ''} ${option.planType} 플랜 업그레이드`
-        .trim()
-        .slice(0, ORDER_NAME_MAX_LENGTH);
+    // 토스 결제 내역에서 어떤 챌린지를 어느 플랜으로 올렸는지 보이게 한다. 길면 챌린지명만 줄여 플랜 부분을 남긴다
+    const planChangeText = ` ${challengePricePlanToText[upgrade.currentPlan.planType]} -> ${challengePricePlanToText[option.planType]}`;
+    const orderName = `${(upgrade.challengeTitle ?? '').slice(
+      0,
+      ORDER_NAME_MAX_LENGTH - planChangeText.length,
+    )}${planChangeText}`.trim();
 
     try {
       await widgets.requestPayment({
-        orderId: `plan-upgrade-${upgrade.applicationId}-${Date.now()}`,
+        // 일반 결제와 같은 형식의 주문번호. 서버는 주문번호 형식을 보지 않는다
+        orderId: generateOrderId(),
         orderName,
         successUrl: `${window.location.origin}${upgradeHref}/result?${planSearch}`,
         failUrl: `${window.location.origin}${upgradeHref}/fail?${planSearch}`,

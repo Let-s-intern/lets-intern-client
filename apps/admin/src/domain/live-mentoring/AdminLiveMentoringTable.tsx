@@ -5,7 +5,6 @@ import {
   useAdminLiveMentoringListQuery,
   useCloseLiveMentoringOpeningMutation,
 } from '@/api/live-mentoring/liveMentoring';
-import type { LiveMentoringStatus } from '@/api/live-mentoring/liveMentoringSchema';
 import MuiPagination from '@/domain/program/pagination/MuiPagination';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import ConfirmActionDialog, {
@@ -16,10 +15,9 @@ import {
   CLOSE_REASON_LABELS,
   durationPricesLabel,
   formatDateTime,
+  OPENING_BADGE,
   publicDetailUrl,
-  STATUS_CLASSES,
-  STATUS_FILTERS,
-  STATUS_LABELS,
+  OPENING_FILTERS,
 } from './constants';
 
 const PAGE_SIZE = 20;
@@ -54,14 +52,12 @@ const AdminLiveMentoringTable = ({
   onSelectMentor,
 }: AdminLiveMentoringTableProps = {}) => {
   const { snackbar } = useAdminSnackbar();
-  const [status, setStatus] = useState<LiveMentoringStatus | undefined>(
-    undefined,
-  );
+  const [opened, setOpened] = useState<boolean | undefined>(undefined);
   const [page, setPage] = useState(1);
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
 
   const { data, isLoading, isError } = useAdminLiveMentoringListQuery({
-    status,
+    opened,
     page,
     size: PAGE_SIZE,
   });
@@ -70,8 +66,8 @@ const AdminLiveMentoringTable = ({
     useCloseLiveMentoringOpeningMutation();
   const isMutating = isClosing;
 
-  const handleFilterChange = (next: LiveMentoringStatus | undefined) => {
-    setStatus(next);
+  const handleFilterChange = (next: boolean | undefined) => {
+    setOpened(next);
     setPage(1);
   };
 
@@ -95,8 +91,8 @@ const AdminLiveMentoringTable = ({
   return (
     <div className="flex flex-col gap-4">
       <div role="group" aria-label="상태 필터" className="flex flex-wrap gap-2">
-        {STATUS_FILTERS.map((filter) => {
-          const active = status === filter.value;
+        {OPENING_FILTERS.map((filter) => {
+          const active = opened === filter.value;
           return (
             <button
               key={filter.label}
@@ -160,6 +156,10 @@ const AdminLiveMentoringTable = ({
             ) : (
               rows.map((row) => {
                 const opening = row.currentOpening;
+                const badge =
+                  opening?.status === 'OPEN'
+                    ? OPENING_BADGE.open
+                    : OPENING_BADGE.notOpen;
                 return (
                   <tr
                     key={row.liveMentoringId}
@@ -195,9 +195,9 @@ const AdminLiveMentoringTable = ({
                     </td>
                     <td className={bodyCellClass}>
                       <span
-                        className={`whitespace-nowrap rounded px-2 py-0.5 text-xs font-medium ${STATUS_CLASSES[row.status]}`}
+                        className={`whitespace-nowrap rounded px-2 py-0.5 text-xs font-medium ${badge.className}`}
                       >
-                        {STATUS_LABELS[row.status]}
+                        {badge.label}
                       </span>
                     </td>
                     <td className={`${bodyCellClass} whitespace-nowrap`}>

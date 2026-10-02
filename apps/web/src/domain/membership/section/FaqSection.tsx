@@ -8,7 +8,7 @@ export default function FaqSection() {
 
   return (
     <section className="faq">
-      <div className="wrap">
+      <div className="wrap rv">
         <div className="sec-head">
           <span className="eyebrow">{FAQ_HEAD.badge}</span>
           <h2>{FAQ_HEAD.title}</h2>

@@ -7,12 +7,15 @@ import {
   useGetAdminUserCareerQuery,
   usePostAdminCareerMutation,
 } from '@/api/career/career';
+import { UserCareerType } from '@/api/career/careerSchema';
 import { uploadFile } from '@/api/file';
 import {
   AdminUserDetailQueryKey,
   useAdminUserDetailQuery,
   usePatchUserAdminMutation,
 } from '@/api/user/user';
+import CareerForm from '@/common/career/CareerForm';
+import { DEFAULT_CAREER } from '@/common/career/constants';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import ProfileImageUploadModal from '@/domain/admin/user/mentor-detail/ui/ProfileImageUploadModal';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
@@ -89,6 +92,7 @@ export default function AdminMentorDetailPage() {
 
   const postCareer = usePostAdminCareerMutation(mentorId);
   const deleteCareer = useDeleteAdminCareerMutation(mentorId);
+  const [isCareerFormOpen, setIsCareerFormOpen] = useState(false);
 
   const [form, setForm] = useState<BasicFormData>(INITIAL_FORM);
 
@@ -168,28 +172,17 @@ export default function AdminMentorDetailPage() {
     }));
   };
 
-  const handleAddCareer = () => {
+  const handleAddCareer = (career: UserCareerType) => {
     const formData = new FormData();
     formData.append(
       'requestDto',
-      new Blob(
-        [
-          JSON.stringify({
-            company: '회사명',
-            job: '직무',
-            employmentType: '정규직',
-            startDate: new Date().toISOString().slice(0, 7),
-            endDate: null,
-            field: null,
-            position: null,
-            department: null,
-          }),
-        ],
-        { type: 'application/json' },
-      ),
+      new Blob([JSON.stringify(career)], { type: 'application/json' }),
     );
     postCareer.mutate(formData, {
-      onSuccess: () => snackbar('경력이 추가되었습니다.'),
+      onSuccess: () => {
+        setIsCareerFormOpen(false);
+        snackbar('경력이 추가되었습니다.');
+      },
       onError: () => snackbar('경력 추가에 실패했습니다.'),
     });
   };
@@ -428,20 +421,27 @@ export default function AdminMentorDetailPage() {
         {/* 경력 사항 */}
         <div className="flex flex-col gap-8">
           <div className="border-neutral-80 rounded-lg border p-6">
-            <div className="mb-2 flex items-center justify-between">
+            <div className="mb-4 flex items-center justify-between">
               <h2 className="text-medium18 font-semibold">경력사항</h2>
               <Button
                 variant="outlined"
                 size="small"
-                onClick={handleAddCareer}
-                disabled={postCareer.isPending}
+                onClick={() => setIsCareerFormOpen(true)}
+                disabled={isCareerFormOpen}
               >
                 경력 추가 +
               </Button>
             </div>
-            <p className="text-xxsmall12 text-neutral-40 mb-4">
-              멘토가 직접 등록한 경력은 수정/삭제할 수 없습니다.
-            </p>
+
+            {isCareerFormOpen ? (
+              <div className="mb-4">
+                <CareerForm
+                  initialCareer={DEFAULT_CAREER}
+                  handleCancel={() => setIsCareerFormOpen(false)}
+                  handleSubmit={handleAddCareer}
+                />
+              </div>
+            ) : null}
 
             {careers.length === 0 ? (
               <div className="text-xsmall14 text-neutral-40 py-8 text-center">
@@ -450,7 +450,7 @@ export default function AdminMentorDetailPage() {
             ) : (
               <div className="flex max-h-[28rem] flex-col gap-3 overflow-y-auto">
                 {careers.map((career, index) => {
-                  const isDeletable = career.isAddedByAdmin && career.id;
+                  const isDeletable = career.id !== null;
                   const hasDetails =
                     career.field || career.position || career.department;
                   return (

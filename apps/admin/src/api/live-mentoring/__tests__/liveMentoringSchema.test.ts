@@ -184,6 +184,7 @@ describe('adminLiveMentoringParticipantListSchema', () => {
       refunded: false,
       refundAmount: 0,
       createDate: '2026-08-15T10:00:00',
+      paidAt: '2026-08-15T10:03:00',
       ...overrides,
     };
   }
@@ -202,5 +203,25 @@ describe('adminLiveMentoringParticipantListSchema', () => {
       pageInfo: { pageNum: 0, pageSize: 20, totalElements: 1, totalPages: 1 },
     });
     expect(parsed.participantList[0].couponName).toBeNull();
+  });
+
+  it('결제 시각이 있으면 그대로 파싱한다', () => {
+    const parsed = adminLiveMentoringParticipantListSchema.parse({
+      participantList: [makeParticipant()],
+      pageInfo: { pageNum: 0, pageSize: 20, totalElements: 1, totalPages: 1 },
+    });
+    expect(parsed.participantList[0].paidAt).toBe('2026-08-15T10:03:00');
+  });
+
+  it('결제 시각이 null 이거나 키가 없어도 파싱된다', () => {
+    const withoutKey = makeParticipant();
+    delete (withoutKey as Record<string, unknown>).paidAt;
+
+    const parsed = adminLiveMentoringParticipantListSchema.parse({
+      participantList: [makeParticipant({ paidAt: null }), withoutKey],
+      pageInfo: { pageNum: 0, pageSize: 20, totalElements: 2, totalPages: 1 },
+    });
+    expect(parsed.participantList[0].paidAt).toBeNull();
+    expect(parsed.participantList[1].paidAt).toBeUndefined();
   });
 });

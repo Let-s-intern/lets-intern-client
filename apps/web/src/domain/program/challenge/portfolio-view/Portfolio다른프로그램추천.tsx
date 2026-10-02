@@ -68,7 +68,7 @@ const Portfolio다른프로그램추천 = ({
 
   const progress = [
     { index: 1, title: '신청 완료' },
-    { index: 2, title: '챌린지 대시보드 및\n오픈채팅방 초대' },
+    { index: 2, title: '챌린지 대시보드 및\n슬랙 채널 초대' },
     { index: 3, title: 'OT' },
     { index: 4, title: '회차별 챌린지 가이드북\n및 미션 템플릿 제공' },
     { index: 5, title: '회차별 미션 수행' },
@@ -112,7 +112,7 @@ const Portfolio다른프로그램추천 = ({
     },
     {
       title: '진행 방식',
-      content: '100% 온라인(챌린지 대시보드, 오픈채팅방)',
+      content: '100% 온라인(챌린지 대시보드, 슬랙 채널)',
     },
   ];
 
@@ -437,7 +437,7 @@ const Portfolio다른프로그램추천 = ({
                   step: 'Step 3-3',
                   title: '챌린지 참여 - 미션 인증',
                   description:
-                    '수행한 미션을 대시보드에 업로드하고 챌린지 오픈채팅방에서 인증을 완료해요.',
+                    '수행한 미션을 대시보드에 업로드하고 챌린지 슬랙 채널에서 인증을 완료해요.',
                   src: '/images/3-3-프로그램 참여-미션 인증.gif',
                 },
                 {

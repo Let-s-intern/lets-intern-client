@@ -20,6 +20,7 @@ import {
   rowMenteeName,
   rowMentorName,
   rowProgramTitle,
+  toLiveSpecInput,
   type ReservationRow,
 } from '../utils/reservationRow';
 import type { SortKey, SortState } from '../utils/sortReservations';
@@ -39,9 +40,8 @@ const ROW_TONE_CLASS: Record<RowTone, string> = {
 /**
  * 1대1에 존재하지 않는 값을 채우는 문구.
  *
- * 빈 칸으로 두면 "없음"이 아니라 "조회가 빠졌다"로 읽힌다. 뱃지는 챌린지 라이브
- * 피드백에만 있는 개념이라 1대1 행에서는 이 말로 채운다. 예약 변경은 결제
- * 완료건이 아니거나 슬롯이 없으면(아직 확정되지 않은 신청) 같은 이유로 쓴다.
+ * 빈 칸으로 두면 "없음"이 아니라 "조회가 빠졌다"로 읽힌다. 예약 변경은 결제
+ * 완료건이 아니거나 슬롯이 없으면(아직 확정되지 않은 신청) 이 말로 채운다.
  */
 const NOT_APPLICABLE = '해당 없음';
 
@@ -185,16 +185,19 @@ function ChallengeRow({
  * 1대1 라이브 멘토링 한 행.
  *
  * 출석은 챌린지 라이브 피드백과 같은 값·같은 단어(`attendanceLabel`)로 보여준다.
- * 뱃지는 세션 진행 단계까지 함께 보는 챌린지 전용 요약이라 그 자리는 `해당 없음`
- * 으로 남긴다. 예약 변경은 결제 완료(CONFIRMED)건이고 슬롯을 점유하고 있을 때만
+ * 뱃지도 챌린지와 같은 진리표로 판정한다. 예약 상태 enum 만 달라 `toLiveSpecInput`
+ * 으로 옮겨 넘기고, 슬롯이 없으면 진행 시점을 가를 수 없어 `-` 로 둔다.
+ * 예약 변경은 결제 완료(CONFIRMED)건이고 슬롯을 점유하고 있을 때만
  * 연다 — 그 밖의 상태는 옮길 일정 자체가 없다.
  */
 function LiveMentoringRow({
   row,
+  now,
   onView,
   onReschedule,
 }: {
   row: Extract<ReservationRow, { kind: 'LIVE_MENTORING' }>;
+  now: Date;
   onView: () => void;
   onReschedule: () => void;
 }) {
@@ -203,9 +206,22 @@ function LiveMentoringRow({
     reservation.reservationStartAt != null &&
     reservation.reservationEndAt != null;
   const canReschedule = hasSlot && reservation.status === 'CONFIRMED';
+  const specInput = toLiveSpecInput(reservation);
+  const spec = specInput ? resolveAdminVoLiveSpec(specInput, now) : null;
+  /*
+    챌린지 행과 같은 규칙으로 행 배경을 칠한다 — 진행 중·완료·미진행 조합을
+    한눈에 가르려는 표시라 두 종류가 달리 칠해지면 오히려 헷갈린다.
+    슬롯이 없어 진행 시점을 모르는 행(spec 이 null)은 칠하지 않는다.
+  */
+  const rowToneClassName = spec ? ROW_TONE_CLASS[resolveRowTone(spec)] : '';
 
   return (
-    <tr className="border-neutral-80 border-b last:border-b-0">
+    <tr
+      className={twMerge(
+        'border-neutral-80 border-b last:border-b-0',
+        rowToneClassName,
+      )}
+    >
       <td className={tdClassName}>
         {hasSlot ? (
           formatReservationDateTime(
@@ -243,12 +259,10 @@ function LiveMentoringRow({
         {attendanceLabel(reservation.menteeStatus)}
       </td>
       <td className={twMerge(tdClassName, 'text-center')}>
-        {/* 뱃지는 세션 진행 단계까지 함께 보는 챌린지 전용 요약이다. 1대1은
-            출석 값만 있고 그 요약을 만들 근거(진행 단계)가 없다. */}
-        <NotApplicableCell />
+        <StatusBadge badge={spec?.mentorBadge ?? null} />
       </td>
       <td className={twMerge(tdClassName, 'text-center')}>
-        <NotApplicableCell />
+        <StatusBadge badge={spec?.menteeBadge ?? null} />
       </td>
       <td className={twMerge(tdClassName, 'text-center')}>
         {formatApplyDateTime(rowCreateDate(row))}
@@ -362,6 +376,7 @@ export default function ReservationListView({
               <LiveMentoringRow
                 key={rowKey(row)}
                 row={row}
+                now={now}
                 onView={() => onView(row)}
                 onReschedule={() => onLiveMentoringReschedule(row.reservation)}
               />

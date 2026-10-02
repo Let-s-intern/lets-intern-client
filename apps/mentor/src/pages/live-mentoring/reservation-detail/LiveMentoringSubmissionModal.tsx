@@ -218,9 +218,11 @@ const AttachmentSection = ({
       );
     }
 
-    if (attachmentType === 'FILE') {
-      return <AttachmentNotice>파일 첨부됨 — 준비 중</AttachmentNotice>;
-    }
+    /*
+      FILE 도 URL 과 같은 자리로 내려온다 — 서버가 `attachmentType` 이 `FILE` 이면
+      `attachmentUrl` 에 파일 주소를 채워 보낸다(공유 동의한 건만). 갈리는 것은
+      링크의 생김새뿐이라 아래 링크 경로를 그대로 탄다.
+     */
 
     // 주소가 비었거나 http(s) 가 아니면 링크를 만들지 않는다. 링크로 만드는 순간
     // 스킴이 그대로 실행되므로, 여는 대신 못 연다고 알린다.
@@ -233,13 +235,22 @@ const AttachmentSection = ({
     return (
       <>
         <div className="flex flex-wrap items-center gap-2">
+          {/*
+            파일은 저장, 그 밖(멘티가 적어 낸 노션 등)은 새 탭이다.
+
+            저장을 만드는 것은 `download` 속성이 아니라 서버가 서명 URL 에 실은
+            `Content-Disposition: attachment` 다 — 교차 출처 링크의 `download` 는
+            브라우저가 무시하므로 붙여도 pdf 가 그냥 열린다. 같은 탭으로 두는 것도
+            그래서다. 첨부 응답은 문서를 그리지 않아 새 탭이면 빈 탭만 남는다.
+          */}
           <a
             href={attachmentUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+            {...(attachmentType === 'FILE'
+              ? {}
+              : { target: '_blank', rel: 'noopener noreferrer' })}
             className={feedbackModalDesign.panelEntryButton}
           >
-            새 탭에서 열기
+            {attachmentType === 'FILE' ? '저장하기' : '새 탭에서 열기'}
           </a>
           {showEmbed && (
             <button

@@ -7,6 +7,7 @@ interface Props {
   label: string;
   code?: number;
   count?: number;
+  allHint?: string;
   onToggleCheck: () => void;
   children?: ReactNode;
 }
@@ -17,6 +18,7 @@ export default function ExpandableRow({
   label,
   code,
   count,
+  allHint,
   onToggleCheck,
   children,
 }: Props) {
@@ -72,8 +74,8 @@ export default function ExpandableRow({
         <>
           {mode === 'all' && (
             <p className="text-xxsmall12 px-4 pt-3 text-blue-500">
-              {label} 전체 선택 상태입니다. 향후 추가되는 {label}도 자동
-              포함됩니다.
+              {allHint ??
+                `${label} 전체 선택 상태입니다. 향후 추가되는 ${label}도 자동 포함됩니다.`}
             </p>
           )}
           {children}

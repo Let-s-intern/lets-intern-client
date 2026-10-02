@@ -1,5 +1,7 @@
 import { Checkbox, Chip, FormControlLabel, Typography } from '@mui/material';
 
+import type { ChallengePricePlan } from '@/schema';
+
 import { useCouponTargetOptions } from '../hooks/useCouponTargetOptions';
 import { useCouponTargetState } from '../hooks/useCouponTargetState';
 import ExpandableRow from '../ui/ExpandableRow';
@@ -40,6 +42,37 @@ function ProgramCheckboxList({
   );
 }
 
+function PlanCheckboxList({
+  plans,
+  isChecked,
+  disabled = false,
+  onToggle,
+}: {
+  plans: { challengePricePlanType: ChallengePricePlan; desc: string }[];
+  isChecked: (plan: ChallengePricePlan) => boolean;
+  disabled?: boolean;
+  onToggle: (plan: ChallengePricePlan) => void;
+}) {
+  return (
+    <div className="grid grid-cols-2 gap-y-1">
+      {plans.map((plan) => (
+        <FormControlLabel
+          key={plan.challengePricePlanType}
+          control={
+            <Checkbox
+              checked={isChecked(plan.challengePricePlanType)}
+              disabled={disabled}
+              onChange={() => onToggle(plan.challengePricePlanType)}
+              size="small"
+            />
+          }
+          label={plan.desc}
+        />
+      ))}
+    </div>
+  );
+}
+
 interface Props {
   value: import('../hooks/useCouponTargetState').TargetCondition[];
   onChange: (
@@ -61,7 +94,10 @@ const CouponTargetSection = ({ value, onChange }: Props) => {
   } = useCouponTargetState(value, onChange, {
     challengeTypeList: options?.challengeTypeList ?? [],
     liveList: options?.liveList ?? [],
+    challengePricePlanTypeList: options?.challengePricePlanTypeList ?? [],
   });
+
+  const planTypeList = options?.challengePricePlanTypeList ?? [];
 
   return (
     <div>
@@ -128,15 +164,58 @@ const CouponTargetSection = ({ value, onChange }: Props) => {
                           challenge.toggleType(t.challengeType)
                         }
                       >
-                        <div className="border-t border-gray-50 px-3 py-2 pl-6">
-                          <ProgramCheckboxList
-                            items={t.challengeList}
-                            checkedIds={challenge.checkedPrograms}
-                            disabled={typeMode === 'all'}
-                            onToggle={(pid) =>
-                              challenge.toggleProgram(t.challengeType, pid)
-                            }
-                          />
+                        <div className="space-y-1.5 border-t border-gray-50 px-3 py-2 pl-6">
+                          {t.challengeList.map((p) => {
+                            const programMode = challenge.programMode(
+                              t.challengeType,
+                              p.id,
+                            );
+                            const coveredByType = typeMode === 'all';
+                            const planCount = planTypeList.filter((pl) =>
+                              challenge.planChecked(
+                                p.id,
+                                pl.challengePricePlanType,
+                              ),
+                            ).length;
+
+                            return (
+                              <div
+                                key={p.id}
+                                className={`rounded-xxs overflow-hidden border transition-colors ${programMode !== 'none' ? 'border-blue-200' : 'border-gray-200'}`}
+                              >
+                                <ExpandableRow
+                                  mode={programMode}
+                                  disabled={coveredByType}
+                                  label={p.title}
+                                  count={planCount}
+                                  allHint="전체 플랜 대상입니다. 특정 플랜만 발급하려면 아래에서 플랜을 선택하세요."
+                                  onToggleCheck={() =>
+                                    challenge.toggleProgram(
+                                      t.challengeType,
+                                      p.id,
+                                    )
+                                  }
+                                >
+                                  <div className="border-t border-gray-50 px-3 py-2 pl-6">
+                                    <PlanCheckboxList
+                                      plans={planTypeList}
+                                      isChecked={(plan) =>
+                                        challenge.planChecked(p.id, plan)
+                                      }
+                                      disabled={coveredByType}
+                                      onToggle={(plan) =>
+                                        challenge.togglePlan(
+                                          t.challengeType,
+                                          p.id,
+                                          plan,
+                                        )
+                                      }
+                                    />
+                                  </div>
+                                </ExpandableRow>
+                              </div>
+                            );
+                          })}
                         </div>
                       </ExpandableRow>
                     </div>
