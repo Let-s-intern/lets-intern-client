@@ -456,6 +456,8 @@ export const getLiveIdPrimitiveSchema = z.object({
   mentorJob: z.string().optional().nullable(),
   mentorCareer: z.string().optional().nullable(),
   mentorIntroduction: z.string().optional().nullable(),
+  // 멘토 계정(user) id. 멘토 프로필 후기 집계 기준이며 위 표시용 멘토 정보와 별개다
+  mentorId: z.number().optional().nullable(),
   job: z.string().optional().nullable(),
   place: z.string().optional().nullable(),
   startDate: z.string().optional(),
@@ -523,6 +525,7 @@ export type CreateLiveReq = {
   mentorJob: string;
   mentorCareer: string;
   mentorIntroduction: string;
+  mentorId?: number;
   job: string;
   place: string;
   vod: boolean;
@@ -572,6 +575,7 @@ export type UpdateLiveReq = {
   mentorJob?: string;
   mentorCareer?: string;
   mentorIntroduction?: string;
+  mentorId?: number;
   job?: string;
   place?: string;
   vod?: boolean;
