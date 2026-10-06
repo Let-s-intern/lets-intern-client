@@ -2,6 +2,7 @@ import { PassFormInput } from '@/domain/all-in-one-pass/types';
 import BasicInfoSection from './BasicInfoSection';
 import CalendarSection from './CalendarSection';
 import DetailContentSection from './DetailContentSection';
+import ExtensionSection from './ExtensionSection';
 import ExternalLinkSection from './ExternalLinkSection';
 import FaqSection from './FaqSection';
 import PlanSection, { createEmptyPlan } from './PlanSection';
@@ -17,6 +18,7 @@ export const createInitialPassInput = (): PassFormInput => ({
   plans: [createEmptyPlan()],
   calendarEvents: [],
   externalLinks: [],
+  extensionOptions: [],
   detailContent: null,
   faqList: [],
 });
@@ -54,6 +56,10 @@ export default function PassForm({ input, patch }: Props) {
           onChange={(externalLinks) => patch({ externalLinks })}
         />
       </div>
+      <ExtensionSection
+        options={input.extensionOptions}
+        onChange={(extensionOptions) => patch({ extensionOptions })}
+      />
       <DetailContentSection
         initialContent={input.detailContent}
         onChange={(detailContent) => patch({ detailContent })}
