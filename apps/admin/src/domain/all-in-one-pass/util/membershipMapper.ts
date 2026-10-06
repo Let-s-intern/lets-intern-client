@@ -123,15 +123,6 @@ export const toFormInput = (detail: MembershipDetail): PassFormInput => {
     calendarEvents: blob.calendarEvents,
     externalLinks: blob.externalLinks,
     detailContent: blob.detailContent,
-    benefits: detail.benefitList.map((b) => ({
-      id: String(b.membershipBenefitId),
-      isVisible: true, // BE 미지원 — 노출 토글 보류
-      category: b.type ?? '',
-      thumbnailUrl: b.thumbnail ?? null,
-      title: b.title,
-      link: b.link ?? '',
-      coupon: null, // 멘토링 쿠폰은 혜택과 별개
-    })),
     // 이 패스에 연결된(노출) FAQ id — 체크박스 prefill
     faqList: detail.faqList.map((f) => f.id),
   };
@@ -166,7 +157,6 @@ export const toCreateDto = (input: PassFormInput) => ({
   periodDays: input.passDays,
   thumbnail: input.thumbnailUrl,
   isVisible: false, // 개설 시 기본 비노출
-  benefitList: input.benefits.map(benefitToDto),
   planList: input.plans.map(planToDto),
   faqList: input.faqList.map((faqId) => ({ faqId })), // 이 패스에 노출할 공통 FAQ
 });

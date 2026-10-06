@@ -64,9 +64,7 @@ export interface PassFormInput {
   externalLinks: PassExternalLink[];
   // 1.5 상세페이지 콘텐츠 (렉시컬 직렬화 JSON 문자열)
   detailContent: string | null;
-  // 1.6 혜택
-  benefits: PassBenefit[];
-  // 1.7 FAQ: 참고.질문/답변은 전 멤버십 공통 풀(/faq, type=MEMBERSHIP)에서 관리
+  // 1.6 FAQ: 질문/답변은 전 멤버십 공통 풀(/faq, type=MEMBERSHIP)에서 관리
   faqList: number[];
 }
 
@@ -85,7 +83,7 @@ export interface BenefitCouponSetting {
   couponCode?: string; // 생성된 쿠폰 코드
 }
 
-/** 1.6 혜택 한 개 */
+/** 혜택 한 개 */
 export interface PassBenefit {
   id: string; // 폼 로컬 식별자
   isVisible: boolean; // 행별 노출 토글

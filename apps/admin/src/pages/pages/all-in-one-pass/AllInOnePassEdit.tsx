@@ -3,10 +3,7 @@ import {
   useGetAllInOnePassDetailQuery,
 } from '@/api/all-in-one-pass/usePassDetail';
 import { allInOnePassListQueryKey } from '@/api/all-in-one-pass/usePassList';
-import {
-  useSyncMembershipBenefitsMutation,
-  useUpdateAllInOnePassMutation,
-} from '@/api/all-in-one-pass/usePassMutations';
+import { useUpdateAllInOnePassMutation } from '@/api/all-in-one-pass/usePassMutations';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
@@ -40,17 +37,11 @@ export default function AllInOnePassEdit() {
     setInput((prev) => (prev ? { ...prev, ...partial } : prev));
 
   const updateMutation = useUpdateAllInOnePassMutation();
-  const syncBenefits = useSyncMembershipBenefitsMutation();
 
   const handleSave = async () => {
     if (!input || numericPassId == null) return;
     try {
       await updateMutation.mutateAsync({ id: numericPassId, input });
-      await syncBenefits.mutateAsync({
-        membershipId: numericPassId,
-        original: data?.benefits ?? [],
-        current: input.benefits,
-      });
       snackbar('수정되었습니다.');
       queryClient.invalidateQueries({ queryKey: [allInOnePassListQueryKey] });
       queryClient.removeQueries({
@@ -97,7 +88,7 @@ export default function AllInOnePassEdit() {
             <Button
               variant="contained"
               onClick={handleSave}
-              disabled={updateMutation.isPending || syncBenefits.isPending}
+              disabled={updateMutation.isPending}
             >
               저장하기
             </Button>

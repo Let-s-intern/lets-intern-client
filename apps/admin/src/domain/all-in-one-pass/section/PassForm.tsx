@@ -1,6 +1,5 @@
 import { PassFormInput } from '@/domain/all-in-one-pass/types';
 import BasicInfoSection from './BasicInfoSection';
-import BenefitSection from './BenefitSection';
 import CalendarSection from './CalendarSection';
 import DetailContentSection from './DetailContentSection';
 import ExternalLinkSection from './ExternalLinkSection';
@@ -19,7 +18,6 @@ export const createInitialPassInput = (): PassFormInput => ({
   calendarEvents: [],
   externalLinks: [],
   detailContent: null,
-  benefits: [],
   faqList: [],
 });
 
@@ -59,10 +57,6 @@ export default function PassForm({ input, patch }: Props) {
       <DetailContentSection
         initialContent={input.detailContent}
         onChange={(detailContent) => patch({ detailContent })}
-      />
-      <BenefitSection
-        benefits={input.benefits}
-        onChange={(benefits) => patch({ benefits })}
       />
       {/* FAQ: 공통 풀 관리(/faq) + 이 패스에 노출할 항목 체크 선택 */}
       <FaqSection
