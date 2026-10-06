@@ -77,14 +77,25 @@ export type PassParticipationStatus = 'BEFORE' | 'IN_PROGRESS' | 'DONE';
 export interface PassCalendarEvent {
   id: number;
   type: PassCalendarEventType;
-  programType: PassProgramType | null; // 카드 "프로그램 종류" 뱃지 (챌린지 등)
   title: string;
   description: string | null;
   startDate: string; // ISO
-  endDate: string | null; // CHALLENGE 막대 종료; 단일일 칩은 null
-  status: PassParticipationStatus | null; // 프로그램 참여 상태; 세미나/마일스톤은 null
-  url: string | null;
+  endDate: string | null; // 종료 시각 — 챌린지 막대 종료 / 세미나·마일스톤 기간 종료(버튼 활성 판정)
+  /** 세미나·마일스톤 외부 링크. 챌린지는 id로 URL 조립하므로 없음 */
+  url?: string | null;
+  /** 챌린지 상세(`/program/challenge/{id}`)·대시보드 URL 구성용 (BE 팩트) */
+  programId?: number | null;
+  /** 챌린지 참여 인스턴스 id. null = 미참여(참여 전). (BE 팩트) */
+  challengeApplicationId?: number | null;
 }
+
+/**
+ * 캘린더 렌더용 이벤트 — FE가 참여 상태를 파생(normalize)해 채운 형태.
+ * 챌린지는 challengeApplicationId + endDate로 계산, 세미나/마일스톤은 null.
+ */
+export type NormalizedCalendarEvent = PassCalendarEvent & {
+  status: PassParticipationStatus | null;
+};
 
 /**
  * 사이드바 하단 외부 링크(오공고·플레이북·커뮤니티 등). 모든 탭 공통 레이아웃에 노출.

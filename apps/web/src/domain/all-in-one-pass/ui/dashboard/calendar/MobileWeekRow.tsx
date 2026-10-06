@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import type { PassCalendarEvent } from '../../../types';
+import type { NormalizedCalendarEvent } from '../../../types';
 import { eventColor } from './calendarColors';
 import type { PointPlacement } from './calendarModel';
 import {
@@ -21,7 +21,7 @@ interface Props {
   week: Day[];
   variant: 'week' | 'month';
   wi: number;
-  bars: PassCalendarEvent[];
+  bars: NormalizedCalendarEvent[];
   barLaneOf: Map<number, number>;
   pointsByDate: Map<string, PointPlacement[]>;
   badgeByDate: Map<string, number>;

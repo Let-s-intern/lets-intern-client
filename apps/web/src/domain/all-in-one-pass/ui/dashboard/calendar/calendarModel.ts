@@ -1,5 +1,5 @@
 import type {
-  PassCalendarEvent,
+  NormalizedCalendarEvent,
   PassParticipationStatus,
 } from '../../../types';
 import {
@@ -13,13 +13,13 @@ import {
 
 /** 당일 일정의 배치 결과: 어느 행(lane)에 놓을지 */
 export interface PointPlacement {
-  event: PassCalendarEvent;
+  event: NormalizedCalendarEvent;
   lane: number;
 }
 
 export interface CalendarModel {
   /** 기간 막대 (우선순위 정렬됨) */
-  bars: PassCalendarEvent[];
+  bars: NormalizedCalendarEvent[];
   /** 막대 id → 행(lane) */
   barLaneOf: Map<number, number>;
   /** 날짜(YYYY-MM-DD) → 당일 칩 배치 */
@@ -39,7 +39,7 @@ export interface CalendarModel {
  * @param visibleItems 초과 시 표시할 개수(나머지는 +N)
  */
 export function deriveCalendar(
-  events: PassCalendarEvent[],
+  events: NormalizedCalendarEvent[],
   filters: Record<PassParticipationStatus, boolean>,
   days: Day[],
   { maxRows, visibleItems }: { maxRows: number; visibleItems: number },
@@ -63,7 +63,7 @@ export function deriveCalendar(
   }
 
   // 날짜별 시작하는 당일 일정
-  const pointsOfDay = new Map<string, PassCalendarEvent[]>();
+  const pointsOfDay = new Map<string, NormalizedCalendarEvent[]>();
   for (const p of points) {
     const key = eventStart(p).format('YYYY-MM-DD');
     const arr = pointsOfDay.get(key);

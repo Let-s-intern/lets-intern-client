@@ -1,4 +1,4 @@
-import type { PassCalendarEvent } from '../../../types';
+import type { NormalizedCalendarEvent } from '../../../types';
 
 /**
  * 일정별 색상 (디자인 지정 hex).
@@ -15,7 +15,7 @@ export const CALENDAR_COLORS = {
 } as const;
 
 /** 일정 → 배경색 */
-export const eventColor = (event: PassCalendarEvent): string => {
+export const eventColor = (event: NormalizedCalendarEvent): string => {
   if (event.type === 'CHALLENGE') {
     return event.status === 'IN_PROGRESS'
       ? CALENDAR_COLORS.challengeInProgress

@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import type { PassCalendarEvent } from '../../../types';
+import type { NormalizedCalendarEvent } from '../../../types';
 import { eventColor } from './calendarColors';
 import {
   BAR_AREA_H,
@@ -18,7 +18,7 @@ interface Props {
   week: Day[];
   /** 창 안에서 몇 번째 주인지 (연속 막대 라벨 처리용) */
   wi: number;
-  bars: PassCalendarEvent[];
+  bars: NormalizedCalendarEvent[];
   barLaneOf: Map<number, number>;
   pointsByDate: Map<string, PointPlacement[]>;
   badgeByDate: Map<string, number>;
