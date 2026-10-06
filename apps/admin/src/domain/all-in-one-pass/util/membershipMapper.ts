@@ -8,6 +8,7 @@ import {
   AllInOnePassListItem,
   PassBenefit,
   PassCalendarEvent,
+  PassExtensionOption,
   PassExternalLink,
   PassFormInput,
   PassPermission,
@@ -59,6 +60,7 @@ interface DescriptionBlob {
   detailContent: string | null;
   calendarEvents: PassCalendarEvent[];
   externalLinks: PassExternalLink[];
+  extensionOptions: PassExtensionOption[];
 }
 
 const parseDescription = (description?: string | null): DescriptionBlob => {
@@ -66,6 +68,7 @@ const parseDescription = (description?: string | null): DescriptionBlob => {
     detailContent: null,
     calendarEvents: [],
     externalLinks: [],
+    extensionOptions: [],
   };
   if (!description) return empty;
   try {
@@ -74,6 +77,7 @@ const parseDescription = (description?: string | null): DescriptionBlob => {
       detailContent: parsed.detailContent ?? null,
       calendarEvents: parsed.calendarEvents ?? [],
       externalLinks: parsed.externalLinks ?? [],
+      extensionOptions: parsed.extensionOptions ?? [],
     };
   } catch {
     return empty;
@@ -85,6 +89,7 @@ const serializeDescription = (input: PassFormInput): string =>
     detailContent: input.detailContent,
     calendarEvents: input.calendarEvents,
     externalLinks: input.externalLinks,
+    extensionOptions: input.extensionOptions,
   } satisfies DescriptionBlob);
 
 // ── 목록 ──────────────────────────────────────────────
@@ -122,6 +127,7 @@ export const toFormInput = (detail: MembershipDetail): PassFormInput => {
     })),
     calendarEvents: blob.calendarEvents,
     externalLinks: blob.externalLinks,
+    extensionOptions: blob.extensionOptions,
     detailContent: blob.detailContent,
     // 이 패스에 연결된(노출) FAQ id — 체크박스 prefill
     faqList: detail.faqList.map((f) => f.id),

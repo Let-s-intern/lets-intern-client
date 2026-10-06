@@ -45,6 +45,13 @@ export interface PassExternalLink {
   url: string;
 }
 
+/** 연장 옵션 한 개 (연장일 + 가격) */
+export interface PassExtensionOption {
+  id: string; // 폼 로컬 식별자
+  days: number | null; // 연장 일수 (예: 30·90)
+  price: number | null; // 연장 가격(원)
+}
+
 /**
  * 생성/수정 폼 입력값. 섹션(1.1~1.6)을 단계적으로 확장한다.
  */
@@ -62,6 +69,8 @@ export interface PassFormInput {
   calendarEvents: PassCalendarEvent[];
   // 1.4 외부 링크
   externalLinks: PassExternalLink[];
+  // 1.4-b 연장 옵션
+  extensionOptions: PassExtensionOption[];
   // 1.5 상세페이지 콘텐츠 (렉시컬 직렬화 JSON 문자열)
   detailContent: string | null;
   // 1.6 FAQ: 질문/답변은 전 멤버십 공통 풀(/faq, type=MEMBERSHIP)에서 관리
