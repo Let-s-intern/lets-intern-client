@@ -27,9 +27,9 @@ export interface PassPlan {
 }
 
 /** 캘린더 일정 유형 */
-export type CalendarEventType = 'SEMINAR' | 'MILESTONE';
+export type CalendarEventType = 'GUERRILLA' | 'MILESTONE';
 
-/** 1.3 캘린더 관리 일정 한 개 (세미나/마일스톤 수기 입력) */
+/** 1.3 캘린더 관리 일정 한 개 (게릴라세션/마일스톤 수기 입력) */
 export interface PassCalendarEvent {
   id: string; // 폼 로컬 식별자
   date: string | null; // 일정 날짜(ISO)

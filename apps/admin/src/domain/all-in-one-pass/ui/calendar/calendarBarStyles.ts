@@ -1,10 +1,10 @@
 import { ChallengeType } from '@/schema';
 
-export type BarKind = 'CHALLENGE' | 'SEMINAR' | 'MILESTONE';
+export type BarKind = 'CHALLENGE' | 'GUERRILLA' | 'MILESTONE';
 
 const KIND_CLASS: Record<BarKind, string> = {
   CHALLENGE: 'bg-primary-10 text-neutral-0',
-  SEMINAR: 'bg-secondary-10 text-neutral-0',
+  GUERRILLA: 'bg-secondary-10 text-neutral-0',
   MILESTONE: 'bg-primary-20 text-neutral-0',
 };
 

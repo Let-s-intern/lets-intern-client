@@ -97,7 +97,7 @@ export function useCalendarPreview({
     return best;
   }, [windowStart]);
 
-  // 표시 항목: (데모) 챌린지 막대 + 폼에 입력한 세미나/마일스톤
+  // 표시 항목: (데모) 챌린지 막대 + 폼에 입력한 게릴라세션/마일스톤
   const items = useMemo<BarItem[]>(() => {
     const challengeItems: BarItem[] = calendarChallengeFixtures.map((c) => ({
       id: c.id,
@@ -111,7 +111,7 @@ export function useCalendarPreview({
       .filter((e) => e.date)
       .map((e) => ({
         id: e.id,
-        title: e.title || (e.type === 'SEMINAR' ? '세미나' : '마일스톤'),
+        title: e.title || (e.type === 'GUERRILLA' ? '게릴라세션' : '마일스톤'),
         kind: e.type,
         start: dayjs(e.date as string),
         end: dayjs(e.date as string),

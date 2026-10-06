@@ -11,14 +11,14 @@ import { FaPlus, FaTrashCan } from 'react-icons/fa6';
 import CalendarPreviewModal from '../ui/calendar/CalendarPreviewModal';
 
 const TYPE_OPTIONS: { value: CalendarEventType; label: string }[] = [
-  { value: 'SEMINAR', label: '세미나' },
+  { value: 'GUERRILLA', label: '게릴라세션' },
   { value: 'MILESTONE', label: '마일스톤' },
 ];
 
 export const createEmptyCalendarEvent = (): PassCalendarEvent => ({
   id: crypto.randomUUID(),
   date: null,
-  type: 'SEMINAR',
+  type: 'GUERRILLA',
   title: '',
   url: null,
 });
@@ -32,7 +32,7 @@ interface Props {
   passDays?: number | null;
 }
 
-/** 1.3 캘린더 관리: 세미나·마일스톤 일정 수기 입력 (챌린지는 자동 반영) */
+/** 1.3 캘린더 관리: 게릴라세션·마일스톤 일정 수기 입력 (챌린지는 자동 반영) */
 export default function CalendarSection({
   events,
   onChange,
