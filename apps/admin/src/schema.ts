@@ -792,6 +792,7 @@ const vodInfoSchema = z.object({
   contentUrl: z.string().nullable().optional(),
   contentFileUrl: z.string().nullable().optional(),
   isVisible: z.boolean().nullable().optional(),
+  mentorId: z.number().nullable().optional(),
 });
 
 /** GET /api/v1/vod/{id} VOD 상세 조회 (어드민) */
@@ -877,6 +878,7 @@ export type CreateVodReq = {
       programAdminClassification: ProgramAdminClassification;
     };
   }[];
+  mentorId?: number;
 };
 
 /** PATCH /api/v1/vod/{vodId} VOD 수정 */
@@ -914,6 +916,7 @@ export type UpdateVodReq = {
       programAdminClassification: ProgramAdminClassification;
     };
   }[];
+  mentorId?: number;
 };
 
 // /**  DELETE /api/v1/vod/{vodId} vod 삭제 */

@@ -24,6 +24,7 @@ export const initialVodInput: ContentProgramFormInput = {
   priceType: 'CHARGE',
   programTypeInfo: [],
   adminProgramTypeInfo: [],
+  mentorId: null,
 };
 
 export const vodToFormInput = (vod: VodIdSchema): ContentProgramFormInput => ({
@@ -53,6 +54,7 @@ export const vodToFormInput = (vod: VodIdSchema): ContentProgramFormInput => ({
         programAdminClassification: value.programAdminClassification,
       },
     })) ?? [],
+  mentorId: vod.vodInfo.mentorId ?? null,
 });
 
 export const buildCreateVodReq = (
@@ -82,6 +84,7 @@ export const buildCreateVodReq = (
   },
   programTypeInfo: input.programTypeInfo,
   adminProgramTypeInfo: input.adminProgramTypeInfo,
+  mentorId: input.mentorId ?? undefined,
 });
 
 export const buildUpdateVodReq = (
@@ -113,4 +116,5 @@ export const buildUpdateVodReq = (
   },
   programTypeInfo: input.programTypeInfo,
   adminProgramTypeInfo: input.adminProgramTypeInfo,
+  mentorId: input.mentorId ?? undefined,
 });
