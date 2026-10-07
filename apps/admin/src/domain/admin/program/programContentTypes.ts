@@ -29,4 +29,5 @@ export type ContentProgramFormInput = {
       programAdminClassification: ProgramAdminClassification;
     };
   }[];
+  mentorId?: number | null;
 };
