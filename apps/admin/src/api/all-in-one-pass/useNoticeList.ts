@@ -1,10 +1,10 @@
 import axios from '@/utils/axios';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
-  MembershipNotice,
-  MembershipNoticeType,
-  membershipNoticeListResponseSchema,
-} from './membershipSchema';
+  AllInOnePassNotice,
+  AllInOnePassNoticeType,
+  allInOnePassNoticeListResponseSchema,
+} from './allInOnePassSchema';
 
 /**
  * A-3 공지·가이드 CRUD 훅. 서버: /api/v1/admin/membership_notice.
@@ -18,7 +18,7 @@ type MutationCallbacks = {
 
 /** 공지·가이드 입력값(유형·제목·내용) */
 export type NoticeFormValues = Pick<
-  MembershipNotice,
+  AllInOnePassNotice,
   'type' | 'title' | 'contents'
 >;
 
@@ -26,7 +26,7 @@ export const allInOnePassNoticeListQueryKey = 'allInOnePassNoticeList';
 
 /** 공지·가이드 목록 (노출 항목만). type 지정 시 해당 유형만. */
 export const useGetAllInOnePassNoticeListQuery = (
-  type?: MembershipNoticeType,
+  type?: AllInOnePassNoticeType,
 ) =>
   useQuery({
     queryKey: [allInOnePassNoticeListQueryKey, type ?? 'ALL'],
@@ -34,7 +34,7 @@ export const useGetAllInOnePassNoticeListQuery = (
       const res = await axios.get('/admin/membership_notice', {
         params: type ? { types: type } : undefined,
       });
-      return membershipNoticeListResponseSchema
+      return allInOnePassNoticeListResponseSchema
         .parse(res.data.data)
         .filter((n) => n.isVisible);
     },

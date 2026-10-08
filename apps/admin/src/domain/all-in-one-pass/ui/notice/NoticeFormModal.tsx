@@ -1,4 +1,4 @@
-import { MembershipNotice } from '@/api/all-in-one-pass/membershipSchema';
+import { AllInOnePassNotice } from '@/api/all-in-one-pass/allInOnePassSchema';
 import { NoticeFormValues } from '@/api/all-in-one-pass/useNoticeList';
 import {
   Button,
@@ -14,7 +14,7 @@ import { useEffect, useState } from 'react';
 interface Props {
   open: boolean;
   isEdit: boolean;
-  initial: MembershipNotice | null;
+  initial: AllInOnePassNotice | null;
   onSubmit: (values: NoticeFormValues) => void;
   onClose: () => void;
   isLoading?: boolean;

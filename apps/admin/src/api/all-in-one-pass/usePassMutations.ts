@@ -3,7 +3,7 @@ import {
   benefitToDto,
   toCreateDto,
   toUpdateDto,
-} from '@/domain/all-in-one-pass/util/membershipMapper';
+} from '@/domain/all-in-one-pass/util/allInOnePassMapper';
 import axios from '@/utils/axios';
 import { useMutation } from '@tanstack/react-query';
 

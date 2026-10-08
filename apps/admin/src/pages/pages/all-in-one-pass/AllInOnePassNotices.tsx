@@ -7,9 +7,9 @@ import {
   useUpdateAllInOnePassNoticeMutation,
 } from '@/api/all-in-one-pass/useNoticeList';
 import {
-  MembershipNotice,
-  MembershipNoticeType,
-} from '@/api/all-in-one-pass/membershipSchema';
+  AllInOnePassNotice,
+  AllInOnePassNoticeType,
+} from '@/api/all-in-one-pass/allInOnePassSchema';
 import EmptyContainer from '@/common/container/EmptyContainer';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import CategoryTabs from '@/common/ui/CategoryTabs';
@@ -27,7 +27,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { FaPlus } from 'react-icons/fa6';
 
-type TabValue = 'ALL' | MembershipNoticeType;
+type TabValue = 'ALL' | AllInOnePassNoticeType;
 
 const TAB_OPTIONS: { value: TabValue; label: string }[] = [
   { value: 'ALL', label: '전체' },
@@ -35,7 +35,7 @@ const TAB_OPTIONS: { value: TabValue; label: string }[] = [
   { value: 'GUIDE', label: '가이드' },
 ];
 
-const NOTICE_TYPE_LABEL: Record<MembershipNoticeType, string> = {
+const NOTICE_TYPE_LABEL: Record<AllInOnePassNoticeType, string> = {
   NOTICE: '공지',
   GUIDE: '가이드',
 };
@@ -43,7 +43,7 @@ const NOTICE_TYPE_LABEL: Record<MembershipNoticeType, string> = {
 /** 모달 대상: 생성(POST) 또는 특정 공지 수정(PATCH) */
 type ModalTarget =
   | { mode: 'create' }
-  | { mode: 'edit'; notice: MembershipNotice };
+  | { mode: 'edit'; notice: AllInOnePassNotice };
 
 /** A-3 공지 / 가이드 관리 */
 export default function AllInOnePassNotices() {
@@ -52,9 +52,8 @@ export default function AllInOnePassNotices() {
 
   const [tab, setTab] = useState<TabValue>('ALL');
   const [target, setTarget] = useState<ModalTarget | null>(null);
-  const [exposureNotice, setExposureNotice] = useState<MembershipNotice | null>(
-    null,
-  );
+  const [exposureNotice, setExposureNotice] =
+    useState<AllInOnePassNotice | null>(null);
 
   const { data, isLoading, error } = useGetAllInOnePassNoticeListQuery(
     tab === 'ALL' ? undefined : tab,
@@ -93,7 +92,7 @@ export default function AllInOnePassNotices() {
     }
   };
 
-  const handleDelete = async (notice: MembershipNotice) => {
+  const handleDelete = async (notice: AllInOnePassNotice) => {
     if (!window.confirm(`<${notice.title}> 정말로 삭제하시겠습니까?`)) return;
     try {
       await deleteNotice.mutateAsync(notice.id);
@@ -103,7 +102,7 @@ export default function AllInOnePassNotices() {
     }
   };
 
-  const columns: GridColDef<MembershipNotice>[] = [
+  const columns: GridColDef<AllInOnePassNotice>[] = [
     { field: 'id', headerName: 'ID', width: 80 },
     {
       field: 'type',

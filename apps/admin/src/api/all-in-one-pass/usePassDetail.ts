@@ -1,12 +1,12 @@
-import { toFormInput } from '@/domain/all-in-one-pass/util/membershipMapper';
+import { toFormInput } from '@/domain/all-in-one-pass/util/allInOnePassMapper';
 import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
-import { membershipDetailSchema } from './membershipSchema';
+import { allInOnePassDetailSchema } from './allInOnePassSchema';
 
 /**
  * 올인원패스(멤버십) 단건 상세 조회 훅 (수정 폼 프리필용).
  *
- * 서버: GET /api/v1/admin/membership/{id}. 응답 DTO를 membershipMapper 로 폼 입력값으로 변환.
+ * 서버: GET /api/v1/admin/membership/{id}. 응답 DTO를 allInOnePassMapper 로 폼 입력값으로 변환.
  */
 
 export const allInOnePassDetailQueryKey = 'allInOnePassDetail';
@@ -20,6 +20,6 @@ export const useGetAllInOnePassDetailQuery = (id?: number) =>
     refetchOnWindowFocus: false,
     queryFn: async () => {
       const res = await axios.get(`/admin/membership/${id}`);
-      return toFormInput(membershipDetailSchema.parse(res.data.data));
+      return toFormInput(allInOnePassDetailSchema.parse(res.data.data));
     },
   });

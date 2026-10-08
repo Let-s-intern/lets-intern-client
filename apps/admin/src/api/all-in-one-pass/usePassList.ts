@@ -2,13 +2,13 @@ import {
   toCreateDto,
   toFormInput,
   toListItem,
-} from '@/domain/all-in-one-pass/util/membershipMapper';
+} from '@/domain/all-in-one-pass/util/allInOnePassMapper';
 import axios from '@/utils/axios';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
-  membershipDetailSchema,
-  membershipListResponseSchema,
-} from './membershipSchema';
+  allInOnePassDetailSchema,
+  allInOnePassListResponseSchema,
+} from './allInOnePassSchema';
 
 /**
  * 올인원패스(멤버십) 목록/노출/삭제 훅.
@@ -31,7 +31,7 @@ export const useGetAllInOnePassListQuery = () =>
       const res = await axios.get('/admin/membership', {
         params: { page: 1, size: 100 },
       });
-      const parsed = membershipListResponseSchema.parse(res.data.data);
+      const parsed = allInOnePassListResponseSchema.parse(res.data.data);
       return parsed.membershipList.map(toListItem);
     },
   });
@@ -81,7 +81,7 @@ export const useDuplicateAllInOnePassMutation = ({
     mutationFn: async (id: number) => {
       const detailRes = await axios.get(`/admin/membership/${id}`);
       const input = toFormInput(
-        membershipDetailSchema.parse(detailRes.data.data),
+        allInOnePassDetailSchema.parse(detailRes.data.data),
       );
       const body = toCreateDto({ ...input, title: `${input.title} (복제)` });
       const res = await axios.post('/admin/membership', body);

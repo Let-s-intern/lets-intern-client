@@ -1,4 +1,4 @@
-import { MembershipNotice } from '@/api/all-in-one-pass/membershipSchema';
+import { AllInOnePassNotice } from '@/api/all-in-one-pass/allInOnePassSchema';
 import {
   allInOnePassNoticeListQueryKey,
   useUpdateAllInOnePassNoticeExposureMutation,
@@ -24,7 +24,7 @@ import { useEffect, useState } from 'react';
 
 interface Props {
   /** 대상 공지. null 이면 모달 닫힘 */
-  notice: MembershipNotice | null;
+  notice: AllInOnePassNotice | null;
   onClose: () => void;
 }
 

@@ -1,9 +1,9 @@
 import {
-  MembershipDetail,
-  MembershipListItem,
-  MembershipPrivilegeType,
-  MembershipProgramType,
-} from '@/api/all-in-one-pass/membershipSchema';
+  AllInOnePassDetail,
+  AllInOnePassListItemResponse,
+  AllInOnePassPrivilegeType,
+  AllInOnePassProgramType,
+} from '@/api/all-in-one-pass/allInOnePassSchema';
 import {
   AllInOnePassListItem,
   PassBenefit,
@@ -25,7 +25,10 @@ import {
 // ── permission ↔ privilege ────────────────────────────
 const PERMISSION_TO_PRIVILEGE: Record<
   PassPermission,
-  { programType: MembershipProgramType; privilegeType: MembershipPrivilegeType }
+  {
+    programType: AllInOnePassProgramType;
+    privilegeType: AllInOnePassPrivilegeType;
+  }
 > = {
   CHALLENGE_ALL_IN_ONE: {
     programType: 'CHALLENGE',
@@ -40,8 +43,8 @@ const PERMISSION_TO_PRIVILEGE: Record<
 };
 
 const privilegeToPermission = (
-  programType: MembershipProgramType,
-  privilegeType: MembershipPrivilegeType,
+  programType: AllInOnePassProgramType,
+  privilegeType: AllInOnePassPrivilegeType,
 ): PassPermission | null => {
   const found = (
     Object.entries(PERMISSION_TO_PRIVILEGE) as [
@@ -97,7 +100,9 @@ const serializeDescription = (input: PassFormInput): string =>
   } satisfies DescriptionBlob);
 
 // ── 목록 ──────────────────────────────────────────────
-export const toListItem = (vo: MembershipListItem): AllInOnePassListItem => ({
+export const toListItem = (
+  vo: AllInOnePassListItemResponse,
+): AllInOnePassListItem => ({
   id: vo.membershipId,
   title: vo.title,
   purchaseStartDate: vo.beginning ?? null,
@@ -110,7 +115,7 @@ export const toListItem = (vo: MembershipListItem): AllInOnePassListItem => ({
 });
 
 // ── 상세 → 폼 ─────────────────────────────────────────
-export const toFormInput = (detail: MembershipDetail): PassFormInput => {
+export const toFormInput = (detail: AllInOnePassDetail): PassFormInput => {
   const blob = parseDescription(detail.description);
   return {
     title: detail.title,
