@@ -65,12 +65,20 @@ const navData = [
         url: '/all-in-one-pass',
       },
       {
+        name: '자료집 관리',
+        url: '/all-in-one-pass/materials',
+      },
+      {
         name: '공지/가이드 관리',
         url: '/all-in-one-pass/notices',
       },
       {
         name: '회고 관리',
         url: '/all-in-one-pass/retrospectives',
+      },
+      {
+        name: '참여중인 유저 목록',
+        url: '/all-in-one-pass/participants',
       },
     ],
   },

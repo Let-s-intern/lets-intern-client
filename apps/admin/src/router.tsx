@@ -21,6 +21,12 @@ const AllInOnePassEdit = lazy(
 const AllInOnePassUsers = lazy(
   () => import('./pages/pages/all-in-one-pass/AllInOnePassUsers'),
 );
+const AllInOnePassMaterials = lazy(
+  () => import('./pages/pages/all-in-one-pass/AllInOnePassMaterials'),
+);
+const AllInOnePassParticipants = lazy(
+  () => import('./pages/pages/all-in-one-pass/AllInOnePassParticipants'),
+);
 const AllInOnePassNotices = lazy(
   () => import('./pages/pages/all-in-one-pass/AllInOnePassNotices'),
 );
@@ -323,6 +329,14 @@ export const router = createBrowserRouter([
       {
         path: '/all-in-one-pass/:passId/users',
         element: withSuspense(<AllInOnePassUsers />),
+      },
+      {
+        path: '/all-in-one-pass/materials',
+        element: withSuspense(<AllInOnePassMaterials />),
+      },
+      {
+        path: '/all-in-one-pass/participants',
+        element: withSuspense(<AllInOnePassParticipants />),
       },
       {
         path: '/all-in-one-pass/notices',
