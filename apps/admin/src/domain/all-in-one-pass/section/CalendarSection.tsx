@@ -81,7 +81,7 @@ export default function CalendarSection({
                 update(event.id, { date: v ? v.toISOString() : null })
               }
               slotProps={{ textField: { size: 'small' } }}
-              className="w-40 shrink-0"
+              className="w-36 shrink-0"
             />
             <TextField
               select
@@ -91,7 +91,7 @@ export default function CalendarSection({
                 update(event.id, { type: e.target.value as CalendarEventType })
               }
               size="small"
-              className="w-28 shrink-0"
+              className="w-30 shrink-0"
             >
               {TYPE_OPTIONS.map((o) => (
                 <MenuItem key={o.value} value={o.value}>

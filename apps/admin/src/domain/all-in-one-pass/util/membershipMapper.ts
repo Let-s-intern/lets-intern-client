@@ -61,6 +61,7 @@ interface DescriptionBlob {
   calendarEvents: PassCalendarEvent[];
   externalLinks: PassExternalLink[];
   extensionOptions: PassExtensionOption[];
+  mentoringCouponAutoIssue: boolean;
 }
 
 const parseDescription = (description?: string | null): DescriptionBlob => {
@@ -69,6 +70,7 @@ const parseDescription = (description?: string | null): DescriptionBlob => {
     calendarEvents: [],
     externalLinks: [],
     extensionOptions: [],
+    mentoringCouponAutoIssue: false,
   };
   if (!description) return empty;
   try {
@@ -78,6 +80,7 @@ const parseDescription = (description?: string | null): DescriptionBlob => {
       calendarEvents: parsed.calendarEvents ?? [],
       externalLinks: parsed.externalLinks ?? [],
       extensionOptions: parsed.extensionOptions ?? [],
+      mentoringCouponAutoIssue: parsed.mentoringCouponAutoIssue ?? false,
     };
   } catch {
     return empty;
@@ -90,6 +93,7 @@ const serializeDescription = (input: PassFormInput): string =>
     calendarEvents: input.calendarEvents,
     externalLinks: input.externalLinks,
     extensionOptions: input.extensionOptions,
+    mentoringCouponAutoIssue: input.mentoringCouponAutoIssue,
   } satisfies DescriptionBlob);
 
 // ── 목록 ──────────────────────────────────────────────
@@ -128,6 +132,7 @@ export const toFormInput = (detail: MembershipDetail): PassFormInput => {
     calendarEvents: blob.calendarEvents,
     externalLinks: blob.externalLinks,
     extensionOptions: blob.extensionOptions,
+    mentoringCouponAutoIssue: blob.mentoringCouponAutoIssue,
     detailContent: blob.detailContent,
     // 이 패스에 연결된(노출) FAQ id — 체크박스 prefill
     faqList: detail.faqList.map((f) => f.id),

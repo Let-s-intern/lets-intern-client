@@ -30,10 +30,17 @@ export const createEmptyPlan = (): PassPlan => ({
 interface Props {
   plans: PassPlan[];
   onChange: (plans: PassPlan[]) => void;
+  mentoringCouponAutoIssue: boolean;
+  onMentoringChange: (checked: boolean) => void;
 }
 
 /** 플랜 정보(권한 구성): 다중 플랜 + 포함 권한 + 정가/할인가 */
-export default function PlanSection({ plans, onChange }: Props) {
+export default function PlanSection({
+  plans,
+  onChange,
+  mentoringCouponAutoIssue,
+  onMentoringChange,
+}: Props) {
   const updatePlan = (id: string, partial: Partial<PassPlan>) =>
     onChange(plans.map((p) => (p.id === id ? { ...p, ...partial } : p)));
 
@@ -48,15 +55,29 @@ export default function PlanSection({ plans, onChange }: Props) {
 
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-small20 text-neutral-0 font-semibold">
-        플랜 정보 (권한 구성)
-      </h2>
+      <div className="flex flex-col justify-between gap-4 selection:items-start">
+        <h2 className="text-small20 text-neutral-0 font-semibold">
+          플랜 정보 (권한 구성)
+        </h2>
+        <div className="bg-primary-10 border-primary-15 rounded-sm border px-4 py-1">
+          <FormControlLabel
+            className="m-0"
+            control={
+              <Checkbox
+                checked={mentoringCouponAutoIssue}
+                onChange={(e) => onMentoringChange(e.target.checked)}
+              />
+            }
+            label="1:1 LIVE 멘토링 50% 쿠폰 자동발급 (월단위)"
+          />
+        </div>
+      </div>
 
       <div className="flex flex-col gap-3">
         {plans.map((plan) => (
           <div
             key={plan.id}
-            className="border-neutral-80 flex overflow-hidden rounded-md border"
+            className="border-neutral-80 flex overflow-hidden rounded-sm border"
           >
             <div className="flex flex-1 flex-col gap-4 p-4">
               <TextField
@@ -81,7 +102,7 @@ export default function PlanSection({ plans, onChange }: Props) {
                 <legend className="text-xxsmall12 text-neutral-40 px-1">
                   포함 권한
                 </legend>
-                <div className="flex flex-wrap gap-x-4 px-1">
+                <div className="flex flex-wrap gap-x-2 px-1">
                   {PERMISSION_OPTIONS.map((opt) => (
                     <FormControlLabel
                       key={opt.value}

@@ -110,10 +110,10 @@ export default function FaqSection({ selectedIds, onChange }: Props) {
     <section className="flex flex-col gap-3">
       <div className="flex flex-col gap-1">
         <h2 className="text-small20 text-neutral-0 font-semibold">FAQ</h2>
-        <p className="text-xsmall14 text-neutral-40">
+        {/* <p className="text-xsmall14 text-neutral-40">
           질문은 전체 멤버십 공통 풀에서 관리하고, 체크한 항목만 이 패스에
           노출됩니다.
-        </p>
+        </p> */}
       </div>
 
       <div className="flex items-center justify-between gap-3">
@@ -144,11 +144,12 @@ export default function FaqSection({ selectedIds, onChange }: Props) {
           등록된 FAQ가 없습니다.
         </p>
       ) : (
-        <div className="flex flex-col gap-3">
+        // 약 4.5개 높이로 고정 → 5번째부터 반만 보이며 안에서 스크롤
+        <div className="flex h-[505px] flex-col gap-3 overflow-y-auto pr-1">
           {filtered.map((faq) => (
             <div
               key={faq.id}
-              className="border-neutral-80 flex overflow-hidden rounded-md border"
+              className="border-neutral-80 flex shrink-0 overflow-hidden rounded-md border"
             >
               <label className="border-neutral-80 hover:bg-neutral-95 flex shrink-0 cursor-pointer items-center justify-center border-r px-2 transition-colors">
                 <Checkbox

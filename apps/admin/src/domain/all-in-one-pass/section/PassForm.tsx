@@ -2,7 +2,6 @@ import { PassFormInput } from '@/domain/all-in-one-pass/types';
 import BasicInfoSection from './BasicInfoSection';
 import CalendarSection from './CalendarSection';
 import DetailContentSection from './DetailContentSection';
-import ExtensionSection from './ExtensionSection';
 import ExternalLinkSection from './ExternalLinkSection';
 import FaqSection from './FaqSection';
 import PlanSection, { createEmptyPlan } from './PlanSection';
@@ -21,6 +20,7 @@ export const createInitialPassInput = (): PassFormInput => ({
   extensionOptions: [],
   detailContent: null,
   faqList: [],
+  mentoringCouponAutoIssue: false,
 });
 
 interface Props {
@@ -36,11 +36,16 @@ interface Props {
 export default function PassForm({ input, patch }: Props) {
   return (
     <div className="mb-10 flex flex-col gap-10">
+      {/* 왼쪽: 기본정보(멘토링·연장 포함) / 오른쪽: 플랜(세로로 긴 편) */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
         <BasicInfoSection input={input} patch={patch} />
         <PlanSection
           plans={input.plans}
           onChange={(plans) => patch({ plans })}
+          mentoringCouponAutoIssue={input.mentoringCouponAutoIssue}
+          onMentoringChange={(mentoringCouponAutoIssue) =>
+            patch({ mentoringCouponAutoIssue })
+          }
         />
       </div>
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
@@ -56,10 +61,6 @@ export default function PassForm({ input, patch }: Props) {
           onChange={(externalLinks) => patch({ externalLinks })}
         />
       </div>
-      <ExtensionSection
-        options={input.extensionOptions}
-        onChange={(extensionOptions) => patch({ extensionOptions })}
-      />
       <DetailContentSection
         initialContent={input.detailContent}
         onChange={(detailContent) => patch({ detailContent })}

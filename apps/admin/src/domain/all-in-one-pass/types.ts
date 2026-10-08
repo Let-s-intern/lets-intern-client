@@ -75,6 +75,8 @@ export interface PassFormInput {
   detailContent: string | null;
   // 1.6 FAQ: 질문/답변은 전 멤버십 공통 풀(/faq, type=MEMBERSHIP)에서 관리
   faqList: number[];
+  // 1:1 LIVE 멘토링 50% 쿠폰 월 자동발급 적용 여부 (참여중 유저에게만)
+  mentoringCouponAutoIssue: boolean;
 }
 
 /** 1:1 LIVE 멘토링 쿠폰 할인 방식 (전액 / 할인율% / 금액원) */
