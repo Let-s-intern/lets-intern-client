@@ -1,5 +1,5 @@
+import { MembershipNotice } from '@/api/all-in-one-pass/membershipSchema';
 import { NoticeFormValues } from '@/api/all-in-one-pass/useNoticeList';
-import { AllInOnePassNotice } from '@/domain/all-in-one-pass/types';
 import {
   Button,
   Dialog,
@@ -14,7 +14,7 @@ import { useEffect, useState } from 'react';
 interface Props {
   open: boolean;
   isEdit: boolean;
-  initial: AllInOnePassNotice | null;
+  initial: MembershipNotice | null;
   onSubmit: (values: NoticeFormValues) => void;
   onClose: () => void;
   isLoading?: boolean;
@@ -38,7 +38,7 @@ export default function NoticeFormModal({
     if (!open) return;
     setType(initial?.type ?? 'NOTICE');
     setTitle(initial?.title ?? '');
-    setContent(initial?.content ?? '');
+    setContent(initial?.contents ?? '');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
@@ -46,7 +46,7 @@ export default function NoticeFormModal({
 
   const handleSubmit = () => {
     if (!canSave) return;
-    onSubmit({ type, title: title.trim(), content: content.trim() });
+    onSubmit({ type, title: title.trim(), contents: content.trim() });
   };
 
   return (

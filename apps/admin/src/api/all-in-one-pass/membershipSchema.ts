@@ -92,3 +92,22 @@ export const membershipDetailSchema = z.object({
   planList: z.array(membershipPlanSchema).default([]),
 });
 export type MembershipDetail = z.infer<typeof membershipDetailSchema>;
+
+// ── 공지/가이드 ────────────────────────────────────────
+export const membershipNoticeTypeSchema = z.enum(['NOTICE', 'GUIDE']);
+export type MembershipNoticeType = z.infer<typeof membershipNoticeTypeSchema>;
+
+export const membershipNoticeSchema = z.object({
+  id: z.number(),
+  type: membershipNoticeTypeSchema,
+  title: z.string(),
+  contents: z.string(),
+  isVisible: z.boolean(),
+  membershipIds: z.array(z.number()).default([]),
+  createDate: z.string(),
+});
+export type MembershipNotice = z.infer<typeof membershipNoticeSchema>;
+
+export const membershipNoticeListResponseSchema = z.array(
+  membershipNoticeSchema,
+);

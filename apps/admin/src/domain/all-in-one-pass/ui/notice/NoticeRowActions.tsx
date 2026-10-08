@@ -1,12 +1,12 @@
-import { AllInOnePassNotice } from '@/domain/all-in-one-pass/types';
+import { MembershipNotice } from '@/api/all-in-one-pass/membershipSchema';
 import { Button } from '@mui/material';
 import { Pencil } from 'lucide-react';
 import { FaTrashCan } from 'react-icons/fa6';
 
 interface Props {
-  notice: AllInOnePassNotice;
-  onEdit: (notice: AllInOnePassNotice) => void;
-  onDelete: (notice: AllInOnePassNotice) => void;
+  notice: MembershipNotice;
+  onEdit: (notice: MembershipNotice) => void;
+  onDelete: (notice: MembershipNotice) => void;
 }
 
 /** A-3 목록 행 관리: 수정 · 삭제 */

@@ -163,19 +163,6 @@ export interface PassParticipant {
   usedPrograms: UsedProgram[]; // 이용한 프로그램 목록 (조회 모달)
 }
 
-/** A-3 공지/가이드 콘텐츠 구분 */
-export type NoticeType = 'NOTICE' | 'GUIDE';
-
-/** A-3 공지·가이드 한 개 */
-export interface AllInOnePassNotice {
-  id: number;
-  type: NoticeType;
-  title: string;
-  content: string; // 본문(평문)
-  createdAt: string; // 생성일(ISO)
-  linkedPassIds: number[]; // 노출 영역: 이 콘텐츠를 노출할 패스 id 목록
-}
-
 /** A-4 공통 질문 (하드코딩 상수, 모든 회차에 포함) */
 export interface RetrospectiveCommonQuestion {
   id: number;

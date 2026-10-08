@@ -1,24 +1,33 @@
 import {
+  allInOnePassNoticeListQueryKey,
   NoticeFormValues,
+  useCreateAllInOnePassNoticeMutation,
+  useDeleteAllInOnePassNoticeMutation,
   useGetAllInOnePassNoticeListQuery,
+  useUpdateAllInOnePassNoticeMutation,
 } from '@/api/all-in-one-pass/useNoticeList';
+import {
+  MembershipNotice,
+  MembershipNoticeType,
+} from '@/api/all-in-one-pass/membershipSchema';
 import EmptyContainer from '@/common/container/EmptyContainer';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import CategoryTabs from '@/common/ui/CategoryTabs';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
-import { AllInOnePassNotice, NoticeType } from '@/domain/all-in-one-pass/types';
 import NoticeExposureModal from '@/domain/all-in-one-pass/ui/notice/NoticeExposureModal';
 import NoticeFormModal from '@/domain/all-in-one-pass/ui/notice/NoticeFormModal';
 import NoticeRowActions from '@/domain/all-in-one-pass/ui/notice/NoticeRowActions';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { usePaginationModelWithSearchParams } from '@/hooks/usePaginationModelWithSearchParams';
 import dayjs from '@/lib/dayjs';
 import { Button } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { FaPlus } from 'react-icons/fa6';
 
-type TabValue = 'ALL' | NoticeType;
+type TabValue = 'ALL' | MembershipNoticeType;
 
 const TAB_OPTIONS: { value: TabValue; label: string }[] = [
   { value: 'ALL', label: '전체' },
@@ -26,7 +35,7 @@ const TAB_OPTIONS: { value: TabValue; label: string }[] = [
   { value: 'GUIDE', label: '가이드' },
 ];
 
-const NOTICE_TYPE_LABEL: Record<NoticeType, string> = {
+const NOTICE_TYPE_LABEL: Record<MembershipNoticeType, string> = {
   NOTICE: '공지',
   GUIDE: '가이드',
 };
@@ -34,14 +43,18 @@ const NOTICE_TYPE_LABEL: Record<NoticeType, string> = {
 /** 모달 대상: 생성(POST) 또는 특정 공지 수정(PATCH) */
 type ModalTarget =
   | { mode: 'create' }
-  | { mode: 'edit'; notice: AllInOnePassNotice };
+  | { mode: 'edit'; notice: MembershipNotice };
 
 /** A-3 공지 / 가이드 관리 */
 export default function AllInOnePassNotices() {
+  const queryClient = useQueryClient();
+  const { snackbar } = useAdminSnackbar();
+
   const [tab, setTab] = useState<TabValue>('ALL');
   const [target, setTarget] = useState<ModalTarget | null>(null);
-  const [exposureNotice, setExposureNotice] =
-    useState<AllInOnePassNotice | null>(null);
+  const [exposureNotice, setExposureNotice] = useState<MembershipNotice | null>(
+    null,
+  );
 
   const { data, isLoading, error } = useGetAllInOnePassNoticeListQuery(
     tab === 'ALL' ? undefined : tab,
@@ -51,26 +64,46 @@ export default function AllInOnePassNotices() {
   const { paginationModel, handlePaginationModelChange } =
     usePaginationModelWithSearchParams({ defaultPage: 0, defaultPageSize: 20 });
 
-  const handleSubmit = (values: NoticeFormValues) => {
-    if (target?.mode === 'edit') {
-      // TODO: API 연결 후 수정(PATCH) 뮤테이션 연결
-      // eslint-disable-next-line no-console
-      console.log('[공지/가이드 수정]', target.notice.id, values);
-    } else {
-      // TODO: API 연결 후 생성(POST) 뮤테이션 연결
-      // eslint-disable-next-line no-console
-      console.log('[공지/가이드 생성]', values);
+  const invalidate = () =>
+    queryClient.invalidateQueries({
+      queryKey: [allInOnePassNoticeListQueryKey],
+    });
+  const createNotice = useCreateAllInOnePassNoticeMutation({
+    successCallback: invalidate,
+  });
+  const updateNotice = useUpdateAllInOnePassNoticeMutation({
+    successCallback: invalidate,
+  });
+  const deleteNotice = useDeleteAllInOnePassNoticeMutation({
+    successCallback: invalidate,
+  });
+
+  const handleSubmit = async (values: NoticeFormValues) => {
+    try {
+      if (target?.mode === 'edit') {
+        await updateNotice.mutateAsync({ id: target.notice.id, values });
+        snackbar('수정되었습니다.');
+      } else {
+        await createNotice.mutateAsync(values);
+        snackbar('추가되었습니다.');
+      }
+      setTarget(null);
+    } catch (e) {
+      snackbar(e instanceof Error ? e.message : '저장에 실패했습니다.');
     }
-    setTarget(null);
   };
 
-  const handleDelete = (notice: AllInOnePassNotice) => {
-    // TODO: API 연결 후 삭제 뮤테이션 연결
-    // eslint-disable-next-line no-console
-    console.log('[공지/가이드 삭제]', notice);
+  const handleDelete = async (notice: MembershipNotice) => {
+    if (!window.confirm(`<${notice.title}> 정말로 삭제하시겠습니까?`)) return;
+    try {
+      await deleteNotice.mutateAsync(notice.id);
+      snackbar('삭제되었습니다.');
+    } catch (e) {
+      snackbar(e instanceof Error ? e.message : '삭제에 실패했습니다.');
+    }
   };
 
-  const columns: GridColDef<AllInOnePassNotice>[] = [
+  const columns: GridColDef<MembershipNotice>[] = [
     { field: 'id', headerName: 'ID', width: 80 },
     {
       field: 'type',
@@ -86,11 +119,11 @@ export default function AllInOnePassNotices() {
       valueGetter: (_, row) => row.title || '-',
     },
     {
-      field: 'createdAt',
+      field: 'createDate',
       headerName: '생성일',
       type: 'dateTime',
       width: 180,
-      valueGetter: (_, row) => dayjs(row.createdAt).toDate(),
+      valueGetter: (_, row) => dayjs(row.createDate).toDate(),
       valueFormatter: (value) => dayjs(value).format('YYYY/MM/DD HH:mm'),
     },
     {
@@ -172,6 +205,7 @@ export default function AllInOnePassNotices() {
         initial={target?.mode === 'edit' ? target.notice : null}
         onSubmit={handleSubmit}
         onClose={() => setTarget(null)}
+        isLoading={createNotice.isPending || updateNotice.isPending}
       />
 
       <NoticeExposureModal

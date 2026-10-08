@@ -1,5 +1,10 @@
+import { MembershipNotice } from '@/api/all-in-one-pass/membershipSchema';
+import {
+  allInOnePassNoticeListQueryKey,
+  useUpdateAllInOnePassNoticeExposureMutation,
+} from '@/api/all-in-one-pass/useNoticeList';
 import { useGetAllInOnePassListQuery } from '@/api/all-in-one-pass/usePassList';
-import { AllInOnePassNotice } from '@/domain/all-in-one-pass/types';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import dayjs from '@/lib/dayjs';
 import {
   Button,
@@ -14,11 +19,12 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 
 interface Props {
   /** 대상 공지. null 이면 모달 닫힘 */
-  notice: AllInOnePassNotice | null;
+  notice: MembershipNotice | null;
   onClose: () => void;
 }
 
@@ -33,6 +39,9 @@ const formatPeriod = (start: string | null, end: string | null) => {
 export default function NoticeExposureModal({ notice, onClose }: Props) {
   const open = notice !== null;
 
+  const queryClient = useQueryClient();
+  const { snackbar } = useAdminSnackbar();
+
   const { data } = useGetAllInOnePassListQuery();
   const passes = data ?? [];
   const allIds = passes.map((p) => p.id);
@@ -40,8 +49,15 @@ export default function NoticeExposureModal({ notice, onClose }: Props) {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   useEffect(() => {
-    if (notice) setSelectedIds(notice.linkedPassIds);
+    if (notice) setSelectedIds(notice.membershipIds);
   }, [notice]);
+
+  const updateExposure = useUpdateAllInOnePassNoticeExposureMutation({
+    successCallback: () =>
+      queryClient.invalidateQueries({
+        queryKey: [allInOnePassNoticeListQueryKey],
+      }),
+  });
 
   const isAllSelected =
     allIds.length > 0 && allIds.every((id) => selectedIds.includes(id));
@@ -55,11 +71,18 @@ export default function NoticeExposureModal({ notice, onClose }: Props) {
   const toggleAll = (checked: boolean) =>
     setSelectedIds(checked ? [...allIds] : []);
 
-  const handleSave = () => {
-    // TODO: API 연결 후 노출 영역(linkedPassIds) 저장 뮤테이션 연결
-    // eslint-disable-next-line no-console
-    console.log('[노출 영역 저장]', { noticeId: notice?.id, selectedIds });
-    onClose();
+  const handleSave = async () => {
+    if (!notice) return;
+    try {
+      await updateExposure.mutateAsync({
+        membershipNoticeId: notice.id,
+        membershipIds: selectedIds,
+      });
+      snackbar('노출 영역이 저장되었습니다.');
+      onClose();
+    } catch (e) {
+      snackbar(e instanceof Error ? e.message : '저장에 실패했습니다.');
+    }
   };
 
   return (
@@ -121,7 +144,11 @@ export default function NoticeExposureModal({ notice, onClose }: Props) {
         <Button variant="outlined" onClick={onClose}>
           취소하기
         </Button>
-        <Button variant="contained" onClick={handleSave}>
+        <Button
+          variant="contained"
+          onClick={handleSave}
+          disabled={updateExposure.isPending}
+        >
           저장하기
         </Button>
       </DialogActions>
