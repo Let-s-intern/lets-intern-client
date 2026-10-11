@@ -1,5 +1,6 @@
 import { uploadFile } from '@/api/file';
 import { twMerge } from '@/lib/twMerge';
+import { Pencil } from 'lucide-react';
 import { useState } from 'react';
 import { FiUpload } from 'react-icons/fi';
 
@@ -35,7 +36,7 @@ export default function ThumbnailUpload({ value, onChange, className }: Props) {
   return (
     <label
       className={twMerge(
-        'border-neutral-80 bg-neutral-95 flex aspect-[4/3] w-52 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-md border',
+        'border-neutral-80 bg-neutral-95 group relative flex aspect-[4/3] w-52 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-md border',
         isUploading && 'cursor-progress',
         className,
       )}
@@ -43,11 +44,16 @@ export default function ThumbnailUpload({ value, onChange, className }: Props) {
       {isUploading ? (
         <span className="text-neutral-40 text-xxsmall12">업로드 중...</span>
       ) : value ? (
-        <img
-          src={value}
-          alt="썸네일"
-          className="max-h-full max-w-full object-contain"
-        />
+        <>
+          <img
+            src={value}
+            alt="썸네일"
+            className="max-h-full max-w-full object-contain"
+          />
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-black/40 text-white opacity-0 transition-opacity group-hover:opacity-100">
+            <Pencil size={18} />
+          </div>
+        </>
       ) : (
         <div className="text-neutral-40 flex flex-col items-center gap-2">
           <FiUpload className="text-2xl" />
