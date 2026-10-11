@@ -70,9 +70,17 @@ export const allInOnePassBenefitSchema = z.object({
   membershipBenefitId: z.number(),
   type: z.string().nullish(),
   title: z.string(),
+  introduction: z.string().nullish(),
   link: z.string().nullish(),
   thumbnail: z.string().nullish(),
+  // 노출 영역(이 자료집을 노출할 패스 id). BE 반영 전엔 응답에 없어 []로 기본.
+  membershipIds: z.array(z.number()).default([]),
 });
+export type AllInOnePassBenefit = z.infer<typeof allInOnePassBenefitSchema>;
+
+export const allInOnePassBenefitListResponseSchema = z.array(
+  allInOnePassBenefitSchema,
+);
 
 export const allInOnePassFaqSchema = z.object({
   id: z.number(),
