@@ -137,6 +137,35 @@ export interface PassParticipant {
   usedPrograms: UsedProgram[]; // 이용한 프로그램 목록 (조회 모달)
 }
 
+/**
+ * A-8 참여 기간 건별 내역 1건 (최초 패스 + 연장 각각 = application 1건).
+ * 목록의 [자세히 보기]로 펼쳐 본다.
+ */
+export interface PassParticipationPeriod {
+  applicationId: string; // 주문번호 (연장마다 새 application)
+  paidAt: string; // 결제일
+  startDate: string;
+  endDate: string;
+  price: number; // 결제 금액(원)
+  // 라벨("패스 이용기간" / "N일 연장")은 저장하지 않고 FE에서 파생한다.
+  // (첫 건=최초, 이후=연장 · 일수는 endDate-startDate로 계산)
+}
+
+/**
+ * A-8 참여중 유저 1명 (전 패스 통합 "현재 참여중" 목록).
+ *
+ * BE는 연장마다 application을 새로 생성하므로, FE가 이메일/전화 기준으로 묶어
+ * 유저 1명 = 1행으로 보여준다. 참여 기간은 periods[0] 시작 ~ 마지막 종료로
+ * 요약(연장 반영)하고, 건별 내역은 periods(application 목록)로 펼친다.
+ */
+export interface ActivePassParticipant {
+  id: string; // 행 식별자 = 최신(대표) 주문번호
+  name: string; // 이름
+  email: string; // 이메일
+  passTitle: string; // 참여 올인원패스
+  periods: PassParticipationPeriod[]; // [0]=최초, 이후 연장. 요약=첫 시작~마지막 종료
+}
+
 /** A-4 공통 질문 (하드코딩 상수, 모든 회차에 포함) */
 export interface RetrospectiveCommonQuestion {
   id: number;
