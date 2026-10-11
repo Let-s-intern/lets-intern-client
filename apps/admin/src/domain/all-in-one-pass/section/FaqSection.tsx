@@ -3,7 +3,7 @@ import { PassFaq } from '@/domain/all-in-one-pass/types';
 import FaqModal from '@/domain/all-in-one-pass/ui/faq/FaqModal';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { Faq, ProgramTypeEnum } from '@/schema';
-import { CategoryTabs } from '@letscareer/ui';
+import CategoryTabs from '@/common/ui/CategoryTabs';
 import { Button, Checkbox } from '@mui/material';
 import { Pencil } from 'lucide-react';
 import { useMemo, useState } from 'react';
@@ -108,13 +108,7 @@ export default function FaqSection({ selectedIds, onChange }: Props) {
 
   return (
     <section className="flex flex-col gap-3">
-      <div className="flex flex-col gap-1">
-        <h2 className="text-small20 text-neutral-0 font-semibold">FAQ</h2>
-        {/* <p className="text-xsmall14 text-neutral-40">
-          질문은 전체 멤버십 공통 풀에서 관리하고, 체크한 항목만 이 패스에
-          노출됩니다.
-        </p> */}
-      </div>
+      <h2 className="text-small20 text-neutral-0 font-semibold">FAQ</h2>
 
       <div className="flex items-center justify-between gap-3">
         <CategoryTabs

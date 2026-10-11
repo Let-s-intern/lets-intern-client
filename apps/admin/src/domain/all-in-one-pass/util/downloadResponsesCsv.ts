@@ -1,5 +1,6 @@
 import { RetrospectiveResponse } from '@/domain/all-in-one-pass/types';
 import dayjs from '@/lib/dayjs';
+import { downloadBlob } from './downloadBlob';
 
 interface QuestionColumn {
   questionId: number;
@@ -35,11 +36,9 @@ export const downloadResponsesCsv = (
     .map((row) => row.map((cell) => escapeCell(String(cell))).join(','))
     .join('\n');
 
-  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `회고응답_${roundNumber ?? ''}회차.csv`;
-  a.click();
-  URL.revokeObjectURL(url);
+  downloadBlob(
+    `회고응답_${roundNumber ?? ''}회차.csv`,
+    '﻿' + csv,
+    'text/csv;charset=utf-8;',
+  );
 };

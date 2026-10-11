@@ -1,5 +1,6 @@
 import ActionButton from '@/domain/admin/ui/button/ActionButton';
 import { PassParticipant } from '@/domain/all-in-one-pass/types';
+import { downloadBlob } from '@/domain/all-in-one-pass/util/downloadBlob';
 import dayjs from '@/lib/dayjs';
 import { useState } from 'react';
 
@@ -8,22 +9,7 @@ interface Props {
   programTitle: string;
 }
 
-const download = (fileName: string, content: string, mime = 'text/plain') => {
-  const blob = new Blob([content], { type: mime });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = fileName;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
-};
-
-/**
- * 참여자 목록 다운로드.
- * CSV + 이메일/전화 전체 목록 제공.
- */
+/** 참여자 목록 다운로드 (CSV + 이메일/전화 목록) */
 export default function DownloadActions({ participants, programTitle }: Props) {
   const [open, setOpen] = useState(false);
 
@@ -45,7 +31,7 @@ export default function DownloadActions({ participants, programTitle }: Props) {
         dayjs(p.createDate).format('YYYY-MM-DD HH:mm'),
       ].join(',');
     });
-    download(
+    downloadBlob(
       `${programTitle} - 참여자 목록.csv`,
       '﻿' + [header, ...rows].join('\n'),
       'text/csv',
@@ -58,7 +44,7 @@ export default function DownloadActions({ participants, programTitle }: Props) {
       column === 'email' ? p.email : p.phoneNum,
     );
     const label = column === 'email' ? '이메일' : '전화번호';
-    download(`${programTitle} - ${label} 목록.txt`, list.join('\n'));
+    downloadBlob(`${programTitle} - ${label} 목록.txt`, list.join('\n'));
     setOpen(false);
   };
 

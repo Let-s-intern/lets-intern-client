@@ -7,6 +7,7 @@ import {
   resolveRefundLabel,
 } from '@/domain/admin/program/program-user/utils/refundState';
 import { PassParticipant } from '@/domain/all-in-one-pass/types';
+import { periodKindLabel } from '@/domain/all-in-one-pass/util/periodKindLabel';
 import dayjs from '@/lib/dayjs';
 
 const SUB_HEAD =
@@ -20,9 +21,6 @@ const BOLD_R = 'border-r-2 border-r-primary-40';
 
 export const appAmount = (p: PassParticipant) =>
   p.isCanceled ? (p.originalPrice ?? p.finalPrice) : p.finalPrice;
-
-const appLabel = (p: PassParticipant, index: number) =>
-  index === 0 ? '기본' : `${p.extendedDays}일 연장`;
 
 interface Props {
   apps: PassParticipant[];
@@ -76,7 +74,7 @@ export default function ParticipantDetailRows({
                     : 'border-primary text-primary'
                 }`}
               >
-                {appLabel(p, index)}
+                {periodKindLabel(index, p.extendedDays, '기본')}
               </span>
             </td>
             <td className={`${SUB_CELL} text-neutral-600${edge}`}>

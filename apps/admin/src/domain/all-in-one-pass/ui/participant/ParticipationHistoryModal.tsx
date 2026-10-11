@@ -12,15 +12,13 @@ import {
   TableRow,
 } from '@mui/material';
 import { IoClose } from 'react-icons/io5';
+import { periodKindLabel } from '../../util/periodKindLabel';
 import { ActivePassParticipant, PassParticipationPeriod } from '../../types';
 
 interface Props {
   participant: ActivePassParticipant | null;
   onClose: () => void;
 }
-
-const periodLabel = (period: PassParticipationPeriod, index: number) =>
-  index === 0 ? '패스 기간' : `${period.extendedDays}일 연장`;
 
 // 연장 커버 구간: [직전 종료+1, 이번 종료] (startDate가 최초 고정이라 역산)
 const coverage = (periods: PassParticipationPeriod[], index: number) => {
@@ -78,7 +76,11 @@ export default function ParticipationHistoryModal({
                   <TableRow key={period.applicationId} hover>
                     <TableCell>
                       <Chip
-                        label={periodLabel(period, index)}
+                        label={periodKindLabel(
+                          index,
+                          period.extendedDays,
+                          '패스 기간',
+                        )}
                         size="small"
                         color={index === 0 ? 'default' : 'primary'}
                         variant="outlined"
