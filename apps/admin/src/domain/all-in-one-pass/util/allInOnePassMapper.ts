@@ -6,7 +6,6 @@ import {
 } from '@/api/all-in-one-pass/allInOnePassSchema';
 import {
   AllInOnePassListItem,
-  PassBenefit,
   PassCalendarEvent,
   PassExtensionOption,
   PassExternalLink,
@@ -154,13 +153,6 @@ const planToDto = (plan: PassPlan) => ({
     ...PERMISSION_TO_PRIVILEGE[perm],
     programCount: null, // 현재 전달 안 함(필드만 유지)
   })),
-});
-
-export const benefitToDto = (benefit: PassBenefit) => ({
-  title: benefit.title,
-  type: benefit.category,
-  link: benefit.link || null,
-  thumbnail: benefit.thumbnailUrl,
 });
 
 /** 생성 요청 body */
