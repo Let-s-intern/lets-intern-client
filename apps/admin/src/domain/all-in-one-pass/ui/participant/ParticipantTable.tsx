@@ -2,16 +2,14 @@ import {
   RefundMode,
   RefundTarget,
 } from '@/domain/admin/program/program-user/ui/RefundModal';
-import {
-  resolveRefundableState,
-  resolveRefundLabel,
-} from '@/domain/admin/program/program-user/utils/refundState';
 import Table from '@/domain/admin/ui/table/regacy/Table';
 import TD from '@/domain/admin/ui/table/regacy/TD';
 import TH, { THProps } from '@/domain/admin/ui/table/regacy/TH';
 import { PassParticipant } from '@/domain/all-in-one-pass/types';
 import dayjs from '@/lib/dayjs';
 import { useMemo, useState } from 'react';
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa6';
+import ParticipantDetailRows, { appAmount } from './ParticipantDetailRows';
 
 interface Props {
   participants: PassParticipant[];
@@ -20,10 +18,6 @@ interface Props {
   onUsedProgramsClick: (participant: PassParticipant) => void;
 }
 
-/**
- * 올인원패스 참여자 테이블. 기존 프로그램 참여자 테이블(Table/TH/TD)과 동일한 레이아웃 +
- * 환불 로직(refundState 재사용)에, 멤버십 전용 '이용 프로그램' 컬럼을 더한다.
- */
 export default function ParticipantTable({
   participants,
   programTitle,
@@ -31,6 +25,7 @@ export default function ParticipantTable({
   onUsedProgramsClick,
 }: Props) {
   const [nameOrder, setNameOrder] = useState<THProps['inOrder']>(null);
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
   const handleNameHeadClick = () =>
     setNameOrder((prev) =>
@@ -41,146 +36,164 @@ export default function ParticipantTable({
           : 'ASCENDING',
     );
 
-  const rows = useMemo(() => {
-    if (!nameOrder) return participants;
-    const sorted = [...participants].sort((a, b) =>
-      a.name.localeCompare(b.name),
+  const toggle = (email: string) =>
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(email)) next.delete(email);
+      else next.add(email);
+      return next;
+    });
+
+  // email 기준 그룹 → 그룹 내 건은 결제일(createDate) 오름차순(최초 먼저)
+  const groups = useMemo(() => {
+    const map = new Map<string, PassParticipant[]>();
+    for (const p of participants) {
+      const arr = map.get(p.email);
+      if (arr) arr.push(p);
+      else map.set(p.email, [p]);
+    }
+    let result = Array.from(map.values()).map((apps) =>
+      [...apps].sort((a, b) => a.createDate.localeCompare(b.createDate)),
     );
-    return nameOrder === 'ASCENDING' ? sorted : sorted.reverse();
+    if (nameOrder) {
+      result = [...result].sort((a, b) => a[0].name.localeCompare(b[0].name));
+      if (nameOrder === 'DESCENDING') result.reverse();
+    }
+    return result;
   }, [participants, nameOrder]);
+
+  const refundTargetOf = (p: PassParticipant): RefundTarget => ({
+    applicationId: p.id,
+    name: p.name,
+    email: p.email,
+    phoneNum: p.phoneNum,
+    programTitle,
+    orderId: p.orderId,
+    pricePlanType: null,
+    couponName: p.couponName,
+    couponDiscount: p.couponDiscount,
+    finalPrice: p.finalPrice,
+  });
 
   return (
     <Table minWidth={1180}>
       <colgroup>
-        <col style={{ width: 130 }} /> {/* 주문번호 */}
-        <col style={{ width: 50 }} /> {/* 이름 */}
-        <col style={{ width: 150 }} /> {/* 소통용 이메일 */}
-        <col style={{ width: 100 }} /> {/* 휴대폰 번호 */}
-        <col style={{ width: 250 }} /> {/* 쿠폰명 */}
-        <col style={{ width: 150 }} /> {/* 결제 상품 */}
-        <col style={{ width: 80 }} /> {/* 결제금액 */}
-        <col style={{ width: 90 }} /> {/* 환불여부 */}
-        <col style={{ width: 100 }} /> {/* 신청일자 */}
-        <col style={{ width: 50 }} /> {/* 이용 프로그램 */}
-        <col style={{ width: 100 }} /> {/* 관리 */}
+        <col style={{ width: 1 }} />
+        <col style={{ width: 120 }} />
+        <col style={{ width: 190 }} />
+        <col style={{ width: 120 }} />
+        <col style={{ width: 170 }} />
+        <col style={{ width: 150 }} />
+        <col style={{ width: 230 }} />
+        <col style={{ width: 160 }} />
       </colgroup>
       <thead>
         <tr>
-          <TH>주문번호</TH>
+          <TH> </TH>
           <TH inOrder={nameOrder} onClick={handleNameHeadClick}>
             이름
           </TH>
           <TH>소통용 이메일</TH>
           <TH>휴대폰 번호</TH>
-          <TH>쿠폰명</TH>
           <TH>결제 상품</TH>
-          <TH>결제금액</TH>
-          <TH>환불여부</TH>
-          <TH>신청일자</TH>
+          <TH>총 결제금액</TH>
+          <TH>참여 기간</TH>
           <TH>이용 프로그램</TH>
-          <TH>관리</TH>
         </tr>
       </thead>
       <tbody>
-        {rows.map((p) => {
-          const amount = p.isCanceled
-            ? (p.originalPrice ?? p.finalPrice)
-            : p.finalPrice;
-
-          const refundLabel = resolveRefundLabel({
-            isCanceled: p.isCanceled,
-            isAdminRefunded: p.isAdminRefunded,
-            finalPrice: p.finalPrice,
-            originalPrice: p.originalPrice,
-          });
-
-          const refundable = resolveRefundableState({
-            isCanceled: p.isCanceled,
-            hasUser: !!p.name,
-            finalPrice: p.finalPrice,
-          });
-
-          const handleRefundClick = (mode: RefundMode) =>
-            onRefundClick(
-              {
-                applicationId: p.id,
-                name: p.name,
-                email: p.email,
-                phoneNum: p.phoneNum,
-                programTitle,
-                orderId: p.orderId,
-                pricePlanType: null,
-                couponName: p.couponName,
-                couponDiscount: p.couponDiscount,
-                finalPrice: p.finalPrice,
-              },
-              mode,
-            );
-
+        {groups.map((apps) => {
+          const email = apps[0].email;
           return (
-            <tr key={p.id}>
-              <TD>{p.orderId}</TD>
-              <TD>{p.name}</TD>
-              <TD>{p.email}</TD>
-              <TD>{p.phoneNum}</TD>
-              <TD>{p.couponName ?? '없음'}</TD>
-              <TD>{p.productName}</TD>
-              <TD>{amount.toLocaleString()}원</TD>
-              <TD whiteSpace="wrap">
-                {refundLabel.isAdmin ? (
-                  <span className="font-bold text-red-600">
-                    {refundLabel.text}
-                  </span>
-                ) : refundLabel.isRefunded ? (
-                  <span className="font-medium">{refundLabel.text}</span>
-                ) : (
-                  <span className="text-gray-300">{refundLabel.text}</span>
-                )}
-              </TD>
-              <TD>{dayjs(p.createDate).format('YYYY-MM-DD HH:mm')}</TD>
-              <TD>
-                <button
-                  type="button"
-                  className="border-primary text-primary hover:bg-primary-5 whitespace-nowrap rounded border px-2 py-1 text-xs"
-                  onClick={() => onUsedProgramsClick(p)}
-                >
-                  조회
-                </button>
-              </TD>
-              <TD textAlign="center">
-                {refundable.canRefund ? (
-                  <div className="flex justify-center gap-1">
-                    <button
-                      type="button"
-                      className="whitespace-nowrap rounded border border-red-500 px-2 py-1 text-xs text-red-600 hover:bg-red-50"
-                      onClick={() => handleRefundClick('full')}
-                    >
-                      환불
-                    </button>
-                    <button
-                      type="button"
-                      className="whitespace-nowrap rounded border border-red-500 px-2 py-1 text-xs text-red-600 hover:bg-red-50 disabled:border-neutral-300 disabled:text-neutral-400 disabled:hover:bg-transparent"
-                      onClick={() => handleRefundClick('partial')}
-                      disabled={!refundable.canPartialRefund}
-                      title={
-                        refundable.canPartialRefund
-                          ? undefined
-                          : '실결제액이 0원이라 나눌 금액이 없습니다.'
-                      }
-                    >
-                      부분환불
-                    </button>
-                  </div>
-                ) : (
-                  <span className="text-xs text-gray-400">
-                    {refundable.reason}
-                  </span>
-                )}
-              </TD>
-            </tr>
+            <ParticipantGroupRows
+              key={email}
+              apps={apps}
+              isOpen={expanded.has(email)}
+              onToggle={() => toggle(email)}
+              onUsedProgramsClick={onUsedProgramsClick}
+              onRefundClick={onRefundClick}
+              refundTargetOf={refundTargetOf}
+            />
           );
         })}
       </tbody>
     </Table>
+  );
+}
+
+interface GroupRowsProps {
+  apps: PassParticipant[];
+  isOpen: boolean;
+  onToggle: () => void;
+  onUsedProgramsClick: (participant: PassParticipant) => void;
+  onRefundClick: (target: RefundTarget, mode: RefundMode) => void;
+  refundTargetOf: (p: PassParticipant) => RefundTarget;
+}
+
+function ParticipantGroupRows({
+  apps,
+  isOpen,
+  onToggle,
+  onUsedProgramsClick,
+  onRefundClick,
+  refundTargetOf,
+}: GroupRowsProps) {
+  const head = apps[0];
+  const total = apps.reduce((sum, p) => sum + appAmount(p), 0);
+  // startDate 는 최초로 고정, createDate 오름차순이라 마지막이 최신 종료
+  const firstStart = head.startDate;
+  const lastEnd = apps[apps.length - 1].endDate;
+  const totalDays = dayjs(lastEnd).diff(dayjs(firstStart), 'day');
+
+  return (
+    <>
+      <tr
+        onClick={onToggle}
+        className={`cursor-pointer ${
+          isOpen ? 'bg-neutral-90' : 'hover:bg-neutral-90'
+        }`}
+        aria-expanded={isOpen}
+      >
+        <TD>
+          <span className="flex items-center justify-center text-neutral-500">
+            {isOpen ? <FaChevronUp size={12} /> : <FaChevronDown size={12} />}
+          </span>
+        </TD>
+        <TD>{head.name}</TD>
+        <TD>{head.email}</TD>
+        <TD>{head.phoneNum}</TD>
+        <TD>{head.productName}</TD>
+        <TD>
+          {total.toLocaleString()}원 ({apps.length}건)
+        </TD>
+        <TD>
+          {totalDays}일 ({dayjs(firstStart).format('YYYY.MM.DD')} ~{' '}
+          {dayjs(lastEnd).format('YYYY.MM.DD')})
+        </TD>
+        <TD>
+          <button
+            type="button"
+            className="border-primary text-primary hover:bg-primary-5 w-24 whitespace-nowrap rounded border py-1 text-xs"
+            onClick={(e) => {
+              e.stopPropagation();
+              onUsedProgramsClick({
+                ...head,
+                usedPrograms: apps.flatMap((p) => p.usedPrograms),
+              });
+            }}
+          >
+            조회
+          </button>
+        </TD>
+      </tr>
+
+      {isOpen && (
+        <ParticipantDetailRows
+          apps={apps}
+          onRefundClick={onRefundClick}
+          refundTargetOf={refundTargetOf}
+        />
+      )}
+    </>
   );
 }

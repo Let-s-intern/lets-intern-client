@@ -1,10 +1,9 @@
 import { PassParticipant } from '@/domain/all-in-one-pass/types';
 
-/**
- * 참여자 mock 시드. 환불여부 라벨(유저/어드민 · 전체/부분)과 관리 컬럼
- * (환불/부분환불/환불완료)을 확인할 수 있도록 다양한 상태를 포함한다.
- */
+// 참여자 mock(= application 목록). email로 묶어 유저 1행.
+// 모델: 연장마다 새 application · startDate 최초 고정 · endDate 누적 · price는 연장분 · extendedDays(최초=null)
 export const participantFixtures: PassParticipant[] = [
+  // ── 김민수: 연장 없음 ──────────────────────────────
   {
     id: 1,
     orderId: 'AIOP-202608-0001',
@@ -21,6 +20,9 @@ export const participantFixtures: PassParticipant[] = [
     isCanceled: false,
     isAdminRefunded: false,
     createDate: '2026-08-05T13:20:00',
+    startDate: '2026-08-05',
+    endDate: '2026-11-03',
+    extendedDays: null,
     usedPrograms: [
       {
         id: 101,
@@ -34,14 +36,9 @@ export const participantFixtures: PassParticipant[] = [
         title: '직무 분석 가이드북',
         usedAt: '2026-08-10T21:00:00',
       },
-      {
-        id: 103,
-        type: 'MENTORING',
-        title: '1:1 포트폴리오 멘토링',
-        usedAt: '2026-08-20T19:00:00',
-      },
     ],
   },
+  // ── 이서연: 최초 + 30일 연장 ───────────────────────
   {
     id: 2,
     orderId: 'AIOP-202608-0002',
@@ -58,6 +55,9 @@ export const participantFixtures: PassParticipant[] = [
     isCanceled: false,
     isAdminRefunded: false,
     createDate: '2026-08-07T10:05:00',
+    startDate: '2026-08-07',
+    endDate: '2026-11-05',
+    extendedDays: null,
     usedPrograms: [
       {
         id: 201,
@@ -74,7 +74,28 @@ export const participantFixtures: PassParticipant[] = [
     ],
   },
   {
-    // 유저 전체 환불 (본인이 취소, finalPrice === originalPrice)
+    id: 5,
+    orderId: 'AIOP-202610-0010',
+    productName: '올인원패스 + VOD 20종',
+    name: '이서연',
+    email: 'seoyeon.lee@example.com',
+    phoneNum: '010-2345-6789',
+    couponName: null,
+    couponDiscount: null,
+    programPrice: 30000,
+    programDiscount: 0,
+    finalPrice: 30000,
+    originalPrice: null,
+    isCanceled: false,
+    isAdminRefunded: false,
+    createDate: '2026-10-30T11:00:00', // 만료(11-05) 전 연장
+    startDate: '2026-08-07', // 최초로 고정
+    endDate: '2026-12-05', // 누적(11-05 + 30일)
+    extendedDays: 30,
+    usedPrograms: [],
+  },
+  // ── 박지훈: 유저 전체 환불 ─────────────────────────
+  {
     id: 3,
     orderId: 'AIOP-202608-0003',
     productName: '올인원패스',
@@ -90,10 +111,13 @@ export const participantFixtures: PassParticipant[] = [
     isCanceled: true,
     isAdminRefunded: false,
     createDate: '2026-08-09T16:40:00',
+    startDate: '2026-08-09',
+    endDate: '2026-11-07',
+    extendedDays: null,
     usedPrograms: [],
   },
+  // ── 최유나: 최초(유효) + 90일 연장(어드민 부분환불) ──
   {
-    // 어드민 부분 환불 (finalPrice < originalPrice)
     id: 4,
     orderId: 'AIOP-202608-0004',
     productName: '올인원패스 + VOD 20종',
@@ -104,11 +128,14 @@ export const participantFixtures: PassParticipant[] = [
     couponDiscount: null,
     programPrice: 139000,
     programDiscount: 0,
-    finalPrice: 70000,
-    originalPrice: 139000,
-    isCanceled: true,
-    isAdminRefunded: true,
+    finalPrice: 139000,
+    originalPrice: null,
+    isCanceled: false,
+    isAdminRefunded: false,
     createDate: '2026-08-11T09:15:00',
+    startDate: '2026-08-11',
+    endDate: '2026-11-09',
+    extendedDays: null,
     usedPrograms: [
       {
         id: 401,
@@ -117,5 +144,26 @@ export const participantFixtures: PassParticipant[] = [
         usedAt: '2026-08-12T10:00:00',
       },
     ],
+  },
+  {
+    id: 6,
+    orderId: 'AIOP-202611-0011',
+    productName: '올인원패스 + VOD 20종',
+    name: '최유나',
+    email: 'yuna.choi@example.com',
+    phoneNum: '010-4567-8901',
+    couponName: null,
+    couponDiscount: null,
+    programPrice: 99000,
+    programDiscount: 0,
+    finalPrice: 70000,
+    originalPrice: 99000,
+    isCanceled: true,
+    isAdminRefunded: true,
+    createDate: '2026-11-03T14:20:00', // 만료(11-09) 전 연장
+    startDate: '2026-08-11', // 최초로 고정
+    endDate: '2027-02-07', // 누적(11-09 + 90일)
+    extendedDays: 90,
+    usedPrograms: [],
   },
 ];

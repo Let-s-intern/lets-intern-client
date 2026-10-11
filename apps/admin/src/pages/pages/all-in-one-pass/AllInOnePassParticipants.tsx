@@ -11,7 +11,6 @@ import { Button } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useMemo, useState } from 'react';
 
-/** 요약 기간: 총 일수 + (최초 시작 ~ 마지막 종료) */
 const periodSummary = (p: ActivePassParticipant) => {
   const first = p.periods[0];
   const last = p.periods[p.periods.length - 1];
@@ -24,7 +23,6 @@ const periodSummary = (p: ActivePassParticipant) => {
   };
 };
 
-/** 결제 금액 합계(최초 + 연장 전부) */
 const totalPrice = (p: ActivePassParticipant) =>
   p.periods.reduce((sum, period) => sum + period.price, 0);
 

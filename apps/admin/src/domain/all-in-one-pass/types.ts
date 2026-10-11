@@ -112,17 +112,18 @@ export interface UsedProgram {
 }
 
 /**
- * 참여자(멤버십 구매자) 1명.
+ * 참여자(멤버십 구매자)의 신청서(application) 1건.
  *
- * 기존 프로그램 참여자 테이블(신청서)과 동일한 필드 구성을 따른다. 환불 상태·라벨은
- * refundState util 이 isCanceled/finalPrice/originalPrice 로 파생하므로 그 필드를 그대로
- * 갖는다(재사용). 여기에 멤버십 전용으로 usedPrograms(이용 프로그램)만 더한다.
+ * 연장마다 새 application 이 생기므로, 한 유저가 여러 건을 가질 수 있다.
+ * 테이블에서는 email 기준으로 묶어 유저 1행 + [전체 내역]으로 펼친다.
+ * 환불 상태·라벨은 refundState util 이 isCanceled/finalPrice/originalPrice 로
+ * 파생하고, 환불은 application(건)별로 독립 처리한다.
  */
 export interface PassParticipant {
   id: number; // 신청서 id (환불 대상)
   orderId: string; // 주문번호
   name: string; // 이름
-  email: string; // 소통용 이메일
+  email: string; // 소통용 이메일(유저 묶음 키)
   phoneNum: string; // 휴대폰 번호
   couponName: string | null; // 쿠폰명
   couponDiscount: number | null; // 쿠폰 할인액 (-1 = 100% 할인)
@@ -133,7 +134,10 @@ export interface PassParticipant {
   originalPrice: number | null; // 환불 시 원결제액(전체/부분 판정용)
   isCanceled: boolean; // 취소(환불 완료) 여부
   isAdminRefunded: boolean; // 어드민 환불 여부(환불여부 라벨 구분용)
-  createDate: string; // 신청일자
+  createDate: string; // 결제일(신청일자)
+  startDate: string; // 이용 시작일 — 최초로 고정(한 유저의 모든 건 동일)
+  endDate: string; // 이용 종료일 — 연장마다 누적 증가
+  extendedDays: number | null; // 연장 일수(연장 건만 · 최초=null). 커버 구간=[직전 종료+1, endDate]
   usedPrograms: UsedProgram[]; // 이용한 프로그램 목록 (조회 모달)
 }
 
@@ -144,11 +148,10 @@ export interface PassParticipant {
 export interface PassParticipationPeriod {
   applicationId: string; // 주문번호 (연장마다 새 application)
   paidAt: string; // 결제일
-  startDate: string;
-  endDate: string;
-  price: number; // 결제 금액(원)
-  // 라벨("패스 이용기간" / "N일 연장")은 저장하지 않고 FE에서 파생한다.
-  // (첫 건=최초, 이후=연장 · 일수는 endDate-startDate로 계산)
+  startDate: string; // 이용 시작일 — 최초로 고정(한 유저의 모든 건 동일)
+  endDate: string; // 이용 종료일 — 연장마다 누적 증가
+  extendedDays: number | null; // 연장 일수(연장 건만 · 최초=null). 커버 구간=[직전 종료+1, endDate]
+  price: number; // 결제 금액(원) — 연장은 연장분만
 }
 
 /**

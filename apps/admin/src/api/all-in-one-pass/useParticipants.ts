@@ -4,11 +4,8 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { participantStore } from './mock/participantStore';
 import { mockDelay } from './mock/passStore';
 
-/**
- * 올인원패스 참여자 조회/환불 훅.
- * 현재는 mock 스토어를 읽고 쓰며, 백엔드 스펙이 나오면 각 함수 본문만 axios 로
- * 교체하고 ./mock 을 삭제한다. (환불은 기존 POST /admin/application/{id}/refund 재사용 예정)
- */
+// 올인원패스 참여자 조회/환불. mock — 스펙 나오면 각 함수 본문만 axios로 교체.
+// (환불은 기존 POST /admin/application/{id}/refund 재사용 예정)
 
 export const participantListQueryKey = 'allInOnePassParticipantList';
 
@@ -29,11 +26,7 @@ export const useGetParticipantsQuery = (passId?: number) =>
       ),
   });
 
-/**
- * 환불(전체/부분) mock. 실서버의 updateRefundPrice 흔적을 흉내낸다:
- * 원결제액을 originalPrice 로 보존하고 finalPrice 에 환불액을 남겨(전체=원결제액,
- * 부분=환불액) refundState 가 전체/부분을 판정할 수 있게 한다.
- */
+// 환불(전체/부분) mock: originalPrice에 원결제액 보존 + finalPrice에 환불액 → refundState가 전체/부분 판정
 export const useRefundParticipantMutation = ({
   successCallback,
   errorCallback,

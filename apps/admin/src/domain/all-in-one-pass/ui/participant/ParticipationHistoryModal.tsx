@@ -19,14 +19,25 @@ interface Props {
   onClose: () => void;
 }
 
-/** 라벨 파생: 첫 건=패스 기간, 이후=연장(일수는 종료-시작) */
-const periodLabel = (period: PassParticipationPeriod, index: number) => {
-  if (index === 0) return '패스 기간';
-  const days = dayjs(period.endDate).diff(dayjs(period.startDate), 'day');
-  return `${days}일 연장`;
+const periodLabel = (period: PassParticipationPeriod, index: number) =>
+  index === 0 ? '패스 기간' : `${period.extendedDays}일 연장`;
+
+// 연장 커버 구간: [직전 종료+1, 이번 종료] (startDate가 최초 고정이라 역산)
+const coverage = (periods: PassParticipationPeriod[], index: number) => {
+  const period = periods[index];
+  if (index === 0)
+    return {
+      days: dayjs(period.endDate).diff(dayjs(period.startDate), 'day'),
+      start: dayjs(period.startDate),
+      end: dayjs(period.endDate),
+    };
+  return {
+    days: period.extendedDays ?? 0,
+    start: dayjs(periods[index - 1].endDate).add(1, 'day'),
+    end: dayjs(period.endDate),
+  };
 };
 
-/** A-8 참여 기간 건별 내역 모달 (최초 패스 + 연장 각각) */
 export default function ParticipationHistoryModal({
   participant,
   onClose,
@@ -61,43 +72,39 @@ export default function ParticipationHistoryModal({
               </TableRow>
             </TableHead>
             <TableBody>
-              {participant.periods.map((period, index) => (
-                <TableRow key={period.applicationId} hover>
-                  <TableCell>
-                    <Chip
-                      label={periodLabel(period, index)}
-                      size="small"
-                      color={index === 0 ? 'default' : 'primary'}
-                      variant="outlined"
-                    />
-                  </TableCell>
-                  <TableCell className="text-neutral-20">
-                    {period.applicationId}
-                  </TableCell>
-
-                  <TableCell className="text-neutral-20">
-                    {dayjs(period.paidAt).format('YYYY.MM.DD')}
-                  </TableCell>
-                  <TableCell className="text-neutral-0">
-                    {period.price.toLocaleString()}원
-                  </TableCell>
-                  <TableCell className="text-neutral-0">
-                    <div className="flex items-center gap-1.5">
-                      <span className="w-11 shrink-0">
-                        {dayjs(period.endDate).diff(
-                          dayjs(period.startDate),
-                          'day',
-                        )}
-                        일
-                      </span>
-                      <span>
-                        ({dayjs(period.startDate).format('YYYY.MM.DD')} ~{' '}
-                        {dayjs(period.endDate).format('YYYY.MM.DD')})
-                      </span>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {participant.periods.map((period, index) => {
+                const cov = coverage(participant.periods, index);
+                return (
+                  <TableRow key={period.applicationId} hover>
+                    <TableCell>
+                      <Chip
+                        label={periodLabel(period, index)}
+                        size="small"
+                        color={index === 0 ? 'default' : 'primary'}
+                        variant="outlined"
+                      />
+                    </TableCell>
+                    <TableCell className="text-neutral-20">
+                      {period.applicationId}
+                    </TableCell>
+                    <TableCell className="text-neutral-20">
+                      {dayjs(period.paidAt).format('YYYY.MM.DD')}
+                    </TableCell>
+                    <TableCell className="text-neutral-0">
+                      {period.price.toLocaleString()}원
+                    </TableCell>
+                    <TableCell className="text-neutral-0">
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-11 shrink-0">{cov.days}일</span>
+                        <span>
+                          ({cov.start.format('YYYY.MM.DD')} ~{' '}
+                          {cov.end.format('YYYY.MM.DD')})
+                        </span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         ) : (

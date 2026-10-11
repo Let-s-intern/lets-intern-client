@@ -1,10 +1,7 @@
 import { ActivePassParticipant } from '@/domain/all-in-one-pass/types';
 
-/**
- * A-8 참여중 유저 mock 시드. 연장 유저(periods 2건 이상)와 여러 패스가 섞인
- * 현재 참여중 목록을 흉내낸다. BE 조회 API가 나오면 이 파일을 삭제한다.
- * (row id = 최신 주문번호 · 라벨은 FE 파생)
- */
+// A-8 참여중 유저 mock. 모델: startDate 최초 고정 · endDate 누적 · price 연장분 · extendedDays.
+// 연장 커버 구간은 FE에서 [직전 종료+1, endDate]로 파생. (row id = 최신 주문번호)
 export const activeParticipantFixtures: ActivePassParticipant[] = [
   {
     id: 'letsvU266401',
@@ -17,6 +14,7 @@ export const activeParticipantFixtures: ActivePassParticipant[] = [
         paidAt: '2026-08-05',
         startDate: '2026-08-05',
         endDate: '2026-11-03',
+        extendedDays: null,
         price: 99000,
       },
     ],
@@ -33,20 +31,23 @@ export const activeParticipantFixtures: ActivePassParticipant[] = [
         paidAt: '2026-07-20',
         startDate: '2026-07-20',
         endDate: '2026-10-18',
+        extendedDays: null,
         price: 99000,
       },
       {
         applicationId: 'letsvU266411',
         paidAt: '2026-10-11', // 만료(10-18) 7일 전
-        startDate: '2026-10-18',
-        endDate: '2026-11-17',
+        startDate: '2026-07-20', // 최초로 고정
+        endDate: '2026-11-17', // 누적(10-18 + 30일)
+        extendedDays: 30,
         price: 30000,
       },
       {
         applicationId: 'letsvU266412',
         paidAt: '2026-11-14', // 만료(11-17) 3일 전
-        startDate: '2026-11-17',
-        endDate: '2027-03-17',
+        startDate: '2026-07-20', // 최초로 고정
+        endDate: '2027-03-17', // 누적(11-17 + 120일)
+        extendedDays: 120,
         price: 99000,
       },
     ],
@@ -62,6 +63,7 @@ export const activeParticipantFixtures: ActivePassParticipant[] = [
         paidAt: '2026-09-01',
         startDate: '2026-09-01',
         endDate: '2026-11-30',
+        extendedDays: null,
         price: 99000,
       },
     ],
@@ -78,13 +80,15 @@ export const activeParticipantFixtures: ActivePassParticipant[] = [
         paidAt: '2026-09-10',
         startDate: '2026-09-10',
         endDate: '2026-12-09',
+        extendedDays: null,
         price: 99000,
       },
       {
         applicationId: 'letsvU266495',
-        paidAt: '2026-12-09', // 만료(12-09) 당일
-        startDate: '2026-12-09',
-        endDate: '2027-01-08',
+        paidAt: '2026-12-09', // 만료 당일
+        startDate: '2026-09-10', // 최초로 고정
+        endDate: '2027-01-08', // 누적(12-09 + 30일)
+        extendedDays: 30,
         price: 30000,
       },
     ],
@@ -100,6 +104,7 @@ export const activeParticipantFixtures: ActivePassParticipant[] = [
         paidAt: '2026-10-02',
         startDate: '2026-10-02',
         endDate: '2026-12-31',
+        extendedDays: null,
         price: 129000,
       },
     ],
@@ -116,13 +121,15 @@ export const activeParticipantFixtures: ActivePassParticipant[] = [
         paidAt: '2026-10-08',
         startDate: '2026-10-08',
         endDate: '2027-01-06',
+        extendedDays: null,
         price: 129000,
       },
       {
         applicationId: 'letsvU266451',
         paidAt: '2027-01-07', // 만료(01-06) 1일 후
-        startDate: '2027-01-06',
-        endDate: '2027-04-06',
+        startDate: '2026-10-08', // 최초로 고정
+        endDate: '2027-04-06', // 누적(01-06 + 90일)
+        extendedDays: 90,
         price: 79000,
       },
     ],
