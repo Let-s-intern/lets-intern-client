@@ -10,12 +10,10 @@ import { useState } from 'react';
 
 interface Props {
   pass: AllInOnePassListItem;
-  /** 이미 노출 중인 다른 패스가 있는지 (단일 노출 규칙) */
-  hasOtherVisible: boolean;
 }
 
-/** 노출 여부 토글. 단일 노출: 다른 패스가 노출 중이면 켜지 않고 안내만 한다. */
-export default function VisibilityToggle({ pass, hasOtherVisible }: Props) {
+/** 노출 여부 토글 (다중 동시 노출 허용 */
+export default function VisibilityToggle({ pass }: Props) {
   const queryClient = useQueryClient();
   const { snackbar } = useAdminSnackbar();
   const [loading, setLoading] = useState(false);
@@ -26,10 +24,6 @@ export default function VisibilityToggle({ pass, hasOtherVisible }: Props) {
   });
 
   const handleChange = async (checked: boolean) => {
-    if (checked && hasOtherVisible) {
-      snackbar('노출 중인 올인원패스가 존재합니다.');
-      return;
-    }
     setLoading(true);
     try {
       await patchVisible.mutateAsync({ id: pass.id, isVisible: checked });

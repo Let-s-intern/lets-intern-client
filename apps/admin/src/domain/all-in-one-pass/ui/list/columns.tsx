@@ -11,10 +11,8 @@ import VisibilityToggle from './VisibilityToggle';
 // 유저 랜딩(비구매자용)으로 이동하는 외부 링크 호스트.
 const WEB_URL = import.meta.env.VITE_WEB_URL ?? '/';
 
-/** A-1 개설 목록 컬럼. 노출여부 단일 노출 판정을 위해 전체 목록을 받는다. */
-export const getListColumns = (
-  passes: AllInOnePassListItem[],
-): GridColDef<AllInOnePassListItem>[] => [
+/** A-1 개설 목록 컬럼 */
+export const getListColumns = (): GridColDef<AllInOnePassListItem>[] => [
   {
     field: 'createdAt',
     headerName: '개설일자',
@@ -97,11 +95,6 @@ export const getListColumns = (
     headerName: '노출여부',
     width: 100,
     sortable: false,
-    renderCell: ({ row }) => (
-      <VisibilityToggle
-        pass={row}
-        hasOtherVisible={passes.some((p) => p.id !== row.id && p.isVisible)}
-      />
-    ),
+    renderCell: ({ row }) => <VisibilityToggle pass={row} />,
   },
 ];

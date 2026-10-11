@@ -17,7 +17,7 @@ export default function AllInOnePassList() {
 
   const { data, isLoading, error } = useGetAllInOnePassListQuery();
   const list = useMemo(() => data ?? [], [data]);
-  const columns = useMemo(() => getListColumns(list), [list]);
+  const columns = useMemo(() => getListColumns(), []);
 
   const { paginationModel, handlePaginationModelChange } =
     usePaginationModelWithSearchParams({ defaultPage: 0, defaultPageSize: 20 });

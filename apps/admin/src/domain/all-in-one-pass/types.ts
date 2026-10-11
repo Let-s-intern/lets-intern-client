@@ -94,7 +94,7 @@ export interface AllInOnePassListItem {
   purchaseStartDate: string | null; // 구매 가능 기간 시작
   purchaseEndDate: string | null; // 구매 가능 기간 종료
   passDays: number; // 패스 기간(일)
-  isVisible: boolean; // 노출 여부(단일 노출)
+  isVisible: boolean; // 노출 여부
   currentApplicantCount: number; // 신청 인원
   maxApplicantCount: number | null; // null = 무제한(∞)
   createdAt: string; // 개설 일자
