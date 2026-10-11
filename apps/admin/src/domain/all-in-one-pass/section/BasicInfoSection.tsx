@@ -93,7 +93,7 @@ export default function BasicInfoSection({ input, patch }: Props) {
           className="w-[235px] shrink-0"
         />
         {/* 오른쪽 남은 공간: 타일 적층 위 + 연장옵션 추가 버튼 아래(일정·링크 패턴) */}
-        <div className="flex flex-1 flex-col gap-3 pt-0.5">
+        <div className="flex flex-1 flex-col gap-3">
           <ExtensionSection
             options={input.extensionOptions}
             onChange={(extensionOptions) => patch({ extensionOptions })}

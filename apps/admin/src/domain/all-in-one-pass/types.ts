@@ -1,10 +1,4 @@
-/**
- * 올인원패스(멤버십) 어드민 타입.
- *
- * 백엔드 도메인이 아직 없어 현재는 mock(./mock)으로만 동작한다. 화면은 이
- * 타입에만 의존하므로, 실제 API 스펙이 나오면 mock 을 실제 호출로 교체해도
- * 화면 코드는 바뀌지 않는다. 필요한 화면부터 타입을 점진적으로 확장한다.
- */
+/** 올인원패스(멤버십) 어드민 타입. (회고·참여자는 BE 대기로 아직 mock) */
 
 /** 모집상태 (구매 가능 기간으로 파생 · util/passStatus.ts) */
 export type PassRecruitmentStatus = 'BEFORE' | 'PROCEEDING' | 'CLOSED';

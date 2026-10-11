@@ -2,7 +2,7 @@ import { AdminRefundRequest } from '@/api/adminRefund';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { participantStore } from './mock/participantStore';
-import { mockDelay } from './mock/passStore';
+import { mockDelay } from './mock/mockDelay';
 
 // 올인원패스 참여자 조회/환불. mock — 스펙 나오면 각 함수 본문만 axios로 교체.
 // (환불은 기존 POST /admin/application/{id}/refund 재사용 예정)

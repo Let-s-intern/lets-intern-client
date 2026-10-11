@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { buildRoundsForPass } from './mock/retrospectiveFixtures';
 import { retrospectiveResponseFixtures } from './mock/retrospectiveResponseFixtures';
-import { mockDelay } from './mock/passStore';
+import { mockDelay } from './mock/mockDelay';
 
 /**
  * A-4/A-5 회고 훅 (읽기 전용).

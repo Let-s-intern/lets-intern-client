@@ -12,7 +12,7 @@ interface Props {
   pass: AllInOnePassListItem;
 }
 
-/** 노출 여부 토글 (다중 동시 노출 허용 */
+/** 노출 여부 토글 (다중 동시 노출 허용) */
 export default function VisibilityToggle({ pass }: Props) {
   const queryClient = useQueryClient();
   const { snackbar } = useAdminSnackbar();

@@ -2,10 +2,7 @@ import axios from '@/utils/axios';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { allInOnePassBenefitListResponseSchema } from './allInOnePassSchema';
 
-/**
- * A-7 자료집(혜택) 글로벌 풀 CRUD 훅. 서버: /api/v1/admin/membership/benefit.
- * 자료집은 패스와 독립된 풀로 관리하고, 패스 연결은 멤버십 CU의 benefitIdList로 한다.
- */
+/** A-7 자료집(혜택) 글로벌 풀 CRUD 훅. 서버: /api/v1/admin/membership/benefit. */
 
 type MutationCallbacks = {
   successCallback?: () => void;
