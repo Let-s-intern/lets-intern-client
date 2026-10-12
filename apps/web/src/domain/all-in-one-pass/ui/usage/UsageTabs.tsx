@@ -1,8 +1,7 @@
 // 나의 패스 이용 카테고리 탭 바 + 활성 탭 내용.
 'use client';
 
-import { CategoryTabs } from '@letscareer/ui';
-import clsx from 'clsx';
+import { CategoryChips, CategoryTabs } from '@letscareer/ui';
 import { useState } from 'react';
 import type { PassPrivilege } from '../../types';
 import UsageChallengeTab from './UsageChallengeTab';
@@ -43,23 +42,14 @@ const UsageTabs = ({ privileges }: Props) => {
 
   return (
     <div className="flex flex-col gap-8 md:gap-10">
-      <div className="border-neutral-80 scrollbar-hide sticky top-[84px] z-10 -mx-5 flex gap-2 overflow-x-auto border-b bg-white px-5 py-4 md:hidden md:border-none md:py-0">
-        {visibleTabs.map((tab) => (
-          <button
-            key={tab.value}
-            type="button"
-            onClick={() => setActive(tab.value)}
-            className={clsx(
-              'text-xsmall14 flex-shrink-0 whitespace-nowrap rounded-full px-3 py-1.5 transition-colors',
-              tab.value === active
-                ? 'bg-primary font-semibold text-white'
-                : 'bg-neutral-95 text-neutral-0 font-medium',
-            )}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      <CategoryChips
+        options={visibleTabs}
+        selected={active}
+        onChange={setActive}
+        className="border-neutral-80 sticky top-[84px] z-10 -mx-5 border-b bg-white px-5 py-4 md:hidden md:border-none md:py-0"
+        activeClassName="bg-primary  text-static-100"
+        inactiveClassName="bg-neutral-95 text-neutral-0 "
+      />
       <div className="hidden md:block">
         <CategoryTabs
           options={visibleTabs}
