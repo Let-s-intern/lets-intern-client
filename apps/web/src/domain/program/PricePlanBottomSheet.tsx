@@ -1,6 +1,7 @@
 import { useProgramApplicationQuery } from '@/api/application';
 import BaseBottomSheet from '@/common/sheet/BaseBottomSheet';
 import { COUPON_DISABLED_CHALLENGE_TYPES } from '@/domain/program/program-detail/apply/constants';
+import { useVodPassPurchaseEnabled } from '@/domain/program/useVodPassPurchaseEnabled';
 import { calculateChallengeTotalWithVodPass } from '@/domain/program/vodPassPurchase';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import { twMerge } from '@/lib/twMerge';
@@ -213,7 +214,11 @@ function PricePlanBottomSheet({
   const { setProgramApplicationForm } = useProgramStore();
 
   // 상품이 null·누락(비활성 또는 서버 배포 전)이면 카드도 선택값도 없다
-  const vodPassProduct = application?.vodPassProduct ?? null;
+  // PostHog 플래그(vod-pass-purchase)가 꺼져 있으면 서버가 상품을 내려줘도 카드를 숨긴다 (LC-3438)
+  const vodPassPurchaseEnabled = useVodPassPurchaseEnabled();
+  const vodPassProduct = vodPassPurchaseEnabled
+    ? (application?.vodPassProduct ?? null)
+    : null;
   const selectedVodPass = isVodPassChecked ? vodPassProduct : null;
   const vodPassPrice = selectedVodPass?.price ?? 0;
 
