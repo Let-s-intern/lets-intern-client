@@ -21,9 +21,34 @@ export type { PointPlacement } from './calendarModel';
  * 창은 오늘이 속한 월요일주 기준 2주, 이동은 1주씩.
  * 노출 규칙(방법 D)은 {@link deriveCalendar} 참고.
  */
-export function useCalendar(events: PassCalendarEvent[]) {
+export function useCalendar(
+  events: PassCalendarEvent[],
+  periodStart?: string,
+  periodEnd?: string,
+) {
   const today = dayjs().startOf('day');
-  const [windowStart, setWindowStart] = useState<Day>(weekStartOf(today));
+
+  // 이용기간 바운드 — 이 범위(2주 창)만 이동 가능. 창은 2주라 마지막 창 시작은 종료주 -1주
+  const minWindowStart = periodStart
+    ? weekStartOf(dayjs(periodStart))
+    : undefined;
+  const maxWindowStart = periodEnd
+    ? (() => {
+        const m = weekStartOf(dayjs(periodEnd)).subtract(7, 'day');
+        return minWindowStart && m.isBefore(minWindowStart)
+          ? minWindowStart
+          : m;
+      })()
+    : undefined;
+  const clampWindow = (w: Day) => {
+    if (minWindowStart && w.isBefore(minWindowStart)) return minWindowStart;
+    if (maxWindowStart && w.isAfter(maxWindowStart)) return maxWindowStart;
+    return w;
+  };
+
+  const [windowStart, setWindowStart] = useState<Day>(() =>
+    clampWindow(weekStartOf(today)),
+  );
   const [selected, setSelected] = useState<Day>(today);
   const [filters, setFilters] = useState<
     Record<PassParticipationStatus, boolean>
@@ -87,11 +112,21 @@ export function useCalendar(events: PassCalendarEvent[]) {
     filters,
     toggleFilter: (k: PassParticipationStatus) =>
       setFilters((f) => ({ ...f, [k]: !f[k] })),
-    goPrevWeek: () => setWindowStart((w) => w.subtract(7, 'day')),
-    goNextWeek: () => setWindowStart((w) => w.add(7, 'day')),
-    /** 오늘로 복귀 — 조회 창·선택일 모두 오늘 기준 */
+    canPrevWeek: !minWindowStart || windowStart.isAfter(minWindowStart),
+    canNextWeek: !maxWindowStart || windowStart.isBefore(maxWindowStart),
+    goPrevWeek: () =>
+      setWindowStart((w) => {
+        const n = w.subtract(7, 'day');
+        return minWindowStart && n.isBefore(minWindowStart) ? w : n;
+      }),
+    goNextWeek: () =>
+      setWindowStart((w) => {
+        const n = w.add(7, 'day');
+        return maxWindowStart && n.isAfter(maxWindowStart) ? w : n;
+      }),
+    /** 오늘로 복귀 — 조회 창·선택일 모두 오늘 기준(이용기간 내로 클램프) */
     goToday: () => {
-      setWindowStart(weekStartOf(today));
+      setWindowStart(clampWindow(weekStartOf(today)));
       setSelected(today);
     },
     bars,

@@ -1,3 +1,4 @@
+import dayjs from '@/lib/dayjs';
 import clsx from 'clsx';
 import type { NormalizedCalendarEvent } from '../../../types';
 import { eventColor } from './calendarColors';
@@ -29,6 +30,8 @@ interface Props {
   today: Day;
   selected: Day;
   onSelect: (d: Day) => void;
+  periodStart?: string;
+  periodEnd?: string;
 }
 
 /**
@@ -47,10 +50,19 @@ export default function MobileWeekRow({
   today,
   selected,
   onSelect,
+  periodStart,
+  periodEnd,
 }: Props) {
   const itemRows = MONTH_MAX_ROWS; // 최대 4행 (렌더 대상 lane 0~3)
   const weekStart = week[0];
   const weekEnd = week[6];
+
+  // 이용기간 밖 날짜 판정 (일 단위)
+  const periodStartDay = periodStart ? dayjs(periodStart).startOf('day') : null;
+  const periodEndDay = periodEnd ? dayjs(periodEnd).startOf('day') : null;
+  const outOfPeriod = (d: Day) =>
+    (periodStartDay != null && d.isBefore(periodStartDay)) ||
+    (periodEndDay != null && d.isAfter(periodEndDay));
   const weekBars = bars.filter(
     (e) =>
       (barLaneOf.get(e.id) ?? 0) < itemRows &&
@@ -67,25 +79,32 @@ export default function MobileWeekRow({
           const isSelected = d.isSame(selected, 'day');
           const dim =
             variant === 'month' && d.format('YYYY-MM') !== mainMonthKey;
+          const disabled = outOfPeriod(d);
           return (
             <button
               key={d.toString()}
               type="button"
               onClick={() => onSelect(d)}
+              disabled={disabled}
               style={{ height: CELL_H }}
-              className="relative flex flex-col items-center pt-2"
+              className={clsx(
+                'relative flex flex-col items-center pt-2',
+                disabled && 'cursor-not-allowed',
+              )}
             >
-              {isSelected && (
+              {isSelected && !disabled && (
                 <span className="bg-primary-10 rounded-xs absolute inset-x-0 inset-y-0" />
               )}
               <span
                 className={clsx(
                   'text-xsmall14 relative z-10 h-5 font-medium leading-5',
-                  isToday
-                    ? 'text-primary font-bold'
-                    : dim
-                      ? 'text-neutral-60'
-                      : 'text-neutral-0',
+                  disabled
+                    ? 'text-neutral-80'
+                    : isToday
+                      ? 'text-primary font-bold'
+                      : dim
+                        ? 'text-neutral-60'
+                        : 'text-neutral-0',
                 )}
               >
                 {d.date()}

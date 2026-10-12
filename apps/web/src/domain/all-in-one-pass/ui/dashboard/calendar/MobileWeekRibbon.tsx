@@ -57,6 +57,8 @@ export default function MobileWeekRibbon({
             today={cal.today}
             selected={cal.selected}
             onSelect={cal.setSelected}
+            periodStart={cal.periodStart}
+            periodEnd={cal.periodEnd}
           />
         </div>
       ))}

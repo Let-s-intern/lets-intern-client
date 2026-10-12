@@ -1,3 +1,4 @@
+import dayjs from '@/lib/dayjs';
 import clsx from 'clsx';
 import type { NormalizedCalendarEvent } from '../../../types';
 import { eventColor } from './calendarColors';
@@ -26,6 +27,9 @@ interface Props {
   today: Day;
   selected: Day;
   onSelect: (d: Day) => void;
+  /** 패스 이용기간 — 이 범위 밖 날짜는 선택 불가(흐리게) */
+  periodStart?: string;
+  periodEnd?: string;
 }
 
 /**
@@ -43,6 +47,8 @@ export default function CalendarWeek({
   today,
   selected,
   onSelect,
+  periodStart,
+  periodEnd,
 }: Props) {
   const weekStart = week[0];
   const weekEnd = week[6];
@@ -50,26 +56,42 @@ export default function CalendarWeek({
     (e) => !eventEnd(e).isBefore(weekStart) && !eventStart(e).isAfter(weekEnd),
   );
 
+  // 이용기간 밖 날짜 판정 (일 단위)
+  const periodStartDay = periodStart ? dayjs(periodStart).startOf('day') : null;
+  const periodEndDay = periodEnd ? dayjs(periodEnd).startOf('day') : null;
+  const outOfPeriod = (d: Day) =>
+    (periodStartDay != null && d.isBefore(periodStartDay)) ||
+    (periodEndDay != null && d.isAfter(periodEndDay));
+
   return (
     <div className="relative">
-      {/* ① 클릭 + 호버 배경 (막대 뒤) */}
+      {/* ① 클릭 + 호버 배경 (막대 뒤) — 이용기간 밖은 비활성 */}
       <div className="grid grid-cols-7 gap-1">
-        {week.map((d) => (
-          <button
-            key={d.toString()}
-            type="button"
-            onClick={() => onSelect(d)}
-            style={{ height: CELL_HEIGHT }}
-            className="border-neutral-80 flex border-b py-3"
-          >
-            <div
+        {week.map((d) => {
+          const disabled = outOfPeriod(d);
+          return (
+            <button
+              key={d.toString()}
+              type="button"
+              onClick={() => onSelect(d)}
+              disabled={disabled}
+              style={{ height: CELL_HEIGHT }}
               className={clsx(
-                'rounded-xs w-full transition-colors',
-                !d.isSame(selected, 'day') && 'hover:bg-neutral-90',
+                'border-neutral-80 flex border-b py-3',
+                disabled && 'cursor-not-allowed',
               )}
-            />
-          </button>
-        ))}
+            >
+              <div
+                className={clsx(
+                  'rounded-xs w-full transition-colors',
+                  !disabled &&
+                    !d.isSame(selected, 'day') &&
+                    'hover:bg-neutral-90',
+                )}
+              />
+            </button>
+          );
+        })}
       </div>
 
       {/* ② 막대 · 당일 칩 · 배지 (표시용) */}
@@ -153,6 +175,7 @@ export default function CalendarWeek({
           const isToday = d.isSame(today, 'day');
           const isSelected = d.isSame(selected, 'day');
           const dim = d.format('YYYY-MM') !== mainMonthKey;
+          const disabled = outOfPeriod(d);
           return (
             <div
               key={d.toString()}
@@ -162,17 +185,21 @@ export default function CalendarWeek({
               <div
                 className={clsx(
                   'rounded-xs flex w-full flex-col items-center border-[1.5px] pt-3',
-                  isSelected ? 'border-primary' : 'border-transparent',
+                  isSelected && !disabled
+                    ? 'border-primary'
+                    : 'border-transparent',
                 )}
               >
                 <span
                   className={clsx(
                     'text-xsmall16 w-full px-2 text-center',
-                    isToday
-                      ? 'text-primary'
-                      : dim
-                        ? 'text-neutral-60'
-                        : 'text-neutral-0',
+                    disabled
+                      ? 'text-neutral-80'
+                      : isToday
+                        ? 'text-primary'
+                        : dim
+                          ? 'text-neutral-60'
+                          : 'text-neutral-0',
                   )}
                 >
                   {d.date()}

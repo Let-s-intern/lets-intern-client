@@ -9,11 +9,18 @@ import { useCalendar } from './useCalendar';
 
 interface Props {
   events: PassCalendarEvent[];
+  /** 패스 이용기간 — 이 범위 내 주만 이동 가능 */
+  periodStart?: string;
+  periodEnd?: string;
 }
 
 /** U-1 일정 캘린더 (데스크탑) — 2주 그리드 + 우측 프로그램 패널 */
-export default function DashboardCalendar({ events }: Props) {
-  const cal = useCalendar(events);
+export default function DashboardCalendar({
+  events,
+  periodStart,
+  periodEnd,
+}: Props) {
+  const cal = useCalendar(events, periodStart, periodEnd);
 
   return (
     <section className="flex flex-col gap-6">
@@ -25,6 +32,8 @@ export default function DashboardCalendar({ events }: Props) {
         onNext={cal.goNextWeek}
         onToday={cal.goToday}
         onToggle={cal.toggleFilter}
+        canPrev={cal.canPrevWeek}
+        canNext={cal.canNextWeek}
       />
 
       <div className="flex flex-col gap-10 md:flex-row">
@@ -53,6 +62,8 @@ export default function DashboardCalendar({ events }: Props) {
               today={cal.today}
               selected={cal.selected}
               onSelect={cal.setSelected}
+              periodStart={periodStart}
+              periodEnd={periodEnd}
             />
           ))}
         </div>

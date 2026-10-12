@@ -42,7 +42,11 @@ export default function AllInOnePassDashboardPage() {
         {calendarEvents && (
           <>
             <div className="hidden md:block">
-              <DashboardCalendar events={calendarEvents} />
+              <DashboardCalendar
+                events={calendarEvents}
+                periodStart={myPass?.startDate}
+                periodEnd={myPass?.endDate}
+              />
             </div>
             <div className="md:hidden">
               <DashboardCalendarMobile

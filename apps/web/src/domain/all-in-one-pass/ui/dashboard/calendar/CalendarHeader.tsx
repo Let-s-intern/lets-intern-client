@@ -11,9 +11,11 @@ interface Props {
   onNext: () => void;
   onToday: () => void;
   onToggle: (k: PassParticipationStatus) => void;
+  canPrev?: boolean;
+  canNext?: boolean;
 }
 
-/** 캘린더 헤더 — 조회 범위 + 주 이동 + 참여상태 필터 */
+/** 캘린더 헤더 — 조회 범위 + 주 이동(이용기간 내) + 참여상태 필터 */
 export default function CalendarHeader({
   windowStart,
   windowEnd,
@@ -22,12 +24,22 @@ export default function CalendarHeader({
   onNext,
   onToday,
   onToggle,
+  canPrev = true,
+  canNext = true,
 }: Props) {
   return (
     <div className="flex flex-col gap-6">
       <div className="text-neutral-0 flex items-center gap-3">
-        <button type="button" aria-label="이전 주" onClick={onPrev}>
-          <ChevronLeft size={20} className="text-neutral-40" />
+        <button
+          type="button"
+          aria-label="<"
+          onClick={onPrev}
+          disabled={!canPrev}
+        >
+          <ChevronLeft
+            size={20}
+            className={canPrev ? 'text-neutral-40' : 'text-neutral-80'}
+          />
         </button>
         <span className="text-small20 min-w-[190.3px] font-bold">
           {windowStart.format('YYYY.MM.DD')} ~ {windowEnd.format('MM.DD')}
@@ -35,8 +47,16 @@ export default function CalendarHeader({
         <button type="button" aria-label="오늘로 가기" onClick={onToday}>
           <Calendar size={18} className="text-neutral-40" />
         </button>
-        <button type="button" aria-label="다음 주" onClick={onNext}>
-          <ChevronRight size={20} className="text-neutral-40" />
+        <button
+          type="button"
+          aria-label=">"
+          onClick={onNext}
+          disabled={!canNext}
+        >
+          <ChevronRight
+            size={20}
+            className={canNext ? 'text-neutral-40' : 'text-neutral-80'}
+          />
         </button>
       </div>
       <div className="flex items-center justify-end gap-4">
