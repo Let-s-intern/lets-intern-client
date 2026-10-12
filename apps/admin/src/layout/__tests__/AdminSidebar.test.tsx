@@ -82,3 +82,20 @@ describe('AdminSidebar SSO 그룹', () => {
     ).toHaveAttribute('href', '/sso/redirect-whitelist');
   });
 });
+
+/**
+ * 화면을 만들어도 메뉴에 없으면 운영은 존재를 모른다 (LC-3438, PRD 4.3 A-2).
+ */
+describe('AdminSidebar 프로그램 관리 그룹', () => {
+  it('VOD 이용권 설정 메뉴가 설정 경로로 이어진다', () => {
+    renderSidebar();
+
+    const group = screen
+      .getByRole('heading', { name: '프로그램 관리' })
+      .closest('div')!.parentElement!;
+
+    expect(
+      within(group).getByRole('link', { name: 'VOD 이용권 설정' }),
+    ).toHaveAttribute('href', '/vod-pass-product');
+  });
+});
