@@ -104,3 +104,20 @@ export interface PassExternalLink {
   name: string;
   url: string;
 }
+
+// ─── U-5 공지사항 / 패스 가이드 ───
+
+/** 공지 유형 (공지사항 / 패스 가이드) */
+export type PassNoticeType = 'NOTICE' | 'GUIDE';
+
+/**
+ * 올인원패스 공지 1건 (MembershipNotice). 본문은 평문(어드민 textarea)이라 줄바꿈 유지해 렌더.
+ * // TODO(BE): 유저 조회 API 나오면 api/notices queryFn 만 교체.
+ */
+export interface AllInOnePassNotice {
+  id: number;
+  type: PassNoticeType;
+  title: string;
+  contents: string;
+  createDate: string;
+}
