@@ -14,7 +14,7 @@ const AllInOnePassNavBar = () => {
 
   const navItems: NavItem[] = [
     { id: 'dashboard', label: '패스 대시보드', href: base },
-    { id: 'benefits', label: '나의 패스 이용', href: `${base}/benefits` },
+    { id: 'usage', label: '나의 패스 이용', href: `${base}/usage` },
     { id: 'retrospectives', label: '회고록', href: `${base}/retrospectives` },
     { id: 'notices', label: '공지사항 / 패스 가이드', href: `${base}/notices` },
   ];
