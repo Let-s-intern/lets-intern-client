@@ -3,13 +3,22 @@ import { paymentDetailQueryOptions } from '@/api/payment/payment';
 import dayjs from '@/lib/dayjs';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
+import { scopePaymentDetailToRow } from '../utils/bundledPayment';
 import { sumPlanUpgradeAmount } from '../utils/planUpgradePayment';
 
 /** 프로그램 결제 내역 로직
  * @note 호출 컴포넌트는 반드시 AsyncBoundary로 감싸야 합니다.
  */
 export default function useCredit(paymentId: string) {
-  const { data } = useSuspenseQuery(paymentDetailQueryOptions(paymentId));
+  const { data: paymentDetail } = useSuspenseQuery(
+    paymentDetailQueryOptions(paymentId),
+  );
+
+  // 챌린지와 VOD 이용권을 한 번에 결제한 묶음은 PG 거래 값을 이 행 기준으로 바꿔 계산한다
+  const data = useMemo(
+    () => scopePaymentDetailToRow(paymentDetail, Number(paymentId)),
+    [paymentDetail, paymentId],
+  );
 
   const isGuidebook = data.programInfo.programType === 'GUIDEBOOK';
   const isVod = data.programInfo.programType === 'VOD';
