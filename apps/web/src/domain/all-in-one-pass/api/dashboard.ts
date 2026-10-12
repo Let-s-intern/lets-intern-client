@@ -19,7 +19,7 @@ export const useGetMyPass = (applicationId: number) =>
     refetchOnWindowFocus: false,
   });
 
-/** 대시보드 일정 캘린더 항목 — 챌린지 막대 + 세미나/마일스톤 칩 */
+/** 대시보드 일정 캘린더 항목 — 챌린지 막대 + 게릴라세션/마일스톤 칩 */
 export const useGetPassCalendar = (applicationId: number) =>
   useQuery({
     queryKey: ['allInOnePass', 'calendar', applicationId],

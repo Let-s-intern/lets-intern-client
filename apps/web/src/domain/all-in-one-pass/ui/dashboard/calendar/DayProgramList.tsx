@@ -17,7 +17,7 @@ type Day = ReturnType<typeof dayjs>;
 /** 캘린더 유형 라벨 (프로그램 종류 아님 — 어드민 캘린더 유형) */
 const TYPE_LABEL: Record<PassCalendarEventType, string> = {
   CHALLENGE: '챌린지',
-  SEMINAR: '세미나',
+  GUERRILLA: '게릴라세션',
   MILESTONE: '기타 일정',
 };
 
@@ -104,10 +104,10 @@ export default function DayProgramList({ date, events, stickyTop }: Props) {
             const showChevron =
               (ev.type === 'CHALLENGE' && detailHref != null) ||
               (ev.type === 'MILESTONE' && !!ev.url);
-            // 세미나 참여 버튼: 시작 10분 전 ~ 종료 시각 사이에만 활성화
+            // 게릴라세션 참여 버튼: 시작 10분 전 ~ 종료 시각 사이에만 활성화
             const now = dayjs();
-            const seminarOpen =
-              ev.type === 'SEMINAR' &&
+            const guerrillaOpen =
+              ev.type === 'GUERRILLA' &&
               !now.isBefore(dayjs(ev.startDate).subtract(10, 'minute')) &&
               (!ev.endDate || !now.isAfter(dayjs(ev.endDate)));
 
@@ -162,7 +162,7 @@ export default function DayProgramList({ date, events, stickyTop }: Props) {
                   )}
 
                   <p className="text-xxsmall12 text-neutral-40 flex gap-1 tracking-tight">
-                    {ev.type === 'SEMINAR' || ev.type === 'MILESTONE' ? (
+                    {ev.type === 'GUERRILLA' || ev.type === 'MILESTONE' ? (
                       <>
                         <span>일시</span>
                         <span>
@@ -202,10 +202,10 @@ export default function DayProgramList({ date, events, stickyTop }: Props) {
                     {enrolled ? '대시보드 입장' : '참여하기'}
                   </SolidButton>
                 )}
-                {ev.type === 'SEMINAR' && (
+                {ev.type === 'GUERRILLA' && (
                   <SolidButton
                     size="sm"
-                    disabled={!seminarOpen}
+                    disabled={!guerrillaOpen}
                     onClick={() =>
                       ev.url &&
                       window.open(ev.url, '_blank', 'noopener,noreferrer')

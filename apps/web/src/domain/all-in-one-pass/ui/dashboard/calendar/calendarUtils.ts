@@ -46,7 +46,7 @@ export const challengeStatus = (
   return 'IN_PROGRESS';
 };
 
-/** 이벤트 목록 정규화 — 챌린지 status를 파생값으로 채움(세미나·마일스톤은 그대로) */
+/** 이벤트 목록 정규화 — 챌린지 status를 파생값으로 채움(게릴라세션·마일스톤은 그대로) */
 export const normalizeEvents = (
   events: PassCalendarEvent[],
   today: Day,
@@ -68,7 +68,7 @@ export const weekStartOf = (d: Day) =>
 export const colOf = (d: Day) => ((d.day() + 6) % 7) + 1;
 
 /**
- * 노출 우선순위: 참여중 챌린지 > 세미나 > 마일스톤/기타 > 참여가능 챌린지 > 참여이력 챌린지.
+ * 노출 우선순위: 참여중 챌린지 > 게릴라세션 > 마일스톤/기타 > 참여가능 챌린지 > 참여이력 챌린지.
  * 동일 순위면 진행기간 짧은 순 → 시작 빠른 순.
  */
 export const priority = (e: NormalizedCalendarEvent): number => {
@@ -77,7 +77,7 @@ export const priority = (e: NormalizedCalendarEvent): number => {
     if (e.status === 'BEFORE') return 3; // 참여가능
     return 4; // 참여완료(DONE)
   }
-  if (e.type === 'SEMINAR') return 1;
+  if (e.type === 'GUERRILLA') return 1;
   return 2; // MILESTONE 등 기타 유형
 };
 export const durationMs = (e: PassCalendarEvent) =>

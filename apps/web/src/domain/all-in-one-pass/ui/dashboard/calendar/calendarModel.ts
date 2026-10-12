@@ -44,7 +44,7 @@ export function deriveCalendar(
   days: Day[],
   { maxRows, visibleItems }: { maxRows: number; visibleItems: number },
 ): CalendarModel {
-  // 상태 필터 (세미나/마일스톤 등 status 없는 일정은 항상 노출)
+  // 상태 필터 (게릴라세션/마일스톤 등 status 없는 일정은 항상 노출)
   const filtered = events.filter((e) => (e.status ? filters[e.status] : true));
 
   // 기간 막대 / 당일 일정 분리

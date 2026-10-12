@@ -37,7 +37,7 @@ export const myPassFixture: AllInOnePassApplication = {
 };
 
 /**
- * 대시보드 일정 캘린더 — 챌린지 막대(참여중/참여가능) + 세미나/마일스톤 칩.
+ * 대시보드 일정 캘린더 — 챌린지 막대(참여중/참여가능) + 게릴라세션/마일스톤 칩.
  * 기본 뷰가 금일 기준이라 오늘(2026-09-30) 주변으로 배치. 10/1에 이벤트를 몰아 오버플로 확인.
  */
 const CHALLENGE_DESC =
@@ -86,8 +86,8 @@ export const calendarFixtures: PassCalendarEvent[] = [
   },
   {
     id: 5,
-    type: 'SEMINAR',
-    title: '현직자 취업 세미나',
+    type: 'GUERRILLA',
+    title: '현직자 취업 게릴라세션',
     description: '현직자에게 직접 듣는 취업 노하우.',
     startDate: '2026-09-30T19:00:00',
     endDate: '2026-09-30T21:00:00',
@@ -123,8 +123,8 @@ export const calendarFixtures: PassCalendarEvent[] = [
   },
   {
     id: 7,
-    type: 'SEMINAR',
-    title: '마케팅 직무 세미나',
+    type: 'GUERRILLA',
+    title: '마케팅 직무 게릴라세션',
     description: null,
     startDate: '2026-10-01T14:00:00',
     endDate: '2026-10-01T16:00:00',
@@ -132,8 +132,8 @@ export const calendarFixtures: PassCalendarEvent[] = [
   },
   ...Array.from({ length: 2 }, (_, i) => ({
     id: 8 + i,
-    type: 'SEMINAR' as const,
-    title: `무료 세미나 ${i + 1}`,
+    type: 'GUERRILLA' as const,
+    title: `게릴라세션 ${i + 1}`,
     description: null,
     startDate: '2026-10-01T10:00:00',
     endDate: '2026-10-01T12:00:00',

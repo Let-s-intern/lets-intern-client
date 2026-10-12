@@ -63,14 +63,14 @@ export interface PassMentoringCoupon {
 
 // ─── U-1 대시보드 ───
 
-/** 대시보드 캘린더 항목 유형 */
-export type PassCalendarEventType = 'CHALLENGE' | 'SEMINAR' | 'MILESTONE';
+/** 대시보드 캘린더 항목 유형 (어드민 수기 입력 = GUERRILLA/MILESTONE, 챌린지는 자동 반영) */
+export type PassCalendarEventType = 'CHALLENGE' | 'GUERRILLA' | 'MILESTONE';
 
 /** 프로그램 참여 상태 (참여 전 / 참여 중 / 참여 완료) */
 export type PassParticipationStatus = 'BEFORE' | 'IN_PROGRESS' | 'DONE';
 
 /**
- * U-1 대시보드 월 캘린더 항목. CHALLENGE 는 진행 기간을 막대(레인)로, SEMINAR/MILESTONE
+ * U-1 대시보드 월 캘린더 항목. CHALLENGE 는 진행 기간을 막대(레인)로, GUERRILLA/MILESTONE
  * 은 단일일 칩으로. 우측 패널은 선택일에 걸친 항목을 카드로 나열.
  * // TODO(BE): 대응 엔티티 없음(갭 B).
  */
@@ -80,8 +80,8 @@ export interface PassCalendarEvent {
   title: string;
   description: string | null;
   startDate: string; // ISO
-  endDate: string | null; // 종료 시각 — 챌린지 막대 종료 / 세미나·마일스톤 기간 종료(버튼 활성 판정)
-  /** 세미나·마일스톤 외부 링크. 챌린지는 id로 URL 조립하므로 없음 */
+  endDate: string | null; // 종료 시각 — 챌린지 막대 종료 / 게릴라세션·마일스톤 기간 종료(버튼 활성 판정)
+  /** 게릴라세션·마일스톤 외부 링크. 챌린지는 id로 URL 조립하므로 없음 */
   url?: string | null;
   /** 챌린지 상세(`/program/challenge/{id}`)·대시보드 URL 구성용 (BE 팩트) */
   programId?: number | null;
@@ -91,7 +91,7 @@ export interface PassCalendarEvent {
 
 /**
  * 캘린더 렌더용 이벤트 — FE가 참여 상태를 파생(normalize)해 채운 형태.
- * 챌린지는 challengeApplicationId + endDate로 계산, 세미나/마일스톤은 null.
+ * 챌린지는 challengeApplicationId + endDate로 계산, 게릴라세션/마일스톤은 null.
  */
 export type NormalizedCalendarEvent = PassCalendarEvent & {
   status: PassParticipationStatus | null;
