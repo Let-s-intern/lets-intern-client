@@ -7,9 +7,11 @@ import {
   paymentResultSearchParamsSchema,
 } from '@/data/getPaymentSearchParams';
 import DescriptionBox from '@/domain/program/paymentSuccess/DescriptionBox';
+import { getOrderErrorMessage } from '@/domain/program/paymentSuccess/orderResult';
 import PaymentInfoRow from '@/domain/program/paymentSuccess/PaymentInfoRow';
 import ProgramCard from '@/domain/program/ProgramCard';
 import { buildPostApplicationBody } from '@/domain/program/program-detail/apply/utils/postApplicationBody';
+import { isVodPassSelected } from '@/domain/program/vodPassPurchase';
 import dayjs from '@/lib/dayjs';
 import useProgramStore from '@/store/useProgramStore';
 import axios from '@/utils/axios';
@@ -28,6 +30,8 @@ const PaymentResultContent = () => {
   const [result, setResult] = useState<PostApplicationResult | null | 'error'>(
     null,
   );
+  // 실패 사유를 구분할 수 있을 때만 값이 있다. 없으면 기존 실패 화면 그대로다
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const params = useMemo(() => {
     const obj = searchParamsToObject(searchParams);
@@ -88,6 +92,7 @@ const PaymentResultContent = () => {
       })
       .catch((e) => {
         console.error(e);
+        setErrorMessage(getOrderErrorMessage(e));
         setResult('error');
       })
       .finally(() => {
@@ -138,6 +143,7 @@ const PaymentResultContent = () => {
   }
 
   const isSuccess = typeof result === 'object' && result !== null;
+  const hasVodPass = isVodPassSelected(programApplicationData);
 
   const returnLink = useMemo(() => {
     const base = `/program/${programApplicationData.programType}/${programApplicationData.programId}`;
@@ -160,6 +166,11 @@ const PaymentResultContent = () => {
           ) : (
             <>
               <DescriptionBox type={isSuccess ? 'SUCCESS' : 'FAIL'} />
+              {errorMessage && (
+                <p className="text-xsmall14 text-neutral-20 mt-3 text-center">
+                  {errorMessage}
+                </p>
+              )}
               <div className="flex w-full flex-col items-center justify-start gap-y-10 py-8">
                 <div className="flex w-full flex-col items-start justify-center gap-6">
                   <div className="text-xsmall16 text-neutral-0 font-semibold">
@@ -271,6 +282,12 @@ const PaymentResultContent = () => {
                       </>
                     )}
                   </div>
+                  {isSuccess && hasVodPass && (
+                    <p className="text-xsmall14 text-neutral-40">
+                      VOD 이용권은 VOD 사이트에서 활성화하면 이용 기간이
+                      시작됩니다
+                    </p>
+                  )}
                   {isSuccess && (
                     <Link
                       href="/mypage/career/board"

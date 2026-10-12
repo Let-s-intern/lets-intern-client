@@ -1,5 +1,6 @@
 import {
   calculateChallengeTotalWithVodPass,
+  getOrderName,
   isVodPassSelected,
   toVodPassRequestFields,
 } from './vodPassPurchase';
@@ -139,5 +140,44 @@ describe('toVodPassRequestFields', () => {
     const body = { amount: '100000', ...toVodPassRequestFields({}) };
 
     expect(Object.keys(body)).toEqual(['amount']);
+  });
+});
+
+describe('getOrderName', () => {
+  it('이용권을 고르지 않으면 프로그램 이름 그대로다', () => {
+    expect(getOrderName('QA 챌린지', { vodPassProductId: 0 })).toBe(
+      'QA 챌린지',
+    );
+    expect(getOrderName('QA 챌린지', {})).toBe('QA 챌린지');
+  });
+
+  it('이용권을 골랐으면 이름 뒤에 + VOD 이용권 을 붙인다', () => {
+    expect(getOrderName('QA 챌린지', { vodPassProductId: 7 })).toBe(
+      'QA 챌린지 + VOD 이용권',
+    );
+  });
+
+  it('이름이 없어도 깨지지 않는다', () => {
+    expect(getOrderName(null, {})).toBe('');
+    expect(getOrderName(undefined, { vodPassProductId: 7 })).toBe(
+      ' + VOD 이용권',
+    );
+  });
+
+  it('이용권을 붙여도 Toss 주문명 100자를 넘지 않는다', () => {
+    const longTitle = '가'.repeat(150);
+
+    const withVod = getOrderName(longTitle, { vodPassProductId: 7 });
+
+    expect(withVod.length).toBe(100);
+    expect(withVod.endsWith(' + VOD 이용권')).toBe(true);
+  });
+
+  it('100자 이내 이름은 자르지 않는다', () => {
+    const title = '가'.repeat(87);
+
+    expect(getOrderName(title, { vodPassProductId: 7 })).toBe(
+      `${title} + VOD 이용권`,
+    );
   });
 });

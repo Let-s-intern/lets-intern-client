@@ -5,6 +5,7 @@ import { useUserQuery } from '@/api/user/user';
 import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import { PaymentMethodKey } from '@/data/getPaymentSearchParams';
+import { getOrderName } from '@/domain/program/vodPassPurchase';
 import useProgramStore from '@/store/useProgramStore';
 import {
   loadTossPayments,
@@ -107,7 +108,11 @@ const Payment = () => {
     try {
       await widgets.requestPayment({
         orderId,
-        orderName: programApplicationData.programTitle ?? '',
+        // 이용권을 담았으면 ` + VOD 이용권` 이 붙는다 (Toss 주문명 100자 이내)
+        orderName: getOrderName(
+          programApplicationData.programTitle,
+          programApplicationData,
+        ),
         successUrl:
           window.location.origin + `/order/result?${searchParams.toString()}`,
         failUrl:

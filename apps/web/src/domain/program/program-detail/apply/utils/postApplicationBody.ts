@@ -1,5 +1,6 @@
 import type { PostApplicationInterface } from '@/api/application';
 import type { paymentResultSearchParamsSchema } from '@/data/getPaymentSearchParams';
+import { toVodPassRequestFields } from '@/domain/program/vodPassPurchase';
 import type useProgramStore from '@/store/useProgramStore';
 
 type ProgramApplicationData = ReturnType<
@@ -36,4 +37,6 @@ export const buildPostApplicationBody = (
   question: data.question ?? '',
   // 버전을 묻지 않은 신청은 신청 입력이 null 로 저장한다. 배포 전에 저장된 폼에는 키가 없다
   challengeVersionId: data.challengeVersionId ?? null,
+  // 이용권은 선택했을 때만 네 필드를 모두 넣는다 (LC-3438)
+  ...toVodPassRequestFields(data),
 });
