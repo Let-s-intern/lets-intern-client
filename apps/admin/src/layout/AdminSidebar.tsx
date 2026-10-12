@@ -26,6 +26,10 @@ const navData = [
         name: '후기 관리',
         url: '/review/challenge',
       },
+      {
+        name: 'VOD 이용권 설정',
+        url: '/vod-pass-product',
+      },
     ],
   },
   {
