@@ -14,6 +14,13 @@ jest.mock('posthog-js', () => ({
   },
 }));
 
+// 관리자 여부. 테스트마다 바꿔 끼운다. undefined 는 아직 응답 전(또는 비로그인)이다
+let mockIsAdmin: boolean | undefined;
+
+jest.mock('@/api/user/user', () => ({
+  useGetUserAdmin: () => ({ data: mockIsAdmin }),
+}));
+
 const mockPosthog = posthog as unknown as {
   __loaded: boolean;
   isFeatureEnabled: jest.Mock;
@@ -42,6 +49,7 @@ beforeEach(() => {
       flagCallback = cb;
       return unsubscribe;
     });
+  mockIsAdmin = undefined;
   setNodeEnv('test');
 });
 
@@ -130,6 +138,56 @@ describe('useVodPassPurchaseEnabled', () => {
     act(() => flagCallback?.());
 
     expect(result.current).toBe(false);
+  });
+
+  it('관리자는 플래그가 꺼져 있어도 운영 빌드에서 켜진다', () => {
+    setNodeEnv('production');
+    mockIsAdmin = true;
+    mockPosthog.isFeatureEnabled.mockReturnValue(false);
+
+    const { result } = renderHook(() => useVodPassPurchaseEnabled());
+
+    expect(result.current).toBe(true);
+  });
+
+  it('관리자는 PostHog 가 초기화되지 않아도(플래그를 못 받아도) 켜진다', () => {
+    setNodeEnv('production');
+    mockIsAdmin = true;
+    mockPosthog.__loaded = false;
+
+    const { result } = renderHook(() => useVodPassPurchaseEnabled());
+
+    expect(result.current).toBe(true);
+  });
+
+  it('관리자가 아니면 플래그가 꺼져 있을 때 꺼진다', () => {
+    setNodeEnv('production');
+    mockIsAdmin = false;
+    mockPosthog.isFeatureEnabled.mockReturnValue(false);
+
+    const { result } = renderHook(() => useVodPassPurchaseEnabled());
+
+    expect(result.current).toBe(false);
+  });
+
+  it('관리자 여부가 아직 없으면(비로그인·응답 전) 플래그만 따른다', () => {
+    setNodeEnv('production');
+    mockIsAdmin = undefined;
+    mockPosthog.isFeatureEnabled.mockReturnValue(false);
+
+    const { result } = renderHook(() => useVodPassPurchaseEnabled());
+
+    expect(result.current).toBe(false);
+  });
+
+  it('관리자가 아니어도 플래그가 켜져 있으면 켜진다', () => {
+    setNodeEnv('production');
+    mockIsAdmin = false;
+    mockPosthog.isFeatureEnabled.mockReturnValue(true);
+
+    const { result } = renderHook(() => useVodPassPurchaseEnabled());
+
+    expect(result.current).toBe(true);
   });
 
   it('언마운트하면 구독을 해제한다', () => {

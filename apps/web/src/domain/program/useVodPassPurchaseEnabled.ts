@@ -1,5 +1,6 @@
 'use client';
 
+import { useGetUserAdmin } from '@/api/user/user';
 import posthog from 'posthog-js';
 import { useEffect, useState } from 'react';
 
@@ -29,6 +30,10 @@ function readFlag(): boolean {
 /**
  * 결제 시트에 VOD 이용권 선택 카드를 보여줄지 정한다.
  *
+ * 관리자(ADMIN) 계정은 플래그와 무관하게 항상 보인다. 롤아웃을 0% 로 두고 운영에서
+ * 내부 확인을 하기 위한 규칙이다. 관리자 여부는 NavBar 와 같은 쿼리(`useGetUserAdmin`)를
+ * 공유하므로 추가 요청이 나가지 않는다. 비로그인이거나 아직 응답 전이면 플래그만 본다.
+ *
  * 이 값은 화면 노출만 막는 클라이언트 스위치다. API 를 직접 호출하는 요청은 막지 못한다.
  * 판매 자체를 막는 하드 스위치는 BE 의 상품 설정(`vod-pass.initial-price`)이다.
  *
@@ -36,17 +41,20 @@ function readFlag(): boolean {
  * 플래그는 PostHog 가 로드한 뒤 반영되므로 카드가 잠시 뒤에 나타날 수 있다.
  */
 export function useVodPassPurchaseEnabled(): boolean {
-  const [enabled, setEnabled] = useState(false);
+  const [flagEnabled, setFlagEnabled] = useState(false);
+  const { data: isAdmin } = useGetUserAdmin({ retry: 1 });
 
   useEffect(() => {
-    setEnabled(readFlag());
+    setFlagEnabled(readFlag());
 
     if (!posthog.__loaded) return;
-    const unsubscribe = posthog.onFeatureFlags(() => setEnabled(readFlag()));
+    const unsubscribe = posthog.onFeatureFlags(() =>
+      setFlagEnabled(readFlag()),
+    );
     return () => {
       if (typeof unsubscribe === 'function') unsubscribe();
     };
   }, []);
 
-  return enabled;
+  return isAdmin === true || flagEnabled;
 }
