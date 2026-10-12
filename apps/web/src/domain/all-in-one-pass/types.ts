@@ -121,3 +121,19 @@ export interface AllInOnePassNotice {
   contents: string;
   createDate: string;
 }
+
+// ─── U-8 패스 ONLY 자료집 ───
+
+/**
+ * 올인원패스 전용 자료집 1건 (MembershipBenefit). introduction 은 설명+부가설명을 담은 JSON
+ * 문자열이며 FE가 파싱한다(평문이면 설명으로 폴백). thumbnail 은 필드만 있고 디자인상 미노출.
+ * // TODO(BE): 유저 조회 API 나오면 api/materials queryFn 만 교체.
+ */
+export interface PassMaterial {
+  id: number;
+  type: string;
+  title: string;
+  introduction: string;
+  link: string;
+  thumbnail?: string | null;
+}
