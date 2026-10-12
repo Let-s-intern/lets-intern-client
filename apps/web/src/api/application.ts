@@ -22,6 +22,7 @@ import {
 } from './payment/payment';
 import { tossInfoType } from './payment/paymentSchema';
 import { useUserQueryKey } from './user/user';
+import { UseVodPassQueryKey } from './vodPass';
 
 export const programApplicationSchema = z.object({
   applied: z.boolean().nullable().optional(),
@@ -243,6 +244,10 @@ export const useCancelApplicationMutation = ({
       });
       client.invalidateQueries({
         queryKey: [UsePaymentDetailQueryKey, paymentId],
+      });
+      // VOD 이용권 환불 뒤 이용권 상태(CANCELED)를 다시 받는다
+      client.invalidateQueries({
+        queryKey: [UseVodPassQueryKey],
       });
     },
     onError: (error) => {

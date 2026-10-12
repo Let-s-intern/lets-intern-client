@@ -12,6 +12,7 @@ import dayjs from '@/lib/dayjs';
 import { useParams, useRouter } from 'next/navigation';
 import useCredit from './hooks/useCredit';
 import { planUpgradePaymentTitle } from './utils/planUpgradePayment';
+import { getVodPassRefundBlockedReason } from './utils/vodPassRefund';
 import { getVodPassInfoRows } from './utils/vodPassStatus';
 
 const convertDateFormat = (date: string) => dayjs(date).format('YYYY.MM.DD');
@@ -74,6 +75,12 @@ const CreditDetailContent = () => {
     isLoading: userDataIsLoading,
     isError: userDataIsError,
   } = useUserQuery();
+
+  // 환불할 수 없는 이용권은 버튼을 없애는 대신 이유를 알려준다
+  const vodPassRefundBlockedReason =
+    vodPass && !isCancelable && !isCanceled
+      ? getVodPassRefundBlockedReason(vodPass)
+      : null;
 
   return (
     <div
@@ -336,6 +343,11 @@ const CreditDetailContent = () => {
             )}
           </div>
         </div>
+        {vodPassRefundBlockedReason && (
+          <p className="text-neutral-40 w-full text-sm font-medium">
+            {vodPassRefundBlockedReason}
+          </p>
+        )}
         {isCancelable ? (
           <button
             className="bg-neutral-80 text-neutral-40 flex w-full items-center justify-center rounded-sm px-5 py-2.5 font-medium"

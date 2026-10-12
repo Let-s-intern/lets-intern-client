@@ -198,4 +198,37 @@ describe('CreditDetailPage VOD_PASS (LC-3438)', () => {
     expect(screen.getAllByText('89,000원')).toHaveLength(1);
     expect(screen.getAllByText('29,000원').length).toBeGreaterThan(0);
   });
+
+  it('환불 가능한 이용권은 결제 취소 버튼을 보인다', async () => {
+    mockApi({ passes: [pass] });
+
+    renderPage();
+
+    expect(
+      await screen.findByRole('button', { name: '결제 취소하기' }),
+    ).toBeInTheDocument();
+  });
+
+  it('활성화한 이용권은 결제 취소 버튼 없이 이유를 알려준다', async () => {
+    mockApi({
+      passes: [
+        {
+          ...pass,
+          status: 'ACTIVE',
+          startsAt: '2026-10-12T12:00:00+09:00',
+          endsAt: '2026-11-11T12:00:00+09:00',
+          refundable: false,
+        },
+      ],
+    });
+
+    renderPage();
+
+    expect(
+      await screen.findByText('활성화한 이용권은 환불할 수 없습니다'),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: '결제 취소하기' }),
+    ).not.toBeInTheDocument();
+  });
 });
