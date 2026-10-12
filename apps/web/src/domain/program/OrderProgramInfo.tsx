@@ -25,6 +25,7 @@ const OrderProgramInfo = ({
   programType,
   accessMethod,
   mentoringPlan,
+  vodPassRows,
 }: {
   thumbnail?: ProgramInfo['thumbnail'];
   title?: ProgramInfo['title'];
@@ -35,6 +36,11 @@ const OrderProgramInfo = ({
   accessMethod?: string | null;
   /** 1대1 라이브 멘토링의 구매 플랜 표기(예: `60분`). 다른 상품에는 없다. */
   mentoringPlan?: string | null;
+  /**
+   * VOD 이용권의 상태·기간 표기. 기간과 진행 방식 대신 그린다.
+   * 이용권 조회가 실패했으면 비어 있고, 그 경우 제목만 보인다.
+   */
+  vodPassRows?: { label: string; value: string }[];
 }) => {
   const isGuidebook = programType?.toString().toLowerCase() === 'guidebook';
   const isVod = programType?.toString().toLowerCase() === 'vod';
@@ -44,6 +50,8 @@ const OrderProgramInfo = ({
   */
   const isLiveMentoring =
     programType?.toString().toLowerCase() === 'live_mentoring';
+  // 이용권은 기간·진행 방식이 아니라 이용권 상태를 그린다. 이미지도 없다.
+  const isVodPass = programType?.toString().toLowerCase() === 'vod_pass';
 
   return (
     <div className="flex w-full flex-col items-start justify-center gap-y-6">
@@ -56,10 +64,12 @@ const OrderProgramInfo = ({
             alt="thumbnail"
           />
         ) : (
-          <div
-            className="bg-neutral-90 h-[97px] w-[137px] shrink-0 rounded-sm"
-            aria-hidden
-          />
+          !isVodPass && (
+            <div
+              className="bg-neutral-90 h-[97px] w-[137px] shrink-0 rounded-sm"
+              aria-hidden
+            />
+          )
         )}
         <div className="flex grow flex-col items-start justify-center gap-y-3">
           <div className="font-semibold">{title}</div>
@@ -79,6 +89,16 @@ const OrderProgramInfo = ({
                   </div>
                 )}
               </>
+            ) : isVodPass ? (
+              (vodPassRows ?? []).map(({ label, value }) => (
+                <div
+                  key={label}
+                  className="flex w-full items-start justify-start gap-x-4 text-xs font-medium"
+                >
+                  <div className="text-neutral-30 shrink-0">{label}</div>
+                  <div className="text-primary-dark">{value}</div>
+                </div>
+              ))
             ) : isGuidebook || isVod ? (
               <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
                 <div className="text-neutral-30 shrink-0">열람 방식</div>
