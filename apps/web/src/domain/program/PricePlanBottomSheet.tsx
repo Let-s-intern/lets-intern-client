@@ -1,6 +1,7 @@
 import { useProgramApplicationQuery } from '@/api/application';
 import BaseBottomSheet from '@/common/sheet/BaseBottomSheet';
 import { COUPON_DISABLED_CHALLENGE_TYPES } from '@/domain/program/program-detail/apply/constants';
+import { calculateChallengeTotalWithVodPass } from '@/domain/program/vodPassPurchase';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import {
   ChallengeIdPrimitive,
@@ -15,7 +16,10 @@ import { RadioGroup } from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
 import BaseButton from '../../common/button/BaseButton';
-import { OptionFormRadioControlLabel } from '../../common/ControlLabel';
+import {
+  OptionFormCheckboxControlLabel,
+  OptionFormRadioControlLabel,
+} from '../../common/ControlLabel';
 import OptionDropdown from '../../common/dropdown/OptionDropdown';
 import PriceView from '../../common/price/PriceView';
 
@@ -84,6 +88,8 @@ function PricePlanBottomSheet({
         : BASIC;
 
   const [pricePlan, setPricePlan] = useState<ChallengePricePlan>(defaultValue);
+  // VOD 이용권 선택 여부. 플랜과 독립이라 플랜을 바꿔도 유지한다 (LC-3438)
+  const [isVodPassChecked, setIsVodPassChecked] = useState(false);
 
   const {
     basicRegularPrice,
@@ -144,6 +150,19 @@ function PricePlanBottomSheet({
 
   const { setProgramApplicationForm } = useProgramStore();
 
+  // 상품이 null·누락(비활성 또는 서버 배포 전)이면 카드도 선택값도 없다
+  const vodPassProduct = application?.vodPassProduct ?? null;
+  const selectedVodPass = isVodPassChecked ? vodPassProduct : null;
+  const vodPassPrice = selectedVodPass?.price ?? 0;
+
+  // 화면 합계와 스토어에 담는 totalPrice 는 같은 함수에서 나온다. 쿠폰은 결제 입력 단계에서 적용된다
+  const totalPrice = calculateChallengeTotalWithVodPass({
+    regularPrice: finalPriceInfo.regularPrice,
+    discount: finalPriceInfo.discountPrice,
+    couponPrice: 0,
+    vodPassPrice,
+  });
+
   const handleApply = useCallback(() => {
     const payInfo = application ? getPayInfo(application, pricePlan) : null;
 
@@ -166,16 +185,14 @@ function PricePlanBottomSheet({
       (item) => item.challengePricePlanType === pricePlan,
     )?.priceId; // 가격 플랜에 맞는 priceId 넘기기
     const orderId = generateOrderId();
-    const totalPrice = Math.max(
-      finalPriceInfo.regularPrice - finalPriceInfo.discountPrice,
-      0,
-    );
+    // 이용권을 담으면 서버가 paymentKey 를 요구하므로 무료 신청으로 처리하지 않는다
     const isFree =
-      payInfo.challengePriceType === 'FREE' ||
-      payInfo.livePriceType === 'FREE' ||
-      // 가격 행의 이용료(payInfo.price)는 옵션 금액을 모른다. 이용료 0원 + 유료 옵션 플랜이
-      // 무료로 처리돼 결제창 없이 신청이 넘어가고 서버 결제 승인이 실패했다. 옵션까지 더한 금액으로 본다
-      totalPrice === 0;
+      !selectedVodPass &&
+      (payInfo.challengePriceType === 'FREE' ||
+        payInfo.livePriceType === 'FREE' ||
+        // 가격 행의 이용료(payInfo.price)는 옵션 금액을 모른다. 이용료 0원 + 유료 옵션 플랜이
+        // 무료로 처리돼 결제창 없이 신청이 넘어가고 서버 결제 승인이 실패했다. 옵션까지 더한 금액으로 본다
+        totalPrice === 0);
 
     setProgramApplicationForm({
       priceId,
@@ -183,7 +200,7 @@ function PricePlanBottomSheet({
       discount: finalPriceInfo.discountPrice,
       couponId: '',
       couponPrice: 0,
-      totalPrice, // 판매가
+      totalPrice, // 판매가. 이용권을 담았다면 쿠폰 적용 뒤에 더해질 이용권 가격이 포함돼 있다
       contactEmail: userInfo.contactEmail,
       question: userInfo.question,
       email: userInfo.email,
@@ -196,6 +213,10 @@ function PricePlanBottomSheet({
       programOrderId: orderId,
       isFree,
       deposit: challenge.priceInfo[0].refund ?? 0,
+      // 미선택이면 0 으로 되돌려 이전 선택이 남지 않게 한다
+      vodPassProductId: selectedVodPass?.id ?? 0,
+      vodPassPrice,
+      vodPassDurationDays: selectedVodPass?.durationDays ?? 0,
     });
 
     router.push(
@@ -206,6 +227,9 @@ function PricePlanBottomSheet({
     pricePlan,
     finalPriceInfo.regularPrice,
     finalPriceInfo.discountPrice,
+    selectedVodPass,
+    totalPrice,
+    vodPassPrice,
     setProgramApplicationForm,
     challenge.title,
     challenge.priceInfo,
@@ -318,16 +342,34 @@ function PricePlanBottomSheet({
           </RadioGroup>
         </OptionDropdown>
 
+        {/* VOD 이용권 (플랜과 독립) */}
+        {vodPassProduct && (
+          <div className="rounded-xs border-neutral-80 mt-4 overflow-hidden border">
+            <OptionFormCheckboxControlLabel
+              label={
+                <PricePlanLabel
+                  title={vodPassProduct.title}
+                  description={`${vodPassProduct.durationDays}일 이용권`}
+                />
+              }
+              checked={isVodPassChecked}
+              onChange={(_, checked) => setIsVodPassChecked(checked)}
+              wrapperClassName="py-3 pl-2 pr-3"
+              right={<PriceView price={vodPassProduct.price} />}
+            />
+            <p className="text-xxsmall12 text-neutral-40 px-3 pb-3">
+              결제 후 VOD 사이트에서 직접 활성화하면 이용 기간이 시작됩니다
+            </p>
+          </div>
+        )}
+
         {/* 총 결제 금액 */}
         <span className="text-xsmall14 mt-6 block font-semibold">
           총 결제 금액
         </span>
         <hr className="my-3" />
         <span className="text-small18 text-neutral-10 block text-right font-bold">
-          {(
-            finalPriceInfo.regularPrice - finalPriceInfo.discountPrice
-          ).toLocaleString()}
-          원
+          {totalPrice.toLocaleString()}원
         </span>
 
         {/* 버튼 */}
