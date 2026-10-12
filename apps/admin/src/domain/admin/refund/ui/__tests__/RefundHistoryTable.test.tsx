@@ -76,3 +76,12 @@ describe('RefundHistoryTable 금액 표시', () => {
     expect(within(row()).queryByText('부분')).not.toBeInTheDocument();
   });
 });
+
+describe('RefundHistoryTable 프로그램 유형 라벨', () => {
+  it('VOD 이용권 환불은 타입 문자열 대신 한글 라벨로 보인다', () => {
+    renderTable([log({ programType: 'VOD_PASS', programId: null })]);
+
+    expect(within(row()).getByText('VOD 이용권')).toBeInTheDocument();
+    expect(within(row()).queryByText('VOD_PASS')).not.toBeInTheDocument();
+  });
+});
