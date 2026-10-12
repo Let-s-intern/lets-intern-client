@@ -8,6 +8,7 @@ import type { PassPrivilege } from '../../types';
 import UsageChallengeTab from './UsageChallengeTab';
 import UsageGuidebookTab from './UsageGuidebookTab';
 import UsageLiveTab from './UsageLiveTab';
+import UsageMentoringTab from './UsageMentoringTab';
 
 type UsageTabKey = 'CHALLENGE' | 'GUIDEBOOK' | 'VOD' | 'MENTORING' | 'LIVE';
 
@@ -74,7 +75,7 @@ const UsageTabs = ({ privileges }: Props) => {
         {active === 'CHALLENGE' && <UsageChallengeTab />}
         {active === 'GUIDEBOOK' && <UsageGuidebookTab />}
         {active === 'VOD' && <Placeholder label="VOD" />}
-        {active === 'MENTORING' && <Placeholder label="멘토링" />}
+        {active === 'MENTORING' && <UsageMentoringTab />}
         {active === 'LIVE' && <UsageLiveTab />}
       </div>
     </div>
