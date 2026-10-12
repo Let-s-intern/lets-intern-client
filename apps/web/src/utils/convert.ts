@@ -20,6 +20,7 @@ export const newProgramTypeToText: Record<string, string> = {
   VOD: 'VOD 클래스',
   REPORT: '서류 진단',
   GUIDEBOOK: '가이드북',
+  VOD_PASS: 'VOD 이용권',
 };
 export const newProgramFeeTypeToText: Record<string, string> = {
   FREE: '무료',

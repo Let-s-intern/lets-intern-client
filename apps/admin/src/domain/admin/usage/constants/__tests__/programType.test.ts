@@ -43,6 +43,15 @@ describe('formatProgramType', () => {
     expect(formatProgramType('CHALLENGE')).toBe('챌린지');
   });
 
+  it('VOD 이용권은 한글 라벨로 바꾼다', () => {
+    expect(formatProgramType('VOD_PASS')).toBe('VOD 이용권');
+  });
+
+  it('VOD 이용권은 이용 로그 필터 선택지에 넣지 않는다', () => {
+    // 라벨만 둔다. 이용 로그는 이용권을 집계하지 않는다.
+    expect(optionFor('VOD_PASS')).toBeUndefined();
+  });
+
   it('모르는 타입은 서버가 준 값을 그대로 보여준다', () => {
     // 빈칸으로 두면 프로그램이 없는 행처럼 읽힌다.
     expect(formatProgramType('NEW_TYPE')).toBe('NEW_TYPE');

@@ -80,3 +80,49 @@ describe('CreditListItem 링크 분기', () => {
     expect(link()).toHaveAttribute('href', '/mypage/credit/live-mentoring/10');
   });
 });
+
+/*
+  묶음 표시를 넣으면서 단일 항목 카드가 바뀌면 안 된다.
+  이 카드는 `tossInfo.totalAmount` 를 결제금액으로, 할인이 있으면 정가를 함께 그린다.
+*/
+describe('CreditListItem 금액 표시', () => {
+  it('할인이 있으면 정가와 결제금액을 그린다', () => {
+    render(
+      <CreditListItem
+        payment={makePayment({
+          price: 70000,
+          paybackPrice: 0,
+          title: '챌린지',
+        })}
+      />,
+    );
+
+    expect(screen.getByText('70,000원')).toBeInTheDocument();
+    expect(screen.getByText('60,000원')).toBeInTheDocument();
+  });
+
+  it('할인이 없으면 정가를 숨긴다', () => {
+    render(<CreditListItem payment={makePayment({ price: 60000 })} />);
+
+    expect(screen.getAllByText('60,000원')).toHaveLength(1);
+  });
+
+  /*
+    이용권 행의 tossInfo 는 챌린지와 함께 결제한 거래 전체다.
+    합계를 그대로 그리면 이용권이 챌린지 값으로 보인다.
+  */
+  it('VOD 이용권 행은 거래 합계가 아니라 이 신청의 결제 금액을 그린다', () => {
+    const payment = makePayment({
+      programType: 'VOD_PASS',
+      title: 'VOD 이용권',
+      price: 29000,
+      paidAmount: 29000,
+    });
+    payment.tossInfo = { status: 'DONE', totalAmount: 89000 };
+
+    render(<CreditListItem payment={payment} />);
+
+    expect(screen.getByText('29,000원')).toBeInTheDocument();
+    expect(screen.queryByText('89,000원')).not.toBeInTheDocument();
+  });
+});

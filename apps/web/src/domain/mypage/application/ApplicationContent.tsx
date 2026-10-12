@@ -61,13 +61,17 @@ const ApplicationContent = () => {
     두 버튼을 제대로 그린다.
 
     여기서 빼지 않으면 같은 신청이 한 구간 안에서 두 번 뜬다.
+
+    VOD 이용권(LC-3438)은 챌린지 카드로 그릴 수 없다. 플랜 업그레이드 링크와 대시보드
+    버튼이 붙어 의미가 없다. 이용권 전용 카드가 생기기 전까지 이 탭에서 뺀다.
   */
   const programApplications =
     applications?.filter(
       (application) =>
         application.programType !== 'GUIDEBOOK' &&
         application.programType !== 'VOD' &&
-        application.programType !== 'LIVE_MENTORING',
+        application.programType !== 'LIVE_MENTORING' &&
+        application.programType !== 'VOD_PASS',
     ) ?? [];
   const programWaitingList = programApplications.filter(
     (application) => application.programStatusType === 'PREV',

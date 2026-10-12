@@ -21,6 +21,7 @@ import {
 } from './payment/payment';
 import { tossInfoType } from './payment/paymentSchema';
 import { useUserQueryKey } from './user/user';
+import { UseVodPassQueryKey } from './vodPass';
 
 export const programApplicationSchema = z.object({
   applied: z.boolean().nullable().optional(),
@@ -40,6 +41,16 @@ export const programApplicationSchema = z.object({
       guidebookApplicationPriceType,
       vodApplicationPriceType,
     ])
+    .nullable()
+    .optional(),
+  // 챌린지와 함께 결제하는 VOD 이용권 상품 (LC-3438). 상품이 비활성이거나 서버 배포 전이면 null·누락이다.
+  vodPassProduct: z
+    .object({
+      id: z.number(),
+      title: z.string(),
+      price: z.number(),
+      durationDays: z.number(),
+    })
     .nullable()
     .optional(),
 });
@@ -87,6 +98,10 @@ export interface PostApplicationInterface {
   contactEmail?: string;
   motivate?: string;
   question?: string;
+  // VOD 이용권을 함께 결제할 때만 세 값을 모두 보낸다 (LC-3438). 하나라도 있으면 서버가 전부 요구한다.
+  vodPassProductId?: number;
+  vodPassExpectedPrice?: number;
+  vodPassExpectedDurationDays?: number;
 }
 
 export const usePostApplicationMutation = ({
@@ -124,6 +139,20 @@ export const usePostApplicationMutation = ({
 
 export const postApplicationResultSchema = z.object({
   tossInfo: tossInfoType.nullable().optional(),
+  // 이용권을 함께 결제한 경우에만 내려온다 (LC-3438). 서버 배포 전에는 오지 않는다.
+  vodPass: z.record(z.string(), z.unknown()).nullable().optional(),
+  payments: z
+    .array(
+      z.object({
+        paymentId: z.number(),
+        applicationId: z.number(),
+        orderId: z.string(),
+        type: z.enum(['CHALLENGE', 'VOD_PASS']),
+        paidAmount: z.number(),
+      }),
+    )
+    .nullable()
+    .optional(),
 });
 
 export type PostApplicationResult = z.infer<typeof postApplicationResultSchema>;
@@ -214,6 +243,10 @@ export const useCancelApplicationMutation = ({
       });
       client.invalidateQueries({
         queryKey: [UsePaymentDetailQueryKey, paymentId],
+      });
+      // VOD 이용권 환불 뒤 이용권 상태(CANCELED)를 다시 받는다
+      client.invalidateQueries({
+        queryKey: [UseVodPassQueryKey],
       });
     },
     onError: (error) => {

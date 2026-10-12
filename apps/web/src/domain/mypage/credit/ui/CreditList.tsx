@@ -4,18 +4,21 @@ import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import dayjs from '@/lib/dayjs';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import Link from 'next/link';
+import { groupPaymentsByTransaction } from '../lib/groupPaymentsByTransaction';
 import CreditDateContainer from './CreditDateContainer';
 import CreditListItem from './CreditListItem';
+import CreditTransactionGroup from './CreditTransactionGroup';
 
-const groupByDate = (data: PaymentType[]) => {
-  return data.reduce((acc: Record<string, PaymentType[]>, payment) => {
-    const date = dayjs(payment.programInfo.createDate).format('YYYY.MM.DD');
+/** 같은 PG 거래의 행은 한 묶음이다. 묶음의 날짜는 첫 행 기준이다 */
+const groupByDate = (data: PaymentType[][]) => {
+  return data.reduce((acc: Record<string, PaymentType[][]>, group) => {
+    const date = dayjs(group[0].programInfo.createDate).format('YYYY.MM.DD');
 
     if (!acc[date]) {
       acc[date] = [];
     }
 
-    acc[date].push(payment);
+    acc[date].push(group);
     return acc;
   }, {});
 };
@@ -68,21 +71,28 @@ function CreditListContent() {
 
   return (
     <>
-      {Object.entries(groupByDate(paymentData.payments)).map(
-        ([date, payments]) => (
-          <div key={date} className="flex flex-col gap-y-3">
-            <CreditDateContainer date={date} />
-            <div className="flex w-full flex-col gap-y-3">
-              {payments.map((payment) => (
+      {Object.entries(
+        groupByDate(groupPaymentsByTransaction(paymentData.payments)),
+      ).map(([date, groups]) => (
+        <div key={date} className="flex flex-col gap-y-3">
+          <CreditDateContainer date={date} />
+          <div className="flex w-full flex-col gap-y-3">
+            {groups.map((group) =>
+              group.length === 1 ? (
                 <CreditListItem
-                  key={payment.programInfo.paymentId}
-                  payment={payment}
+                  key={group[0].programInfo.paymentId}
+                  payment={group[0]}
                 />
-              ))}
-            </div>
+              ) : (
+                <CreditTransactionGroup
+                  key={group[0].programInfo.paymentId}
+                  payments={group}
+                />
+              ),
+            )}
           </div>
-        ),
-      )}
+        </div>
+      ))}
     </>
   );
 }
