@@ -43,7 +43,8 @@ export const hideMobileBottomNavBar = (pathname: string) =>
   pathname === '/login' ||
   pathname === '/signup' ||
   pathname.startsWith('/challenge') ||
-  pathname.startsWith('/pass-certification');
+  pathname.startsWith('/pass-certification') ||
+  pathname.startsWith('/all-in-one-pass');
 
 export const getBottomNavBarClassNameByPath = (pathname: string) => {
   return hideMobileBottomNavBar(pathname) && 'hidden md:flex';
