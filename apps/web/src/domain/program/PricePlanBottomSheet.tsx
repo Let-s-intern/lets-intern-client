@@ -3,6 +3,7 @@ import BaseBottomSheet from '@/common/sheet/BaseBottomSheet';
 import { COUPON_DISABLED_CHALLENGE_TYPES } from '@/domain/program/program-detail/apply/constants';
 import { calculateChallengeTotalWithVodPass } from '@/domain/program/vodPassPurchase';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
+import { twMerge } from '@/lib/twMerge';
 import {
   ChallengeIdPrimitive,
   ChallengePricePlan,
@@ -37,6 +38,28 @@ function PricePlanLabel({
       <b className="font-bold">{title}</b>
       <br />
       <span className="text-neutral-10">{description}</span>
+    </>
+  );
+}
+
+function VodPassLabel({
+  title,
+  durationDays,
+}: {
+  title: string;
+  durationDays: number;
+}) {
+  return (
+    <>
+      <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
+        <b className="font-bold">{title}</b>
+        <span className="text-xxsmall12 bg-neutral-95 text-neutral-30 rounded-full px-2 py-0.5 font-medium">
+          {durationDays}일 이용권
+        </span>
+      </span>
+      <span className="text-xxsmall12 text-neutral-40 mt-1 block font-normal leading-5">
+        결제 후 VOD 사이트에서 직접 활성화하면 이용 기간이 시작됩니다
+      </span>
     </>
   );
 }
@@ -351,23 +374,32 @@ function PricePlanBottomSheet({
 
         {/* VOD 이용권 (플랜과 독립) */}
         {vodPassProduct && (
-          <div className="rounded-xs border-neutral-80 mt-4 overflow-hidden border">
-            <OptionFormCheckboxControlLabel
-              label={
-                <PricePlanLabel
-                  title={vodPassProduct.title}
-                  description={`${vodPassProduct.durationDays}일 이용권`}
-                />
-              }
-              checked={isVodPassChecked}
-              onChange={(_, checked) => setIsVodPassChecked(checked)}
-              wrapperClassName="py-3 pl-2 pr-3"
-              right={<PriceView price={vodPassProduct.price} />}
-            />
-            <p className="text-xxsmall12 text-neutral-40 px-3 pb-3">
-              결제 후 VOD 사이트에서 직접 활성화하면 이용 기간이 시작됩니다
-            </p>
-          </div>
+          <>
+            <span className="text-xsmall14 mb-3 mt-6 block font-semibold">
+              VOD 이용권 추가 (선택)
+            </span>
+            <div
+              className={twMerge(
+                'rounded-xs overflow-hidden border',
+                isVodPassChecked
+                  ? 'border-primary bg-primary-5'
+                  : 'border-neutral-80',
+              )}
+            >
+              <OptionFormCheckboxControlLabel
+                label={
+                  <VodPassLabel
+                    title={vodPassProduct.title}
+                    durationDays={vodPassProduct.durationDays}
+                  />
+                }
+                checked={isVodPassChecked}
+                onChange={(_, checked) => setIsVodPassChecked(checked)}
+                wrapperClassName="py-3 pl-2 pr-3"
+                right={<PriceView price={vodPassProduct.price} />}
+              />
+            </div>
+          </>
         )}
 
         {/* 총 결제 금액 */}
