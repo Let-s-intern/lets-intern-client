@@ -29,7 +29,10 @@ function WheelColumn({ items, value, onChange, format }: WheelProps) {
     if (!el) return;
     const idx = items.indexOf(value);
     if (idx < 0 || Math.round(el.scrollTop / ITEM_H) === idx) return;
-    el.scrollTo({ top: idx * ITEM_H, behavior: didInit.current ? 'smooth' : 'auto' });
+    el.scrollTo({
+      top: idx * ITEM_H,
+      behavior: didInit.current ? 'smooth' : 'auto',
+    });
     didInit.current = true;
   }, [value, items]);
 
@@ -62,7 +65,7 @@ function WheelColumn({ items, value, onChange, format }: WheelProps) {
             'flex w-full cursor-pointer snap-center items-center justify-center',
             it === value
               ? 'text-primary text-base font-semibold'
-              : 'text-neutral-50 text-sm',
+              : 'text-sm text-neutral-50',
           )}
         >
           {format(it)}

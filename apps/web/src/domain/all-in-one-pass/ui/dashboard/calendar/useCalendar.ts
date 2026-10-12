@@ -1,6 +1,9 @@
 import dayjs from '@/lib/dayjs';
 import { useMemo, useState } from 'react';
-import type { PassCalendarEvent, PassParticipationStatus } from '../../../types';
+import type {
+  PassCalendarEvent,
+  PassParticipationStatus,
+} from '../../../types';
 import { deriveCalendar } from './calendarModel';
 import {
   Day,
