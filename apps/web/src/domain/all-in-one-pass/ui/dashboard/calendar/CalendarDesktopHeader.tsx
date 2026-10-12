@@ -1,3 +1,4 @@
+// 데스크탑 캘린더 헤더 — 조회 기간·주 이동(< >)·참여상태 필터
 import clsx from 'clsx';
 import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { PassParticipationStatus } from '../../../types';
@@ -14,9 +15,7 @@ interface Props {
   canPrev?: boolean;
   canNext?: boolean;
 }
-
-/** 캘린더 헤더 — 조회 범위 + 주 이동(이용기간 내) + 참여상태 필터 */
-export default function CalendarHeader({
+export default function CalendarDesktopHeader({
   windowStart,
   windowEnd,
   filters,

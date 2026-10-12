@@ -1,3 +1,4 @@
+// 날짜 선택 휠 바텀시트 — 패스 기간 내 년/월/일
 import OutlinedButton from '@/common/button/OutlinedButton';
 import SolidButton from '@/common/button/SolidButton';
 import BaseBottomSheet from '@/common/sheet/BaseBottomSheet';
@@ -6,7 +7,7 @@ import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import type { Day } from './calendarUtils';
 
-const ITEM_H = 40; // 휠 아이템 높이(px)
+const ITEM_H = 40;
 
 const range = (lo: number, hi: number) =>
   Array.from({ length: Math.max(0, hi - lo + 1) }, (_, i) => lo + i);
@@ -84,9 +85,7 @@ interface Props {
   periodEnd?: string;
   onConfirm: (d: Day) => void;
 }
-
-/** 날짜 선택 바텀시트 — 패스 기간에 해당하는 년/월/일만 노출 */
-export default function PassDatePickerSheet({
+export default function CalendarDatePicker({
   isOpen,
   onClose,
   initial,
@@ -98,10 +97,9 @@ export default function PassDatePickerSheet({
   const max = periodEnd ? dayjs(periodEnd).startOf('day') : undefined;
 
   const [year, setYear] = useState(initial.year());
-  const [month, setMonth] = useState(initial.month() + 1); // 1~12
+  const [month, setMonth] = useState(initial.month() + 1);
   const [day, setDay] = useState(initial.date());
 
-  // 열릴 때 선택일 기준으로 초기화
   useEffect(() => {
     if (!isOpen) return;
     setYear(initial.year());
@@ -124,7 +122,6 @@ export default function PassDatePickerSheet({
       : daysInMonth,
   );
 
-  // 년/월 변경 시 월·일을 유효 범위로 보정
   useEffect(() => {
     if (!months.includes(month)) setMonth(months[0]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -146,7 +143,6 @@ export default function PassDatePickerSheet({
   return (
     <BaseBottomSheet isOpen={isOpen} onClose={onClose}>
       <div className="relative flex" style={{ height: ITEM_H * 5 }}>
-        {/* 가운데 선택 밴드 */}
         <div
           className="bg-neutral-95 pointer-events-none absolute inset-x-0 top-1/2 -translate-y-1/2 rounded-lg"
           style={{ height: ITEM_H }}

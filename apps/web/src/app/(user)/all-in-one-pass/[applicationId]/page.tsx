@@ -5,8 +5,8 @@ import {
   useGetMyPass,
   useGetPassCalendar,
 } from '@/domain/all-in-one-pass/api/dashboard';
-import DashboardCalendar from '@/domain/all-in-one-pass/ui/dashboard/calendar/DashboardCalendar';
-import DashboardCalendarMobile from '@/domain/all-in-one-pass/ui/dashboard/calendar/DashboardCalendarMobile';
+import CalendarDesktop from '@/domain/all-in-one-pass/ui/dashboard/calendar/CalendarDesktop';
+import CalendarMobile from '@/domain/all-in-one-pass/ui/dashboard/calendar/CalendarMobile';
 import PassUsageCard from '@/domain/all-in-one-pass/ui/dashboard/PassUsageCard';
 import RemainingPeriodCard from '@/domain/all-in-one-pass/ui/dashboard/RemainingPeriodCard';
 import { useParams } from 'next/navigation';
@@ -42,14 +42,14 @@ export default function AllInOnePassDashboardPage() {
         {calendarEvents && (
           <>
             <div className="hidden md:block">
-              <DashboardCalendar
+              <CalendarDesktop
                 events={calendarEvents}
                 periodStart={myPass?.startDate}
                 periodEnd={myPass?.endDate}
               />
             </div>
             <div className="md:hidden">
-              <DashboardCalendarMobile
+              <CalendarMobile
                 events={calendarEvents}
                 periodStart={myPass?.startDate}
                 periodEnd={myPass?.endDate}

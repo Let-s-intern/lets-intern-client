@@ -1,68 +1,51 @@
+// 모바일 캘린더 공용 한 주 행 — 얇은 막대 라인·+N (주간·월간 공유)
 import dayjs from '@/lib/dayjs';
 import clsx from 'clsx';
-import type { NormalizedCalendarEvent } from '../../../types';
-import { eventColor } from './calendarColors';
-import type { PointPlacement } from './calendarModel';
+import { useCalendarRender } from './CalendarContext';
 import {
   colOf,
   Day,
+  eventColor,
   eventEnd,
   eventStart,
   MONTH_MAX_ROWS,
   MONTH_VISIBLE_ITEMS,
 } from './calendarUtils';
 
-const CELL_H = 72; // 셀 전체 높이
-const PAD_TOP = 8; // 셀 상단 여백 (pt-2)
-const NUM_H = 20; // 날짜 숫자 줄 높이 (leading-5)
-/** 막대 시작 지점 = 상단여백 + 숫자 + 숫자↔막대 6px */
+const CELL_H = 72;
+const PAD_TOP = 8;
+const NUM_H = 20;
 const LINE_TOP = PAD_TOP + NUM_H + 6;
 
 interface Props {
   week: Day[];
   variant: 'week' | 'month';
-  wi: number;
-  bars: NormalizedCalendarEvent[];
-  barLaneOf: Map<number, number>;
-  pointsByDate: Map<string, PointPlacement[]>;
-  badgeByDate: Map<string, number>;
-  mainMonthKey: string;
-  today: Day;
-  selected: Day;
-  onSelect: (d: Day) => void;
-  periodStart?: string;
-  periodEnd?: string;
 }
 
-/**
- * 모바일 한 주 행 — 숫자 셀(선택=연보라 배경)
- * + 막대·당일 일정을 얇은 라인으로, 오버플로는 +N 텍스트(월간).
- */
-export default function MobileWeekRow({
-  week,
-  variant,
-  wi,
-  bars,
-  barLaneOf,
-  pointsByDate,
-  badgeByDate,
-  mainMonthKey,
-  today,
-  selected,
-  onSelect,
-  periodStart,
-  periodEnd,
-}: Props) {
-  const itemRows = MONTH_MAX_ROWS; // 최대 4행 (렌더 대상 lane 0~3)
+export default function CalendarMobileRow({ week, variant }: Props) {
+  const {
+    bars,
+    barLaneOf,
+    pointsByDate,
+    badgeByDate,
+    mainMonthKey,
+    today,
+    selected,
+    onSelect,
+    periodStart,
+    periodEnd,
+  } = useCalendarRender();
+
+  const itemRows = MONTH_MAX_ROWS;
   const weekStart = week[0];
   const weekEnd = week[6];
 
-  // 이용기간 밖 날짜 판정 (일 단위)
   const periodStartDay = periodStart ? dayjs(periodStart).startOf('day') : null;
   const periodEndDay = periodEnd ? dayjs(periodEnd).startOf('day') : null;
   const outOfPeriod = (d: Day) =>
     (periodStartDay != null && d.isBefore(periodStartDay)) ||
     (periodEndDay != null && d.isAfter(periodEndDay));
+
   const weekBars = bars.filter(
     (e) =>
       (barLaneOf.get(e.id) ?? 0) < itemRows &&
@@ -72,7 +55,6 @@ export default function MobileWeekRow({
 
   return (
     <div className="relative w-full shrink-0">
-      {/* 숫자 셀 */}
       <div className="grid grid-cols-7 pt-1">
         {week.map((d) => {
           const isToday = d.isSame(today, 'day');
@@ -113,8 +95,6 @@ export default function MobileWeekRow({
           );
         })}
       </div>
-
-      {/* 막대·당일 라인 + 배지 — 라인 4px, 행 간격 2px, 최대 4행(5개↑는 3 + +N) */}
       <div
         className="pointer-events-none absolute inset-x-0 flex flex-col gap-[2px]"
         style={{ top: LINE_TOP }}
@@ -143,7 +123,6 @@ export default function MobileWeekRow({
                 );
               })}
 
-            {/* 당일 일정 (한 칸) */}
             {week.map((d, di) => {
               const p = pointsByDate
                 .get(d.format('YYYY-MM-DD'))
@@ -161,7 +140,6 @@ export default function MobileWeekRow({
               );
             })}
 
-            {/* +N 배지 — 마지막(4번째) 행에서 오버플로 날짜의 막대 자리를 대체 */}
             {row === MONTH_VISIBLE_ITEMS &&
               week.map((d, di) => {
                 const n = badgeByDate.get(d.format('YYYY-MM-DD')) ?? 0;

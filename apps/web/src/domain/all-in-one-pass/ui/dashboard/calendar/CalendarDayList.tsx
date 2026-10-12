@@ -1,5 +1,6 @@
 'use client';
 
+// 선택일의 프로그램/일정 목록 — 상태 뱃지·일시·참여/대시보드 버튼
 import SolidButton from '@/common/button/SolidButton';
 import dayjs from '@/lib/dayjs';
 import clsx from 'clsx';
@@ -39,7 +40,7 @@ interface Props {
 }
 
 /** U-1 캘린더 우측 패널 — 선택일의 프로그램/일정 목록 */
-export default function DayProgramList({ date, events, stickyTop }: Props) {
+export default function CalendarDayList({ date, events, stickyTop }: Props) {
   const router = useRouter();
   const rootRef = useRef<HTMLDivElement>(null);
   const ulRef = useRef<HTMLUListElement>(null);

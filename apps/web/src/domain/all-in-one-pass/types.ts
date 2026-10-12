@@ -9,7 +9,7 @@
  * 참고 엔티티: lets-career-server-dev domain/membership/entity/*, MembershipApplication.
  */
 
-/** 이용권 프로그램 종류 (ProgramType). LIVE = 유저 화면 "무료 세미나" */
+/** 이용권 프로그램 종류 (ProgramType). LIVE = 유저 화면 "라이브 클래스" */
 export type PassProgramType = 'CHALLENGE' | 'GUIDEBOOK' | 'VOD' | 'LIVE';
 
 /** 이용권 방식 (MembershipPrivilegeType) */

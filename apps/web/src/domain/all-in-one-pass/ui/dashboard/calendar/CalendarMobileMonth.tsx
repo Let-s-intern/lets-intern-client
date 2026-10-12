@@ -1,13 +1,15 @@
+// 모바일 월간 뷰 — 한 달 그리드 (좌우 스와이프로 월 이동)
 import { useRef } from 'react';
-import MobileWeekRow from './MobileWeekRow';
+import CalendarMobileRow from './CalendarMobileRow';
 import { WEEKDAYS } from './calendarUtils';
 import type { MobileCalendarState } from './useMobileCalendar';
 
-/** 좌우 스와이프로 월 단위 이동 (임계값 50px) */
 const SWIPE_THRESHOLD = 50;
-
-/** 모바일 월간 그리드 — MON~SUN 헤더 + 주 단위 행 (한 칸 최대 3 + +N) */
-export default function MobileMonthGrid({ cal }: { cal: MobileCalendarState }) {
+export default function CalendarMobileMonth({
+  cal,
+}: {
+  cal: MobileCalendarState;
+}) {
   const startX = useRef(0);
   const onTouchStart = (e: React.TouchEvent) => {
     startX.current = e.touches[0].clientX;
@@ -35,22 +37,7 @@ export default function MobileMonthGrid({ cal }: { cal: MobileCalendarState }) {
         ))}
       </div>
       {cal.monthWeeks.map((week, wi) => (
-        <MobileWeekRow
-          key={wi}
-          variant="month"
-          wi={wi}
-          week={week}
-          bars={cal.bars}
-          barLaneOf={cal.barLaneOf}
-          pointsByDate={cal.pointsByDate}
-          badgeByDate={cal.badgeByDate}
-          mainMonthKey={cal.monthAnchor.format('YYYY-MM')}
-          today={cal.today}
-          selected={cal.selected}
-          onSelect={cal.setSelected}
-          periodStart={cal.periodStart}
-          periodEnd={cal.periodEnd}
-        />
+        <CalendarMobileRow key={wi} variant="month" week={week} />
       ))}
     </div>
   );

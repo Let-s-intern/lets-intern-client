@@ -1,3 +1,4 @@
+// 캘린더 노출 계산(방법 D) — deriveCalendar: 막대 lane 패킹 + 당일 배치 + +N
 import type {
   NormalizedCalendarEvent,
   PassParticipationStatus,
@@ -11,47 +12,29 @@ import {
   overlapsDay,
 } from './calendarUtils';
 
-/** 당일 일정의 배치 결과: 어느 행(lane)에 놓을지 */
 export interface PointPlacement {
   event: NormalizedCalendarEvent;
   lane: number;
 }
 
 export interface CalendarModel {
-  /** 기간 막대 (우선순위 정렬됨) */
   bars: NormalizedCalendarEvent[];
-  /** 막대 id → 행(lane) */
   barLaneOf: Map<number, number>;
-  /** 날짜(YYYY-MM-DD) → 당일 칩 배치 */
   pointsByDate: Map<string, PointPlacement[]>;
-  /** 날짜(YYYY-MM-DD) → 오버플로 개수(+N) */
   badgeByDate: Map<string, number>;
 }
 
-/**
- * 캘린더 노출 모델(방법 D) — 데스크탑·모바일(주간/월간) 공용.
- * - 기간 막대(여러 날)는 자기들끼리만 lane 패킹 → 항상 표시(안 끊김).
- * - 당일 일정(칩)은 날짜별로 남는 행에 채우고, 한 칸이 maxRows를 넘으면
- *   visibleItems개까지만 표시하고 나머지는 +N 배지로 접는다.
- *
- * @param days   배치를 계산할 날짜 목록(주간=7 / 2주=14 / 월간=한 달)
- * @param maxRows 한 칸 최대 행(이하면 전부 표시)
- * @param visibleItems 초과 시 표시할 개수(나머지는 +N)
- */
 export function deriveCalendar(
   events: NormalizedCalendarEvent[],
   filters: Record<PassParticipationStatus, boolean>,
   days: Day[],
   { maxRows, visibleItems }: { maxRows: number; visibleItems: number },
 ): CalendarModel {
-  // 상태 필터 (게릴라세션/마일스톤 등 status 없는 일정은 항상 노출)
   const filtered = events.filter((e) => (e.status ? filters[e.status] : true));
 
-  // 기간 막대 / 당일 일정 분리
   const bars = filtered.filter(isBarEvent).sort(compareEvents);
   const points = filtered.filter((e) => !isBarEvent(e));
 
-  // 막대끼리만 greedy lane 패킹 (기간 겹치면 다음 행). 막대는 항상 표시
   const barLaneOf = new Map<number, number>();
   const laneEnds: number[] = [];
   for (const e of bars) {
@@ -62,7 +45,6 @@ export function deriveCalendar(
     barLaneOf.set(e.id, lane);
   }
 
-  // 날짜별 시작하는 당일 일정
   const pointsOfDay = new Map<string, NormalizedCalendarEvent[]>();
   for (const p of points) {
     const key = eventStart(p).format('YYYY-MM-DD');
@@ -72,7 +54,6 @@ export function deriveCalendar(
   }
   for (const arr of pointsOfDay.values()) arr.sort(compareEvents);
 
-  // 날짜별 당일 일정 배치(남는 행 채우기) + 오버플로(+N) 집계
   const pointsByDate = new Map<string, PointPlacement[]>();
   const badgeByDate = new Map<string, number>();
 
@@ -85,7 +66,6 @@ export function deriveCalendar(
     const dayPoints = pointsOfDay.get(key) ?? [];
     const total = dayBars.length + dayPoints.length;
 
-    // maxRows 이하: 전부 표시 / 초과: visibleItems까지만(막대 포함), 나머지 +N
     const cap = total <= maxRows ? maxRows : visibleItems;
     const placed: PointPlacement[] = [];
     let overflow = 0;

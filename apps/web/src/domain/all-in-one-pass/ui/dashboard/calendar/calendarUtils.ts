@@ -1,3 +1,4 @@
+// 캘린더 공용 헬퍼 — 상수·날짜/요일·우선순위·상태 파생·색상
 import dayjs from '@/lib/dayjs';
 import type {
   NormalizedCalendarEvent,
@@ -35,7 +36,7 @@ export const FILTER_LABEL: Record<PassParticipationStatus, string> = {
  * - 오늘이 종료일(일 단위)을 지남 → DONE(참여 완료)
  * - 그 외 → IN_PROGRESS(참여 중)
  */
-export const challengeStatus = (
+const challengeStatus = (
   e: PassCalendarEvent,
   today: Day,
 ): PassParticipationStatus => {
@@ -71,7 +72,7 @@ export const colOf = (d: Day) => ((d.day() + 6) % 7) + 1;
  * 노출 우선순위: 참여중 챌린지 > 게릴라세션 > 마일스톤/기타 > 참여가능 챌린지 > 참여이력 챌린지.
  * 동일 순위면 진행기간 짧은 순 → 시작 빠른 순.
  */
-export const priority = (e: NormalizedCalendarEvent): number => {
+const priority = (e: NormalizedCalendarEvent): number => {
   if (e.type === 'CHALLENGE') {
     if (e.status === 'IN_PROGRESS') return 0;
     if (e.status === 'BEFORE') return 3; // 참여가능
@@ -80,7 +81,7 @@ export const priority = (e: NormalizedCalendarEvent): number => {
   if (e.type === 'GUERRILLA') return 1;
   return 2; // MILESTONE 등 기타 유형
 };
-export const durationMs = (e: PassCalendarEvent) =>
+const durationMs = (e: PassCalendarEvent) =>
   eventEnd(e).valueOf() - eventStart(e).valueOf();
 
 /** 여러 날 걸치는 일정(막대). 같은 날에 끝나면 당일 일정(칩) */
@@ -99,3 +100,28 @@ export const compareEvents = (
   priority(a) - priority(b) ||
   durationMs(a) - durationMs(b) ||
   eventStart(a).valueOf() - eventStart(b).valueOf();
+
+/**
+ * 일정별 색상 (디자인 지정 hex).
+ * - 참여중 챌린지 E3E5FB / 참여가능 챌린지 EFEFEF
+ * - 게릴라세션 / 유형1 / 유형2
+ */
+export const CALENDAR_COLORS = {
+  challengeInProgress: '#E3E5FB',
+  challengeBefore: '#EFEFEF',
+  guerrilla: '#DAFF7C',
+  type1: '#BBEDD8',
+  type2: '#E0BAF7',
+} as const;
+
+/** 일정 → 배경색 */
+export const eventColor = (event: NormalizedCalendarEvent): string => {
+  if (event.type === 'CHALLENGE') {
+    return event.status === 'IN_PROGRESS'
+      ? CALENDAR_COLORS.challengeInProgress
+      : CALENDAR_COLORS.challengeBefore;
+  }
+  if (event.type === 'GUERRILLA') return CALENDAR_COLORS.guerrilla;
+  // MILESTONE 등 — 유형1 기본
+  return CALENDAR_COLORS.type1;
+};

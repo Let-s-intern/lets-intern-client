@@ -1,3 +1,4 @@
+// 데스크탑 캘린더 상태 훅 — 2주 창 이동·필터·이용기간 바운드
 import dayjs from '@/lib/dayjs';
 import { useMemo, useState } from 'react';
 import type {
@@ -14,8 +15,6 @@ import {
   weekStartOf,
 } from './calendarUtils';
 
-export type { PointPlacement } from './calendarModel';
-
 /**
  * U-1 캘린더(데스크탑) 상태·파생 데이터.
  * 창은 오늘이 속한 월요일주 기준 2주, 이동은 1주씩.
@@ -26,7 +25,7 @@ export function useCalendar(
   periodStart?: string,
   periodEnd?: string,
 ) {
-  const today = dayjs().startOf('day');
+  const today = useMemo(() => dayjs().startOf('day'), []);
 
   // 이용기간 바운드 — 이 범위(2주 창)만 이동 가능. 창은 2주라 마지막 창 시작은 종료주 -1주
   const minWindowStart = periodStart

@@ -1,62 +1,45 @@
+// 데스크탑 캘린더 한 주 행 — 막대·당일 칩·+N 배지 (3층 구조)
 import dayjs from '@/lib/dayjs';
 import clsx from 'clsx';
-import type { NormalizedCalendarEvent } from '../../../types';
-import { eventColor } from './calendarColors';
+import { useCalendarRender } from './CalendarContext';
 import {
   BAR_AREA_H,
   CELL_HEIGHT,
   colOf,
   Day,
+  eventColor,
   eventEnd,
   eventStart,
   MAX_ROWS,
   NUM_H,
   VISIBLE_ITEMS,
 } from './calendarUtils';
-import type { PointPlacement } from './useCalendar';
 
 interface Props {
   week: Day[];
-  /** 창 안에서 몇 번째 주인지 (연속 막대 라벨 처리용) */
   wi: number;
-  bars: NormalizedCalendarEvent[];
-  barLaneOf: Map<number, number>;
-  pointsByDate: Map<string, PointPlacement[]>;
-  badgeByDate: Map<string, number>;
-  mainMonthKey: string;
-  today: Day;
-  selected: Day;
-  onSelect: (d: Day) => void;
-  /** 패스 이용기간 — 이 범위 밖 날짜는 선택 불가(흐리게) */
-  periodStart?: string;
-  periodEnd?: string;
 }
 
-/**
- * 캘린더 한 주 — 3층 구조:
- * ① 호버 배경 + 클릭(막대 뒤) · ② 막대·당일 칩·배지 · ③ 숫자 + 선택 테두리(위, 클릭 통과)
- */
-export default function CalendarWeek({
-  week,
-  wi,
-  bars,
-  barLaneOf,
-  pointsByDate,
-  badgeByDate,
-  mainMonthKey,
-  today,
-  selected,
-  onSelect,
-  periodStart,
-  periodEnd,
-}: Props) {
+export default function CalendarDesktopWeek({ week, wi }: Props) {
+  const {
+    bars,
+    barLaneOf,
+    pointsByDate,
+    badgeByDate,
+    mainMonthKey,
+    today,
+    selected,
+    onSelect,
+    periodStart,
+    periodEnd,
+  } = useCalendarRender();
+
   const weekStart = week[0];
   const weekEnd = week[6];
   const weekBars = bars.filter(
     (e) => !eventEnd(e).isBefore(weekStart) && !eventStart(e).isAfter(weekEnd),
   );
 
-  // 이용기간 밖 날짜 판정 (일 단위)
   const periodStartDay = periodStart ? dayjs(periodStart).startOf('day') : null;
   const periodEndDay = periodEnd ? dayjs(periodEnd).startOf('day') : null;
   const outOfPeriod = (d: Day) =>
@@ -65,7 +48,6 @@ export default function CalendarWeek({
 
   return (
     <div className="relative">
-      {/* ① 클릭 + 호버 배경 (막대 뒤) — 이용기간 밖은 비활성 */}
       <div className="grid grid-cols-7 gap-1">
         {week.map((d) => {
           const disabled = outOfPeriod(d);
@@ -93,8 +75,6 @@ export default function CalendarWeek({
           );
         })}
       </div>
-
-      {/* ② 막대 · 당일 칩 · 배지 (표시용) */}
       <div
         className="pointer-events-none absolute inset-x-0 flex flex-col gap-1.5"
         style={{ top: NUM_H + 4, height: BAR_AREA_H }}
@@ -127,8 +107,6 @@ export default function CalendarWeek({
                   </div>
                 );
               })}
-
-              {/* 당일 칩 (한 칸) */}
               {week.map((d, di) => {
                 const p = pointsByDate
                   .get(d.format('YYYY-MM-DD'))
@@ -148,8 +126,6 @@ export default function CalendarWeek({
                   </div>
                 );
               })}
-
-              {/* +N 배지 (오버플로 날짜, 마지막 행) */}
               {row === VISIBLE_ITEMS &&
                 week.map((d, di) => {
                   const n = badgeByDate.get(d.format('YYYY-MM-DD')) ?? 0;
@@ -168,8 +144,6 @@ export default function CalendarWeek({
           );
         })}
       </div>
-
-      {/* ③ 숫자 + 선택 테두리 (막대 위, 클릭은 아래로 통과) */}
       <div className="pointer-events-none absolute inset-0 grid grid-cols-7 gap-1">
         {week.map((d) => {
           const isToday = d.isSame(today, 'day');
