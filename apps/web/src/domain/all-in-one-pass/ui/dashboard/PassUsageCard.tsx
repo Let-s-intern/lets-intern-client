@@ -8,23 +8,22 @@ const PROGRAM_LABEL: Record<PassProgramType, string> = {
   CHALLENGE: '챌린지',
   GUIDEBOOK: '가이드북',
   VOD: 'VOD',
-  LIVE: '무료세미나',
+  LIVE: '라이브 클래스',
 };
 
 interface Props {
   plan: AllInOnePassPlan;
-  /** 멘토링 쿠폰 (privilege 가 아니라 쿠폰). 쿠폰명 + 사용 가능 횟수로 표기 */
+  /** 멘토링 쿠폰 (privilege 아님). 월 자동발급 50% 할인권 — 쿠폰명 그대로 표기 */
   mentoringCoupons: PassMentoringCoupon[];
 }
 
 /** U-1 대시보드 "내 패스 이용권" 카드 — 플랜명 + 이용권 뱃지 */
 export default function PassUsageCard({ plan, mentoringCoupons }: Props) {
-  const mentoringTotal = mentoringCoupons.reduce((sum, c) => sum + c.count, 0);
   const badges = [
-    ...plan.privileges.map(
-      (p) => `${PROGRAM_LABEL[p.programType]} ${p.programCount}종`,
-    ),
-    ...(mentoringTotal > 0 ? [`멘토링 할인쿠폰 ${mentoringTotal}장`] : []),
+    // 이용권: 수량 미표기, "{유형} 이용권"으로 통일
+    ...plan.privileges.map((p) => `${PROGRAM_LABEL[p.programType]} 이용권`),
+    // 멘토링: 월 자동발급 할인권 (쿠폰명 그대로)
+    ...mentoringCoupons.map((c) => c.name),
   ];
 
   return (

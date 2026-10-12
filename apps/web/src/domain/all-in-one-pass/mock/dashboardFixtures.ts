@@ -31,9 +31,15 @@ export const myPassFixture: AllInOnePassApplication = {
         privilegeType: 'ALL_IN_ONE',
         programCount: 20,
       },
+      {
+        id: 4,
+        programType: 'LIVE', // 라이브 클래스 (수량 개념 없음 → programCount 0, 뱃지에 수량 미표기)
+        privilegeType: 'ALL_IN_ONE',
+        programCount: 0,
+      },
     ],
   },
-  mentoringCoupons: [{ name: '1:1 LIVE 멘토링 50% 할인 쿠폰', count: 1 }],
+  mentoringCoupons: [{ name: '월 1회 1:1 LIVE 멘토링 50% 할인권', count: 1 }],
 };
 
 /**
