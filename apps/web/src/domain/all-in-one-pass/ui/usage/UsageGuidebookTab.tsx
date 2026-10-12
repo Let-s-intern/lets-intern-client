@@ -1,6 +1,7 @@
 // 나의 패스 이용 > 가이드북 탭 (열람 가능 / 보유 중).
 'use client';
 
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import { useRouter } from 'next/navigation';
 import type { PassProgramCardData } from './PassProgramCard';
 import UsageSection from './UsageSection';
@@ -17,11 +18,7 @@ const UsageGuidebookTab = () => {
   };
 
   if (isLoading) {
-    return (
-      <p className="text-xsmall14 text-neutral-40 py-20 text-center">
-        불러오는 중…
-      </p>
-    );
+    return <LoadingContainer className="py-20" />;
   }
   if (isError) {
     return (

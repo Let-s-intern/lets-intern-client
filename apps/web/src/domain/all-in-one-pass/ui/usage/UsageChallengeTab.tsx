@@ -1,6 +1,7 @@
 // 나의 패스 이용 > 챌린지 탭 (참여 전 / 참여 중 / 참여 완료).
 'use client';
 
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import { useRouter } from 'next/navigation';
 import type { PassProgramCardData } from './PassProgramCard';
 import UsageSection from './UsageSection';
@@ -23,11 +24,7 @@ const UsageChallengeTab = () => {
   };
 
   if (isLoading) {
-    return (
-      <p className="text-xsmall14 text-neutral-40 py-20 text-center">
-        불러오는 중…
-      </p>
-    );
+    return <LoadingContainer className="py-20" />;
   }
   if (isError) {
     return (

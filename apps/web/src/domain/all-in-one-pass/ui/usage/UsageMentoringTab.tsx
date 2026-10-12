@@ -2,6 +2,7 @@
 'use client';
 
 import { useLiveMentorListQuery } from '@/api/live-mentoring/liveMentoring';
+import LoadingContainer from '@/common/loading/LoadingContainer';
 import MentorCard from '@/domain/live-mentoring/list/MentorCard';
 import Link from 'next/link';
 
@@ -27,9 +28,7 @@ const UsageMentoringTab = () => {
       </div>
 
       {isLoading ? (
-        <p className="text-xsmall14 text-neutral-40 py-20 text-center">
-          불러오는 중…
-        </p>
+        <LoadingContainer className="py-20" />
       ) : isError ? (
         <p className="text-xsmall14 text-neutral-40 py-20 text-center">
           멘토링 프로그램 목록을 불러오지 못했어요. 잠시 후 다시 시도해주세요.
