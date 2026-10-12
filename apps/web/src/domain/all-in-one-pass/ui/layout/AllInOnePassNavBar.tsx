@@ -15,6 +15,7 @@ const AllInOnePassNavBar = () => {
   const navItems: NavItem[] = [
     { id: 'dashboard', label: '패스 대시보드', href: base },
     { id: 'usage', label: '나의 패스 이용', href: `${base}/usage` },
+    { id: 'materials', label: '패스 ONLY 자료집', href: `${base}/materials` },
     { id: 'retrospectives', label: '회고록', href: `${base}/retrospectives` },
     { id: 'notices', label: '공지사항 / 패스 가이드', href: `${base}/notices` },
   ];
@@ -23,10 +24,8 @@ const AllInOnePassNavBar = () => {
 
   const linkClass = (active: boolean) =>
     clsx(
-      'rounded-xxs text-xsmall14 md:text-xsmall16 flex flex-row items-center whitespace-nowrap transition-colors md:h-[44px] md:px-3',
-      active
-        ? 'text-primary md:bg-primary-5 font-semibold'
-        : 'text-neutral-40 font-medium',
+      'rounded-xxs text-xsmall14 md:text-xsmall16 flex flex-row items-center whitespace-nowrap font-medium transition-colors md:h-[44px] md:px-3',
+      active ? 'text-primary md:bg-primary-5' : 'md:text-neutral-40',
     );
 
   return (
