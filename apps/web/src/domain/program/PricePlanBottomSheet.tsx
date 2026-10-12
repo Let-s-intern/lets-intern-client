@@ -13,14 +13,11 @@ import useProgramStore from '@/store/useProgramStore';
 import FeedbackMentoringLink from '@/domain/program/challenge/ui/FeedbackMentoringLink';
 import { getChallengeThemeColor } from '@/domain/program/challenge/utils/getChallengeThemeColor';
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
-import { RadioGroup } from '@mui/material';
+import { Checkbox, FormControlLabel, RadioGroup } from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
 import BaseButton from '../../common/button/BaseButton';
-import {
-  OptionFormCheckboxControlLabel,
-  OptionFormRadioControlLabel,
-} from '../../common/ControlLabel';
+import { OptionFormRadioControlLabel } from '../../common/ControlLabel';
 import OptionDropdown from '../../common/dropdown/OptionDropdown';
 import PriceView from '../../common/price/PriceView';
 
@@ -42,25 +39,67 @@ function PricePlanLabel({
   );
 }
 
+// 체크박스 색은 common/ControlLabel.tsx 와 같은 파란색을 쓰되, 해제 상태 테두리만 진하게 한다.
+// 공용 색(#E7E7E7)은 흰 배경에서 거의 보이지 않는다.
+const VOD_PASS_CHECKBOX_SX = {
+  color: '#ACAFB6',
+  '&.Mui-checked': {
+    color: '#5177FF',
+  },
+};
+
+const VOD_PASS_LABEL_SX = {
+  m: 0,
+  width: '100%',
+  '.MuiFormControlLabel-label': {
+    flex: 1,
+    minWidth: 0,
+    fontSize: '0.875rem',
+    fontWeight: 500,
+    color: '#2A2D34',
+    fontFamily: 'Pretendard Variable',
+  },
+};
+
 function VodPassLabel({
   title,
   durationDays,
+  price,
+  checked,
 }: {
   title: string;
   durationDays: number;
+  price: number;
+  checked: boolean;
 }) {
   return (
-    <>
-      <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-        <b className="font-bold">{title}</b>
-        <span className="text-xxsmall12 bg-neutral-95 text-neutral-30 rounded-full px-2 py-0.5 font-medium">
-          {durationDays}일 이용권
+    <span className="flex w-full items-center justify-between gap-3">
+      <span className="min-w-0">
+        <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
+          <b className="font-bold">{title}</b>
+          <span
+            className={twMerge(
+              'text-xxsmall12 text-primary rounded-full px-2 py-0.5 font-medium',
+              checked ? 'bg-static-100' : 'bg-primary-10',
+            )}
+          >
+            {durationDays}일 이용권
+          </span>
+        </span>
+        <span className="text-xxsmall12 text-neutral-30 mt-1 block font-normal leading-5">
+          결제 후 VOD 사이트에서 직접 활성화하면 이용 기간이 시작됩니다
         </span>
       </span>
-      <span className="text-xxsmall12 text-neutral-40 mt-1 block font-normal leading-5">
-        결제 후 VOD 사이트에서 직접 활성화하면 이용 기간이 시작됩니다
+      <span
+        className={twMerge(
+          'text-xsmall14 flex shrink-0 items-baseline font-bold',
+          checked ? 'text-primary' : 'text-neutral-10',
+        )}
+      >
+        <span aria-hidden="true">+</span>
+        <span>{price.toLocaleString()}원</span>
       </span>
-    </>
+    </span>
   );
 }
 
@@ -373,23 +412,26 @@ function PricePlanBottomSheet({
             </span>
             <div
               className={twMerge(
-                'rounded-xs overflow-hidden border',
+                'rounded-xs overflow-hidden border transition-colors',
                 isVodPassChecked
                   ? 'border-primary bg-primary-5'
-                  : 'border-neutral-80',
+                  : 'border-neutral-80 hover:bg-neutral-100',
               )}
             >
-              <OptionFormCheckboxControlLabel
+              <FormControlLabel
+                className="py-3 pl-2 pr-3"
+                sx={VOD_PASS_LABEL_SX}
+                checked={isVodPassChecked}
+                onChange={(_, checked) => setIsVodPassChecked(checked)}
+                control={<Checkbox size="small" sx={VOD_PASS_CHECKBOX_SX} />}
                 label={
                   <VodPassLabel
                     title={vodPassProduct.title}
                     durationDays={vodPassProduct.durationDays}
+                    price={vodPassProduct.price}
+                    checked={isVodPassChecked}
                   />
                 }
-                checked={isVodPassChecked}
-                onChange={(_, checked) => setIsVodPassChecked(checked)}
-                wrapperClassName="py-3 pl-2 pr-3"
-                right={<PriceView price={vodPassProduct.price} />}
               />
             </div>
           </>
