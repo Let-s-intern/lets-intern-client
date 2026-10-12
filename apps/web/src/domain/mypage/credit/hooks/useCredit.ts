@@ -32,10 +32,11 @@ export default function useCredit(paymentId: string) {
 
   // VOD 이용권의 상태·환불 가능 여부는 결제 상세에 없어 이용권 목록에서 찾는다
   const isVodPass = data.programInfo.programType === 'VOD_PASS';
-  const { data: vodPass, isError: isVodPassError } = useVodPassQuery(
-    data.programInfo.applicationId,
-    isVodPass,
-  );
+  const {
+    data: vodPass,
+    isError: isVodPassError,
+    isLoading: isVodPassLoading,
+  } = useVodPassQuery(data.programInfo.applicationId, isVodPass);
 
   // 결제 취소 가능한 프로그램이면 true 아니면 false
   const isCancelable = useMemo(() => {
@@ -44,6 +45,11 @@ export default function useCredit(paymentId: string) {
       data.programInfo.isCanceled
     ) {
       return false;
+    }
+
+    // VOD 이용권: 활성화 전이고 서버가 환불 가능하다고 한 경우만. 조회 전·실패는 불가로 본다
+    if (data.programInfo.programType === 'VOD_PASS') {
+      return vodPass?.refundable === true;
     }
 
     // 가이드북/VOD: 결제 후 7일 이내 + 다운로드 이력 없을 때만 환불 가능
@@ -70,7 +76,7 @@ export default function useCredit(paymentId: string) {
     } else {
       return dayjs().isBefore(dayjs(data.programInfo.startDate));
     }
-  }, [data, downloadStatus]);
+  }, [data, downloadStatus, vodPass]);
 
   // 결제 취소된 내역이면 true
   const isCanceled =
@@ -161,10 +167,11 @@ export default function useCredit(paymentId: string) {
       return 0;
     }
 
-    // 가이드북/VOD: 차감 없이 전액 환불
+    // 가이드북/VOD/VOD 이용권: 차감 없이 전액 환불
     if (
       data.programInfo.programType === 'GUIDEBOOK' ||
-      data.programInfo.programType === 'VOD'
+      data.programInfo.programType === 'VOD' ||
+      data.programInfo.programType === 'VOD_PASS'
     ) {
       return data.paymentInfo.finalPrice ?? 0;
     }
@@ -239,6 +246,7 @@ export default function useCredit(paymentId: string) {
     isVodPass,
     vodPass,
     isVodPassError,
+    isVodPassLoading,
     planUpgradePayments,
     planUpgradeAmount,
     data,
