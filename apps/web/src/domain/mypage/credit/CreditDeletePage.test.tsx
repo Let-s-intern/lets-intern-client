@@ -19,6 +19,21 @@ jest.mock('@/api/user/user', () => ({
 }));
 
 const mockPush = jest.fn();
+jest.mock('next/link', () => ({
+  __esModule: true,
+  default: ({
+    href,
+    children,
+    ...rest
+  }: {
+    href: string;
+    children: React.ReactNode;
+  }) => (
+    <a href={href} {...rest}>
+      {children}
+    </a>
+  ),
+}));
 jest.mock('next/navigation', () => ({
   useParams: () => ({ paymentId: '502' }),
   useRouter: () => ({ push: mockPush, back: jest.fn() }),
@@ -89,14 +104,14 @@ const pass = {
   durationDays: 30,
 };
 
-function mockApi(passes: unknown[] | 'error') {
+function mockApi(passes: unknown[] | 'error', detail: unknown = passDetail) {
   mockGet.mockImplementation(async (url: string) => {
     if (url === '/vod-pass') {
       if (passes === 'error') throw new Error('network');
       return { data: { data: { passes } } };
     }
     if (url.startsWith('/payment/')) {
-      return { data: { data: passDetail } };
+      return { data: { data: detail } };
     }
     throw new Error(`unexpected GET ${url}`);
   });
@@ -248,5 +263,137 @@ describe('CreditDeletePage VOD_PASS (LC-3438)', () => {
     expect(
       screen.queryByRole('button', { name: '결제 취소하기' }),
     ).not.toBeInTheDocument();
+  });
+});
+
+/*
+  챌린지 환불 화면. 함께 결제한 이용권은 자동으로 환불되지 않으므로 별도 환불을 안내하되,
+  챌린지 환불 금액은 이용권 유무와 상관없이 같아야 한다.
+*/
+describe('CreditDeletePage 챌린지 환불 안내 (LC-3438)', () => {
+  const challengeDetail = (paymentItems: unknown) => ({
+    programInfo: {
+      id: 3,
+      title: '챌린지',
+      thumbnail: '/thumb.png',
+      programType: 'CHALLENGE',
+      progressType: null,
+      isCanceled: false,
+      // 시작 전이라 전액 환불 구간이다
+      startDate: '2099-01-01T00:00:00',
+      endDate: '2099-01-31T00:00:00',
+      applicationId: 10,
+    },
+    priceInfo: { id: 3, price: 60000, discount: 0, refund: 0, option: 0 },
+    paymentInfo: {
+      id: 502,
+      finalPrice: 60000,
+      couponDiscount: null,
+      isRefunded: false,
+      createDate: '2026-10-12T10:00:00',
+    },
+    tossInfo: {
+      status: 'DONE',
+      paymentKey: 'pk-A',
+      // 이용권을 함께 결제한 거래만 PG 합계가 챌린지 금액보다 크다
+      totalAmount:
+        Array.isArray(paymentItems) && paymentItems.length > 1 ? 89000 : 60000,
+      balanceAmount:
+        Array.isArray(paymentItems) && paymentItems.length > 1 ? 89000 : 60000,
+      method: '카드',
+      requestedAt: '2026-10-12T10:00:00',
+    },
+    paymentItems,
+  });
+
+  const challengeItem = {
+    paymentId: 502,
+    applicationId: 10,
+    programType: 'CHALLENGE',
+    title: '챌린지',
+    paidAmount: 60000,
+  };
+  const passItem = {
+    paymentId: 601,
+    applicationId: 11,
+    programType: 'VOD_PASS',
+    title: 'VOD 전체 이용권',
+    paidAmount: 29000,
+  };
+  const NOTICE = '함께 결제한 VOD 이용권은 별도로 환불해야 합니다';
+
+  beforeEach(() => {
+    mockGet.mockReset();
+    mockDelete.mockReset();
+    mockPush.mockReset();
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('미활성 이용권을 함께 결제했으면 별도 환불 안내와 이용권 환불 링크를 보이고 환불 금액은 챌린지 금액이다', async () => {
+    mockApi(
+      [{ ...pass, paymentId: 601 }],
+      challengeDetail([challengeItem, passItem]),
+    );
+
+    renderPage();
+
+    expect(await screen.findByText(NOTICE)).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: 'VOD 이용권 환불하러 가기' }),
+    ).toHaveAttribute('href', '/mypage/credit/601/delete');
+    // 이용권 29,000원이 환불 금액이나 차감에 섞이지 않는다
+    expect(screen.getAllByText('60,000원').length).toBeGreaterThanOrEqual(2);
+    expect(screen.queryByText('89,000원')).not.toBeInTheDocument();
+    expect(screen.queryByText('-29,000원')).not.toBeInTheDocument();
+    expect(screen.getByText('-0원')).toBeInTheDocument();
+  });
+
+  it('이용권 없이 결제한 챌린지는 안내가 없고 이용권 목록도 조회하지 않는다', async () => {
+    mockApi([], challengeDetail([]));
+
+    renderPage();
+
+    expect(await screen.findByText('예정 환불금액')).toBeInTheDocument();
+    expect(screen.getAllByText('60,000원').length).toBeGreaterThanOrEqual(2);
+    expect(screen.queryByText(NOTICE)).not.toBeInTheDocument();
+    expect(mockGet).not.toHaveBeenCalledWith('/vod-pass');
+  });
+
+  it('이용권을 이미 활성화했다면 안내가 없다', async () => {
+    mockApi(
+      [
+        {
+          ...pass,
+          paymentId: 601,
+          status: 'ACTIVE',
+          startsAt: '2026-10-12T12:00:00+09:00',
+          endsAt: '2026-11-11T12:00:00+09:00',
+          refundable: false,
+        },
+      ],
+      challengeDetail([challengeItem, passItem]),
+    );
+
+    renderPage();
+
+    expect(await screen.findByText('예정 환불금액')).toBeInTheDocument();
+    await waitFor(() => expect(mockGet).toHaveBeenCalledWith('/vod-pass'));
+    expect(screen.queryByText(NOTICE)).not.toBeInTheDocument();
+  });
+
+  it('이용권을 이미 환불했다면 안내가 없다', async () => {
+    mockApi(
+      [{ ...pass, paymentId: 601, status: 'CANCELED', refundable: false }],
+      challengeDetail([challengeItem, { ...passItem, isCanceled: true }]),
+    );
+
+    renderPage();
+
+    expect(await screen.findByText('예정 환불금액')).toBeInTheDocument();
+    expect(screen.queryByText(NOTICE)).not.toBeInTheDocument();
   });
 });

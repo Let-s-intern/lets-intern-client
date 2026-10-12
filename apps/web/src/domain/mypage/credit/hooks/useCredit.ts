@@ -38,6 +38,21 @@ export default function useCredit(paymentId: string) {
     isLoading: isVodPassLoading,
   } = useVodPassQuery(data.programInfo.applicationId, isVodPass);
 
+  // 챌린지와 함께 결제한 이용권이 아직 활성화 전이면 챌린지 환불 화면에서 별도 환불을 안내한다
+  const bundledVodPassItem = isVodPass
+    ? undefined
+    : data.paymentItems?.find(
+        (item) => item.programType === 'VOD_PASS' && !item.isCanceled,
+      );
+  const { data: bundledVodPass } = useVodPassQuery(
+    bundledVodPassItem?.applicationId,
+    bundledVodPassItem !== undefined,
+  );
+  const unactivatedBundledVodPassPaymentId =
+    bundledVodPass?.status === 'UNACTIVATED'
+      ? (bundledVodPassItem?.paymentId ?? null)
+      : null;
+
   // 결제 취소 가능한 프로그램이면 true 아니면 false
   const isCancelable = useMemo(() => {
     if (
@@ -247,6 +262,7 @@ export default function useCredit(paymentId: string) {
     vodPass,
     isVodPassError,
     isVodPassLoading,
+    unactivatedBundledVodPassPaymentId,
     planUpgradePayments,
     planUpgradeAmount,
     data,

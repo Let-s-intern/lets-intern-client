@@ -7,6 +7,7 @@ import DescriptionBox from '@/domain/program/paymentSuccess/DescriptionBox';
 import PaymentInfoRow from '@/domain/program/paymentSuccess/PaymentInfoRow';
 import dayjs from '@/lib/dayjs';
 import { AxiosError } from 'axios';
+import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import useCredit from './hooks/useCredit';
@@ -55,6 +56,7 @@ const CreditDeleteContent = () => {
     vodPass,
     isVodPassError,
     isVodPassLoading,
+    unactivatedBundledVodPassPaymentId,
   } = useCredit(paymentId);
 
   const { mutate: tryCancelPayment } = useCancelApplicationMutation({
@@ -183,6 +185,20 @@ const CreditDeleteContent = () => {
             )}
           </div>
         </div>
+        {/* 챌린지를 취소해도 함께 결제한 이용권은 자동으로 환불되지 않는다. 환불 금액에도 포함되지 않는다 */}
+        {unactivatedBundledVodPassPaymentId !== null && (
+          <div className="bg-neutral-90 flex w-full flex-col gap-y-1 rounded-sm px-4 py-3 text-sm font-medium">
+            <p className="text-neutral-0">
+              함께 결제한 VOD 이용권은 별도로 환불해야 합니다
+            </p>
+            <Link
+              className="text-primary-dark underline underline-offset-2"
+              href={`/mypage/credit/${unactivatedBundledVodPassPaymentId}/delete`}
+            >
+              VOD 이용권 환불하러 가기
+            </Link>
+          </div>
+        )}
         {isRefundBlocked ? (
           <>
             {vodPassNotice && (
