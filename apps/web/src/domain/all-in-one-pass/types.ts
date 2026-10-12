@@ -20,8 +20,6 @@ export interface PassPrivilege {
   id: number;
   programType: PassProgramType;
   privilegeType: PassPrivilegeType;
-  /** 개수/횟수 (예: 챌린지 10종, VOD 20회). 이용권 뱃지 표기에 사용 */
-  programCount: number;
 }
 
 /** 플랜 (MembershipPlan) */

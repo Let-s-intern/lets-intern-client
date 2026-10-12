@@ -17,25 +17,21 @@ export const myPassFixture: AllInOnePassApplication = {
         id: 1,
         programType: 'CHALLENGE',
         privilegeType: 'ALL_IN_ONE',
-        programCount: 10,
       },
       {
         id: 2,
         programType: 'GUIDEBOOK',
         privilegeType: 'ALL_IN_ONE',
-        programCount: 6,
       },
       {
         id: 3,
         programType: 'VOD',
         privilegeType: 'ALL_IN_ONE',
-        programCount: 20,
       },
       {
         id: 4,
-        programType: 'LIVE', // 라이브 클래스 (수량 개념 없음 → programCount 0, 뱃지에 수량 미표기)
+        programType: 'LIVE',
         privilegeType: 'ALL_IN_ONE',
-        programCount: 0,
       },
     ],
   },
