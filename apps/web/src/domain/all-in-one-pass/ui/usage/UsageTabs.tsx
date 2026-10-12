@@ -6,19 +6,22 @@ import clsx from 'clsx';
 import { useState } from 'react';
 import type { PassPrivilege } from '../../types';
 import UsageChallengeTab from './UsageChallengeTab';
+import UsageGuidebookTab from './UsageGuidebookTab';
+import UsageLiveTab from './UsageLiveTab';
 
-type UsageTabKey = 'CHALLENGE' | 'GUIDEBOOK' | 'VOD' | 'MENTORING';
+type UsageTabKey = 'CHALLENGE' | 'GUIDEBOOK' | 'VOD' | 'MENTORING' | 'LIVE';
 
 const TABS: { value: UsageTabKey; label: string }[] = [
   { value: 'CHALLENGE', label: '챌린지' },
   { value: 'GUIDEBOOK', label: '가이드북' },
   { value: 'VOD', label: 'VOD' },
   { value: 'MENTORING', label: '멘토링' },
+  { value: 'LIVE', label: '라이브 클래스' },
 ];
 
 const Placeholder = ({ label }: { label: string }) => (
   <p className="text-xsmall14 text-neutral-40 py-20 text-center">
-    {label} 탭은 준비 중이에요.
+    {label} 탭 준비 중
   </p>
 );
 
@@ -69,9 +72,10 @@ const UsageTabs = ({ privileges }: Props) => {
       </div>
       <div>
         {active === 'CHALLENGE' && <UsageChallengeTab />}
-        {active === 'GUIDEBOOK' && <Placeholder label="가이드북" />}
+        {active === 'GUIDEBOOK' && <UsageGuidebookTab />}
         {active === 'VOD' && <Placeholder label="VOD" />}
         {active === 'MENTORING' && <Placeholder label="멘토링" />}
+        {active === 'LIVE' && <UsageLiveTab />}
       </div>
     </div>
   );
