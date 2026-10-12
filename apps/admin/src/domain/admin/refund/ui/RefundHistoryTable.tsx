@@ -8,6 +8,7 @@ const programTypeLabel: Record<string, string> = {
   LIVE: '라이브',
   GUIDEBOOK: '가이드북',
   VOD: 'VOD',
+  VOD_PASS: 'VOD 이용권',
   REPORT: '서류진단',
 };
 

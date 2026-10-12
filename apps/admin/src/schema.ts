@@ -201,6 +201,8 @@ export const ProgramTypeEnum = z.enum([
   'REPORT',
   'GUIDEBOOK',
   'MEMBERSHIP',
+  // VOD 이용권(LC-3438). 결제·환불 내역에 별도 행으로 내려온다.
+  'VOD_PASS',
 ]);
 
 export type ProgramTypeUpperCase = z.infer<typeof ProgramTypeEnum>;
