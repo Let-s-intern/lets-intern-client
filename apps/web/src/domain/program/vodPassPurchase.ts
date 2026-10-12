@@ -68,3 +68,25 @@ export function toVodPassRequestFields(
     vodPassExpectedDurationDays: selection.vodPassDurationDays ?? 0,
   };
 }
+
+/** Toss requestPayment 의 orderName 최대 길이 */
+const ORDER_NAME_MAX_LENGTH = 100;
+const VOD_PASS_ORDER_NAME_SUFFIX = ' + VOD 이용권';
+
+/**
+ * Toss 결제창에 보이는 주문명. 이용권을 담았으면 이름 뒤에 ` + VOD 이용권` 을 붙이되
+ * 길이 제한(100자)을 넘지 않도록 프로그램 이름을 자른다. 미선택이면 이름 그대로다.
+ */
+export function getOrderName(
+  programTitle: string | null | undefined,
+  selection: VodPassSelection,
+): string {
+  const title = programTitle ?? '';
+  if (!isVodPassSelected(selection)) {
+    return title;
+  }
+
+  const maxTitleLength =
+    ORDER_NAME_MAX_LENGTH - VOD_PASS_ORDER_NAME_SUFFIX.length;
+  return `${title.slice(0, maxTitleLength)}${VOD_PASS_ORDER_NAME_SUFFIX}`;
+}
