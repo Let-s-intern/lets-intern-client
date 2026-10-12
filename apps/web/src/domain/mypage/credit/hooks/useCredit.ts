@@ -1,5 +1,6 @@
 import { useApplicationDownloadQuery } from '@/api/application';
 import { paymentDetailQueryOptions } from '@/api/payment/payment';
+import { useVodPassQuery } from '@/api/vodPass';
 import dayjs from '@/lib/dayjs';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
@@ -28,6 +29,13 @@ export default function useCredit(paymentId: string) {
     type: isVod ? 'VOD' : 'GUIDEBOOK',
     enabled: isGuidebook || isVod,
   });
+
+  // VOD 이용권의 상태·환불 가능 여부는 결제 상세에 없어 이용권 목록에서 찾는다
+  const isVodPass = data.programInfo.programType === 'VOD_PASS';
+  const { data: vodPass, isError: isVodPassError } = useVodPassQuery(
+    data.programInfo.applicationId,
+    isVodPass,
+  );
 
   // 결제 취소 가능한 프로그램이면 true 아니면 false
   const isCancelable = useMemo(() => {
@@ -228,6 +236,9 @@ export default function useCredit(paymentId: string) {
   }, [data, productAmount]);
 
   return {
+    isVodPass,
+    vodPass,
+    isVodPassError,
     planUpgradePayments,
     planUpgradeAmount,
     data,

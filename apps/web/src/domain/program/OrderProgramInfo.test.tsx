@@ -124,3 +124,54 @@ describe('OrderProgramInfo — 1:1 LIVE 멘토링', () => {
     expect(screen.getByText('-')).toBeInTheDocument();
   });
 });
+
+/*
+  VOD 이용권(LC-3438)은 기간이 아니라 이용권 상태를 그린다. 상태는 이용권 목록에서
+  찾아 넘기며, 조회가 실패하면 넘어오지 않는다.
+*/
+describe('OrderProgramInfo — VOD 이용권', () => {
+  it('진행 일정·진행 방식 대신 넘겨받은 상태를 보여준다', () => {
+    render(
+      <OrderProgramInfo
+        title="VOD 전체 이용권"
+        programType="VOD_PASS"
+        startDate={null}
+        endDate={null}
+        vodPassRows={[
+          { label: '이용권 상태', value: '이용 중' },
+          { label: '이용 종료일', value: '2026.11.11' },
+        ]}
+      />,
+    );
+
+    expect(screen.getByText('VOD 전체 이용권')).toBeInTheDocument();
+    expect(screen.getByText('이용 중')).toBeInTheDocument();
+    expect(screen.getByText('2026.11.11')).toBeInTheDocument();
+    expect(screen.queryByText('진행 일정')).not.toBeInTheDocument();
+    expect(screen.queryByText('진행 방식')).not.toBeInTheDocument();
+    // 이용권에는 썸네일이 없다
+    expect(screen.queryByAltText('thumbnail')).not.toBeInTheDocument();
+  });
+
+  it('이용권 조회가 실패해 상태가 없으면 제목만 보여준다', () => {
+    render(<OrderProgramInfo title="VOD 전체 이용권" programType="VOD_PASS" />);
+
+    expect(screen.getByText('VOD 전체 이용권')).toBeInTheDocument();
+    expect(screen.queryByText('이용권 상태')).not.toBeInTheDocument();
+    expect(screen.queryByText('진행 일정')).not.toBeInTheDocument();
+  });
+
+  it('썸네일이 있는 다른 상품은 이전처럼 이미지를 보여준다', () => {
+    render(
+      <OrderProgramInfo
+        programType="CHALLENGE"
+        title="챌린지"
+        thumbnail="/thumb.png"
+        startDate="2026-10-01T00:00:00"
+        endDate="2026-10-31T00:00:00"
+      />,
+    );
+
+    expect(screen.getByAltText('thumbnail')).toBeInTheDocument();
+  });
+});
