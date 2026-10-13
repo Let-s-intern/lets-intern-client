@@ -15,20 +15,19 @@ export type PassProgramType = 'CHALLENGE' | 'GUIDEBOOK' | 'VOD' | 'LIVE';
 /** 이용권 방식 (MembershipPrivilegeType) */
 export type PassPrivilegeType = 'ALL_IN_ONE' | 'LIMITED_COUNT';
 
-/** 플랜에 포함된 이용권 하나 (MembershipPlanPrivilege) */
+/** 플랜에 포함된 이용권 하나 (MembershipPlanPrivilege). programType 이 플랜 내 유일키라 id 불필요. */
 export interface PassPrivilege {
-  id: number;
   programType: PassProgramType;
   privilegeType: PassPrivilegeType;
 }
 
 /** 플랜 (MembershipPlan) */
 export interface AllInOnePassPlan {
-  id: number;
+  id: number; // membershipPlanId
   title: string;
   description: string | null;
-  price: number; // 정가
-  discount: number; // 할인액
+  price: number; // 정가 (BE price)
+  discount: number | null; // 할인액(차감 금액, BE discount). 최종가 = price - discount. null/0 = 할인 없음
   privileges: PassPrivilege[];
 }
 
@@ -57,6 +56,59 @@ export interface AllInOnePassApplication {
 export interface PassMentoringCoupon {
   name: string; // 예: "1:1 LIVE 멘토링 50% 할인 쿠폰"
   count: number; // 사용 가능 횟수
+}
+
+// ─── 랜딩(구매) 페이지 ───
+
+/**
+ * 올인원패스 FAQ 1건 (어드민 MEMBERSHIP FAQ 중 패스별 선택분). category 로 그룹핑 가능.
+ */
+export interface PassFaq {
+  id: number;
+  question: string;
+  answer: string;
+  category: string | null;
+}
+
+/**
+ * 랜딩에 노출되는 외부 링크 — 혜택 "이름"만.
+ * 어드민 외부링크(id=폼 로컬 string·name·url)는 description blob 저장이고, 랜딩엔 url·id 없이
+ * name 만 내려준다(비구매자 접근 불가). 렌더 key 는 name/index 로 충분.
+ */
+export interface PassLandingExternalLink {
+  name: string;
+}
+
+/**
+ * 랜딩(구매) 페이지가 읽는 올인원패스 상품 상세 (어드민 AllInOnePassDetail 대응).
+ *
+ * `/all-in-one-pass/[id]` 의 id 가 membershipId 다. 구매 후 대시보드는 하위
+ * `[id]/[applicationId]` 로 이어진다. introduction = 짧은 소개(히어로),
+ * landingDescription = 랜딩 전용 상세 JSON(Membership.landingDescription 컬럼). planList
+ * 가 구매 카드의 핵심.
+ *
+ * ⚠️ 비구매자에게 공개되는 페이지다. "구매해야 받는 것"은 응답에 담지 않는다.
+ * 제외 대상(구매자 전용 — 공개 API 응답 금지):
+ *   - 자료집(benefit) 전체: 자료 링크가 실제 콘텐츠 접근 URL이라 통째 제외
+ *   - 외부 링크의 url(슬랙방·오픈채팅·플레이북 등): 링크 자체. 랜딩엔 name 만(externalLinks)
+ *   - 기존 description 컬럼(외부링크 url·캘린더 데이터 blob) 통째 — landingDescription 만 공개
+ *   - 공지사항 / 패스 가이드 본문, 회고록 질문·가이드, 쿠폰 코드/발급분
+ * 플랜의 이용권 목록(programType/privilegeType)은 "무엇을 제공하는지"라 공개 OK.
+ * // TODO(BE): 공개 응답은 landingDescription + externalLinks(name만) 로 내려줘야 한다.
+ * description(url·캘린더) 을 그대로 실으면 안 그려도 네트워크 응답에 유출된다. queryFn 만 교체.
+ */
+export interface AllInOnePassLanding {
+  id: number; // membershipId
+  title: string;
+  introduction: string | null;
+  landingDescription: string | null; // 랜딩 전용 상세 JSON (FE 파싱)
+  thumbnail: string | null;
+  beginning: string | null; // 판매 시작 (ISO)
+  deadline: string | null; // 판매 종료 (ISO)
+  periodDays: number | null; // 이용 기간(일)
+  plans: AllInOnePassPlan[];
+  externalLinks: PassLandingExternalLink[]; // 혜택 링크 이름만(url 제외)
+  faqs: PassFaq[];
 }
 
 // ─── U-1 대시보드 ───
