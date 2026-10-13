@@ -16,7 +16,11 @@ const AllInOnePassNavBar = () => {
     { id: 'dashboard', label: '패스 대시보드', href: base },
     { id: 'usage', label: '나의 패스 이용', href: `${base}/usage` },
     { id: 'materials', label: '패스 ONLY 자료집', href: `${base}/materials` },
-    { id: 'retrospectives', label: '회고록', href: `${base}/retrospectives` },
+    {
+      id: 'retrospectives',
+      label: '취준 회고록',
+      href: `${base}/retrospectives`,
+    },
     { id: 'notices', label: '공지사항 / 패스 가이드', href: `${base}/notices` },
   ];
 
