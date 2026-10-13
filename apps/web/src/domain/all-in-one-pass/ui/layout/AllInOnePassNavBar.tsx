@@ -8,9 +8,9 @@ type NavItem = { id: string; label: string; href: string };
 
 /** 올인원패스 대시보드 사이드바(4탭). 챌린지 NavBar 구조를 따르되 서브아이템 없이 평면. */
 const AllInOnePassNavBar = () => {
-  const params = useParams<{ applicationId: string }>();
+  const params = useParams<{ id: string; applicationId: string }>();
   const pathname = usePathname();
-  const base = `/all-in-one-pass/${params.applicationId}`;
+  const base = `/all-in-one-pass/${params.id}/${params.applicationId}`;
 
   const navItems: NavItem[] = [
     { id: 'dashboard', label: '패스 대시보드', href: base },
