@@ -14,6 +14,7 @@ import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import MaterialExposureModal from '@/domain/all-in-one-pass/ui/material/MaterialExposureModal';
 import MaterialFormModal from '@/domain/all-in-one-pass/ui/material/MaterialFormModal';
+import { parseMaterialIntro } from '@/domain/all-in-one-pass/util/materialIntro';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { usePaginationModelWithSearchParams } from '@/hooks/usePaginationModelWithSearchParams';
 import { Button } from '@mui/material';
@@ -119,7 +120,10 @@ export default function AllInOnePassMaterials() {
       headerName: '설명',
       flex: 1,
       minWidth: 220,
-      valueGetter: (_, row) => row.introduction || '-',
+      valueGetter: (_, row) => {
+        const { summary, bullets } = parseMaterialIntro(row.introduction);
+        return [summary, ...bullets].filter(Boolean).join(' · ') || '-';
+      },
     },
     {
       field: 'exposure',
