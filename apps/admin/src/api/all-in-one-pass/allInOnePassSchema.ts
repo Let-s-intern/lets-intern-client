@@ -90,11 +90,22 @@ export const allInOnePassFaqSchema = z.object({
   faqProgramType: z.string().nullish(),
 });
 
+// 연장 옵션 (server MembershipOption). BE 상세 응답 반영 전엔 optionList가 없어 []로 기본.
+export const allInOnePassOptionSchema = z.object({
+  membershipOptionId: z.number().nullish(),
+  title: z.string().nullish(),
+  extensionDays: z.number().nullish(),
+  price: z.number().nullish(),
+  discount: z.number().nullish(),
+});
+
 export const allInOnePassDetailSchema = z.object({
   membershipId: z.number(),
   title: z.string(),
   introduction: z.string().nullish(),
   description: z.string().nullish(),
+  landingDescription: z.string().nullish(),
+  optionList: z.array(allInOnePassOptionSchema).default([]),
   beginning: z.string().nullish(),
   deadline: z.string().nullish(),
   periodDays: z.number().nullish(),
