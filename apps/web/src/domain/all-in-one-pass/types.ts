@@ -137,3 +137,38 @@ export interface PassMaterial {
   link: string;
   thumbnail?: string | null;
 }
+
+// ─── U-4 회고록 ───
+
+/** 질문 기간 타입 (BE MembershipOrdinalQuestionPeriodType). INFINITY = 무기한(상시). */
+export type PassQuestionPeriodType =
+  | 'YEAR'
+  | 'MONTH'
+  | 'WEEK'
+  | 'DAY'
+  | 'INFINITY';
+
+/** 회고 질문 1개 (질문 + 답변 가이드=placeholder). */
+export interface RetroQuestion {
+  id: number;
+  question: string;
+  answerGuide: string;
+}
+
+/**
+ * 회고 회차 1건 (BE MembershipOrdinalQuestion 대응). 날짜는 저장 안 하고 visiblePeriod(노출)·
+ * period(작성기간) config + 패스 시작일로 FE 계산. periodType === 'INFINITY' = 마감 없음(상시 = 마무리).
+ * 공통질문은 BE MembershipCommonQuestion (여기선 COMMON_QUESTIONS mock).
+ * // TODO(BE): 유저 조회 API 나오면 api/retrospectives queryFn 교체. 응답 저장 뮤테이션 미구현(mock).
+ */
+export interface PassRetrospectiveRound {
+  id: number;
+  th: number;
+  weeklyQuestion: RetroQuestion;
+  visiblePeriodType: PassQuestionPeriodType;
+  visiblePeriodValue: number;
+  periodType: PassQuestionPeriodType;
+  periodValue: number;
+  /** 유저 제출 여부. // TODO(BE): 유저 응답 조회에서 회차별로 내려줌. */
+  isSubmitted: boolean;
+}
