@@ -57,31 +57,26 @@ const privilegeToPermission = (
   return found ? found[0] : null;
 };
 
-// ── description JSON (상세·캘린더·외부링크) ─────────────
+// ── description JSON (캘린더·외부링크·멘토링) ────────────
+// 상세 렉시컬은 landingDescription, 연장 옵션은 optionList(server)로 분리한다.
 interface DescriptionBlob {
-  detailContent: string | null;
   calendarEvents: PassCalendarEvent[];
   externalLinks: PassExternalLink[];
-  extensionOptions: PassExtensionOption[];
   mentoringCouponAutoIssue: boolean;
 }
 
 const parseDescription = (description?: string | null): DescriptionBlob => {
   const empty: DescriptionBlob = {
-    detailContent: null,
     calendarEvents: [],
     externalLinks: [],
-    extensionOptions: [],
     mentoringCouponAutoIssue: false,
   };
   if (!description) return empty;
   try {
     const parsed = JSON.parse(description) as Partial<DescriptionBlob>;
     return {
-      detailContent: parsed.detailContent ?? null,
       calendarEvents: parsed.calendarEvents ?? [],
       externalLinks: parsed.externalLinks ?? [],
-      extensionOptions: parsed.extensionOptions ?? [],
       mentoringCouponAutoIssue: parsed.mentoringCouponAutoIssue ?? false,
     };
   } catch {
@@ -91,12 +86,46 @@ const parseDescription = (description?: string | null): DescriptionBlob => {
 
 const serializeDescription = (input: PassFormInput): string =>
   JSON.stringify({
-    detailContent: input.detailContent,
     calendarEvents: input.calendarEvents,
     externalLinks: input.externalLinks,
-    extensionOptions: input.extensionOptions,
     mentoringCouponAutoIssue: input.mentoringCouponAutoIssue,
   } satisfies DescriptionBlob);
+
+// ── landingDescription JSON (랜딩 페이지용) ─────────────
+// 랜딩은 description이 아니라 이 필드만 읽는다. 비구매자에게 노출되는
+// 페이지라 외부링크 url은 넣지 않고 name만 담는다(url은 description에 유지).
+// 확장형 — 랜딩에 필요한 필드가 늘면 여기에 추가한다.
+interface LandingDescriptionBlob {
+  detailContent: string | null;
+  externalLinkNames: string[];
+}
+
+const parseLandingDescription = (
+  landingDescription?: string | null,
+): LandingDescriptionBlob => {
+  const empty: LandingDescriptionBlob = {
+    detailContent: null,
+    externalLinkNames: [],
+  };
+  if (!landingDescription) return empty;
+  try {
+    const parsed = JSON.parse(
+      landingDescription,
+    ) as Partial<LandingDescriptionBlob>;
+    return {
+      detailContent: parsed.detailContent ?? null,
+      externalLinkNames: parsed.externalLinkNames ?? [],
+    };
+  } catch {
+    return empty;
+  }
+};
+
+const serializeLandingDescription = (input: PassFormInput): string =>
+  JSON.stringify({
+    detailContent: input.detailContent,
+    externalLinkNames: input.externalLinks.map((link) => link.name),
+  } satisfies LandingDescriptionBlob);
 
 // ── 목록 ──────────────────────────────────────────────
 export const toListItem = (
@@ -116,6 +145,7 @@ export const toListItem = (
 // ── 상세 → 폼 ─────────────────────────────────────────
 export const toFormInput = (detail: AllInOnePassDetail): PassFormInput => {
   const blob = parseDescription(detail.description);
+  const landing = parseLandingDescription(detail.landingDescription);
   return {
     title: detail.title,
     shortDescription: detail.introduction ?? '',
@@ -135,15 +165,27 @@ export const toFormInput = (detail: AllInOnePassDetail): PassFormInput => {
     })),
     calendarEvents: blob.calendarEvents,
     externalLinks: blob.externalLinks,
-    extensionOptions: blob.extensionOptions,
+    extensionOptions: detail.optionList.map((opt) => ({
+      id: String(opt.membershipOptionId ?? crypto.randomUUID()),
+      days: opt.extensionDays ?? null,
+      price: opt.price ?? null,
+    })),
     mentoringCouponAutoIssue: blob.mentoringCouponAutoIssue,
-    detailContent: blob.detailContent,
+    detailContent: landing.detailContent,
     // 이 패스에 연결된(노출) FAQ id — 체크박스 prefill
     faqList: detail.faqList.map((f) => f.id),
   };
 };
 
 // ── 폼 → 생성/수정 DTO ────────────────────────────────
+// 연장 옵션 → server optionList. title은 "{패스명} {N}일 연장"으로 자동생성.
+const extensionToOption = (passTitle: string, opt: PassExtensionOption) => ({
+  title: `${passTitle} ${opt.days ?? 0}일 연장`,
+  extensionDays: opt.days ?? 0,
+  price: opt.price ?? 0,
+  discount: null,
+});
+
 const planToDto = (plan: PassPlan) => ({
   title: plan.name,
   description: plan.description || null,
@@ -160,12 +202,16 @@ export const toCreateDto = (input: PassFormInput) => ({
   title: input.title,
   introduction: input.shortDescription || null,
   description: serializeDescription(input),
+  landingDescription: serializeLandingDescription(input),
   beginning: input.purchaseStartDate,
   deadline: input.purchaseEndDate,
   periodDays: input.passDays,
   thumbnail: input.thumbnailUrl,
   isVisible: false, // 개설 시 기본 비노출
   planList: input.plans.map(planToDto),
+  optionList: input.extensionOptions.map((opt) =>
+    extensionToOption(input.title, opt),
+  ),
   faqList: input.faqList.map((faqId) => ({ faqId })), // 이 패스에 노출할 공통 FAQ
 });
 
@@ -174,9 +220,13 @@ export const toUpdateDto = (input: PassFormInput) => ({
   title: input.title,
   introduction: input.shortDescription || null,
   description: serializeDescription(input),
+  landingDescription: serializeLandingDescription(input),
   beginning: input.purchaseStartDate,
   deadline: input.purchaseEndDate,
   periodDays: input.passDays,
   thumbnail: input.thumbnailUrl,
+  optionList: input.extensionOptions.map((opt) =>
+    extensionToOption(input.title, opt),
+  ),
   faqList: input.faqList.map((faqId) => ({ faqId })),
 });
