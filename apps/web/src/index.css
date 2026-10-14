@@ -273,8 +273,8 @@ body.non-scroll {
 @media (hover: hover) and (pointer: fine) {
   .custom-scrollbar {
     &::-webkit-scrollbar {
-      width: 8px;
-      height: 10px;
+      width: 6px;
+      height: 8px;
     }
 
     &::-webkit-scrollbar-track {

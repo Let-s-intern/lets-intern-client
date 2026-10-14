@@ -1,3 +1,4 @@
+import { CurationType } from '@/api/curation';
 import { useGetUserProgramQuery } from '@/api/program';
 import dayjs from '@/lib/dayjs';
 import { useMemo } from 'react';
@@ -52,25 +53,28 @@ const ActiveProgramSection = () => {
           }
           moreUrl="/program?status=PROCEEDING"
           isDeadline={false}
-          programs={filteredData.map((program) => ({
-            thumbnail: program.programInfo.thumbnail ?? '',
-            title: program.programInfo.title ?? '',
-            url: getProgramUrl({
-              type: program.programInfo.programType,
-              programId: program.programInfo.id ?? undefined,
-            }),
-            duration: getDuration({
-              type: program.programInfo.programType,
-              startDate: program.programInfo.startDate ?? '',
-              endDate: program.programInfo.endDate ?? '',
-            }),
-            badge: {
-              text: getBadgeText({
-                type: program.programInfo.programType,
-                deadline: program.programInfo.deadline ?? '',
+          programs={filteredData.map((program) => {
+            const type = program.programInfo.programType as CurationType;
+            return {
+              thumbnail: program.programInfo.thumbnail ?? '',
+              title: program.programInfo.title ?? '',
+              url: getProgramUrl({
+                type,
+                programId: program.programInfo.id ?? undefined,
               }),
-            },
-          }))}
+              duration: getDuration({
+                type,
+                startDate: program.programInfo.startDate ?? '',
+                endDate: program.programInfo.endDate ?? '',
+              }),
+              badge: {
+                text: getBadgeText({
+                  type,
+                  deadline: program.programInfo.deadline ?? '',
+                }),
+              },
+            };
+          })}
         />
       </section>
     </>

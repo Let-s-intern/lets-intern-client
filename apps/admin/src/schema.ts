@@ -196,6 +196,7 @@ export const ProgramTypeEnum = z.enum([
   'VOD',
   'REPORT',
   'GUIDEBOOK',
+  'MEMBERSHIP',
 ]);
 
 export type ProgramTypeUpperCase = z.infer<typeof ProgramTypeEnum>;

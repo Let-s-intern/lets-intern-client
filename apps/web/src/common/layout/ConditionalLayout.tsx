@@ -22,6 +22,9 @@ const ConditionalLayout = ({ children }: ConditionalLayoutProps) => {
   // VOD 등 외부 서비스에 임베드되는 SSO 로그인 화면(LC-3208). 렛츠커리어 사이트라는 티가
   // 나면 안 되므로 NavBar·Footer·채널톡·바텀바를 전부 없앤 완전히 빈 페이지로 띄운다.
   const isSsoLoginPage = pathname === '/sso/login';
+  // 올인원패스 대시보드는 모바일에서 자체 sticky 달력/목록이 화면을 채우므로
+  // 하단 Footer 를 모바일(md 미만)에서만 숨긴다.
+  const isAllInOnePassPage = pathname.startsWith('/all-in-one-pass');
 
   if (isSsoLoginPage) {
     return <div>{children}</div>;
@@ -40,7 +43,16 @@ const ConditionalLayout = ({ children }: ConditionalLayoutProps) => {
     <div>
       <NavBar isLoginPage={isLoginPage} disableFixed={isCurationPage} />
       <div className="min-h-[31rem] w-full">{children}</div>
-      {!isLoginPage && !isDarkPage && !isCurationPage && <Footer />}
+      {!isLoginPage &&
+        !isDarkPage &&
+        !isCurationPage &&
+        (isAllInOnePassPage ? (
+          <div className="hidden md:block">
+            <Footer />
+          </div>
+        ) : (
+          <Footer />
+        ))}
       {!isLoginPage && !isCurationPage && <ChannelTalkBtn />}
       {!isLoginPage && !isCurationPage && <BottomNavBarWithPathname />}
     </div>

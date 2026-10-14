@@ -49,11 +49,18 @@ const OrderProgramInfo = ({
     <div className="flex w-full flex-col items-start justify-center gap-y-6">
       <div className="text-neutral-0 font-semibold">프로그램 정보</div>
       <div className="flex w-full items-start justify-center gap-x-4">
-        <img
-          className="h-[97px] w-[137px] rounded-sm object-cover"
-          src={thumbnail || ''}
-          alt="thumbnail"
-        />
+        {thumbnail ? (
+          <img
+            className="h-[97px] w-[137px] rounded-sm object-cover"
+            src={thumbnail}
+            alt="thumbnail"
+          />
+        ) : (
+          <div
+            className="bg-neutral-90 h-[97px] w-[137px] shrink-0 rounded-sm"
+            aria-hidden
+          />
+        )}
         <div className="flex grow flex-col items-start justify-center gap-y-3">
           <div className="font-semibold">{title}</div>
           <div className="flex w-full flex-col gap-y-1">

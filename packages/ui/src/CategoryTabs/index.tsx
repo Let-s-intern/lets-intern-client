@@ -24,6 +24,7 @@ interface CategoryTabsProps<Value extends string> {
   onChange: (value: Value) => void;
   size?: 'large' | 'small';
   full?: boolean;
+  align?: 'left' | 'center';
   className?: string;
 }
 
@@ -35,6 +36,7 @@ const CategoryTabs = <Value extends string>({
   onChange,
   size = 'small',
   full = false,
+  align = 'center',
   className,
 }: CategoryTabsProps<Value>) => {
   const navRef = useRef<HTMLElement>(null);
@@ -91,7 +93,10 @@ const CategoryTabs = <Value extends string>({
             className={clsx(
               'text-nowrap transition-colors',
               (() => {
-                if (full) return 'flex-1 pb-2 text-center md:pb-3';
+                if (full)
+                  return align === 'left'
+                    ? 'flex-1 pb-2 text-left md:pb-3'
+                    : 'flex-1 pb-2 text-center md:pb-3';
                 if (size === 'large') return 'mr-4 pb-2 md:mr-6 md:pb-3';
                 return 'mr-6 pb-3';
               })(),
