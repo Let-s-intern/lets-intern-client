@@ -141,7 +141,7 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
       >
         {/* 서비스 토글 띠(데스크톱). 모바일은 1단의 로고 옆에 붙는다. 높이(`h-10`)는 `FULL_NAVBAR_HEIGHT_OFFSET`·`Spacer` 와 맞춘다. */}
         <div className="border-neutral-90 hidden border-b md:block">
-          <div className="mw-1180 flex h-10 items-center pt-2 whitespace-nowrap">
+          <div className="mw-1180 flex h-10 items-center whitespace-nowrap pt-2">
             <ServiceToggle size="desktop" />
           </div>
         </div>

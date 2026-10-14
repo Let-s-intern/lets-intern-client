@@ -29,7 +29,9 @@ function withUtm(url: URL): URL {
 }
 
 /** 토큰 없는 첫 화면. 서버 렌더와 새 탭 열기(가운데 버튼 등)의 `href` 로 쓴다. */
-export const OGONGGO_WEB_HOME = withUtm(new URL('/', OGONGGO_WEB_ORIGIN)).toString();
+export const OGONGGO_WEB_HOME = withUtm(
+  new URL('/', OGONGGO_WEB_ORIGIN),
+).toString();
 
 /**
  * 헤더의 오공고 링크가 가는 곳. 로그인해 있으면 `#__sso=<accessToken>|<refreshToken>` 을 붙여 오공고에서도
