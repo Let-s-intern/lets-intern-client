@@ -153,16 +153,25 @@ export const toFormInput = (detail: AllInOnePassDetail): PassFormInput => {
     purchaseEndDate: detail.deadline ?? null,
     passDays: detail.periodDays ?? null,
     thumbnailUrl: detail.thumbnail ?? null,
-    plans: detail.planList.map((plan) => ({
-      id: String(plan.membershipPlanId ?? crypto.randomUUID()),
-      name: plan.title,
-      description: plan.description ?? '',
-      permissions: plan.privilegeList
-        .map((pv) => privilegeToPermission(pv.programType, pv.privilegeType))
-        .filter((p): p is PassPermission => p !== null),
-      regularPrice: plan.price ?? null,
-      discountPrice: plan.discount ?? null,
-    })),
+    plans: detail.planList.map((plan) => {
+      const privilegeIds: Partial<Record<PassPermission, number>> = {};
+      plan.privilegeList.forEach((pv) => {
+        const perm = privilegeToPermission(pv.programType, pv.privilegeType);
+        if (perm && pv.membershipPlanPrivilegeId != null)
+          privilegeIds[perm] = pv.membershipPlanPrivilegeId;
+      });
+      return {
+        id: String(plan.membershipPlanId ?? crypto.randomUUID()),
+        name: plan.title,
+        description: plan.description ?? '',
+        permissions: plan.privilegeList
+          .map((pv) => privilegeToPermission(pv.programType, pv.privilegeType))
+          .filter((p): p is PassPermission => p !== null),
+        regularPrice: plan.price ?? null,
+        discountPrice: plan.discount ?? null,
+        privilegeIds,
+      };
+    }),
     calendarEvents: blob.calendarEvents,
     externalLinks: blob.externalLinks,
     extensionOptions: detail.optionList.map((opt) => ({
@@ -195,6 +204,20 @@ const planToDto = (plan: PassPlan) => ({
     ...PERMISSION_TO_PRIVILEGE[perm],
     programCount: null, // 현재 전달 안 함(필드만 유지)
   })),
+});
+
+/** 플랜 수정 요청 body (기존 플랜 PATCH — 권한은 별도 엔드포인트) */
+export const planToUpdateDto = (plan: PassPlan) => ({
+  title: plan.name,
+  description: plan.description || null,
+  price: plan.regularPrice ?? 0,
+  discount: plan.discountPrice ?? null,
+});
+
+/** 권한 생성/수정 요청 body (privilege POST·PATCH 공용) */
+export const permissionToPrivilegeDto = (perm: PassPermission) => ({
+  ...PERMISSION_TO_PRIVILEGE[perm],
+  programCount: null,
 });
 
 /** 생성 요청 body */

@@ -18,6 +18,8 @@ export interface PassPlan {
   permissions: PassPermission[]; // 포함 권한
   regularPrice: number | null; // 정가
   discountPrice: number | null; // 할인가
+  // 서버에 존재하는 권한의 id(권한→membershipPlanPrivilegeId). 수정 시 PATCH/DELETE용.
+  privilegeIds?: Partial<Record<PassPermission, number>>;
 }
 
 /** 캘린더 일정 유형 */
