@@ -13,6 +13,10 @@ import {
   PassPermission,
   PassPlan,
 } from '@/domain/all-in-one-pass/types';
+import {
+  serializeLandingDescription,
+  toLandingConfig,
+} from '@/domain/all-in-one-pass/util/landingDescriptionMapper';
 
 /**
  * 백엔드 membership DTO ↔ FE 화면 타입(PassFormInput 등) 변환 레이어.
@@ -91,41 +95,7 @@ const serializeDescription = (input: PassFormInput): string =>
     mentoringCouponAutoIssue: input.mentoringCouponAutoIssue,
   } satisfies DescriptionBlob);
 
-// ── landingDescription JSON (랜딩 페이지용) ─────────────
-// 랜딩은 description이 아니라 이 필드만 읽는다. 비구매자에게 노출되는
-// 페이지라 외부링크 url은 넣지 않고 name만 담는다(url은 description에 유지).
-// 확장형 — 랜딩에 필요한 필드가 늘면 여기에 추가한다.
-interface LandingDescriptionBlob {
-  detailContent: string | null;
-  externalLinkNames: string[];
-}
-
-const parseLandingDescription = (
-  landingDescription?: string | null,
-): LandingDescriptionBlob => {
-  const empty: LandingDescriptionBlob = {
-    detailContent: null,
-    externalLinkNames: [],
-  };
-  if (!landingDescription) return empty;
-  try {
-    const parsed = JSON.parse(
-      landingDescription,
-    ) as Partial<LandingDescriptionBlob>;
-    return {
-      detailContent: parsed.detailContent ?? null,
-      externalLinkNames: parsed.externalLinkNames ?? [],
-    };
-  } catch {
-    return empty;
-  }
-};
-
-const serializeLandingDescription = (input: PassFormInput): string =>
-  JSON.stringify({
-    detailContent: input.detailContent,
-    externalLinkNames: input.externalLinks.map((link) => link.name),
-  } satisfies LandingDescriptionBlob);
+// 랜딩(landingDescription) (de)serialize 는 landingDescriptionMapper 로 분리.
 
 // ── 목록 ──────────────────────────────────────────────
 export const toListItem = (
@@ -145,7 +115,6 @@ export const toListItem = (
 // ── 상세 → 폼 ─────────────────────────────────────────
 export const toFormInput = (detail: AllInOnePassDetail): PassFormInput => {
   const blob = parseDescription(detail.description);
-  const landing = parseLandingDescription(detail.landingDescription);
   return {
     title: detail.title,
     shortDescription: detail.introduction ?? '',
@@ -180,7 +149,7 @@ export const toFormInput = (detail: AllInOnePassDetail): PassFormInput => {
       price: opt.price ?? null,
     })),
     mentoringCouponAutoIssue: blob.mentoringCouponAutoIssue,
-    detailContent: landing.detailContent,
+    landing: toLandingConfig(detail.landingDescription, blob.externalLinks),
     // 이 패스에 연결된(노출) FAQ id — 체크박스 prefill
     faqList: detail.faqList.map((f) => f.id),
   };

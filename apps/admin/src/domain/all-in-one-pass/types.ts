@@ -49,6 +49,64 @@ export interface PassExtensionOption {
 }
 
 /**
+ * 1.8 랜딩페이지 구성.
+ *
+ * 저장은 서버 `landingDescription`(JSON) 컬럼으로 직렬화한다(비구매자 노출 페이지라
+ * 외부링크 url 등 민감 정보는 담지 않는다). (de)serialize 는 allInOnePassMapper 참고.
+ */
+
+/** 추가혜택 중 외부링크에 붙이는 부가정보(설명·아이콘). name 은 외부링크에서 실시간으로 가져온다. */
+export interface PassLandingBenefitExtra {
+  description: string;
+  iconKey: string; // 'icon1' | 'icon2' | 'icon3' (실제 아이콘 파일 매핑 전 플레이스홀더)
+}
+
+/** 추가혜택 중 외부링크와 무관하게 직접 추가하는 혜택 */
+export interface PassLandingManualBenefit {
+  id: string; // 폼 로컬 식별자
+  name: string;
+  description: string;
+  iconKey: string;
+}
+
+/** 후기 한 개 (어드민 직접 입력) */
+export interface PassLandingReview {
+  id: string; // 폼 로컬 식별자
+  source: string; // 출처(드롭다운)
+  resultTag: string; // 결과태그(드롭다운)
+  imageUrl: string; // width 고정 이미지
+  summary: string; // 요약, 최대 70자
+}
+
+/**
+ * 랜딩페이지 구성 입력값.
+ *
+ * 추가혜택만 편집 중엔 쪼개서 보관한다: 외부링크 유래분은 `benefitExtras`(링크 id→설명·아이콘,
+ * 이름은 externalLinks 에서 실시간), 그 외는 `manualBenefits`. 저장 시 둘을 합쳐
+ * additionalBenefits(name+설명+아이콘, url 제거) 로 직렬화한다.
+ */
+export interface PassLandingConfig {
+  hero: {
+    title: string; // 최대 30자
+    description: string; // 최대 60자
+    recruitFootnote: string; // 모집카드 하단문구, 최대 50자
+  };
+  lexical: {
+    introSection: string; // ① 왜 사야하는지(소개) — 렉시컬 직렬화 JSON
+    playbookSection: string; // ② 플레이북
+    benefitSection: string; // ③ 패스 특별 혜택
+    reviewSection: string; // ④ 기타 후기
+  };
+  benefitExtras: Record<string, PassLandingBenefitExtra>; // key = externalLink.id
+  manualBenefits: PassLandingManualBenefit[];
+  reviews: PassLandingReview[];
+  finalCta: {
+    title: string;
+    description: string;
+  };
+}
+
+/**
  * 생성/수정 폼 입력값. 섹션(1.1~1.6)을 단계적으로 확장한다.
  */
 export interface PassFormInput {
@@ -67,8 +125,8 @@ export interface PassFormInput {
   externalLinks: PassExternalLink[];
   // 1.4-b 연장 옵션
   extensionOptions: PassExtensionOption[];
-  // 1.5 상세페이지 콘텐츠 (렉시컬 직렬화 JSON 문자열)
-  detailContent: string | null;
+  // 1.5 랜딩페이지 구성 (히어로·렉시컬4·추가혜택·후기·최종CTA → landingDescription)
+  landing: PassLandingConfig;
   // 1.6 FAQ: 질문/답변은 전 멤버십 공통 풀(/faq, type=MEMBERSHIP)에서 관리
   faqList: number[];
   // 1:1 LIVE 멘토링 50% 쿠폰 월 자동발급 적용 여부 (참여중 유저에게만)
