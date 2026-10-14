@@ -4,7 +4,9 @@
 
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import { useGetAllInOnePassLanding } from '@/domain/all-in-one-pass/api/landing';
+import { useGetMembershipApplicationForm } from '@/domain/all-in-one-pass/api/purchase';
 import MembershipPlanBottomSheet from '@/domain/all-in-one-pass/ui/MembershipPlanBottomSheet';
+import dayjs from '@/lib/dayjs';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 
@@ -13,6 +15,27 @@ export default function AllInOnePassLandingPage() {
   const membershipId = Number(params.id);
   const [sheetOpen, setSheetOpen] = useState(false);
   const { data: pass, isLoading } = useGetAllInOnePassLanding(membershipId);
+  const { data: applicationForm } =
+    useGetMembershipApplicationForm(membershipId);
+
+  const isApplied = applicationForm?.applied ?? false;
+  const now = dayjs();
+  const beginning = applicationForm?.beginning
+    ? dayjs(applicationForm.beginning)
+    : null;
+  const deadline = applicationForm?.deadline
+    ? dayjs(applicationForm.deadline)
+    : null;
+  const isBeforeSale = !!beginning && now.isBefore(beginning);
+  const isClosed = !!deadline && now.isAfter(deadline);
+  const ctaDisabled = isApplied || isBeforeSale || isClosed;
+  const ctaText = isApplied
+    ? '이미 이용 중'
+    : isBeforeSale
+      ? '판매 예정'
+      : isClosed
+        ? '판매 종료'
+        : '구매하기';
 
   if (isLoading || !pass) {
     return <LoadingContainer />;
@@ -66,9 +89,10 @@ export default function AllInOnePassLandingPage() {
       <button
         type="button"
         onClick={() => setSheetOpen(true)}
-        className="bg-primary text-small16 w-full rounded-md px-6 py-3 text-center font-medium text-neutral-100"
+        disabled={ctaDisabled}
+        className="bg-primary text-small16 disabled:bg-neutral-70 w-full rounded-md px-6 py-3 text-center font-medium text-neutral-100"
       >
-        구매하기
+        {ctaText}
       </button>
 
       <MembershipPlanBottomSheet
