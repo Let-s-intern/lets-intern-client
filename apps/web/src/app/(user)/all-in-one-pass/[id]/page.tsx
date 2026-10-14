@@ -7,16 +7,35 @@ import { useGetAllInOnePassLanding } from '@/domain/all-in-one-pass/api/landing'
 import { useGetMembershipApplicationForm } from '@/domain/all-in-one-pass/api/purchase';
 import MembershipPlanBottomSheet from '@/domain/all-in-one-pass/ui/MembershipPlanBottomSheet';
 import dayjs from '@/lib/dayjs';
-import { useParams } from 'next/navigation';
-import { useState } from 'react';
+import useAuthStore from '@/store/useAuthStore';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function AllInOnePassLandingPage() {
   const params = useParams<{ id: string }>();
   const membershipId = Number(params.id);
   const [sheetOpen, setSheetOpen] = useState(false);
   const { data: pass, isLoading } = useGetAllInOnePassLanding(membershipId);
-  const { data: applicationForm } =
+  const { data: applicationForm, refetch } =
     useGetMembershipApplicationForm(membershipId);
+  const { isLoggedIn } = useAuthStore();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (isLoggedIn) refetch();
+  }, [isLoggedIn, refetch]);
+
+  const handleBuyClick = () => {
+    if (!isLoggedIn) {
+      const path = window.location.pathname;
+      const search = searchParams.toString();
+      const redirect = search ? `${path}?${search}` : path;
+      router.push(`/login?redirect=${encodeURIComponent(redirect)}`);
+      return;
+    }
+    setSheetOpen(true);
+  };
 
   const isApplied = applicationForm?.applied ?? false;
   const now = dayjs();
@@ -88,7 +107,7 @@ export default function AllInOnePassLandingPage() {
 
       <button
         type="button"
-        onClick={() => setSheetOpen(true)}
+        onClick={handleBuyClick}
         disabled={ctaDisabled}
         className="bg-primary text-small16 disabled:bg-neutral-70 w-full rounded-md px-6 py-3 text-center font-medium text-neutral-100"
       >
