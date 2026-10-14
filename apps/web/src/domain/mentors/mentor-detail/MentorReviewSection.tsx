@@ -133,7 +133,7 @@ const MentorReviewSection = ({
   return (
     <section
       id="mentor-reviews"
-      className="flex w-full scroll-mt-[84px] flex-col gap-6 md:scroll-mt-[115px]"
+      className="flex w-full scroll-mt-[84px] flex-col gap-6 md:scroll-mt-[155px]"
     >
       <div className="flex items-baseline justify-between">
         <h2 className="text-medium22 text-neutral-0 font-bold">후기</h2>

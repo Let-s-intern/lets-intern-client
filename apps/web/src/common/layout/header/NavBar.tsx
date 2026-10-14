@@ -26,6 +26,7 @@ import GlobalNavTopBar from './GlobalNavTopBar';
 // [LC-3219-MEMBERSHIP] 멤버십 랜딩 진입 메뉴 라벨 — 시즌 종료 시 아래 SideNavItem 과 함께 제거한다
 import MembershipNavLabel from './MembershipNavLabel';
 import NavOverlay from './NavOverlay';
+import ServiceToggle from './ServiceToggle';
 import SideNavContainer from './SideNavContainer';
 import SideNavItem from './SideNavItem';
 import Spacer from './Spacer';
@@ -34,8 +35,9 @@ import {
   SHOW_LIVE_MENTORING_NAV,
 } from '@/domain/live-mentoring/constants';
 
-export const FULL_NAVBAR_HEIGHT_OFFSET = 'top-[84px] md:top-[115px]';
-export const SINGLE_ROW_NAVBAR_HEIGHT_OFFSET = 'top-[43px] md:top-[115px]';
+// 데스크톱 헤더 맨 위에 서비스 토글 띠(40px)가 있어 아래 값들은 그만큼 크다. 띠 높이는 아래 `h-10`.
+export const FULL_NAVBAR_HEIGHT_OFFSET = 'top-[84px] md:top-[155px]';
+export const SINGLE_ROW_NAVBAR_HEIGHT_OFFSET = 'top-[43px] md:top-[155px]';
 
 export const hideMobileBottomNavBar = (pathname: string) =>
   pathname.startsWith('/program/') ||
@@ -137,6 +139,12 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
               : 'translate-y-0'),
         )}
       >
+        {/* 서비스 토글 띠(데스크톱). 모바일은 1단의 로고 옆에 붙는다. 높이(`h-10`)는 `FULL_NAVBAR_HEIGHT_OFFSET`·`Spacer` 와 맞춘다. */}
+        <div className="border-neutral-90 hidden border-b md:block">
+          <div className="mw-1180 flex h-10 items-center pt-2 whitespace-nowrap">
+            <ServiceToggle size="desktop" />
+          </div>
+        </div>
         {/* 1단 */}
         <GlobalNavTopBar
           loginRedirect={encodeURIComponent(pathname)}
