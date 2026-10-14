@@ -1,10 +1,10 @@
 'use client';
 
 import { twMerge } from '@/lib/twMerge';
-import { useState } from 'react';
+import { type MouseEvent, useState } from 'react';
 import LetsCareerMark from './LetsCareerMark';
 import OgonggoLogo from './OgonggoLogo';
-import { OGONGGO_WEB_HOME } from './ogonggoHref';
+import { OGONGGO_WEB_HOME, ogonggoWebHref } from './ogonggoHref';
 
 const OGONGGO_BLUE = 'text-[#4A76FF]';
 
@@ -22,10 +22,26 @@ interface Props {
  * `mobile` 은 상단바의 `LogoLink` 오른쪽에 `| 오공고 로고` 만 붙는다. 상단바 높이는 그대로다.
  *
  * 누르면 떠나기 전까지 토글이 넘어간 모양을 보인다(오공고가 파랗고 렛츠커리어가 연해진다).
- * 같은 탭에서 이동하고, 새 탭으로 열어도(Cmd·Ctrl·가운데 버튼) 같은 주소가 열린다.
+ * 같은 탭에서 누르는 순간 로그인을 이어 주는 주소(`ogonggoWebHref`)로 이동한다. `href` 는 토큰 없는
+ * 첫 화면이라, 새 탭으로 열면(Cmd·Ctrl·가운데 버튼) 로그인 없이 열린다.
  */
 function ServiceToggle({ size }: Props) {
   const [leaving, setLeaving] = useState(false);
+
+  const goToOgonggo = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
+      return;
+    }
+    event.preventDefault();
+    setLeaving(true);
+    window.location.assign(ogonggoWebHref());
+  };
 
   if (size === 'desktop') {
     return (
@@ -43,7 +59,7 @@ function ServiceToggle({ size }: Props) {
         <a
           href={OGONGGO_WEB_HOME}
           aria-label="오늘의 공고로 이동"
-          onClick={() => setLeaving(true)}
+          onClick={goToOgonggo}
           className={twMerge(
             'flex items-center gap-1.5 transition-colors',
             leaving ? OGONGGO_BLUE : 'text-neutral-45 hover:text-neutral-40',
@@ -62,7 +78,7 @@ function ServiceToggle({ size }: Props) {
       <a
         href={OGONGGO_WEB_HOME}
         aria-label="오늘의 공고로 이동"
-        onClick={() => setLeaving(true)}
+        onClick={goToOgonggo}
       >
         <OgonggoLogo
           className={twMerge(
