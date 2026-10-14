@@ -14,6 +14,9 @@ import LoadingContainer from '@/common/loading/LoadingContainer';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import PassForm from '@/domain/all-in-one-pass/section/PassForm';
+import PassFormViewTabs, {
+  PassFormView,
+} from '@/domain/all-in-one-pass/section/PassFormViewTabs';
 import {
   PassFormInput,
   PassPermission,
@@ -39,6 +42,7 @@ export default function AllInOnePassEdit() {
     useGetAllInOnePassDetailQuery(numericPassId);
 
   const [input, setInput] = useState<PassFormInput | null>(null);
+  const [view, setView] = useState<PassFormView>('info');
   useEffect(() => {
     if (data) setInput((prev) => prev ?? data);
   }, [data]);
@@ -176,7 +180,10 @@ export default function AllInOnePassEdit() {
           올인원패스 개설
         </Link>
         <Header>
-          <Heading>올인원패스 수정</Heading>
+          <div className="flex items-center gap-4">
+            <Heading>올인원패스 수정</Heading>
+            {input && <PassFormViewTabs value={view} onChange={setView} />}
+          </div>
           {input && <ImportExportBar mode="export" input={input} />}
         </Header>
       </div>
@@ -192,6 +199,7 @@ export default function AllInOnePassEdit() {
           <PassForm
             input={input}
             patch={patch}
+            view={view}
             onSavePlan={handleSavePlan}
             onDeletePlan={handleDeletePlan}
           />
