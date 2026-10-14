@@ -1,21 +1,18 @@
 'use client';
 
-// 올인원패스 랜딩(구매) 페이지. `[id]` = membershipId(어드민에서 개설한 패스).
-// 구매 후 대시보드는 하위 `[id]/[applicationId]` 로 이어진다.
-//
-// ⚠️ 디자인 시안 수신 전 임시 스캐폴드다. 라우팅과 데이터 흐름(useGetAllInOnePassLanding)만
-// 검증하는 용도이며, 시안이 오면 이 본문을 섹션 컴포넌트들로 교체한다. 구매 CTA 는 신청
-// 생성·신청폼 조회 API 연결 시 결선한다.
+// 올인원패스 랜딩(임시 스캐폴드, 시안 수신 후 교체). [id]=membershipId. 구매 → 플랜 바텀시트.
 
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import { useGetAllInOnePassLanding } from '@/domain/all-in-one-pass/api/landing';
+import MembershipPlanBottomSheet from '@/domain/all-in-one-pass/ui/MembershipPlanBottomSheet';
 import { useParams } from 'next/navigation';
+import { useState } from 'react';
 
 export default function AllInOnePassLandingPage() {
   const params = useParams<{ id: string }>();
-  const { data: pass, isLoading } = useGetAllInOnePassLanding(
-    Number(params.id),
-  );
+  const membershipId = Number(params.id);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const { data: pass, isLoading } = useGetAllInOnePassLanding(membershipId);
 
   if (isLoading || !pass) {
     return <LoadingContainer />;
@@ -65,6 +62,20 @@ export default function AllInOnePassLandingPage() {
           );
         })}
       </section>
+
+      <button
+        type="button"
+        onClick={() => setSheetOpen(true)}
+        className="bg-primary text-small16 w-full rounded-md px-6 py-3 text-center font-medium text-neutral-100"
+      >
+        구매하기
+      </button>
+
+      <MembershipPlanBottomSheet
+        membershipId={membershipId}
+        isOpen={sheetOpen}
+        onClose={() => setSheetOpen(false)}
+      />
     </main>
   );
 }
