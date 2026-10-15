@@ -40,11 +40,14 @@ function PricePlanLabel({
 function PricePlanBottomSheet({
   challenge,
   challengeId,
+  challengeVersionId = null,
   isOpen,
   onClose,
 }: {
   challenge: ChallengeIdPrimitive;
   challengeId: string;
+  /** 들어온 상세 페이지의 버전. 버전 없는 챌린지면 null (LC-3247) */
+  challengeVersionId?: number | null;
   isOpen: boolean;
   onClose: () => void;
 }) {
@@ -196,6 +199,9 @@ function PricePlanBottomSheet({
       programOrderId: orderId,
       isFree,
       deposit: challenge.priceInfo[0].refund ?? 0,
+      // 버전은 들어온 페이지의 버전으로 고정한다. 다른 챌린지·버전에서 남은 값을
+      // 항상 덮어쓰고, LIGHT 는 버전을 쓰지 않는다 (설계안 D1)
+      challengeVersionId: pricePlan === LIGHT ? null : challengeVersionId,
     });
 
     router.push(
@@ -204,6 +210,7 @@ function PricePlanBottomSheet({
   }, [
     application,
     pricePlan,
+    challengeVersionId,
     finalPriceInfo.regularPrice,
     finalPriceInfo.discountPrice,
     setProgramApplicationForm,
@@ -222,7 +229,7 @@ function PricePlanBottomSheet({
         className="mx-auto max-w-[1000px]"
       >
         {/* 챌린지 플랜 */}
-        <div className="mb-4 mt-3 flex items-center justify-between">
+        <div className="mb-4 mt-6 flex items-center justify-between">
           <span className="required-star text-xsmall14 font-semibold">
             챌린지 플랜 선택 (필수)
           </span>

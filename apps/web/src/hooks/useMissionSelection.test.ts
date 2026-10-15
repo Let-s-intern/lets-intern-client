@@ -5,7 +5,9 @@ import { renderHook } from '@testing-library/react';
 
 const mockContext = {
   schedules: [] as Schedule[],
-  myDailyMission: null as { dailyMission: { th: number } | null } | null,
+  myDailyMission: null as {
+    dailyMission: { id: number; th: number } | null;
+  } | null,
 };
 
 jest.mock('@/context/CurrentChallengeProvider', () => ({
@@ -33,10 +35,16 @@ const setup = ({
   todayThFromServer: number | null;
 }) => {
   mockContext.schedules = schedules;
+  // 서버가 고른 오늘 미션 id 는 픽스처 규칙(th + 1000)을 따른다
   mockContext.myDailyMission =
     todayThFromServer === null
       ? { dailyMission: null }
-      : { dailyMission: { th: todayThFromServer } };
+      : {
+          dailyMission: {
+            id: todayThFromServer + 1000,
+            th: todayThFromServer,
+          },
+        };
 
   renderHook(() => useMissionSelection());
 
