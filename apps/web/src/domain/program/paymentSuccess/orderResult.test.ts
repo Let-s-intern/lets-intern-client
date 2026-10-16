@@ -12,6 +12,8 @@ jest.mock('@letscareer/api', () => ({
 import {
   buildPostApplicationBody,
   getOrderErrorMessage,
+  getVodPassResultNotice,
+  isVodPassProductChangedError,
   PAYMENT_ORDER_CONFLICT_MESSAGE,
   VOD_PASS_PRODUCT_CHANGED_MESSAGE,
   type OrderRequestForm,
@@ -160,5 +162,62 @@ describe('getOrderErrorMessage', () => {
     expect(getOrderErrorMessage(null)).toBeNull();
     expect(getOrderErrorMessage(undefined)).toBeNull();
     expect(getOrderErrorMessage('error')).toBeNull();
+  });
+});
+
+describe('isVodPassProductChangedError', () => {
+  it('409 VOD_PASS_PRODUCT_CHANGED 만 참이다', () => {
+    expect(
+      isVodPassProductChangedError({
+        status: 409,
+        code: 'VOD_PASS_PRODUCT_CHANGED',
+      }),
+    ).toBe(true);
+    expect(
+      isVodPassProductChangedError({
+        status: 409,
+        code: 'PAYMENT_ORDER_CONFLICT',
+      }),
+    ).toBe(false);
+    expect(
+      isVodPassProductChangedError({
+        status: 400,
+        code: 'VOD_PASS_PRODUCT_CHANGED',
+      }),
+    ).toBe(false);
+    expect(isVodPassProductChangedError(null)).toBe(false);
+  });
+});
+
+describe('getVodPassResultNotice', () => {
+  const base = {
+    applicationId: 91,
+    startsAt: '2026-10-16T10:00:00+09:00',
+    endsAt: '2027-01-14T10:00:00+09:00',
+  };
+
+  it('ACTIVE 는 지금부터 이용할 수 있다고 안내한다', () => {
+    expect(getVodPassResultNotice({ ...base, status: 'ACTIVE' })).toBe(
+      'VOD 이용권을 지금부터 이용할 수 있습니다. 이용 기간은 2026.10.16 ~ 2027.01.14 입니다',
+    );
+  });
+
+  it('SCHEDULED 는 시작 예정일을 안내한다', () => {
+    expect(getVodPassResultNotice({ ...base, status: 'SCHEDULED' })).toContain(
+      '2026.10.16부터 VOD 이용권 이용이 시작됩니다',
+    );
+  });
+
+  it('기간이나 상태를 모르면 마이페이지 확인 안내로 대신한다', () => {
+    const fallback = /마이페이지 결제 내역에서 확인할 수 있습니다/;
+
+    expect(getVodPassResultNotice(null)).toMatch(fallback);
+    expect(getVodPassResultNotice(undefined)).toMatch(fallback);
+    expect(
+      getVodPassResultNotice({ ...base, status: 'ACTIVE', endsAt: null }),
+    ).toMatch(fallback);
+    expect(getVodPassResultNotice({ ...base, status: 'UNKNOWN' })).toMatch(
+      fallback,
+    );
   });
 });

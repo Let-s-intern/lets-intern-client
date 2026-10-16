@@ -15,11 +15,18 @@ jest.mock('@/store/useProgramStore', () => ({
   default: () => ({ setProgramApplicationForm }),
 }));
 
+// additionalMonthPrice 가 없는 응답은 개월 선택을 지원하지 않는 이전 서버다
 const VOD_PASS_PRODUCT = {
   id: 7,
   title: 'VOD 전체 이용권',
   price: 29000,
   durationDays: 30,
+};
+
+const MULTI_MONTH_VOD_PASS_PRODUCT = {
+  ...VOD_PASS_PRODUCT,
+  price: 20000,
+  additionalMonthPrice: 10000,
 };
 
 // 신청폼 응답. 테스트마다 vodPassProduct 만 바꿔 끼운다
@@ -101,7 +108,12 @@ function renderSheet(challenge: ChallengeIdPrimitive) {
   );
 }
 
-function makeApplication(vodPassProduct?: typeof VOD_PASS_PRODUCT | null) {
+function makeApplication(
+  vodPassProduct?:
+    | typeof VOD_PASS_PRODUCT
+    | typeof MULTI_MONTH_VOD_PASS_PRODUCT
+    | null,
+) {
   return {
     name: 'QA',
     email: 'qa@letscareer.test',
@@ -159,11 +171,8 @@ describe('PricePlanBottomSheet — VOD 이용권 선택 카드 (LC-3438)', () =>
     ).toBeInTheDocument();
     expect(screen.getByText('30일 이용권')).toBeInTheDocument();
     expect(screen.getByText('29,000원')).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        '결제 후 VOD 사이트에서 직접 활성화하면 이용 기간이 시작됩니다',
-      ),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/결제 즉시 이용이 시작됩니다/)).toBeInTheDocument();
+    expect(screen.queryByText(/활성화/)).not.toBeInTheDocument();
   });
 
   it('PostHog 플래그가 꺼져 있으면 서버가 상품을 내려줘도 카드를 보여주지 않는다', () => {
@@ -173,7 +182,9 @@ describe('PricePlanBottomSheet — VOD 이용권 선택 카드 (LC-3438)', () =>
 
     expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
     expect(screen.queryByText(/VOD 이용권 추가/)).not.toBeInTheDocument();
-    expect(screen.queryByText(/VOD 사이트에서/)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/결제 즉시 이용이 시작됩니다/),
+    ).not.toBeInTheDocument();
   });
 
   it('플래그가 꺼져 있으면 신청해도 이용권 필드는 0 이고 합계는 기존과 같다', () => {
@@ -190,6 +201,7 @@ describe('PricePlanBottomSheet — VOD 이용권 선택 카드 (LC-3438)', () =>
         vodPassProductId: 0,
         vodPassPrice: 0,
         vodPassDurationDays: 0,
+        vodPassMonths: 0,
       }),
     );
   });
@@ -199,7 +211,9 @@ describe('PricePlanBottomSheet — VOD 이용권 선택 카드 (LC-3438)', () =>
     renderSheet(makeChallenge());
 
     expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
-    expect(screen.queryByText(/VOD 사이트에서/)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/결제 즉시 이용이 시작됩니다/),
+    ).not.toBeInTheDocument();
   });
 
   it('vodPassProduct 가 누락돼도 카드를 렌더하지 않는다', () => {
@@ -222,6 +236,7 @@ describe('PricePlanBottomSheet — VOD 이용권 선택 카드 (LC-3438)', () =>
         vodPassProductId: 0,
         vodPassPrice: 0,
         vodPassDurationDays: 0,
+        vodPassMonths: 0,
       }),
     );
   });
@@ -243,6 +258,7 @@ describe('PricePlanBottomSheet — VOD 이용권 선택 카드 (LC-3438)', () =>
         vodPassProductId: 7,
         vodPassPrice: 29000,
         vodPassDurationDays: 30,
+        vodPassMonths: 1,
         isFree: false,
       }),
     );
@@ -278,6 +294,7 @@ describe('PricePlanBottomSheet — VOD 이용권 선택 카드 (LC-3438)', () =>
         vodPassProductId: 0,
         vodPassPrice: 0,
         vodPassDurationDays: 0,
+        vodPassMonths: 0,
       }),
     );
   });
@@ -319,5 +336,131 @@ describe('PricePlanBottomSheet — VOD 이용권 선택 카드 (LC-3438)', () =>
     expect(setProgramApplicationForm).toHaveBeenCalledWith(
       expect.objectContaining({ totalPrice: 29000, isFree: false }),
     );
+  });
+});
+
+describe('PricePlanBottomSheet — VOD 이용권 개월 선택 (LC-3438)', () => {
+  const VOD_CARD = /VOD 전체 이용권/;
+  const MORE = { name: '이용 개월 수 늘리기' };
+  const LESS = { name: '이용 개월 수 줄이기' };
+
+  function checkVodPass() {
+    fireEvent.click(screen.getByRole('checkbox', { name: VOD_CARD }));
+  }
+
+  it('체크하기 전에는 개월 선택이 보이지 않는다', () => {
+    mockApplication = makeApplication(MULTI_MONTH_VOD_PASS_PRODUCT);
+    renderSheet(makeChallenge());
+
+    expect(screen.queryByRole('button', MORE)).not.toBeInTheDocument();
+  });
+
+  it('체크하면 1개월로 시작하고 줄이기 버튼은 막혀 있다', () => {
+    mockApplication = makeApplication(MULTI_MONTH_VOD_PASS_PRODUCT);
+    renderSheet(makeChallenge());
+
+    checkVodPass();
+
+    expect(screen.getByText('1개월')).toBeInTheDocument();
+    expect(screen.getByRole('button', LESS)).toBeDisabled();
+    expect(screen.getByText('2개월부터 매월 +10,000원')).toBeInTheDocument();
+  });
+
+  it('개월 수를 늘리면 이용권 금액과 총 이용일수가 서버 계산식대로 바뀐다', () => {
+    mockApplication = makeApplication(MULTI_MONTH_VOD_PASS_PRODUCT);
+    renderSheet(makeChallenge());
+
+    checkVodPass();
+    fireEvent.click(screen.getByRole('button', MORE));
+    fireEvent.click(screen.getByRole('button', MORE));
+
+    // 20,000 + 10,000 * 2 = 40,000, 30일 * 3 = 90일
+    expect(screen.getByText('3개월')).toBeInTheDocument();
+    expect(screen.getByText('90일 이용권')).toBeInTheDocument();
+    expect(screen.getByText('40,000원')).toBeInTheDocument();
+    // 합계 = 챌린지(스탠다드 옵션 1,000) + 이용권 40,000
+    expect(
+      screen.getByText('41,000원', { selector: 'span.text-small18' }),
+    ).toBeInTheDocument();
+  });
+
+  it('신청하면 총액·총일수·개월 수를 스토어에 담는다', () => {
+    mockApplication = makeApplication(MULTI_MONTH_VOD_PASS_PRODUCT);
+    renderSheet(makeChallenge());
+
+    checkVodPass();
+    fireEvent.click(screen.getByRole('button', MORE));
+    fireEvent.click(screen.getByRole('button', MORE));
+    fireEvent.click(screen.getByRole('button', { name: '신청하기' }));
+
+    expect(setProgramApplicationForm).toHaveBeenCalledWith(
+      expect.objectContaining({
+        totalPrice: 41000,
+        vodPassProductId: 7,
+        vodPassPrice: 40000,
+        vodPassDurationDays: 90,
+        vodPassMonths: 3,
+      }),
+    );
+  });
+
+  it('상한에서는 늘리기 버튼이 막힌다', () => {
+    mockApplication = makeApplication(MULTI_MONTH_VOD_PASS_PRODUCT);
+    renderSheet(makeChallenge());
+
+    checkVodPass();
+    for (let i = 0; i < 20; i += 1) {
+      const more = screen.getByRole('button', MORE);
+      if ((more as HTMLButtonElement).disabled) break;
+      fireEvent.click(more);
+    }
+
+    expect(screen.getByText('12개월')).toBeInTheDocument();
+    expect(screen.getByRole('button', MORE)).toBeDisabled();
+  });
+
+  it('체크를 해제했다가 다시 하면 고른 개월 수를 유지한다', () => {
+    mockApplication = makeApplication(MULTI_MONTH_VOD_PASS_PRODUCT);
+    renderSheet(makeChallenge());
+
+    checkVodPass();
+    fireEvent.click(screen.getByRole('button', MORE));
+    checkVodPass();
+    expect(screen.queryByRole('button', MORE)).not.toBeInTheDocument();
+    checkVodPass();
+
+    expect(screen.getByText('2개월')).toBeInTheDocument();
+  });
+
+  it('추가 월 가격이 없는 응답은 개월 선택 없이 1개월로 담는다', () => {
+    mockApplication = makeApplication(VOD_PASS_PRODUCT);
+    renderSheet(makeChallenge());
+
+    checkVodPass();
+    expect(screen.queryByRole('button', MORE)).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: '신청하기' }));
+
+    expect(setProgramApplicationForm).toHaveBeenCalledWith(
+      expect.objectContaining({
+        vodPassPrice: 29000,
+        vodPassDurationDays: 30,
+        vodPassMonths: 1,
+      }),
+    );
+  });
+
+  it('추가 월 가격이 0 이면 안내 문구 없이 개월만 늘고 금액은 같다', () => {
+    mockApplication = makeApplication({
+      ...MULTI_MONTH_VOD_PASS_PRODUCT,
+      additionalMonthPrice: 0,
+    });
+    renderSheet(makeChallenge());
+
+    checkVodPass();
+    fireEvent.click(screen.getByRole('button', MORE));
+
+    expect(screen.queryByText(/2개월부터 매월/)).not.toBeInTheDocument();
+    expect(screen.getByText('60일 이용권')).toBeInTheDocument();
+    expect(screen.getByText('20,000원')).toBeInTheDocument();
   });
 });

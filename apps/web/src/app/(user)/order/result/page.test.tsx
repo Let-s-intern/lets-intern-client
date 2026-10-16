@@ -3,6 +3,7 @@
   요청 본문·문구 분기는 `orderResult.ts` 단위 테스트가 따로 있고, 여기서는 페이지가
   그 함수를 실제로 쓰는지(배선)를 본다.
 */
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
 
@@ -10,6 +11,13 @@ const postMock = jest.fn();
 jest.mock('@/utils/axios', () => ({
   __esModule: true,
   default: { post: (...args: unknown[]) => postMock(...args) },
+}));
+
+// 페이지가 `@/api/application` 의 쿼리 키를 가져오므로 그 모듈이 딸고 오는 네트워크 계층을 막는다
+jest.mock('@/utils/axiosV2', () => ({ __esModule: true, default: {} }));
+jest.mock('@letscareer/api', () => ({
+  __esModule: true,
+  fetchJson: jest.fn(),
 }));
 
 const replaceMock = jest.fn();
@@ -70,8 +78,9 @@ const FORM = {
 
 const VOD_PASS = {
   vodPassProductId: 7,
-  vodPassPrice: 29000,
-  vodPassDurationDays: 30,
+  vodPassPrice: 40000,
+  vodPassDurationDays: 90,
+  vodPassMonths: 3,
 };
 
 function seed(withVodPass: boolean, totalPrice: number) {
@@ -95,11 +104,39 @@ const SUCCESS_RESPONSE = {
   },
 };
 
+function successWithVodPass(vodPass: Record<string, unknown>) {
+  return {
+    data: {
+      data: {
+        tossInfo: { method: '카드', approvedAt: '2026-10-16T10:00:00' },
+        vodPass: {
+          applicationId: 91,
+          paymentId: 2,
+          durationDays: 90,
+          purchasedMonths: 3,
+          ...vodPass,
+        },
+      },
+    },
+  };
+}
+
+let queryClient: QueryClient;
+
+function renderPage() {
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <PaymentResult />
+    </QueryClientProvider>,
+  );
+}
+
 function apiError(status: number, code: string) {
   return Object.assign(new Error(code), { status, code });
 }
 
 beforeEach(() => {
+  queryClient = new QueryClient();
   postMock.mockReset();
   replaceMock.mockReset();
   jest.spyOn(console, 'log').mockImplementation(() => undefined);
@@ -116,7 +153,7 @@ describe('order/result 주문 생성 요청', () => {
     mockSearch = TOSS_QUERY(70000);
     postMock.mockResolvedValue(SUCCESS_RESPONSE);
 
-    render(<PaymentResult />);
+    renderPage();
 
     await waitFor(() => expect(postMock).toHaveBeenCalledTimes(1));
     const [url, body] = postMock.mock.calls[0];
@@ -131,36 +168,77 @@ describe('order/result 주문 생성 요청', () => {
     expect(Object.keys(body)).not.toContain('vodPassProductId');
     expect(Object.keys(body)).not.toContain('vodPassExpectedPrice');
     expect(Object.keys(body)).not.toContain('vodPassExpectedDurationDays');
+    expect(Object.keys(body)).not.toContain('vodPassMonths');
   });
 
-  it('이용권을 골랐으면 세 필드를 담고 amount 는 Toss 쿼리 값(이용권 합산)을 쓴다', async () => {
-    seed(true, 99000);
-    mockSearch = TOSS_QUERY(99000);
+  it('이용권을 골랐으면 네 필드를 담고 amount 는 Toss 쿼리 값(이용권 합산)을 쓴다', async () => {
+    seed(true, 110000);
+    mockSearch = TOSS_QUERY(110000);
     postMock.mockResolvedValue(SUCCESS_RESPONSE);
 
-    render(<PaymentResult />);
+    renderPage();
 
     await waitFor(() => expect(postMock).toHaveBeenCalledTimes(1));
     const body = postMock.mock.calls[0][1];
     expect(body.vodPassProductId).toBe(7);
-    expect(body.vodPassExpectedPrice).toBe(29000);
-    expect(body.vodPassExpectedDurationDays).toBe(30);
-    expect(body.paymentInfo.amount).toBe('99000');
+    expect(body.vodPassExpectedPrice).toBe(40000);
+    expect(body.vodPassExpectedDurationDays).toBe(90);
+    expect(body.vodPassMonths).toBe(3);
+    expect(body.paymentInfo.amount).toBe('110000');
   });
 });
 
 describe('order/result 화면', () => {
-  it('성공하고 이용권을 샀으면 활성화 안내를 보여준다', async () => {
-    seed(true, 99000);
-    mockSearch = TOSS_QUERY(99000);
-    postMock.mockResolvedValue(SUCCESS_RESPONSE);
+  it('즉시 시작된 이용권이면 지금부터 이용할 수 있다는 안내와 기간을 보여준다', async () => {
+    seed(true, 110000);
+    mockSearch = TOSS_QUERY(110000);
+    postMock.mockResolvedValue(
+      successWithVodPass({
+        status: 'ACTIVE',
+        startsAt: '2026-10-16T10:00:00+09:00',
+        endsAt: '2027-01-14T10:00:00+09:00',
+      }),
+    );
 
-    render(<PaymentResult />);
+    renderPage();
 
     expect(
       await screen.findByText(
-        'VOD 이용권은 VOD 사이트에서 활성화하면 이용 기간이 시작됩니다',
+        'VOD 이용권을 지금부터 이용할 수 있습니다. 이용 기간은 2026.10.16 ~ 2027.01.14 입니다',
       ),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/활성화/)).not.toBeInTheDocument();
+  });
+
+  it('앞선 이용권 뒤에 예약된 이용권이면 시작 예정일을 안내한다', async () => {
+    seed(true, 110000);
+    mockSearch = TOSS_QUERY(110000);
+    postMock.mockResolvedValue(
+      successWithVodPass({
+        status: 'SCHEDULED',
+        startsAt: '2026-11-15T10:00:00+09:00',
+        endsAt: '2027-02-13T10:00:00+09:00',
+      }),
+    );
+
+    renderPage();
+
+    expect(
+      await screen.findByText(
+        '이미 이용 중인 이용권이 있어 2026.11.15부터 VOD 이용권 이용이 시작됩니다. 이용 기간은 2026.11.15 ~ 2027.02.13 입니다',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('응답에 이용 기간이 없으면 마이페이지에서 확인하라고 안내한다', async () => {
+    seed(true, 110000);
+    mockSearch = TOSS_QUERY(110000);
+    postMock.mockResolvedValue(SUCCESS_RESPONSE);
+
+    renderPage();
+
+    expect(
+      await screen.findByText(/마이페이지 결제 내역에서 확인할 수 있습니다/),
     ).toBeInTheDocument();
   });
 
@@ -169,10 +247,10 @@ describe('order/result 화면', () => {
     mockSearch = TOSS_QUERY(70000);
     postMock.mockResolvedValue(SUCCESS_RESPONSE);
 
-    render(<PaymentResult />);
+    renderPage();
 
     expect(await screen.findByText('마이페이지 바로가기')).toBeInTheDocument();
-    expect(screen.queryByText(/VOD 사이트에서 활성화/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/VOD 이용권/)).not.toBeInTheDocument();
   });
 
   it('409 VOD_PASS_PRODUCT_CHANGED 는 다시 선택하라는 문구를 보여준다', async () => {
@@ -180,7 +258,7 @@ describe('order/result 화면', () => {
     mockSearch = TOSS_QUERY(99000);
     postMock.mockRejectedValue(apiError(409, 'VOD_PASS_PRODUCT_CHANGED'));
 
-    render(<PaymentResult />);
+    renderPage();
 
     expect(
       await screen.findByText(
@@ -188,7 +266,33 @@ describe('order/result 화면', () => {
       ),
     ).toBeInTheDocument();
     expect(screen.getByText(/결제가 승인되지 않았어요/)).toBeInTheDocument();
-    expect(screen.queryByText(/VOD 사이트에서 활성화/)).not.toBeInTheDocument();
+  });
+
+  it('409 VOD_PASS_PRODUCT_CHANGED 면 신청폼 쿼리를 무효화해 최신 상품을 다시 받게 한다', async () => {
+    seed(true, 110000);
+    mockSearch = TOSS_QUERY(110000);
+    postMock.mockRejectedValue(apiError(409, 'VOD_PASS_PRODUCT_CHANGED'));
+    const invalidate = jest.spyOn(queryClient, 'invalidateQueries');
+
+    renderPage();
+
+    await waitFor(() =>
+      expect(invalidate).toHaveBeenCalledWith({
+        queryKey: ['useProgramApplicationQueryKey'],
+      }),
+    );
+  });
+
+  it('다른 409 는 신청폼 쿼리를 무효화하지 않는다', async () => {
+    seed(true, 110000);
+    mockSearch = TOSS_QUERY(110000);
+    postMock.mockRejectedValue(apiError(409, 'PAYMENT_ORDER_CONFLICT'));
+    const invalidate = jest.spyOn(queryClient, 'invalidateQueries');
+
+    renderPage();
+
+    await screen.findByText(/결제 내역을 확인해 주세요/);
+    expect(invalidate).not.toHaveBeenCalled();
   });
 
   it('409 PAYMENT_ORDER_CONFLICT 는 결제 내역을 확인하라는 문구를 보여준다', async () => {
@@ -196,7 +300,7 @@ describe('order/result 화면', () => {
     mockSearch = TOSS_QUERY(99000);
     postMock.mockRejectedValue(apiError(409, 'PAYMENT_ORDER_CONFLICT'));
 
-    render(<PaymentResult />);
+    renderPage();
 
     expect(
       await screen.findByText(
@@ -210,7 +314,7 @@ describe('order/result 화면', () => {
     mockSearch = TOSS_QUERY(99000);
     postMock.mockRejectedValue(apiError(400, 'INVALID_PRICE'));
 
-    render(<PaymentResult />);
+    renderPage();
 
     expect(
       await screen.findByText(/결제가 승인되지 않았어요/),
