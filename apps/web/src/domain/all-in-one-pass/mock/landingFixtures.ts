@@ -1,6 +1,6 @@
 // 랜딩 mock (공개 API 전까지). discount=할인액, 최종가 = price - discount.
-import type { AllInOnePassLanding } from '../types';
 import type { LandingDescription } from '../landing/landingContent';
+import type { AllInOnePassLanding } from '../types';
 
 /** mock용 최소 렉시컬 상태(단락 1개) */
 const lexical = (text: string): string =>
@@ -36,9 +36,9 @@ const lexical = (text: string): string =>
 
 const landingDescription: LandingDescription = {
   hero: {
-    title: '취업, 하나의 패스로 끝내세요',
+    title: '취업, 하나의 패스로 끝내세요. 취업, 하나의 패스로 끝내세요.',
     description:
-      '챌린지부터 가이드북·VOD·라이브까지, 취업 준비 전 과정을 하나로.',
+      '챌린지부터 가이드북·VOD·라이브까지, 취업 준비 전 과정을 하나로. 챌린지부터 가이드북·VOD·라이브까지, 취업 준비 전 과정을 하나로. 챌린지부터 가이드북·VOD·라이브까지, 취업 준비 전 과정을 하나로.',
     recruitFootnote: '마감 후 다음 기회는 2027 상반기 예정이에요.',
   },
   lexical: {
