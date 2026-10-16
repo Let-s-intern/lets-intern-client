@@ -12,16 +12,70 @@
 /** 스토어에 persist 된 이전 상태는 이용권 필드가 undefined 라 null·undefined 를 0 으로 본다. */
 type Amount = number | null | undefined;
 
+/**
+ * `vodPassPrice`·`vodPassDurationDays` 는 선택한 개월 수 기준의 총액·총일수다.
+ * `vodPassMonths` 는 개월 선택이 생기기 전에 persist 된 상태에서는 없고, 그때는 1개월이다.
+ */
 export interface VodPassSelection {
   vodPassProductId?: Amount;
   vodPassPrice?: Amount;
   vodPassDurationDays?: Amount;
+  vodPassMonths?: Amount;
 }
 
 export interface VodPassRequestFields {
   vodPassProductId: number;
   vodPassExpectedPrice: number;
   vodPassExpectedDurationDays: number;
+  vodPassMonths: number;
+}
+
+export interface VodPassProductPricing {
+  price: number;
+  additionalMonthPrice?: Amount;
+  durationDays: number;
+}
+
+export const VOD_PASS_MIN_MONTHS = 1;
+/** 화면 상한이다. 서버는 상한이 없고 정수 범위를 넘으면 400 을 준다. */
+export const VOD_PASS_MAX_MONTHS = 12;
+
+/** 개월 수를 화면 범위(1 이상 상한 이하의 정수)로 맞춘다. */
+export function clampVodPassMonths(months: number): number {
+  if (!Number.isFinite(months)) {
+    return VOD_PASS_MIN_MONTHS;
+  }
+  return Math.min(
+    Math.max(Math.trunc(months), VOD_PASS_MIN_MONTHS),
+    VOD_PASS_MAX_MONTHS,
+  );
+}
+
+/**
+ * 개월 선택을 지원하는 서버인가. 추가 월 가격이 응답에 없으면 이전 서버라 1개월만 판다.
+ * (이전 서버는 vodPassMonths 를 모르므로 보내도 금액 검증에서 거절된다.)
+ */
+export function supportsVodPassMonths(
+  product: Pick<VodPassProductPricing, 'additionalMonthPrice'>,
+): boolean {
+  return typeof product.additionalMonthPrice === 'number';
+}
+
+/** 이용권 금액. 서버: `price + additionalMonthPrice * (months - 1)` */
+export function calculateVodPassPrice(
+  product: VodPassProductPricing,
+  months: number,
+): number {
+  const safeMonths = clampVodPassMonths(months);
+  return product.price + (product.additionalMonthPrice ?? 0) * (safeMonths - 1);
+}
+
+/** 총 이용일수. 서버: `durationDays * months` */
+export function calculateVodPassDurationDays(
+  product: Pick<VodPassProductPricing, 'durationDays'>,
+  months: number,
+): number {
+  return product.durationDays * clampVodPassMonths(months);
 }
 
 /**
@@ -53,7 +107,7 @@ export function isVodPassSelected(selection: VodPassSelection): boolean {
 
 /**
  * 주문 생성 요청 본문에 합칠 이용권 필드.
- * 서버는 세 값 중 하나라도 있으면 전부 요구하므로, 미선택이면 세 필드를 모두 내보내지 않는다.
+ * 서버는 네 값 중 하나라도 있으면 전부 요구하므로, 미선택이면 네 필드를 모두 내보내지 않는다.
  */
 export function toVodPassRequestFields(
   selection: VodPassSelection,
@@ -62,10 +116,14 @@ export function toVodPassRequestFields(
     return {};
   }
 
+  // 개월 선택 전에 담긴 선택은 단일 월 금액이라 1개월로 보내야 서버 계산과 맞는다
+  const months = selection.vodPassMonths ?? 0;
+
   return {
     vodPassProductId: selection.vodPassProductId ?? 0,
     vodPassExpectedPrice: selection.vodPassPrice ?? 0,
     vodPassExpectedDurationDays: selection.vodPassDurationDays ?? 0,
+    vodPassMonths: months > 0 ? months : VOD_PASS_MIN_MONTHS,
   };
 }
 

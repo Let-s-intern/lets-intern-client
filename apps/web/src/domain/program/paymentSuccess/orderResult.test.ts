@@ -27,6 +27,7 @@ const FORM: OrderRequestForm = {
   vodPassProductId: 0,
   vodPassPrice: 0,
   vodPassDurationDays: 0,
+  vodPassMonths: 0,
 };
 
 const PARAMS = { orderId: 'letsAB12', paymentKey: 'pk_1', amount: 99000 };
@@ -50,24 +51,27 @@ describe('buildPostApplicationBody', () => {
     expect(Object.keys(body)).not.toContain('vodPassProductId');
     expect(Object.keys(body)).not.toContain('vodPassExpectedPrice');
     expect(Object.keys(body)).not.toContain('vodPassExpectedDurationDays');
+    expect(Object.keys(body)).not.toContain('vodPassMonths');
   });
 
-  it('이용권을 골랐으면 세 필드를 모두 넣고 amount 는 Toss 쿼리 값을 그대로 쓴다', () => {
+  it('이용권을 골랐으면 네 필드를 모두 넣고 amount 는 Toss 쿼리 값을 그대로 쓴다', () => {
     const body = buildPostApplicationBody(
       {
         ...FORM,
         vodPassProductId: 7,
-        vodPassPrice: 29000,
-        vodPassDurationDays: 30,
+        vodPassPrice: 40000,
+        vodPassDurationDays: 90,
+        vodPassMonths: 3,
       },
-      { ...PARAMS, amount: 128000 },
+      { ...PARAMS, amount: 140000 },
     );
 
     expect(body.vodPassProductId).toBe(7);
-    expect(body.vodPassExpectedPrice).toBe(29000);
-    expect(body.vodPassExpectedDurationDays).toBe(30);
+    expect(body.vodPassExpectedPrice).toBe(40000);
+    expect(body.vodPassExpectedDurationDays).toBe(90);
+    expect(body.vodPassMonths).toBe(3);
     // 이미 이용권이 합산된 금액이다. 여기서 다시 더하지 않는다
-    expect(body.paymentInfo.amount).toBe('128000');
+    expect(body.paymentInfo.amount).toBe('140000');
   });
 
   it('이용권 필드가 없던 시절의 저장 상태(undefined)는 미선택으로 본다', () => {
