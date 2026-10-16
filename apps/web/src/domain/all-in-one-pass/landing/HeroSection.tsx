@@ -26,7 +26,7 @@ export default function HeroSection({
 }: Props) {
   const badge = periodDays
     ? `구매 시점부터 ${periodDays}일 이용 가능`
-    : '지금 바로 이용 가능';
+    : '구매 즉시 이용 가능';
 
   return (
     <section className="bg-gradient-to-br from-white/30 to-[#3378E0]/30">
@@ -48,7 +48,7 @@ export default function HeroSection({
               type="button"
               onClick={onStart}
               disabled={ctaDisabled}
-              className="text-xsmall16 md:text-small20 disabled:bg-neutral-70 w-full rounded-sm bg-[#F36D32] px-4 py-3 font-semibold text-neutral-100 md:w-[280px] md:px-9 md:py-5"
+              className="text-xsmall16 md:text-small20 disabled:bg-neutral-70 w-full rounded-sm bg-[#F36D32] px-4 py-3 font-semibold text-neutral-100 md:w-[280px] md:px-6 md:py-5"
             >
               {ctaText}
             </button>

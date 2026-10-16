@@ -87,7 +87,7 @@ const landingDescription: LandingDescription = {
 };
 
 export const landingFixture: AllInOnePassLanding = {
-  id: 1,
+  id: 9,
   title: '2026 하반기 취업 올인원패스',
   introduction:
     '챌린지부터 가이드북·VOD·라이브 클래스까지, 취업 준비 전 과정을 하나로.',
