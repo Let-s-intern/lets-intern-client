@@ -451,6 +451,7 @@ const PaymentInputContent = () => {
               }}
               showCouponDiscount={showCouponSection}
               vodPassPrice={programApplicationData.vodPassPrice ?? 0}
+              vodPassMonths={programApplicationData.vodPassMonths ?? 0}
             />
             <hr className="bg-neutral-85" />
             <div className="text-neutral-0 flex h-10 items-center justify-between px-3 font-semibold">
