@@ -214,7 +214,12 @@ export default function MentorNoticeManagement() {
         mode={modalState.open ? modalState.mode : 'create'}
         initialForm={modalInitialForm}
         challengeList={challengeList}
-        mentorList={mentorData?.mentorList ?? []}
+        mentorList={(mentorData?.mentorList ?? []).flatMap(
+          ({ challengeMentorId, name }) =>
+            challengeMentorId !== undefined && name !== undefined
+              ? [{ challengeMentorId, name }]
+              : [],
+        )}
         onClose={closeModal}
         onSubmit={handleSubmit}
         onChallengeIdChange={setFormChallengeId}
