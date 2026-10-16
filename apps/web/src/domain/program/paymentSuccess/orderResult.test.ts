@@ -10,114 +10,12 @@ jest.mock('@letscareer/api', () => ({
 }));
 
 import {
-  buildPostApplicationBody,
   getOrderErrorMessage,
   getVodPassResultNotice,
   isVodPassProductChangedError,
   PAYMENT_ORDER_CONFLICT_MESSAGE,
   VOD_PASS_PRODUCT_CHANGED_MESSAGE,
-  type OrderRequestForm,
 } from './orderResult';
-
-const FORM: OrderRequestForm = {
-  couponId: '3',
-  priceId: 2,
-  isFree: false,
-  totalPrice: 99000,
-  contactEmail: 'qa@letscareer.test',
-  question: '',
-  vodPassProductId: 0,
-  vodPassPrice: 0,
-  vodPassDurationDays: 0,
-  vodPassMonths: 0,
-};
-
-const PARAMS = { orderId: 'letsAB12', paymentKey: 'pk_1', amount: 99000 };
-
-describe('buildPostApplicationBody', () => {
-  it('이용권을 고르지 않으면 이용권 키가 본문에 없고 기존 본문과 같다', () => {
-    const body = buildPostApplicationBody(FORM, PARAMS);
-
-    expect(body).toEqual({
-      paymentInfo: {
-        couponId: 3,
-        priceId: 2,
-        paymentKey: 'pk_1',
-        orderId: 'letsAB12',
-        amount: '99000',
-      },
-      contactEmail: 'qa@letscareer.test',
-      motivate: '',
-      question: '',
-    });
-    expect(Object.keys(body)).not.toContain('vodPassProductId');
-    expect(Object.keys(body)).not.toContain('vodPassExpectedPrice');
-    expect(Object.keys(body)).not.toContain('vodPassExpectedDurationDays');
-    expect(Object.keys(body)).not.toContain('vodPassMonths');
-  });
-
-  it('이용권을 골랐으면 네 필드를 모두 넣고 amount 는 Toss 쿼리 값을 그대로 쓴다', () => {
-    const body = buildPostApplicationBody(
-      {
-        ...FORM,
-        vodPassProductId: 7,
-        vodPassPrice: 40000,
-        vodPassDurationDays: 90,
-        vodPassMonths: 3,
-      },
-      { ...PARAMS, amount: 140000 },
-    );
-
-    expect(body.vodPassProductId).toBe(7);
-    expect(body.vodPassExpectedPrice).toBe(40000);
-    expect(body.vodPassExpectedDurationDays).toBe(90);
-    expect(body.vodPassMonths).toBe(3);
-    // 이미 이용권이 합산된 금액이다. 여기서 다시 더하지 않는다
-    expect(body.paymentInfo.amount).toBe('140000');
-  });
-
-  it('이용권 필드가 없던 시절의 저장 상태(undefined)는 미선택으로 본다', () => {
-    const legacyForm = {
-      ...FORM,
-      vodPassProductId: undefined,
-      vodPassPrice: undefined,
-      vodPassDurationDays: undefined,
-    };
-
-    const body = buildPostApplicationBody(legacyForm, PARAMS);
-
-    expect(Object.keys(body)).not.toContain('vodPassProductId');
-  });
-
-  it('무료 신청이면 paymentKey 를 비우고 amount 는 스토어 합계를 쓴다', () => {
-    const body = buildPostApplicationBody(
-      { ...FORM, isFree: true, totalPrice: 0 },
-      { orderId: 'letsAB12' },
-    );
-
-    expect(body.paymentInfo.paymentKey).toBeNull();
-    expect(body.paymentInfo.amount).toBe('0');
-  });
-
-  it('Toss amount 가 없으면 스토어 합계로 대신한다', () => {
-    const body = buildPostApplicationBody(FORM, {
-      orderId: 'letsAB12',
-      paymentKey: 'pk_1',
-    });
-
-    expect(body.paymentInfo.amount).toBe('99000');
-  });
-
-  it('쿠폰이 없으면 couponId 는 null, priceId 가 없으면 -1 이다', () => {
-    const body = buildPostApplicationBody(
-      { ...FORM, couponId: '', priceId: null },
-      PARAMS,
-    );
-
-    expect(body.paymentInfo.couponId).toBeNull();
-    expect(body.paymentInfo.priceId).toBe(-1);
-  });
-});
 
 describe('getOrderErrorMessage', () => {
   it('409 VOD_PASS_PRODUCT_CHANGED 는 다시 선택하라는 문구다', () => {

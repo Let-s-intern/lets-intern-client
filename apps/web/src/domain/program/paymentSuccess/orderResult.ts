@@ -1,58 +1,5 @@
-import type {
-  PostApplicationInterface,
-  PostApplicationResult,
-} from '@/api/application';
+import type { PostApplicationResult } from '@/api/application';
 import dayjs from '@/lib/dayjs';
-import {
-  toVodPassRequestFields,
-  type VodPassSelection,
-} from '@/domain/program/vodPassPurchase';
-
-/** 주문 생성 요청에 쓰는 신청 폼 스토어 값 */
-export interface OrderRequestForm extends VodPassSelection {
-  couponId: string | null;
-  priceId: number | null;
-  isFree: boolean | null;
-  totalPrice: number | null;
-  contactEmail: string | null;
-  question: string | null;
-}
-
-/** Toss 가 successUrl 쿼리로 넘겨준 값 */
-export interface OrderResultParams {
-  orderId: string;
-  paymentKey?: string | null;
-  amount?: number | null;
-}
-
-/**
- * `POST /application/{programId}` 요청 본문.
- * `amount` 는 Toss 쿼리 값을 그대로 쓴다. 이용권이 이미 합산된 금액이라 여기서 다시 더하지 않는다.
- * 이용권은 선택했을 때만 필드 세 개를 모두 넣는다.
- */
-export function buildPostApplicationBody(
-  form: OrderRequestForm,
-  params: OrderResultParams,
-): PostApplicationInterface {
-  const isFree = form.isFree === true;
-
-  return {
-    paymentInfo: {
-      couponId: form.couponId ? Number(form.couponId) : null,
-      priceId: form.priceId ?? -1,
-      paymentKey: isFree || !params.paymentKey ? null : params.paymentKey,
-      orderId: params.orderId,
-      amount:
-        isFree || !params.amount
-          ? (form.totalPrice?.toString() ?? '0')
-          : (params.amount?.toString() ?? '0'),
-    },
-    contactEmail: form.contactEmail ?? '',
-    motivate: '',
-    question: form.question ?? '',
-    ...toVodPassRequestFields(form),
-  };
-}
 
 export const VOD_PASS_PRODUCT_CHANGED_MESSAGE =
   'VOD 이용권 가격·기간이 변경되었으니 다시 선택해 주세요';
