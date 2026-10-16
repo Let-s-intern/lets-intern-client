@@ -17,6 +17,8 @@ export const BENEFIT_ICON_OPTIONS = [
   { key: 'mentoring', src: `${ICON_BASE}-mentoring.svg` },
   { key: 'playbook', src: `${ICON_BASE}-playbook.svg` },
   { key: 'talk', src: `${ICON_BASE}-talk.svg` },
+  { key: 'point', src: `${ICON_BASE}-point.svg` },
+  { key: 'coupon', src: `${ICON_BASE}-coupon.svg` },
   { key: 'slack', src: `${ICON_BASE}-slack.svg` },
 ] as const;
 
