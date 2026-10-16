@@ -73,7 +73,7 @@ export interface PassLandingManualBenefit {
 export interface PassLandingReview {
   id: string; // 폼 로컬 식별자
   source: string; // 출처(드롭다운)
-  resultTag: string; // 결과태그(드롭다운)
+  resultTags: string[]; // 결과태그(다중 선택)
   imageUrl: string; // width 고정 이미지
   summary: string; // 요약, 최대 70자
 }

@@ -1,6 +1,7 @@
 import {
   PassExternalLink,
   PassLandingConfig,
+  PassPlan,
 } from '@/domain/all-in-one-pass/types';
 import { TextField } from '@mui/material';
 import { lazy, Suspense } from 'react';
@@ -11,6 +12,7 @@ const EditorApp = lazy(() => import('@/common/lexical/EditorApp'));
 
 interface Props {
   value: PassLandingConfig;
+  plans: PassPlan[];
   externalLinks: PassExternalLink[];
   onChange: (value: PassLandingConfig) => void;
 }
@@ -25,7 +27,7 @@ const Block = ({
   description?: string;
   children: React.ReactNode;
 }) => (
-  <section className="flex flex-col gap-4">
+  <section className="flex flex-1 flex-col gap-4">
     <div className="flex flex-col gap-0.5">
       <h2 className="text-small20 text-neutral-0 font-semibold">{title}</h2>
       {description && (
@@ -69,6 +71,7 @@ const LexicalField = ({
  */
 export default function LandingSection({
   value,
+  plans,
   externalLinks,
   onChange,
 }: Props) {
@@ -83,42 +86,99 @@ export default function LandingSection({
 
   return (
     <div className="flex flex-col gap-10">
-      {/* 히어로 */}
-      <Block title="히어로">
-        <div className="flex flex-col gap-4">
-          <TextField
-            label="제목"
-            placeholder="히어로 제목 (최대 30자)"
-            value={value.hero.title}
-            onChange={(e) => patchHero({ title: e.target.value })}
-            size="small"
-            fullWidth
-            slotProps={{ htmlInput: { maxLength: 30 } }}
-            helperText={`${value.hero.title.length}/30`}
-          />
-          <TextField
-            label="설명"
-            placeholder="히어로 설명 (최대 60자)"
-            value={value.hero.description}
-            onChange={(e) => patchHero({ description: e.target.value })}
-            size="small"
-            fullWidth
-            slotProps={{ htmlInput: { maxLength: 60 } }}
-            helperText={`${value.hero.description.length}/60`}
-          />
-          <TextField
-            label="모집 카드 하단 문구"
-            placeholder="예) 마감 후 다음 기회는 2027 상반기 예정이에요 (최대 50자)"
-            value={value.hero.recruitFootnote}
-            onChange={(e) => patchHero({ recruitFootnote: e.target.value })}
-            size="small"
-            fullWidth
-            slotProps={{ htmlInput: { maxLength: 50 } }}
-            helperText={`${value.hero.recruitFootnote.length}/50`}
-          />
-        </div>
-      </Block>
+      {/* 왼쪽: 히어로·추가혜택·최하단 CTA 세로 스택 / 오른쪽: 후기 */}
+      <div className="flex items-start gap-4">
+        <div className="flex flex-1 flex-col gap-10">
+          {/* 히어로 */}
+          <Block title="히어로">
+            <div className="flex flex-col gap-3">
+              <TextField
+                label="헤드라인 (최대 30자)"
+                placeholder="히어로 헤드라인"
+                value={value.hero.title}
+                onChange={(e) => patchHero({ title: e.target.value })}
+                size="small"
+                fullWidth
+                multiline
+                slotProps={{
+                  htmlInput: { maxLength: 30 },
+                }}
+              />
+              <TextField
+                label="설명 (최대 60자)"
+                placeholder="히어로 설명"
+                value={value.hero.description}
+                onChange={(e) => patchHero({ description: e.target.value })}
+                size="small"
+                fullWidth
+                multiline
+                slotProps={{
+                  htmlInput: { maxLength: 60 },
+                }}
+              />
+              <TextField
+                label="모집 카드 하단 문구 (최대 50자)"
+                placeholder="예) 마감 후 다음 기회는 2027 상반기 예정이에요 "
+                value={value.hero.recruitFootnote}
+                onChange={(e) => patchHero({ recruitFootnote: e.target.value })}
+                size="small"
+                fullWidth
+                multiline
+                slotProps={{
+                  htmlInput: { maxLength: 50 },
+                }}
+              />
+            </div>
+          </Block>
 
+          {/* 최종 CTA */}
+          <Block title="최하단 CTA">
+            <div className="flex flex-col gap-3">
+              <TextField
+                label="헤드라인"
+                value={value.finalCta.title}
+                onChange={(e) => patchFinalCta({ title: e.target.value })}
+                size="small"
+                fullWidth
+              />
+              <TextField
+                label="설명"
+                value={value.finalCta.description}
+                onChange={(e) => patchFinalCta({ description: e.target.value })}
+                size="small"
+                fullWidth
+              />
+            </div>
+          </Block>
+
+          {/* 혜택 섹션 카드*/}
+          <Block
+            title="혜택 요약"
+            description="'플랜정보'·'외부 링크'를 추가하면 자동으로 생성됩니다. 최대 6개까지 추가 가능합니다."
+          >
+            <LandingBenefitEditor
+              plans={plans}
+              externalLinks={externalLinks}
+              benefitExtras={value.benefitExtras}
+              manualBenefits={value.manualBenefits}
+              onBenefitExtrasChange={(benefitExtras) =>
+                patch({ benefitExtras })
+              }
+              onManualBenefitsChange={(manualBenefits) =>
+                patch({ manualBenefits })
+              }
+            />
+          </Block>
+        </div>
+
+        {/* 후기 */}
+        <Block title="후기" description="최소 3개, 최대 9까지 입력 가능합니다.">
+          <LandingReviewEditor
+            reviews={value.reviews}
+            onChange={(reviews) => patch({ reviews })}
+          />
+        </Block>
+      </div>
       {/* 상세 콘텐츠 렉시컬 4개 */}
       <Block
         title="상세 콘텐츠"
@@ -126,7 +186,7 @@ export default function LandingSection({
       >
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <LexicalField
-            label="1. 인트로(최상단)"
+            label="1. 인트로(소개 상단)"
             initialContent={value.lexical.introSection}
             onChange={(introSection) => patchLexical({ introSection })}
           />
@@ -144,41 +204,6 @@ export default function LandingSection({
             label="4. 기타후기(후기섹션 하단)"
             initialContent={value.lexical.reviewSection}
             onChange={(reviewSection) => patchLexical({ reviewSection })}
-          />
-        </div>
-      </Block>
-
-      {/* 추가 혜택 */}
-      <LandingBenefitEditor
-        externalLinks={externalLinks}
-        benefitExtras={value.benefitExtras}
-        manualBenefits={value.manualBenefits}
-        onBenefitExtrasChange={(benefitExtras) => patch({ benefitExtras })}
-        onManualBenefitsChange={(manualBenefits) => patch({ manualBenefits })}
-      />
-
-      {/* 후기 */}
-      <LandingReviewEditor
-        reviews={value.reviews}
-        onChange={(reviews) => patch({ reviews })}
-      />
-
-      {/* 최종 CTA */}
-      <Block title="최종 CTA">
-        <div className="flex flex-col gap-4">
-          <TextField
-            label="제목"
-            value={value.finalCta.title}
-            onChange={(e) => patchFinalCta({ title: e.target.value })}
-            size="small"
-            fullWidth
-          />
-          <TextField
-            label="설명"
-            value={value.finalCta.description}
-            onChange={(e) => patchFinalCta({ description: e.target.value })}
-            size="small"
-            fullWidth
           />
         </div>
       </Block>
