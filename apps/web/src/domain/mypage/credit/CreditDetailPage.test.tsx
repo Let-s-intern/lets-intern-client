@@ -143,21 +143,19 @@ describe('CreditDetailPage VOD_PASS (LC-3438)', () => {
     mockGet.mockReset();
   });
 
-  it('미활성 이용권은 활성화 안내와 이용 일수를 보인다', async () => {
+  it('이용 시작 전 이용권은 활성화 안내 없이 시작 전과 구매 기간을 보인다', async () => {
     mockApi({ passes: [pass] });
 
     renderPage();
 
-    expect(
-      await screen.findByText(
-        '아직 활성화하지 않았습니다. VOD 사이트에서 활성화하면 30일 동안 시청할 수 있습니다',
-      ),
-    ).toBeInTheDocument();
+    expect(await screen.findByText('이용 시작 전')).toBeInTheDocument();
+    expect(screen.getByText('30일')).toBeInTheDocument();
+    expect(screen.queryByText(/활성화/)).not.toBeInTheDocument();
     // 이용권 행에 챌린지 기간이 그려지지 않는다
     expect(screen.queryByText('진행 일정')).not.toBeInTheDocument();
   });
 
-  it('이용 중인 이용권은 종료일을 보인다', async () => {
+  it('이용 중인 이용권은 이용 기간을 보인다', async () => {
     mockApi({
       passes: [
         {
@@ -173,7 +171,7 @@ describe('CreditDetailPage VOD_PASS (LC-3438)', () => {
     renderPage();
 
     expect(await screen.findByText('이용 중')).toBeInTheDocument();
-    expect(screen.getByText('2026.11.11')).toBeInTheDocument();
+    expect(screen.getByText('2026.10.12 ~ 2026.11.11')).toBeInTheDocument();
   });
 
   it('이용권 조회가 실패해도 결제 상세는 보이고 상태만 빠진다', async () => {
@@ -209,7 +207,7 @@ describe('CreditDetailPage VOD_PASS (LC-3438)', () => {
     ).toBeInTheDocument();
   });
 
-  it('활성화한 이용권은 결제 취소 버튼 없이 이유를 알려준다', async () => {
+  it('이용 중인 이용권은 결제 취소 버튼 없이 이유를 알려준다', async () => {
     mockApi({
       passes: [
         {
@@ -225,7 +223,7 @@ describe('CreditDetailPage VOD_PASS (LC-3438)', () => {
     renderPage();
 
     expect(
-      await screen.findByText('활성화한 이용권은 환불할 수 없습니다'),
+      await screen.findByText('이용이 시작된 이용권은 환불할 수 없습니다'),
     ).toBeInTheDocument();
     expect(
       screen.queryByRole('button', { name: '결제 취소하기' }),

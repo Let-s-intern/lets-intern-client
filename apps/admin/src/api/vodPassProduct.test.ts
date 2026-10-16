@@ -25,6 +25,7 @@ const product = {
   vodPassProductId: 1,
   title: 'VOD 이용권',
   price: 49000,
+  additionalMonthPrice: 10000,
   durationDays: 30,
   isActive: true,
 };
@@ -49,6 +50,12 @@ describe('vodPassProductSchema', () => {
     expect(vodPassProductSchema.parse(product)).toEqual(product);
   });
 
+  it('추가 월 가격이 없는 이전 서버 응답은 0 으로 받는다', () => {
+    const { additionalMonthPrice: _additionalMonthPrice, ...legacy } = product;
+
+    expect(vodPassProductSchema.parse(legacy).additionalMonthPrice).toBe(0);
+  });
+
   it('필수 값이 빠지면 거절한다', () => {
     const { durationDays: _durationDays, ...rest } = product;
 
@@ -57,10 +64,27 @@ describe('vodPassProductSchema', () => {
 });
 
 describe('vodPassProductUpdateSchema', () => {
-  it('양의 정수 두 값을 받는다', () => {
+  it('기본 가격·이용일수는 양의 정수, 추가 월 가격은 0 이상 정수를 받는다', () => {
     expect(
-      vodPassProductUpdateSchema.parse({ price: 49000, durationDays: 30 }),
-    ).toEqual({ price: 49000, durationDays: 30 });
+      vodPassProductUpdateSchema.parse({
+        price: 49000,
+        additionalMonthPrice: 0,
+        durationDays: 30,
+      }),
+    ).toEqual({ price: 49000, additionalMonthPrice: 0, durationDays: 30 });
+  });
+
+  it.each([
+    ['음수', -1],
+    ['소수', 0.5],
+  ])('추가 월 가격이 %s 이면 거절한다', (_label, additionalMonthPrice) => {
+    expect(() =>
+      vodPassProductUpdateSchema.parse({
+        price: 49000,
+        additionalMonthPrice,
+        durationDays: 30,
+      }),
+    ).toThrow();
   });
 
   it.each([
@@ -69,7 +93,11 @@ describe('vodPassProductUpdateSchema', () => {
     ['소수', 1.5],
   ])('가격이 %s 이면 거절한다', (_label, price) => {
     expect(() =>
-      vodPassProductUpdateSchema.parse({ price, durationDays: 30 }),
+      vodPassProductUpdateSchema.parse({
+        price,
+        additionalMonthPrice: 0,
+        durationDays: 30,
+      }),
     ).toThrow();
   });
 
@@ -79,7 +107,11 @@ describe('vodPassProductUpdateSchema', () => {
     ['소수', 0.5],
   ])('이용일수가 %s 이면 거절한다', (_label, durationDays) => {
     expect(() =>
-      vodPassProductUpdateSchema.parse({ price: 49000, durationDays }),
+      vodPassProductUpdateSchema.parse({
+        price: 49000,
+        additionalMonthPrice: 0,
+        durationDays,
+      }),
     ).toThrow();
   });
 });
@@ -99,7 +131,7 @@ describe('useVodPassProductQuery', () => {
 });
 
 describe('useUpdateVodPassProductMutation', () => {
-  it('PUT 으로 가격과 이용일수를 보내고 성공하면 조회 쿼리를 무효화한다', async () => {
+  it('PUT 으로 기본 가격·추가 월 가격·이용일수를 보내고 성공하면 조회 쿼리를 무효화한다', async () => {
     put.mockResolvedValue({ data: { data: null } });
     const client = createClient();
     const invalidate = vi.spyOn(client, 'invalidateQueries');
@@ -110,11 +142,16 @@ describe('useUpdateVodPassProductMutation', () => {
       { wrapper: createWrapper(client) },
     );
 
-    result.current.mutate({ price: 59000, durationDays: 60 });
+    result.current.mutate({
+      price: 59000,
+      additionalMonthPrice: 5000,
+      durationDays: 60,
+    });
 
     await waitFor(() => expect(onSuccess).toHaveBeenCalledTimes(1));
     expect(put).toHaveBeenCalledWith('/admin/vod-pass-product', {
       price: 59000,
+      additionalMonthPrice: 5000,
       durationDays: 60,
     });
     expect(invalidate).toHaveBeenCalledWith({
@@ -130,7 +167,11 @@ describe('useUpdateVodPassProductMutation', () => {
       { wrapper: createWrapper(createClient()) },
     );
 
-    result.current.mutate({ price: 0, durationDays: 30 });
+    result.current.mutate({
+      price: 0,
+      additionalMonthPrice: 0,
+      durationDays: 30,
+    });
 
     await waitFor(() => expect(onError).toHaveBeenCalledTimes(1));
     expect(put).not.toHaveBeenCalled();
@@ -147,7 +188,11 @@ describe('useUpdateVodPassProductMutation', () => {
       { wrapper: createWrapper(client) },
     );
 
-    result.current.mutate({ price: 59000, durationDays: 60 });
+    result.current.mutate({
+      price: 59000,
+      additionalMonthPrice: 5000,
+      durationDays: 60,
+    });
 
     await waitFor(() =>
       expect(onError).toHaveBeenCalledWith('가격은 1원 이상이어야 합니다.'),

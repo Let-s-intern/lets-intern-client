@@ -1,9 +1,78 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import useProgramStore, {
+  checkInvalidate,
+  initProgramApplicationForm,
+  setProgramApplicationForm,
+} from './useProgramStore';
 
-const STORAGE_KEY = 'programApplicationForm';
+/** 결제까지 가는 챌린지 신청 폼. 버전은 고르지 않았다 */
+const FILLED_FORM = {
+  priceId: 10,
+  price: 100000,
+  discount: 10000,
+  couponId: '',
+  couponPrice: 0,
+  totalPrice: 90000,
+  contactEmail: 'user@example.com',
+  question: '',
+  email: 'user@example.com',
+  phone: '010-0000-0000',
+  name: '참여자',
+  programTitle: '챌린지',
+  programType: 'challenge' as const,
+  progressType: 'none',
+  programId: 1,
+  programOrderId: 'order-1',
+  isFree: false,
+  deposit: 0,
+};
+
+beforeEach(() => {
+  window.localStorage.clear();
+  initProgramApplicationForm();
+});
+
+describe('useProgramStore challengeVersionId', () => {
+  it('폼을 초기화하면 null 이다', () => {
+    setProgramApplicationForm({ ...FILLED_FORM, challengeVersionId: 3 });
+    initProgramApplicationForm();
+
+    expect(useProgramStore.getState().data.challengeVersionId).toBeNull();
+  });
+
+  it('버전을 묻지 않는 신청(null)은 잘못된 접근으로 보지 않는다', () => {
+    setProgramApplicationForm({ ...FILLED_FORM, challengeVersionId: null });
+
+    expect(checkInvalidate()).toBe(false);
+  });
+
+  it('다른 필드가 null 이면 여전히 잘못된 접근이다', () => {
+    setProgramApplicationForm({ ...FILLED_FORM, programOrderId: null });
+
+    expect(checkInvalidate()).toBe(true);
+  });
+
+  it('토스 결제창을 다녀와 새 문서로 로드해도 localStorage 에서 복원된다', async () => {
+    setProgramApplicationForm({ ...FILLED_FORM, challengeVersionId: 3 });
+
+    const saved = JSON.parse(
+      window.localStorage.getItem('programApplicationForm') ?? '{}',
+    );
+    expect(saved.state.data.challengeVersionId).toBe(3);
+
+    vi.resetModules();
+    const { default: reloadedStore } = await import('./useProgramStore');
+    await reloadedStore.persist.rehydrate();
+
+    expect(reloadedStore.getState().data.challengeVersionId).toBe(3);
+    expect(reloadedStore.getState()._hasHydrated).toBe(true);
+  });
+});
+
+const VOD_STORAGE_KEY = 'programApplicationForm';
 
 /** 신청 폼에서 이용권을 제외한 필드를 모두 채운 상태 (null 이 하나도 없다) */
-const FILLED_FORM = {
+const VOD_FILLED_FORM = {
   priceId: 1,
   price: 100000,
   discount: 10000,
@@ -44,6 +113,7 @@ describe('useProgramStore VOD 이용권 필드 (LC-3438)', () => {
       vodPassProductId: 0,
       vodPassPrice: 0,
       vodPassDurationDays: 0,
+      vodPassMonths: 0,
     });
   });
 
@@ -54,13 +124,13 @@ describe('useProgramStore VOD 이용권 필드 (LC-3438)', () => {
       checkInvalidate,
     } = await loadStoreFresh();
 
-    setProgramApplicationForm(FILLED_FORM);
+    setProgramApplicationForm(VOD_FILLED_FORM);
 
     expect(store.getState().data.vodPassProductId).toBe(0);
     expect(checkInvalidate()).toBe(false);
   });
 
-  it('이용권을 선택하면 세 필드가 스토어에 담긴다', async () => {
+  it('이용권을 선택하면 네 필드가 스토어에 담긴다', async () => {
     const {
       default: store,
       setProgramApplicationForm,
@@ -68,16 +138,18 @@ describe('useProgramStore VOD 이용권 필드 (LC-3438)', () => {
     } = await loadStoreFresh();
 
     setProgramApplicationForm({
-      ...FILLED_FORM,
+      ...VOD_FILLED_FORM,
       vodPassProductId: 7,
-      vodPassPrice: 29000,
-      vodPassDurationDays: 30,
+      vodPassPrice: 40000,
+      vodPassDurationDays: 90,
+      vodPassMonths: 3,
     });
 
     expect(store.getState().data).toMatchObject({
       vodPassProductId: 7,
-      vodPassPrice: 29000,
-      vodPassDurationDays: 30,
+      vodPassPrice: 40000,
+      vodPassDurationDays: 90,
+      vodPassMonths: 3,
     });
     expect(checkInvalidate()).toBe(false);
   });
@@ -90,8 +162,9 @@ describe('useProgramStore VOD 이용권 필드 (LC-3438)', () => {
     } = await loadStoreFresh();
     setProgramApplicationForm({
       vodPassProductId: 7,
-      vodPassPrice: 29000,
-      vodPassDurationDays: 30,
+      vodPassPrice: 40000,
+      vodPassDurationDays: 90,
+      vodPassMonths: 3,
     });
 
     initProgramApplicationForm();
@@ -100,6 +173,7 @@ describe('useProgramStore VOD 이용권 필드 (LC-3438)', () => {
       vodPassProductId: 0,
       vodPassPrice: 0,
       vodPassDurationDays: 0,
+      vodPassMonths: 0,
     });
   });
 
@@ -107,8 +181,8 @@ describe('useProgramStore VOD 이용권 필드 (LC-3438)', () => {
     // persist 는 data 를 통째로 복원하므로 이 필드들은 undefined 로 돌아온다.
     // undefined 는 null 이 아니라 checkInvalidate 가 미완성으로 보지 않는다.
     window.localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({ state: { data: FILLED_FORM }, version: 0 }),
+      VOD_STORAGE_KEY,
+      JSON.stringify({ state: { data: VOD_FILLED_FORM }, version: 0 }),
     );
     const { default: store, checkInvalidate } = await loadStoreFresh();
 

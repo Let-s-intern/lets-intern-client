@@ -25,6 +25,21 @@ describe('PriceSection VOD 이용권 줄 (LC-3438)', () => {
     ]);
   });
 
+  it('개월 수를 넘기면 이용권 줄에 개월을 함께 보여준다', () => {
+    render(
+      <PriceSection
+        payInfo={PAY_INFO}
+        coupon={{ id: null, price: 0 }}
+        vodPassPrice={40000}
+        vodPassMonths={3}
+      />,
+    );
+
+    const row = screen.getByText('VOD 이용권 3개월')
+      .parentElement as HTMLElement;
+    expect(within(row).getByText('+40,000원')).toBeInTheDocument();
+  });
+
   it('이용권 가격을 넘기지 않으면 기존 줄만 그린다', () => {
     render(<PriceSection payInfo={PAY_INFO} coupon={{ id: null, price: 0 }} />);
 

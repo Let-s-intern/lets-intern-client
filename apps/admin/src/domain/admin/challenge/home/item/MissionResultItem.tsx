@@ -1,3 +1,4 @@
+import { formatMissionRoundLabel } from '@/domain/admin/challenge/version/utils/missionVersion';
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
 import { Mission } from '@/schema';
@@ -13,7 +14,9 @@ const MissionResultItem = ({ mission }: { mission: Mission }) => {
           dayjs(mission.endDate).format('MM/DD(dd)')}
       </div>
       <div className="mx-1 mt-1 pb-2">
-        <div className="py-2 text-center text-sm">{mission.th}회차</div>
+        <div className="py-2 text-center text-sm">
+          {formatMissionRoundLabel(mission)}
+        </div>
         <div className="flex items-end justify-center text-3xl font-bold">
           {mission.attendanceCount}
         </div>

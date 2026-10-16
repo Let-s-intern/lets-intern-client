@@ -16,6 +16,7 @@ vi.mock('@/api/vodPassProduct', async (importOriginal) => ({
       vodPassProductId: 1,
       title: 'VOD 이용권',
       price: 49000,
+      additionalMonthPrice: 10000,
       durationDays: 30,
       isActive: true,
     },
@@ -55,6 +56,6 @@ describe('VOD 이용권 설정 라우트', () => {
         LAZY_TIMEOUT,
       ),
     ).toBeInTheDocument();
-    expect(screen.getByLabelText('가격(원)')).toBeInTheDocument();
+    expect(screen.getByLabelText('기본 가격(원)')).toBeInTheDocument();
   }, 15_000);
 });
