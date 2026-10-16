@@ -14,61 +14,75 @@ const makePass = (overrides: Partial<VodPass>): VodPass => ({
 });
 
 describe('getVodPassInfoRows', () => {
-  it('미활성 이용권은 활성화 안내와 이용 일수를 알려준다', () => {
+  it('이용 시작 전 이용권은 활성화 안내 없이 시작 전이라고만 알린다', () => {
     const rows = getVodPassInfoRows(makePass({ status: 'UNACTIVATED' }));
 
     expect(rows).toEqual([
-      {
-        label: '이용권 상태',
-        value:
-          '아직 활성화하지 않았습니다. VOD 사이트에서 활성화하면 30일 동안 시청할 수 있습니다',
-      },
+      { label: '이용권 상태', value: '이용 시작 전' },
+      { label: '구매 기간', value: '30일' },
     ]);
+    expect(JSON.stringify(rows)).not.toContain('활성화');
   });
 
-  it('이용 일수를 모르면 일수 없이 안내한다', () => {
-    const rows = getVodPassInfoRows(
-      makePass({ status: 'UNACTIVATED', durationDays: null }),
-    );
-
-    expect(rows[0].value).toBe(
-      '아직 활성화하지 않았습니다. VOD 사이트에서 활성화하면 시청할 수 있습니다',
-    );
-  });
-
-  it('이용 중인 이용권은 종료일을 알려준다', () => {
+  it('이용 중인 이용권은 이용 기간과 구매 개월 수를 알려준다', () => {
     const rows = getVodPassInfoRows(
       makePass({
         status: 'ACTIVE',
-        startsAt: '2026-10-12T12:00:00+09:00',
-        endsAt: '2026-11-11T12:00:00+09:00',
+        startsAt: '2026-10-16T10:00:00+09:00',
+        endsAt: '2027-01-14T10:00:00+09:00',
+        durationDays: 90,
+        purchasedMonths: 3,
       }),
     );
 
     expect(rows).toEqual([
       { label: '이용권 상태', value: '이용 중' },
-      { label: '이용 종료일', value: '2026.11.11' },
+      { label: '이용 기간', value: '2026.10.16 ~ 2027.01.14' },
+      { label: '구매 기간', value: '3개월 (90일)' },
     ]);
   });
 
-  it('이용 예정인 이용권은 시작일을 알려준다', () => {
+  it('이용 예정인 이용권은 시작 예정과 이용 기간을 알려준다', () => {
     const rows = getVodPassInfoRows(
       makePass({
         status: 'SCHEDULED',
         startsAt: '2026-12-01T12:00:00+09:00',
+        endsAt: '2026-12-31T12:00:00+09:00',
       }),
     );
 
     expect(rows).toEqual([
       { label: '이용권 상태', value: '이용 시작 예정' },
-      { label: '이용 시작일', value: '2026.12.01' },
+      { label: '이용 기간', value: '2026.12.01 ~ 2026.12.31' },
+      { label: '구매 기간', value: '30일' },
     ]);
   });
 
-  it('종료·취소된 이용권은 해당 문구만 보인다', () => {
-    expect(getVodPassInfoRows(makePass({ status: 'EXPIRED' }))).toEqual([
+  it('종료된 이용권은 이용 기간을 남겨 보여준다', () => {
+    const rows = getVodPassInfoRows(
+      makePass({
+        status: 'EXPIRED',
+        startsAt: '2026-08-01T12:00:00+09:00',
+        endsAt: '2026-08-31T12:00:00+09:00',
+        durationDays: null,
+      }),
+    );
+
+    expect(rows).toEqual([
       { label: '이용권 상태', value: '이용 기간이 종료되었습니다' },
+      { label: '이용 기간', value: '2026.08.01 ~ 2026.08.31' },
     ]);
+  });
+
+  it('기간을 모르는 경우 해당 줄만 빠진다', () => {
+    const rows = getVodPassInfoRows(
+      makePass({ status: 'ACTIVE', durationDays: null }),
+    );
+
+    expect(rows).toEqual([{ label: '이용권 상태', value: '이용 중' }]);
+  });
+
+  it('취소된 이용권은 해당 문구만 보인다', () => {
     expect(getVodPassInfoRows(makePass({ status: 'CANCELED' }))).toEqual([
       { label: '이용권 상태', value: '취소된 이용권입니다' },
     ]);

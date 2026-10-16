@@ -228,7 +228,7 @@ describe('CreditDeletePage VOD_PASS (LC-3438)', () => {
     );
   });
 
-  it('활성화한 이용권은 환불 버튼 없이 이유를 알려준다', async () => {
+  it('이용 중인 이용권은 환불 버튼 없이 이유를 알려준다', async () => {
     mockApi([
       {
         ...pass,
@@ -242,12 +242,83 @@ describe('CreditDeletePage VOD_PASS (LC-3438)', () => {
     renderPage();
 
     expect(
-      await screen.findByText('활성화한 이용권은 환불할 수 없습니다'),
+      await screen.findByText('이용이 시작된 이용권은 환불할 수 없습니다'),
     ).toBeInTheDocument();
     expect(
       screen.queryByRole('button', { name: '결제 취소하기' }),
     ).not.toBeInTheDocument();
     expect(mockDelete).not.toHaveBeenCalled();
+  });
+
+  it('이용 예정(SCHEDULED) 이용권도 환불 버튼이 보이고, 뒤에 예약된 이용권이 있으면 시작일 안내를 한다', async () => {
+    mockApi([
+      {
+        ...pass,
+        status: 'SCHEDULED',
+        startsAt: '2026-11-11T12:00:00+09:00',
+        endsAt: '2026-12-11T12:00:00+09:00',
+        refundable: true,
+      },
+      {
+        ...pass,
+        applicationId: 12,
+        paymentId: 503,
+        status: 'SCHEDULED',
+        startsAt: '2026-12-11T12:00:00+09:00',
+        endsAt: '2027-01-10T12:00:00+09:00',
+        refundable: true,
+      },
+    ]);
+
+    renderPage();
+
+    expect(
+      await screen.findByRole('button', { name: '결제 취소하기' }),
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        '이 이용권을 환불해도 뒤에 예약된 이용권의 시작일은 앞당겨지지 않습니다',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('뒤에 예약된 이용권이 없으면 시작일 안내가 없다', async () => {
+    mockApi([
+      {
+        ...pass,
+        status: 'SCHEDULED',
+        startsAt: '2026-11-11T12:00:00+09:00',
+        endsAt: '2026-12-11T12:00:00+09:00',
+      },
+    ]);
+
+    renderPage();
+
+    expect(
+      await screen.findByRole('button', { name: '결제 취소하기' }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/뒤에 예약된 이용권/)).not.toBeInTheDocument();
+  });
+
+  it('0원 이용권 등 서버가 400 으로 막으면 서버 문구를 알려준다', async () => {
+    mockApi([pass]);
+    mockDelete.mockRejectedValue({
+      status: 400,
+      code: 'APPLICATION_CANNOT_CANCELED',
+      serverMessage: '환불이 불가능한 기간입니다.',
+    });
+    const user = userEvent.setup();
+
+    renderPage();
+
+    await user.click(await screen.findByText('환불 정보를 확인하셨나요?'));
+    await user.click(screen.getByRole('button', { name: '결제 취소하기' }));
+
+    await waitFor(() =>
+      expect(alertSpy).toHaveBeenCalledWith(
+        '[결제 취소 실패]\n환불이 불가능한 기간입니다.',
+      ),
+    );
   });
 
   it('이용권 조회가 실패하면 환불 버튼 없이 다시 시도하라고 알려준다', async () => {
@@ -333,7 +404,7 @@ describe('CreditDeletePage 챌린지 환불 안내 (LC-3438)', () => {
     jest.restoreAllMocks();
   });
 
-  it('미활성 이용권을 함께 결제했으면 별도 환불 안내와 이용권 환불 링크를 보이고 환불 금액은 챌린지 금액이다', async () => {
+  it('환불할 수 있는 이용권을 함께 결제했으면 별도 환불 안내와 이용권 환불 링크를 보이고 환불 금액은 챌린지 금액이다', async () => {
     mockApi(
       [{ ...pass, paymentId: 601 }],
       challengeDetail([challengeItem, passItem]),
@@ -363,7 +434,7 @@ describe('CreditDeletePage 챌린지 환불 안내 (LC-3438)', () => {
     expect(mockGet).not.toHaveBeenCalledWith('/vod-pass');
   });
 
-  it('이용권을 이미 활성화했다면 안내가 없다', async () => {
+  it('이용권이 이미 이용 중이면 환불되지 않는다는 안내만 보이고 환불 링크는 없다', async () => {
     mockApi(
       [
         {
@@ -381,8 +452,13 @@ describe('CreditDeletePage 챌린지 환불 안내 (LC-3438)', () => {
     renderPage();
 
     expect(await screen.findByText('예정 환불금액')).toBeInTheDocument();
-    await waitFor(() => expect(mockGet).toHaveBeenCalledWith('/vod-pass'));
+    expect(
+      await screen.findByText(/이용이 시작되어 환불되지 않으며/),
+    ).toBeInTheDocument();
     expect(screen.queryByText(NOTICE)).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('link', { name: 'VOD 이용권 환불하러 가기' }),
+    ).not.toBeInTheDocument();
   });
 
   it('이용권을 이미 환불했다면 안내가 없다', async () => {
@@ -395,5 +471,6 @@ describe('CreditDeletePage 챌린지 환불 안내 (LC-3438)', () => {
 
     expect(await screen.findByText('예정 환불금액')).toBeInTheDocument();
     expect(screen.queryByText(NOTICE)).not.toBeInTheDocument();
+    expect(screen.queryByText(/환불되지 않으며/)).not.toBeInTheDocument();
   });
 });
