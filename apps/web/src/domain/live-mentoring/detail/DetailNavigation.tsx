@@ -48,8 +48,8 @@ const SCROLL_OFFSET = 70;
  * 그 모듈을 import 하면 `import.meta` 를 쓰는 의존성이 딸려와 jest 가 파싱하지 못한다.
  * 값이 바뀌면 NavBar 와 함께 고쳐야 한다.
  */
-const FULL_NAVBAR_OFFSET = 'top-[84px] md:top-[115px]';
-const SINGLE_ROW_NAVBAR_OFFSET = 'top-[43px] md:top-[115px]';
+const FULL_NAVBAR_OFFSET = 'top-[84px] md:top-[155px]';
+const SINGLE_ROW_NAVBAR_OFFSET = 'top-[43px] md:top-[155px]';
 
 interface DetailNavigationProps {
   /** 섹션이 DOM 에 올라온 뒤 관찰을 시작하기 위한 플래그. */
