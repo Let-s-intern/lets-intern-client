@@ -6,6 +6,7 @@ import LoadingContainer from '@/common/loading/LoadingContainer';
 import { useGetAllInOnePassLanding } from '@/domain/all-in-one-pass/api/landing';
 import { useGetMembershipApplicationForm } from '@/domain/all-in-one-pass/api/purchase';
 import HeroSection from '@/domain/all-in-one-pass/landing/HeroSection';
+import LandingNav from '@/domain/all-in-one-pass/landing/LandingNav';
 import { parseLandingDescription } from '@/domain/all-in-one-pass/landing/landingContent';
 import MembershipPlanBottomSheet from '@/domain/all-in-one-pass/ui/MembershipPlanBottomSheet';
 import dayjs from '@/lib/dayjs';
@@ -59,11 +60,11 @@ export default function AllInOnePassLandingPage() {
   const isClosed = !!deadline && now.isAfter(deadline);
   const ctaDisabled = isApplied || isBeforeSale || isClosed;
   const ctaText = isApplied
-    ? '이미 이용 중'
+    ? '이미 신청이 완료되었습니다.'
     : isBeforeSale
-      ? '판매 예정'
+      ? '판매 예정입니다.'
       : isClosed
-        ? '판매 종료'
+        ? '판매가 종료되었습니다.'
         : '지금 바로 시작하기';
 
   if (isLoading || !pass) {
@@ -81,6 +82,7 @@ export default function AllInOnePassLandingPage() {
         onStart={handleBuyClick}
         onScrollToBenefit={scrollToBenefit}
       />
+      <LandingNav isReady={!isLoading} />
 
       <MembershipPlanBottomSheet
         membershipId={membershipId}
