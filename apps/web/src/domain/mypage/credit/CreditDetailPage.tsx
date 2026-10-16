@@ -3,6 +3,7 @@
 import { useUserQuery } from '@/api/user/user';
 import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import Input from '@/common/input/v2/Input';
+import BundledPaymentItems from '@/domain/mypage/credit/ui/BundledPaymentItems';
 import ReportCreditSubRow from '@/domain/mypage/credit/ui/ReportCreditSubRow';
 import MoreButton from '@/domain/mypage/ui/button/MoreButton';
 import OrderProgramInfo from '@/domain/program/OrderProgramInfo';
@@ -11,6 +12,8 @@ import dayjs from '@/lib/dayjs';
 import { useParams, useRouter } from 'next/navigation';
 import useCredit from './hooks/useCredit';
 import { planUpgradePaymentTitle } from './utils/planUpgradePayment';
+import { getVodPassRefundBlockedReason } from './utils/vodPassRefund';
+import { getVodPassInfoRows } from './utils/vodPassStatus';
 
 const convertDateFormat = (date: string) => dayjs(date).format('YYYY.MM.DD');
 
@@ -64,6 +67,7 @@ const CreditDetailContent = () => {
     discountAmount,
     planUpgradePayments,
     planUpgradeAmount,
+    vodPass,
   } = useCredit(paymentId);
 
   const {
@@ -71,6 +75,12 @@ const CreditDetailContent = () => {
     isLoading: userDataIsLoading,
     isError: userDataIsError,
   } = useUserQuery();
+
+  // 환불할 수 없는 이용권은 버튼을 없애는 대신 이유를 알려준다
+  const vodPassRefundBlockedReason =
+    vodPass && !isCancelable && !isCanceled
+      ? getVodPassRefundBlockedReason(vodPass)
+      : null;
 
   return (
     <div
@@ -117,10 +127,23 @@ const CreditDetailContent = () => {
           `OrderProgramInfo` 안에 있다). 구매 플랜은 결제 상세 응답에 없어
           넘기지 않는다 — 전용 상세(`/mypage/credit/live-mentoring/{id}`)가
           신청 API 에서 받아 보여준다.
+
+          VOD 이용권은 이용권 목록에서 찾은 상태를 넘긴다. 이용권 조회가 실패해도
+          (`vodPass` 없음) 결제 상세는 그대로 보이고 상태 영역만 빠진다.
         */}
         <OrderProgramInfo
           {...paymentDetail.programInfo}
           accessMethod={paymentDetail.accessMethod}
+          vodPassRows={vodPass ? getVodPassInfoRows(vodPass) : undefined}
+        />
+        <BundledPaymentItems
+          items={paymentDetail.paymentItems}
+          currentPaymentId={Number(paymentId)}
+          totalAmount={
+            paymentDetail.orderTotalPaidAmount ??
+            paymentDetail.tossInfo?.totalAmount ??
+            0
+          }
         />
       </div>
 
@@ -320,6 +343,11 @@ const CreditDetailContent = () => {
             )}
           </div>
         </div>
+        {vodPassRefundBlockedReason && (
+          <p className="text-neutral-40 w-full text-sm font-medium">
+            {vodPassRefundBlockedReason}
+          </p>
+        )}
         {isCancelable ? (
           <button
             className="bg-neutral-80 text-neutral-40 flex w-full items-center justify-center rounded-sm px-5 py-2.5 font-medium"

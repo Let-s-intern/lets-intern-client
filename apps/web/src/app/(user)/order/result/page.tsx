@@ -1,19 +1,29 @@
 'use client';
 
-import { PostApplicationResult } from '@/api/application';
+import {
+  PostApplicationResult,
+  useProgramApplicationQueryKey,
+} from '@/api/application';
 import { useProgramQuery } from '@/api/program';
 import {
   getPaymentMethodLabel,
   paymentResultSearchParamsSchema,
 } from '@/data/getPaymentSearchParams';
 import DescriptionBox from '@/domain/program/paymentSuccess/DescriptionBox';
+import {
+  getOrderErrorMessage,
+  getVodPassResultNotice,
+  isVodPassProductChangedError,
+} from '@/domain/program/paymentSuccess/orderResult';
 import PaymentInfoRow from '@/domain/program/paymentSuccess/PaymentInfoRow';
 import ProgramCard from '@/domain/program/ProgramCard';
 import { buildPostApplicationBody } from '@/domain/program/program-detail/apply/utils/postApplicationBody';
+import { isVodPassSelected } from '@/domain/program/vodPassPurchase';
 import dayjs from '@/lib/dayjs';
 import useProgramStore from '@/store/useProgramStore';
 import axios from '@/utils/axios';
 import { searchParamsToObject } from '@/utils/network';
+import { useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -24,10 +34,13 @@ const PaymentResultContent = () => {
   const hasRequested = useRef(false);
   const searchParams = useSearchParams();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const [result, setResult] = useState<PostApplicationResult | null | 'error'>(
     null,
   );
+  // 실패 사유를 구분할 수 있을 때만 값이 있다. 없으면 기존 실패 화면 그대로다
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const params = useMemo(() => {
     const obj = searchParamsToObject(searchParams);
@@ -88,6 +101,13 @@ const PaymentResultContent = () => {
       })
       .catch((e) => {
         console.error(e);
+        setErrorMessage(getOrderErrorMessage(e));
+        if (isVodPassProductChangedError(e)) {
+          // 돌아가서 이용권을 다시 고를 때 최신 가격·기간이 보이도록 신청폼을 새로 받게 한다
+          queryClient.invalidateQueries({
+            queryKey: [useProgramApplicationQueryKey],
+          });
+        }
         setResult('error');
       })
       .finally(() => {
@@ -98,7 +118,14 @@ const PaymentResultContent = () => {
           `${window.location.pathname}?${newSearchParams.toString()}`,
         );
       });
-  }, [_hasHydrated, params, programApplicationData, router, searchParams]);
+  }, [
+    _hasHydrated,
+    params,
+    programApplicationData,
+    queryClient,
+    router,
+    searchParams,
+  ]);
 
   const programQuery = useProgramQuery({
     programId: programApplicationData.programId ?? -1,
@@ -138,6 +165,10 @@ const PaymentResultContent = () => {
   }
 
   const isSuccess = typeof result === 'object' && result !== null;
+  const vodPassResult =
+    typeof result === 'object' && result !== null ? result.vodPass : null;
+  const hasVodPass =
+    isVodPassSelected(programApplicationData) || vodPassResult != null;
 
   const returnLink = useMemo(() => {
     const base = `/program/${programApplicationData.programType}/${programApplicationData.programId}`;
@@ -160,6 +191,11 @@ const PaymentResultContent = () => {
           ) : (
             <>
               <DescriptionBox type={isSuccess ? 'SUCCESS' : 'FAIL'} />
+              {errorMessage && (
+                <p className="text-xsmall14 text-neutral-20 mt-3 text-center">
+                  {errorMessage}
+                </p>
+              )}
               <div className="flex w-full flex-col items-center justify-start gap-y-10 py-8">
                 <div className="flex w-full flex-col items-start justify-center gap-6">
                   <div className="text-xsmall16 text-neutral-0 font-semibold">
@@ -271,6 +307,11 @@ const PaymentResultContent = () => {
                       </>
                     )}
                   </div>
+                  {isSuccess && hasVodPass && (
+                    <p className="text-xsmall14 text-neutral-40">
+                      {getVodPassResultNotice(vodPassResult)}
+                    </p>
+                  )}
                   {isSuccess && (
                     <Link
                       href="/mypage/career/board"

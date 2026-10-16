@@ -1,15 +1,26 @@
 import { useApplicationDownloadQuery } from '@/api/application';
 import { paymentDetailQueryOptions } from '@/api/payment/payment';
+import { useVodPassListQuery, useVodPassQuery } from '@/api/vodPass';
 import dayjs from '@/lib/dayjs';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
+import { scopePaymentDetailToRow } from '../utils/bundledPayment';
 import { sumPlanUpgradeAmount } from '../utils/planUpgradePayment';
+import { hasLaterVodPass } from '../utils/vodPassRefund';
 
 /** 프로그램 결제 내역 로직
  * @note 호출 컴포넌트는 반드시 AsyncBoundary로 감싸야 합니다.
  */
 export default function useCredit(paymentId: string) {
-  const { data } = useSuspenseQuery(paymentDetailQueryOptions(paymentId));
+  const { data: paymentDetail } = useSuspenseQuery(
+    paymentDetailQueryOptions(paymentId),
+  );
+
+  // 챌린지와 VOD 이용권을 한 번에 결제한 묶음은 PG 거래 값을 이 행 기준으로 바꿔 계산한다
+  const data = useMemo(
+    () => scopePaymentDetailToRow(paymentDetail, Number(paymentId)),
+    [paymentDetail, paymentId],
+  );
 
   const isGuidebook = data.programInfo.programType === 'GUIDEBOOK';
   const isVod = data.programInfo.programType === 'VOD';
@@ -20,6 +31,41 @@ export default function useCredit(paymentId: string) {
     enabled: isGuidebook || isVod,
   });
 
+  // VOD 이용권의 상태·환불 가능 여부는 결제 상세에 없어 이용권 목록에서 찾는다
+  const isVodPass = data.programInfo.programType === 'VOD_PASS';
+  const {
+    data: vodPass,
+    isError: isVodPassError,
+    isLoading: isVodPassLoading,
+  } = useVodPassQuery(data.programInfo.applicationId, isVodPass);
+
+  // 이 이용권 뒤에 예약된 이용권이 있으면 환불 전에 시작일이 당겨지지 않는다고 알린다
+  const { data: vodPassList } = useVodPassListQuery(isVodPass);
+  const hasLaterVodPassAfterThis =
+    vodPass !== undefined && vodPassList !== undefined
+      ? hasLaterVodPass(vodPass, vodPassList.passes)
+      : false;
+
+  // 챌린지와 함께 결제한 이용권은 챌린지 환불로 환불되지 않는다.
+  // 아직 환불할 수 있으면 별도 환불을, 이미 이용이 시작됐으면 환불되지 않는다는 점을 안내한다
+  const bundledVodPassItem = isVodPass
+    ? undefined
+    : data.paymentItems?.find(
+        (item) => item.programType === 'VOD_PASS' && !item.isCanceled,
+      );
+  const { data: bundledVodPass } = useVodPassQuery(
+    bundledVodPassItem?.applicationId,
+    bundledVodPassItem !== undefined,
+  );
+  const refundableBundledVodPassPaymentId =
+    bundledVodPass?.refundable === true
+      ? (bundledVodPassItem?.paymentId ?? null)
+      : null;
+  const hasUnrefundableBundledVodPass =
+    bundledVodPass !== undefined &&
+    bundledVodPass.refundable !== true &&
+    bundledVodPass.status !== 'CANCELED';
+
   // 결제 취소 가능한 프로그램이면 true 아니면 false
   const isCancelable = useMemo(() => {
     if (
@@ -27,6 +73,11 @@ export default function useCredit(paymentId: string) {
       data.programInfo.isCanceled
     ) {
       return false;
+    }
+
+    // VOD 이용권: 활성화 전이고 서버가 환불 가능하다고 한 경우만. 조회 전·실패는 불가로 본다
+    if (data.programInfo.programType === 'VOD_PASS') {
+      return vodPass?.refundable === true;
     }
 
     // 가이드북/VOD: 결제 후 7일 이내 + 다운로드 이력 없을 때만 환불 가능
@@ -53,7 +104,7 @@ export default function useCredit(paymentId: string) {
     } else {
       return dayjs().isBefore(dayjs(data.programInfo.startDate));
     }
-  }, [data, downloadStatus]);
+  }, [data, downloadStatus, vodPass]);
 
   // 결제 취소된 내역이면 true
   const isCanceled =
@@ -144,10 +195,11 @@ export default function useCredit(paymentId: string) {
       return 0;
     }
 
-    // 가이드북/VOD: 차감 없이 전액 환불
+    // 가이드북/VOD/VOD 이용권: 차감 없이 전액 환불
     if (
       data.programInfo.programType === 'GUIDEBOOK' ||
-      data.programInfo.programType === 'VOD'
+      data.programInfo.programType === 'VOD' ||
+      data.programInfo.programType === 'VOD_PASS'
     ) {
       return data.paymentInfo.finalPrice ?? 0;
     }
@@ -219,6 +271,13 @@ export default function useCredit(paymentId: string) {
   }, [data, productAmount]);
 
   return {
+    isVodPass,
+    vodPass,
+    isVodPassError,
+    isVodPassLoading,
+    refundableBundledVodPassPaymentId,
+    hasUnrefundableBundledVodPass,
+    hasLaterVodPass: hasLaterVodPassAfterThis,
     planUpgradePayments,
     planUpgradeAmount,
     data,

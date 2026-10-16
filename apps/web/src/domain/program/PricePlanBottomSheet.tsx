@@ -1,7 +1,18 @@
 import { useProgramApplicationQuery } from '@/api/application';
 import BaseBottomSheet from '@/common/sheet/BaseBottomSheet';
 import { COUPON_DISABLED_CHALLENGE_TYPES } from '@/domain/program/program-detail/apply/constants';
+import { useVodPassPurchaseEnabled } from '@/domain/program/useVodPassPurchaseEnabled';
+import {
+  calculateChallengeTotalWithVodPass,
+  calculateVodPassDurationDays,
+  calculateVodPassPrice,
+  clampVodPassMonths,
+  supportsVodPassMonths,
+  VOD_PASS_MAX_MONTHS,
+  VOD_PASS_MIN_MONTHS,
+} from '@/domain/program/vodPassPurchase';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
+import { twMerge } from '@/lib/twMerge';
 import {
   ChallengeIdPrimitive,
   ChallengePricePlan,
@@ -11,7 +22,7 @@ import useProgramStore from '@/store/useProgramStore';
 import FeedbackMentoringLink from '@/domain/program/challenge/ui/FeedbackMentoringLink';
 import { getChallengeThemeColor } from '@/domain/program/challenge/utils/getChallengeThemeColor';
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
-import { RadioGroup } from '@mui/material';
+import { Checkbox, FormControlLabel, RadioGroup } from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
 import BaseButton from '../../common/button/BaseButton';
@@ -34,6 +45,123 @@ function PricePlanLabel({
       <br />
       <span className="text-neutral-10">{description}</span>
     </>
+  );
+}
+
+// 체크박스 색은 common/ControlLabel.tsx 와 같은 파란색을 쓰되, 해제 상태 테두리만 진하게 한다.
+// 공용 색(#E7E7E7)은 흰 배경에서 거의 보이지 않는다.
+const VOD_PASS_CHECKBOX_SX = {
+  color: '#ACAFB6',
+  '&.Mui-checked': {
+    color: '#5177FF',
+  },
+};
+
+const VOD_PASS_LABEL_SX = {
+  m: 0,
+  width: '100%',
+  '.MuiFormControlLabel-label': {
+    flex: 1,
+    minWidth: 0,
+    fontSize: '0.875rem',
+    fontWeight: 500,
+    color: '#2A2D34',
+    fontFamily: 'Pretendard Variable',
+  },
+};
+
+function VodPassLabel({
+  title,
+  durationDays,
+  price,
+  checked,
+}: {
+  title: string;
+  durationDays: number;
+  price: number;
+  checked: boolean;
+}) {
+  return (
+    <span className="flex w-full items-center justify-between gap-3">
+      <span className="min-w-0">
+        <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
+          <b className="font-bold">{title}</b>
+          <span
+            className={twMerge(
+              'text-xxsmall12 text-primary rounded-full px-2 py-0.5 font-medium',
+              checked ? 'bg-static-100' : 'bg-primary-10',
+            )}
+          >
+            {durationDays}일 이용권
+          </span>
+        </span>
+        <span className="text-xxsmall12 text-neutral-30 mt-1 block font-normal leading-5">
+          결제 즉시 이용이 시작됩니다. 이용 중인 이용권이 있으면 종료 후 이어서
+          시작됩니다
+        </span>
+      </span>
+      <span
+        className={twMerge(
+          'text-xsmall14 flex shrink-0 items-baseline font-bold',
+          checked ? 'text-primary' : 'text-neutral-10',
+        )}
+      >
+        <span aria-hidden="true">+</span>
+        <span>{price.toLocaleString()}원</span>
+      </span>
+    </span>
+  );
+}
+
+const VOD_PASS_STEPPER_BUTTON_CLASS =
+  'border-neutral-80 text-neutral-10 disabled:text-neutral-60 flex h-8 w-8 items-center justify-center rounded-xs border bg-white text-base font-bold disabled:cursor-not-allowed';
+
+function VodPassMonthsStepper({
+  months,
+  additionalMonthPrice,
+  onChange,
+}: {
+  months: number;
+  additionalMonthPrice: number;
+  onChange: (months: number) => void;
+}) {
+  return (
+    <div className="border-primary-20 flex items-center justify-between gap-3 border-t px-3 py-3">
+      <span className="min-w-0">
+        <span className="text-xsmall14 block font-medium">이용 기간</span>
+        {additionalMonthPrice > 0 && (
+          <span className="text-xxsmall12 text-neutral-30 mt-0.5 block">
+            2개월부터 매월 +{additionalMonthPrice.toLocaleString()}원
+          </span>
+        )}
+      </span>
+      <span className="flex shrink-0 items-center gap-2">
+        <button
+          type="button"
+          aria-label="이용 개월 수 줄이기"
+          className={VOD_PASS_STEPPER_BUTTON_CLASS}
+          disabled={months <= VOD_PASS_MIN_MONTHS}
+          onClick={() => onChange(months - 1)}
+        >
+          -
+        </button>
+        <span
+          className="text-xsmall14 min-w-[3.5rem] text-center font-semibold"
+          aria-live="polite"
+        >
+          {months}개월
+        </span>
+        <button
+          type="button"
+          aria-label="이용 개월 수 늘리기"
+          className={VOD_PASS_STEPPER_BUTTON_CLASS}
+          disabled={months >= VOD_PASS_MAX_MONTHS}
+          onClick={() => onChange(months + 1)}
+        >
+          +
+        </button>
+      </span>
+    </div>
   );
 }
 
@@ -87,6 +215,9 @@ function PricePlanBottomSheet({
         : BASIC;
 
   const [pricePlan, setPricePlan] = useState<ChallengePricePlan>(defaultValue);
+  // VOD 이용권 선택 여부와 개월 수. 플랜과 독립이라 플랜을 바꿔도 유지한다 (LC-3438)
+  const [isVodPassChecked, setIsVodPassChecked] = useState(false);
+  const [vodPassMonths, setVodPassMonths] = useState(VOD_PASS_MIN_MONTHS);
 
   const {
     basicRegularPrice,
@@ -147,6 +278,35 @@ function PricePlanBottomSheet({
 
   const { setProgramApplicationForm } = useProgramStore();
 
+  // 상품이 null·누락(비활성 또는 서버 배포 전)이면 카드도 선택값도 없다
+  // PostHog 플래그(vod-pass-purchase)가 꺼져 있으면 서버가 상품을 내려줘도 카드를 숨긴다 (LC-3438)
+  const vodPassPurchaseEnabled = useVodPassPurchaseEnabled();
+  const vodPassProduct = vodPassPurchaseEnabled
+    ? (application?.vodPassProduct ?? null)
+    : null;
+  const selectedVodPass = isVodPassChecked ? vodPassProduct : null;
+  // 추가 월 가격이 없는 응답이면 개월 선택을 지원하지 않는 서버라 1개월로 고정한다
+  const canSelectMonths = vodPassProduct
+    ? supportsVodPassMonths(vodPassProduct)
+    : false;
+  const selectedMonths = canSelectMonths
+    ? clampVodPassMonths(vodPassMonths)
+    : VOD_PASS_MIN_MONTHS;
+  const vodPassPrice = selectedVodPass
+    ? calculateVodPassPrice(selectedVodPass, selectedMonths)
+    : 0;
+  const vodPassDurationDays = selectedVodPass
+    ? calculateVodPassDurationDays(selectedVodPass, selectedMonths)
+    : 0;
+
+  // 화면 합계와 스토어에 담는 totalPrice 는 같은 함수에서 나온다. 쿠폰은 결제 입력 단계에서 적용된다
+  const totalPrice = calculateChallengeTotalWithVodPass({
+    regularPrice: finalPriceInfo.regularPrice,
+    discount: finalPriceInfo.discountPrice,
+    couponPrice: 0,
+    vodPassPrice,
+  });
+
   const handleApply = useCallback(() => {
     const payInfo = application ? getPayInfo(application, pricePlan) : null;
 
@@ -169,16 +329,14 @@ function PricePlanBottomSheet({
       (item) => item.challengePricePlanType === pricePlan,
     )?.priceId; // 가격 플랜에 맞는 priceId 넘기기
     const orderId = generateOrderId();
-    const totalPrice = Math.max(
-      finalPriceInfo.regularPrice - finalPriceInfo.discountPrice,
-      0,
-    );
+    // 이용권을 담으면 서버가 paymentKey 를 요구하므로 무료 신청으로 처리하지 않는다
     const isFree =
-      payInfo.challengePriceType === 'FREE' ||
-      payInfo.livePriceType === 'FREE' ||
-      // 가격 행의 이용료(payInfo.price)는 옵션 금액을 모른다. 이용료 0원 + 유료 옵션 플랜이
-      // 무료로 처리돼 결제창 없이 신청이 넘어가고 서버 결제 승인이 실패했다. 옵션까지 더한 금액으로 본다
-      totalPrice === 0;
+      !selectedVodPass &&
+      (payInfo.challengePriceType === 'FREE' ||
+        payInfo.livePriceType === 'FREE' ||
+        // 가격 행의 이용료(payInfo.price)는 옵션 금액을 모른다. 이용료 0원 + 유료 옵션 플랜이
+        // 무료로 처리돼 결제창 없이 신청이 넘어가고 서버 결제 승인이 실패했다. 옵션까지 더한 금액으로 본다
+        totalPrice === 0);
 
     setProgramApplicationForm({
       priceId,
@@ -186,7 +344,7 @@ function PricePlanBottomSheet({
       discount: finalPriceInfo.discountPrice,
       couponId: '',
       couponPrice: 0,
-      totalPrice, // 판매가
+      totalPrice, // 판매가. 이용권을 담았다면 쿠폰 적용 뒤에 더해질 이용권 가격이 포함돼 있다
       contactEmail: userInfo.contactEmail,
       question: userInfo.question,
       email: userInfo.email,
@@ -202,6 +360,11 @@ function PricePlanBottomSheet({
       // 버전은 들어온 페이지의 버전으로 고정한다. 다른 챌린지·버전에서 남은 값을
       // 항상 덮어쓰고, LIGHT 는 버전을 쓰지 않는다 (설계안 D1)
       challengeVersionId: pricePlan === LIGHT ? null : challengeVersionId,
+      // 미선택이면 0 으로 되돌려 이전 선택이 남지 않게 한다
+      vodPassProductId: selectedVodPass?.id ?? 0,
+      vodPassPrice, // 선택한 개월 수 기준 총액
+      vodPassDurationDays, // 선택한 개월 수 기준 총 이용일수
+      vodPassMonths: selectedVodPass ? selectedMonths : 0,
     });
 
     router.push(
@@ -213,6 +376,11 @@ function PricePlanBottomSheet({
     challengeVersionId,
     finalPriceInfo.regularPrice,
     finalPriceInfo.discountPrice,
+    selectedVodPass,
+    selectedMonths,
+    totalPrice,
+    vodPassPrice,
+    vodPassDurationDays,
     setProgramApplicationForm,
     challenge.title,
     challenge.priceInfo,
@@ -325,16 +493,63 @@ function PricePlanBottomSheet({
           </RadioGroup>
         </OptionDropdown>
 
+        {/* VOD 이용권 (플랜과 독립) */}
+        {vodPassProduct && (
+          <>
+            <span className="text-xsmall14 mb-3 mt-6 block font-semibold">
+              VOD 이용권 추가 (선택)
+            </span>
+            <div
+              className={twMerge(
+                'rounded-xs overflow-hidden border transition-colors',
+                isVodPassChecked
+                  ? 'border-primary bg-primary-5'
+                  : 'border-neutral-80 hover:bg-neutral-100',
+              )}
+            >
+              <FormControlLabel
+                className="py-3 pl-2 pr-3"
+                sx={VOD_PASS_LABEL_SX}
+                checked={isVodPassChecked}
+                onChange={(_, checked) => setIsVodPassChecked(checked)}
+                control={<Checkbox size="small" sx={VOD_PASS_CHECKBOX_SX} />}
+                label={
+                  <VodPassLabel
+                    title={vodPassProduct.title}
+                    durationDays={calculateVodPassDurationDays(
+                      vodPassProduct,
+                      selectedMonths,
+                    )}
+                    price={calculateVodPassPrice(
+                      vodPassProduct,
+                      selectedMonths,
+                    )}
+                    checked={isVodPassChecked}
+                  />
+                }
+              />
+              {isVodPassChecked && canSelectMonths && (
+                <VodPassMonthsStepper
+                  months={selectedMonths}
+                  additionalMonthPrice={
+                    vodPassProduct.additionalMonthPrice ?? 0
+                  }
+                  onChange={(months) =>
+                    setVodPassMonths(clampVodPassMonths(months))
+                  }
+                />
+              )}
+            </div>
+          </>
+        )}
+
         {/* 총 결제 금액 */}
         <span className="text-xsmall14 mt-6 block font-semibold">
           총 결제 금액
         </span>
         <hr className="my-3" />
         <span className="text-small18 text-neutral-10 block text-right font-bold">
-          {(
-            finalPriceInfo.regularPrice - finalPriceInfo.discountPrice
-          ).toLocaleString()}
-          원
+          {totalPrice.toLocaleString()}원
         </span>
 
         {/* 버튼 */}

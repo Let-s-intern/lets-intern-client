@@ -8,6 +8,7 @@ const programTypeLabel: Record<string, string> = {
   LIVE: '라이브',
   GUIDEBOOK: '가이드북',
   VOD: 'VOD',
+  VOD_PASS: 'VOD 이용권',
   REPORT: '서류진단',
 };
 
@@ -69,7 +70,8 @@ const RefundHistoryTable = ({ logs, isLoading }: Props) => {
                 <span className="mr-1 rounded bg-neutral-200 px-1.5 py-0.5 text-xs">
                   {programTypeLabel[log.programType ?? ''] ?? log.programType}
                 </span>
-                {log.programId ? (
+                {/* 이용권의 programId 는 상품 ID 라 프로그램 사용자 페이지로 갈 수 없다 */}
+                {log.programId && log.programType !== 'VOD_PASS' ? (
                   <Link
                     className="underline"
                     to={`/programs/${log.programId}/users?programType=${log.programType}`}

@@ -50,6 +50,9 @@ const RefundHistoryPage = lazy(
 const UsageHistoryPage = lazy(
   () => import('./pages/pages/usage/UsageHistoryPage'),
 );
+const VodPassProductSettings = lazy(
+  () => import('./pages/pages/vodpass/VodPassProductSettings'),
+);
 
 const ChallengeContents = lazy(
   () => import('./pages/pages/challenge/ChallengeContents'),
@@ -362,6 +365,10 @@ export const router = createBrowserRouter([
       {
         path: '/programs/:programId/users',
         element: withSuspense(<ProgramUsers />),
+      },
+      {
+        path: '/vod-pass-product',
+        element: withSuspense(<VodPassProductSettings />),
       },
 
       // 챌린지 운영

@@ -18,6 +18,7 @@ import CouponSection, {
 import MotiveAnswerSection from '@/domain/program/program-detail/apply/section/MotiveAnswerSection';
 import PaymentSubmitSection from '@/domain/program/program-detail/apply/section/PaymentSubmitSection';
 import PriceSection from '@/domain/program/program-detail/apply/section/PriceSection';
+import { calculateChallengeTotalWithVodPass } from '@/domain/program/vodPassPurchase';
 import UserInputSection from '@/domain/program/program-detail/apply/section/UserInputSection';
 import AppliedVersionSection from '@/domain/program/program-detail/apply/section/AppliedVersionSection';
 import {
@@ -41,19 +42,6 @@ import { AxiosError } from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import OrderProgramInfo from '../../../domain/program/OrderProgramInfo';
-
-function calculateTotalPrice({
-  regularPrice = 0,
-  discount = 0,
-  couponPrice = 0,
-}: {
-  regularPrice?: number; // 프로그램 정가
-  discount?: number; // 프로그램 할인금액
-  couponPrice?: number;
-}) {
-  const totalDiscount = discount + couponPrice;
-  return regularPrice <= totalDiscount ? 0 : regularPrice - totalDiscount;
-}
 
 const PaymentInputContent = () => {
   const router = useRouter();
@@ -183,10 +171,12 @@ const PaymentInputContent = () => {
             })
           : coupon;
 
-      const newTotalPrice = calculateTotalPrice({
-        regularPrice: programApplicationData.price ?? 0, // 총 정가
-        discount: programApplicationData.discount ?? 0,
+      // 서버 합계식: max(정가 - 할인 - 쿠폰, 0) + 이용권. 이용권은 쿠폰 적용 뒤에 더해진다
+      const newTotalPrice = calculateChallengeTotalWithVodPass({
+        regularPrice: programApplicationData.price, // 총 정가
+        discount: programApplicationData.discount,
         couponPrice: data.price,
+        vodPassPrice: programApplicationData.vodPassPrice,
       });
 
       setProgramApplicationForm({
@@ -200,22 +190,26 @@ const PaymentInputContent = () => {
       programApplicationData.couponPrice,
       programApplicationData.discount,
       programApplicationData.price,
+      programApplicationData.vodPassPrice,
     ],
   );
 
-  // 결제 금액
-  const totalPrice = useMemo(() => {
-    const regularPrice = programApplicationData.price ?? 0;
-    const discountAmount = programApplicationData.discount ?? 0;
-    const couponPrice = programApplicationData.couponPrice ?? 0;
-    const totalDiscount = discountAmount + couponPrice;
-
-    return regularPrice <= totalDiscount ? 0 : regularPrice - totalDiscount;
-  }, [
-    programApplicationData.couponPrice,
-    programApplicationData.discount,
-    programApplicationData.price,
-  ]);
+  // 결제 금액. setCoupon 이 스토어에 담는 totalPrice 와 같은 함수에서 나온다
+  const totalPrice = useMemo(
+    () =>
+      calculateChallengeTotalWithVodPass({
+        regularPrice: programApplicationData.price,
+        discount: programApplicationData.discount,
+        couponPrice: programApplicationData.couponPrice,
+        vodPassPrice: programApplicationData.vodPassPrice,
+      }),
+    [
+      programApplicationData.couponPrice,
+      programApplicationData.discount,
+      programApplicationData.price,
+      programApplicationData.vodPassPrice,
+    ],
+  );
 
   /** 쿠폰 적용이 아니라 애초부터 무료인 경우 다르게 보여주기 **/
   const buttonText = programApplicationData.isFree
@@ -456,6 +450,8 @@ const PaymentInputContent = () => {
                 price: programApplicationData.couponPrice ?? 0,
               }}
               showCouponDiscount={showCouponSection}
+              vodPassPrice={programApplicationData.vodPassPrice ?? 0}
+              vodPassMonths={programApplicationData.vodPassMonths ?? 0}
             />
             <hr className="bg-neutral-85" />
             <div className="text-neutral-0 flex h-10 items-center justify-between px-3 font-semibold">

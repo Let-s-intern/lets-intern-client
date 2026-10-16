@@ -201,6 +201,8 @@ export const ProgramTypeEnum = z.enum([
   'VOD',
   'REPORT',
   'GUIDEBOOK',
+  // VOD 이용권(LC-3438). 결제 내역에 별도 행으로 내려온다. 모르는 값이면 응답 전체가 parse 에서 터진다.
+  'VOD_PASS',
   /*
     서버 `ProgramType` 에 있는 값이다. `GET /api/v2/user/applications` 가 실제로
     내려주므로 빠져 있으면 신청현황 응답 전체가 zod parse 에서 터진다.

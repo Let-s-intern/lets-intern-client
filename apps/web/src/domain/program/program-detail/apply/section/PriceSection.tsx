@@ -37,6 +37,8 @@ const PriceSection = ({
   payInfo,
   coupon,
   showCouponDiscount = true,
+  vodPassPrice = 0,
+  vodPassMonths = 0,
 }: {
   payInfo: {
     price: number;
@@ -44,6 +46,10 @@ const PriceSection = ({
   };
   coupon: ICouponForm;
   showCouponDiscount?: boolean;
+  /** 함께 결제하는 VOD 이용권 가격. 쿠폰 적용 뒤에 더해지며 0 이면 줄을 그리지 않는다 (LC-3438) */
+  vodPassPrice?: number;
+  /** 함께 결제하는 VOD 이용권 개월 수. 0 이면 개월 표기 없이 그린다 (LC-3438) */
+  vodPassMonths?: number;
 }) => {
   const discountInfo = handleCouponPrice({ payInfo, coupon });
   return (
@@ -62,6 +68,14 @@ const PriceSection = ({
           <span className="font-bold">
             -{discountInfo.couponDiscount.toLocaleString()}원
           </span>
+        </div>
+      )}
+      {vodPassPrice > 0 && (
+        <div className="text-neutral-0 flex h-10 items-center justify-between px-3">
+          <span>
+            VOD 이용권{vodPassMonths > 0 ? ` ${vodPassMonths}개월` : ''}
+          </span>
+          <span>+{vodPassPrice.toLocaleString()}원</span>
         </div>
       )}
     </div>

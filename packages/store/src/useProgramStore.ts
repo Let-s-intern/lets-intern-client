@@ -24,6 +24,13 @@ interface ProgramApplicationFormStore extends HydrationStore {
     deposit: number;
     // 신청 입력에서 고른 챌린지 버전. 버전을 묻지 않는 신청은 null (LC-3247)
     challengeVersionId: number | null;
+    // 챌린지와 함께 결제하는 VOD 이용권(LC-3438). 0 이면 미선택이다.
+    // null 을 쓰면 checkInvalidate() 가 결제 폼 전체를 막으므로 기본값은 0 이다.
+    // 이 필드가 생기기 전에 persist 된 상태에서는 undefined 로 복원되므로 읽는 쪽은 `?? 0` 처리한다.
+    vodPassProductId: number;
+    vodPassPrice: number; // 선택한 개월 수 기준 총액
+    vodPassDurationDays: number; // 선택한 개월 수 기준 총 이용일수
+    vodPassMonths: number; // 0 이면 미선택이거나 개월 선택 전에 담긴 값이다. 요청에서는 1 로 본다
   };
   setProgramApplicationForm: (
     params: Partial<ProgramApplicationFormStore['data']>,
@@ -62,6 +69,10 @@ const useProgramStore = create(
         isFree: null,
         deposit: 0,
         challengeVersionId: null,
+        vodPassProductId: 0,
+        vodPassPrice: 0,
+        vodPassDurationDays: 0,
+        vodPassMonths: 0,
       },
       setProgramApplicationForm: (params) => {
         const currentData = get().data;
@@ -94,6 +105,10 @@ const useProgramStore = create(
             isFree: null,
             deposit: 0,
             challengeVersionId: null,
+            vodPassProductId: 0,
+            vodPassPrice: 0,
+            vodPassDurationDays: 0,
+            vodPassMonths: 0,
           },
         });
       },

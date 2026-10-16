@@ -1,5 +1,5 @@
 import dayjs from '@/lib/dayjs';
-import { missionSubmitToBadge } from './convert';
+import { missionSubmitToBadge, newProgramTypeToText } from './convert';
 
 // '최종 반려' 판정은 챌린지 종료 + 2일을 넘겼는지로 갈린다.
 const ongoing = dayjs().add(10, 'day');
@@ -79,4 +79,15 @@ describe('missionSubmitToBadge — 기존 케이스 회귀', () => {
       );
     },
   );
+});
+
+describe('newProgramTypeToText', () => {
+  it('VOD_PASS 는 타입 문자열 대신 VOD 이용권 라벨을 쓴다', () => {
+    expect(newProgramTypeToText.VOD_PASS).toBe('VOD 이용권');
+  });
+
+  it('기존 라벨은 그대로다', () => {
+    expect(newProgramTypeToText.CHALLENGE).toBe('챌린지');
+    expect(newProgramTypeToText.VOD).toBe('VOD 클래스');
+  });
 });
