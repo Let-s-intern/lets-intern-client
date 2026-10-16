@@ -55,6 +55,10 @@ export const vodPassListQueryOptions = {
   },
 };
 
+/** 내 이용권 목록 전체. 다른 이용권과의 선후 관계를 볼 때 쓴다. */
+export const useVodPassListQuery = (enabled = true) =>
+  useQuery({ ...vodPassListQueryOptions, enabled });
+
 /**
  * `applicationId` 의 이용권 한 건. 목록에 없으면 `data` 는 `undefined` 다.
  * 이용권 조회가 실패해도 호출한 화면이 깨지지 않도록 `isError` 로 갈라 쓴다.
