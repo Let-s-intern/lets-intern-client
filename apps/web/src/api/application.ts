@@ -22,7 +22,7 @@ import {
 } from './payment/payment';
 import { tossInfoType } from './payment/paymentSchema';
 import { useUserQueryKey } from './user/user';
-import { UseVodPassQueryKey } from './vodPass';
+import { UseVodPassQueryKey, vodPassStatusSchema } from './vodPass';
 
 export const programApplicationSchema = z.object({
   applied: z.boolean().nullable().optional(),
@@ -50,6 +50,8 @@ export const programApplicationSchema = z.object({
       id: z.number(),
       title: z.string(),
       price: z.number(),
+      // 1개월 초과분에 매월 더해지는 금액. 없으면 개월 선택을 지원하지 않는 서버라 1개월만 판다
+      additionalMonthPrice: z.number().nullable().optional(),
       durationDays: z.number(),
     })
     .nullable()
@@ -99,10 +101,11 @@ export interface PostApplicationInterface {
   contactEmail?: string;
   motivate?: string;
   question?: string;
-  // VOD 이용권을 함께 결제할 때만 세 값을 모두 보낸다 (LC-3438). 하나라도 있으면 서버가 전부 요구한다.
+  // VOD 이용권을 함께 결제할 때만 네 값을 모두 보낸다 (LC-3438). 하나라도 있으면 서버가 전부 요구한다.
   vodPassProductId?: number;
   vodPassExpectedPrice?: number;
   vodPassExpectedDurationDays?: number;
+  vodPassMonths?: number;
 }
 
 export const usePostApplicationMutation = ({
@@ -140,8 +143,19 @@ export const usePostApplicationMutation = ({
 
 export const postApplicationResultSchema = z.object({
   tossInfo: tossInfoType.nullable().optional(),
-  // 이용권을 함께 결제한 경우에만 내려온다 (LC-3438). 서버 배포 전에는 오지 않는다.
-  vodPass: z.record(z.string(), z.unknown()).nullable().optional(),
+  // 이용권을 함께 결제한 경우에만 내려온다 (LC-3438). status 는 ACTIVE 또는 SCHEDULED 다.
+  vodPass: z
+    .object({
+      applicationId: z.number(),
+      paymentId: z.number().nullable().optional(),
+      durationDays: z.number().nullable().optional(),
+      purchasedMonths: z.number().nullable().optional(),
+      status: vodPassStatusSchema,
+      startsAt: z.string().nullable().optional(),
+      endsAt: z.string().nullable().optional(),
+    })
+    .nullable()
+    .optional(),
   payments: z
     .array(
       z.object({

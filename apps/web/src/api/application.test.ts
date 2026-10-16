@@ -26,6 +26,7 @@ describe('programApplicationSchema.vodPassProduct (LC-3438)', () => {
     id: 7,
     title: 'VOD 전체 이용권',
     price: 29000,
+    additionalMonthPrice: 10000,
     durationDays: 30,
   };
 
@@ -45,6 +46,17 @@ describe('programApplicationSchema.vodPassProduct (LC-3438)', () => {
     const parsed = programApplicationSchema.parse({ name: 'QA' });
 
     expect(parsed.vodPassProduct).toBeUndefined();
+  });
+
+  it('추가 월 가격이 없는 이전 서버 응답도 파싱한다 (신청폼 전체가 깨지지 않는다)', () => {
+    const { additionalMonthPrice: _additionalMonthPrice, ...legacyProduct } =
+      vodPassProduct;
+
+    const parsed = programApplicationSchema.parse({
+      vodPassProduct: legacyProduct,
+    });
+
+    expect(parsed.vodPassProduct?.additionalMonthPrice).toBeUndefined();
   });
 
   it('필드가 모자란 상품은 거른다', () => {
@@ -67,7 +79,15 @@ describe('postApplicationResultSchema (LC-3438)', () => {
   it('이용권을 함께 결제한 응답의 payments 를 파싱한다', () => {
     const parsed = postApplicationResultSchema.parse({
       tossInfo: { method: '카드' },
-      vodPass: { applicationId: 91, status: 'UNACTIVATED' },
+      vodPass: {
+        applicationId: 91,
+        paymentId: 2,
+        durationDays: 90,
+        purchasedMonths: 3,
+        status: 'ACTIVE',
+        startsAt: '2026-10-16T10:00:00+09:00',
+        endsAt: '2027-01-14T10:00:00+09:00',
+      },
       payments: [
         {
           paymentId: 1,
@@ -86,6 +106,11 @@ describe('postApplicationResultSchema (LC-3438)', () => {
       ],
     });
 
+    expect(parsed.vodPass).toMatchObject({
+      status: 'ACTIVE',
+      purchasedMonths: 3,
+      endsAt: '2027-01-14T10:00:00+09:00',
+    });
     expect(parsed.payments).toHaveLength(2);
     expect(parsed.payments?.[1]).toMatchObject({
       type: 'VOD_PASS',
