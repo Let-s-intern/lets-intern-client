@@ -85,3 +85,26 @@ describe('RefundHistoryTable 프로그램 유형 라벨', () => {
     expect(within(row()).queryByText('VOD_PASS')).not.toBeInTheDocument();
   });
 });
+
+describe('RefundHistoryTable 프로그램 링크', () => {
+  it('일반 프로그램은 제목이 사용자 목록 링크다', () => {
+    renderTable([log()]);
+
+    expect(
+      within(row()).getByRole('link', { name: /면접 준비 7일 끝장 챌린지/ }),
+    ).toHaveAttribute('href', '/programs/319/users?programType=CHALLENGE');
+  });
+
+  it('이용권은 programId 가 상품 ID 여도 링크 없이 제목만 보인다', () => {
+    renderTable([
+      log({
+        programType: 'VOD_PASS',
+        programId: 1,
+        programTitle: 'VOD 전체 이용권',
+      }),
+    ]);
+
+    expect(within(row()).getByText('VOD 전체 이용권')).toBeInTheDocument();
+    expect(within(row()).queryByRole('link')).not.toBeInTheDocument();
+  });
+});

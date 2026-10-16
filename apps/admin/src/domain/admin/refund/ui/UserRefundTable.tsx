@@ -101,7 +101,8 @@ const UserRefundTable = ({ refunds, isLoading }: Props) => {
                   {programTypeLabel[refund.programType ?? ''] ??
                     refund.programType}
                 </span>
-                {refund.programId ? (
+                {/* 이용권의 programId 는 상품 ID 라 프로그램 사용자 페이지로 갈 수 없다 */}
+                {refund.programId && refund.programType !== 'VOD_PASS' ? (
                   <Link
                     className="underline"
                     to={`/programs/${refund.programId}/users?programType=${refund.programType}`}
