@@ -1,7 +1,12 @@
-import { useGetRetrospectiveRoundsQuery } from '@/api/all-in-one-pass/useRetrospectives';
+import {
+  retrospectiveRoundsQueryKey,
+  useGetRetrospectiveRoundsQuery,
+  useUpdateOrdinalQuestionMutation,
+} from '@/api/all-in-one-pass/useRetrospectives';
 import EmptyContainer from '@/common/container/EmptyContainer';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import { RetrospectiveRound } from '@/domain/all-in-one-pass/types';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import {
   Button,
   Table,
@@ -11,6 +16,7 @@ import {
   TableRow,
   TextField,
 } from '@mui/material';
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -26,6 +32,8 @@ const guideFieldSx = {
 /** A-4 회차별 질문·답변 가이드 수정 (회차는 BE 자동 생성) */
 export default function RoundListSection({ passId }: Props) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { snackbar } = useAdminSnackbar();
   const {
     data: rounds = [],
     isLoading,
@@ -42,10 +50,42 @@ export default function RoundListSection({ passId }: Props) {
       prev.map((r) => (r.id === id ? { ...r, ...partial } : r)),
     );
 
-  const handleSave = () => {
-    // TODO: API 연결 후 회차 질문·답변 가이드 저장(PATCH) 뮤테이션 연결
-    // eslint-disable-next-line no-console
-    console.log('[회고 회차 저장]', passId, rows);
+  const updateQuestion = useUpdateOrdinalQuestionMutation({
+    successCallback: () =>
+      queryClient.invalidateQueries({
+        queryKey: [retrospectiveRoundsQueryKey, passId],
+      }),
+  });
+
+  // 질문·답변 가이드가 바뀐 회차만 PATCH
+  const handleSave = async () => {
+    const changed = rows.filter((r) => {
+      const orig = rounds.find((o) => o.id === r.id);
+      return (
+        orig &&
+        (orig.weeklyQuestion !== r.weeklyQuestion ||
+          orig.answerGuide !== r.answerGuide)
+      );
+    });
+    if (changed.length === 0) {
+      snackbar('변경사항이 없습니다.');
+      return;
+    }
+    try {
+      await Promise.all(
+        changed.map((r) =>
+          updateQuestion.mutateAsync({
+            membershipId: passId,
+            questionId: r.id,
+            question: r.weeklyQuestion,
+            answerGuide: r.answerGuide,
+          }),
+        ),
+      );
+      snackbar('저장되었습니다.');
+    } catch (e) {
+      snackbar(e instanceof Error ? e.message : '저장에 실패했습니다.');
+    }
   };
 
   // 마지막 회차 = 마무리 회고
@@ -163,7 +203,11 @@ export default function RoundListSection({ passId }: Props) {
           </Table>
 
           <div className="flex justify-end">
-            <Button variant="contained" onClick={handleSave}>
+            <Button
+              variant="contained"
+              onClick={handleSave}
+              disabled={updateQuestion.isPending}
+            >
               저장하기
             </Button>
           </div>
