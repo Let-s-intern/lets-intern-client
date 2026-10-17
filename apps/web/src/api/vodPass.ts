@@ -26,8 +26,8 @@ export type VodPassStatus = z.infer<typeof vodPassStatusSchema>;
 export const vodPassSchema = z.object({
   applicationId: z.number(),
   paymentId: z.number().nullable().optional(),
-  startsAt: z.string().nullable().optional(), // 활성화 전에는 null
-  endsAt: z.string().nullable().optional(), // 활성화 전에는 null
+  startsAt: z.string().nullable().optional(), // 이전 모델의 미활성(UNACTIVATED) 구매는 null
+  endsAt: z.string().nullable().optional(), // 이전 모델의 미활성(UNACTIVATED) 구매는 null
   status: vodPassStatusSchema,
   paidAmount: z.number().nullable().optional(),
   // 서버가 내려주는 값만 믿는다. 없으면 환불할 수 없는 것으로 본다
@@ -37,6 +37,8 @@ export const vodPassSchema = z.object({
     .optional()
     .transform((value) => value === true),
   durationDays: z.number().nullable().optional(),
+  // 구매 당시 선택한 개월 수. 개월 선택이 생기기 전 구매는 null 이다
+  purchasedMonths: z.number().nullable().optional(),
 });
 
 export type VodPass = z.infer<typeof vodPassSchema>;
@@ -52,6 +54,10 @@ export const vodPassListQueryOptions = {
     return vodPassListSchema.parse(res.data.data);
   },
 };
+
+/** 내 이용권 목록 전체. 다른 이용권과의 선후 관계를 볼 때 쓴다. */
+export const useVodPassListQuery = (enabled = true) =>
+  useQuery({ ...vodPassListQueryOptions, enabled });
 
 /**
  * `applicationId` 의 이용권 한 건. 목록에 없으면 `data` 는 `undefined` 다.

@@ -26,8 +26,9 @@ interface ProgramApplicationFormStore extends HydrationStore {
     // null 을 쓰면 checkInvalidate() 가 결제 폼 전체를 막으므로 기본값은 0 이다.
     // 이 필드가 생기기 전에 persist 된 상태에서는 undefined 로 복원되므로 읽는 쪽은 `?? 0` 처리한다.
     vodPassProductId: number;
-    vodPassPrice: number;
-    vodPassDurationDays: number;
+    vodPassPrice: number; // 선택한 개월 수 기준 총액
+    vodPassDurationDays: number; // 선택한 개월 수 기준 총 이용일수
+    vodPassMonths: number; // 0 이면 미선택이거나 개월 선택 전에 담긴 값이다. 요청에서는 1 로 본다
   };
   setProgramApplicationForm: (
     params: Partial<ProgramApplicationFormStore['data']>,
@@ -68,6 +69,7 @@ const useProgramStore = create(
         vodPassProductId: 0,
         vodPassPrice: 0,
         vodPassDurationDays: 0,
+        vodPassMonths: 0,
       },
       setProgramApplicationForm: (params) => {
         const currentData = get().data;
@@ -102,6 +104,7 @@ const useProgramStore = create(
             vodPassProductId: 0,
             vodPassPrice: 0,
             vodPassDurationDays: 0,
+            vodPassMonths: 0,
           },
         });
       },

@@ -1,11 +1,12 @@
 import { useApplicationDownloadQuery } from '@/api/application';
 import { paymentDetailQueryOptions } from '@/api/payment/payment';
-import { useVodPassQuery } from '@/api/vodPass';
+import { useVodPassListQuery, useVodPassQuery } from '@/api/vodPass';
 import dayjs from '@/lib/dayjs';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { scopePaymentDetailToRow } from '../utils/bundledPayment';
 import { sumPlanUpgradeAmount } from '../utils/planUpgradePayment';
+import { hasLaterVodPass } from '../utils/vodPassRefund';
 
 /** 프로그램 결제 내역 로직
  * @note 호출 컴포넌트는 반드시 AsyncBoundary로 감싸야 합니다.
@@ -38,7 +39,15 @@ export default function useCredit(paymentId: string) {
     isLoading: isVodPassLoading,
   } = useVodPassQuery(data.programInfo.applicationId, isVodPass);
 
-  // 챌린지와 함께 결제한 이용권이 아직 활성화 전이면 챌린지 환불 화면에서 별도 환불을 안내한다
+  // 이 이용권 뒤에 예약된 이용권이 있으면 환불 전에 시작일이 당겨지지 않는다고 알린다
+  const { data: vodPassList } = useVodPassListQuery(isVodPass);
+  const hasLaterVodPassAfterThis =
+    vodPass !== undefined && vodPassList !== undefined
+      ? hasLaterVodPass(vodPass, vodPassList.passes)
+      : false;
+
+  // 챌린지와 함께 결제한 이용권은 챌린지 환불로 환불되지 않는다.
+  // 아직 환불할 수 있으면 별도 환불을, 이미 이용이 시작됐으면 환불되지 않는다는 점을 안내한다
   const bundledVodPassItem = isVodPass
     ? undefined
     : data.paymentItems?.find(
@@ -48,10 +57,14 @@ export default function useCredit(paymentId: string) {
     bundledVodPassItem?.applicationId,
     bundledVodPassItem !== undefined,
   );
-  const unactivatedBundledVodPassPaymentId =
-    bundledVodPass?.status === 'UNACTIVATED'
+  const refundableBundledVodPassPaymentId =
+    bundledVodPass?.refundable === true
       ? (bundledVodPassItem?.paymentId ?? null)
       : null;
+  const hasUnrefundableBundledVodPass =
+    bundledVodPass !== undefined &&
+    bundledVodPass.refundable !== true &&
+    bundledVodPass.status !== 'CANCELED';
 
   // 결제 취소 가능한 프로그램이면 true 아니면 false
   const isCancelable = useMemo(() => {
@@ -262,7 +275,9 @@ export default function useCredit(paymentId: string) {
     vodPass,
     isVodPassError,
     isVodPassLoading,
-    unactivatedBundledVodPassPaymentId,
+    refundableBundledVodPassPaymentId,
+    hasUnrefundableBundledVodPass,
+    hasLaterVodPass: hasLaterVodPassAfterThis,
     planUpgradePayments,
     planUpgradeAmount,
     data,

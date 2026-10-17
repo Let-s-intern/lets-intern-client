@@ -1,4 +1,8 @@
-import type { PostApplicationInterface } from '@/api/application';
+import type {
+  PostApplicationInterface,
+  PostApplicationResult,
+} from '@/api/application';
+import dayjs from '@/lib/dayjs';
 import {
   toVodPassRequestFields,
   type VodPassSelection,
@@ -80,4 +84,42 @@ export function getOrderErrorMessage(error: unknown): string | null {
     return PAYMENT_ORDER_CONFLICT_MESSAGE;
   }
   return null;
+}
+
+/** 상품이 바뀌어 주문이 거절됐는가. 이때는 신청폼을 다시 받아야 최신 이용권 정보가 보인다. */
+export function isVodPassProductChangedError(error: unknown): boolean {
+  if (typeof error !== 'object' || error === null) {
+    return false;
+  }
+
+  const { status, code } = error as { status?: unknown; code?: unknown };
+  return status === 409 && code === 'VOD_PASS_PRODUCT_CHANGED';
+}
+
+const formatDate = (date: string) => dayjs(date).format('YYYY.MM.DD');
+
+/**
+ * 결제 성공 화면에 보여줄 이용권 이용 안내.
+ * 서버가 배정한 기간(`ACTIVE` 면 즉시 시작, `SCHEDULED` 면 앞선 이용 종료 뒤 시작)을 그대로 쓴다.
+ * 기간을 알 수 없으면 마이페이지에서 확인하도록만 안내한다.
+ */
+export function getVodPassResultNotice(
+  vodPass: PostApplicationResult['vodPass'],
+): string {
+  const fallback =
+    'VOD 이용권이 결제되었습니다. 이용 기간은 마이페이지 결제 내역에서 확인할 수 있습니다';
+
+  if (!vodPass?.startsAt || !vodPass.endsAt) {
+    return fallback;
+  }
+
+  const period = `${formatDate(vodPass.startsAt)} ~ ${formatDate(vodPass.endsAt)}`;
+  switch (vodPass.status) {
+    case 'ACTIVE':
+      return `VOD 이용권을 지금부터 이용할 수 있습니다. 이용 기간은 ${period} 입니다`;
+    case 'SCHEDULED':
+      return `이미 이용 중인 이용권이 있어 ${formatDate(vodPass.startsAt)}부터 VOD 이용권 이용이 시작됩니다. 이용 기간은 ${period} 입니다`;
+    default:
+      return fallback;
+  }
 }

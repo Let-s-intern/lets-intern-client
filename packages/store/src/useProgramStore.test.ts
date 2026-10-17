@@ -44,6 +44,7 @@ describe('useProgramStore VOD 이용권 필드 (LC-3438)', () => {
       vodPassProductId: 0,
       vodPassPrice: 0,
       vodPassDurationDays: 0,
+      vodPassMonths: 0,
     });
   });
 
@@ -60,7 +61,7 @@ describe('useProgramStore VOD 이용권 필드 (LC-3438)', () => {
     expect(checkInvalidate()).toBe(false);
   });
 
-  it('이용권을 선택하면 세 필드가 스토어에 담긴다', async () => {
+  it('이용권을 선택하면 네 필드가 스토어에 담긴다', async () => {
     const {
       default: store,
       setProgramApplicationForm,
@@ -70,14 +71,16 @@ describe('useProgramStore VOD 이용권 필드 (LC-3438)', () => {
     setProgramApplicationForm({
       ...FILLED_FORM,
       vodPassProductId: 7,
-      vodPassPrice: 29000,
-      vodPassDurationDays: 30,
+      vodPassPrice: 40000,
+      vodPassDurationDays: 90,
+      vodPassMonths: 3,
     });
 
     expect(store.getState().data).toMatchObject({
       vodPassProductId: 7,
-      vodPassPrice: 29000,
-      vodPassDurationDays: 30,
+      vodPassPrice: 40000,
+      vodPassDurationDays: 90,
+      vodPassMonths: 3,
     });
     expect(checkInvalidate()).toBe(false);
   });
@@ -90,8 +93,9 @@ describe('useProgramStore VOD 이용권 필드 (LC-3438)', () => {
     } = await loadStoreFresh();
     setProgramApplicationForm({
       vodPassProductId: 7,
-      vodPassPrice: 29000,
-      vodPassDurationDays: 30,
+      vodPassPrice: 40000,
+      vodPassDurationDays: 90,
+      vodPassMonths: 3,
     });
 
     initProgramApplicationForm();
@@ -100,6 +104,7 @@ describe('useProgramStore VOD 이용권 필드 (LC-3438)', () => {
       vodPassProductId: 0,
       vodPassPrice: 0,
       vodPassDurationDays: 0,
+      vodPassMonths: 0,
     });
   });
 

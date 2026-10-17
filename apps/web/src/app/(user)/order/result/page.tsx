@@ -1,6 +1,9 @@
 'use client';
 
-import { PostApplicationResult } from '@/api/application';
+import {
+  PostApplicationResult,
+  useProgramApplicationQueryKey,
+} from '@/api/application';
 import { useProgramQuery } from '@/api/program';
 import {
   getPaymentMethodLabel,
@@ -10,6 +13,8 @@ import DescriptionBox from '@/domain/program/paymentSuccess/DescriptionBox';
 import {
   buildPostApplicationBody,
   getOrderErrorMessage,
+  getVodPassResultNotice,
+  isVodPassProductChangedError,
 } from '@/domain/program/paymentSuccess/orderResult';
 import PaymentInfoRow from '@/domain/program/paymentSuccess/PaymentInfoRow';
 import ProgramCard from '@/domain/program/ProgramCard';
@@ -18,6 +23,7 @@ import dayjs from '@/lib/dayjs';
 import useProgramStore from '@/store/useProgramStore';
 import axios from '@/utils/axios';
 import { searchParamsToObject } from '@/utils/network';
+import { useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -28,6 +34,7 @@ const PaymentResultContent = () => {
   const hasRequested = useRef(false);
   const searchParams = useSearchParams();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const [result, setResult] = useState<PostApplicationResult | null | 'error'>(
     null,
@@ -95,6 +102,12 @@ const PaymentResultContent = () => {
       .catch((e) => {
         console.error(e);
         setErrorMessage(getOrderErrorMessage(e));
+        if (isVodPassProductChangedError(e)) {
+          // 돌아가서 이용권을 다시 고를 때 최신 가격·기간이 보이도록 신청폼을 새로 받게 한다
+          queryClient.invalidateQueries({
+            queryKey: [useProgramApplicationQueryKey],
+          });
+        }
         setResult('error');
       })
       .finally(() => {
@@ -105,7 +118,14 @@ const PaymentResultContent = () => {
           `${window.location.pathname}?${newSearchParams.toString()}`,
         );
       });
-  }, [_hasHydrated, params, programApplicationData, router, searchParams]);
+  }, [
+    _hasHydrated,
+    params,
+    programApplicationData,
+    queryClient,
+    router,
+    searchParams,
+  ]);
 
   const programQuery = useProgramQuery({
     programId: programApplicationData.programId ?? -1,
@@ -145,7 +165,10 @@ const PaymentResultContent = () => {
   }
 
   const isSuccess = typeof result === 'object' && result !== null;
-  const hasVodPass = isVodPassSelected(programApplicationData);
+  const vodPassResult =
+    typeof result === 'object' && result !== null ? result.vodPass : null;
+  const hasVodPass =
+    isVodPassSelected(programApplicationData) || vodPassResult != null;
 
   const returnLink = useMemo(() => {
     const base = `/program/${programApplicationData.programType}/${programApplicationData.programId}`;
@@ -286,8 +309,7 @@ const PaymentResultContent = () => {
                   </div>
                   {isSuccess && hasVodPass && (
                     <p className="text-xsmall14 text-neutral-40">
-                      VOD 이용권은 VOD 사이트에서 활성화하면 이용 기간이
-                      시작됩니다
+                      {getVodPassResultNotice(vodPassResult)}
                     </p>
                   )}
                   {isSuccess && (
