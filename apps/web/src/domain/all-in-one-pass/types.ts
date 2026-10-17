@@ -71,31 +71,8 @@ export interface PassFaq {
 }
 
 /**
- * 랜딩에 노출되는 외부 링크 — 혜택 "이름"만.
- * 어드민 외부링크(id=폼 로컬 string·name·url)는 description blob 저장이고, 랜딩엔 url·id 없이
- * name 만 내려준다(비구매자 접근 불가). 렌더 key 는 name/index 로 충분.
- */
-export interface PassLandingExternalLink {
-  name: string;
-}
-
-/**
- * 랜딩(구매) 페이지가 읽는 올인원패스 상품 상세 (어드민 AllInOnePassDetail 대응).
- *
- * `/all-in-one-pass/[id]` 의 id 가 membershipId 다. 구매 후 대시보드는 하위
- * `[id]/[applicationId]` 로 이어진다. introduction = 짧은 소개(히어로),
- * landingDescription = 랜딩 전용 상세 JSON(Membership.landingDescription 컬럼). planList
- * 가 구매 카드의 핵심.
- *
- * ⚠️ 비구매자에게 공개되는 페이지다. "구매해야 받는 것"은 응답에 담지 않는다.
- * 제외 대상(구매자 전용 — 공개 API 응답 금지):
- *   - 자료집(benefit) 전체: 자료 링크가 실제 콘텐츠 접근 URL이라 통째 제외
- *   - 외부 링크의 url(슬랙방·오픈채팅·플레이북 등): 링크 자체. 랜딩엔 name 만(externalLinks)
- *   - 기존 description 컬럼(외부링크 url·캘린더 데이터 blob) 통째 — landingDescription 만 공개
- *   - 공지사항 / 패스 가이드 본문, 회고록 질문·가이드, 쿠폰 코드/발급분
- * 플랜의 이용권 목록(programType/privilegeType)은 "무엇을 제공하는지"라 공개 OK.
- * // TODO(BE): 공개 응답은 landingDescription + externalLinks(name만) 로 내려줘야 한다.
- * description(url·캘린더) 을 그대로 실으면 안 그려도 네트워크 응답에 유출된다. queryFn 만 교체.
+ * 랜딩(구매) 페이지 상품 상세. 공개 API `GET /api/v1/membership/{id}`(미개발, mock).
+ * ⚠️ 비구매자 공개 페이지 — 자료집·외부링크 url·공지·회고·쿠폰 등 구매자 전용은 응답 금지.
  */
 export interface AllInOnePassLanding {
   id: number; // membershipId
@@ -107,7 +84,6 @@ export interface AllInOnePassLanding {
   deadline: string | null; // 판매 종료 (ISO)
   periodDays: number | null; // 이용 기간(일)
   plans: AllInOnePassPlan[];
-  externalLinks: PassLandingExternalLink[]; // 혜택 링크 이름만(url 제외)
   faqs: PassFaq[];
 }
 

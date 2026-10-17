@@ -55,6 +55,7 @@ export default function PassForm({
       <div className="mb-10">
         <LandingSection
           value={input.landing}
+          plans={input.plans}
           externalLinks={input.externalLinks}
           onChange={(landing) => patch({ landing })}
         />

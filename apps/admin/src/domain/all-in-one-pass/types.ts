@@ -73,7 +73,7 @@ export interface PassLandingManualBenefit {
 export interface PassLandingReview {
   id: string; // 폼 로컬 식별자
   source: string; // 출처(드롭다운)
-  resultTag: string; // 결과태그(드롭다운)
+  resultTags: string[]; // 결과태그(다중 선택)
   imageUrl: string; // width 고정 이미지
   summary: string; // 요약, 최대 70자
 }
@@ -223,10 +223,11 @@ export interface ActivePassParticipant {
   periods: PassParticipationPeriod[]; // [0]=최초, 이후 연장. 요약=첫 시작~마지막 종료
 }
 
-/** A-4 공통 질문 (하드코딩 상수, 모든 회차에 포함) */
+/** A-4 공통 질문 (전 회차 공통, 읽기 전용) */
 export interface RetrospectiveCommonQuestion {
   id: number;
   question: string;
+  answerGuide: string; // 유저 작성칸 placeholder 안내 문구
 }
 
 /**
@@ -238,7 +239,8 @@ export interface RetrospectiveCommonQuestion {
 export interface RetrospectiveRound {
   id: number;
   round: number; // 회차 번호
-  weeklyQuestion: string; // 주차별 질문(1개)
+  weeklyQuestion: string; // 회차 질문(1개)
+  answerGuide: string; // 유저 작성칸 placeholder 안내 문구
   responseCount: number; // 응답 수
 }
 
