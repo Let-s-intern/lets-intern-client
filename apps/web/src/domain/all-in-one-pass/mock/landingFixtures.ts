@@ -1,19 +1,91 @@
-// 랜딩(구매) 페이지 mock. 어드민 BE 응답 스키마(allInOnePassSchema.ts)의 상세(detail)를
-// 공개용으로 깎은 형태다. 실제 유저 공개 조회 API 나오면 이 파일을 삭제하고 api/landing
-// queryFn 을 axios 로 교체한다.
-//
-// 값 규칙(어드민 매퍼 기준):
-//   - price = 정가, discount = 할인액(차감 금액). 최종가 = price - discount. 할인 없으면 discount = null.
-//   - privilegeType 은 올인원패스라 전부 ALL_IN_ONE. programType 은 4종(CHALLENGE·GUIDEBOOK·VOD·LIVE).
-//   - externalLinks 는 url 없이 name 만(비구매자 노출 안전분). landingDescription 은 BE 신규 컬럼.
+// 랜딩 mock (공개 API 전까지). discount=할인액, 최종가 = price - discount.
+import type { LandingDescription } from '../landing/landingContent';
 import type { AllInOnePassLanding } from '../types';
 
+/** mock용 최소 렉시컬 상태(단락 1개) */
+const lexical = (text: string): string =>
+  JSON.stringify({
+    root: {
+      children: [
+        {
+          children: [
+            {
+              detail: 0,
+              format: 0,
+              mode: 'normal',
+              style: '',
+              text,
+              type: 'text',
+              version: 1,
+            },
+          ],
+          direction: 'ltr',
+          format: '',
+          indent: 0,
+          type: 'paragraph',
+          version: 1,
+        },
+      ],
+      direction: 'ltr',
+      format: '',
+      indent: 0,
+      type: 'root',
+      version: 1,
+    },
+  });
+
+const landingDescription: LandingDescription = {
+  hero: {
+    title: '취업, 하나의 패스로 끝내세요. 취업, 하나의 패스로 끝내세요.',
+    description:
+      '챌린지부터 가이드북·VOD·라이브까지, 취업 준비 전 과정을 하나로. 챌린지부터 가이드북·VOD·라이브까지, 취업 준비 전 과정을 하나로. 챌린지부터 가이드북·VOD·라이브까지, 취업 준비 전 과정을 하나로.',
+    recruitFootnote: '마감 후 다음 기회는 2027 상반기 예정이에요.',
+  },
+  lexical: {
+    introSection: lexical('introSection 렉시컬 들어갈 자리'),
+    playbookSection: lexical('playbook 렉시컬 들어갈 자리'),
+    benefitSection: lexical('혜택 섹션 상단 렉시컬 들어갈 자리'),
+    reviewSection: lexical('혜택 섹션 하단 렉시컬 들어갈 자리'),
+  },
+  additionalBenefits: [
+    {
+      name: '10주 취준 플레이북',
+      description: '주차별 취준 로드맵',
+      iconKey: 'playbook',
+    },
+  ],
+  reviews: [
+    {
+      source: '인스타그램 DM',
+      resultTags: ['서류 합격', '최종 합격'],
+      imageUrl: '',
+      summary: '자소서 첨삭 덕분에 서류 통과율이 확 올랐어요!',
+    },
+    {
+      source: '카카오톡 오픈채팅',
+      resultTags: ['인턴 합격'],
+      imageUrl: '',
+      summary: '현직자 멘토링으로 면접 준비를 제대로 했습니다.',
+    },
+    {
+      source: '챌린지 커뮤니티',
+      resultTags: ['취준 루틴', '동기부여'],
+      imageUrl: '',
+      summary: '매일 함께 인증하니 취준 루틴이 잡혔어요.',
+    },
+  ],
+  finalCta: {
+    title: '지금 시작하면, 다음 시즌엔 합격 후기의 주인공',
+    description: '선착순 마감 전에 올인원패스로 시작하세요.',
+  },
+};
+
 export const landingFixture: AllInOnePassLanding = {
-  id: 1,
+  id: 9,
   title: '2026 하반기 취업 올인원패스',
   introduction:
     '챌린지부터 가이드북·VOD·라이브 클래스까지, 취업 준비 전 과정을 하나로.',
-  landingDescription: null, // BE 신규 컬럼(랜딩 전용 렉시컬 JSON). 구조 확정 후 실샘플 교체
+  landingDescription: JSON.stringify(landingDescription),
   thumbnail: null,
   beginning: '2026-10-01T00:00:00',
   deadline: '2026-11-30T23:59:59',
@@ -43,11 +115,6 @@ export const landingFixture: AllInOnePassLanding = {
         { programType: 'GUIDEBOOK', privilegeType: 'ALL_IN_ONE' },
       ],
     },
-  ],
-  externalLinks: [
-    { name: '커뮤니티 슬랙' },
-    { name: '취준 플레이북' },
-    { name: '오픈채팅방' },
   ],
   faqs: [
     {
