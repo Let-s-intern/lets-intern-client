@@ -12,6 +12,7 @@ import GuideSection from '@/domain/challenge/dashboard/section/GuideSection';
 import NoticeSection from '@/domain/challenge/dashboard/section/NoticeSection';
 import ScoreSection from '@/domain/challenge/dashboard/section/ScoreSection';
 import VersionSection from '@/domain/challenge/dashboard/section/VersionSection';
+import VodPassHoldingBanner from '@/domain/challenge/dashboard/ui/VodPassHoldingBanner';
 import useCouponRewardPopup from '@/domain/challenge/hooks/useCouponRewardPopup';
 import { findNextUpcomingSchedule } from '@/domain/challenge/utils/missionTimeState';
 import MissionEndSection from '@/domain/challenge/MissionEndSection';
@@ -170,6 +171,9 @@ function ChallengeDashboardContent() {
     <main className="px-5 py-8 md:pb-0 md:pl-12 md:pr-0 md:pt-0">
       <header>
         <h1 className="text-[22px] font-semibold">{user?.name}님의 대시보드</h1>
+        <div className="mt-4 empty:hidden">
+          <VodPassHoldingBanner />
+        </div>
       </header>
       <VersionSection applicationId={params.applicationId} />
       <div className="flex flex-col gap-4 md:gap-5">

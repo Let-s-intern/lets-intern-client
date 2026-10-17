@@ -29,6 +29,12 @@ jest.mock('@/domain/mypage/application/version/VersionChangeModal', () => ({
   default: () => null,
 }));
 
+// VOD 클래스 탭의 이용권 배너는 이 테스트와 무관하고 네트워크 계층을 끌고 온다
+jest.mock('@/domain/mypage/application/ui/VodPassHoldingBanner', () => ({
+  __esModule: true,
+  default: () => null,
+}));
+
 jest.mock('@/domain/live-mentoring/constants', () => ({
   __esModule: true,
   SHOW_LIVE_MENTORING_NAV: false,
