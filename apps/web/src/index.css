@@ -455,6 +455,26 @@ input[type='number'] {
   }
 }
 
+/* 중앙 허브 쪽으로 안쪽으로 통통 찌르는 효과
+.landing-poke {
+  animation: landing-poke 1.1s ease-in-out infinite;
+}
+@keyframes landing-poke {
+  0%,
+  100% {
+    transform: translateX(var(--rest-x, 0px));
+  }
+  55% {
+    transform: translateX(calc(var(--rest-x, 0px) + var(--poke-x, 0px)));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing-poke {
+    animation: none;
+    transform: translateX(var(--rest-x, 0px));
+  }
+}
+
 .speech-bubble:after {
   content: '';
   position: absolute;

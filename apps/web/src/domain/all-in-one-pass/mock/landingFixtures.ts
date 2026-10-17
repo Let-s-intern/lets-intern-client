@@ -42,16 +42,10 @@ const landingDescription: LandingDescription = {
     recruitFootnote: '마감 후 다음 기회는 2027 상반기 예정이에요.',
   },
   lexical: {
-    introSection: lexical(
-      '혼자 준비하기 막막한 취업, 왜 올인원패스여야 할까요? 경험 정리부터 서류·면접까지 필요한 모든 걸 담았습니다.',
-    ),
-    playbookSection: lexical(
-      '10주 합격 플레이북 — 주차별로 무엇을 해야 하는지 한눈에.',
-    ),
-    benefitSection: lexical('패스 구매자만 받는 특별 혜택을 소개합니다.'),
-    reviewSection: lexical(
-      '렛츠커리어와 함께한 취준생들이 합격한 기업들이에요.',
-    ),
+    introSection: lexical('introSection 렉시컬 들어갈 자리'),
+    playbookSection: lexical('playbook 렉시컬 들어갈 자리'),
+    benefitSection: lexical('혜택 섹션 상단 렉시컬 들어갈 자리'),
+    reviewSection: lexical('혜택 섹션 하단 렉시컬 들어갈 자리'),
   },
   additionalBenefits: [
     {

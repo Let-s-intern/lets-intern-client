@@ -5,11 +5,13 @@
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import { useGetAllInOnePassLanding } from '@/domain/all-in-one-pass/api/landing';
 import { useGetMembershipApplicationForm } from '@/domain/all-in-one-pass/api/purchase';
+import BenefitSummarySection from '@/domain/all-in-one-pass/landing/BenefitSummarySection';
 import HeroSection from '@/domain/all-in-one-pass/landing/HeroSection';
+import IntroSection from '@/domain/all-in-one-pass/landing/IntroSection';
 import LandingNav from '@/domain/all-in-one-pass/landing/LandingNav';
 import { parseLandingDescription } from '@/domain/all-in-one-pass/landing/landingContent';
+import { useCtaState } from '@/domain/all-in-one-pass/landing/useCtaState';
 import MembershipPlanBottomSheet from '@/domain/all-in-one-pass/ui/MembershipPlanBottomSheet';
-import dayjs from '@/lib/dayjs';
 import useAuthStore from '@/store/useAuthStore';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -48,24 +50,7 @@ export default function AllInOnePassLandingPage() {
   const scrollToBenefit = () =>
     document.getElementById('benefit')?.scrollIntoView({ behavior: 'smooth' });
 
-  const isApplied = applicationForm?.applied ?? false;
-  const now = dayjs();
-  const beginning = applicationForm?.beginning
-    ? dayjs(applicationForm.beginning)
-    : null;
-  const deadline = applicationForm?.deadline
-    ? dayjs(applicationForm.deadline)
-    : null;
-  const isBeforeSale = !!beginning && now.isBefore(beginning);
-  const isClosed = !!deadline && now.isAfter(deadline);
-  const ctaDisabled = isApplied || isBeforeSale || isClosed;
-  const ctaText = isApplied
-    ? '이미 신청이 완료되었습니다.'
-    : isBeforeSale
-      ? '판매 예정입니다.'
-      : isClosed
-        ? '판매가 종료되었습니다.'
-        : '지금 바로 시작하기';
+  const { ctaText, ctaDisabled } = useCtaState(applicationForm);
 
   if (isLoading || !pass) {
     return <LoadingContainer />;
@@ -83,6 +68,15 @@ export default function AllInOnePassLandingPage() {
         onScrollToBenefit={scrollToBenefit}
       />
       <LandingNav isReady={!isLoading} />
+
+      <IntroSection introLexical={landing.lexical.introSection} />
+      <BenefitSummarySection
+        passTitle={pass.title}
+        periodDays={pass.periodDays}
+        plans={pass.plans}
+        additionalBenefits={landing.additionalBenefits}
+        onBenefitClick={scrollToBenefit}
+      />
 
       <MembershipPlanBottomSheet
         membershipId={membershipId}
