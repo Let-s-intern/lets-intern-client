@@ -57,6 +57,33 @@ describe('VodPassHoldingBanner (마이페이지)', () => {
     ).toBeInTheDocument();
   });
 
+  it('VOD 사이트로 이동하는 버튼은 새 탭으로 열린다', () => {
+    mockHolding = {
+      current,
+      endsAt: current.endsAt as string,
+      hasScheduled: false,
+    };
+
+    render(<VodPassHoldingBanner />);
+
+    const link = screen.getByRole('link', { name: '내 VOD 사이트로 이동' });
+    expect(link).toHaveAttribute('href', 'https://vod.letscareer.co.kr/vod');
+    expect(link).toHaveAttribute('target', '_blank');
+    expect(link).toHaveAttribute('rel', expect.stringContaining('noopener'));
+  });
+
+  it('className 을 받아 바깥 여백을 호출한 쪽이 정한다', () => {
+    mockHolding = {
+      current,
+      endsAt: current.endsAt as string,
+      hasScheduled: false,
+    };
+
+    const { container } = render(<VodPassHoldingBanner className="mt-10" />);
+
+    expect(container.firstElementChild).toHaveClass('mt-10');
+  });
+
   it('예약된 이용권이 이어져 있으면 마지막 종료일까지 보여주고 예약 포함을 알린다', () => {
     mockHolding = {
       current,
