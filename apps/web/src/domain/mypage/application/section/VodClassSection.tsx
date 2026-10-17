@@ -2,6 +2,7 @@ import { MypageApplication } from '@/api/application';
 import { useState } from 'react';
 import MoreButton from '../../ui/button/MoreButton';
 import NewApplicationCard from '../../ui/card/NewApplicationCard';
+import VodPassHoldingBanner from '../ui/VodPassHoldingBanner';
 import EmptySection from './EmptySection';
 
 interface VodClassSectionProps {
@@ -15,6 +16,7 @@ const VodClassSection = ({ applicationList }: VodClassSectionProps) => {
 
   return (
     <section className="flex flex-col gap-6">
+      <VodPassHoldingBanner />
       {hasVodCLass ? (
         <>
           <div className="grid grid-cols-2 gap-x-5 gap-y-10 md:flex md:flex-col md:gap-y-5">
