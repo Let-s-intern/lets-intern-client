@@ -7,6 +7,7 @@ import { useEffect, useMemo } from 'react';
 import { useIsMentorQuery } from '@/api/user/user';
 import { CategoryTabs } from '@letscareer/ui';
 import { Profile } from '@/domain/mypage/mypage/profile/Profile';
+import VodPassHoldingBanner from '@/domain/mypage/application/ui/VodPassHoldingBanner';
 import MyPageBanner from '@/domain/mypage/MyPageBanner';
 import useAuthStore from '@/store/useAuthStore';
 
@@ -224,6 +225,11 @@ const MyPageLayout = ({ children }: MyPageLayoutProps) => {
 
             {/* 페이지 컨텐츠 */}
             <div className="mx-5 md:mx-0">{children}</div>
+
+            {/* VOD 이용권을 쓰는 사람에게만 커리어 관리 하단에 보인다 (LC-3438) */}
+            {showCareerSubTabs && (
+              <VodPassHoldingBanner className="mx-5 mt-10 md:mx-0" />
+            )}
           </div>
         </main>
       </div>
