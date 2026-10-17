@@ -211,7 +211,8 @@ export default function AllInOnePassRetrospectiveResponses() {
         <DialogContent dividers className="flex flex-col gap-4">
           <div className="text-xxsmall12 text-neutral-40 flex flex-col gap-1">
             <span>
-              {detail?.submitterName} |{' '}
+              {detail?.submitterName}
+              {passName && ` | ${passName}`} |{' '}
               {detail && dayjs(detail.submittedAt).format('YYYY.MM.DD HH:mm')}
             </span>
           </div>
