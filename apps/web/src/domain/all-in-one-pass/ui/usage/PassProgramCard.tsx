@@ -20,6 +20,9 @@ export interface PassProgramCardData {
   applicationId?: number | null;
   /** 올인원패스 혜택으로 구매·참여한 프로그램이면 true */
   isMembershipApplied?: boolean;
+  isDownloaded?: boolean;
+  contentUrl?: string | null;
+  contentFileUrl?: string | null;
 }
 
 const recruitmentPill = (item: PassProgramCardData): string | null => {

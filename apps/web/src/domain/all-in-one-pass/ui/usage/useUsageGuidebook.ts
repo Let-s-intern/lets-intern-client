@@ -54,7 +54,11 @@ export const useUsageGuidebook = (): UsageGuidebook => {
         a.programTitle ?? '',
         a.programThumbnail,
       ),
+      applicationId: a.id,
       isMembershipApplied: a.isMembershipApplied ?? false,
+      isDownloaded: a.isDownloaded ?? false,
+      contentUrl: a.contentUrl,
+      contentFileUrl: a.contentFileUrl,
     }));
 
     return {
