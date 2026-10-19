@@ -37,11 +37,13 @@ const mockApi = (enabled: { programType: string; programId: number }[]) => {
               program(31, 'CHALLENGE', '자소서 챌린지 31기'),
               program(5, 'LIVE', '면접 라이브'),
               program(9, 'MEMBERSHIP', '멤버십'),
+              program(30, 'CHALLENGE', '지난 챌린지 30기', 'POST'),
+              program(32, 'CHALLENGE', '다음 챌린지 32기', 'PREV'),
             ],
             pageInfo: {
               pageNum: 0,
               pageSize: 1000,
-              totalElements: 3,
+              totalElements: 5,
               totalPages: 1,
             },
           },
@@ -83,6 +85,18 @@ describe('VOD 이용권 판매 설정', () => {
     expect(await screen.findByText('자소서 챌린지 31기')).toBeInTheDocument();
     expect(saleSwitch('자소서 챌린지 31기')).toBeChecked();
     expect(saleSwitch('면접 라이브')).not.toBeChecked();
+  });
+
+  it('모집 마감 프로그램은 보이지 않고 모집 전, 모집 중만 보인다', async () => {
+    mockApi([{ programType: 'CHALLENGE', programId: 30 }]);
+
+    renderPage();
+
+    expect(await screen.findByText('자소서 챌린지 31기')).toBeInTheDocument();
+    expect(screen.getByText('다음 챌린지 32기')).toBeInTheDocument();
+    expect(screen.getByText('모집 전')).toBeInTheDocument();
+    expect(screen.queryByText('지난 챌린지 30기')).not.toBeInTheDocument();
+    expect(screen.queryByText('모집 마감')).not.toBeInTheDocument();
   });
 
   it('판매 대상이 아닌 유형은 목록에 보이지 않는다', async () => {
