@@ -30,6 +30,10 @@ const navData = [
         name: 'VOD 이용권 설정',
         url: '/vod-pass-product',
       },
+      {
+        name: 'VOD 이용권 구매자',
+        url: '/vod-pass-applications',
+      },
     ],
   },
   {
