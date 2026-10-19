@@ -415,7 +415,7 @@ describe('PricePlanBottomSheet — VOD 이용권 개월 선택 (LC-3438)', () =>
       fireEvent.click(more);
     }
 
-    expect(screen.getByText('12개월')).toBeInTheDocument();
+    expect(screen.getByText('3개월')).toBeInTheDocument();
     expect(screen.getByRole('button', MORE)).toBeDisabled();
   });
 

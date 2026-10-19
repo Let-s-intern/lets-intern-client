@@ -37,8 +37,8 @@ export interface VodPassProductPricing {
 }
 
 export const VOD_PASS_MIN_MONTHS = 1;
-/** 화면 상한이다. 서버는 상한이 없고 정수 범위를 넘으면 400 을 준다. */
-export const VOD_PASS_MAX_MONTHS = 12;
+/** 구매할 수 있는 최대 개월 수. 서버 상한(`VodPassProduct.MAX_PURCHASE_MONTHS`)과 같아야 한다. 넘으면 서버가 400 을 준다. */
+export const VOD_PASS_MAX_MONTHS = 3;
 
 /** 개월 수를 화면 범위(1 이상 상한 이하의 정수)로 맞춘다. */
 export function clampVodPassMonths(months: number): number {
