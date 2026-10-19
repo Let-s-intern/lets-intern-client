@@ -1,7 +1,6 @@
 import { useProgramApplicationQuery } from '@/api/application';
 import BaseBottomSheet from '@/common/sheet/BaseBottomSheet';
 import { COUPON_DISABLED_CHALLENGE_TYPES } from '@/domain/program/program-detail/apply/constants';
-import { useVodPassPurchaseEnabled } from '@/domain/program/useVodPassPurchaseEnabled';
 import {
   calculateChallengeTotalWithVodPass,
   calculateVodPassDurationDays,
@@ -278,12 +277,9 @@ function PricePlanBottomSheet({
 
   const { setProgramApplicationForm } = useProgramStore();
 
-  // 상품이 null·누락(비활성 또는 서버 배포 전)이면 카드도 선택값도 없다
-  // PostHog 플래그(vod-pass-purchase)가 꺼져 있으면 서버가 상품을 내려줘도 카드를 숨긴다 (LC-3438)
-  const vodPassPurchaseEnabled = useVodPassPurchaseEnabled();
-  const vodPassProduct = vodPassPurchaseEnabled
-    ? (application?.vodPassProduct ?? null)
-    : null;
+  // 서버는 어드민에서 VOD 이용권 판매를 켠 프로그램에만 상품을 내려준다 (LC-3438)
+  // 상품이 null·누락(판매 꺼짐, 상품 비활성, 서버 배포 전)이면 카드도 선택값도 없다
+  const vodPassProduct = application?.vodPassProduct ?? null;
   const selectedVodPass = isVodPassChecked ? vodPassProduct : null;
   // 추가 월 가격이 없는 응답이면 개월 선택을 지원하지 않는 서버라 1개월로 고정한다
   const canSelectMonths = vodPassProduct
