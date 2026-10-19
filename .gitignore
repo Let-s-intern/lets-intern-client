@@ -83,3 +83,6 @@ next-env.d.ts
 storybook-static/
 
 .claude/scheduled_tasks.lock
+
+# Claude Code 워크트리 (로컬 전용)
+.claude/worktrees/
