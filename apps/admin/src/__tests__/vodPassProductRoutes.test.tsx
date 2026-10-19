@@ -59,3 +59,9 @@ describe('VOD 이용권 설정 라우트', () => {
     expect(screen.getByLabelText('기본 가격(원)')).toBeInTheDocument();
   }, 15_000);
 });
+
+describe('VOD 이용권 구매자 라우트', () => {
+  it('구매자 목록 경로가 등록돼 있다', () => {
+    expect(routeOf('/vod-pass-applications')).toBeDefined();
+  });
+});
