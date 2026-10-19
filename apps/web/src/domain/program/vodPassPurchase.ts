@@ -34,20 +34,49 @@ export interface VodPassProductPricing {
   price: number;
   additionalMonthPrice?: Amount;
   durationDays: number;
+  maxPurchaseMonths?: Amount;
+  availableMonths?: Amount;
 }
 
 export const VOD_PASS_MIN_MONTHS = 1;
-/** 화면 상한이다. 서버는 상한이 없고 정수 범위를 넘으면 400 을 준다. */
-export const VOD_PASS_MAX_MONTHS = 12;
+/**
+ * 서버가 상한을 내려주지 않을 때 쓰는 기본 상한이다. 서버의 기본 1회 상한(3개월)과 같다.
+ * 상한은 어드민이 정하고 서버가 `availableMonths`·`maxPurchaseMonths` 로 내려준다.
+ */
+export const VOD_PASS_MAX_MONTHS = 3;
+
+/**
+ * 이 사용자가 고를 수 있는 최대 개월 수. 서버가 사용자별로 계산한 `availableMonths` 를 우선하고,
+ * 없으면 1회 상한, 그것도 없으면 기본 상한이다. 최소 1개월은 보장한다.
+ */
+export function getVodPassMaxMonths(
+  product: Pick<VodPassProductPricing, 'maxPurchaseMonths' | 'availableMonths'>,
+): number {
+  const limit = product.availableMonths ?? product.maxPurchaseMonths;
+  if (typeof limit !== 'number' || !Number.isFinite(limit)) {
+    return VOD_PASS_MAX_MONTHS;
+  }
+  return Math.max(Math.trunc(limit), VOD_PASS_MIN_MONTHS);
+}
+
+/** 이 사용자가 지금 더 살 수 있는가. 서버가 구매 가능 개월 수를 0 으로 주면 보유 기간이 누적 상한에 찬 것이다. */
+export function isVodPassPurchasable(
+  product: Pick<VodPassProductPricing, 'availableMonths'>,
+): boolean {
+  return product.availableMonths !== 0;
+}
 
 /** 개월 수를 화면 범위(1 이상 상한 이하의 정수)로 맞춘다. */
-export function clampVodPassMonths(months: number): number {
+export function clampVodPassMonths(
+  months: number,
+  maxMonths: number = VOD_PASS_MAX_MONTHS,
+): number {
   if (!Number.isFinite(months)) {
     return VOD_PASS_MIN_MONTHS;
   }
   return Math.min(
     Math.max(Math.trunc(months), VOD_PASS_MIN_MONTHS),
-    VOD_PASS_MAX_MONTHS,
+    Math.max(maxMonths, VOD_PASS_MIN_MONTHS),
   );
 }
 
@@ -66,16 +95,22 @@ export function calculateVodPassPrice(
   product: VodPassProductPricing,
   months: number,
 ): number {
-  const safeMonths = clampVodPassMonths(months);
+  const safeMonths = clampVodPassMonths(months, getVodPassMaxMonths(product));
   return product.price + (product.additionalMonthPrice ?? 0) * (safeMonths - 1);
 }
 
 /** 총 이용일수. 서버: `durationDays * months` */
 export function calculateVodPassDurationDays(
-  product: Pick<VodPassProductPricing, 'durationDays'>,
+  product: Pick<
+    VodPassProductPricing,
+    'durationDays' | 'maxPurchaseMonths' | 'availableMonths'
+  >,
   months: number,
 ): number {
-  return product.durationDays * clampVodPassMonths(months);
+  return (
+    product.durationDays *
+    clampVodPassMonths(months, getVodPassMaxMonths(product))
+  );
 }
 
 /**

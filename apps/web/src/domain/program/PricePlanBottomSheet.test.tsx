@@ -121,7 +121,10 @@ function renderSheet(
 function makeApplication(
   vodPassProduct?:
     | typeof VOD_PASS_PRODUCT
-    | typeof MULTI_MONTH_VOD_PASS_PRODUCT
+    | (typeof MULTI_MONTH_VOD_PASS_PRODUCT & {
+        maxPurchaseMonths?: number;
+        availableMonths?: number;
+      })
     | null,
 ) {
   return {
@@ -471,8 +474,57 @@ describe('PricePlanBottomSheet — VOD 이용권 개월 선택 (LC-3438)', () =>
       fireEvent.click(more);
     }
 
-    expect(screen.getByText('12개월')).toBeInTheDocument();
+    expect(screen.getByText('3개월')).toBeInTheDocument();
     expect(screen.getByRole('button', MORE)).toBeDisabled();
+  });
+
+  it('서버가 내려준 1회 상한까지 늘릴 수 있다', () => {
+    mockApplication = makeApplication({
+      ...MULTI_MONTH_VOD_PASS_PRODUCT,
+      maxPurchaseMonths: 6,
+      availableMonths: 6,
+    });
+    renderSheet(makeChallenge([]));
+
+    checkVodPass();
+    for (let i = 0; i < 20; i += 1) {
+      const more = screen.getByRole('button', MORE);
+      if ((more as HTMLButtonElement).disabled) break;
+      fireEvent.click(more);
+    }
+
+    expect(screen.getByText('6개월')).toBeInTheDocument();
+    expect(screen.getByRole('button', MORE)).toBeDisabled();
+    expect(
+      screen.getByText('최대 6개월까지 선택할 수 있어요'),
+    ).toBeInTheDocument();
+  });
+
+  it('보유 기간이 많아 구매 가능 개월 수가 줄면 그만큼만 늘릴 수 있다', () => {
+    mockApplication = makeApplication({
+      ...MULTI_MONTH_VOD_PASS_PRODUCT,
+      maxPurchaseMonths: 6,
+      availableMonths: 2,
+    });
+    renderSheet(makeChallenge([]));
+
+    checkVodPass();
+    fireEvent.click(screen.getByRole('button', MORE));
+
+    expect(screen.getByText('2개월')).toBeInTheDocument();
+    expect(screen.getByRole('button', MORE)).toBeDisabled();
+  });
+
+  it('누적 상한에 차서 구매 가능 개월 수가 0 이면 카드를 보여주지 않는다', () => {
+    mockApplication = makeApplication({
+      ...MULTI_MONTH_VOD_PASS_PRODUCT,
+      maxPurchaseMonths: 3,
+      availableMonths: 0,
+    });
+    renderSheet(makeChallenge([]));
+
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
+    expect(screen.queryByText(/VOD 이용권 추가/)).not.toBeInTheDocument();
   });
 
   it('체크를 해제했다가 다시 하면 고른 개월 수를 유지한다', () => {

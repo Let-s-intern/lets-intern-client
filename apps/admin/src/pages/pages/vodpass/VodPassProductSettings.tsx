@@ -16,6 +16,9 @@ const INPUT_CLASS =
 const CONFIRM_MESSAGE =
   '변경은 이후 구매에만 적용됩니다. 이미 구매한 이용권의 기간과 개월 수는 바뀌지 않습니다. 결제를 진행 중인 사용자는 이용권을 다시 선택하게 됩니다.';
 
+/** 서버가 받는 개월 수 상한의 최댓값 (VodPassProduct.MONTH_LIMIT_CEILING) */
+const MONTH_LIMIT_CEILING = 120;
+
 const isPositiveInteger = (value: string) => {
   const n = Number(value);
   return value.trim() !== '' && Number.isInteger(n) && n > 0;
@@ -37,6 +40,12 @@ const VodPassProductForm = ({ product }: { product: VodPassProduct }) => {
   );
   const [durationDays, setDurationDays] = useState(
     String(product.durationDays),
+  );
+  const [maxPurchaseMonths, setMaxPurchaseMonths] = useState(
+    String(product.maxPurchaseMonths),
+  );
+  const [maxTotalMonths, setMaxTotalMonths] = useState(
+    String(product.maxTotalMonths),
   );
   const [error, setError] = useState<string | null>(null);
 
@@ -62,6 +71,21 @@ const VodPassProductForm = ({ product }: { product: VodPassProduct }) => {
       return;
     }
 
+    if (!isPositiveInteger(maxPurchaseMonths)) {
+      setError('1회 최대 구매 개월 수는 1개월 이상의 정수로 입력해 주세요.');
+      return;
+    }
+    if (
+      !isPositiveInteger(maxTotalMonths) ||
+      Number(maxTotalMonths) < Number(maxPurchaseMonths) ||
+      Number(maxTotalMonths) > MONTH_LIMIT_CEILING
+    ) {
+      setError(
+        `누적 최대 보유 개월 수는 1회 최대 구매 개월 수 이상, ${MONTH_LIMIT_CEILING}개월 이하의 정수로 입력해 주세요.`,
+      );
+      return;
+    }
+
     setError(null);
     if (!window.confirm(CONFIRM_MESSAGE)) return;
 
@@ -69,6 +93,8 @@ const VodPassProductForm = ({ product }: { product: VodPassProduct }) => {
       price: Number(price),
       additionalMonthPrice: Number(additionalMonthPrice),
       durationDays: Number(durationDays),
+      maxPurchaseMonths: Number(maxPurchaseMonths),
+      maxTotalMonths: Number(maxTotalMonths),
     });
   };
 
@@ -150,6 +176,42 @@ const VodPassProductForm = ({ product }: { product: VodPassProduct }) => {
           value={durationDays}
           onChange={(e) => setDurationDays(e.target.value)}
         />
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label className={LABEL_CLASS} htmlFor="vod-pass-max-purchase-months">
+          1회 최대 구매 개월 수(개월)
+        </label>
+        <input
+          id="vod-pass-max-purchase-months"
+          type="number"
+          inputMode="numeric"
+          className={INPUT_CLASS}
+          value={maxPurchaseMonths}
+          onChange={(e) => setMaxPurchaseMonths(e.target.value)}
+        />
+        <span className="text-neutral-40 text-xs">
+          한 번 결제에서 고를 수 있는 최대 개월 수입니다.
+        </span>
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label className={LABEL_CLASS} htmlFor="vod-pass-max-total-months">
+          누적 최대 보유 개월 수(개월)
+        </label>
+        <input
+          id="vod-pass-max-total-months"
+          type="number"
+          inputMode="numeric"
+          className={INPUT_CLASS}
+          value={maxTotalMonths}
+          onChange={(e) => setMaxTotalMonths(e.target.value)}
+        />
+        <span className="text-neutral-40 text-xs">
+          지금 이용 중이거나 이용 예정인 이용권의 남은 기간을 합쳐 쌓아 둘 수
+          있는 최대 개월 수입니다. 이용 기간이 끝나면 다시 구매할 수 있습니다.
+          1회 최대 구매 개월 수 이상이어야 합니다.
+        </span>
       </div>
 
       {error && (
