@@ -6,9 +6,13 @@ import NewApplicationCard from '../../ui/card/NewApplicationCard';
 
 interface CompleteSectionProps {
   applicationList: MypageApplication[];
+  emptyText?: string;
 }
 
-const CompleteSection = ({ applicationList }: CompleteSectionProps) => {
+const CompleteSection = ({
+  applicationList,
+  emptyText = '참여 완료한 프로그램이 아직 없어요.',
+}: CompleteSectionProps) => {
   const [showMore, setShowMore] = useState(false);
   const isDesktop = useMediaQuery('(min-width:768px)');
 
@@ -23,7 +27,7 @@ const CompleteSection = ({ applicationList }: CompleteSectionProps) => {
       {applicationList.length === 0 ? (
         <div className="flex w-full flex-col items-center gap-4 py-20">
           <p className="text-xsmall14 text-neutral-20 font-normal">
-            참여 완료한 프로그램이 아직 없어요.
+            {emptyText}
           </p>
         </div>
       ) : (

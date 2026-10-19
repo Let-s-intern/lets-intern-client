@@ -6,9 +6,13 @@ import NewApplicationCard from '../../ui/card/NewApplicationCard';
 
 interface ParticipateSectionProps {
   applicationList: MypageApplication[];
+  emptyText?: string;
 }
 
-const ParticipateSection = ({ applicationList }: ParticipateSectionProps) => {
+const ParticipateSection = ({
+  applicationList,
+  emptyText = '참여 중인 프로그램이 아직 없어요.',
+}: ParticipateSectionProps) => {
   const [showMore, setShowMore] = useState(false);
   const isDesktop = useMediaQuery('(min-width:768px)');
 
@@ -23,7 +27,7 @@ const ParticipateSection = ({ applicationList }: ParticipateSectionProps) => {
       {applicationList.length === 0 ? (
         <div className="flex w-full flex-col items-center gap-4 py-14">
           <p className="text-xsmall14 text-neutral-20 font-normal">
-            참여 중인 프로그램이 아직 없어요.
+            {emptyText}
           </p>
         </div>
       ) : (
