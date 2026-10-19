@@ -53,6 +53,11 @@ export const programApplicationSchema = z.object({
       // 1개월 초과분에 매월 더해지는 금액. 없으면 개월 선택을 지원하지 않는 서버라 1개월만 판다
       additionalMonthPrice: z.number().nullable().optional(),
       durationDays: z.number(),
+      // 어드민이 정한 구매 개월 수 상한. 없으면 상한을 내려주지 않는 서버라 기본값(3개월)을 쓴다
+      maxPurchaseMonths: z.number().nullable().optional(),
+      maxTotalMonths: z.number().nullable().optional(),
+      // 이 사용자가 지금 살 수 있는 최대 개월 수. 1회 상한과 보유 기간을 반영한 값이고 0 이면 더 살 수 없다
+      availableMonths: z.number().nullable().optional(),
     })
     .nullable()
     .optional(),
