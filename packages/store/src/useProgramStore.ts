@@ -22,6 +22,7 @@ interface ProgramApplicationFormStore extends HydrationStore {
     programOrderId: string | null;
     isFree: boolean | null;
     deposit: number;
+    membershipDiscount: number; // 올인원패스 권한 0원 할인액
   };
   setProgramApplicationForm: (
     params: Partial<ProgramApplicationFormStore['data']>,
@@ -59,6 +60,7 @@ const useProgramStore = create(
         programOrderId: null,
         isFree: null,
         deposit: 0,
+        membershipDiscount: 0,
       },
       setProgramApplicationForm: (params) => {
         const currentData = get().data;
@@ -90,6 +92,7 @@ const useProgramStore = create(
             programOrderId: null,
             isFree: null,
             deposit: 0,
+            membershipDiscount: 0,
           },
         });
       },
