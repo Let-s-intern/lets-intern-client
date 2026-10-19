@@ -48,9 +48,14 @@ export const useUsageGuidebook = (): UsageGuidebook => {
         ),
       );
 
-    const owned = guidebookApps.map((a) =>
-      toCard(a.programId as number, a.programTitle ?? '', a.programThumbnail),
-    );
+    const owned = guidebookApps.map((a) => ({
+      ...toCard(
+        a.programId as number,
+        a.programTitle ?? '',
+        a.programThumbnail,
+      ),
+      isMembershipApplied: a.isMembershipApplied ?? false,
+    }));
 
     return {
       available,
