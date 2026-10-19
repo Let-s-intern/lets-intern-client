@@ -180,6 +180,8 @@ const PaymentInputContent = () => {
 
   // 결제 금액
   const totalPrice = useMemo(() => {
+    // 무료면 0원 (토스 스킵)
+    if (programApplicationData.isFree) return 0;
     const regularPrice = programApplicationData.price ?? 0;
     const discountAmount = programApplicationData.discount ?? 0;
     const couponPrice = programApplicationData.couponPrice ?? 0;
@@ -187,6 +189,7 @@ const PaymentInputContent = () => {
 
     return regularPrice <= totalDiscount ? 0 : regularPrice - totalDiscount;
   }, [
+    programApplicationData.isFree,
     programApplicationData.couponPrice,
     programApplicationData.discount,
     programApplicationData.price,

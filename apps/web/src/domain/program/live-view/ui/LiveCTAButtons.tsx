@@ -1,6 +1,7 @@
 'use client';
 
 import { useProgramApplicationQuery } from '@/api/application';
+import { useGetMembershipPrivilege } from '@/domain/all-in-one-pass/api/privilege';
 import dayjs from '@/lib/dayjs';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import { LiveIdPrimitive } from '@/schema';
@@ -29,6 +30,7 @@ const LiveCTAButtons = ({
   );
 
   const { setProgramApplicationForm } = useProgramStore();
+  const { data: privilege } = useGetMembershipPrivilege('LIVE', Number(liveId));
 
   // 로그인 상태 변경 시 application 데이터 refetch
   useEffect(() => {
@@ -76,10 +78,15 @@ const LiveCTAButtons = ({
       application?.priceList?.[0]?.priceId ?? application?.price?.priceId ?? -1;
 
     const orderId = generateOrderId();
-    const totalPrice = Math.max(payInfo.price - payInfo.discount, 0);
+    const baseTotalPrice = Math.max(payInfo.price - payInfo.discount, 0);
+
+    // 권한 보유 시 0원 (서버가 신청 시 재검증)
+    const hasPrivilege = privilege?.hasPrivilege ?? false;
+    const membershipDiscount = hasPrivilege ? baseTotalPrice : 0;
+    const totalPrice = hasPrivilege ? 0 : baseTotalPrice;
 
     const isFree =
-      payInfo.livePriceType === 'FREE' ||
+      hasPrivilege ||
       payInfo.livePriceType === 'FREE' ||
       payInfo.price === 0 ||
       totalPrice === 0;
@@ -91,6 +98,7 @@ const LiveCTAButtons = ({
       couponId: '',
       couponPrice: 0,
       totalPrice,
+      membershipDiscount,
       contactEmail: userInfo.contactEmail,
       question: userInfo.question,
       email: userInfo.email,
@@ -108,6 +116,7 @@ const LiveCTAButtons = ({
   }, [
     isLoggedIn,
     application,
+    privilege,
     setProgramApplicationForm,
     live.title,
     liveId,

@@ -1,6 +1,7 @@
 'use client';
 
 import { useProgramApplicationQuery } from '@/api/application';
+import { useGetMembershipPrivilege } from '@/domain/all-in-one-pass/api/privilege';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import useAuthStore from '@/store/useAuthStore';
 import useProgramStore from '@/store/useProgramStore';
@@ -29,6 +30,10 @@ const GuidebookCTAButtons = ({
   );
 
   const { setProgramApplicationForm } = useProgramStore();
+  const { data: privilege } = useGetMembershipPrivilege(
+    'GUIDEBOOK',
+    Number(guidebookId),
+  );
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -72,9 +77,15 @@ const GuidebookCTAButtons = ({
       application?.priceList?.[0]?.priceId ?? application?.price?.priceId ?? -1;
 
     const orderId = generateOrderId();
-    const totalPrice = Math.max(payInfo.price - payInfo.discount, 0);
+    const baseTotalPrice = Math.max(payInfo.price - payInfo.discount, 0);
+
+    // 권한 보유 시 0원 (서버가 신청 시 재검증)
+    const hasPrivilege = privilege?.hasPrivilege ?? false;
+    const membershipDiscount = hasPrivilege ? baseTotalPrice : 0;
+    const totalPrice = hasPrivilege ? 0 : baseTotalPrice;
 
     const isFree =
+      hasPrivilege ||
       payInfo.guideBookPriceType === 'FREE' ||
       payInfo.price === 0 ||
       totalPrice === 0;
@@ -86,6 +97,7 @@ const GuidebookCTAButtons = ({
       couponId: '',
       couponPrice: 0,
       totalPrice,
+      membershipDiscount,
       contactEmail: userInfo.contactEmail,
       question: userInfo.question,
       email: userInfo.email,
@@ -103,6 +115,7 @@ const GuidebookCTAButtons = ({
   }, [
     isLoggedIn,
     application,
+    privilege,
     setProgramApplicationForm,
     programTitle,
     guidebookId,
