@@ -1,5 +1,7 @@
 'use client';
 
+import { PROFILE_TEXT_MAX_LENGTH } from '../constants';
+
 interface IntroductionProps {
   value: string;
   onChange: (value: string) => void;
@@ -15,8 +17,12 @@ export default function Introduction({ value, onChange }: IntroductionProps) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="한줄 소개를 입력해주세요"
+        maxLength={PROFILE_TEXT_MAX_LENGTH}
         className="focus:border-primary h-32 w-full resize-none rounded-lg border border-gray-200 px-4 py-3 text-sm outline-none transition-colors"
       />
+      <p className="mt-1 text-right text-xs text-neutral-50">
+        {value.length}/{PROFILE_TEXT_MAX_LENGTH}
+      </p>
     </section>
   );
 }
