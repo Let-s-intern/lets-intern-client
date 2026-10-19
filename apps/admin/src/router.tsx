@@ -56,6 +56,9 @@ const VodPassProductSettings = lazy(
 const VodPassApplications = lazy(
   () => import('./pages/pages/vodpass/VodPassApplications'),
 );
+const VodPassSaleSettings = lazy(
+  () => import('./pages/pages/vodpass/VodPassSaleSettings'),
+);
 
 const ChallengeContents = lazy(
   () => import('./pages/pages/challenge/ChallengeContents'),
@@ -376,6 +379,10 @@ export const router = createBrowserRouter([
       {
         path: '/vod-pass-applications',
         element: withSuspense(<VodPassApplications />),
+      },
+      {
+        path: '/vod-pass-sale-settings',
+        element: withSuspense(<VodPassSaleSettings />),
       },
 
       // 챌린지 운영

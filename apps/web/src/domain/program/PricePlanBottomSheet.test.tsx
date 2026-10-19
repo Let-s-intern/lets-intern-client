@@ -44,14 +44,6 @@ jest.mock('@/api/application', () => ({
   useProgramApplicationQuery: () => ({ data: mockApplication }),
 }));
 
-// PostHog 플래그(vod-pass-purchase). 테스트마다 바꿔 끼운다
-let mockVodPassPurchaseEnabled = true;
-
-jest.mock('@/domain/program/useVodPassPurchaseEnabled', () => ({
-  __esModule: true,
-  useVodPassPurchaseEnabled: () => mockVodPassPurchaseEnabled,
-}));
-
 // getPayInfo 가 돌려주는 이용료 유형. 테스트마다 바꿔 끼운다
 let mockChallengePriceType = 'CHARGE';
 
@@ -156,7 +148,6 @@ beforeEach(() => {
   storeState = {};
   mockApplication = makeApplication();
   mockChallengePriceType = 'CHARGE';
-  mockVodPassPurchaseEnabled = true;
 });
 
 describe('PricePlanBottomSheet — 버전 고정 (LC-3247)', () => {
@@ -253,21 +244,8 @@ describe('PricePlanBottomSheet — VOD 이용권 선택 카드 (LC-3438)', () =>
     expect(screen.queryByText(/활성화/)).not.toBeInTheDocument();
   });
 
-  it('PostHog 플래그가 꺼져 있으면 서버가 상품을 내려줘도 카드를 보여주지 않는다', () => {
-    mockVodPassPurchaseEnabled = false;
-    mockApplication = makeApplication(VOD_PASS_PRODUCT);
-    renderSheet(makeChallenge([]));
-
-    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
-    expect(screen.queryByText(/VOD 이용권 추가/)).not.toBeInTheDocument();
-    expect(
-      screen.queryByText(/결제 즉시 이용이 시작됩니다/),
-    ).not.toBeInTheDocument();
-  });
-
-  it('플래그가 꺼져 있으면 신청해도 이용권 필드는 0 이고 합계는 기존과 같다', () => {
-    mockVodPassPurchaseEnabled = false;
-    mockApplication = makeApplication(VOD_PASS_PRODUCT);
+  it('서버가 상품을 내려주지 않으면 신청해도 이용권 필드는 0 이고 합계는 기존과 같다', () => {
+    mockApplication = makeApplication(null);
     renderSheet(makeChallenge([]));
 
     fireEvent.click(screen.getByRole('button', { name: '신청하기' }));
