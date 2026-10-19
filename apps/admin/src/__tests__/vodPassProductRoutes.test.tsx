@@ -64,4 +64,8 @@ describe('VOD 이용권 구매자 라우트', () => {
   it('구매자 목록 경로가 등록돼 있다', () => {
     expect(routeOf('/vod-pass-applications')).toBeDefined();
   });
+
+  it('판매 설정 경로가 등록돼 있다', () => {
+    expect(routeOf('/vod-pass-sale-settings')).toBeDefined();
+  });
 });
