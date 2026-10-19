@@ -93,6 +93,11 @@ const CareerGrowthItemCard = ({ config }: CareerGrowthItemCardProps) => {
               >
                 {config.statusLabel}
               </span>
+              {config.isMembershipApplied && (
+                <span className="rounded-xxs text-xxsmall12 bg-[#edeffe] px-2 py-1 font-medium text-[#4A76FF]">
+                  올인원패스 혜택
+                </span>
+              )}
               <span className="text-xxsmall12 text-neutral-40 font-normal">
                 {config.categoryLabel}
               </span>

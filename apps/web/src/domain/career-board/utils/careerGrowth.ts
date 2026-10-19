@@ -26,6 +26,7 @@ export interface CareerGrowthItem {
   isDownloaded: boolean;
   chatLink: string;
   chatPassword: string;
+  isMembershipApplied: boolean;
 }
 
 // Dayjs를 'YY.MM.DD' 형식으로 변환
@@ -75,6 +76,7 @@ const applicationToCareerGrowthItem = (
     isDownloaded: application.isDownloaded ?? false,
     chatLink: application.chatLink ?? '',
     chatPassword: application.chatPassword ?? '',
+    isMembershipApplied: application.isMembershipApplied ?? false,
   };
 };
 
