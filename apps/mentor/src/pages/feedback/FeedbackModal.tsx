@@ -4,6 +4,7 @@ import { Suspense, lazy, useEffect, useState } from 'react';
 
 import BaseModal from '@/common/modal/BaseModal';
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
+import mentorConfig from '@/constants/config';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
 import { twMerge } from '@/lib/twMerge';
 import { feedbackModalDesign } from '@/pages/feedback/feedbackModalDesign';
@@ -58,6 +59,7 @@ const FeedbackModal = ({
     selectedAttendanceId,
     editorContent,
     setEditorContent,
+    isDraftRestored,
     currentMentee,
     preQuestion,
     isReadOnly,
@@ -242,7 +244,9 @@ const FeedbackModal = ({
                 ? LATE_SUBMISSION_NOTICE
                 : isReadOnly
                   ? '제출 완료되어 수정할 수 없습니다'
-                  : null
+                  : isDraftRestored
+                    ? mentorConfig.feedback.draftRestoredHint
+                    : null
             }
             submissionState={submissionState}
             hasMentee={!!currentMentee}

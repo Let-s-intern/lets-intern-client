@@ -14,6 +14,8 @@ export const mentorConfig = {
     unsavedWarning:
       '저장하지 않은 변경사항이 있습니다. 다른 멘티로 이동하시겠습니까?',
     closeWarning: '저장하지 않은 변경사항이 있습니다. 모달을 닫으시겠습니까?',
+    draftRestoredHint:
+      '저장하지 않고 닫은 내용을 복원했습니다. 임시저장을 눌러 저장해 주세요',
   },
   profile: {
     saveSuccess: '프로필이 저장되었습니다.',
