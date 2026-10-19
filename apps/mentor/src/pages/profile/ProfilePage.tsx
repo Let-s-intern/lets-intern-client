@@ -11,6 +11,7 @@ import MentorAlertModal from '@/common/modal/MentorAlertModal';
 import mentorConfig from '@/constants/config';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
 import { parseSnsList, serializeSnsList, toSnsUrl } from '@/utils/sns';
+import { PROFILE_TEXT_MAX_LENGTH } from './constants';
 import BasicInfoSection, {
   type BasicInfoFormData,
 } from './ui/BasicInfoSection';
@@ -247,6 +248,20 @@ export default function ProfilePage() {
       return;
     }
 
+    /*
+     * SNS 는 입력칸이 여러 개라 칸마다 maxLength 를 걸어도 합친 문자열이 넘을 수 있다.
+     * 서버 `sns` 칼럼(varchar 255)은 그 JSON 문자열 전체를 담는다.
+     */
+    const serializedSns = serializeSnsList(validSnsUrls);
+    if (serializedSns.length > PROFILE_TEXT_MAX_LENGTH) {
+      showAlert({
+        title: 'SNS 주소가 너무 길어요.',
+        description: `SNS 주소는 전체 ${PROFILE_TEXT_MAX_LENGTH}자까지 저장할 수 있어요. 지금 ${serializedSns.length}자예요.`,
+        variant: 'error',
+      });
+      return;
+    }
+
     setIsSaving(true);
 
     /*
@@ -264,9 +279,14 @@ export default function ProfilePage() {
             name: formData.name || undefined,
             nickname: formData.nickname || null,
             phoneNum: formData.phoneNum || undefined,
-            sns: serializeSnsList(validSnsUrls),
+            sns: serializedSns,
             email: formData.email || undefined,
-            introduction: introduction || null,
+            /*
+             * 저장돼 있던 한줄소개를 비웠으면 빈 문자열을 보낸다. null 은 서버가 "바꾸지 않음"으로
+             * 받아 삭제가 반영되지 않는다(SNS 와 같은 LC-3306 문제). 원래 비어 있었다면 null 로
+             * 둬서 DB 의 NULL 이 ''로 바뀌지 않게 한다.
+             */
+            introduction: introduction || (savedIntroduction ? '' : null),
             profileImgUrl: formData.profileImgUrl || null,
             description: detailContent || null,
           }).then(
@@ -352,6 +372,7 @@ export default function ProfilePage() {
     isHashTagChanged,
     formData,
     introduction,
+    savedIntroduction,
     detailContent,
     hashTagIds,
     patchUser,

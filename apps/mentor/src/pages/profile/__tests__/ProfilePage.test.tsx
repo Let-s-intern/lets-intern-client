@@ -252,6 +252,76 @@ describe('ProfilePage SNS', () => {
   });
 });
 
+const introTextarea = () =>
+  screen.getByPlaceholderText('한줄 소개를 입력해주세요');
+
+/*
+ * 한줄소개 저장 실패(500) 회귀 테스트.
+ *
+ * 서버 `user.introduction` 은 varchar(255) 인데 입력칸에 길이 제한이 없어서, 255자를 넘겨
+ * 저장하면 DB 가 거절해 「서버 내부 오류입니다」가 떴다. 또 한줄소개를 비워도 null 로 가서
+ * 서버가 기존 값을 그대로 유지했다.
+ */
+describe('ProfilePage 한줄소개', () => {
+  it('입력칸이 255자로 제한되고 글자 수가 보인다', () => {
+    renderPage();
+
+    expect(introTextarea().getAttribute('maxlength')).toBe('255');
+    expect(screen.getByText('3/255')).toBeTruthy();
+  });
+
+  it('저장돼 있던 한줄소개를 비우고 저장하면 빈 문자열을 보낸다', async () => {
+    renderPage();
+
+    fireEvent.change(introTextarea(), { target: { value: '' } });
+    fireEvent.click(saveButton());
+
+    await waitFor(() => expect(patchUserMock).toHaveBeenCalledTimes(1));
+    expect(patchUserMock.mock.calls[0][0].introduction).toBe('');
+  });
+
+  it('원래 비어 있던 한줄소개는 다른 칸만 고쳐도 null 로 보낸다', async () => {
+    USER = { ...BASE_USER, introduction: null } as unknown as typeof BASE_USER;
+    renderPage();
+
+    fireEvent.change(screen.getByDisplayValue('쥬디'), {
+      target: { value: '새 활동명' },
+    });
+    fireEvent.click(saveButton());
+
+    await waitFor(() => expect(patchUserMock).toHaveBeenCalledTimes(1));
+    expect(patchUserMock.mock.calls[0][0].introduction).toBeNull();
+  });
+
+  it('활동명 입력칸도 255자로 제한된다', () => {
+    renderPage();
+
+    expect(screen.getByDisplayValue('쥬디').getAttribute('maxlength')).toBe(
+      '255',
+    );
+  });
+
+  it('SNS 가 합쳐서 255자를 넘으면 알리고 저장하지 않는다', async () => {
+    renderPage();
+
+    for (let i = 0; i < 3; i += 1) {
+      fireEvent.click(screen.getByRole('button', { name: '+ 추가' }));
+    }
+    const inputs = screen.getAllByPlaceholderText('https://...');
+    inputs.forEach((input, index) => {
+      fireEvent.change(input, {
+        target: { value: `https://example.com/${index}/${'a'.repeat(80)}` },
+      });
+    });
+    fireEvent.click(saveButton());
+
+    await waitFor(() =>
+      expect(screen.getByText('SNS 주소가 너무 길어요.')).toBeTruthy(),
+    );
+    expect(patchUserMock).not.toHaveBeenCalled();
+  });
+});
+
 /*
   회귀 테스트 — 저장한 상세페이지 본문이 새로고침 후에도 보여야 한다.
 
