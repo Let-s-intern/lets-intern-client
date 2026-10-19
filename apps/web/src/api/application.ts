@@ -293,7 +293,10 @@ export const mypageApplicationsSchema = z
         createDate: z.string().nullable().optional(),
         status: applicationStatus.nullable().optional(),
         programId: z.number().nullable().optional(),
-        programType: ProgramTypeEnum.nullable().optional(),
+        programType: z
+          .union([ProgramTypeEnum, z.literal('MEMBERSHIP')])
+          .nullable()
+          .optional(),
         programStatusType: ProgramStatusEnum.nullable().optional(),
         reportType: reportTypeSchema.nullable().optional(),
         programTitle: z.string().nullable().optional(),
@@ -311,6 +314,8 @@ export const mypageApplicationsSchema = z
         contentUrl: z.string().nullable().optional(),
         contentFileUrl: z.string().nullable().optional(),
         isDownloaded: z.boolean().nullable().optional(),
+        // 올인원패스(멤버십)로 신청된 건지 여부
+        isMembershipApplied: z.boolean().nullable().optional(),
         // 챌린지 오픈채팅방. 어드민이 챌린지 기본정보에서 입력한 값(Challenge.chatLink/chatPassword)이며
         // BE 응답 추가 전까지는 undefined 라 오픈채팅방 버튼이 렌더되지 않는다.
         chatLink: z.string().nullable().optional(),
