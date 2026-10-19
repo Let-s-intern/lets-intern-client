@@ -66,6 +66,7 @@ export const useProgramApplicationQueryKey = 'useProgramApplicationQueryKey';
 export const useProgramApplicationQuery = (
   programType: ProgramType,
   programId: number,
+  options?: { enabled?: boolean },
 ) => {
   return useQuery({
     queryKey: [useProgramApplicationQueryKey, programType, programId],
@@ -73,6 +74,7 @@ export const useProgramApplicationQuery = (
       const res = await axios.get(`/${programType}/${programId}/application`);
       return programApplicationSchema.parse(res.data.data);
     },
+    enabled: options?.enabled ?? true,
   });
 };
 
