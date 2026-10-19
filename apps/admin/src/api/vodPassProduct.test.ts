@@ -28,7 +28,11 @@ const product = {
   additionalMonthPrice: 10000,
   durationDays: 30,
   isActive: true,
+  maxPurchaseMonths: 3,
+  maxTotalMonths: 12,
 };
+
+const limits = { maxPurchaseMonths: 3, maxTotalMonths: 12 };
 
 const createClient = () =>
   new QueryClient({
@@ -56,6 +60,19 @@ describe('vodPassProductSchema', () => {
     expect(vodPassProductSchema.parse(legacy).additionalMonthPrice).toBe(0);
   });
 
+  it('구매 개월 수 상한이 없는 이전 서버 응답은 서버 기본값(1회 3, 누적 12)으로 받는다', () => {
+    const {
+      maxPurchaseMonths: _purchase,
+      maxTotalMonths: _total,
+      ...legacy
+    } = product;
+
+    const parsed = vodPassProductSchema.parse(legacy);
+
+    expect(parsed.maxPurchaseMonths).toBe(3);
+    expect(parsed.maxTotalMonths).toBe(12);
+  });
+
   it('필수 값이 빠지면 거절한다', () => {
     const { durationDays: _durationDays, ...rest } = product;
 
@@ -70,8 +87,14 @@ describe('vodPassProductUpdateSchema', () => {
         price: 49000,
         additionalMonthPrice: 0,
         durationDays: 30,
+        ...limits,
       }),
-    ).toEqual({ price: 49000, additionalMonthPrice: 0, durationDays: 30 });
+    ).toEqual({
+      price: 49000,
+      additionalMonthPrice: 0,
+      durationDays: 30,
+      ...limits,
+    });
   });
 
   it.each([
@@ -83,6 +106,7 @@ describe('vodPassProductUpdateSchema', () => {
         price: 49000,
         additionalMonthPrice,
         durationDays: 30,
+        ...limits,
       }),
     ).toThrow();
   });
@@ -97,6 +121,7 @@ describe('vodPassProductUpdateSchema', () => {
         price,
         additionalMonthPrice: 0,
         durationDays: 30,
+        ...limits,
       }),
     ).toThrow();
   });
@@ -111,6 +136,24 @@ describe('vodPassProductUpdateSchema', () => {
         price: 49000,
         additionalMonthPrice: 0,
         durationDays,
+        ...limits,
+      }),
+    ).toThrow();
+  });
+});
+
+describe('vodPassProductUpdateSchema 개월 수 상한', () => {
+  it.each([
+    ['0', { maxPurchaseMonths: 0, maxTotalMonths: 12 }],
+    ['소수', { maxPurchaseMonths: 1.5, maxTotalMonths: 12 }],
+    ['누락', { maxTotalMonths: 12 }],
+  ])('1회 최대 개월 수가 %s 이면 거절한다', (_label, override) => {
+    expect(() =>
+      vodPassProductUpdateSchema.parse({
+        price: 49000,
+        additionalMonthPrice: 0,
+        durationDays: 30,
+        ...override,
       }),
     ).toThrow();
   });
@@ -146,6 +189,7 @@ describe('useUpdateVodPassProductMutation', () => {
       price: 59000,
       additionalMonthPrice: 5000,
       durationDays: 60,
+      ...limits,
     });
 
     await waitFor(() => expect(onSuccess).toHaveBeenCalledTimes(1));
@@ -153,6 +197,7 @@ describe('useUpdateVodPassProductMutation', () => {
       price: 59000,
       additionalMonthPrice: 5000,
       durationDays: 60,
+      ...limits,
     });
     expect(invalidate).toHaveBeenCalledWith({
       queryKey: vodPassProductQueryKey,
@@ -171,6 +216,7 @@ describe('useUpdateVodPassProductMutation', () => {
       price: 0,
       additionalMonthPrice: 0,
       durationDays: 30,
+      ...limits,
     });
 
     await waitFor(() => expect(onError).toHaveBeenCalledTimes(1));
@@ -192,6 +238,7 @@ describe('useUpdateVodPassProductMutation', () => {
       price: 59000,
       additionalMonthPrice: 5000,
       durationDays: 60,
+      ...limits,
     });
 
     await waitFor(() =>

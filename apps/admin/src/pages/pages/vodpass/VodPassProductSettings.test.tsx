@@ -25,6 +25,8 @@ const product = {
   additionalMonthPrice: 10000,
   durationDays: 30,
   isActive: true,
+  maxPurchaseMonths: 3,
+  maxTotalMonths: 12,
 };
 
 const CONFIRM_MESSAGE =
@@ -55,6 +57,10 @@ const renderPage = () => {
 const priceInput = () => screen.getByLabelText('기본 가격(원)');
 const additionalInput = () => screen.getByLabelText('추가 월 가격(원)');
 const daysInput = () => screen.getByLabelText('이용일수(일)');
+const purchaseMonthsInput = () =>
+  screen.getByLabelText('1회 최대 구매 개월 수(개월)');
+const totalMonthsInput = () =>
+  screen.getByLabelText('누적 최대 보유 개월 수(개월)');
 
 /** 입력칸을 비우고 새 값을 넣는다. */
 const fill = async (input: HTMLElement, value: string) => {
@@ -178,11 +184,64 @@ describe('VodPassProductSettings 저장', () => {
         price: 59000,
         additionalMonthPrice: 5000,
         durationDays: 60,
+        maxPurchaseMonths: 3,
+        maxTotalMonths: 12,
       }),
     );
     expect(
       await screen.findByText('VOD 이용권 설정을 저장했습니다.'),
     ).toBeInTheDocument();
+  });
+
+  it('1회·누적 구매 개월 수 상한을 현재 값으로 보여주고 바꾼 값으로 저장한다', async () => {
+    put.mockResolvedValue({ data: { data: null } });
+    const user = userEvent.setup();
+
+    renderPage();
+    await screen.findByText('VOD 이용권');
+
+    expect(purchaseMonthsInput()).toHaveValue(3);
+    expect(totalMonthsInput()).toHaveValue(12);
+
+    await fill(purchaseMonthsInput(), '6');
+    await fill(totalMonthsInput(), '24');
+    await user.click(screen.getByRole('button', { name: '저장' }));
+
+    await waitFor(() =>
+      expect(put).toHaveBeenCalledWith(
+        '/admin/vod-pass-product',
+        expect.objectContaining({ maxPurchaseMonths: 6, maxTotalMonths: 24 }),
+      ),
+    );
+  });
+
+  it('누적 상한이 1회 상한보다 작으면 저장하지 않고 안내한다', async () => {
+    const user = userEvent.setup();
+
+    renderPage();
+    await screen.findByText('VOD 이용권');
+
+    await fill(purchaseMonthsInput(), '6');
+    await fill(totalMonthsInput(), '3');
+    await user.click(screen.getByRole('button', { name: '저장' }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      '누적 최대 보유 개월 수는 1회 최대 구매 개월 수 이상',
+    );
+    expect(put).not.toHaveBeenCalled();
+  });
+
+  it('누적 상한이 120개월을 넘으면 저장하지 않는다', async () => {
+    const user = userEvent.setup();
+
+    renderPage();
+    await screen.findByText('VOD 이용권');
+
+    await fill(totalMonthsInput(), '121');
+    await user.click(screen.getByRole('button', { name: '저장' }));
+
+    expect(await screen.findByRole('alert')).toBeInTheDocument();
+    expect(put).not.toHaveBeenCalled();
   });
 
   it('확인 문구를 거절하면 저장하지 않는다', async () => {
@@ -255,6 +314,8 @@ describe('VodPassProductSettings 저장', () => {
         price: 49000,
         additionalMonthPrice: 0,
         durationDays: 30,
+        maxPurchaseMonths: 3,
+        maxTotalMonths: 12,
       }),
     );
   });
