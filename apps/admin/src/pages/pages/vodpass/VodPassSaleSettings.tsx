@@ -50,6 +50,8 @@ const VodPassSaleSettings = () => {
       (programsQuery.data?.programList ?? [])
         .map((item) => item.programInfo)
         .filter((info) => isSaleProgramType(info.programType))
+        // 모집 마감은 새로 판매를 켤 일이 없어 목록에서 뺀다. 이미 켜 둔 설정은 그대로 남는다
+        .filter((info) => info.programStatusType !== 'POST')
         .filter(
           (info) => typeFilter === 'ALL' || info.programType === typeFilter,
         ),
@@ -149,8 +151,9 @@ const VodPassSaleSettings = () => {
     <div className="p-8">
       <h1 className="text-1.5-bold mb-2">VOD 이용권 판매 설정</h1>
       <p className="mb-6 text-sm text-neutral-500">
-        켠 프로그램에서만 VOD 이용권을 판매합니다. 기본값은 꺼짐입니다. 지금은
-        챌린지에서만 결제가 연동되어 있고, 다른 유형은 설정만 저장됩니다.
+        켠 프로그램에서만 VOD 이용권을 판매합니다. 기본값은 꺼짐입니다. 모집 전,
+        모집 중인 프로그램만 보입니다. 지금은 챌린지에서만 결제가 연동되어 있고,
+        다른 유형은 설정만 저장됩니다.
       </p>
       {renderBody()}
     </div>
