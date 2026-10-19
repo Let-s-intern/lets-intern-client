@@ -77,7 +77,7 @@ const LiveView: React.FC<{ live: LiveIdPrimitive; isPreview?: boolean }> = ({
             {live.title ?? ''}
           </BackHeader>
           {live.vod && <LiveVod className="mb-8 md:mb-12" />}
-          <LiveBasicInfo live={liveTransformed} />
+          <LiveBasicInfo live={liveTransformed} liveId={id} />
         </div>
 
         <ProgramDetailNavigation
@@ -150,7 +150,7 @@ const LiveView: React.FC<{ live: LiveIdPrimitive; isPreview?: boolean }> = ({
             </section>
           )}
           <LiveFaqSection liveId={id ?? ''} onSettle={handleFaqSettle} />
-          <LiveInfoBottom live={liveTransformed} />
+          <LiveInfoBottom live={liveTransformed} liveId={id} />
         </div>
       </div>
     </div>
