@@ -26,14 +26,6 @@ const navData = [
         name: '후기 관리',
         url: '/review/challenge',
       },
-      {
-        name: 'VOD 이용권 설정',
-        url: '/vod-pass-product',
-      },
-      {
-        name: 'VOD 이용권 구매자',
-        url: '/vod-pass-applications',
-      },
     ],
   },
   {
@@ -87,6 +79,23 @@ const navData = [
       {
         name: '참여중인 유저 목록',
         url: '/all-in-one-pass/participants',
+      },
+    ],
+  },
+  {
+    title: 'VOD 관리',
+    itemList: [
+      {
+        name: 'VOD 이용권 설정',
+        url: '/vod-pass-product',
+      },
+      {
+        name: 'VOD 이용권 판매 설정',
+        url: '/vod-pass-sale-settings',
+      },
+      {
+        name: 'VOD 이용권 구매자',
+        url: '/vod-pass-applications',
       },
     ],
   },
