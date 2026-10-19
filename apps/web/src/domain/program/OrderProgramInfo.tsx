@@ -44,6 +44,7 @@ const OrderProgramInfo = ({
   */
   const isLiveMentoring =
     programType?.toString().toLowerCase() === 'live_mentoring';
+  const isMembership = programType?.toString().toLowerCase() === 'membership';
 
   return (
     <div className="flex w-full flex-col items-start justify-center gap-y-6">
@@ -87,21 +88,25 @@ const OrderProgramInfo = ({
             ) : (
               <>
                 <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
-                  <div className="text-neutral-30 shrink-0">진행 일정</div>
+                  <div className="text-neutral-30 shrink-0">
+                    {isMembership ? '이용 기간' : '진행 일정'}
+                  </div>
                   <div className="text-primary-dark">{`${convertDateFormat(startDate || '')} - ${convertDateFormat(endDate || '')}`}</div>
                 </div>
-                {progressType !== 'none' && programType !== 'CHALLENGE' && (
-                  <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
-                    <div className="text-neutral-30 shrink-0">진행 방식</div>
-                    <div className="text-primary-dark">{`${
-                      progressType === 'ALL'
-                        ? '온라인/오프라인'
-                        : progressType === 'ONLINE'
-                          ? '온라인'
-                          : '오프라인'
-                    }`}</div>
-                  </div>
-                )}
+                {!isMembership &&
+                  progressType !== 'none' &&
+                  programType !== 'CHALLENGE' && (
+                    <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
+                      <div className="text-neutral-30 shrink-0">진행 방식</div>
+                      <div className="text-primary-dark">{`${
+                        progressType === 'ALL'
+                          ? '온라인/오프라인'
+                          : progressType === 'ONLINE'
+                            ? '온라인'
+                            : '오프라인'
+                      }`}</div>
+                    </div>
+                  )}
               </>
             )}
           </div>

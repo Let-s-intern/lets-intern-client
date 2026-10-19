@@ -15,6 +15,7 @@ import { z } from 'zod';
 const paymentProgramTypeSchema = z.union([
   ProgramTypeEnum,
   z.literal('LIVE_MENTORING'),
+  z.literal('MEMBERSHIP'),
 ]);
 export type PaymentProgramType = z.infer<typeof paymentProgramTypeSchema>;
 
@@ -212,7 +213,11 @@ export const paymentDetailType = z.object({
     title: z.string().nullable().optional(),
     thumbnail: z.string().nullable().optional(),
     programType: z
-      .union([ProgramTypeEnum.exclude(['REPORT']), z.literal('LIVE_MENTORING')])
+      .union([
+        ProgramTypeEnum.exclude(['REPORT']),
+        z.literal('LIVE_MENTORING'),
+        z.literal('MEMBERSHIP'),
+      ])
       .nullable()
       .optional(),
     progressType: z.string().nullable().optional(),
