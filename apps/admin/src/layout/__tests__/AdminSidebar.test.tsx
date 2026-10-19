@@ -98,4 +98,16 @@ describe('AdminSidebar 프로그램 관리 그룹', () => {
       within(group).getByRole('link', { name: 'VOD 이용권 설정' }),
     ).toHaveAttribute('href', '/vod-pass-product');
   });
+
+  it('VOD 이용권 구매자 메뉴가 구매자 목록 경로로 이어진다', () => {
+    renderSidebar();
+
+    const group = screen
+      .getByRole('heading', { name: '프로그램 관리' })
+      .closest('div')!.parentElement!;
+
+    expect(
+      within(group).getByRole('link', { name: 'VOD 이용권 구매자' }),
+    ).toHaveAttribute('href', '/vod-pass-applications');
+  });
 });
