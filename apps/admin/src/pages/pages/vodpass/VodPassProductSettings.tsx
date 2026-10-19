@@ -14,16 +14,27 @@ const INPUT_CLASS =
   'rounded-xxs border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-primary';
 
 const CONFIRM_MESSAGE =
-  '변경은 이후 구매에만 적용됩니다. 결제를 진행 중인 사용자는 이용권을 다시 선택하게 됩니다.';
+  '변경은 이후 구매에만 적용됩니다. 이미 구매한 이용권의 기간과 개월 수는 바뀌지 않습니다. 결제를 진행 중인 사용자는 이용권을 다시 선택하게 됩니다.';
 
 const isPositiveInteger = (value: string) => {
   const n = Number(value);
   return value.trim() !== '' && Number.isInteger(n) && n > 0;
 };
 
+const isNonNegativeInteger = (value: string) => {
+  const n = Number(value);
+  return value.trim() !== '' && Number.isInteger(n) && n >= 0;
+};
+
+/** 서버 계산식과 같다: 가격 = 기본 + 추가 * (개월 - 1), 일수 = 이용일수 * 개월 */
+const PREVIEW_MONTHS = 3;
+
 const VodPassProductForm = ({ product }: { product: VodPassProduct }) => {
   const { snackbar } = useAdminSnackbar();
   const [price, setPrice] = useState(String(product.price));
+  const [additionalMonthPrice, setAdditionalMonthPrice] = useState(
+    String(product.additionalMonthPrice),
+  );
   const [durationDays, setDurationDays] = useState(
     String(product.durationDays),
   );
@@ -42,6 +53,10 @@ const VodPassProductForm = ({ product }: { product: VodPassProduct }) => {
       setError('가격은 1원 이상의 정수로 입력해 주세요.');
       return;
     }
+    if (!isNonNegativeInteger(additionalMonthPrice)) {
+      setError('추가 월 가격은 0원 이상의 정수로 입력해 주세요.');
+      return;
+    }
     if (!isPositiveInteger(durationDays)) {
       setError('이용일수는 1일 이상의 정수로 입력해 주세요.');
       return;
@@ -50,8 +65,20 @@ const VodPassProductForm = ({ product }: { product: VodPassProduct }) => {
     setError(null);
     if (!window.confirm(CONFIRM_MESSAGE)) return;
 
-    save({ price: Number(price), durationDays: Number(durationDays) });
+    save({
+      price: Number(price),
+      additionalMonthPrice: Number(additionalMonthPrice),
+      durationDays: Number(durationDays),
+    });
   };
+
+  const canPreview =
+    isPositiveInteger(price) &&
+    isNonNegativeInteger(additionalMonthPrice) &&
+    isPositiveInteger(durationDays);
+  const previewPrice =
+    Number(price) + Number(additionalMonthPrice) * (PREVIEW_MONTHS - 1);
+  const previewDays = Number(durationDays) * PREVIEW_MONTHS;
 
   return (
     <form className="flex max-w-md flex-col gap-4" onSubmit={handleSubmit}>
@@ -72,7 +99,7 @@ const VodPassProductForm = ({ product }: { product: VodPassProduct }) => {
 
       <div className="flex flex-col gap-1">
         <label className={LABEL_CLASS} htmlFor="vod-pass-price">
-          가격(원)
+          기본 가격(원)
         </label>
         <input
           id="vod-pass-price"
@@ -82,6 +109,33 @@ const VodPassProductForm = ({ product }: { product: VodPassProduct }) => {
           value={price}
           onChange={(e) => setPrice(e.target.value)}
         />
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label
+          className={LABEL_CLASS}
+          htmlFor="vod-pass-additional-month-price"
+        >
+          추가 월 가격(원)
+        </label>
+        <input
+          id="vod-pass-additional-month-price"
+          type="number"
+          inputMode="numeric"
+          className={INPUT_CLASS}
+          value={additionalMonthPrice}
+          onChange={(e) => setAdditionalMonthPrice(e.target.value)}
+        />
+        <span className="text-neutral-40 text-xs">
+          2개월째부터 매월 더해지는 금액입니다. 0원이면 개월 수와 관계없이 1개월
+          가격입니다.
+        </span>
+        {canPreview && (
+          <span className="text-neutral-40 text-xs">
+            예시: {PREVIEW_MONTHS}개월 구매 시 {previewPrice.toLocaleString()}
+            원, {previewDays}일
+          </span>
+        )}
       </div>
 
       <div className="flex flex-col gap-1">
@@ -120,7 +174,7 @@ const VodPassProductForm = ({ product }: { product: VodPassProduct }) => {
 /**
  * VOD 이용권 상품 설정 (LC-3438, PRD 4.3 A-2).
  *
- * 가격과 이용일수만 바꾼다. 판매 상태(isActive)는 BE 에 변경 API 가 없어 읽기 전용이다.
+ * 기본 가격, 추가 월 가격, 이용일수를 바꾼다. 판매 상태(isActive)는 BE 에 변경 API 가 없어 읽기 전용이다.
  */
 const VodPassProductSettings = () => {
   const { data, isLoading, error } = useVodPassProductQuery();

@@ -28,6 +28,7 @@ import {
   ApplicationCategory,
   filterMentoringCategory,
 } from '@/domain/mypage/application/constants';
+import VersionChangeModal from '@/domain/mypage/application/version/VersionChangeModal';
 import CategoryChips from '@/domain/mypage/ui/button/CategoryChips';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
@@ -143,6 +144,9 @@ const CareerGrowthContent = () => {
   const [entryApplicationId, setEntryApplicationId] = useState<number | null>(
     null,
   );
+  const [versionApplicationId, setVersionApplicationId] = useState<
+    number | null
+  >(null);
 
   const isLibraryTab = category === 'LIBRARY';
 
@@ -185,14 +189,21 @@ const CareerGrowthContent = () => {
     const configs = toCareerGrowthCardConfigs(visibleItems, category);
 
     return configs.map((config) => {
+      // 버전 변경은 마이페이지 카드와 같은 모달로 연다 (LC-3247)
+      const withVersion = config.version?.changeable
+        ? {
+            ...config,
+            onVersionChangeClick: () => setVersionApplicationId(config.id),
+          }
+        : config;
       const mentoring = mentoringById.get(config.id);
-      if (!mentoring) return config;
+      if (!mentoring) return withVersion;
 
       // 마이페이지와 같은 값을 쓴다 — 서버가 판단한 결과다.
       const questionVisible = mentoring.questionEditable;
 
       return {
-        ...config,
+        ...withVersion,
         // 마감(예약 24시간 전) 뒤에는 질문 버튼을 감춘다. 마이페이지와 같은 규칙이다.
         secondaryButton: questionVisible
           ? {
@@ -280,6 +291,12 @@ const CareerGrowthContent = () => {
           applicationId={openMentoring.applicationId}
           readOnly={false}
           onClose={() => setOpenApplicationId(null)}
+        />
+      )}
+      {versionApplicationId !== null && (
+        <VersionChangeModal
+          applicationId={versionApplicationId}
+          onClose={() => setVersionApplicationId(null)}
         />
       )}
     </>

@@ -10,108 +10,12 @@ jest.mock('@letscareer/api', () => ({
 }));
 
 import {
-  buildPostApplicationBody,
   getOrderErrorMessage,
+  getVodPassResultNotice,
+  isVodPassProductChangedError,
   PAYMENT_ORDER_CONFLICT_MESSAGE,
   VOD_PASS_PRODUCT_CHANGED_MESSAGE,
-  type OrderRequestForm,
 } from './orderResult';
-
-const FORM: OrderRequestForm = {
-  couponId: '3',
-  priceId: 2,
-  isFree: false,
-  totalPrice: 99000,
-  contactEmail: 'qa@letscareer.test',
-  question: '',
-  vodPassProductId: 0,
-  vodPassPrice: 0,
-  vodPassDurationDays: 0,
-};
-
-const PARAMS = { orderId: 'letsAB12', paymentKey: 'pk_1', amount: 99000 };
-
-describe('buildPostApplicationBody', () => {
-  it('이용권을 고르지 않으면 이용권 키가 본문에 없고 기존 본문과 같다', () => {
-    const body = buildPostApplicationBody(FORM, PARAMS);
-
-    expect(body).toEqual({
-      paymentInfo: {
-        couponId: 3,
-        priceId: 2,
-        paymentKey: 'pk_1',
-        orderId: 'letsAB12',
-        amount: '99000',
-      },
-      contactEmail: 'qa@letscareer.test',
-      motivate: '',
-      question: '',
-    });
-    expect(Object.keys(body)).not.toContain('vodPassProductId');
-    expect(Object.keys(body)).not.toContain('vodPassExpectedPrice');
-    expect(Object.keys(body)).not.toContain('vodPassExpectedDurationDays');
-  });
-
-  it('이용권을 골랐으면 세 필드를 모두 넣고 amount 는 Toss 쿼리 값을 그대로 쓴다', () => {
-    const body = buildPostApplicationBody(
-      {
-        ...FORM,
-        vodPassProductId: 7,
-        vodPassPrice: 29000,
-        vodPassDurationDays: 30,
-      },
-      { ...PARAMS, amount: 128000 },
-    );
-
-    expect(body.vodPassProductId).toBe(7);
-    expect(body.vodPassExpectedPrice).toBe(29000);
-    expect(body.vodPassExpectedDurationDays).toBe(30);
-    // 이미 이용권이 합산된 금액이다. 여기서 다시 더하지 않는다
-    expect(body.paymentInfo.amount).toBe('128000');
-  });
-
-  it('이용권 필드가 없던 시절의 저장 상태(undefined)는 미선택으로 본다', () => {
-    const legacyForm = {
-      ...FORM,
-      vodPassProductId: undefined,
-      vodPassPrice: undefined,
-      vodPassDurationDays: undefined,
-    };
-
-    const body = buildPostApplicationBody(legacyForm, PARAMS);
-
-    expect(Object.keys(body)).not.toContain('vodPassProductId');
-  });
-
-  it('무료 신청이면 paymentKey 를 비우고 amount 는 스토어 합계를 쓴다', () => {
-    const body = buildPostApplicationBody(
-      { ...FORM, isFree: true, totalPrice: 0 },
-      { orderId: 'letsAB12' },
-    );
-
-    expect(body.paymentInfo.paymentKey).toBeNull();
-    expect(body.paymentInfo.amount).toBe('0');
-  });
-
-  it('Toss amount 가 없으면 스토어 합계로 대신한다', () => {
-    const body = buildPostApplicationBody(FORM, {
-      orderId: 'letsAB12',
-      paymentKey: 'pk_1',
-    });
-
-    expect(body.paymentInfo.amount).toBe('99000');
-  });
-
-  it('쿠폰이 없으면 couponId 는 null, priceId 가 없으면 -1 이다', () => {
-    const body = buildPostApplicationBody(
-      { ...FORM, couponId: '', priceId: null },
-      PARAMS,
-    );
-
-    expect(body.paymentInfo.couponId).toBeNull();
-    expect(body.paymentInfo.priceId).toBe(-1);
-  });
-});
 
 describe('getOrderErrorMessage', () => {
   it('409 VOD_PASS_PRODUCT_CHANGED 는 다시 선택하라는 문구다', () => {
@@ -156,5 +60,62 @@ describe('getOrderErrorMessage', () => {
     expect(getOrderErrorMessage(null)).toBeNull();
     expect(getOrderErrorMessage(undefined)).toBeNull();
     expect(getOrderErrorMessage('error')).toBeNull();
+  });
+});
+
+describe('isVodPassProductChangedError', () => {
+  it('409 VOD_PASS_PRODUCT_CHANGED 만 참이다', () => {
+    expect(
+      isVodPassProductChangedError({
+        status: 409,
+        code: 'VOD_PASS_PRODUCT_CHANGED',
+      }),
+    ).toBe(true);
+    expect(
+      isVodPassProductChangedError({
+        status: 409,
+        code: 'PAYMENT_ORDER_CONFLICT',
+      }),
+    ).toBe(false);
+    expect(
+      isVodPassProductChangedError({
+        status: 400,
+        code: 'VOD_PASS_PRODUCT_CHANGED',
+      }),
+    ).toBe(false);
+    expect(isVodPassProductChangedError(null)).toBe(false);
+  });
+});
+
+describe('getVodPassResultNotice', () => {
+  const base = {
+    applicationId: 91,
+    startsAt: '2026-10-16T10:00:00+09:00',
+    endsAt: '2027-01-14T10:00:00+09:00',
+  };
+
+  it('ACTIVE 는 지금부터 이용할 수 있다고 안내한다', () => {
+    expect(getVodPassResultNotice({ ...base, status: 'ACTIVE' })).toBe(
+      'VOD 이용권을 지금부터 이용할 수 있습니다. 이용 기간은 2026.10.16 ~ 2027.01.14 입니다',
+    );
+  });
+
+  it('SCHEDULED 는 시작 예정일을 안내한다', () => {
+    expect(getVodPassResultNotice({ ...base, status: 'SCHEDULED' })).toContain(
+      '2026.10.16부터 VOD 이용권 이용이 시작됩니다',
+    );
+  });
+
+  it('기간이나 상태를 모르면 마이페이지 확인 안내로 대신한다', () => {
+    const fallback = /마이페이지 결제 내역에서 확인할 수 있습니다/;
+
+    expect(getVodPassResultNotice(null)).toMatch(fallback);
+    expect(getVodPassResultNotice(undefined)).toMatch(fallback);
+    expect(
+      getVodPassResultNotice({ ...base, status: 'ACTIVE', endsAt: null }),
+    ).toMatch(fallback);
+    expect(getVodPassResultNotice({ ...base, status: 'UNKNOWN' })).toMatch(
+      fallback,
+    );
   });
 });

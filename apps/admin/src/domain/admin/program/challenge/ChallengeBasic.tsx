@@ -23,6 +23,7 @@ import {
   OutlinedInput,
   Select,
   SelectChangeEvent,
+  Typography,
 } from '@mui/material';
 import React from 'react';
 import SelectFormControl from '../ui/form/SelectFormControl';
@@ -44,6 +45,8 @@ interface ChallengeBasicProps<
   >;
   className?: string;
   setInput: React.Dispatch<React.SetStateAction<Omit<T, 'desc'>>>;
+  /** 버전이 있으면 목록·상세에는 버전 노출 제목이 보인다는 안내를 붙인다 */
+  hasVersions?: boolean;
 }
 
 const ChallengeBasic = React.memo(
@@ -51,6 +54,7 @@ const ChallengeBasic = React.memo(
     className,
     defaultValue,
     setInput,
+    hasVersions = false,
   }: ChallengeBasicProps<T>) => {
     const onChange = (e: SelectChangeEvent) => {
       setInput((prev) => ({ ...prev, [e.target!.name]: e.target!.value }));
@@ -213,6 +217,11 @@ const ChallengeBasic = React.memo(
           size="small"
           onChange={onChange}
         />
+        {hasVersions && (
+          <Typography variant="caption" color="text.secondary" component="p">
+            버전이 있으면 목록·상세에는 버전의 노출 제목이 보입니다
+          </Typography>
+        )}
         <Input
           label="한 줄 설명"
           type="text"

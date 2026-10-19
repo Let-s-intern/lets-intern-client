@@ -56,7 +56,9 @@ const CreditDeleteContent = () => {
     vodPass,
     isVodPassError,
     isVodPassLoading,
-    unactivatedBundledVodPassPaymentId,
+    refundableBundledVodPassPaymentId,
+    hasUnrefundableBundledVodPass,
+    hasLaterVodPass,
   } = useCredit(paymentId);
 
   const { mutate: tryCancelPayment } = useCancelApplicationMutation({
@@ -186,17 +188,33 @@ const CreditDeleteContent = () => {
           </div>
         </div>
         {/* 챌린지를 취소해도 함께 결제한 이용권은 자동으로 환불되지 않는다. 환불 금액에도 포함되지 않는다 */}
-        {unactivatedBundledVodPassPaymentId !== null && (
+        {hasUnrefundableBundledVodPass && (
+          <div className="bg-neutral-90 flex w-full flex-col gap-y-1 rounded-sm px-4 py-3 text-sm font-medium">
+            <p className="text-neutral-0">
+              함께 결제한 VOD 이용권은 이용이 시작되어 환불되지 않으며, 챌린지
+              환불 금액에도 포함되지 않습니다
+            </p>
+          </div>
+        )}
+        {refundableBundledVodPassPaymentId !== null && (
           <div className="bg-neutral-90 flex w-full flex-col gap-y-1 rounded-sm px-4 py-3 text-sm font-medium">
             <p className="text-neutral-0">
               함께 결제한 VOD 이용권은 별도로 환불해야 합니다
             </p>
             <Link
               className="text-primary-dark underline underline-offset-2"
-              href={`/mypage/credit/${unactivatedBundledVodPassPaymentId}/delete`}
+              href={`/mypage/credit/${refundableBundledVodPassPaymentId}/delete`}
             >
               VOD 이용권 환불하러 가기
             </Link>
+          </div>
+        )}
+        {isVodPass && isCancelable && hasLaterVodPass && (
+          <div className="bg-neutral-90 w-full rounded-sm px-4 py-3 text-sm font-medium">
+            <p className="text-neutral-0">
+              이 이용권을 환불해도 뒤에 예약된 이용권의 시작일은 앞당겨지지
+              않습니다
+            </p>
           </div>
         )}
         {isRefundBlocked ? (

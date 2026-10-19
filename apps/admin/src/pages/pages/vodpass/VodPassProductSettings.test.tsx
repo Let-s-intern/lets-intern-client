@@ -22,12 +22,13 @@ const product = {
   vodPassProductId: 1,
   title: 'VOD 이용권',
   price: 49000,
+  additionalMonthPrice: 10000,
   durationDays: 30,
   isActive: true,
 };
 
 const CONFIRM_MESSAGE =
-  '변경은 이후 구매에만 적용됩니다. 결제를 진행 중인 사용자는 이용권을 다시 선택하게 됩니다.';
+  '변경은 이후 구매에만 적용됩니다. 이미 구매한 이용권의 기간과 개월 수는 바뀌지 않습니다. 결제를 진행 중인 사용자는 이용권을 다시 선택하게 됩니다.';
 
 const apiError = (code: string, message: string, status: number) =>
   new ApiError({
@@ -51,7 +52,8 @@ const renderPage = () => {
   );
 };
 
-const priceInput = () => screen.getByLabelText('가격(원)');
+const priceInput = () => screen.getByLabelText('기본 가격(원)');
+const additionalInput = () => screen.getByLabelText('추가 월 가격(원)');
 const daysInput = () => screen.getByLabelText('이용일수(일)');
 
 /** 입력칸을 비우고 새 값을 넣는다. */
@@ -74,7 +76,7 @@ afterEach(() => {
 });
 
 describe('VodPassProductSettings 조회', () => {
-  it('제목과 판매 상태를 읽기 전용으로, 가격과 이용일수를 입력칸에 채운다', async () => {
+  it('제목과 판매 상태를 읽기 전용으로, 가격·추가 월 가격·이용일수를 입력칸에 채운다', async () => {
     get.mockResolvedValue({ data: { data: product } });
 
     renderPage();
@@ -82,7 +84,37 @@ describe('VodPassProductSettings 조회', () => {
     expect(await screen.findByText('VOD 이용권')).toBeInTheDocument();
     expect(screen.getByText('판매 중')).toBeInTheDocument();
     expect(priceInput()).toHaveValue(49000);
+    expect(additionalInput()).toHaveValue(10000);
     expect(daysInput()).toHaveValue(30);
+  });
+
+  it('입력값으로 계산한 3개월 구매 예시를 보여주고 입력을 바꾸면 따라 바뀐다', async () => {
+    get.mockResolvedValue({ data: { data: product } });
+
+    renderPage();
+    await screen.findByText('VOD 이용권');
+
+    // 49,000 + 10,000 * 2 = 69,000원, 30일 * 3 = 90일
+    expect(
+      screen.getByText('예시: 3개월 구매 시 69,000원, 90일'),
+    ).toBeInTheDocument();
+
+    await fill(additionalInput(), '0');
+
+    expect(
+      screen.getByText('예시: 3개월 구매 시 49,000원, 90일'),
+    ).toBeInTheDocument();
+  });
+
+  it('입력이 올바르지 않으면 예시를 숨긴다', async () => {
+    get.mockResolvedValue({ data: { data: product } });
+
+    renderPage();
+    await screen.findByText('VOD 이용권');
+
+    await fill(additionalInput(), '-1');
+
+    expect(screen.queryByText(/예시: 3개월/)).not.toBeInTheDocument();
   });
 
   it('판매 중지 상품은 판매 중지로 표시한다', async () => {
@@ -111,7 +143,7 @@ describe('VodPassProductSettings 조회', () => {
         '상품이 아직 생성되지 않았습니다. BE 배포 설정(vod-pass.initial-price)을 확인하세요',
       ),
     ).toBeInTheDocument();
-    expect(screen.queryByLabelText('가격(원)')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('기본 가격(원)')).not.toBeInTheDocument();
   });
 
   it('다른 조회 실패는 서버 문구를 그대로 보여준다', async () => {
@@ -136,6 +168,7 @@ describe('VodPassProductSettings 저장', () => {
     await screen.findByText('VOD 이용권');
 
     await fill(priceInput(), '59000');
+    await fill(additionalInput(), '5000');
     await fill(daysInput(), '60');
     await user.click(screen.getByRole('button', { name: '저장' }));
 
@@ -143,6 +176,7 @@ describe('VodPassProductSettings 저장', () => {
     await waitFor(() =>
       expect(put).toHaveBeenCalledWith('/admin/vod-pass-product', {
         price: 59000,
+        additionalMonthPrice: 5000,
         durationDays: 60,
       }),
     );
@@ -205,6 +239,48 @@ describe('VodPassProductSettings 저장', () => {
     ).toBeInTheDocument();
     expect(put).not.toHaveBeenCalled();
   });
+
+  it('추가 월 가격 0 은 허용하고 그대로 보낸다', async () => {
+    put.mockResolvedValue({ data: { data: null } });
+    const user = userEvent.setup();
+
+    renderPage();
+    await screen.findByText('VOD 이용권');
+
+    await fill(additionalInput(), '0');
+    await user.click(screen.getByRole('button', { name: '저장' }));
+
+    await waitFor(() =>
+      expect(put).toHaveBeenCalledWith('/admin/vod-pass-product', {
+        price: 49000,
+        additionalMonthPrice: 0,
+        durationDays: 30,
+      }),
+    );
+  });
+
+  it.each([
+    ['음수', '-1'],
+    ['소수', '0.5'],
+    ['빈 값', ''],
+  ])(
+    '추가 월 가격이 %s 이면 안내하고 저장하지 않는다',
+    async (_label, value) => {
+      const user = userEvent.setup();
+
+      renderPage();
+      await screen.findByText('VOD 이용권');
+
+      await fill(additionalInput(), value);
+      await user.click(screen.getByRole('button', { name: '저장' }));
+
+      expect(
+        screen.getByText('추가 월 가격은 0원 이상의 정수로 입력해 주세요.'),
+      ).toBeInTheDocument();
+      expect(confirmSpy).not.toHaveBeenCalled();
+      expect(put).not.toHaveBeenCalled();
+    },
+  );
 
   it('저장이 실패하면 서버 문구를 알린다', async () => {
     put.mockRejectedValue(

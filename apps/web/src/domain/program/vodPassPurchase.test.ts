@@ -1,8 +1,13 @@
 import {
   calculateChallengeTotalWithVodPass,
+  calculateVodPassDurationDays,
+  calculateVodPassPrice,
+  clampVodPassMonths,
   getOrderName,
   isVodPassSelected,
+  supportsVodPassMonths,
   toVodPassRequestFields,
+  VOD_PASS_MAX_MONTHS,
 } from './vodPassPurchase';
 
 /** 이용권 도입 전 payment-input 의 합계식. 이용권 미선택 결과가 이와 같아야 한다. */
@@ -110,19 +115,90 @@ describe('isVodPassSelected', () => {
   });
 });
 
+describe('calculateVodPassPrice / calculateVodPassDurationDays', () => {
+  // 서버 VodPassProduct.calculatePrice·calculateDurationDays 와 같은 입력
+  const product = {
+    price: 20000,
+    additionalMonthPrice: 10000,
+    durationDays: 30,
+  };
+
+  it('1개월은 기본 가격과 1개월 일수다', () => {
+    expect(calculateVodPassPrice(product, 1)).toBe(20000);
+    expect(calculateVodPassDurationDays(product, 1)).toBe(30);
+  });
+
+  it('2개월째부터 매월 추가 월 가격이 더해지고 일수는 개월 수에 비례한다', () => {
+    expect(calculateVodPassPrice(product, 3)).toBe(40000);
+    expect(calculateVodPassDurationDays(product, 3)).toBe(90);
+  });
+
+  it('추가 월 가격이 0 이면 개월 수와 무관하게 기본 가격이다', () => {
+    expect(
+      calculateVodPassPrice({ ...product, additionalMonthPrice: 0 }, 5),
+    ).toBe(20000);
+  });
+
+  it('추가 월 가격이 없으면 0 으로 본다', () => {
+    expect(calculateVodPassPrice({ price: 20000, durationDays: 30 }, 3)).toBe(
+      20000,
+    );
+  });
+
+  it('화면 범위를 벗어난 개월 수는 범위 안으로 맞춰 계산한다', () => {
+    expect(calculateVodPassPrice(product, 0)).toBe(20000);
+    expect(calculateVodPassPrice(product, 99)).toBe(
+      20000 + 10000 * (VOD_PASS_MAX_MONTHS - 1),
+    );
+  });
+});
+
+describe('clampVodPassMonths', () => {
+  it('1 이상 상한 이하의 정수로 맞춘다', () => {
+    expect(clampVodPassMonths(0)).toBe(1);
+    expect(clampVodPassMonths(-3)).toBe(1);
+    expect(clampVodPassMonths(2.7)).toBe(2);
+    expect(clampVodPassMonths(VOD_PASS_MAX_MONTHS + 1)).toBe(
+      VOD_PASS_MAX_MONTHS,
+    );
+    expect(clampVodPassMonths(Number.NaN)).toBe(1);
+  });
+});
+
+describe('supportsVodPassMonths', () => {
+  it('추가 월 가격이 숫자일 때만 개월 선택을 지원한다 (0 도 지원이다)', () => {
+    expect(supportsVodPassMonths({ additionalMonthPrice: 10000 })).toBe(true);
+    expect(supportsVodPassMonths({ additionalMonthPrice: 0 })).toBe(true);
+    expect(supportsVodPassMonths({ additionalMonthPrice: null })).toBe(false);
+    expect(supportsVodPassMonths({})).toBe(false);
+  });
+});
+
 describe('toVodPassRequestFields', () => {
-  it('선택했으면 서버가 요구하는 이름의 필드 세 개로 변환한다', () => {
+  it('선택했으면 서버가 요구하는 이름의 필드 네 개로 변환한다', () => {
+    expect(
+      toVodPassRequestFields({
+        vodPassProductId: 7,
+        vodPassPrice: 40000,
+        vodPassDurationDays: 90,
+        vodPassMonths: 3,
+      }),
+    ).toEqual({
+      vodPassProductId: 7,
+      vodPassExpectedPrice: 40000,
+      vodPassExpectedDurationDays: 90,
+      vodPassMonths: 3,
+    });
+  });
+
+  it('개월 선택 전에 담긴 선택(개월 수 없음)은 1개월로 보낸다', () => {
     expect(
       toVodPassRequestFields({
         vodPassProductId: 7,
         vodPassPrice: 29000,
         vodPassDurationDays: 30,
       }),
-    ).toEqual({
-      vodPassProductId: 7,
-      vodPassExpectedPrice: 29000,
-      vodPassExpectedDurationDays: 30,
-    });
+    ).toMatchObject({ vodPassMonths: 1 });
   });
 
   it('미선택이면 필드를 하나도 내보내지 않는다', () => {
@@ -131,6 +207,7 @@ describe('toVodPassRequestFields', () => {
         vodPassProductId: 0,
         vodPassPrice: 0,
         vodPassDurationDays: 0,
+        vodPassMonths: 0,
       }),
     ).toEqual({});
     expect(toVodPassRequestFields({})).toEqual({});

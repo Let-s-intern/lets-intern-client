@@ -1,4 +1,5 @@
 import { LOCALIZED_YYYY_MD_Hm } from '@/data/dayjsFormat';
+import { formatMissionRoundLabel } from '@/domain/admin/challenge/version/utils/missionVersion';
 import dayjs from '@/lib/dayjs';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { Link } from 'react-router-dom';
@@ -40,7 +41,15 @@ function FeedbackMissionList() {
           return <span className="text-gray-400">-</span>;
         },
       },
-      { field: 'th', headerName: '미션 회차', type: 'number', width: 90 },
+      {
+        field: 'th',
+        headerName: '미션 회차',
+        type: 'number',
+        width: 160,
+        // 버전 미션이면 회차 옆에 버전명을 붙인다
+        renderCell: (params: GridRenderCellParams<Row>) =>
+          formatMissionRoundLabel(params.row),
+      },
       {
         field: 'startDate',
         headerName: '공개일',

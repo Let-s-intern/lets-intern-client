@@ -62,6 +62,22 @@ describe('vodPassListSchema (LC-3438)', () => {
     expect(parsed.passes[0].refundable).toBe(false);
   });
 
+  it('구매 개월 수를 파싱하고, 없으면 null 이나 undefined 로 둔다', () => {
+    const parsed = vodPassListSchema.parse({
+      passes: [
+        { ...basePass, purchasedMonths: 3 },
+        { ...basePass, applicationId: 32, purchasedMonths: null },
+        { ...basePass, applicationId: 33 },
+      ],
+    });
+
+    expect(parsed.passes.map((pass) => pass.purchasedMonths)).toEqual([
+      3,
+      null,
+      undefined,
+    ]);
+  });
+
   it('모르는 상태가 있어도 목록 전체가 실패하지 않고 UNKNOWN 이 된다', () => {
     const parsed = vodPassListSchema.parse({
       passes: [basePass, { ...basePass, applicationId: 32, status: 'PAUSED' }],

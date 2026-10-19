@@ -15,13 +15,14 @@ import {
 } from '../schema';
 import { ProgramType } from '../types/common';
 import axios from '../utils/axios';
+import { ChallengeMissionQueryKey } from './challenge/challenge';
 import {
   UsePaymentDetailQueryKey,
   UsePaymentQueryKey,
 } from './payment/payment';
 import { tossInfoType } from './payment/paymentSchema';
 import { useUserQueryKey } from './user/user';
-import { UseVodPassQueryKey } from './vodPass';
+import { UseVodPassQueryKey, vodPassStatusSchema } from './vodPass';
 
 export const programApplicationSchema = z.object({
   applied: z.boolean().nullable().optional(),
@@ -49,6 +50,8 @@ export const programApplicationSchema = z.object({
       id: z.number(),
       title: z.string(),
       price: z.number(),
+      // 1개월 초과분에 매월 더해지는 금액. 없으면 개월 선택을 지원하지 않는 서버라 1개월만 판다
+      additionalMonthPrice: z.number().nullable().optional(),
       durationDays: z.number(),
     })
     .nullable()
@@ -98,10 +101,11 @@ export interface PostApplicationInterface {
   contactEmail?: string;
   motivate?: string;
   question?: string;
-  // VOD 이용권을 함께 결제할 때만 세 값을 모두 보낸다 (LC-3438). 하나라도 있으면 서버가 전부 요구한다.
+  // VOD 이용권을 함께 결제할 때만 네 값을 모두 보낸다 (LC-3438). 하나라도 있으면 서버가 전부 요구한다.
   vodPassProductId?: number;
   vodPassExpectedPrice?: number;
   vodPassExpectedDurationDays?: number;
+  vodPassMonths?: number;
 }
 
 export const usePostApplicationMutation = ({
@@ -139,8 +143,19 @@ export const usePostApplicationMutation = ({
 
 export const postApplicationResultSchema = z.object({
   tossInfo: tossInfoType.nullable().optional(),
-  // 이용권을 함께 결제한 경우에만 내려온다 (LC-3438). 서버 배포 전에는 오지 않는다.
-  vodPass: z.record(z.string(), z.unknown()).nullable().optional(),
+  // 이용권을 함께 결제한 경우에만 내려온다 (LC-3438). status 는 ACTIVE 또는 SCHEDULED 다.
+  vodPass: z
+    .object({
+      applicationId: z.number(),
+      paymentId: z.number().nullable().optional(),
+      durationDays: z.number().nullable().optional(),
+      purchasedMonths: z.number().nullable().optional(),
+      status: vodPassStatusSchema,
+      startsAt: z.string().nullable().optional(),
+      endsAt: z.string().nullable().optional(),
+    })
+    .nullable()
+    .optional(),
   payments: z
     .array(
       z.object({
@@ -348,6 +363,13 @@ export const mypageApplicationsSchema = z
         // BE 응답 추가 전까지는 undefined 라 오픈채팅방 버튼이 렌더되지 않는다.
         chatLink: z.string().nullable().optional(),
         chatPassword: z.string().nullable().optional(),
+        // 챌린지 버전 (LC-3247). 챌린지가 아니거나 서버 배포 전이면 값이 오지 않는다.
+        challengeVersionTitle: z.string().nullable().default(null),
+        canChangeVersion: z
+          .boolean()
+          .nullable()
+          .optional()
+          .transform((canChangeVersion) => canChangeVersion ?? false),
         // 셀프 플랜 업그레이드 가능 여부 (LC-3247). 챌린지가 아니거나 서버 배포 전이면 값이 오지 않는다.
         canUpgradePlan: z
           .boolean()
@@ -394,6 +416,90 @@ export const mypageApplicationsQueryOptions = {
 
 export const useMypageApplicationsQuery = () => {
   return useQuery(mypageApplicationsQueryOptions);
+};
+
+/** 버전 변경이 막힌 이유. 서버가 이 순서로 검사해 처음 걸린 것을 준다 */
+const applicationVersionUnavailableReason = z.enum([
+  'CANCELED',
+  'LIGHT',
+  'NO_VERSION',
+  'ALREADY_CHANGED',
+  'DEADLINE_PASSED',
+]);
+
+const challengeVersionItemSchema = z.object({
+  challengeVersionId: z.number(),
+  title: z.string(),
+});
+
+/** GET /api/v1/application/{applicationId}/version 신청 버전 조회 */
+export const applicationVersionSchema = z.object({
+  currentVersion: challengeVersionItemSchema.nullable().optional(),
+  versionList: z.array(challengeVersionItemSchema),
+  deadline: z.string().nullable().optional(),
+  changeable: z.boolean(),
+  unavailableReason: applicationVersionUnavailableReason.nullable().optional(),
+});
+
+export type ApplicationVersion = z.infer<typeof applicationVersionSchema>;
+
+export const useApplicationVersionQueryKey = 'useApplicationVersionQueryKey';
+
+export const useApplicationVersionQuery = (
+  applicationId?: number | string | null,
+) => {
+  return useQuery({
+    queryKey: [useApplicationVersionQueryKey, applicationId],
+    queryFn: async () => {
+      const res = await axios.get(`/application/${applicationId}/version`);
+      return applicationVersionSchema.parse(res.data.data);
+    },
+    enabled: !!applicationId,
+  });
+};
+
+/** ['challenge', id, 여기] 꼴 키 중 버전이 바뀌면 달라지는 것 */
+const VERSION_DEPENDENT_CHALLENGE_QUERIES = ['schedule', 'missions', 'score'];
+
+/** PATCH /api/v1/application/{applicationId}/version 참여자 버전 변경 */
+export const usePatchApplicationVersionMutation = () => {
+  const client = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      applicationId,
+      challengeVersionId,
+    }: {
+      applicationId: number | string;
+      challengeVersionId: number;
+    }) => {
+      const res = await axios.patch(`/application/${applicationId}/version`, {
+        challengeVersionId,
+      });
+      return res.data;
+    },
+    onSuccess: () => {
+      // 대시보드는 URL 의 문자열 id, 마이페이지는 숫자 id 로 조회해 키가 달라 접두어로 무효화한다
+      client.invalidateQueries({ queryKey: [useApplicationVersionQueryKey] });
+      client.invalidateQueries({
+        queryKey: mypageApplicationsQueryOptions.queryKey,
+      });
+      // 서버가 공통 미션 + 내 버전 미션만 주므로 버전이 바뀌면 미션이 걸린 응답을 다시 받는다.
+      // 'useChallengeDailyMission' 은 challenge.ts useChallengeMyDailyMission 의 키다
+      client.invalidateQueries({ queryKey: ['useChallengeDailyMission'] });
+      client.invalidateQueries({ queryKey: [ChallengeMissionQueryKey] });
+      // 일정·미션 목록 3종(CurrentChallengeProvider)과 점수(대시보드 page.tsx)다.
+      // 키의 두 번째 칸이 URL 문자열 id 와 숫자 id 로 섞여 있어 세 번째 칸으로 고른다
+      client.invalidateQueries({
+        predicate: ({ queryKey }) =>
+          queryKey[0] === 'challenge' &&
+          VERSION_DEPENDENT_CHALLENGE_QUERIES.includes(queryKey[2] as string),
+      });
+      // 피드백 목록(api/feedback/feedback.ts)
+      client.invalidateQueries({ queryKey: ['liveFeedbackList'] });
+      client.invalidateQueries({ queryKey: ['writtenFeedbackList'] });
+    },
+  });
 };
 
 const participationInfoSchema = z.object({

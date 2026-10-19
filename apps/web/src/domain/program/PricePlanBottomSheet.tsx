@@ -2,7 +2,15 @@ import { useProgramApplicationQuery } from '@/api/application';
 import BaseBottomSheet from '@/common/sheet/BaseBottomSheet';
 import { COUPON_DISABLED_CHALLENGE_TYPES } from '@/domain/program/program-detail/apply/constants';
 import { useVodPassPurchaseEnabled } from '@/domain/program/useVodPassPurchaseEnabled';
-import { calculateChallengeTotalWithVodPass } from '@/domain/program/vodPassPurchase';
+import {
+  calculateChallengeTotalWithVodPass,
+  calculateVodPassDurationDays,
+  calculateVodPassPrice,
+  clampVodPassMonths,
+  supportsVodPassMonths,
+  VOD_PASS_MAX_MONTHS,
+  VOD_PASS_MIN_MONTHS,
+} from '@/domain/program/vodPassPurchase';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
 import { twMerge } from '@/lib/twMerge';
 import {
@@ -88,7 +96,8 @@ function VodPassLabel({
           </span>
         </span>
         <span className="text-xxsmall12 text-neutral-30 mt-1 block font-normal leading-5">
-          결제 후 VOD 사이트에서 직접 활성화하면 이용 기간이 시작됩니다
+          결제 즉시 이용이 시작됩니다. 이용 중인 이용권이 있으면 종료 후 이어서
+          시작됩니다
         </span>
       </span>
       <span
@@ -104,14 +113,69 @@ function VodPassLabel({
   );
 }
 
+const VOD_PASS_STEPPER_BUTTON_CLASS =
+  'border-neutral-80 text-neutral-10 disabled:text-neutral-60 flex h-8 w-8 items-center justify-center rounded-xs border bg-white text-base font-bold disabled:cursor-not-allowed';
+
+function VodPassMonthsStepper({
+  months,
+  additionalMonthPrice,
+  onChange,
+}: {
+  months: number;
+  additionalMonthPrice: number;
+  onChange: (months: number) => void;
+}) {
+  return (
+    <div className="border-primary-20 flex items-center justify-between gap-3 border-t px-3 py-3">
+      <span className="min-w-0">
+        <span className="text-xsmall14 block font-medium">이용 기간</span>
+        {additionalMonthPrice > 0 && (
+          <span className="text-xxsmall12 text-neutral-30 mt-0.5 block">
+            2개월부터 매월 +{additionalMonthPrice.toLocaleString()}원
+          </span>
+        )}
+      </span>
+      <span className="flex shrink-0 items-center gap-2">
+        <button
+          type="button"
+          aria-label="이용 개월 수 줄이기"
+          className={VOD_PASS_STEPPER_BUTTON_CLASS}
+          disabled={months <= VOD_PASS_MIN_MONTHS}
+          onClick={() => onChange(months - 1)}
+        >
+          -
+        </button>
+        <span
+          className="text-xsmall14 min-w-[3.5rem] text-center font-semibold"
+          aria-live="polite"
+        >
+          {months}개월
+        </span>
+        <button
+          type="button"
+          aria-label="이용 개월 수 늘리기"
+          className={VOD_PASS_STEPPER_BUTTON_CLASS}
+          disabled={months >= VOD_PASS_MAX_MONTHS}
+          onClick={() => onChange(months + 1)}
+        >
+          +
+        </button>
+      </span>
+    </div>
+  );
+}
+
 function PricePlanBottomSheet({
   challenge,
   challengeId,
+  challengeVersionId = null,
   isOpen,
   onClose,
 }: {
   challenge: ChallengeIdPrimitive;
   challengeId: string;
+  /** 들어온 상세 페이지의 버전. 버전 없는 챌린지면 null (LC-3247) */
+  challengeVersionId?: number | null;
   isOpen: boolean;
   onClose: () => void;
 }) {
@@ -151,8 +215,9 @@ function PricePlanBottomSheet({
         : BASIC;
 
   const [pricePlan, setPricePlan] = useState<ChallengePricePlan>(defaultValue);
-  // VOD 이용권 선택 여부. 플랜과 독립이라 플랜을 바꿔도 유지한다 (LC-3438)
+  // VOD 이용권 선택 여부와 개월 수. 플랜과 독립이라 플랜을 바꿔도 유지한다 (LC-3438)
   const [isVodPassChecked, setIsVodPassChecked] = useState(false);
+  const [vodPassMonths, setVodPassMonths] = useState(VOD_PASS_MIN_MONTHS);
 
   const {
     basicRegularPrice,
@@ -220,7 +285,19 @@ function PricePlanBottomSheet({
     ? (application?.vodPassProduct ?? null)
     : null;
   const selectedVodPass = isVodPassChecked ? vodPassProduct : null;
-  const vodPassPrice = selectedVodPass?.price ?? 0;
+  // 추가 월 가격이 없는 응답이면 개월 선택을 지원하지 않는 서버라 1개월로 고정한다
+  const canSelectMonths = vodPassProduct
+    ? supportsVodPassMonths(vodPassProduct)
+    : false;
+  const selectedMonths = canSelectMonths
+    ? clampVodPassMonths(vodPassMonths)
+    : VOD_PASS_MIN_MONTHS;
+  const vodPassPrice = selectedVodPass
+    ? calculateVodPassPrice(selectedVodPass, selectedMonths)
+    : 0;
+  const vodPassDurationDays = selectedVodPass
+    ? calculateVodPassDurationDays(selectedVodPass, selectedMonths)
+    : 0;
 
   // 화면 합계와 스토어에 담는 totalPrice 는 같은 함수에서 나온다. 쿠폰은 결제 입력 단계에서 적용된다
   const totalPrice = calculateChallengeTotalWithVodPass({
@@ -280,10 +357,14 @@ function PricePlanBottomSheet({
       programOrderId: orderId,
       isFree,
       deposit: challenge.priceInfo[0].refund ?? 0,
+      // 버전은 들어온 페이지의 버전으로 고정한다. 다른 챌린지·버전에서 남은 값을
+      // 항상 덮어쓰고, LIGHT 는 버전을 쓰지 않는다 (설계안 D1)
+      challengeVersionId: pricePlan === LIGHT ? null : challengeVersionId,
       // 미선택이면 0 으로 되돌려 이전 선택이 남지 않게 한다
       vodPassProductId: selectedVodPass?.id ?? 0,
-      vodPassPrice,
-      vodPassDurationDays: selectedVodPass?.durationDays ?? 0,
+      vodPassPrice, // 선택한 개월 수 기준 총액
+      vodPassDurationDays, // 선택한 개월 수 기준 총 이용일수
+      vodPassMonths: selectedVodPass ? selectedMonths : 0,
     });
 
     router.push(
@@ -292,11 +373,14 @@ function PricePlanBottomSheet({
   }, [
     application,
     pricePlan,
+    challengeVersionId,
     finalPriceInfo.regularPrice,
     finalPriceInfo.discountPrice,
     selectedVodPass,
+    selectedMonths,
     totalPrice,
     vodPassPrice,
+    vodPassDurationDays,
     setProgramApplicationForm,
     challenge.title,
     challenge.priceInfo,
@@ -313,7 +397,7 @@ function PricePlanBottomSheet({
         className="mx-auto max-w-[1000px]"
       >
         {/* 챌린지 플랜 */}
-        <div className="mb-4 mt-3 flex items-center justify-between">
+        <div className="mb-4 mt-6 flex items-center justify-between">
           <span className="required-star text-xsmall14 font-semibold">
             챌린지 플랜 선택 (필수)
           </span>
@@ -432,12 +516,29 @@ function PricePlanBottomSheet({
                 label={
                   <VodPassLabel
                     title={vodPassProduct.title}
-                    durationDays={vodPassProduct.durationDays}
-                    price={vodPassProduct.price}
+                    durationDays={calculateVodPassDurationDays(
+                      vodPassProduct,
+                      selectedMonths,
+                    )}
+                    price={calculateVodPassPrice(
+                      vodPassProduct,
+                      selectedMonths,
+                    )}
                     checked={isVodPassChecked}
                   />
                 }
               />
+              {isVodPassChecked && canSelectMonths && (
+                <VodPassMonthsStepper
+                  months={selectedMonths}
+                  additionalMonthPrice={
+                    vodPassProduct.additionalMonthPrice ?? 0
+                  }
+                  onChange={(months) =>
+                    setVodPassMonths(clampVodPassMonths(months))
+                  }
+                />
+              )}
             </div>
           </>
         )}

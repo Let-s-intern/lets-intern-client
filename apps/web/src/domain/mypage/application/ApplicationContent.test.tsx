@@ -23,6 +23,12 @@ jest.mock('@/api/live-mentoring/liveMentoring', () => ({
   useMyLiveMentoringApplicationsQuery: () => ({ data: undefined }),
 }));
 
+// 버전 변경 모달(LC-3247)은 `@letscareer/api` 를 끌고 오는데 jest 가 파싱하지 못한다. 이 테스트와 무관하다
+jest.mock('@/domain/mypage/application/version/VersionChangeModal', () => ({
+  __esModule: true,
+  default: () => null,
+}));
+
 jest.mock('@/domain/live-mentoring/constants', () => ({
   __esModule: true,
   SHOW_LIVE_MENTORING_NAV: false,
