@@ -70,6 +70,19 @@ describe('AdminSidebar 히스토리 그룹', () => {
  * 화면을 만들어도 메뉴에 없으면 운영은 존재를 모른다 (LC-3438, PRD 4.3 A-2).
  */
 describe('AdminSidebar VOD 관리 그룹', () => {
+  it('VOD 관리 그룹은 올인원패스 관리와 히스토리 사이에 있다', () => {
+    renderSidebar();
+
+    const titles = screen
+      .getAllByRole('heading', { level: 3 })
+      .map((heading) => heading.textContent);
+
+    expect(titles.indexOf('VOD 관리')).toBe(
+      titles.indexOf('올인원패스 관리') + 1,
+    );
+    expect(titles.indexOf('히스토리')).toBe(titles.indexOf('VOD 관리') + 1);
+  });
+
   const vodGroup = () =>
     screen.getByRole('heading', { name: 'VOD 관리' }).closest('div')!
       .parentElement!;
