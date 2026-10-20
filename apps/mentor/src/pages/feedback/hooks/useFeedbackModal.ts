@@ -11,7 +11,15 @@ import {
 } from './useMentorAttendanceQuery';
 import { emptyEditorState } from '@/common/lexical/EditorApp';
 import mentorConfig from '@/constants/config';
-import { resolveWrittenSubmissionState } from '../utils/writtenSubmissionState';
+import {
+  clearFeedbackDraft,
+  loadFeedbackDraft,
+} from '../utils/feedbackLocalDraft';
+import {
+  canWriteWrittenFeedback,
+  resolveWrittenSubmissionState,
+} from '../utils/writtenSubmissionState';
+import { useFeedbackAutosave } from './useFeedbackAutosave';
 
 interface UseFeedbackModalParams {
   isOpen: boolean;
@@ -34,6 +42,9 @@ export function useFeedbackModal({
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const [editorContent, setEditorContent] = useState(emptyEditorState);
   const [serverContent, setServerContent] = useState(emptyEditorState);
+  // 로컬 초안으로 복원했는지. 에디터는 마운트 때만 초기값을 읽으므로 횟수를 key 에 섞어 재마운트한다.
+  const [isDraftRestored, setIsDraftRestored] = useState(false);
+  const [draftRestoreCount, setDraftRestoreCount] = useState(0);
 
   // Promise-based confirm for dirty check
   const confirmResolveRef = useRef<((v: boolean) => void) | null>(null);
@@ -61,6 +72,19 @@ export function useFeedbackModal({
   const currentMentee = attendanceList[selectedIndex] ?? null;
   const selectedAttendanceId = currentMentee?.id ?? null;
 
+  const isReadOnly =
+    currentMentee?.feedbackStatus === 'COMPLETED' ||
+    currentMentee?.feedbackStatus === 'CONFIRMED';
+
+  // 제출 상태(미제출/지각 제출/제출) — 표기와 작성 가능 여부의 단일 판정.
+  const submissionState = resolveWrittenSubmissionState({
+    status: currentMentee?.status,
+    attendanceId: currentMentee?.id,
+  });
+
+  // 로컬 초안은 실제로 쓸 수 있는 피드백에만 둔다.
+  const canWriteDraft = !isReadOnly && canWriteWrittenFeedback(submissionState);
+
   // Fetch selected mentee detail — only when mentee has submitted (id exists)
   const { data: feedbackData, dataUpdatedAt } = useFeedbackAttendanceQuery({
     challengeId,
@@ -86,13 +110,58 @@ export function useFeedbackModal({
       // 미제출자: 에디터 초기화
       setEditorContent(emptyEditorState);
       setServerContent(emptyEditorState);
+      setIsDraftRestored(false);
       return;
     }
     const content =
       feedbackData?.attendanceDetailVo?.feedback || emptyEditorState;
-    setEditorContent(content);
     setServerContent(content);
-  }, [feedbackData, selectedIndex, selectedAttendanceId, dataUpdatedAt]);
+
+    // 저장하지 않은 로컬 초안이 서버 내용과 다르면 그것으로 복원한다.
+    const draft = loadFeedbackDraft(selectedAttendanceId);
+    if (draft && canWriteDraft && draft !== content) {
+      setEditorContent(draft);
+      setIsDraftRestored(true);
+      setDraftRestoreCount((count) => count + 1);
+      return;
+    }
+    // 쓸 수 없는 상태이거나 서버와 같아진 초안은 남겨둘 이유가 없다.
+    if (draft) clearFeedbackDraft(selectedAttendanceId);
+    setEditorContent(content);
+    setIsDraftRestored(false);
+  }, [
+    feedbackData,
+    selectedIndex,
+    selectedAttendanceId,
+    dataUpdatedAt,
+    canWriteDraft,
+  ]);
+
+  // 자동 저장 성공 — 상세 조회를 다시 하지 않는다. 다시 하면 dataUpdatedAt 이 바뀌어
+  // editorKey 가 달라지고, 입력 중인 에디터가 새로 마운트돼 커서가 사라진다.
+  // 목록만 갱신해 멘티별 진행 상태(대기 → 진행중)를 맞춘다.
+  const handleAutosaved = useCallback(
+    (content: string) => {
+      setServerContent(content);
+      setIsDraftRestored(false);
+      queryClient.invalidateQueries({
+        queryKey: [
+          getMentorAttendanceQueryKey(challengeId),
+          challengeId,
+          missionId,
+        ],
+      });
+    },
+    [queryClient, challengeId, missionId],
+  );
+
+  const { isAutoSaving } = useFeedbackAutosave({
+    attendanceId: selectedAttendanceId,
+    content: editorContent,
+    savedContent: serverContent,
+    enabled: isOpen && canWriteDraft,
+    onServerSaved: handleAutosaved,
+  });
 
   // Reset state when modal closes
   useEffect(() => {
@@ -137,6 +206,9 @@ export function useFeedbackModal({
   }, [requestConfirm, onClose]);
 
   const handleMutationSuccess = useCallback(() => {
+    // 서버에 저장됐으니 로컬 초안은 낡은 것이 된다.
+    if (selectedAttendanceId) clearFeedbackDraft(selectedAttendanceId);
+    setIsDraftRestored(false);
     queryClient.invalidateQueries({
       queryKey: [
         getMentorAttendanceQueryKey(challengeId),
@@ -157,21 +229,13 @@ export function useFeedbackModal({
   // 멘티 사전 질문 — 서면 상세 응답(attendanceDetailVo)에서 파생. BE 미배포 시 null.
   const preQuestion = feedbackData?.attendanceDetailVo?.preQuestion ?? null;
 
-  const isReadOnly =
-    currentMentee?.feedbackStatus === 'COMPLETED' ||
-    currentMentee?.feedbackStatus === 'CONFIRMED';
-
-  // 제출 상태(미제출/지각 제출/제출) — 표기와 작성 가능 여부의 단일 판정.
-  const submissionState = resolveWrittenSubmissionState({
-    status: currentMentee?.status,
-    attendanceId: currentMentee?.id,
-  });
-
   return {
     selectedIndex,
     selectedAttendanceId,
     editorContent,
     setEditorContent,
+    isDraftRestored,
+    isAutoSaving,
     currentMentee,
     preQuestion,
     isReadOnly,
@@ -180,7 +244,7 @@ export function useFeedbackModal({
     handleSelectByIndex,
     handleClose,
     handleMutationSuccess,
-    editorKey: `${selectedIndex}-${dataUpdatedAt}`,
+    editorKey: `${selectedIndex}-${dataUpdatedAt}-${draftRestoreCount}`,
     confirmModal,
     handleConfirmResult,
   };

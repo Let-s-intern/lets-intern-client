@@ -14,6 +14,12 @@ export const mentorConfig = {
     unsavedWarning:
       '저장하지 않은 변경사항이 있습니다. 다른 멘티로 이동하시겠습니까?',
     closeWarning: '저장하지 않은 변경사항이 있습니다. 모달을 닫으시겠습니까?',
+    draftRestoredHint:
+      '저장되지 않았던 작성 내용을 복원했습니다. 잠시 후 자동으로 저장됩니다',
+    /** 입력이 멈춘 뒤 이만큼 지나면 브라우저에 초안을 남긴다. */
+    localDraftDebounceMs: 1000,
+    /** 저장되지 않은 변경이 생기면 이 간격으로 서버에 자동 임시저장한다. */
+    serverAutosaveIntervalMs: 30_000,
   },
   profile: {
     saveSuccess: '프로필이 저장되었습니다.',
