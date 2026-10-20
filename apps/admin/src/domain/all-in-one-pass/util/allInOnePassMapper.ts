@@ -140,7 +140,7 @@ export const toFormInput = (detail: AllInOnePassDetail): PassFormInput => {
       days: opt.extensionDays ?? null,
       price: opt.price ?? null,
     })),
-    mentoringCouponAutoIssue: blob.mentoringCouponAutoIssue,
+    mentoringCouponAutoIssue: true, // v1배포: 항상 포함(고정)
     landing: toLandingConfig(detail.landingDescription, blob.externalLinks),
     // 이 패스에 연결된(노출) FAQ id — 체크박스 prefill
     faqList: detail.faqList.map((f) => f.id),

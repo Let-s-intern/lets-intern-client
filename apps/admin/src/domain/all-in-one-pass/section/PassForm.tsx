@@ -24,7 +24,7 @@ export const createInitialPassInput = (): PassFormInput => ({
   extensionOptions: [],
   landing: createEmptyLandingConfig(),
   faqList: [],
-  mentoringCouponAutoIssue: false,
+  mentoringCouponAutoIssue: true,
 });
 
 interface Props {
