@@ -60,6 +60,7 @@ const FeedbackModal = ({
     editorContent,
     setEditorContent,
     isDraftRestored,
+    isAutoSaving,
     currentMentee,
     preQuestion,
     isReadOnly,
@@ -258,6 +259,7 @@ const FeedbackModal = ({
             editorContent={editorContent}
             feedbackStatus={currentMentee?.feedbackStatus ?? null}
             submissionState={submissionState}
+            isAutoSaving={isAutoSaving}
             onSaveSuccess={handleMutationSuccess}
             onSubmitSuccess={handleMutationSuccess}
             onAlert={(opts) =>

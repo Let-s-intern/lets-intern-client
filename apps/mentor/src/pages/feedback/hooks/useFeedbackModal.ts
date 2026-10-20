@@ -14,12 +14,12 @@ import mentorConfig from '@/constants/config';
 import {
   clearFeedbackDraft,
   loadFeedbackDraft,
-  saveFeedbackDraft,
 } from '../utils/feedbackLocalDraft';
 import {
   canWriteWrittenFeedback,
   resolveWrittenSubmissionState,
 } from '../utils/writtenSubmissionState';
+import { useFeedbackAutosave } from './useFeedbackAutosave';
 
 interface UseFeedbackModalParams {
   isOpen: boolean;
@@ -137,16 +137,31 @@ export function useFeedbackModal({
     canWriteDraft,
   ]);
 
-  // 에디터 입력 — 서버 임시저장 전에 창이 닫혀도 남도록 로컬에도 보관한다.
-  const handleEditorChange = useCallback(
+  // 자동 저장 성공 — 상세 조회를 다시 하지 않는다. 다시 하면 dataUpdatedAt 이 바뀌어
+  // editorKey 가 달라지고, 입력 중인 에디터가 새로 마운트돼 커서가 사라진다.
+  // 목록만 갱신해 멘티별 진행 상태(대기 → 진행중)를 맞춘다.
+  const handleAutosaved = useCallback(
     (content: string) => {
-      setEditorContent(content);
-      if (!selectedAttendanceId || !canWriteDraft) return;
-      if (content === serverContent) clearFeedbackDraft(selectedAttendanceId);
-      else saveFeedbackDraft(selectedAttendanceId, content);
+      setServerContent(content);
+      setIsDraftRestored(false);
+      queryClient.invalidateQueries({
+        queryKey: [
+          getMentorAttendanceQueryKey(challengeId),
+          challengeId,
+          missionId,
+        ],
+      });
     },
-    [selectedAttendanceId, canWriteDraft, serverContent],
+    [queryClient, challengeId, missionId],
   );
+
+  const { isAutoSaving } = useFeedbackAutosave({
+    attendanceId: selectedAttendanceId,
+    content: editorContent,
+    savedContent: serverContent,
+    enabled: isOpen && canWriteDraft,
+    onServerSaved: handleAutosaved,
+  });
 
   // Reset state when modal closes
   useEffect(() => {
@@ -218,8 +233,9 @@ export function useFeedbackModal({
     selectedIndex,
     selectedAttendanceId,
     editorContent,
-    setEditorContent: handleEditorChange,
+    setEditorContent,
     isDraftRestored,
+    isAutoSaving,
     currentMentee,
     preQuestion,
     isReadOnly,
