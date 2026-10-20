@@ -5,6 +5,7 @@ import {
   PostApplicationResult,
 } from '@/api/application';
 import { useProgramQuery } from '@/api/program';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import {
   getPaymentMethodLabel,
   paymentResultSearchParamsSchema,
@@ -17,7 +18,6 @@ import useProgramStore from '@/store/useProgramStore';
 import axios from '@/utils/axios';
 import { searchParamsToObject } from '@/utils/network';
 import Link from 'next/link';
-import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -242,7 +242,7 @@ const PaymentResultContent = () => {
                     />
                     {(programApplicationData.membershipDiscount ?? 0) > 0 && (
                       <PaymentInfoRow
-                        title="올인원패스 혜택 할인"
+                        title="패스 혜택 할인"
                         content={`-${programApplicationData.membershipDiscount.toLocaleString()}원`}
                       />
                     )}

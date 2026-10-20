@@ -97,7 +97,7 @@ const LiveInfoBottom = ({
                   }`}
                 >
                   <span className="text-xsmall16 text-primary font-bold">
-                    올인원패스 혜택 할인
+                    패스 혜택 할인
                   </span>
                   <span>-{discountedPrice.toLocaleString()}원</span>
                 </div>
