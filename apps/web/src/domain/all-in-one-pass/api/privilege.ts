@@ -44,12 +44,15 @@ export type OpenMembershipPrivilege = z.infer<
 >;
 
 // 현재 열린 패스의 권한 목록 (비보유자 업셀 노출 판정)
-export const useGetOpenMembershipPrivilege = () =>
+export const useGetOpenMembershipPrivilege = (options?: {
+  enabled?: boolean;
+}) =>
   useQuery({
     queryKey: ['openMembershipPrivilege'],
     queryFn: async (): Promise<OpenMembershipPrivilege> => {
       const res = await axios.get('/membership/open/privilege');
       return openMembershipPrivilegeSchema.parse(res.data.data);
     },
+    enabled: options?.enabled ?? true,
     refetchOnWindowFocus: false,
   });
