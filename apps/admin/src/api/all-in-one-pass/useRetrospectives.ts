@@ -22,13 +22,14 @@ export const retrospectiveRoundsQueryKey = 'allInOnePassRetrospectiveRounds';
 export const retrospectiveResponsesQueryKey =
   'allInOnePassRetrospectiveResponses';
 
-// 회차 질문 응답 (server MembershipOrdinalQuestion)
 const ordinalQuestionSchema = z.object({
   id: z.number(),
   th: z.number(),
   question: z.string().nullish(),
-  answerGuide: z.string().nullish(), // BE GET 추가 예정
-  responseCount: z.number().nullish(), // BE 추가 예정 (현재 count는 정렬값)
+  answerGuide: z.string().nullish(),
+  answerNumber: z.number().nullish(),
+  visiblePeriodType: z.string().nullish(),
+  visiblePeriodValue: z.number().nullish(),
 });
 type OrdinalQuestionDto = z.infer<typeof ordinalQuestionSchema>;
 
@@ -37,10 +38,11 @@ const toRetrospectiveRound = (dto: OrdinalQuestionDto): RetrospectiveRound => ({
   round: dto.th,
   weeklyQuestion: dto.question ?? '',
   answerGuide: dto.answerGuide ?? '',
-  responseCount: dto.responseCount ?? 0,
+  responseCount: dto.answerNumber ?? 0,
+  visiblePeriodType: dto.visiblePeriodType ?? null,
+  visiblePeriodValue: dto.visiblePeriodValue ?? null,
 });
 
-/** 특정 패스의 회차 질문 목록 (회차·질문 ID 오름차순) */
 export const useGetRetrospectiveRoundsQuery = (passId?: number) =>
   useQuery({
     queryKey: [retrospectiveRoundsQueryKey, passId],
@@ -56,26 +58,21 @@ export const useGetRetrospectiveRoundsQuery = (passId?: number) =>
     },
   });
 
-/** 회차 질문·답변 가이드 수정 (전달하지 않은 필드는 기존 값 유지) */
-export const useUpdateOrdinalQuestionMutation = ({
+export const useUpdateOrdinalQuestionsMutation = ({
   successCallback,
   errorCallback,
 }: MutationCallbacks = {}) =>
   useMutation({
     mutationFn: async ({
       membershipId,
-      questionId,
-      question,
-      answerGuide,
+      rounds,
     }: {
       membershipId: number;
-      questionId: number;
-      question: string;
-      answerGuide: string;
+      rounds: { th: number; question: string; answerGuide: string }[];
     }) => {
       const res = await axios.patch(
-        `/admin/membershipQuestion/ordinal/${membershipId}/${questionId}`,
-        { question, answerGuide },
+        `/admin/membershipQuestion/ordinal/${membershipId}`,
+        rounds,
       );
       return res.data;
     },
