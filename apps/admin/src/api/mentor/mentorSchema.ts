@@ -108,3 +108,43 @@ export interface MentorHashTagReq {
   type: string;
   title: string;
 }
+
+export const mentorReviewSourceSchema = z.enum([
+  'REVIEW',
+  'OLD_REVIEW',
+  'FEEDBACK',
+]);
+
+export const mentorReviewTypeSchema = z.enum([
+  'LIVE',
+  'FEEDBACK',
+  'LIVE_MENTORING',
+  'CHALLENGE',
+]);
+
+export type MentorReviewType = z.infer<typeof mentorReviewTypeSchema>;
+
+export const adminMentorReviewSchema = z.object({
+  source: mentorReviewSourceSchema,
+  sourceId: z.number(),
+  type: mentorReviewTypeSchema,
+  programTitle: z.string().nullable(),
+  score: z.number().nullable(),
+  review: z.string().nullable(),
+  createDate: z.string().nullable(),
+  isExposed: z.boolean(),
+});
+
+export type AdminMentorReview = z.infer<typeof adminMentorReviewSchema>;
+
+/** GET /api/v1/admin/mentor/{mentorId}/reviews 응답 */
+export const adminMentorReviewListSchema = z.object({
+  reviewList: z.array(adminMentorReviewSchema),
+});
+
+/** PATCH /api/v1/admin/mentor/{mentorId}/reviews/exposure 요청 바디 */
+export interface PatchMentorReviewExposureReq {
+  source: AdminMentorReview['source'];
+  sourceId: number;
+  isExposed: boolean;
+}
