@@ -1,5 +1,6 @@
 'use client';
 
+import { useGetMembershipPrivilege } from '@/domain/all-in-one-pass/api/privilege';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
 import { twMerge } from '@/lib/twMerge';
 import {
@@ -9,6 +10,7 @@ import {
   ChallengeType,
 } from '@/schema';
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
+import { useParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import FeedbackMentoringLink from '../ui/FeedbackMentoringLink';
 import { DEFAULT_COLOR } from '../utils/getChallengeThemeColor';
@@ -179,6 +181,30 @@ function ChallengePriceInfoContent({
   const discountPercentage = Math.round((discountAmount / regularPrice) * 100);
   const finalPrice = sellingPrice - deposit; // 최종 금액 (환급 금액 미포함)
 
+  // 올인원패스 혜택 — 권한 보유 시 패스회원가 노출(LIGHT 제외).
+  // 패스회원가 = max(플랜 판매가 − BASIC 판매가, 0), useChallengePassBenefit와 동일 규칙.
+  const params = useParams();
+  const challengeId = typeof params?.id === 'string' ? params.id : '';
+  const { data: privilege } = useGetMembershipPrivilege(
+    'CHALLENGE',
+    challengeId ? Number(challengeId) : -1,
+  );
+  const hasPrivilege = !!challengeId && (privilege?.hasPrivilege ?? false);
+  const basicSellingPrice = Math.max(
+    basicRegularPrice - basicDiscountAmount,
+    0,
+  );
+  const activePassPrice =
+    active === 'LIGHT'
+      ? undefined
+      : Math.max(sellingPrice - basicSellingPrice, 0);
+  const isPassApplied = hasPrivilege && activePassPrice !== undefined;
+  const passFinalPrice = activePassPrice ?? sellingPrice;
+  const membershipDiscount = isPassApplied
+    ? Math.max(sellingPrice - passFinalPrice, 0)
+    : 0;
+  const showDeposit = deposit !== 0 && !isPassApplied; // 권한 시 보증금 면제 → 환급 숨김
+
   const plans = useMemo(() => {
     const standardPriceInfo = priceInfoList.find(
       (item) => item.challengePricePlanType === 'STANDARD',
@@ -261,8 +287,15 @@ function ChallengePriceInfoContent({
               <span>-{discountAmount.toLocaleString()}원</span>
             </div>
           )}
-          {/* 환급 */}
-          {deposit !== 0 && (
+          {/* 패스 혜택 할인 */}
+          {isPassApplied && membershipDiscount > 0 && (
+            <div className="flex w-full items-center justify-between px-3 font-medium">
+              <span className="text-primary font-semibold">패스 혜택 할인</span>
+              <span>-{membershipDiscount.toLocaleString()}원</span>
+            </div>
+          )}
+          {/* 환급 (권한 보유 시 보증금 면제 → 숨김) */}
+          {showDeposit && (
             <div className="flex w-full items-center justify-between rounded-[2px] bg-[#FFEFED] px-3 py-1 font-medium">
               <span>모든 미션 수행 시, 환급</span>
               <span>-{deposit.toLocaleString()}원</span>
@@ -272,8 +305,8 @@ function ChallengePriceInfoContent({
 
         {/* 최종 결제 금액 */}
         <FinalPriceInfo
-          finalPrice={finalPrice}
-          sellingPrice={sellingPrice}
+          finalPrice={isPassApplied ? passFinalPrice : finalPrice}
+          sellingPrice={isPassApplied ? passFinalPrice : sellingPrice}
           themeColor={themeColor}
         />
       </div>
