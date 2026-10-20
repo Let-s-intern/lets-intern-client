@@ -8,8 +8,9 @@ import BackHeader from '@/common/header/BackHeader';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 // [LC-3219-MEMBERSHIP] 하반기 멤버십 전액할인 쿠폰 차단에만 쓴다 — 시즌 종료 시 이 import 를
 // 지운다(아래 isMembership 블록과 짝). 담당자 임성빈
-import { MEMBERSHIP_CHALLENGE_ID } from '@/domain/membership/lib/membershipChallenge';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import { MEMBERSHIP_CHALLENGE_ID as LEGACY_MEMBERSHIP_CHALLENGE_ID } from '@/domain/membership-legacy/lib/membershipChallenge';
+import { MEMBERSHIP_CHALLENGE_ID } from '@/domain/membership/lib/membershipChallenge';
 import { COUPON_DISABLED_CHALLENGE_TYPES } from '@/domain/program/program-detail/apply/constants';
 import CouponSection, {
   CouponSectionProps,
@@ -27,11 +28,10 @@ import useProgramStore, {
   initProgramApplicationForm,
   setProgramApplicationForm,
 } from '@/store/useProgramStore';
-import { isValidEmail } from '@/utils/valid';
-import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import { captureDomainError } from '@/utils/captureError';
-import { NoticeDialog } from '@letscareer/ui';
+import { isValidEmail } from '@/utils/valid';
 import { ApiError } from '@letscareer/api';
+import { NoticeDialog } from '@letscareer/ui';
 import { AxiosError } from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -41,12 +41,14 @@ function calculateTotalPrice({
   regularPrice = 0,
   discount = 0,
   couponPrice = 0,
+  membershipDiscount = 0,
 }: {
   regularPrice?: number; // 프로그램 정가
   discount?: number; // 프로그램 할인금액
   couponPrice?: number;
+  membershipDiscount?: number; // 올인원패스 권한 할인액
 }) {
-  const totalDiscount = discount + couponPrice;
+  const totalDiscount = discount + couponPrice + membershipDiscount;
   return regularPrice <= totalDiscount ? 0 : regularPrice - totalDiscount;
 }
 
@@ -162,6 +164,7 @@ const PaymentInputContent = () => {
         regularPrice: programApplicationData.price ?? 0, // 총 정가
         discount: programApplicationData.discount ?? 0,
         couponPrice: data.price,
+        membershipDiscount: programApplicationData.membershipDiscount ?? 0,
       });
 
       setProgramApplicationForm({
@@ -175,6 +178,7 @@ const PaymentInputContent = () => {
       programApplicationData.couponPrice,
       programApplicationData.discount,
       programApplicationData.price,
+      programApplicationData.membershipDiscount,
     ],
   );
 
@@ -185,7 +189,8 @@ const PaymentInputContent = () => {
     const regularPrice = programApplicationData.price ?? 0;
     const discountAmount = programApplicationData.discount ?? 0;
     const couponPrice = programApplicationData.couponPrice ?? 0;
-    const totalDiscount = discountAmount + couponPrice;
+    const membershipDiscount = programApplicationData.membershipDiscount ?? 0;
+    const totalDiscount = discountAmount + couponPrice + membershipDiscount;
 
     return regularPrice <= totalDiscount ? 0 : regularPrice - totalDiscount;
   }, [
@@ -193,6 +198,7 @@ const PaymentInputContent = () => {
     programApplicationData.couponPrice,
     programApplicationData.discount,
     programApplicationData.price,
+    programApplicationData.membershipDiscount,
   ]);
 
   /** 쿠폰 적용이 아니라 애초부터 무료인 경우 다르게 보여주기 **/
@@ -419,6 +425,9 @@ const PaymentInputContent = () => {
                 price: programApplicationData.couponPrice ?? 0,
               }}
               showCouponDiscount={showCouponSection}
+              membershipDiscount={
+                programApplicationData.membershipDiscount ?? 0
+              }
             />
             <hr className="bg-neutral-85" />
             <div className="text-neutral-0 flex h-10 items-center justify-between px-3 font-semibold">

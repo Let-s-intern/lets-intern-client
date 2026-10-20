@@ -37,6 +37,7 @@ const PriceSection = ({
   payInfo,
   coupon,
   showCouponDiscount = true,
+  membershipDiscount = 0,
 }: {
   payInfo: {
     price: number;
@@ -44,6 +45,7 @@ const PriceSection = ({
   };
   coupon: ICouponForm;
   showCouponDiscount?: boolean;
+  membershipDiscount?: number; // 올인원패스 권한 할인액 (>0일 때만 노출)
 }) => {
   const discountInfo = handleCouponPrice({ payInfo, coupon });
   return (
@@ -61,6 +63,14 @@ const PriceSection = ({
           <span>쿠폰할인</span>
           <span className="font-bold">
             -{discountInfo.couponDiscount.toLocaleString()}원
+          </span>
+        </div>
+      )}
+      {membershipDiscount > 0 && (
+        <div className="text-primary flex h-10 items-center justify-between px-3">
+          <span>패스 혜택 할인</span>
+          <span className="font-bold">
+            -{membershipDiscount.toLocaleString()}원
           </span>
         </div>
       )}
