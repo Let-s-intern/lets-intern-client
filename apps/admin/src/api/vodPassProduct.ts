@@ -5,6 +5,7 @@ import { z } from 'zod';
 /**
  * GET /api/v1/admin/vod-pass-product 응답. isActive 변경 API 는 BE 에 없어 읽기 전용이다.
  * additionalMonthPrice 는 추가 월 가격 도입 전 서버에는 없어 0 으로 받는다.
+ * maxPurchaseMonths, maxTotalMonths 는 구매 개월 수 상한 도입 전 서버에는 없어 서버 기본값(3, 12)으로 받는다.
  */
 export const vodPassProductSchema = z.object({
   vodPassProductId: z.number(),
@@ -13,18 +14,24 @@ export const vodPassProductSchema = z.object({
   additionalMonthPrice: z.number().default(0),
   durationDays: z.number(),
   isActive: z.boolean(),
+  maxPurchaseMonths: z.number().default(3),
+  maxTotalMonths: z.number().default(12),
 });
 export type VodPassProduct = z.infer<typeof vodPassProductSchema>;
 
 /**
  * PUT 요청. BE 는 기본 월 가격·이용일수가 1 미만이거나 추가 월 가격이 0 미만이면
  * 400 VOD_PASS_PRODUCT_SETTING_INVALID 를 준다. 추가 월 가격 0 은 허용한다.
- * 화면은 항상 세 값을 보낸다(BE 는 추가 월 가격을 생략하면 기존 값을 유지하지만 쓰지 않는다).
+ * 화면은 항상 다섯 값을 보낸다(BE 는 추가 월 가격과 두 상한을 생략하면 기존 값을 유지하지만 쓰지 않는다).
+ * 1회 최대 개월 수는 1 이상, 누적 최대 개월 수는 1회 최대 이상 120 이하여야 하고 아니면
+ * 400 VOD_PASS_MONTH_LIMIT_INVALID 를 준다.
  */
 export const vodPassProductUpdateSchema = z.object({
   price: z.number().int().positive(),
   additionalMonthPrice: z.number().int().nonnegative(),
   durationDays: z.number().int().positive(),
+  maxPurchaseMonths: z.number().int().positive(),
+  maxTotalMonths: z.number().int().positive(),
 });
 export type VodPassProductUpdateReq = z.infer<
   typeof vodPassProductUpdateSchema

@@ -6,8 +6,9 @@ import {
   calculateVodPassDurationDays,
   calculateVodPassPrice,
   clampVodPassMonths,
+  getVodPassMaxMonths,
+  isVodPassPurchasable,
   supportsVodPassMonths,
-  VOD_PASS_MAX_MONTHS,
   VOD_PASS_MIN_MONTHS,
 } from '@/domain/program/vodPassPurchase';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
@@ -117,10 +118,12 @@ const VOD_PASS_STEPPER_BUTTON_CLASS =
 
 function VodPassMonthsStepper({
   months,
+  maxMonths,
   additionalMonthPrice,
   onChange,
 }: {
   months: number;
+  maxMonths: number;
   additionalMonthPrice: number;
   onChange: (months: number) => void;
 }) {
@@ -133,6 +136,9 @@ function VodPassMonthsStepper({
             2개월부터 매월 +{additionalMonthPrice.toLocaleString()}원
           </span>
         )}
+        <span className="text-xxsmall12 text-neutral-30 mt-0.5 block">
+          최대 {maxMonths}개월까지 선택할 수 있어요
+        </span>
       </span>
       <span className="flex shrink-0 items-center gap-2">
         <button
@@ -154,7 +160,7 @@ function VodPassMonthsStepper({
           type="button"
           aria-label="이용 개월 수 늘리기"
           className={VOD_PASS_STEPPER_BUTTON_CLASS}
-          disabled={months >= VOD_PASS_MAX_MONTHS}
+          disabled={months >= maxMonths}
           onClick={() => onChange(months + 1)}
         >
           +
@@ -279,14 +285,22 @@ function PricePlanBottomSheet({
 
   // 서버는 어드민에서 VOD 이용권 판매를 켠 프로그램에만 상품을 내려준다 (LC-3438)
   // 상품이 null·누락(판매 꺼짐, 상품 비활성, 서버 배포 전)이면 카드도 선택값도 없다
-  const vodPassProduct = application?.vodPassProduct ?? null;
+  // 보유 기간이 누적 상한에 차서 더 살 수 없는 사용자에게는 카드를 보여주지 않는다
+  const offeredVodPassProduct = application?.vodPassProduct ?? null;
+  const vodPassProduct =
+    offeredVodPassProduct && isVodPassPurchasable(offeredVodPassProduct)
+      ? offeredVodPassProduct
+      : null;
+  const vodPassMaxMonths = vodPassProduct
+    ? getVodPassMaxMonths(vodPassProduct)
+    : VOD_PASS_MIN_MONTHS;
   const selectedVodPass = isVodPassChecked ? vodPassProduct : null;
   // 추가 월 가격이 없는 응답이면 개월 선택을 지원하지 않는 서버라 1개월로 고정한다
   const canSelectMonths = vodPassProduct
     ? supportsVodPassMonths(vodPassProduct)
     : false;
   const selectedMonths = canSelectMonths
-    ? clampVodPassMonths(vodPassMonths)
+    ? clampVodPassMonths(vodPassMonths, vodPassMaxMonths)
     : VOD_PASS_MIN_MONTHS;
   const vodPassPrice = selectedVodPass
     ? calculateVodPassPrice(selectedVodPass, selectedMonths)
@@ -527,11 +541,14 @@ function PricePlanBottomSheet({
               {isVodPassChecked && canSelectMonths && (
                 <VodPassMonthsStepper
                   months={selectedMonths}
+                  maxMonths={vodPassMaxMonths}
                   additionalMonthPrice={
                     vodPassProduct.additionalMonthPrice ?? 0
                   }
                   onChange={(months) =>
-                    setVodPassMonths(clampVodPassMonths(months))
+                    setVodPassMonths(
+                      clampVodPassMonths(months, vodPassMaxMonths),
+                    )
                   }
                 />
               )}

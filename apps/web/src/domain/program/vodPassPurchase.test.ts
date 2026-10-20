@@ -3,6 +3,8 @@ import {
   calculateVodPassDurationDays,
   calculateVodPassPrice,
   clampVodPassMonths,
+  getVodPassMaxMonths,
+  isVodPassPurchasable,
   getOrderName,
   isVodPassSelected,
   supportsVodPassMonths,
@@ -256,5 +258,50 @@ describe('getOrderName', () => {
     expect(getOrderName(title, { vodPassProductId: 7 })).toBe(
       `${title} + VOD 이용권`,
     );
+  });
+});
+
+describe('getVodPassMaxMonths', () => {
+  it('사용자별 구매 가능 개월 수를 우선하고 없으면 1회 상한, 그것도 없으면 기본 상한이다', () => {
+    expect(
+      getVodPassMaxMonths({ availableMonths: 2, maxPurchaseMonths: 6 }),
+    ).toBe(2);
+    expect(getVodPassMaxMonths({ maxPurchaseMonths: 6 })).toBe(6);
+    expect(
+      getVodPassMaxMonths({ availableMonths: null, maxPurchaseMonths: null }),
+    ).toBe(VOD_PASS_MAX_MONTHS);
+    expect(getVodPassMaxMonths({})).toBe(VOD_PASS_MAX_MONTHS);
+  });
+
+  it('구매 가능 개월 수가 0 이어도 선택 범위는 최소 1개월이다', () => {
+    expect(getVodPassMaxMonths({ availableMonths: 0 })).toBe(1);
+  });
+});
+
+describe('isVodPassPurchasable', () => {
+  it('구매 가능 개월 수가 0 일 때만 구매할 수 없다', () => {
+    expect(isVodPassPurchasable({ availableMonths: 0 })).toBe(false);
+    expect(isVodPassPurchasable({ availableMonths: 1 })).toBe(true);
+    expect(isVodPassPurchasable({ availableMonths: null })).toBe(true);
+    expect(isVodPassPurchasable({})).toBe(true);
+  });
+});
+
+describe('clampVodPassMonths 상한 지정', () => {
+  it('넘겨준 상한으로 맞춘다', () => {
+    expect(clampVodPassMonths(9, 6)).toBe(6);
+    expect(clampVodPassMonths(4, 6)).toBe(4);
+    expect(clampVodPassMonths(4, 0)).toBe(1);
+  });
+
+  it('상품의 상한을 넘는 개월 수는 가격과 이용일수 계산에서 상한으로 맞춘다', () => {
+    const limited = {
+      price: 20000,
+      additionalMonthPrice: 10000,
+      durationDays: 30,
+      maxPurchaseMonths: 6,
+    };
+    expect(calculateVodPassPrice(limited, 99)).toBe(20000 + 10000 * 5);
+    expect(calculateVodPassDurationDays(limited, 99)).toBe(30 * 6);
   });
 });
