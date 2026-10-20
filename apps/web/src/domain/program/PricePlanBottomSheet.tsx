@@ -1,39 +1,73 @@
 import { useProgramApplicationQuery } from '@/api/application';
 import BaseBottomSheet from '@/common/sheet/BaseBottomSheet';
+import FeedbackMentoringLink from '@/domain/program/challenge/ui/FeedbackMentoringLink';
+import {
+  MembershipBenefitNotice,
+  PlanPriceRight,
+} from '@/domain/program/challenge/ui/PricePlanMembership';
+import { useChallengePassBenefit } from '@/domain/program/challenge/useChallengePassBenefit';
+import { getChallengeThemeColor } from '@/domain/program/challenge/utils/getChallengeThemeColor';
 import { COUPON_DISABLED_CHALLENGE_TYPES } from '@/domain/program/program-detail/apply/constants';
 import { generateOrderId, getPayInfo, UserInfo } from '@/lib/order';
+import { twMerge } from '@/lib/twMerge';
 import {
   ChallengeIdPrimitive,
   ChallengePricePlan,
   ChallengePricePlanEnum,
 } from '@/schema';
 import useProgramStore from '@/store/useProgramStore';
-import FeedbackMentoringLink from '@/domain/program/challenge/ui/FeedbackMentoringLink';
-import { getChallengeThemeColor } from '@/domain/program/challenge/utils/getChallengeThemeColor';
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import { RadioGroup } from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useMemo, useState } from 'react';
+import { ComponentProps, useCallback, useMemo, useState } from 'react';
 import BaseButton from '../../common/button/BaseButton';
 import { OptionFormRadioControlLabel } from '../../common/ControlLabel';
 import OptionDropdown from '../../common/dropdown/OptionDropdown';
-import PriceView from '../../common/price/PriceView';
 
 const { STANDARD, PREMIUM, BASIC, LIGHT } = ChallengePricePlanEnum.enum;
 
-function PricePlanLabel({
+/**
+ * 플랜 옵션 카드 — 라디오+플랜명+가격이 한 행, 설명은 아래 bg-neutral-100 박스.
+ * 모바일에선 가격이 설명 아래로 내려가고 가격 블록도 세로로 쌓임.
+ */
+function PlanOption({
+  value,
   title,
   description,
+  isLast,
+  priceProps,
 }: {
+  value: ChallengePricePlan;
   title: string;
   description: string;
+  isLast?: boolean;
+  priceProps: ComponentProps<typeof PlanPriceRight>;
 }) {
   return (
-    <>
-      <b className="font-bold">{title}</b>
-      <br />
-      <span className="text-neutral-10">{description}</span>
-    </>
+    <div
+      className={twMerge(
+        'flex flex-col gap-1 py-3 pl-2 pr-3 md:gap-2',
+        !isLast && 'border-neutral-80 border-b',
+      )}
+    >
+      <OptionFormRadioControlLabel
+        value={value}
+        label={<b className="font-medium">{title}</b>}
+        right={
+          <div className="hidden md:block">
+            <PlanPriceRight {...priceProps} />
+          </div>
+        }
+      />
+      {description && (
+        <p className="rounded-xs text-xsmall14 text-neutral-10 bg-neutral-100 px-4 py-2 font-normal">
+          {description}
+        </p>
+      )}
+      <div className="flex justify-end md:hidden">
+        <PlanPriceRight {...priceProps} />
+      </div>
+    </div>
   );
 }
 
@@ -42,11 +76,14 @@ function PricePlanBottomSheet({
   challengeId,
   isOpen,
   onClose,
+  showMembershipBenefit = false,
 }: {
   challenge: ChallengeIdPrimitive;
   challengeId: string;
   isOpen: boolean;
   onClose: () => void;
+  // 올인원패스 혜택(패스회원가/업셀) 노출 — 챌린지 상세에서만 true. 멤버십 랜딩 등은 false.
+  showMembershipBenefit?: boolean;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -136,6 +173,38 @@ function PricePlanBottomSheet({
     lightDiscountAmount,
   ]);
 
+  // 올인원패스 혜택 — showMembershipBenefit=true인 챌린지 상세에서만 활성
+  const { hasPrivilege, showPassPrice, openMembershipId, passPrices } =
+    useChallengePassBenefit({
+      challengeId,
+      enabled: showMembershipBenefit,
+      prices: {
+        basicRegularPrice,
+        basicDiscountAmount,
+        standardRegularPrice,
+        standardDiscountAmount,
+        premiumRegularPrice,
+        premiumDiscountAmount,
+      },
+    });
+  const selectedPassPrice =
+    pricePlan === BASIC
+      ? passPrices.BASIC
+      : pricePlan === STANDARD
+        ? passPrices.STANDARD
+        : pricePlan === PREMIUM
+          ? passPrices.PREMIUM
+          : undefined; // LIGHT 제외
+
+  const normalTotal = Math.max(
+    finalPriceInfo.regularPrice - finalPriceInfo.discountPrice,
+    0,
+  );
+  const displayTotal =
+    hasPrivilege && selectedPassPrice !== undefined
+      ? selectedPassPrice
+      : normalTotal;
+
   // 챌린지 참여자 목록 조회
   const { data: application } = useProgramApplicationQuery(
     'challenge',
@@ -166,10 +235,7 @@ function PricePlanBottomSheet({
       (item) => item.challengePricePlanType === pricePlan,
     )?.priceId; // 가격 플랜에 맞는 priceId 넘기기
     const orderId = generateOrderId();
-    const totalPrice = Math.max(
-      finalPriceInfo.regularPrice - finalPriceInfo.discountPrice,
-      0,
-    );
+    const totalPrice = displayTotal; // 권한 보유 시 패스회원가, 아니면 판매가
     const isFree =
       payInfo.challengePriceType === 'FREE' ||
       payInfo.livePriceType === 'FREE' ||
@@ -182,7 +248,10 @@ function PricePlanBottomSheet({
       discount: finalPriceInfo.discountPrice,
       couponId: '',
       couponPrice: 0,
-      totalPrice, // 판매가
+      totalPrice, // 판매가(권한 시 패스회원가)
+      membershipDiscount: hasPrivilege
+        ? Math.max(normalTotal - displayTotal, 0)
+        : 0,
       contactEmail: userInfo.contactEmail,
       question: userInfo.question,
       email: userInfo.email,
@@ -194,7 +263,7 @@ function PricePlanBottomSheet({
       programId: Number(challengeId),
       programOrderId: orderId,
       isFree,
-      deposit: challenge.priceInfo[0].refund ?? 0,
+      deposit: hasPrivilege ? 0 : (challenge.priceInfo[0].refund ?? 0),
     });
 
     router.push(
@@ -205,6 +274,9 @@ function PricePlanBottomSheet({
     pricePlan,
     finalPriceInfo.regularPrice,
     finalPriceInfo.discountPrice,
+    displayTotal,
+    normalTotal,
+    hasPrivilege,
     setProgramApplicationForm,
     challenge.title,
     challenge.priceInfo,
@@ -233,104 +305,94 @@ function PricePlanBottomSheet({
         </div>
         <OptionDropdown
           label={`${challenge.title} 플랜`}
-          wrapperClassName="w-full"
+          wrapperClassName="flex max-h-[312px] w-full flex-col md:max-h-none"
         >
-          <RadioGroup
-            aria-labelledby="price-plan-group-label"
-            value={pricePlan}
-            onChange={(_, v) => setPricePlan(v as ChallengePricePlan)}
-          >
-            {lightPriceInfo && (
-              <OptionFormRadioControlLabel
-                key={LIGHT}
-                label={
-                  <PricePlanLabel
-                    title={lightPriceInfo.title || '라이트 플랜'}
-                    description={lightPriceInfo.description ?? ''}
-                  />
-                }
-                value={LIGHT}
-                wrapperClassName="py-3 pl-2 pr-3 border-b border-neutral-80"
-                right={
-                  <PriceView
-                    price={lightRegularPrice}
-                    discount={lightDiscountAmount}
-                  />
-                }
-              />
-            )}
-            {premiumPriceInfo && (
-              <OptionFormRadioControlLabel
-                key={PREMIUM}
-                label={
-                  <PricePlanLabel
-                    title={premiumPriceInfo.title || '프리미엄 플랜'}
-                    description={premiumPriceInfo.description ?? ''}
-                  />
-                }
-                value={PREMIUM}
-                wrapperClassName="py-3 pl-2 pr-3 border-b border-neutral-80"
-                right={
-                  <PriceView
-                    price={premiumRegularPrice}
-                    discount={premiumDiscountAmount}
-                  />
-                }
-              />
-            )}
-            {standardPriceInfo && (
-              <OptionFormRadioControlLabel
-                key={STANDARD}
-                label={
-                  <PricePlanLabel
-                    title={standardPriceInfo.title || '스탠다드 플랜'}
-                    description={standardPriceInfo.description ?? ''}
-                  />
-                }
-                value={STANDARD}
-                wrapperClassName="py-3 pl-2 pr-3 border-b border-neutral-80"
-                right={
-                  <PriceView
-                    price={standardRegularPrice}
-                    discount={standardDiscountAmount}
-                  />
-                }
-              />
-            )}
-            <OptionFormRadioControlLabel
-              key={BASIC}
-              label={
-                <PricePlanLabel
-                  title={basicPriceInfo.title || '베이직 플랜'}
-                  description={basicPriceInfo.description ?? ''}
+          {/* 헤더는 OptionDropdown이 고정, 플랜 많아지면 이 영역만 스크롤(모바일 312px 상한) */}
+          <div className="min-h-0 overflow-y-auto md:overflow-visible">
+            <RadioGroup
+              aria-labelledby="price-plan-group-label"
+              value={pricePlan}
+              onChange={(_, v) => setPricePlan(v as ChallengePricePlan)}
+            >
+              {lightPriceInfo && (
+                <PlanOption
+                  key={LIGHT}
+                  value={LIGHT}
+                  title={lightPriceInfo.title || '라이트 플랜'}
+                  description={lightPriceInfo.description ?? ''}
+                  priceProps={{
+                    regularPrice: lightRegularPrice,
+                    discountAmount: lightDiscountAmount,
+                    hasPrivilege,
+                    showPassPrice,
+                  }}
                 />
-              }
-              value={BASIC}
-              wrapperClassName="py-3 pl-2 pr-3"
-              right={
-                <PriceView
-                  price={basicRegularPrice}
-                  discount={basicDiscountAmount}
+              )}
+              {premiumPriceInfo && (
+                <PlanOption
+                  key={PREMIUM}
+                  value={PREMIUM}
+                  title={premiumPriceInfo.title || '프리미엄 플랜'}
+                  description={premiumPriceInfo.description ?? ''}
+                  priceProps={{
+                    regularPrice: premiumRegularPrice,
+                    discountAmount: premiumDiscountAmount,
+                    passPrice: passPrices.PREMIUM,
+                    hasPrivilege,
+                    showPassPrice,
+                  }}
                 />
-              }
-            />
-          </RadioGroup>
+              )}
+              {standardPriceInfo && (
+                <PlanOption
+                  key={STANDARD}
+                  value={STANDARD}
+                  title={standardPriceInfo.title || '스탠다드 플랜'}
+                  description={standardPriceInfo.description ?? ''}
+                  priceProps={{
+                    regularPrice: standardRegularPrice,
+                    discountAmount: standardDiscountAmount,
+                    passPrice: passPrices.STANDARD,
+                    hasPrivilege,
+                    showPassPrice,
+                  }}
+                />
+              )}
+              <PlanOption
+                key={BASIC}
+                value={BASIC}
+                title={basicPriceInfo.title || '베이직 플랜'}
+                description={basicPriceInfo.description ?? ''}
+                isLast
+                priceProps={{
+                  regularPrice: basicRegularPrice,
+                  discountAmount: basicDiscountAmount,
+                  passPrice: passPrices.BASIC,
+                  hasPrivilege,
+                  showPassPrice,
+                }}
+              />
+            </RadioGroup>
+          </div>
         </OptionDropdown>
 
+        <MembershipBenefitNotice
+          show={showPassPrice}
+          hasPrivilege={hasPrivilege}
+          openMembershipId={openMembershipId}
+        />
+
         {/* 총 결제 금액 */}
-        <span className="text-xsmall14 mt-6 block font-semibold">
+        <span className="text-xsmall14 mt-5 block font-semibold md:mt-6">
           총 결제 금액
         </span>
         <hr className="my-3" />
         <span className="text-small18 text-neutral-10 block text-right font-bold">
-          {(
-            finalPriceInfo.regularPrice - finalPriceInfo.discountPrice
-          ).toLocaleString()}
-          원
+          {displayTotal.toLocaleString()}원
         </span>
 
         {/* 버튼 */}
-        <section className="mt-6 flex items-center gap-3">
+        <section className="mt-5 flex items-center gap-3 md:mt-6">
           <BaseButton className="flex-1" variant="outlined" onClick={onClose}>
             이전 단계로
           </BaseButton>
