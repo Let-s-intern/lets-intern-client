@@ -196,8 +196,9 @@ export const usePatchAdminMentorReviewExposure = (mentorId: number) => {
     mutationFn: async (body: PatchMentorReviewExposureReq) => {
       return axios.patch(`/admin/mentor/${mentorId}/reviews/exposure`, body);
     },
+    // 다시 불러올 때까지 pending 으로 두어 스위치가 이전 값으로 튀지 않게 한다
     onSuccess: () => {
-      queryClient.invalidateQueries({
+      return queryClient.invalidateQueries({
         queryKey: [AdminMentorReviewListQueryKey, mentorId],
       });
     },
