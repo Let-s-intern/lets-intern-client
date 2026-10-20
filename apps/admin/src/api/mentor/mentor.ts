@@ -4,10 +4,12 @@ import axiosV2 from '@/utils/axiosV2';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   adminChallengeMentorListSchema,
+  adminMentorReviewListSchema,
   adminUserMentorList,
   mentorHashTagListSchema,
   type MentorHashTagReq,
   type PatchAttendanceMentorReq,
+  type PatchMentorReviewExposureReq,
   PostAdminChallengeMentorReq,
 } from './mentorSchema';
 
@@ -167,6 +169,36 @@ export const useDeleteAdminMentorHashTag = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [AdminMentorHashTagQueryKey],
+      });
+    },
+  });
+};
+
+export const AdminMentorReviewListQueryKey = 'adminMentorReviewListQuery';
+
+/** GET 멘토 페이지 후기 목록 /api/v1/admin/mentor/{mentorId}/reviews */
+export const useAdminMentorReviewListQuery = (mentorId: number) => {
+  return useQuery({
+    queryKey: [AdminMentorReviewListQueryKey, mentorId],
+    queryFn: async () => {
+      const res = await axios.get(`/admin/mentor/${mentorId}/reviews`);
+      return adminMentorReviewListSchema.parse(res.data.data).reviewList;
+    },
+    enabled: !!mentorId,
+    refetchOnWindowFocus: false,
+  });
+};
+
+/** PATCH 멘토 페이지 후기 노출 변경 /api/v1/admin/mentor/{mentorId}/reviews/exposure */
+export const usePatchAdminMentorReviewExposure = (mentorId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: PatchMentorReviewExposureReq) => {
+      return axios.patch(`/admin/mentor/${mentorId}/reviews/exposure`, body);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [AdminMentorReviewListQueryKey, mentorId],
       });
     },
   });
