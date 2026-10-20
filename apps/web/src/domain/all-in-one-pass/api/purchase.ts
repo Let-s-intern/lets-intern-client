@@ -58,6 +58,7 @@ export interface CreateMembershipApplicationBody {
   paymentKey?: string | null;
   orderId: string;
   amount: string;
+  contactEmail?: string | null;
 }
 
 export const postMembershipApplication = (
