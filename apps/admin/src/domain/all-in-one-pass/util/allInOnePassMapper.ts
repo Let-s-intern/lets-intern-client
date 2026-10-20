@@ -148,12 +148,22 @@ export const toFormInput = (detail: AllInOnePassDetail): PassFormInput => {
 };
 
 // ── 폼 → 생성/수정 DTO ────────────────────────────────
-// 연장 옵션 → server optionList (title 자동생성)
-const extensionToOption = (passTitle: string, opt: PassExtensionOption) => ({
-  title: `${passTitle} ${opt.days ?? 0}일 연장`,
+/** 폼 옵션 id가 서버 옵션(숫자)이면 true. uuid 는 신규 옵션. */
+export const isServerOptionId = (id: string) => /^\d+$/.test(id);
+
+/** 연장 옵션 생성 body (title "{N}일 연장" 자동, 할인가 생략) */
+export const optionToCreateDto = (opt: PassExtensionOption) => ({
+  title: `${opt.days ?? 0}일 연장`,
   extensionDays: opt.days ?? 0,
   price: opt.price ?? 0,
   discount: null,
+});
+
+/** 연장 옵션 수정 body */
+export const optionToUpdateDto = (opt: PassExtensionOption) => ({
+  title: `${opt.days ?? 0}일 연장`,
+  extensionDays: opt.days ?? 0,
+  price: opt.price ?? 0,
 });
 
 export const planToCreateDto = (plan: PassPlan) => ({
@@ -196,9 +206,7 @@ export const toCreateDto = (input: PassFormInput) => ({
   thumbnail: input.thumbnailUrl,
   isVisible: false, // 개설 시 기본 비노출
   planList: input.plans.map(planToCreateDto),
-  optionList: input.extensionOptions.map((opt) =>
-    extensionToOption(input.title, opt),
-  ),
+  optionList: input.extensionOptions.map(optionToCreateDto),
   faqList: input.faqList.map((faqId) => ({ faqId })), // 이 패스에 노출할 공통 FAQ
 });
 

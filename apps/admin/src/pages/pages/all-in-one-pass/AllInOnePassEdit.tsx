@@ -5,6 +5,7 @@ import {
 import { allInOnePassListQueryKey } from '@/api/all-in-one-pass/usePassList';
 import {
   useDeleteAllInOnePassPlanMutation,
+  useSyncAllInOnePassOptionsMutation,
   useUpdateAllInOnePassMutation,
 } from '@/api/all-in-one-pass/usePassMutations';
 import LoadingContainer from '@/common/loading/LoadingContainer';
@@ -46,6 +47,7 @@ export default function AllInOnePassEdit() {
 
   const updateMutation = useUpdateAllInOnePassMutation();
   const deletePlanMutation = useDeleteAllInOnePassPlanMutation();
+  const syncOptionsMutation = useSyncAllInOnePassOptionsMutation();
 
   /**
    * 저장: 폼에서 빠진 기존 플랜을 DELETE 한 뒤, 기본정보 + 플랜/권한을
@@ -68,6 +70,11 @@ export default function AllInOnePassEdit() {
       }
 
       await updateMutation.mutateAsync({ id: numericPassId, input });
+      await syncOptionsMutation.mutateAsync({
+        membershipId: numericPassId,
+        original: data?.extensionOptions ?? [],
+        current: input.extensionOptions,
+      });
       snackbar('수정되었습니다.');
       queryClient.invalidateQueries({ queryKey: [allInOnePassListQueryKey] });
       queryClient.removeQueries({
@@ -79,7 +86,10 @@ export default function AllInOnePassEdit() {
     }
   };
 
-  const saving = updateMutation.isPending || deletePlanMutation.isPending;
+  const saving =
+    updateMutation.isPending ||
+    deletePlanMutation.isPending ||
+    syncOptionsMutation.isPending;
 
   return (
     <main className="flex flex-col p-6">

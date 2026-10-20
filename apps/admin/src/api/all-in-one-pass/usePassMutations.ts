@@ -1,5 +1,11 @@
-import { PassFormInput } from '@/domain/all-in-one-pass/types';
 import {
+  PassExtensionOption,
+  PassFormInput,
+} from '@/domain/all-in-one-pass/types';
+import {
+  isServerOptionId,
+  optionToCreateDto,
+  optionToUpdateDto,
   toCreateDto,
   toUpdateDto,
 } from '@/domain/all-in-one-pass/util/allInOnePassMapper';
@@ -66,6 +72,51 @@ export const useDeleteAllInOnePassPlanMutation = ({
         `/admin/membership/${membershipId}/plan/${planId}`,
       );
       return res.data;
+    },
+    onSuccess: successCallback,
+    onError: errorCallback,
+  });
+
+/**
+ * 연장 옵션 sync (수정 페이지). 신규=POST / 기존=PATCH / 빠진 것=DELETE.
+ * ※ 상세 응답에 optionList 가 생기기 전엔 original 이 비어 매번 POST(중복 생성) 된다.
+ */
+export const useSyncAllInOnePassOptionsMutation = ({
+  successCallback,
+  errorCallback,
+}: MutationCallbacks = {}) =>
+  useMutation({
+    mutationFn: async ({
+      membershipId,
+      original,
+      current,
+    }: {
+      membershipId: number;
+      original: PassExtensionOption[];
+      current: PassExtensionOption[];
+    }) => {
+      const currentServerIds = new Set(
+        current.filter((o) => isServerOptionId(o.id)).map((o) => o.id),
+      );
+      const removed = original.filter(
+        (o) => isServerOptionId(o.id) && !currentServerIds.has(o.id),
+      );
+      await Promise.all([
+        ...removed.map((o) =>
+          axios.delete(`/admin/membership/${membershipId}/option/${o.id}`),
+        ),
+        ...current.map((o) =>
+          isServerOptionId(o.id)
+            ? axios.patch(
+                `/admin/membership/${membershipId}/option/${o.id}`,
+                optionToUpdateDto(o),
+              )
+            : axios.post(
+                `/admin/membership/${membershipId}/option`,
+                optionToCreateDto(o),
+              ),
+        ),
+      ]);
     },
     onSuccess: successCallback,
     onError: errorCallback,
