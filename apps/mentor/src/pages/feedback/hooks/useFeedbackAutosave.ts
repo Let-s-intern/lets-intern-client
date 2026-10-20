@@ -133,7 +133,7 @@ export function useFeedbackAutosave({
     return () => clearTimeout(timer);
     // content 는 일부러 뺐다. 넣으면 입력마다 타이머가 다시 시작돼 쉬지 않고 쓰는
     // 동안 한 번도 저장되지 않는다. 보낼 때는 latestRef 로 최신 본문을 읽는다.
-  },[shouldSaveToServer, attendanceId, savedContent, mutate]);
+  }, [shouldSaveToServer, attendanceId, savedContent, mutate]);
 
   return { isAutoSaving };
 }
