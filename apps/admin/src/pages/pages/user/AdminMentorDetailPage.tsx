@@ -18,6 +18,7 @@ import CareerForm from '@/common/career/CareerForm';
 import { DEFAULT_CAREER } from '@/common/career/constants';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import ProfileImageUploadModal from '@/domain/admin/user/mentor-detail/ui/ProfileImageUploadModal';
+import MentorReviewExposureSection from '@/domain/mentor/review-exposure/ui/MentorReviewExposureSection';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { parseSnsList, serializeSnsList, toSnsUrl } from '@/utils/sns';
 import { useQueryClient } from '@tanstack/react-query';
@@ -539,6 +540,8 @@ export default function AdminMentorDetailPage() {
               </div>
             )}
           </div>
+
+          <MentorReviewExposureSection mentorId={mentorId} />
         </div>
       </div>
     </section>
