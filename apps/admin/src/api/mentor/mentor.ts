@@ -9,6 +9,7 @@ import {
   mentorHashTagListSchema,
   type MentorHashTagReq,
   type PatchAttendanceMentorReq,
+  type PatchMentorReviewContentReq,
   type PatchMentorReviewExposureReq,
   PostAdminChallengeMentorReq,
 } from './mentorSchema';
@@ -197,6 +198,21 @@ export const usePatchAdminMentorReviewExposure = (mentorId: number) => {
       return axios.patch(`/admin/mentor/${mentorId}/reviews/exposure`, body);
     },
     // 다시 불러올 때까지 pending 으로 두어 스위치가 이전 값으로 튀지 않게 한다
+    onSuccess: () => {
+      return queryClient.invalidateQueries({
+        queryKey: [AdminMentorReviewListQueryKey, mentorId],
+      });
+    },
+  });
+};
+
+/** PATCH 멘토 페이지 후기 점수·내용 수정 /api/v1/admin/mentor/{mentorId}/reviews/content */
+export const usePatchAdminMentorReviewContent = (mentorId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: PatchMentorReviewContentReq) => {
+      return axios.patch(`/admin/mentor/${mentorId}/reviews/content`, body);
+    },
     onSuccess: () => {
       return queryClient.invalidateQueries({
         queryKey: [AdminMentorReviewListQueryKey, mentorId],

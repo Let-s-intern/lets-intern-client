@@ -540,9 +540,12 @@ export default function AdminMentorDetailPage() {
               </div>
             )}
           </div>
-
-          <MentorReviewExposureSection mentorId={mentorId} />
         </div>
+      </div>
+
+      {/* 표가 넓어 반쪽 칸에서는 후기 내용이 잘린다. 그리드 밖에서 전체 폭을 쓴다 */}
+      <div className="mt-8">
+        <MentorReviewExposureSection mentorId={mentorId} />
       </div>
     </section>
   );
