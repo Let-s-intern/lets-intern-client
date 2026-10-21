@@ -11,6 +11,22 @@ import type { AllInOnePassApplication, PassCalendarEvent } from '../types';
  * queryKey 에 applicationId 를 넣어 패스별로 캐시를 분리한다.
  */
 
+/**
+ * 내 신청 상세 — 대시보드 접근 가드 + 기간/이용권/연장 공통 소스.
+ *
+ * 403/404(본인 신청 아님) → isError → 레이아웃이 홈으로 redirect 한다.
+ * // TODO(BE): GET /membership-application/{applicationId} 나오면 아래 mock 을 axios.get 으로
+ * // 교체. (분리형이면 /access 로 가드만 교체해도 됨 — 레이아웃 코드는 그대로.)
+ */
+export const useGetMembershipApplication = (applicationId: number) =>
+  useQuery({
+    queryKey: ['allInOnePass', 'application', applicationId],
+    queryFn: (): Promise<AllInOnePassApplication> => mockDelay(myPassFixture),
+    enabled: Number.isFinite(applicationId) && applicationId > 0,
+    retry: false, // 403/404 는 즉시 에러로 (가드 redirect)
+    refetchOnWindowFocus: false,
+  });
+
 /** 내가 구매한 올인원패스 1건 — 남은기간·이용권 카드용 */
 export const useGetMyPass = (applicationId: number) =>
   useQuery({
