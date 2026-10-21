@@ -7,6 +7,7 @@ import {
 } from '@/domain/all-in-one-pass/api/dashboard';
 import CalendarDesktop from '@/domain/all-in-one-pass/ui/dashboard/calendar/CalendarDesktop';
 import CalendarMobile from '@/domain/all-in-one-pass/ui/dashboard/calendar/CalendarMobile';
+import MobileExternalLinks from '@/domain/all-in-one-pass/ui/dashboard/MobileExternalLinks';
 import PassUsageCard from '@/domain/all-in-one-pass/ui/dashboard/PassUsageCard';
 import RemainingPeriodCard from '@/domain/all-in-one-pass/ui/dashboard/RemainingPeriodCard';
 import { useParams } from 'next/navigation';
@@ -28,15 +29,18 @@ export default function AllInOnePassDashboardPage() {
       </header>
       <div className="flex flex-col gap-6 md:gap-10">
         {myPass && (
-          <div className="flex gap-2 md:gap-5">
-            <RemainingPeriodCard
-              startDate={myPass.startDate}
-              endDate={myPass.endDate}
-            />
-            <PassUsageCard
-              plan={myPass.plan}
-              mentoringCoupons={myPass.mentoringCoupons}
-            />
+          <div className="flex flex-col gap-2">
+            <div className="flex gap-2 md:gap-5">
+              <RemainingPeriodCard
+                startDate={myPass.startDate}
+                endDate={myPass.endDate}
+              />
+              <PassUsageCard
+                plan={myPass.plan}
+                mentoringCoupons={myPass.mentoringCoupons}
+              />
+            </div>
+            <MobileExternalLinks applicationId={Number(params.applicationId)} />
           </div>
         )}
         {calendarEvents && (
