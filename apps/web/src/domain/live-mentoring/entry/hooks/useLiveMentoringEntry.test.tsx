@@ -15,10 +15,11 @@ const mockMeetingServerBaseUrls = [
   'https://jitsi-main.example.com/',
   'https://jitsi-fallback.example.com/',
 ];
+const mockLoadBaseUrls = jest.fn(async () => mockMeetingServerBaseUrls);
 jest.mock('@/api/meetingServer', () => ({
   useMeetingServerBaseUrls: () => ({
     baseUrls: mockMeetingServerBaseUrls,
-    loadBaseUrls: async () => mockMeetingServerBaseUrls,
+    loadBaseUrls: () => mockLoadBaseUrls(),
   }),
 }));
 
@@ -62,6 +63,29 @@ describe('useLiveMentoringEntry', () => {
     createMeetingRoomMutate.mockClear();
     updateAttendanceMutate.mockClear();
     ensureMock.mockReset();
+    mockLoadBaseUrls.mockReset();
+    mockLoadBaseUrls.mockResolvedValue(mockMeetingServerBaseUrls);
+  });
+
+  it('이미 방이 있으면 회의 서버 목록 조회가 실패해도 입장한다', async () => {
+    ensureMock.mockResolvedValue({ ok: true });
+    mockLoadBaseUrls.mockRejectedValueOnce(new Error('network'));
+    const { result } = renderHook(() =>
+      useLiveMentoringEntry({
+        applicationId: 1,
+        entry: {
+          ...baseEntry,
+          meetingUrl: 'https://jitsi-main.example.com/room',
+        },
+      }),
+    );
+
+    await act(async () => {
+      await result.current.enter();
+    });
+
+    expect(mockLoadBaseUrls).not.toHaveBeenCalled();
+    expect(result.current.isOpen).toBe(true);
   });
 
   it('입장 후보와 failover 후보는 env 가 아니라 서버 회의 서버 목록이다', async () => {

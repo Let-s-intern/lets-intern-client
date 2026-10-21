@@ -414,7 +414,8 @@ const SubmissionModalBody = ({
     try {
       const result = await ensureLiveMeetingUrl({
         meetingUrl: data?.meetingUrl ?? null,
-        baseCandidates: await loadBaseUrls(),
+        // 이미 방이 있으면 후보가 필요 없다. 목록 조회 실패로 열린 방에 못 들어가는 일을 막는다.
+        baseCandidates: data?.meetingUrl ? [] : await loadBaseUrls(),
         // 서버가 base + 방 이름을 합성한다. 프론트는 base 만 보낸다.
         registerBaseUrl: async (base) => {
           await createMeetingRoom({ applicationId, meetingUrlBase: base });

@@ -76,7 +76,8 @@ const ReservationInfoSection = ({
     try {
       const result = await ensureLiveMeetingUrl({
         meetingUrl,
-        baseCandidates: await loadBaseUrls(),
+        // 이미 방이 있으면 후보가 필요 없다. 목록 조회 실패로 열린 방에 못 들어가는 일을 막는다.
+        baseCandidates: meetingUrl ? [] : await loadBaseUrls(),
         // BE 가 base + meetingRoom 을 합성하므로 FE 는 base URL 만 보낸다.
         registerBaseUrl: async (base) => {
           await patchMeetingUrl.mutateAsync({ meetingUrl: base });

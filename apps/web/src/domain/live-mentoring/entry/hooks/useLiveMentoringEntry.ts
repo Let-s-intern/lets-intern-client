@@ -65,7 +65,8 @@ export function useLiveMentoringEntry({
     try {
       const result = await ensureLiveMeetingUrl({
         meetingUrl: entry?.meetingUrl ?? null,
-        baseCandidates: await loadBaseUrls(),
+        // 이미 방이 있으면 후보가 필요 없다. 목록 조회 실패로 열린 방에 못 들어가는 일을 막는다.
+        baseCandidates: entry?.meetingUrl ? [] : await loadBaseUrls(),
         registerBaseUrl,
       });
 
