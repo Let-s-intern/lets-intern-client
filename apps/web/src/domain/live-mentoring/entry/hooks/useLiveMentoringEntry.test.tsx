@@ -10,6 +10,18 @@ const createMeetingRoomMutate = jest
   .mockResolvedValue('https://meet.test/room');
 const updateAttendanceMutate = jest.fn().mockResolvedValue(undefined);
 
+// 회의 서버 목록(GET /meeting-servers) — 입장 후보는 서버 DB 에서 온다.
+const mockMeetingServerBaseUrls = [
+  'https://jitsi-main.example.com/',
+  'https://jitsi-fallback.example.com/',
+];
+jest.mock('@/api/meetingServer', () => ({
+  useMeetingServerBaseUrls: () => ({
+    baseUrls: mockMeetingServerBaseUrls,
+    loadBaseUrls: async () => mockMeetingServerBaseUrls,
+  }),
+}));
+
 jest.mock('@/api/live-mentoring/liveMentoring', () => ({
   useCreateLiveMentoringEntryMeetingRoomMutation: () => ({
     mutateAsync: createMeetingRoomMutate,
@@ -50,6 +62,22 @@ describe('useLiveMentoringEntry', () => {
     createMeetingRoomMutate.mockClear();
     updateAttendanceMutate.mockClear();
     ensureMock.mockReset();
+  });
+
+  it('입장 후보와 failover 후보는 env 가 아니라 서버 회의 서버 목록이다', async () => {
+    ensureMock.mockResolvedValue({ ok: true });
+    const { result } = renderHook(() =>
+      useLiveMentoringEntry({ applicationId: 1, entry: baseEntry }),
+    );
+
+    await act(async () => {
+      await result.current.enter();
+    });
+
+    expect(ensureMock).toHaveBeenCalledWith(
+      expect.objectContaining({ baseCandidates: mockMeetingServerBaseUrls }),
+    );
+    expect(result.current.baseCandidates).toEqual(mockMeetingServerBaseUrls);
   });
 
   it('멘토 입장 성공 시 멘토 출석 PATCH를 호출하고 인라인을 연다', async () => {
