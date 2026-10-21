@@ -68,6 +68,10 @@ export const adminLiveMentoringSchema = z.object({
   lastModifiedDate: z.string(),
   /** 활성 개설이 없거나 이미 종료됐으면 null. */
   currentOpening: adminCurrentOpeningSchema.nullable(),
+  /** 멘토 단위. 결제 확정이고 예약 시작 전인 참여자 수. 같은 멘토의 상품끼리 값이 같다. */
+  upcomingParticipantCount: z.number(),
+  /** 멘토 단위. 멘토 페이지 후기 수(숨긴 후기 포함). 후기 탭의 "전체" 와 같다. */
+  mentorReviewCount: z.number(),
 });
 export type AdminLiveMentoring = z.infer<typeof adminLiveMentoringSchema>;
 

@@ -42,6 +42,8 @@ interface AdminLiveMentoringTableProps {
   onSelectMentor?: (mentorId: number) => void;
   /** 이 멘토의 멘토 페이지 후기를 관리하러 가기. 주면 행마다 버튼을 내건다. */
   onSelectMentorReviews?: (mentorId: number) => void;
+  /** 멘토 정보 수정 모달 열기. 주면 멘토 이름 밑에 버튼을 내건다. 모달은 페이지가 띄운다. */
+  onEditMentor?: (mentorId: number) => void;
 }
 
 /**
@@ -53,6 +55,7 @@ interface AdminLiveMentoringTableProps {
 const AdminLiveMentoringTable = ({
   onSelectMentor,
   onSelectMentorReviews,
+  onEditMentor,
 }: AdminLiveMentoringTableProps = {}) => {
   const { snackbar } = useAdminSnackbar();
   const [opened, setOpened] = useState<boolean | undefined>(undefined);
@@ -177,9 +180,20 @@ const AdminLiveMentoringTable = ({
                             className="h-8 w-8 shrink-0 rounded-full object-cover"
                           />
                         )}
-                        <span className="whitespace-nowrap">
-                          {row.mentorNickname ?? `멘토 #${row.mentorId}`}
-                        </span>
+                        <div className="flex flex-col items-start gap-1">
+                          <span className="whitespace-nowrap">
+                            {row.mentorNickname ?? `멘토 #${row.mentorId}`}
+                          </span>
+                          {onEditMentor && (
+                            <button
+                              type="button"
+                              onClick={() => onEditMentor(row.mentorId)}
+                              className="text-primary whitespace-nowrap text-xs underline"
+                            >
+                              멘토 수정
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </td>
                     <td className={`${bodyCellClass} break-keep`}>
@@ -238,7 +252,7 @@ const AdminLiveMentoringTable = ({
                             size="small"
                             onClick={() => onSelectMentor(row.mentorId)}
                           >
-                            참여자 보기
+                            참여자 보기 (예정 {row.upcomingParticipantCount}명)
                           </Button>
                         )}
                         {onSelectMentorReviews && (
@@ -247,7 +261,7 @@ const AdminLiveMentoringTable = ({
                             size="small"
                             onClick={() => onSelectMentorReviews(row.mentorId)}
                           >
-                            후기 관리
+                            후기 관리 ({row.mentorReviewCount}건)
                           </Button>
                         )}
                         {opening?.status === 'OPEN' && (
