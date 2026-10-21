@@ -33,6 +33,8 @@ const draftRow: AdminLiveMentoring = {
   createDate: '2026-08-03T12:00:00',
   lastModifiedDate: '2026-08-03T12:00:00',
   currentOpening: null,
+  upcomingParticipantCount: 3,
+  mentorReviewCount: 12,
 };
 
 const approvedRow: AdminLiveMentoring = {
@@ -316,7 +318,7 @@ describe('AdminLiveMentoringTable — 멘토별 참여자', () => {
 
     fireEvent.click(
       within(screen.getByRole('table')).getByRole('button', {
-        name: '참여자 보기',
+        name: '참여자 보기 (예정 3명)',
       }),
     );
     expect(onSelectMentor).toHaveBeenCalledWith(draftRow.mentorId);
@@ -325,7 +327,7 @@ describe('AdminLiveMentoringTable — 멘토별 참여자', () => {
   it('onSelectMentor 가 없으면 버튼을 내걸지 않는다', () => {
     renderTable([draftRow]);
     expect(
-      screen.queryByRole('button', { name: '참여자 보기' }),
+      screen.queryByRole('button', { name: /참여자 보기/ }),
     ).not.toBeInTheDocument();
   });
 
@@ -350,9 +352,37 @@ describe('AdminLiveMentoringTable — 멘토별 참여자', () => {
 
     fireEvent.click(
       within(screen.getByRole('table')).getByRole('button', {
-        name: '후기 관리',
+        name: '후기 관리 (12건)',
       }),
     );
     expect(onSelectMentorReviews).toHaveBeenCalledWith(draftRow.mentorId);
+  });
+
+  it('onEditMentor 를 주면 멘토 이름 밑에 멘토 수정을 내걸고 멘토 id 를 넘긴다', () => {
+    const onEditMentor = vi.fn();
+    listQuery.mockReturnValue({
+      data: {
+        liveMentoringList: [draftRow],
+        pageInfo: {
+          pageNum: 0,
+          pageSize: 20,
+          totalElements: 1,
+          totalPages: 1,
+        },
+      },
+      isLoading: false,
+      isError: false,
+    });
+    render(<AdminLiveMentoringTable onEditMentor={onEditMentor} />);
+
+    fireEvent.click(screen.getByRole('button', { name: '멘토 수정' }));
+    expect(onEditMentor).toHaveBeenCalledWith(draftRow.mentorId);
+  });
+
+  it('onEditMentor 가 없으면 멘토 수정을 내걸지 않는다', () => {
+    renderTable([draftRow]);
+    expect(
+      screen.queryByRole('button', { name: '멘토 수정' }),
+    ).not.toBeInTheDocument();
   });
 });
