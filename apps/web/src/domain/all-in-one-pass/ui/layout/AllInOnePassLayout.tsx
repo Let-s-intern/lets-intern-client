@@ -8,11 +8,8 @@ import { useGetMembershipApplication } from '../../api/dashboard';
 import AllInOnePassNavBar from './AllInOnePassNavBar';
 
 /**
- * 올인원패스 대시보드 공통 셸. 챌린지 ChallengeLayout 의 큰 골격(사이드바 + 본문)을 따른다.
- *
- * 접근 가드: 로그인 게이트 + 본인 신청 소유 검증. 소유 검증은 내 신청 상세 조회로 하며,
- * 403/404(본인 신청 아님)면 홈으로 리다이렉트한다(챌린지 useGetChallengeValideUser 패턴).
- * // TODO(BE): useGetMembershipApplication 의 queryFn 을 실제 GET 으로 교체하면 즉시 동작.
+ * 올인원패스 대시보드 공통 셸 + 접근 가드(로그인 + 본인 신청 소유: 403/404면 홈으로).
+ * // TODO(BE): useGetMembershipApplication queryFn 을 실제 GET 으로 교체하면 즉시 동작.
  */
 const AllInOnePassLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
