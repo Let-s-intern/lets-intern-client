@@ -4,7 +4,7 @@ import { Metadata } from 'next';
 // 링크를 걸지 않고 주소를 길게 둔 비공개 테스트 페이지다. 확인이 끝나면 이 폴더째 삭제한다.
 
 const VOD_HUB_ORIGIN =
-  process.env.VOD_HUB_ORIGIN ?? 'https://vod.letscareer.co.kr';
+  process.env.VOD_HUB_ORIGIN ?? 'https://seminar-vod.letscareer.co.kr';
 
 interface HubVod {
   id: number;
