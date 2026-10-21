@@ -131,8 +131,7 @@ const MeetingServerEditor = ({ server }: MeetingServerEditorProps) => {
       {isEdit && (
         <p className="rounded-xxs border border-red-300 px-3 py-2 text-sm text-red-500">
           주소를 바꾸면 예전 주소로 열린 회의실은 다음 입장 때 다른 서버로
-          옮겨집니다. 프론트 환경변수(NEXT_PUBLIC_JITSI_*)의 주소와도 같아야
-          입장할 수 있습니다.
+          옮겨집니다. 저장하면 다음 입장부터 바로 적용됩니다.
         </p>
       )}
 
