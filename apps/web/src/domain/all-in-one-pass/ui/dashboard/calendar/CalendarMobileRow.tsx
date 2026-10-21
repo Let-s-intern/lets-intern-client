@@ -48,7 +48,7 @@ export default function CalendarMobileRow({ week, variant }: Props) {
 
   const weekBars = bars.filter(
     (e) =>
-      (barLaneOf.get(e.id) ?? 0) < itemRows &&
+      (barLaneOf.get(e.id) ?? 0) < MONTH_VISIBLE_ITEMS &&
       !eventEnd(e).isBefore(weekStart) &&
       !eventStart(e).isAfter(weekEnd),
   );
