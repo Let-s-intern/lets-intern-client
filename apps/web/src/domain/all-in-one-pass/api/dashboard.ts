@@ -1,44 +1,173 @@
+import { useMypageApplicationsQuery } from '@/api/application';
+import { useGetUserProgramQuery } from '@/api/program';
+import dayjs from '@/lib/dayjs';
 import { useQuery } from '@tanstack/react-query';
-import { calendarFixtures, myPassFixture } from '../mock/dashboardFixtures';
+import { useMemo } from 'react';
+import { applicationDetailFixture } from '../mock/dashboardFixtures';
 import { mockDelay } from '../mock/mockDelay';
-import type { AllInOnePassApplication, PassCalendarEvent } from '../types';
+import type {
+  AllInOnePassApplication,
+  AllInOnePassApplicationDetail,
+  PassCalendarEvent,
+  PassDescriptionBlob,
+  PassExternalLink,
+} from '../types';
+
+// U-1 대시보드 훅. 모두 내 신청 상세(단일 소스)에서 파생 — 실 API 시 useGetMembershipApplication 만 교체.
+
+/** description(JSON) 파싱 → 캘린더(게릴라/마일스톤)·외부링크·멘토링쿠폰 */
+const parsePassDescription = (description: string) => {
+  let blob: PassDescriptionBlob;
+  try {
+    blob = JSON.parse(description) as PassDescriptionBlob;
+  } catch {
+    blob = {
+      calendarEvents: [],
+      externalLinks: [],
+      mentoringCouponAutoIssue: false,
+    };
+  }
+  // id 는 챌린지(programId)와 안 겹치게 오프셋
+  const calendarEvents: PassCalendarEvent[] = (blob.calendarEvents ?? []).map(
+    (e, i) => ({
+      id: 1_000_000 + i,
+      type: e.type,
+      title: e.title,
+      description: null,
+      startDate: e.startDate,
+      endDate: e.endDate,
+      url: e.url ?? null,
+    }),
+  );
+  const externalLinks: PassExternalLink[] = (blob.externalLinks ?? []).map(
+    (l, i) => ({ id: i + 1, name: l.name, url: l.url }),
+  );
+  return {
+    calendarEvents,
+    externalLinks,
+    mentoringCouponAutoIssue: blob.mentoringCouponAutoIssue ?? false,
+  };
+};
 
 /**
- * U-1 대시보드 조회 훅.
- *
- * 유저 조회 API가 아직 없어 현재는 mock(../mock)을 반환한다. 실제 스펙이 나오면 각
- * queryFn 본문만 axios 호출로 교체하고 ../mock 을 삭제하면 된다(어드민 api 계층과 동일).
- * queryKey 에 applicationId 를 넣어 패스별로 캐시를 분리한다.
- */
-
-/**
- * 내 신청 상세 — 대시보드 접근 가드 + 기간/이용권/연장 공통 소스.
- *
- * 403/404(본인 신청 아님) → isError → 레이아웃이 홈으로 redirect 한다.
- * // TODO(BE): GET /membership-application/{applicationId} 나오면 아래 mock 을 axios.get 으로
- * // 교체. (분리형이면 /access 로 가드만 교체해도 됨 — 레이아웃 코드는 그대로.)
+ * 내 신청 상세 — 접근 가드 + 기간/이용권/연장 공통 소스. 403/404 → isError → 레이아웃 redirect.
+ * // TODO(BE): queryFn 을 GET /membership-application/{applicationId} 로 교체.
  */
 export const useGetMembershipApplication = (applicationId: number) =>
   useQuery({
     queryKey: ['allInOnePass', 'application', applicationId],
-    queryFn: (): Promise<AllInOnePassApplication> => mockDelay(myPassFixture),
+    queryFn: (): Promise<AllInOnePassApplicationDetail> =>
+      mockDelay(applicationDetailFixture),
     enabled: Number.isFinite(applicationId) && applicationId > 0,
     retry: false, // 403/404 는 즉시 에러로 (가드 redirect)
     refetchOnWindowFocus: false,
   });
 
-/** 내가 구매한 올인원패스 1건 — 남은기간·이용권 카드용 */
-export const useGetMyPass = (applicationId: number) =>
-  useQuery({
-    queryKey: ['allInOnePass', 'myPass', applicationId],
-    queryFn: (): Promise<AllInOnePassApplication> => mockDelay(myPassFixture),
-    refetchOnWindowFocus: false,
-  });
+export const useGetMyPass = (applicationId: number) => {
+  const { data, isLoading, isError } =
+    useGetMembershipApplication(applicationId);
+  return useMemo(() => {
+    if (!data) return { data: undefined, isLoading, isError };
+    const { mentoringCouponAutoIssue } = parsePassDescription(data.description);
+    const myPass: AllInOnePassApplication = {
+      id: data.membershipApplicationId,
+      passTitle: data.title,
+      startDate: data.startDate,
+      endDate: data.endDate,
+      plan: {
+        id: 0,
+        title: data.plan.title,
+        description: null,
+        price: 0,
+        discount: null,
+        privileges: data.plan.privilegeList,
+      },
+      // 멘토링 쿠폰은 현재 고정 — 자동발급이면 쿠폰명 노출
+      mentoringCoupons: mentoringCouponAutoIssue
+        ? [{ name: '1:1 LIVE 멘토링 50% 할인 쿠폰', count: 1 }]
+        : [],
+    };
+    return { data: myPass, isLoading, isError };
+  }, [data, isLoading, isError]);
+};
 
-/** 대시보드 일정 캘린더 항목 — 챌린지 막대 + 게릴라세션/마일스톤 칩 */
-export const useGetPassCalendar = (applicationId: number) =>
-  useQuery({
-    queryKey: ['allInOnePass', 'calendar', applicationId],
-    queryFn: (): Promise<PassCalendarEvent[]> => mockDelay(calendarFixtures),
-    refetchOnWindowFocus: false,
+export const useGetPassExternalLinks = (applicationId: number) => {
+  const { data, isLoading, isError } =
+    useGetMembershipApplication(applicationId);
+  return useMemo(
+    () => ({
+      data: (data
+        ? parsePassDescription(data.description).externalLinks
+        : []) as PassExternalLink[],
+      isLoading,
+      isError,
+    }),
+    [data, isLoading, isError],
+  );
+};
+
+export const useGetPassCalendar = (applicationId: number) => {
+  const catalogQuery = useGetUserProgramQuery({
+    pageable: { page: 1, size: 100 },
+    searchParams: { type: 'CHALLENGE' },
   });
+  const applicationsQuery = useMypageApplicationsQuery();
+  const { data: application } = useGetMembershipApplication(applicationId);
+
+  return useMemo(() => {
+    const apps = (applicationsQuery.data ?? []).filter(
+      (a) => a.programType === 'CHALLENGE' && a.programId != null,
+    );
+    const enrolledIds = new Set(apps.map((a) => a.programId));
+
+    const enrolled: PassCalendarEvent[] = apps.map((a) => ({
+      id: a.programId as number,
+      type: 'CHALLENGE',
+      title: a.programTitle ?? '',
+      description: null,
+      startDate: a.programStartDate?.toISOString() ?? '',
+      endDate: a.programEndDate?.toISOString() ?? null,
+      programId: a.programId as number,
+      challengeApplicationId: a.id,
+    }));
+
+    const now = dayjs();
+    const notEnrolled: PassCalendarEvent[] = (
+      catalogQuery.data?.programList ?? []
+    )
+      .filter(
+        (p) =>
+          !enrolledIds.has(p.programInfo.id) &&
+          (!p.programInfo.deadline ||
+            !now.isAfter(dayjs(p.programInfo.deadline))),
+      )
+      .map((p) => ({
+        id: p.programInfo.id,
+        type: 'CHALLENGE',
+        title: p.programInfo.title ?? '',
+        description: null,
+        startDate: p.programInfo.startDate ?? '',
+        endDate: p.programInfo.endDate ?? null,
+        programId: p.programInfo.id,
+        challengeApplicationId: null,
+      }));
+
+    const descEvents = application
+      ? parsePassDescription(application.description).calendarEvents
+      : [];
+
+    return {
+      data: [...enrolled, ...notEnrolled, ...descEvents],
+      isLoading: catalogQuery.isLoading || applicationsQuery.isLoading,
+      isError: catalogQuery.isError || applicationsQuery.isError,
+    };
+  }, [
+    catalogQuery.data,
+    catalogQuery.isLoading,
+    catalogQuery.isError,
+    applicationsQuery.data,
+    applicationsQuery.isLoading,
+    applicationsQuery.isError,
+    application,
+  ]);
+};

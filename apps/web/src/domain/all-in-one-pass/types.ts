@@ -133,6 +133,44 @@ export interface PassExternalLink {
   url: string;
 }
 
+// ─── 내 신청 상세 (GET /membership-application/{applicationId} 응답 shape) ───
+
+/** 연장 옵션 (연장 모달) */
+export interface AllInOnePassOption {
+  membershipOptionId: number;
+  title: string;
+  extensionDays: number;
+  price: number;
+  discount: number | null;
+}
+
+/** 내 신청 상세 — 대시보드 공통 소스. description 은 JSON(캘린더·외부링크·멘토링쿠폰) 문자열 */
+export interface AllInOnePassApplicationDetail {
+  membershipApplicationId: number;
+  membershipId: number;
+  title: string;
+  startDate: string;
+  endDate: string;
+  periodDays: number;
+  plan: { title: string; privilegeList: PassPrivilege[] };
+  description: string;
+  optionList: AllInOnePassOption[];
+}
+
+/** description(JSON) 파싱 결과 — 어드민 저장 형식 (게릴라/마일스톤·외부링크·멘토링쿠폰) */
+export interface PassDescriptionBlob {
+  calendarEvents: {
+    id: string;
+    startDate: string; // 시작(시간 포함)
+    endDate: string; // 종료(시간 포함)
+    type: 'GUERRILLA' | 'MILESTONE';
+    title: string;
+    url?: string | null;
+  }[];
+  externalLinks: { id: string; name: string; url: string }[];
+  mentoringCouponAutoIssue: boolean;
+}
+
 // ─── U-5 공지사항 / 패스 가이드 ───
 
 /** 공지 유형 (공지사항 / 패스 가이드) */
