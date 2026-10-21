@@ -56,12 +56,22 @@ const privilegeToPermission = (
   return found ? found[0] : null;
 };
 
-// description 컬럼 JSON: 캘린더·외부링크·멘토링 (렉시컬=landingDescription, 연장=optionList 분리)
 interface DescriptionBlob {
   calendarEvents: PassCalendarEvent[];
   externalLinks: PassExternalLink[];
   mentoringCouponAutoIssue: boolean;
 }
+
+const migrateCalendarEvent = (
+  e: PassCalendarEvent & { date?: string | null },
+): PassCalendarEvent => ({
+  id: e.id,
+  startDate: e.startDate ?? e.date ?? null,
+  endDate: e.endDate ?? e.date ?? null,
+  type: e.type,
+  title: e.title,
+  url: e.url ?? null,
+});
 
 const parseDescription = (description?: string | null): DescriptionBlob => {
   const empty: DescriptionBlob = {
@@ -73,7 +83,7 @@ const parseDescription = (description?: string | null): DescriptionBlob => {
   try {
     const parsed = JSON.parse(description) as Partial<DescriptionBlob>;
     return {
-      calendarEvents: parsed.calendarEvents ?? [],
+      calendarEvents: (parsed.calendarEvents ?? []).map(migrateCalendarEvent),
       externalLinks: parsed.externalLinks ?? [],
       mentoringCouponAutoIssue: parsed.mentoringCouponAutoIssue ?? false,
     };

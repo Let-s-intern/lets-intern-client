@@ -28,7 +28,8 @@ export type CalendarEventType = 'GUERRILLA' | 'MILESTONE';
 /** 1.3 캘린더 관리 일정 한 개 (게릴라세션/마일스톤 수기 입력) */
 export interface PassCalendarEvent {
   id: string; // 폼 로컬 식별자
-  date: string | null; // 일정 날짜(ISO)
+  startDate: string | null; // 시작일(ISO)
+  endDate: string | null; // 종료일(ISO)
   type: CalendarEventType;
   title: string;
   url: string | null; // URL(선택)
