@@ -31,6 +31,7 @@ interface ProgramApplicationFormStore extends HydrationStore {
     vodPassPrice: number; // 선택한 개월 수 기준 총액
     vodPassDurationDays: number; // 선택한 개월 수 기준 총 이용일수
     vodPassMonths: number; // 0 이면 미선택이거나 개월 선택 전에 담긴 값이다. 요청에서는 1 로 본다
+    membershipDiscount: number; // 올인원패스 권한 0원 할인액
   };
   setProgramApplicationForm: (
     params: Partial<ProgramApplicationFormStore['data']>,
@@ -73,6 +74,7 @@ const useProgramStore = create(
         vodPassPrice: 0,
         vodPassDurationDays: 0,
         vodPassMonths: 0,
+        membershipDiscount: 0,
       },
       setProgramApplicationForm: (params) => {
         const currentData = get().data;
@@ -109,6 +111,7 @@ const useProgramStore = create(
             vodPassPrice: 0,
             vodPassDurationDays: 0,
             vodPassMonths: 0,
+            membershipDiscount: 0,
           },
         });
       },

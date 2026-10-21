@@ -18,12 +18,7 @@ import {
   toLandingConfig,
 } from '@/domain/all-in-one-pass/util/landingDescriptionMapper';
 
-/**
- * 백엔드 membership DTO ↔ FE 화면 타입(PassFormInput 등) 변환 레이어.
- *
- * 주의: 서버 `description` 컬럼은 상세(렉시컬)·캘린더·외부링크 3가지를 JSON 한 덩어리로
- * 저장한다(형식은 FE 자유). 아래 (de)serialize 로 처리한다.
- */
+/** 백엔드 membership DTO ↔ FE 폼 타입(PassFormInput) 변환 레이어. */
 
 // ── permission ↔ privilege ────────────────────────────
 const PERMISSION_TO_PRIVILEGE: Record<
@@ -61,8 +56,7 @@ const privilegeToPermission = (
   return found ? found[0] : null;
 };
 
-// ── description JSON (캘린더·외부링크·멘토링) ────────────
-// 상세 렉시컬은 landingDescription, 연장 옵션은 optionList(server)로 분리한다.
+// description 컬럼 JSON: 캘린더·외부링크·멘토링 (렉시컬=landingDescription, 연장=optionList 분리)
 interface DescriptionBlob {
   calendarEvents: PassCalendarEvent[];
   externalLinks: PassExternalLink[];
@@ -94,8 +88,6 @@ const serializeDescription = (input: PassFormInput): string =>
     externalLinks: input.externalLinks,
     mentoringCouponAutoIssue: input.mentoringCouponAutoIssue,
   } satisfies DescriptionBlob);
-
-// 랜딩(landingDescription) (de)serialize 는 landingDescriptionMapper 로 분리.
 
 // ── 목록 ──────────────────────────────────────────────
 export const toListItem = (
@@ -148,7 +140,7 @@ export const toFormInput = (detail: AllInOnePassDetail): PassFormInput => {
       days: opt.extensionDays ?? null,
       price: opt.price ?? null,
     })),
-    mentoringCouponAutoIssue: blob.mentoringCouponAutoIssue,
+    mentoringCouponAutoIssue: true, // v1배포: 항상 포함(고정)
     landing: toLandingConfig(detail.landingDescription, blob.externalLinks),
     // 이 패스에 연결된(노출) FAQ id — 체크박스 prefill
     faqList: detail.faqList.map((f) => f.id),
@@ -156,15 +148,25 @@ export const toFormInput = (detail: AllInOnePassDetail): PassFormInput => {
 };
 
 // ── 폼 → 생성/수정 DTO ────────────────────────────────
-// 연장 옵션 → server optionList. title은 "{패스명} {N}일 연장"으로 자동생성.
-const extensionToOption = (passTitle: string, opt: PassExtensionOption) => ({
-  title: `${passTitle} ${opt.days ?? 0}일 연장`,
+/** 폼 옵션 id가 서버 옵션(숫자)이면 true. uuid 는 신규 옵션. */
+export const isServerOptionId = (id: string) => /^\d+$/.test(id);
+
+/** 연장 옵션 생성 body (title "{N}일 연장" 자동, 할인가 생략) */
+export const optionToCreateDto = (opt: PassExtensionOption) => ({
+  title: `${opt.days ?? 0}일 연장`,
   extensionDays: opt.days ?? 0,
   price: opt.price ?? 0,
   discount: null,
 });
 
-const planToDto = (plan: PassPlan) => ({
+/** 연장 옵션 수정 body */
+export const optionToUpdateDto = (opt: PassExtensionOption) => ({
+  title: `${opt.days ?? 0}일 연장`,
+  extensionDays: opt.days ?? 0,
+  price: opt.price ?? 0,
+});
+
+export const planToCreateDto = (plan: PassPlan) => ({
   title: plan.name,
   description: plan.description || null,
   price: plan.regularPrice ?? 0,
@@ -175,18 +177,21 @@ const planToDto = (plan: PassPlan) => ({
   })),
 });
 
-/** 플랜 수정 요청 body (기존 플랜 PATCH — 권한은 별도 엔드포인트) */
-export const planToUpdateDto = (plan: PassPlan) => ({
+/** 폼 플랜 id가 서버 플랜(숫자)이면 true. uuid 는 아직 저장 안 된 신규 플랜. */
+export const isServerPlanId = (id: string) => /^\d+$/.test(id);
+
+/** 수정 PATCH inline planList 한 개 (id null=생성, privilegeList 전체=권한 full-sync). */
+export const planToInMembershipDto = (plan: PassPlan) => ({
+  membershipPlanId: isServerPlanId(plan.id) ? Number(plan.id) : null,
   title: plan.name,
   description: plan.description || null,
   price: plan.regularPrice ?? 0,
   discount: plan.discountPrice ?? null,
-});
-
-/** 권한 생성/수정 요청 body (privilege POST·PATCH 공용) */
-export const permissionToPrivilegeDto = (perm: PassPermission) => ({
-  ...PERMISSION_TO_PRIVILEGE[perm],
-  programCount: null,
+  privilegeList: plan.permissions.map((perm) => ({
+    membershipPlanPrivilegeId: plan.privilegeIds?.[perm] ?? null,
+    ...PERMISSION_TO_PRIVILEGE[perm],
+    programCount: null,
+  })),
 });
 
 /** 생성 요청 body */
@@ -200,14 +205,12 @@ export const toCreateDto = (input: PassFormInput) => ({
   periodDays: input.passDays,
   thumbnail: input.thumbnailUrl,
   isVisible: false, // 개설 시 기본 비노출
-  planList: input.plans.map(planToDto),
-  optionList: input.extensionOptions.map((opt) =>
-    extensionToOption(input.title, opt),
-  ),
+  planList: input.plans.map(planToCreateDto),
+  optionList: input.extensionOptions.map(optionToCreateDto),
   faqList: input.faqList.map((faqId) => ({ faqId })), // 이 패스에 노출할 공통 FAQ
 });
 
-/** 수정 요청 body (basic + faqList. plan/benefit은 각자 독립 엔드포인트) */
+/** 수정 요청 body. 플랜·권한은 planList inline full-sync, 삭제만 별도 DELETE. */
 export const toUpdateDto = (input: PassFormInput) => ({
   title: input.title,
   introduction: input.shortDescription || null,
@@ -217,8 +220,6 @@ export const toUpdateDto = (input: PassFormInput) => ({
   deadline: input.purchaseEndDate,
   periodDays: input.passDays,
   thumbnail: input.thumbnailUrl,
-  optionList: input.extensionOptions.map((opt) =>
-    extensionToOption(input.title, opt),
-  ),
+  planList: input.plans.map(planToInMembershipDto),
   faqList: input.faqList.map((faqId) => ({ faqId })),
 });

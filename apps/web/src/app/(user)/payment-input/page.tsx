@@ -177,6 +177,7 @@ const PaymentInputContent = () => {
         discount: programApplicationData.discount,
         couponPrice: data.price,
         vodPassPrice: programApplicationData.vodPassPrice,
+        membershipDiscount: programApplicationData.membershipDiscount ?? 0,
       });
 
       setProgramApplicationForm({
@@ -191,25 +192,29 @@ const PaymentInputContent = () => {
       programApplicationData.discount,
       programApplicationData.price,
       programApplicationData.vodPassPrice,
+      programApplicationData.membershipDiscount,
     ],
   );
 
   // 결제 금액. setCoupon 이 스토어에 담는 totalPrice 와 같은 함수에서 나온다
-  const totalPrice = useMemo(
-    () =>
-      calculateChallengeTotalWithVodPass({
-        regularPrice: programApplicationData.price,
-        discount: programApplicationData.discount,
-        couponPrice: programApplicationData.couponPrice,
-        vodPassPrice: programApplicationData.vodPassPrice,
-      }),
-    [
-      programApplicationData.couponPrice,
-      programApplicationData.discount,
-      programApplicationData.price,
-      programApplicationData.vodPassPrice,
-    ],
-  );
+  const totalPrice = useMemo(() => {
+    // 무료면 0원 (토스 스킵)
+    if (programApplicationData.isFree) return 0;
+    return calculateChallengeTotalWithVodPass({
+      regularPrice: programApplicationData.price,
+      discount: programApplicationData.discount,
+      couponPrice: programApplicationData.couponPrice,
+      vodPassPrice: programApplicationData.vodPassPrice,
+      membershipDiscount: programApplicationData.membershipDiscount ?? 0,
+    });
+  }, [
+    programApplicationData.isFree,
+    programApplicationData.couponPrice,
+    programApplicationData.discount,
+    programApplicationData.price,
+    programApplicationData.vodPassPrice,
+    programApplicationData.membershipDiscount,
+  ]);
 
   /** 쿠폰 적용이 아니라 애초부터 무료인 경우 다르게 보여주기 **/
   const buttonText = programApplicationData.isFree
@@ -452,6 +457,7 @@ const PaymentInputContent = () => {
               showCouponDiscount={showCouponSection}
               vodPassPrice={programApplicationData.vodPassPrice ?? 0}
               vodPassMonths={programApplicationData.vodPassMonths ?? 0}
+              membershipDiscount={programApplicationData.membershipDiscount ?? 0}
             />
             <hr className="bg-neutral-85" />
             <div className="text-neutral-0 flex h-10 items-center justify-between px-3 font-semibold">

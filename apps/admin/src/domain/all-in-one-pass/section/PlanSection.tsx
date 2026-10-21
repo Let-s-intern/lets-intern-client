@@ -107,10 +107,12 @@ export default function PlanSection({
         <div className="bg-primary-10 border-primary-15 rounded-sm border px-4 py-1">
           <FormControlLabel
             className="m-0"
+            sx={{ cursor: 'not-allowed' }}
             control={
               <Checkbox
                 checked={mentoringCouponAutoIssue}
                 onChange={(e) => onMentoringChange(e.target.checked)}
+                disabled
               />
             }
             label="1:1 LIVE 멘토링 50% 쿠폰 자동발급 (월단위)"

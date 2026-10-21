@@ -5,8 +5,10 @@ import FileIcon from '@/assets/icons/file.svg?react';
 import FolderIcon from '@/assets/icons/folder.svg?react';
 import UserIcon from '@/assets/icons/mentor.svg?react';
 import BackHeader from '@/common/header/BackHeader';
-import type { GuidebookPublicViewModel } from '../utils/publicGuidebookMapping';
+import LoadingContainer from '@/common/loading/LoadingContainer';
+import { useGetMembershipPrivilege } from '@/domain/all-in-one-pass/api/privilege';
 import BasicInfoRow from '../../program-detail/basicInfo/BasicInfoRow';
+import type { GuidebookPublicViewModel } from '../utils/publicGuidebookMapping';
 
 interface GuidebookBasicInfoSectionProps {
   guidebook: GuidebookPublicViewModel;
@@ -26,6 +28,13 @@ const GuidebookBasicInfoSection = ({
   const thumbnail = guidebook.thumbnail ?? guidebook.desktopThumbnail ?? null;
   const price = guidebook.price ?? 0;
   const discount = guidebook.discount ?? 0;
+
+  const { data: privilege, isLoading: isPrivilegeLoading } =
+    useGetMembershipPrivilege('GUIDEBOOK', guidebook.id);
+  const isPrivilegePending = isPrivilegeLoading;
+  const hasPrivilege = privilege?.hasPrivilege ?? false;
+  const discountedPrice = price - discount;
+  const finalPrice = hasPrivilege ? 0 : discountedPrice;
 
   return (
     <div className="mx-auto w-full max-w-[1000px] px-5 pb-10 md:px-10 md:pb-20 md:pt-[60px] lg:px-0">
@@ -67,23 +76,46 @@ const GuidebookBasicInfoSection = ({
                 icon={<CardIcon />}
                 title="가격"
                 content={
-                  <>
-                    <div className="border-neutral-80 text-neutral-0 flex w-full flex-col gap-y-2.5 border-b pb-4 pt-2.5">
-                      <div className="flex w-full items-center justify-between gap-x-4">
-                        <span className="text-xsmall16">정가</span>
-                        <span>{price.toLocaleString()}원</span>
+                  <div className="relative w-full">
+                    <div
+                      className={isPrivilegePending ? 'invisible' : undefined}
+                    >
+                      <div className="border-neutral-80 text-neutral-0 flex w-full flex-col gap-y-2.5 border-b pb-4 pt-2.5">
+                        <div className="flex w-full items-center justify-between gap-x-4">
+                          <span className="text-xsmall16">정가</span>
+                          <span>{price.toLocaleString()}원</span>
+                        </div>
+                        <div className="flex w-full items-center justify-between gap-x-4">
+                          <span className="text-xsmall16 text-primary font-bold">
+                            {getDiscountPercent(price, discount)}% 할인
+                          </span>
+                          <span>-{discount.toLocaleString()}원</span>
+                        </div>
+                        {/* 비권한 시 높이만 확보 */}
+                        <div
+                          className={`flex w-full items-center justify-between gap-x-4 ${
+                            hasPrivilege ? '' : 'invisible'
+                          }`}
+                        >
+                          <span className="text-xsmall16 text-primary font-bold">
+                            패스 혜택 할인
+                          </span>
+                          <span>-{discountedPrice.toLocaleString()}원</span>
+                        </div>
                       </div>
-                      <div className="flex w-full items-center justify-between gap-x-4">
-                        <span className="text-xsmall16 text-primary font-bold">
-                          {getDiscountPercent(price, discount)}% 할인
-                        </span>
-                        <span>-{discount.toLocaleString()}원</span>
+                      <div className="text-xxlarge32 text-neutral-0 w-full pt-3 text-end font-bold">
+                        {finalPrice.toLocaleString()}원
                       </div>
                     </div>
-                    <div className="text-xxlarge32 text-neutral-0 w-full pt-3 text-end font-bold">
-                      {(price - discount).toLocaleString()}원
-                    </div>
-                  </>
+                    {isPrivilegePending && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <LoadingContainer
+                          text="가격을 불러오는 중입니다"
+                          className="py-0"
+                        />
+                      </div>
+                    )}
+                  </div>
                 }
               />
             </div>

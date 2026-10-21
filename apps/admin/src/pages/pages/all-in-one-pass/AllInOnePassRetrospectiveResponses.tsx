@@ -5,45 +5,27 @@ import {
 } from '@/api/all-in-one-pass/useRetrospectives';
 import EmptyContainer from '@/common/container/EmptyContainer';
 import LoadingContainer from '@/common/loading/LoadingContainer';
-import { COMMON_QUESTION_IDS } from '@/domain/all-in-one-pass/section/CommonQuestionSection';
 import { RetrospectiveResponse } from '@/domain/all-in-one-pass/types';
+import AnswerViewModal from '@/domain/all-in-one-pass/ui/retrospective/AnswerViewModal';
+import ResponseCommentModal from '@/domain/all-in-one-pass/ui/retrospective/ResponseCommentModal';
+import {
+  AnswerView,
+  buildResponseTabs,
+  getResponseColumns,
+} from '@/domain/all-in-one-pass/ui/retrospective/responseColumns';
 import { downloadResponsesCsv } from '@/domain/all-in-one-pass/util/downloadResponsesCsv';
 import { usePaginationModelWithSearchParams } from '@/hooks/usePaginationModelWithSearchParams';
-import dayjs from '@/lib/dayjs';
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-} from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { Button } from '@mui/material';
+import { DataGrid } from '@mui/x-data-grid';
 import clsx from 'clsx';
 import { useMemo, useState } from 'react';
 import { IoArrowBack } from 'react-icons/io5';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 
-interface QuestionTab {
-  questionId: number;
-  label: string;
-}
-
-/** 응답에 등장한 질문들로 탭 구성 (공통 먼저 → 주차별). 저장 라벨은 스냅샷. */
-const buildTabs = (responses: RetrospectiveResponse[]): QuestionTab[] => {
-  const present = new Set<number>();
-  responses.forEach((r) => r.answers.forEach((a) => present.add(a.questionId)));
-
-  const commonSet = new Set(COMMON_QUESTION_IDS);
-  const commonTabs = COMMON_QUESTION_IDS.filter((id) => present.has(id)).map(
-    (id, i) => ({ questionId: id, label: `공통 질문 ${i + 1}` }),
-  );
-  const weeklyTabs = [...present]
-    .filter((id) => !commonSet.has(id))
-    .map((id) => ({ questionId: id, label: '주차별 질문' }));
-  return [...commonTabs, ...weeklyTabs];
-};
-
-/** A-5 회고 응답 조회 */
+/**
+ * A-5 회고 응답 조회. 질문 탭으로 답변을 전환해 보고, 코멘트는 제출자(유저)별 1개.
+ * 현재 로컬 상태 = mock, 추후 실 API(PATCH/DELETE)로 교체.
+ */
 export default function AllInOnePassRetrospectiveResponses() {
   const { retrospectiveId } = useParams();
   const roundId = retrospectiveId ? Number(retrospectiveId) : undefined;
@@ -62,68 +44,50 @@ export default function AllInOnePassRetrospectiveResponses() {
   } = useGetRetrospectiveResponsesQuery(roundId);
 
   const round = rounds.find((r) => r.id === roundId);
-  const tabs = useMemo(() => buildTabs(responses), [responses]);
+  const tabs = useMemo(
+    () => buildResponseTabs(responses, roundId),
+    [responses, roundId],
+  );
 
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const activeId = selectedId ?? tabs[0]?.questionId ?? null;
-
-  const [detail, setDetail] = useState<{
-    submitterName: string;
-    submittedAt: string;
-    answer: string;
-  } | null>(null);
-
-  // 선택 질문의 전문(제출 당시 스냅샷 아무거나) — 삭제된 질문도 안전
   const activeLabel = responses
     .flatMap((r) => r.answers)
     .find((a) => a.questionId === activeId)?.questionLabel;
 
+  const [commentMap, setCommentMap] = useState<Record<number, string>>({});
+  const [target, setTarget] = useState<RetrospectiveResponse | null>(null);
+  const [draft, setDraft] = useState('');
+  const [answerView, setAnswerView] = useState<AnswerView | null>(null);
+
+  const openComment = (res: RetrospectiveResponse) => {
+    setTarget(res);
+    setDraft(commentMap[res.id] ?? '');
+  };
+  const saveComment = () => {
+    if (!target) return;
+    setCommentMap((prev) => ({ ...prev, [target.id]: draft.trim() }));
+    setTarget(null);
+  };
+  const deleteComment = () => {
+    if (!target) return;
+    setCommentMap((prev) => {
+      const next = { ...prev };
+      delete next[target.id];
+      return next;
+    });
+    setTarget(null);
+  };
+
   const { paginationModel, handlePaginationModelChange } =
     usePaginationModelWithSearchParams({ defaultPage: 0, defaultPageSize: 20 });
 
-  const rows = responses.map((r) => ({
-    id: r.id,
-    submitterName: r.submitterName,
-    submittedAt: r.submittedAt,
-    answer: r.answers.find((a) => a.questionId === activeId)?.answer ?? '-',
-  }));
-
-  const columns: GridColDef<(typeof rows)[number]>[] = [
-    { field: 'submitterName', headerName: '제출자', width: 140 },
-    {
-      field: 'submittedAt',
-      headerName: '제출일',
-      width: 160,
-      valueFormatter: (value) => dayjs(value).format('YYYY.MM.DD HH:mm'),
-    },
-    {
-      field: 'answer',
-      headerName: '답변',
-      flex: 1,
-      minWidth: 320,
-      sortable: false,
-      renderCell: ({ row, value }) => (
-        <div className="flex h-full w-full min-w-0 items-center gap-4">
-          <span className="min-w-0 flex-1 truncate">{value}</span>
-          {String(value).length > 40 && (
-            <button
-              type="button"
-              className="text-primary text-xsmall14 shrink-0 hover:underline"
-              onClick={() =>
-                setDetail({
-                  submitterName: row.submitterName,
-                  submittedAt: row.submittedAt,
-                  answer: String(value),
-                })
-              }
-            >
-              상세보기
-            </button>
-          )}
-        </div>
-      ),
-    },
-  ];
+  const columns = getResponseColumns({
+    activeId,
+    hasComment: (id) => !!commentMap[id],
+    onOpenComment: openComment,
+    onViewAnswer: setAnswerView,
+  });
 
   return (
     <main className="flex flex-col gap-5 p-6">
@@ -155,6 +119,7 @@ export default function AllInOnePassRetrospectiveResponses() {
           </Button>
         </div>
       </header>
+
       {isLoading ? (
         <LoadingContainer />
       ) : error ? (
@@ -163,7 +128,7 @@ export default function AllInOnePassRetrospectiveResponses() {
         <EmptyContainer text="제출된 응답이 없습니다." />
       ) : (
         <>
-          {/* 질문 탭 */}
+          {/* 질문 탭 (뱃지) */}
           <div className="flex flex-wrap gap-2">
             {tabs.map((tab) => (
               <button
@@ -191,7 +156,7 @@ export default function AllInOnePassRetrospectiveResponses() {
 
           <DataGrid
             autoHeight
-            rows={rows}
+            rows={responses}
             columns={columns}
             pagination
             pageSizeOptions={[10, 20, 50, 100]}
@@ -201,38 +166,23 @@ export default function AllInOnePassRetrospectiveResponses() {
         </>
       )}
 
-      <Dialog
-        open={detail !== null}
-        onClose={() => setDetail(null)}
-        fullWidth
-        maxWidth="sm"
-      >
-        <DialogTitle>응답 상세</DialogTitle>
-        <DialogContent dividers className="flex flex-col gap-4">
-          <div className="text-xxsmall12 text-neutral-40 flex flex-col gap-1">
-            <span>
-              {detail?.submitterName}
-              {passName && ` | ${passName}`} |{' '}
-              {detail && dayjs(detail.submittedAt).format('YYYY.MM.DD HH:mm')}
-            </span>
-          </div>
-          <div className="flex flex-col gap-2.5">
-            <span className="text-xsmall14 text-primary-80 font-medium">
-              Q. {activeLabel ?? '-'}
-            </span>
-            <div className="bg-neutral-90 rounded rounded-sm p-4">
-              <p className="text-xsmall16 text-neutral-10 whitespace-pre-wrap">
-                {detail?.answer}
-              </p>
-            </div>
-          </div>
-        </DialogContent>
-        <DialogActions>
-          <Button variant="outlined" onClick={() => setDetail(null)}>
-            닫기
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <ResponseCommentModal
+        response={target}
+        value={draft}
+        onChange={setDraft}
+        hasComment={!!(target && commentMap[target.id])}
+        passName={passName}
+        onSave={saveComment}
+        onDelete={deleteComment}
+        onClose={() => setTarget(null)}
+      />
+
+      <AnswerViewModal
+        view={answerView}
+        question={activeLabel}
+        passName={passName}
+        onClose={() => setAnswerView(null)}
+      />
     </main>
   );
 }

@@ -81,6 +81,12 @@ const CreditDetailContent = () => {
     vodPass && !isCancelable && !isCanceled
       ? getVodPassRefundBlockedReason(vodPass)
       : null;
+  const isMembership = paymentDetail.programInfo.programType === 'MEMBERSHIP';
+  // 현재 멤버십 환불은 어드민 수동 처리: 이용기간 중이면 취소 대신 1:1 문의 안내(disabled)로 노출, 추후 개발 진행 예정
+  const isMembershipRefundable =
+    isMembership &&
+    !isCanceled &&
+    dayjs().isBefore(dayjs(paymentDetail.programInfo.endDate));
 
   return (
     <div
@@ -348,12 +354,18 @@ const CreditDetailContent = () => {
             {vodPassRefundBlockedReason}
           </p>
         )}
-        {isCancelable ? (
+        {(isMembership ? isMembershipRefundable : isCancelable) ? (
           <button
-            className="bg-neutral-80 text-neutral-40 flex w-full items-center justify-center rounded-sm px-5 py-2.5 font-medium"
-            onClick={() => router.push(`/mypage/credit/${paymentId}/delete`)}
+            type="button"
+            disabled={isMembership}
+            className="bg-neutral-80 text-neutral-40 flex w-full items-center justify-center rounded-sm px-5 py-2.5 font-medium disabled:cursor-not-allowed"
+            onClick={
+              isMembership
+                ? undefined
+                : () => router.push(`/mypage/credit/${paymentId}/delete`)
+            }
           >
-            결제 취소하기
+            {isMembership ? '환불은 1:1 문의 부탁드립니다.' : '결제 취소하기'}
           </button>
         ) : (
           <MoreButton

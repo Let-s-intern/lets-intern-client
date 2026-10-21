@@ -1,7 +1,7 @@
 import {
   retrospectiveRoundsQueryKey,
   useGetRetrospectiveRoundsQuery,
-  useUpdateOrdinalQuestionMutation,
+  useUpdateOrdinalQuestionsMutation,
 } from '@/api/all-in-one-pass/useRetrospectives';
 import EmptyContainer from '@/common/container/EmptyContainer';
 import LoadingContainer from '@/common/loading/LoadingContainer';
@@ -29,6 +29,19 @@ const guideFieldSx = {
   '& .MuiInputBase-input': { fontSize: 13, color: '#4c4f56' },
 };
 
+const visibleOffsetLabel = (row: RetrospectiveRound) => {
+  const v = row.visiblePeriodValue;
+  if (v == null || row.visiblePeriodType == null)
+    return `패스 시작일 + ${row.round * 2}주`;
+  if (row.visiblePeriodType === 'DAY' && v % 7 === 0)
+    return `패스 시작일 + ${v / 7}주`;
+  if (row.visiblePeriodType === 'WEEK') return `패스 시작일 + ${v}주`;
+  const unit = { YEAR: '년', MONTH: '개월', WEEK: '주', DAY: '일' }[
+    row.visiblePeriodType
+  ];
+  return `패스 시작일 + ${v}${unit ?? '일'}`;
+};
+
 /** A-4 회차별 질문·답변 가이드 수정 (회차는 BE 자동 생성) */
 export default function RoundListSection({ passId }: Props) {
   const navigate = useNavigate();
@@ -50,14 +63,13 @@ export default function RoundListSection({ passId }: Props) {
       prev.map((r) => (r.id === id ? { ...r, ...partial } : r)),
     );
 
-  const updateQuestion = useUpdateOrdinalQuestionMutation({
+  const updateQuestions = useUpdateOrdinalQuestionsMutation({
     successCallback: () =>
       queryClient.invalidateQueries({
         queryKey: [retrospectiveRoundsQueryKey, passId],
       }),
   });
 
-  // 질문·답변 가이드가 바뀐 회차만 PATCH
   const handleSave = async () => {
     const changed = rows.filter((r) => {
       const orig = rounds.find((o) => o.id === r.id);
@@ -72,16 +84,14 @@ export default function RoundListSection({ passId }: Props) {
       return;
     }
     try {
-      await Promise.all(
-        changed.map((r) =>
-          updateQuestion.mutateAsync({
-            membershipId: passId,
-            questionId: r.id,
-            question: r.weeklyQuestion,
-            answerGuide: r.answerGuide,
-          }),
-        ),
-      );
+      await updateQuestions.mutateAsync({
+        membershipId: passId,
+        rounds: changed.map((r) => ({
+          th: r.round,
+          question: r.weeklyQuestion,
+          answerGuide: r.answerGuide,
+        })),
+      });
       snackbar('저장되었습니다.');
     } catch (e) {
       snackbar(e instanceof Error ? e.message : '저장에 실패했습니다.');
@@ -144,9 +154,7 @@ export default function RoundListSection({ passId }: Props) {
                       sx={{ pt: 2.5 }}
                       className="text-xsmall14 text-neutral-40"
                     >
-                      {isFinal
-                        ? '패스 종료 시점'
-                        : `패스 시작일 + ${row.round * 2}주`}
+                      {isFinal ? '패스 종료 시점' : visibleOffsetLabel(row)}
                     </TableCell>
 
                     <TableCell>
@@ -206,7 +214,7 @@ export default function RoundListSection({ passId }: Props) {
             <Button
               variant="contained"
               onClick={handleSave}
-              disabled={updateQuestion.isPending}
+              disabled={updateQuestions.isPending}
             >
               저장하기
             </Button>

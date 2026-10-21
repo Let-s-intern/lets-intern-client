@@ -1,6 +1,7 @@
 export type ApplicationCategory =
   | 'PROGRAM'
   | 'MENTORING'
+  | 'MEMBERSHIP'
   | 'LIBRARY'
   | 'GUIDEBOOK'
   | 'VOD'
@@ -12,6 +13,7 @@ export const APPLICATION_CATEGORY_OPTIONS: {
   label: string;
 }[] = [
   { value: 'PROGRAM', label: '프로그램' },
+  { value: 'MEMBERSHIP', label: '올인원패스' },
   /*
     1대1 라이브 멘토링은 프로그램 탭에도 함께 보이고, 이 탭에서는 멘토링만 모아 본다(LC-3301).
   */

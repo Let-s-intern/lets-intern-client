@@ -30,6 +30,7 @@ export interface CareerGrowthItem {
   version?: { title: string | null; changeable: boolean };
   /** 셀프 플랜 업그레이드 주소 (LC-3247). 서버가 가능하다고 할 때만 채운다 */
   planUpgradeHref?: string;
+  isMembershipApplied: boolean;
 }
 
 // Dayjs를 'YY.MM.DD' 형식으로 변환
@@ -97,6 +98,7 @@ const applicationToCareerGrowthItem = (
     chatPassword: application.chatPassword ?? '',
     version,
     planUpgradeHref,
+    isMembershipApplied: application.isMembershipApplied ?? false,
   };
 };
 

@@ -2,16 +2,15 @@
 
 // 올인원패스 결제정보 입력 — 프로그램 /payment-input 섹션 재사용, 멤버십 전용 스토어. 쿠폰 보류.
 
-import { usePatchUser } from '@/api/user/user';
 import { Duration } from '@/common/Duration';
 import BackHeader from '@/common/header/BackHeader';
 import LoadingContainer from '@/common/loading/LoadingContainer';
-import dayjs from '@/lib/dayjs';
 import useMembershipOrderStore from '@/domain/all-in-one-pass/store/useMembershipOrderStore';
 import OrderProgramInfo from '@/domain/program/OrderProgramInfo';
 import PaymentSubmitSection from '@/domain/program/program-detail/apply/section/PaymentSubmitSection';
 import PriceSection from '@/domain/program/program-detail/apply/section/PriceSection';
 import UserInputSection from '@/domain/program/program-detail/apply/section/UserInputSection';
+import dayjs from '@/lib/dayjs';
 import useAuthStore from '@/store/useAuthStore';
 import { isValidEmail } from '@/utils/valid';
 import { NoticeDialog } from '@letscareer/ui';
@@ -26,7 +25,6 @@ export default function MembershipPaymentInputPage() {
   const { isLoggedIn, isInitialized } = useAuthStore();
   const { data, _hasHydrated, setOrder, initOrder, checkInvalidate } =
     useMembershipOrderStore();
-  const patchUserMutation = usePatchUser();
 
   const [invalidAccess, setInvalidAccess] = useState(false);
 
@@ -49,21 +47,13 @@ export default function MembershipPaymentInputPage() {
   const isFormValid =
     userInfo.initialized && isValidEmail(data.contactEmail ?? '');
 
-  const onPaymentClick = useCallback(async () => {
-    try {
-      // 멤버십 POST에 contactEmail 추가 전까지 연락이메일 기록은 이 경로뿐.
-      await patchUserMutation.mutateAsync({ contactEmail: data.contactEmail });
-
-      if (totalPrice !== 0) {
-        router.push(`/all-in-one-pass/${membershipId}/payment`);
-      } else {
-        router.push(`/all-in-one-pass/${membershipId}/order/result`);
-      }
-    } catch (e) {
-      console.error(e);
-      alert('결제 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+  const onPaymentClick = useCallback(() => {
+    if (totalPrice !== 0) {
+      router.push(`/all-in-one-pass/${membershipId}/payment`);
+    } else {
+      router.push(`/all-in-one-pass/${membershipId}/order/result`);
     }
-  }, [patchUserMutation, data.contactEmail, totalPrice, router, membershipId]);
+  }, [totalPrice, router, membershipId]);
 
   const goHome = useCallback(() => {
     initOrder();

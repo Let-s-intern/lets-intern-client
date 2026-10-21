@@ -89,6 +89,11 @@ const EMPTY_CONFIG_BY_CATEGORY: Record<
     href: '/program?type=VOD',
     buttonText: 'VOD 클래스 둘러보기',
   },
+  MEMBERSHIP: {
+    description: '이용 중인 올인원패스가 없어요.',
+    href: '/membership-marketing',
+    buttonText: '올인원패스 둘러보기',
+  },
 };
 
 const CareerGrowthSection = () => {
@@ -167,13 +172,17 @@ const CareerGrowthContent = () => {
         (program) => program.programTypeKey === 'LIVE_MENTORING',
       );
     }
+    if (category === 'MEMBERSHIP') {
+      return items.filter((program) => program.programTypeKey === 'MEMBERSHIP');
+    }
     if (category === 'LIBRARY') {
       return [];
     }
     return items.filter(
       (program) =>
         program.programTypeKey !== 'GUIDEBOOK' &&
-        program.programTypeKey !== 'VOD',
+        program.programTypeKey !== 'VOD' &&
+        program.programTypeKey !== 'MEMBERSHIP',
     );
   }, [category, items]);
 

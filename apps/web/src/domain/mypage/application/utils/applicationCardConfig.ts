@@ -56,6 +56,8 @@ export interface MypageApplicationCardConfig {
     isDownload?: boolean;
   };
   isCompleted: boolean;
+  /** 올인원패스 혜택으로 구매·참여한 프로그램이면 true (카드에 뱃지 노출) */
+  isMembershipApplied?: boolean;
 }
 
 const toProgramCardConfig = (
@@ -316,15 +318,67 @@ const toVodCardConfig = (
   };
 };
 
+const toMembershipCardConfig = (
+  application: MypageApplication,
+): MypageApplicationCardConfig => {
+  const {
+    id,
+    programId,
+    programStatusType,
+    programType,
+    programThumbnail,
+    programTitle,
+    programShortDesc,
+    programStartDate,
+    programEndDate,
+  } = application;
+
+  const statusLabel =
+    programStatusType === 'PROCEEDING' ? '참여중' : '참여종료';
+  const programTypeKey = programType ?? '';
+
+  const dateText =
+    programStartDate && programEndDate
+      ? `${programStartDate.format('YY.MM.DD')} ~ ${programEndDate.format('YY.MM.DD')}`
+      : '';
+
+  return {
+    id: id ?? 0,
+    programId: programId ?? 0,
+    programTypeKey,
+    thumbnail: programThumbnail ?? '',
+    title: programTitle ?? '',
+    description: programShortDesc ?? '',
+    statusLabel,
+    categoryLabel: newProgramTypeToText[programTypeKey] || programTypeKey,
+    dateLabel: '이용기간',
+    dateText,
+    // programId=멤버십id, id=멤버십신청id → 패스 대시보드
+    actionButton:
+      programId != null && id != null
+        ? {
+            label: '대시보드 입장',
+            href: `/all-in-one-pass/${programId}/${id}`,
+          }
+        : undefined,
+    isCompleted: statusLabel === '참여종료',
+  };
+};
+
 export const toMypageApplicationCardConfig = (
   application: MypageApplication,
 ): MypageApplicationCardConfig => {
-  if (application.programType === 'GUIDEBOOK') {
-    return toGuidebookCardConfig(application);
-  }
-  if (application.programType === 'VOD') {
-    return toVodCardConfig(application);
-  }
+  const config =
+    application.programType === 'GUIDEBOOK'
+      ? toGuidebookCardConfig(application)
+      : application.programType === 'VOD'
+        ? toVodCardConfig(application)
+        : application.programType === 'MEMBERSHIP'
+          ? toMembershipCardConfig(application)
+          : toProgramCardConfig(application);
 
-  return toProgramCardConfig(application);
+  return {
+    ...config,
+    isMembershipApplied: application.isMembershipApplied ?? false,
+  };
 };

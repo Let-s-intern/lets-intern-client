@@ -17,7 +17,12 @@ export default function AllInOnePassUsagePage() {
             : '나의 패스 이용'}
         </h1>
       </header>
-      {myPass && <UsageTabs privileges={myPass.plan.privileges} />}
+      {myPass && (
+        <UsageTabs
+          privileges={myPass.plan.privileges}
+          passTitle={myPass.passTitle}
+        />
+      )}
     </main>
   );
 }

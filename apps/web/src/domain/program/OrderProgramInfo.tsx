@@ -52,6 +52,7 @@ const OrderProgramInfo = ({
     programType?.toString().toLowerCase() === 'live_mentoring';
   // 이용권은 기간·진행 방식이 아니라 이용권 상태를 그린다. 이미지도 없다.
   const isVodPass = programType?.toString().toLowerCase() === 'vod_pass';
+  const isMembership = programType?.toString().toLowerCase() === 'membership';
 
   return (
     <div className="flex w-full flex-col items-start justify-center gap-y-6">
@@ -107,21 +108,25 @@ const OrderProgramInfo = ({
             ) : (
               <>
                 <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
-                  <div className="text-neutral-30 shrink-0">진행 일정</div>
+                  <div className="text-neutral-30 shrink-0">
+                    {isMembership ? '이용 기간' : '진행 일정'}
+                  </div>
                   <div className="text-primary-dark">{`${convertDateFormat(startDate || '')} - ${convertDateFormat(endDate || '')}`}</div>
                 </div>
-                {progressType !== 'none' && programType !== 'CHALLENGE' && (
-                  <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
-                    <div className="text-neutral-30 shrink-0">진행 방식</div>
-                    <div className="text-primary-dark">{`${
-                      progressType === 'ALL'
-                        ? '온라인/오프라인'
-                        : progressType === 'ONLINE'
-                          ? '온라인'
-                          : '오프라인'
-                    }`}</div>
-                  </div>
-                )}
+                {!isMembership &&
+                  progressType !== 'none' &&
+                  programType !== 'CHALLENGE' && (
+                    <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
+                      <div className="text-neutral-30 shrink-0">진행 방식</div>
+                      <div className="text-primary-dark">{`${
+                        progressType === 'ALL'
+                          ? '온라인/오프라인'
+                          : progressType === 'ONLINE'
+                            ? '온라인'
+                            : '오프라인'
+                      }`}</div>
+                    </div>
+                  )}
               </>
             )}
           </div>
