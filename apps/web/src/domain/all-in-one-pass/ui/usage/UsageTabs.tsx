@@ -8,6 +8,7 @@ import UsageChallengeTab from './UsageChallengeTab';
 import UsageGuidebookTab from './UsageGuidebookTab';
 import UsageLiveTab from './UsageLiveTab';
 import UsageMentoringTab from './UsageMentoringTab';
+import UsageVodTab from './UsageVodTab';
 
 type UsageTabKey = 'CHALLENGE' | 'GUIDEBOOK' | 'VOD' | 'MENTORING' | 'LIVE';
 
@@ -18,12 +19,6 @@ const TABS: { value: UsageTabKey; label: string }[] = [
   { value: 'MENTORING', label: '멘토링' },
   { value: 'LIVE', label: 'LIVE 클래스' },
 ];
-
-const Placeholder = ({ label }: { label: string }) => (
-  <p className="text-xsmall14 text-neutral-40 py-20 text-center">
-    {label} 탭 준비 중
-  </p>
-);
 
 interface Props {
   privileges: PassPrivilege[];
@@ -65,7 +60,7 @@ const UsageTabs = ({ privileges, passTitle }: Props) => {
       <div>
         {active === 'CHALLENGE' && <UsageChallengeTab />}
         {active === 'GUIDEBOOK' && <UsageGuidebookTab passTitle={passTitle} />}
-        {active === 'VOD' && <Placeholder label="VOD" />}
+        {active === 'VOD' && <UsageVodTab />}
         {active === 'MENTORING' && <UsageMentoringTab />}
         {active === 'LIVE' && <UsageLiveTab passTitle={passTitle} />}
       </div>

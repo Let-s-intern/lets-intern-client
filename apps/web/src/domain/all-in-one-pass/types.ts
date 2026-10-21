@@ -171,6 +171,17 @@ export interface PassDescriptionBlob {
   mentoringCouponAutoIssue: boolean;
 }
 
+// ─── 나의 패스 이용 > VOD ───
+
+/** 세미나 VOD 1건 (seminar-vod 공개 API). url 은 외부 상세페이지. */
+export interface PassVod {
+  id: number;
+  title: string;
+  description: string | null;
+  thumbnailUrl: string;
+  url: string;
+}
+
 // ─── U-5 공지사항 / 패스 가이드 ───
 
 /** 공지 유형 (공지사항 / 패스 가이드) */
