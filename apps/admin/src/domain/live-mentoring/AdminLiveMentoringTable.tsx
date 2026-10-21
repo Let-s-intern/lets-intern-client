@@ -40,6 +40,8 @@ interface AdminLiveMentoringTableProps {
    * 참여자 탭으로 넘기는 것은 페이지가 한다(URL 로 유지해야 새로고침에도 남는다).
    */
   onSelectMentor?: (mentorId: number) => void;
+  /** 이 멘토의 멘토 페이지 후기를 관리하러 가기. 주면 행마다 버튼을 내건다. */
+  onSelectMentorReviews?: (mentorId: number) => void;
 }
 
 /**
@@ -50,6 +52,7 @@ interface AdminLiveMentoringTableProps {
  */
 const AdminLiveMentoringTable = ({
   onSelectMentor,
+  onSelectMentorReviews,
 }: AdminLiveMentoringTableProps = {}) => {
   const { snackbar } = useAdminSnackbar();
   const [opened, setOpened] = useState<boolean | undefined>(undefined);
@@ -236,6 +239,15 @@ const AdminLiveMentoringTable = ({
                             onClick={() => onSelectMentor(row.mentorId)}
                           >
                             참여자 보기
+                          </Button>
+                        )}
+                        {onSelectMentorReviews && (
+                          <Button
+                            variant="outlined"
+                            size="small"
+                            onClick={() => onSelectMentorReviews(row.mentorId)}
+                          >
+                            후기 관리
                           </Button>
                         )}
                         {opening?.status === 'OPEN' && (

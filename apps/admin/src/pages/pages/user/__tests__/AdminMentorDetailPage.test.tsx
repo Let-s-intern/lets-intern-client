@@ -44,7 +44,7 @@ vi.mock(
 import AdminMentorDetailPage from '../AdminMentorDetailPage';
 
 describe('AdminMentorDetailPage', () => {
-  it('멘토 페이지 후기 섹션을 키워드 섹션 아래에 mentorId 와 함께 렌더한다', () => {
+  it('멘토 페이지 후기 섹션을 두 칸 그리드 밖, 키워드 섹션 아래에 mentorId 와 함께 렌더한다', () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={['/mentors/7']}>
@@ -66,5 +66,9 @@ describe('AdminMentorDetailPage', () => {
       keywordHeading.compareDocumentPosition(section) &
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
+    // 반쪽 칸에 들어가면 후기 내용 열이 좁아져 잘린다
+    const grid = keywordHeading.closest('.grid');
+    expect(grid).not.toBeNull();
+    expect(grid?.contains(section)).toBe(false);
   });
 });
