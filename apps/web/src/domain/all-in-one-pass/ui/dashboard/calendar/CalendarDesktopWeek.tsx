@@ -37,7 +37,10 @@ export default function CalendarDesktopWeek({ week, wi }: Props) {
   const weekStart = week[0];
   const weekEnd = week[6];
   const weekBars = bars.filter(
-    (e) => !eventEnd(e).isBefore(weekStart) && !eventStart(e).isAfter(weekEnd),
+    (e) =>
+      (barLaneOf.get(e.id) ?? 0) < VISIBLE_ITEMS &&
+      !eventEnd(e).isBefore(weekStart) &&
+      !eventStart(e).isAfter(weekEnd),
   );
 
   const periodStartDay = periodStart ? dayjs(periodStart).startOf('day') : null;
