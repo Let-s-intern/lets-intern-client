@@ -19,6 +19,7 @@ vi.mock('@/utils/axiosV2', () => ({ default: {} }));
 import {
   AdminMentorReviewListQueryKey,
   useAdminMentorReviewListQuery,
+  usePatchAdminMentorReviewContent,
   usePatchAdminMentorReviewExposure,
 } from '../mentor';
 import { adminMentorReviewListSchema } from '../mentorSchema';
@@ -30,6 +31,9 @@ const review = {
   programTitle: '자소서 챌린지',
   score: 5,
   review: '좋았어요',
+  originalScore: 5,
+  originalReview: '좋았어요',
+  isEdited: false,
   createDate: '2026-10-01T12:00:00',
   isExposed: true,
 };
@@ -69,6 +73,13 @@ describe('adminMentorReviewListSchema', () => {
     });
     expect(parsed.reviewList[0].review).toBeNull();
     expect(parsed.reviewList[0].createDate).toBeNull();
+  });
+
+  it('수정 여부와 원본 값이 없는 응답은 거부한다', () => {
+    const { isEdited: _isEdited, ...withoutEdited } = review;
+    expect(() =>
+      adminMentorReviewListSchema.parse({ reviewList: [withoutEdited] }),
+    ).toThrow();
   });
 
   it('모르는 종류는 거부한다', () => {
@@ -114,6 +125,36 @@ describe('usePatchAdminMentorReviewExposure', () => {
       source: 'REVIEW',
       sourceId: 11,
       isExposed: false,
+    });
+    expect(invalidate).toHaveBeenCalledTimes(1);
+    expect(invalidate).toHaveBeenCalledWith({
+      queryKey: [AdminMentorReviewListQueryKey, 7],
+    });
+  });
+});
+
+describe('usePatchAdminMentorReviewContent', () => {
+  it('수정 경로와 바디로 호출하고 목록 쿼리 키만 무효화한다', async () => {
+    patch.mockResolvedValue({ data: { data: null } });
+    const client = createClient();
+    const invalidate = vi.spyOn(client, 'invalidateQueries');
+
+    const { result } = renderHook(() => usePatchAdminMentorReviewContent(7), {
+      wrapper: createWrapper(client),
+    });
+
+    await result.current.mutateAsync({
+      source: 'REVIEW',
+      sourceId: 11,
+      score: 4.5,
+      review: null,
+    });
+
+    expect(patch).toHaveBeenCalledWith('/admin/mentor/7/reviews/content', {
+      source: 'REVIEW',
+      sourceId: 11,
+      score: 4.5,
+      review: null,
     });
     expect(invalidate).toHaveBeenCalledTimes(1);
     expect(invalidate).toHaveBeenCalledWith({

@@ -4,12 +4,32 @@ import { describe, expect, it, vi } from 'vitest';
 
 // 두 표 모두 네트워크 의존이라 목으로 대체한다. 이 테스트가 보는 것은 탭 전환이다.
 vi.mock('@/domain/live-mentoring/AdminLiveMentoringTable', () => ({
-  default: ({ onSelectMentor }: { onSelectMentor?: (id: number) => void }) => (
-    <button type="button" onClick={() => onSelectMentor?.(21)}>
-      상품표목
-    </button>
+  default: ({
+    onSelectMentor,
+    onSelectMentorReviews,
+  }: {
+    onSelectMentor?: (id: number) => void;
+    onSelectMentorReviews?: (id: number) => void;
+  }) => (
+    <div>
+      <button type="button" onClick={() => onSelectMentor?.(21)}>
+        상품표목
+      </button>
+      <button type="button" onClick={() => onSelectMentorReviews?.(21)}>
+        후기목
+      </button>
+    </div>
   ),
 }));
+// 섹션 자체는 MentorReviewExposureSection.test.tsx 에서 본다. 여기서는 연결만 확인한다
+vi.mock(
+  '@/domain/mentor/review-exposure/ui/MentorReviewExposureSection',
+  () => ({
+    default: ({ mentorId }: { mentorId: number }) => (
+      <span>후기섹션 {mentorId}</span>
+    ),
+  }),
+);
 vi.mock('@/domain/live-mentoring/AdminLiveMentoringParticipantTable', () => ({
   default: ({
     mentorId,
@@ -86,5 +106,20 @@ describe('AdminLiveMentoringPage', () => {
   it('알 수 없는 tab 값은 상품 관리로 되돌린다', () => {
     renderPage('/live-mentoring?tab=unknown');
     expect(screen.getByText('상품표목')).toBeInTheDocument();
+  });
+
+  it('상품 표에서 후기 관리를 누르면 그 멘토의 후기 탭으로 간다', () => {
+    renderPage();
+    fireEvent.click(screen.getByRole('button', { name: '후기목' }));
+    expect(screen.getByText('후기섹션 21')).toBeInTheDocument();
+    expect(screen.getByText(/원본 후기는 바뀌지 않습니다/)).toBeInTheDocument();
+  });
+
+  it('후기 탭에 멘토가 없으면 상품 관리에서 고르라고 안내한다', () => {
+    renderPage('/live-mentoring?tab=reviews');
+    expect(
+      screen.getByText('상품 관리 탭에서 멘토의 후기 관리 버튼을 눌러 주세요.'),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/후기섹션/)).not.toBeInTheDocument();
   });
 });
