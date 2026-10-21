@@ -1,8 +1,20 @@
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from '@mui/material';
+import { useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
+import { ADMIN_LIVE_MENTORING_QUERY_KEY } from '@/api/live-mentoring/liveMentoring';
 import Heading from '@/domain/admin/ui/heading/Heading';
+import MentorDetailEditor from '@/domain/admin/user/mentor-detail/ui/MentorDetailEditor';
 import AdminLiveMentoringParticipantTable from '@/domain/live-mentoring/AdminLiveMentoringParticipantTable';
 import AdminLiveMentoringTable from '@/domain/live-mentoring/AdminLiveMentoringTable';
+import ReviewMentorBar from '@/domain/live-mentoring/ui/ReviewMentorBar';
 import MentorReviewExposureSection from '@/domain/mentor/review-exposure/ui/MentorReviewExposureSection';
 import { twMerge } from '@/lib/twMerge';
 
@@ -39,6 +51,16 @@ export default function AdminLiveMentoringPage() {
     Number.isInteger(mentorIdParam) && mentorIdParam > 0
       ? mentorIdParam
       : undefined;
+
+  // 멘토 수정 모달. 상품 표에서 고른 멘토를 담고, 닫혀 있으면 null
+  const [editingMentorId, setEditingMentorId] = useState<number | null>(null);
+  const queryClient = useQueryClient();
+
+  // 모달에서 바꾼 닉네임·사진이 상품 표에 바로 보이도록 닫을 때 다시 불러온다
+  const closeMentorEditor = () => {
+    setEditingMentorId(null);
+    queryClient.invalidateQueries({ queryKey: ADMIN_LIVE_MENTORING_QUERY_KEY });
+  };
 
   const setActiveTab = (tab: Tab) => {
     const next = new URLSearchParams(searchParams);
@@ -89,10 +111,17 @@ export default function AdminLiveMentoringPage() {
         <AdminLiveMentoringTable
           onSelectMentor={(id) => showMentorTab('participants', id)}
           onSelectMentorReviews={(id) => showMentorTab('reviews', id)}
+          onEditMentor={setEditingMentorId}
         />
       ) : activeTab === 'reviews' ? (
         mentorId ? (
-          <MentorReviewExposureSection key={mentorId} mentorId={mentorId} />
+          <>
+            <ReviewMentorBar
+              mentorId={mentorId}
+              onChangeMentor={() => setActiveTab('products')}
+            />
+            <MentorReviewExposureSection key={mentorId} mentorId={mentorId} />
+          </>
         ) : (
           <p className="text-xsmall14 text-neutral-40 py-16 text-center">
             상품 관리 탭에서 멘토의 후기 관리 버튼을 눌러 주세요.
@@ -106,6 +135,22 @@ export default function AdminLiveMentoringPage() {
           onClearMentor={clearMentorFilter}
         />
       )}
+
+      {editingMentorId !== null ? (
+        <Dialog open onClose={closeMentorEditor} maxWidth="lg" fullWidth>
+          <DialogTitle className="text-base font-semibold">
+            멘토 수정
+          </DialogTitle>
+          <DialogContent>
+            <MentorDetailEditor mentorId={editingMentorId} />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={closeMentorEditor} color="inherit">
+              닫기
+            </Button>
+          </DialogActions>
+        </Dialog>
+      ) : null}
     </section>
   );
 }
