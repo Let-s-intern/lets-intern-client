@@ -7,6 +7,7 @@ import {
   usePatchMentorFeedbackStatus,
 } from '@/api/feedback/feedback';
 import type { FeedbackInfo } from '@/api/feedback/feedbackSchema';
+import { useMeetingServerBaseUrls } from '@/api/meetingServer';
 
 import { ensureLiveMeetingUrl } from '@letscareer/live-session/JitsiEmbed/jitsiHealthCheck';
 
@@ -27,17 +28,11 @@ interface LiveEntry {
   enter: () => Promise<void>;
   /** 인라인 Jitsi 닫기. */
   closeJitsi: () => void;
-  /** 우선순위 순 jitsi base 후보 — JitsiEmbed failover 주입용. */
+  /** 우선순위 순 jitsi base 후보(서버 회의 서버 목록) — JitsiEmbed failover 주입용. */
   baseCandidates: ReadonlyArray<string | undefined>;
   /** 다음 base 재등록(overwrite PATCH) — JitsiEmbed failover 주입용. */
   registerBaseUrl: (base: string) => Promise<void>;
 }
-
-/** 우선순위 순 jitsi base 후보 (env). 모듈 상수로 두어 안정적 참조. */
-const JITSI_BASE_CANDIDATES: ReadonlyArray<string | undefined> = [
-  process.env.NEXT_PUBLIC_JITSI_BASE_URL,
-  process.env.NEXT_PUBLIC_JITSI_FALLBACK_URL,
-];
 
 /**
  * 라이브 입장 핵심 로직 (멘토·멘티 공통).
@@ -58,6 +53,7 @@ export function useLiveEntry({
 }: Params): LiveEntry {
   const [isOpen, setIsOpen] = useState(false);
   const [isPreparing, setIsPreparing] = useState(false);
+  const { baseUrls, loadBaseUrls } = useMeetingServerBaseUrls();
 
   const patchMeetingUrl = usePatchFeedbackMeetingUrl(feedbackId);
   const patchMentorStatus = usePatchMentorFeedbackStatus(feedbackId);
@@ -74,7 +70,7 @@ export function useLiveEntry({
     try {
       const result = await ensureLiveMeetingUrl({
         meetingUrl: feedbackInfo?.meetingUrl,
-        baseCandidates: JITSI_BASE_CANDIDATES,
+        baseCandidates: await loadBaseUrls(),
         registerBaseUrl,
       });
 
@@ -113,7 +109,7 @@ export function useLiveEntry({
     isPreparing,
     enter,
     closeJitsi,
-    baseCandidates: JITSI_BASE_CANDIDATES,
+    baseCandidates: baseUrls,
     registerBaseUrl,
   };
 }

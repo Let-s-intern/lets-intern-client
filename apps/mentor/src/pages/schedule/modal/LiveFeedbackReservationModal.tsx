@@ -10,6 +10,7 @@ import {
   useUpdateFeedbackMeetingUrlMutation,
 } from '@/api/feedback/feedback';
 import { usePatchAttendanceMentorMutation } from '@/api/mentor/mentor';
+import { useMeetingServerBaseUrls } from '@/api/meetingServer';
 import type { FeedbackStatus } from '@/api/challenge/challengeSchema';
 import BaseModal from '@/common/modal/BaseModal';
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
@@ -114,6 +115,7 @@ const LiveFeedbackReservationModal = ({
   const [isAttendanceOpen, setIsAttendanceOpen] = useState(false);
   // 멘토 입장 시 회의실 URL 준비(헬스체크 + PATCH) 진행 상태
   const [isPreparingRoom, setIsPreparingRoom] = useState(false);
+  const { baseUrls, loadBaseUrls } = useMeetingServerBaseUrls();
   // 왼쪽 사이드 패널 — 제출물(노션)을 보면서 입장/확인. 한번 더 클릭하면 닫힘(토글).
   const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
   // 오른쪽 사이드 패널 — 사전 Q&A. 작성 중 참조용이라 열어둔 채 유지한다.
@@ -295,10 +297,7 @@ const LiveFeedbackReservationModal = ({
     try {
       const result = await ensureLiveMeetingUrl({
         meetingUrl,
-        baseCandidates: [
-          import.meta.env.VITE_JITSI_BASE_URL,
-          import.meta.env.VITE_JITSI_FALLBACK_URL,
-        ],
+        baseCandidates: await loadBaseUrls(),
         // BE 가 base + meetingRoom 을 합성하므로 FE 는 base URL 만 보낸다.
         registerBaseUrl: async (base) => {
           await updateMeetingUrl({ feedbackId, meetingUrl: base });
@@ -1085,10 +1084,7 @@ const LiveFeedbackReservationModal = ({
           spaceName={selectedBar?.challengeTitle}
           // 입장 후 현재 서버가 죽어있으면(external_api.js 로드 실패) 다음 후보로 자동
           // 재등록(failover). BE 는 base + meetingRoom 을 덮어써 합성한다.
-          baseCandidates={[
-            import.meta.env.VITE_JITSI_BASE_URL,
-            import.meta.env.VITE_JITSI_FALLBACK_URL,
-          ]}
+          baseCandidates={baseUrls}
           registerBaseUrl={async (base) => {
             await updateMeetingUrl({ feedbackId, meetingUrl: base });
           }}

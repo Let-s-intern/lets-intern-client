@@ -7,6 +7,7 @@ import {
   useUpdateLiveMentoringAttendanceMutation,
 } from '@/api/live-mentoring/liveMentoring';
 import type { LiveMentoringReservationDetail } from '@/api/live-mentoring/liveMentoringSchema';
+import { useMeetingServerBaseUrls } from '@/api/meetingServer';
 import BaseModal from '@/common/modal/BaseModal';
 import { twMerge } from '@/lib/twMerge';
 import { feedbackModalDesign } from '@/pages/feedback/feedbackModalDesign';
@@ -371,6 +372,7 @@ const SubmissionModalBody = ({
 
   const [isJitsiOpen, setIsJitsiOpen] = useState(false);
   const [isPreparingRoom, setIsPreparingRoom] = useState(false);
+  const { baseUrls, loadBaseUrls } = useMeetingServerBaseUrls();
   // 입장 실패를 모달 안에 남긴다. 멘토 앱에는 토스트 인프라가 없어 alert 로 띄우면
   // 화면 밖으로 사라지고, 왜 못 들어갔는지 다시 볼 방법이 없다.
   const [enterError, setEnterError] = useState<string | null>(null);
@@ -412,10 +414,7 @@ const SubmissionModalBody = ({
     try {
       const result = await ensureLiveMeetingUrl({
         meetingUrl: data?.meetingUrl ?? null,
-        baseCandidates: [
-          import.meta.env.VITE_JITSI_BASE_URL,
-          import.meta.env.VITE_JITSI_FALLBACK_URL,
-        ],
+        baseCandidates: await loadBaseUrls(),
         // 서버가 base + 방 이름을 합성한다. 프론트는 base 만 보낸다.
         registerBaseUrl: async (base) => {
           await createMeetingRoom({ applicationId, meetingUrlBase: base });
@@ -591,10 +590,7 @@ const SubmissionModalBody = ({
             hasQuestion(data) ? (data.questionContent ?? undefined) : undefined
           }
           submissionUrl={sharedSubmissionUrl}
-          baseCandidates={[
-            import.meta.env.VITE_JITSI_BASE_URL,
-            import.meta.env.VITE_JITSI_FALLBACK_URL,
-          ]}
+          baseCandidates={baseUrls}
           registerBaseUrl={async (base) => {
             await createMeetingRoom({ applicationId, meetingUrlBase: base });
           }}
