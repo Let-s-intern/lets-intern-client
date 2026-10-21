@@ -7,6 +7,18 @@ import userEvent from '@testing-library/user-event';
 import type { FeedbackInfo, Mentor } from '../types';
 import ReservationInfoSection from './ReservationInfoSection';
 
+// 회의 서버 목록(GET /meeting-servers) — 입장 후보는 서버 DB 에서 온다.
+let mockMeetingServerBaseUrls = [
+  'https://jitsi-main.example.com/',
+  'https://jitsi-fallback.example.com/',
+];
+jest.mock('@/api/meetingServer', () => ({
+  useMeetingServerBaseUrls: () => ({
+    baseUrls: mockMeetingServerBaseUrls,
+    loadBaseUrls: async () => mockMeetingServerBaseUrls,
+  }),
+}));
+
 // @jitsi/react-sdk(ESM)는 jest가 그대로 파싱하지 못하므로 임베드 본문을 경량 스텁으로
 // 대체한다. 방 URL 은 BE meetingUrl 을 그대로 받는다(스텁의 data-room-url 로 검증).
 jest.mock('@letscareer/live-session/JitsiEmbed', () => ({
@@ -114,6 +126,9 @@ describe('ReservationInfoSection — LIVE 피드백 입장 (Jitsi)', () => {
     // 입장 순서 무관(데드락 방지): meetingUrl 이 null 이어도 멘티가 직접 헬스체크 후
     // 회의실을 생성(PATCH)하려 시도한다. 단, 살아있는 도메인이 하나도 없으면 알림 후 종료.
     // (생성 성공 경로는 @letscareer/ui ensureLiveMeetingUrl 단위 테스트가 커버)
+    // 주 서버 헬스체크가 실패해도 폴백은 확인 없이 고르므로, 사용 중 서버가 없는 상태로 만든다.
+    const servers = mockMeetingServerBaseUrls;
+    mockMeetingServerBaseUrls = [];
     const user = userEvent.setup();
     const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
     // 환경에 따라 global.fetch 유무가 다르므로 헬스체크가 결정적으로 실패하도록 stub
@@ -141,6 +156,7 @@ describe('ReservationInfoSection — LIVE 피드백 입장 (Jitsi)', () => {
     expect(screen.queryByTestId('jitsi-embed')).not.toBeInTheDocument();
 
     global.fetch = originalFetch;
+    mockMeetingServerBaseUrls = servers;
     alertSpy.mockRestore();
   });
 

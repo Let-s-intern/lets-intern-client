@@ -9,6 +9,18 @@ const detailQueryMock = vi.fn();
 const createMeetingRoomMock = vi.fn();
 const updateAttendanceMock = vi.fn();
 
+// 회의 서버 목록(GET /meeting-servers) — 입장 후보는 서버 DB 에서 온다.
+const mockMeetingServerBaseUrls = [
+  'https://jitsi-main.example.com/',
+  'https://jitsi-fallback.example.com/',
+];
+vi.mock('@/api/meetingServer', () => ({
+  useMeetingServerBaseUrls: () => ({
+    baseUrls: mockMeetingServerBaseUrls,
+    loadBaseUrls: async () => mockMeetingServerBaseUrls,
+  }),
+}));
+
 vi.mock('@/api/live-mentoring/liveMentoring', () => ({
   useLiveMentoringReservationDetailQuery: (applicationId: number | null) =>
     detailQueryMock(applicationId),

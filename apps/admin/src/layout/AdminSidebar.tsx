@@ -10,7 +10,7 @@ import StatsEmbedSection from './StatsEmbedSection';
 // VITE_WEB_URL 미설정 시 admin 자기 자신의 root 로 fallback (안전장치).
 const WEB_URL = import.meta.env.VITE_WEB_URL ?? '/';
 
-const navData = [
+export const navData = [
   {
     title: '프로그램 관리',
     itemList: [
@@ -141,12 +141,16 @@ const navData = [
     ],
   },
   {
-    // 계정·로그인에 딸린 설정이라 사용자 관리 바로 뒤에 둔다.
-    title: 'SSO 관리',
+    // 로그인·회의 입장처럼 서비스 동작을 바꾸는 설정이라 사용자 관리 바로 뒤에 둔다.
+    title: '시스템 관리',
     itemList: [
       {
-        name: '리다이렉트 화이트리스트',
+        name: 'SSO 리다이렉트 화이트리스트',
         url: '/sso/redirect-whitelist',
+      },
+      {
+        name: '회의 서버 관리',
+        url: '/meeting-servers',
       },
     ],
   },
