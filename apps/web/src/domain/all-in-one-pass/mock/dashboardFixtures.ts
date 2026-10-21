@@ -62,9 +62,9 @@ export const applicationDetailFixture: AllInOnePassApplicationDetail = {
   membershipApplicationId: 1,
   membershipId: 9,
   title: '올인원패스',
-  startDate: '2026-08-30T00:00:00',
-  endDate: '2026-11-28T23:59:59',
-  periodDays: 90,
+  startDate: '2026-10-09T00:00:00',
+  endDate: '2026-10-29T23:59:59',
+  periodDays: 20,
   plan: {
     title: '올인원패스 + VOD + LIVE',
     privilegeList: [
