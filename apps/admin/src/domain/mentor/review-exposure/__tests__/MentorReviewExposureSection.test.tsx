@@ -24,6 +24,9 @@ const exposedReview = {
   programTitle: '자소서 챌린지',
   score: 5,
   review: '정말 좋았어요',
+  originalScore: 5,
+  originalReview: '정말 좋았어요',
+  isEdited: false,
   createDate: '2026-10-01T12:00:00',
   isExposed: true,
 };
@@ -35,6 +38,9 @@ const hiddenReview = {
   programTitle: null,
   score: null,
   review: '숨긴 후기',
+  originalScore: null,
+  originalReview: '숨긴 후기',
+  isEdited: false,
   createDate: null,
   isExposed: false,
 };
@@ -126,5 +132,27 @@ describe('MentorReviewExposureSection', () => {
       await screen.findByText('이 멘토의 공개 후기가 없습니다'),
     ).toBeInTheDocument();
     expect(screen.getByText('노출 0 / 전체 0')).toBeInTheDocument();
+  });
+
+  it('점수를 소수 한 자리로 보이고, 수정된 후기에 수정됨을 붙인다', async () => {
+    mockList([{ ...exposedReview, score: 4.5, isEdited: true }, hiddenReview]);
+
+    renderSection();
+
+    expect(await screen.findByText('4.5')).toBeInTheDocument();
+    expect(screen.getAllByText('수정됨')).toHaveLength(1);
+  });
+
+  it('수정 버튼을 누르면 그 후기의 수정 모달을 연다', async () => {
+    mockList([exposedReview]);
+
+    renderSection();
+    await screen.findByText('정말 좋았어요');
+
+    fireEvent.click(screen.getByRole('button', { name: '수정' }));
+
+    expect(screen.getByRole('textbox', { name: '후기 내용' })).toHaveValue(
+      '정말 좋았어요',
+    );
   });
 });

@@ -1,7 +1,15 @@
 import { useAdminMentorReviewListQuery } from '@/api/mentor/mentor';
 import MentorReviewExposureRow from './MentorReviewExposureRow';
 
-const COLUMNS = ['종류', '프로그램', '점수', '후기 내용', '작성일', '노출'];
+const COLUMNS = [
+  '종류',
+  '프로그램',
+  '점수',
+  '후기 내용',
+  '작성일',
+  '노출',
+  '관리',
+];
 
 interface Props {
   mentorId: number;
@@ -31,12 +39,16 @@ export default function MentorReviewExposureSection({ mentorId }: Props) {
           이 멘토의 공개 후기가 없습니다
         </div>
       ) : (
-        <div className="max-h-[32rem] overflow-y-auto">
-          <table className="text-xsmall14 w-full">
+        // 좁은 화면에서는 페이지가 아니라 이 영역만 가로로 스크롤한다
+        <div className="max-h-[40rem] overflow-auto">
+          <table className="text-xsmall14 w-full min-w-[60rem]">
             <thead>
               <tr className="text-neutral-30 text-left">
                 {COLUMNS.map((column) => (
-                  <th key={column} className="px-3 py-2 font-medium">
+                  <th
+                    key={column}
+                    className="whitespace-nowrap px-3 py-2 font-medium"
+                  >
                     {column}
                   </th>
                 ))}

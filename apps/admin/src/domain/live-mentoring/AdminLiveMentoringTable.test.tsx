@@ -328,4 +328,31 @@ describe('AdminLiveMentoringTable — 멘토별 참여자', () => {
       screen.queryByRole('button', { name: '참여자 보기' }),
     ).not.toBeInTheDocument();
   });
+
+  it('onSelectMentorReviews 를 주면 행마다 후기 관리를 내걸고 멘토 id 를 넘긴다', () => {
+    const onSelectMentorReviews = vi.fn();
+    listQuery.mockReturnValue({
+      data: {
+        liveMentoringList: [draftRow],
+        pageInfo: {
+          pageNum: 0,
+          pageSize: 20,
+          totalElements: 1,
+          totalPages: 1,
+        },
+      },
+      isLoading: false,
+      isError: false,
+    });
+    render(
+      <AdminLiveMentoringTable onSelectMentorReviews={onSelectMentorReviews} />,
+    );
+
+    fireEvent.click(
+      within(screen.getByRole('table')).getByRole('button', {
+        name: '후기 관리',
+      }),
+    );
+    expect(onSelectMentorReviews).toHaveBeenCalledWith(draftRow.mentorId);
+  });
 });
