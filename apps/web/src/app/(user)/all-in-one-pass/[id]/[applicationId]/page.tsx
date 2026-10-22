@@ -9,7 +9,7 @@ import CalendarDesktop from '@/domain/all-in-one-pass/ui/dashboard/calendar/Cale
 import CalendarMobile from '@/domain/all-in-one-pass/ui/dashboard/calendar/CalendarMobile';
 import ExtensionModal from '@/domain/all-in-one-pass/ui/dashboard/extension/ExtensionModal';
 import ExtensionPopup from '@/domain/all-in-one-pass/ui/dashboard/extension/ExtensionPopup';
-import MobileExternalLinks from '@/domain/all-in-one-pass/ui/dashboard/MobileExternalLinks';
+import ExternalLinks from '@/domain/all-in-one-pass/ui/dashboard/ExternalLinks';
 import PassUsageCard from '@/domain/all-in-one-pass/ui/dashboard/PassUsageCard';
 import RemainingPeriodCard from '@/domain/all-in-one-pass/ui/dashboard/RemainingPeriodCard';
 import { useParams } from 'next/navigation';
@@ -25,10 +25,11 @@ export default function AllInOnePassDashboardPage() {
 
   return (
     <main className="flex flex-col px-5 pb-16 pt-8 md:gap-10 md:pb-0 md:pl-12 md:pr-0 md:pt-0">
-      <header>
-        <h1 className="hidden text-[22px] font-semibold md:block">
+      <header className="hidden items-center justify-between md:flex">
+        <h1 className="text-[22px] font-semibold">
           {user?.name}님의 패스 대시보드
         </h1>
+        <ExternalLinks applicationId={applicationId} variant="header" />
       </header>
       <div className="flex flex-col gap-6 md:gap-10">
         <div className="flex flex-col gap-2">
@@ -39,7 +40,7 @@ export default function AllInOnePassDashboardPage() {
             />
             <PassUsageCard applicationId={applicationId} />
           </div>
-          <MobileExternalLinks applicationId={applicationId} />
+          <ExternalLinks applicationId={applicationId} variant="box" />
         </div>
         {calendarEvents && (
           <>

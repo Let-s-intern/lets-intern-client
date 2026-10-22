@@ -1,10 +1,8 @@
 'use client';
 
 import clsx from 'clsx';
-import { SquareArrowOutUpRight } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
-import { useGetPassExternalLinks } from '../../api/dashboard';
 
 type NavItem = { id: string; label: string; href: string };
 
@@ -12,9 +10,6 @@ const AllInOnePassNavBar = () => {
   const params = useParams<{ id: string; applicationId: string }>();
   const pathname = usePathname();
   const base = `/all-in-one-pass/${params.id}/${params.applicationId}`;
-  const { data: externalLinks = [] } = useGetPassExternalLinks(
-    Number(params.applicationId),
-  );
 
   const navItems: NavItem[] = [
     { id: 'dashboard', label: '패스 대시보드', href: base },
@@ -47,24 +42,6 @@ const AllInOnePassNavBar = () => {
           </li>
         ))}
       </ul>
-      {/* 사이드바 하단 외부 링크(오공고·플레이북·커뮤니티 등) — 데스크톱만, 전 탭 공통 */}
-      {externalLinks.length > 0 && (
-        <ul className="mt-6 hidden flex-col gap-1 md:flex">
-          {externalLinks.map((link) => (
-            <li key={link.id}>
-              <a
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xsmall16 text-neutral-40 hover:text-neutral-0 flex items-center gap-1.5 px-3 py-1.5 font-medium transition-colors"
-              >
-                {link.name}
-                <SquareArrowOutUpRight size={14} />
-              </a>
-            </li>
-          ))}
-        </ul>
-      )}
     </nav>
   );
 };
