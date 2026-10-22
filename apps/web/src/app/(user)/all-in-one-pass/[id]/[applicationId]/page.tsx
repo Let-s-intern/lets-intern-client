@@ -2,7 +2,7 @@
 
 import { useUserQuery } from '@/api/user/user';
 import {
-  useGetMyPass,
+  useGetMyMembershipApplication,
   useGetPassCalendar,
 } from '@/domain/all-in-one-pass/api/dashboard';
 import CalendarDesktop from '@/domain/all-in-one-pass/ui/dashboard/calendar/CalendarDesktop';
@@ -19,7 +19,7 @@ export default function AllInOnePassDashboardPage() {
   const params = useParams<{ applicationId: string }>();
   const applicationId = Number(params.applicationId);
   const { data: user } = useUserQuery();
-  const { data: myPass } = useGetMyPass(applicationId);
+  const { data: base } = useGetMyMembershipApplication(applicationId);
   const { data: calendarEvents } = useGetPassCalendar(applicationId);
   const [extensionOpen, setExtensionOpen] = useState(false);
 
@@ -47,15 +47,15 @@ export default function AllInOnePassDashboardPage() {
             <div className="hidden md:block">
               <CalendarDesktop
                 events={calendarEvents}
-                periodStart={myPass?.startDate}
-                periodEnd={myPass?.endDate}
+                periodStart={base?.startDate ?? undefined}
+                periodEnd={base?.endDate ?? undefined}
               />
             </div>
             <div className="md:hidden">
               <CalendarMobile
                 events={calendarEvents}
-                periodStart={myPass?.startDate}
-                periodEnd={myPass?.endDate}
+                periodStart={base?.startDate ?? undefined}
+                periodEnd={base?.endDate ?? undefined}
               />
             </div>
           </>

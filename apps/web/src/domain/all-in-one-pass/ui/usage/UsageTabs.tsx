@@ -3,7 +3,6 @@
 
 import { CategoryChips, CategoryTabs } from '@letscareer/ui';
 import { useState } from 'react';
-import type { PassPrivilege } from '../../types';
 import UsageChallengeTab from './UsageChallengeTab';
 import UsageGuidebookTab from './UsageGuidebookTab';
 import UsageLiveTab from './UsageLiveTab';
@@ -21,7 +20,7 @@ const TABS: { value: UsageTabKey; label: string }[] = [
 ];
 
 interface Props {
-  privileges: PassPrivilege[];
+  privileges: { programType: string }[];
   passTitle?: string;
 }
 
