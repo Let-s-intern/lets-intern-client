@@ -4,9 +4,13 @@
 import SolidButton from '@/common/button/SolidButton';
 import dayjs from '@/lib/dayjs';
 import { useEffect, useState } from 'react';
-import { useGetMembershipApplication } from '../../../api/dashboard';
+import { useGetMyMembershipApplication } from '../../../api/dashboard';
 import ExtensionSheet from './ExtensionSheet';
-import { getExtensionCopy, getExtensionStatus } from './extensionStatus';
+import {
+  getExtensionCopy,
+  getExtensionStatus,
+  getExtensionWindowEnd,
+} from './extensionStatus';
 
 const dismissKey = (applicationId: number) =>
   `pass-ext-popup-dismissed-${applicationId}`;
@@ -25,19 +29,22 @@ export default function ExtensionPopup({
   onExtend,
   isModalOpen,
 }: Props) {
-  const { data } = useGetMembershipApplication(applicationId);
+  const { data: base } = useGetMyMembershipApplication(applicationId);
   const [open, setOpen] = useState(false);
   const [dontShowToday, setDontShowToday] = useState(false);
 
   useEffect(() => {
-    if (!data) return;
+    if (!base?.endDate) return;
     const dismissedToday =
       localStorage.getItem(dismissKey(applicationId)) ===
       dayjs().format('YYYY-MM-DD');
-    setOpen(!dismissedToday && getExtensionStatus(data.endDate).canExtend);
-  }, [data, applicationId]);
+    setOpen(
+      !dismissedToday &&
+        getExtensionStatus(base.endDate, base.deadline).canExtend,
+    );
+  }, [base, applicationId]);
 
-  if (!open || !data || isModalOpen) return null;
+  if (!open || !base?.endDate || isModalOpen) return null;
 
   const close = () => {
     if (dontShowToday) {
@@ -49,7 +56,7 @@ export default function ExtensionPopup({
     setOpen(false);
   };
 
-  const copy = getExtensionCopy(data.title, data.endDate);
+  const copy = getExtensionCopy(base.title ?? '올인원패스', base.endDate);
 
   return (
     <ExtensionSheet
@@ -70,11 +77,15 @@ export default function ExtensionPopup({
             현재 이용 종료일
           </span>
           <span className="text-xsmall16 text-neutral-0 font-normal">
-            {formatDate(data.endDate)}
+            {formatDate(base.endDate)}
           </span>
         </div>
         <p className="text-xsmall14 text-neutral-35">
-          기간 연장은 이용 종료 다음 날까지 가능해요.
+          기간 연장은{' '}
+          {getExtensionWindowEnd(base.endDate, base.deadline).format(
+            'YYYY년 M월 D일',
+          )}
+          까지 가능해요.
         </p>
 
         <SolidButton

@@ -1,19 +1,15 @@
-import { useMypageApplicationsQuery } from '@/api/application';
-import { useGetUserProgramQuery } from '@/api/program';
-import dayjs from '@/lib/dayjs';
+import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { applicationDetailFixture } from '../mock/dashboardFixtures';
-import { mockDelay } from '../mock/mockDelay';
+import { z } from 'zod';
 import type {
-  AllInOnePassApplication,
-  AllInOnePassApplicationDetail,
   PassCalendarEvent,
   PassDescriptionBlob,
   PassExternalLink,
+  PassParticipationStatus,
 } from '../types';
 
-// U-1 대시보드 훅. 모두 내 신청 상세(단일 소스)에서 파생 — 실 API 시 useGetMembershipApplication 만 교체.
+// U-1 대시보드 훅 — 섹션별 실 API(가드·이용권·연장옵션·캘린더·benefit/challenge).
 
 /** description(JSON) 파싱 → 캘린더(게릴라/마일스톤)·외부링크·멘토링쿠폰 */
 const parsePassDescription = (description: string) => {
@@ -49,54 +45,170 @@ const parsePassDescription = (description: string) => {
   };
 };
 
-/**
- * 내 신청 상세 — 접근 가드 + 기간/이용권/연장 공통 소스. 403/404 → isError → 레이아웃 redirect.
- * // TODO(BE): queryFn 을 GET /membership-application/{applicationId} 로 교체.
- */
-export const useGetMembershipApplication = (applicationId: number) =>
+// ─── GET /membership-application/{id} — 접근 가드 + 기본 정보(실 API) ───
+const myMembershipApplicationSchema = z.object({
+  membershipApplicationId: z.number(),
+  membershipId: z.number(),
+  title: z.string().nullish(),
+  startDate: z.string().nullish(),
+  endDate: z.string().nullish(),
+  periodDays: z.number().nullish(),
+  deadline: z.string().nullish(), // 판매 종료일(연장 창 상한)
+});
+export type MyMembershipApplication = z.infer<
+  typeof myMembershipApplicationSchema
+>;
+
+/** 접근 가드 + 기본 정보(기간·판매종료일). 본인 아니면 403 → isError → 레이아웃 redirect. */
+export const useGetMyMembershipApplication = (applicationId: number) =>
   useQuery({
-    queryKey: ['allInOnePass', 'application', applicationId],
-    queryFn: (): Promise<AllInOnePassApplicationDetail> =>
-      mockDelay(applicationDetailFixture),
+    queryKey: ['allInOnePass', 'myApplication', applicationId],
+    queryFn: async (): Promise<MyMembershipApplication> => {
+      const res = await axios.get(`/membership-application/${applicationId}`);
+      return myMembershipApplicationSchema.parse(res.data.data);
+    },
     enabled: Number.isFinite(applicationId) && applicationId > 0,
-    retry: false, // 403/404 는 즉시 에러로 (가드 redirect)
+    retry: false, // 403/404 는 즉시 에러로(가드 redirect)
     refetchOnWindowFocus: false,
   });
 
-export const useGetMyPass = (applicationId: number) => {
-  const { data, isLoading, isError } =
-    useGetMembershipApplication(applicationId);
-  return useMemo(() => {
-    if (!data) return { data: undefined, isLoading, isError };
-    const { mentoringCouponAutoIssue } = parsePassDescription(data.description);
-    const myPass: AllInOnePassApplication = {
-      id: data.membershipApplicationId,
-      passTitle: data.title,
-      startDate: data.startDate,
-      endDate: data.endDate,
-      plan: {
-        id: 0,
-        title: data.plan.title,
-        description: null,
-        price: 0,
-        discount: null,
-        privileges: data.plan.privilegeList,
-      },
-      // 멘토링 쿠폰은 현재 고정 — 자동발급이면 쿠폰명 노출
-      mentoringCoupons: mentoringCouponAutoIssue
-        ? [{ name: '1:1 LIVE 멘토링 50% 할인 쿠폰', count: 1 }]
-        : [],
-    };
-    return { data: myPass, isLoading, isError };
-  }, [data, isLoading, isError]);
-};
+// ─── GET /{id}/plan — 이용권 카드 ───
+const planPrivilegeSchema = z.object({
+  membershipPlanPrivilegeId: z.number().nullish(),
+  programType: z.string(),
+  privilegeType: z.string(),
+  programCount: z.number().nullish(),
+});
+const myPassPlanSchema = z.object({
+  title: z.string().nullish(),
+  privilegeList: z.array(planPrivilegeSchema).default([]),
+});
+export type MyPassPlan = z.infer<typeof myPassPlanSchema>;
+
+export const useGetMyPassPlan = (applicationId: number) =>
+  useQuery({
+    queryKey: ['allInOnePass', 'plan', applicationId],
+    queryFn: async (): Promise<MyPassPlan> => {
+      const res = await axios.get(
+        `/membership-application/${applicationId}/plan`,
+      );
+      return myPassPlanSchema.parse(res.data.data);
+    },
+    enabled: Number.isFinite(applicationId) && applicationId > 0,
+    refetchOnWindowFocus: false,
+  });
+
+// ─── GET /{id}/extension-option — 연장 모달 옵션(isVisible 은 BE가 필터) ───
+const extensionOptionSchema = z.object({
+  membershipOptionId: z.number(),
+  title: z.string().nullish(),
+  extensionDays: z.number(),
+  price: z.number(),
+  discount: z.number().nullish(),
+  isVisible: z.boolean().nullish(),
+});
+const extensionOptionsSchema = z.object({
+  optionList: z.array(extensionOptionSchema).default([]),
+});
+export type ExtensionOption = z.infer<typeof extensionOptionSchema>;
+
+export const useGetExtensionOptions = (applicationId: number) =>
+  useQuery({
+    queryKey: ['allInOnePass', 'extensionOption', applicationId],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/membership-application/${applicationId}/extension-option`,
+      );
+      return extensionOptionsSchema.parse(res.data.data);
+    },
+    enabled: Number.isFinite(applicationId) && applicationId > 0,
+    refetchOnWindowFocus: false,
+  });
+
+// ─── GET /{id}/calendar — 게릴라/마일스톤·외부링크(description). 챌린지는 benefit/challenge ───
+const calendarSchema = z.object({
+  description: z.string().nullish(),
+});
+
+export const useGetPassCalendarData = (applicationId: number) =>
+  useQuery({
+    queryKey: ['allInOnePass', 'calendar', applicationId],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/membership-application/${applicationId}/calendar`,
+      );
+      return calendarSchema.parse(res.data.data);
+    },
+    enabled: Number.isFinite(applicationId) && applicationId > 0,
+    refetchOnWindowFocus: false,
+  });
+
+// ─── GET /{id}/benefit/challenge — 캘린더 챌린지 바(참여전/중/완료), 챌린지 탭과 공유 ───
+const benefitChallengeSchema = z.object({
+  challengeId: z.number(),
+  title: z.string().nullish(),
+  thumbnail: z.string().nullish(),
+  startDate: z.string().nullish(),
+  endDate: z.string().nullish(),
+  beginning: z.string().nullish(),
+  deadline: z.string().nullish(),
+});
+const benefitChallengesSchema = z.object({
+  applicableUntil: z.string().nullish(),
+  availableList: z.array(benefitChallengeSchema).default([]),
+  ongoingList: z.array(benefitChallengeSchema).default([]),
+  completedList: z.array(benefitChallengeSchema).default([]),
+});
+export type BenefitChallenge = z.infer<typeof benefitChallengeSchema>;
+export type BenefitChallenges = z.infer<typeof benefitChallengesSchema>;
+
+export const useGetBenefitChallenges = (applicationId: number) =>
+  useQuery({
+    queryKey: ['allInOnePass', 'benefitChallenge', applicationId],
+    queryFn: async (): Promise<BenefitChallenges> => {
+      const res = await axios.get(
+        `/membership-application/${applicationId}/benefit/challenge`,
+      );
+      return benefitChallengesSchema.parse(res.data.data);
+    },
+    enabled: Number.isFinite(applicationId) && applicationId > 0,
+    refetchOnWindowFocus: false,
+  });
+
+// ─── GET /{id}/benefit/guidebook — 가이드북 탭 열람 가능 목록(패스로 볼 수 있는 전체). 보유 분리는 user/applications ───
+const benefitGuidebookSchema = z.object({
+  accessible: z.boolean().nullish(),
+  programList: z
+    .array(
+      z.object({
+        programId: z.number(),
+        title: z.string().nullish(),
+        shortDesc: z.string().nullish(),
+        thumbnail: z.string().nullish(),
+      }),
+    )
+    .default([]),
+});
+export type BenefitGuidebook = z.infer<typeof benefitGuidebookSchema>;
+
+export const useGetBenefitGuidebook = (applicationId: number) =>
+  useQuery({
+    queryKey: ['allInOnePass', 'benefitGuidebook', applicationId],
+    queryFn: async (): Promise<BenefitGuidebook> => {
+      const res = await axios.get(
+        `/membership-application/${applicationId}/benefit/guidebook`,
+      );
+      return benefitGuidebookSchema.parse(res.data.data);
+    },
+    enabled: Number.isFinite(applicationId) && applicationId > 0,
+    refetchOnWindowFocus: false,
+  });
 
 export const useGetPassExternalLinks = (applicationId: number) => {
-  const { data, isLoading, isError } =
-    useGetMembershipApplication(applicationId);
+  const { data, isLoading, isError } = useGetPassCalendarData(applicationId);
   return useMemo(
     () => ({
-      data: (data
+      data: (data?.description
         ? parsePassDescription(data.description).externalLinks
         : []) as PassExternalLink[],
       isLoading,
@@ -107,67 +219,48 @@ export const useGetPassExternalLinks = (applicationId: number) => {
 };
 
 export const useGetPassCalendar = (applicationId: number) => {
-  const catalogQuery = useGetUserProgramQuery({
-    pageable: { page: 1, size: 100 },
-    searchParams: { type: 'CHALLENGE' },
-  });
-  const applicationsQuery = useMypageApplicationsQuery();
-  const { data: application } = useGetMembershipApplication(applicationId);
+  const challengeQuery = useGetBenefitChallenges(applicationId);
+  const calendarQuery = useGetPassCalendarData(applicationId);
 
   return useMemo(() => {
-    const apps = (applicationsQuery.data ?? []).filter(
-      (a) => a.programType === 'CHALLENGE' && a.programId != null,
-    );
-    const enrolledIds = new Set(apps.map((a) => a.programId));
-
-    const enrolled: PassCalendarEvent[] = apps.map((a) => ({
-      id: a.programId as number,
+    const toEvent = (
+      c: BenefitChallenge,
+      status: PassParticipationStatus,
+    ): PassCalendarEvent => ({
+      id: c.challengeId,
       type: 'CHALLENGE',
-      title: a.programTitle ?? '',
+      title: c.title ?? '',
       description: null,
-      startDate: a.programStartDate?.toISOString() ?? '',
-      endDate: a.programEndDate?.toISOString() ?? null,
-      programId: a.programId as number,
-      challengeApplicationId: a.id,
-    }));
+      startDate: c.startDate ?? '',
+      endDate: c.endDate ?? null,
+      programId: c.challengeId,
+      participationStatus: status, // BE 3분류를 그대로 사용(FE 파생 X)
+    });
 
-    const now = dayjs();
-    const notEnrolled: PassCalendarEvent[] = (
-      catalogQuery.data?.programList ?? []
-    )
-      .filter(
-        (p) =>
-          !enrolledIds.has(p.programInfo.id) &&
-          (!p.programInfo.deadline ||
-            !now.isAfter(dayjs(p.programInfo.deadline))),
-      )
-      .map((p) => ({
-        id: p.programInfo.id,
-        type: 'CHALLENGE',
-        title: p.programInfo.title ?? '',
-        description: null,
-        startDate: p.programInfo.startDate ?? '',
-        endDate: p.programInfo.endDate ?? null,
-        programId: p.programInfo.id,
-        challengeApplicationId: null,
-      }));
+    const ch = challengeQuery.data;
+    const challengeEvents: PassCalendarEvent[] = ch
+      ? [
+          ...ch.availableList.map((c) => toEvent(c, 'BEFORE')),
+          ...ch.ongoingList.map((c) => toEvent(c, 'IN_PROGRESS')),
+          ...ch.completedList.map((c) => toEvent(c, 'DONE')),
+        ]
+      : [];
 
-    const descEvents = application
-      ? parsePassDescription(application.description).calendarEvents
+    const descEvents = calendarQuery.data?.description
+      ? parsePassDescription(calendarQuery.data.description).calendarEvents
       : [];
 
     return {
-      data: [...enrolled, ...notEnrolled, ...descEvents],
-      isLoading: catalogQuery.isLoading || applicationsQuery.isLoading,
-      isError: catalogQuery.isError || applicationsQuery.isError,
+      data: [...challengeEvents, ...descEvents],
+      isLoading: challengeQuery.isLoading || calendarQuery.isLoading,
+      isError: challengeQuery.isError || calendarQuery.isError,
     };
   }, [
-    catalogQuery.data,
-    catalogQuery.isLoading,
-    catalogQuery.isError,
-    applicationsQuery.data,
-    applicationsQuery.isLoading,
-    applicationsQuery.isError,
-    application,
+    challengeQuery.data,
+    challengeQuery.isLoading,
+    challengeQuery.isError,
+    calendarQuery.data,
+    calendarQuery.isLoading,
+    calendarQuery.isError,
   ]);
 };

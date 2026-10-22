@@ -1,10 +1,8 @@
-// 가이드북 탭 데이터 — GET /program(카탈로그) + GET /user/applications(보유 이력)를 programId로 조인.
+// 가이드북 탭 — 열람 가능=benefit/guidebook(패스로 볼 수 있는 전체−보유), 보유 중=user/applications.
 import { useMypageApplicationsQuery } from '@/api/application';
-import { useGetUserProgramQuery } from '@/api/program';
 import { useMemo } from 'react';
+import { useGetBenefitGuidebook } from '../../api/dashboard';
 import type { PassProgramCardData } from './PassProgramCard';
-
-const CATALOG_PAGE = { page: 1, size: 100 } as const;
 
 export interface UsageGuidebook {
   available: PassProgramCardData[];
@@ -13,49 +11,39 @@ export interface UsageGuidebook {
   isError: boolean;
 }
 
-const toCard = (
-  programId: number,
-  title: string,
-  thumbnail?: string | null,
-): PassProgramCardData => ({
-  programId,
-  title,
-  thumbnail,
-  participation: 'BEFORE',
-});
-
-export const useUsageGuidebook = (): UsageGuidebook => {
-  const catalogQuery = useGetUserProgramQuery({
-    pageable: CATALOG_PAGE,
-    searchParams: { type: 'GUIDEBOOK' },
-  });
-  const applicationsQuery = useMypageApplicationsQuery();
+export const useUsageGuidebook = (applicationId: number): UsageGuidebook => {
+  const benefitQuery = useGetBenefitGuidebook(applicationId);
+  const appsQuery = useMypageApplicationsQuery();
 
   return useMemo(() => {
-    const applications = applicationsQuery.data ?? [];
-    const guidebookApps = applications.filter(
+    const apps = (appsQuery.data ?? []).filter(
       (a) => a.programType === 'GUIDEBOOK' && a.programId != null,
     );
-    const ownedIds = new Set(guidebookApps.map((a) => a.programId));
+    const ownedIds = new Set(apps.map((a) => a.programId));
 
-    const available = (catalogQuery.data?.programList ?? [])
-      .filter((p) => !ownedIds.has(p.programInfo.id))
-      .map((p) =>
-        toCard(
-          p.programInfo.id,
-          p.programInfo.title ?? '',
-          p.programInfo.thumbnail,
-        ),
-      );
+    // 열람 가능 — 패스로 볼 수 있는 전체에서 보유분 제외
+    const available: PassProgramCardData[] = (
+      benefitQuery.data?.programList ?? []
+    )
+      .filter((p) => !ownedIds.has(p.programId))
+      .map((p) => ({
+        programId: p.programId,
+        title: p.title ?? '',
+        thumbnail: p.thumbnail,
+        participation: 'BEFORE',
+      }));
 
-    const owned = guidebookApps.map((a) => ({
-      ...toCard(
-        a.programId as number,
-        a.programTitle ?? '',
-        a.programThumbnail,
-      ),
+    // 보유 중 — 유저의 전체 보유(패스 외 포함) + 다운로드 정보. 이 패스로 받은 것만 뱃지.
+    const owned: PassProgramCardData[] = apps.map((a) => ({
+      programId: a.programId as number,
+      title: a.programTitle ?? '',
+      thumbnail: a.programThumbnail,
+      participation: 'BEFORE',
       applicationId: a.id,
-      isMembershipApplied: a.isMembershipApplied ?? false,
+      isMembershipApplied:
+        a.membershipApplicationId != null
+          ? a.membershipApplicationId === applicationId
+          : (a.isMembershipApplied ?? false),
       isDownloaded: a.isDownloaded ?? false,
       contentUrl: a.contentUrl,
       contentFileUrl: a.contentFileUrl,
@@ -64,15 +52,16 @@ export const useUsageGuidebook = (): UsageGuidebook => {
     return {
       available,
       owned,
-      isLoading: catalogQuery.isLoading || applicationsQuery.isLoading,
-      isError: catalogQuery.isError || applicationsQuery.isError,
+      isLoading: benefitQuery.isLoading || appsQuery.isLoading,
+      isError: benefitQuery.isError || appsQuery.isError,
     };
   }, [
-    catalogQuery.data,
-    catalogQuery.isLoading,
-    catalogQuery.isError,
-    applicationsQuery.data,
-    applicationsQuery.isLoading,
-    applicationsQuery.isError,
+    benefitQuery.data,
+    benefitQuery.isLoading,
+    benefitQuery.isError,
+    appsQuery.data,
+    appsQuery.isLoading,
+    appsQuery.isError,
+    applicationId,
   ]);
 };

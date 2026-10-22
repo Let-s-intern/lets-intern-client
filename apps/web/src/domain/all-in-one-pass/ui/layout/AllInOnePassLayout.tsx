@@ -4,12 +4,12 @@ import LoadingContainer from '@/common/loading/LoadingContainer';
 import useAuthStore from '@/store/useAuthStore';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useGetMembershipApplication } from '../../api/dashboard';
+import { useGetMyMembershipApplication } from '../../api/dashboard';
 import AllInOnePassNavBar from './AllInOnePassNavBar';
 
 /**
  * 올인원패스 대시보드 공통 셸 + 접근 가드(로그인 + 본인 신청 소유: 403/404면 홈으로).
- * // TODO(BE): useGetMembershipApplication queryFn 을 실제 GET 으로 교체하면 즉시 동작.
+ * GET /membership-application/{id} 로 본인 소유 검증 + URL [id]와 membershipId 일치 확인.
  */
 const AllInOnePassLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
@@ -22,7 +22,8 @@ const AllInOnePassLayout = ({ children }: { children: React.ReactNode }) => {
     Number.isInteger(applicationId) &&
     applicationId > 0;
   const { isLoggedIn, isInitialized } = useAuthStore();
-  const { isError, isLoading } = useGetMembershipApplication(applicationId);
+  const { data, isError, isLoading } =
+    useGetMyMembershipApplication(applicationId);
   const [redirecting, setRedirecting] = useState(true);
 
   useEffect(() => {
@@ -49,12 +50,23 @@ const AllInOnePassLayout = ({ children }: { children: React.ReactNode }) => {
       return;
     }
 
-    // TODO(BE): 실 API 연동 시 한 줄 추가 — 소유했지만 URL의 [id](membershipId)와
-    // 짝이 안 맞는 경우도 차단한다. 훅에서 data 를 꺼내 아래처럼:
-    //   if (data && data.membershipId !== membershipId) { router.replace('/'); return; }
+    // 소유했지만 URL의 [id](membershipId)와 짝이 안 맞으면 차단
+    if (data && data.membershipId !== membershipId) {
+      router.replace('/');
+      return;
+    }
 
     setRedirecting(false);
-  }, [isInitialized, isLoggedIn, isValidRoute, isLoading, isError, router]);
+  }, [
+    isInitialized,
+    isLoggedIn,
+    isValidRoute,
+    isLoading,
+    isError,
+    data,
+    membershipId,
+    router,
+  ]);
 
   if (redirecting || isLoading) {
     return <LoadingContainer />;

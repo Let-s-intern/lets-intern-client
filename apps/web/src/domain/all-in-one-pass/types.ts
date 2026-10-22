@@ -113,6 +113,8 @@ export interface PassCalendarEvent {
   programId?: number | null;
   /** 챌린지 참여 인스턴스 id. null = 미참여(참여 전). (BE 팩트) */
   challengeApplicationId?: number | null;
+  /** BE가 내려준 참여 상태(benefit/challenge 3분류). 있으면 FE 파생 대신 이걸 사용. */
+  participationStatus?: PassParticipationStatus | null;
 }
 
 /**

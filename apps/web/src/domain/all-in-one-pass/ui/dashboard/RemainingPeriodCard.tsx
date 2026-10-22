@@ -1,31 +1,28 @@
 import OutlinedButton from '@/common/button/OutlinedButton';
 import SolidButton from '@/common/button/SolidButton';
 import dayjs from '@/lib/dayjs';
+import { useGetMyMembershipApplication } from '../../api/dashboard';
 import { getExtensionStatus } from './extension/extensionStatus';
 
 interface Props {
-  startDate: string;
-  endDate: string;
+  applicationId: number;
   onExtend?: () => void;
 }
 
-/** U-1 대시보드 "남은 기간" 카드 — D-day + 진행 바 + 이용 기간 */
 export default function RemainingPeriodCard({
-  startDate,
-  endDate,
+  applicationId,
   onExtend,
 }: Props) {
-  const now = dayjs();
-  const start = dayjs(startDate);
-  const end = dayjs(endDate);
+  const { data } = useGetMyMembershipApplication(applicationId);
+  if (!data?.startDate || !data?.endDate) return null;
 
-  const totalDays = end.startOf('day').diff(start.startOf('day'), 'day');
-  const elapsedDays = now.startOf('day').diff(start.startOf('day'), 'day');
-  // 진행 바: 이용 기간 중 경과 비율
+  const start = dayjs(data.startDate);
+  const end = dayjs(data.endDate);
+  const totalMs = end.diff(start);
   const progress =
-    totalDays > 0 ? Math.min(Math.max(elapsedDays / totalDays, 0), 1) : 0;
+    totalMs > 0 ? Math.min(Math.max(dayjs().diff(start) / totalMs, 0), 1) : 1;
 
-  const status = getExtensionStatus(endDate);
+  const status = getExtensionStatus(data.endDate, data.deadline);
   const label = status.isEnded ? '패스 이용 상태' : '남은 기간';
   const dDayText = status.isEnded ? '이용 종료' : `D-${status.daysLeft}`;
 
