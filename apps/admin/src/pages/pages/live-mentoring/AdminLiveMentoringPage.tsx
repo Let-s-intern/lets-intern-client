@@ -137,7 +137,14 @@ export default function AdminLiveMentoringPage() {
       )}
 
       {editingMentorId !== null ? (
-        <Dialog open onClose={closeMentorEditor} maxWidth="lg" fullWidth>
+        // 에디터가 띄우는 프로필 업로드 모달은 Dialog 밖에 포털로 그려진다. 포커스를 빼앗지 않게 한다.
+        <Dialog
+          open
+          onClose={closeMentorEditor}
+          maxWidth="lg"
+          fullWidth
+          disableEnforceFocus
+        >
           <DialogTitle className="text-base font-semibold">
             멘토 수정
           </DialogTitle>
