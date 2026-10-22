@@ -1,6 +1,3 @@
-import { useMypageApplicationsQuery } from '@/api/application';
-import { useGetUserProgramQuery } from '@/api/program';
-import dayjs from '@/lib/dayjs';
 import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
@@ -13,6 +10,7 @@ import type {
   PassCalendarEvent,
   PassDescriptionBlob,
   PassExternalLink,
+  PassParticipationStatus,
 } from '../types';
 
 // U-1 대시보드 훅. 모두 내 신청 상세(단일 소스)에서 파생 — 실 API 시 useGetMembershipApplication 만 교체.
@@ -146,12 +144,61 @@ export const useGetMyPass = (applicationId: number) => {
   }, [data, isLoading, isError]);
 };
 
+// ─── GET /{id}/calendar — 게릴라/마일스톤·외부링크(description). 챌린지는 benefit/challenge ───
+const calendarSchema = z.object({
+  description: z.string().nullish(),
+});
+
+export const useGetPassCalendarData = (applicationId: number) =>
+  useQuery({
+    queryKey: ['allInOnePass', 'calendar', applicationId],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/membership-application/${applicationId}/calendar`,
+      );
+      return calendarSchema.parse(res.data.data);
+    },
+    enabled: Number.isFinite(applicationId) && applicationId > 0,
+    refetchOnWindowFocus: false,
+  });
+
+// ─── GET /{id}/benefit/challenge — 캘린더 챌린지 바(참여전/중/완료), 챌린지 탭과 공유 ───
+const benefitChallengeSchema = z.object({
+  challengeId: z.number(),
+  title: z.string().nullish(),
+  thumbnail: z.string().nullish(),
+  startDate: z.string().nullish(),
+  endDate: z.string().nullish(),
+  beginning: z.string().nullish(),
+  deadline: z.string().nullish(),
+});
+const benefitChallengesSchema = z.object({
+  applicableUntil: z.string().nullish(),
+  availableList: z.array(benefitChallengeSchema).default([]),
+  ongoingList: z.array(benefitChallengeSchema).default([]),
+  completedList: z.array(benefitChallengeSchema).default([]),
+});
+export type BenefitChallenge = z.infer<typeof benefitChallengeSchema>;
+export type BenefitChallenges = z.infer<typeof benefitChallengesSchema>;
+
+export const useGetBenefitChallenges = (applicationId: number) =>
+  useQuery({
+    queryKey: ['allInOnePass', 'benefitChallenge', applicationId],
+    queryFn: async (): Promise<BenefitChallenges> => {
+      const res = await axios.get(
+        `/membership-application/${applicationId}/benefit/challenge`,
+      );
+      return benefitChallengesSchema.parse(res.data.data);
+    },
+    enabled: Number.isFinite(applicationId) && applicationId > 0,
+    refetchOnWindowFocus: false,
+  });
+
 export const useGetPassExternalLinks = (applicationId: number) => {
-  const { data, isLoading, isError } =
-    useGetMembershipApplication(applicationId);
+  const { data, isLoading, isError } = useGetPassCalendarData(applicationId);
   return useMemo(
     () => ({
-      data: (data
+      data: (data?.description
         ? parsePassDescription(data.description).externalLinks
         : []) as PassExternalLink[],
       isLoading,
@@ -162,67 +209,48 @@ export const useGetPassExternalLinks = (applicationId: number) => {
 };
 
 export const useGetPassCalendar = (applicationId: number) => {
-  const catalogQuery = useGetUserProgramQuery({
-    pageable: { page: 1, size: 100 },
-    searchParams: { type: 'CHALLENGE' },
-  });
-  const applicationsQuery = useMypageApplicationsQuery();
-  const { data: application } = useGetMembershipApplication(applicationId);
+  const challengeQuery = useGetBenefitChallenges(applicationId);
+  const calendarQuery = useGetPassCalendarData(applicationId);
 
   return useMemo(() => {
-    const apps = (applicationsQuery.data ?? []).filter(
-      (a) => a.programType === 'CHALLENGE' && a.programId != null,
-    );
-    const enrolledIds = new Set(apps.map((a) => a.programId));
-
-    const enrolled: PassCalendarEvent[] = apps.map((a) => ({
-      id: a.programId as number,
+    const toEvent = (
+      c: BenefitChallenge,
+      status: PassParticipationStatus,
+    ): PassCalendarEvent => ({
+      id: c.challengeId,
       type: 'CHALLENGE',
-      title: a.programTitle ?? '',
+      title: c.title ?? '',
       description: null,
-      startDate: a.programStartDate?.toISOString() ?? '',
-      endDate: a.programEndDate?.toISOString() ?? null,
-      programId: a.programId as number,
-      challengeApplicationId: a.id,
-    }));
+      startDate: c.startDate ?? '',
+      endDate: c.endDate ?? null,
+      programId: c.challengeId,
+      participationStatus: status, // BE 3분류를 그대로 사용(FE 파생 X)
+    });
 
-    const now = dayjs();
-    const notEnrolled: PassCalendarEvent[] = (
-      catalogQuery.data?.programList ?? []
-    )
-      .filter(
-        (p) =>
-          !enrolledIds.has(p.programInfo.id) &&
-          (!p.programInfo.deadline ||
-            !now.isAfter(dayjs(p.programInfo.deadline))),
-      )
-      .map((p) => ({
-        id: p.programInfo.id,
-        type: 'CHALLENGE',
-        title: p.programInfo.title ?? '',
-        description: null,
-        startDate: p.programInfo.startDate ?? '',
-        endDate: p.programInfo.endDate ?? null,
-        programId: p.programInfo.id,
-        challengeApplicationId: null,
-      }));
+    const ch = challengeQuery.data;
+    const challengeEvents: PassCalendarEvent[] = ch
+      ? [
+          ...ch.availableList.map((c) => toEvent(c, 'BEFORE')),
+          ...ch.ongoingList.map((c) => toEvent(c, 'IN_PROGRESS')),
+          ...ch.completedList.map((c) => toEvent(c, 'DONE')),
+        ]
+      : [];
 
-    const descEvents = application
-      ? parsePassDescription(application.description).calendarEvents
+    const descEvents = calendarQuery.data?.description
+      ? parsePassDescription(calendarQuery.data.description).calendarEvents
       : [];
 
     return {
-      data: [...enrolled, ...notEnrolled, ...descEvents],
-      isLoading: catalogQuery.isLoading || applicationsQuery.isLoading,
-      isError: catalogQuery.isError || applicationsQuery.isError,
+      data: [...challengeEvents, ...descEvents],
+      isLoading: challengeQuery.isLoading || calendarQuery.isLoading,
+      isError: challengeQuery.isError || calendarQuery.isError,
     };
   }, [
-    catalogQuery.data,
-    catalogQuery.isLoading,
-    catalogQuery.isError,
-    applicationsQuery.data,
-    applicationsQuery.isLoading,
-    applicationsQuery.isError,
-    application,
+    challengeQuery.data,
+    challengeQuery.isLoading,
+    challengeQuery.isError,
+    calendarQuery.data,
+    calendarQuery.isLoading,
+    calendarQuery.isError,
   ]);
 };

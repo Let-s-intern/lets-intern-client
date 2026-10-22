@@ -43,7 +43,10 @@ export const normalizeEvents = (
 ): NormalizedCalendarEvent[] =>
   events.map((e) => ({
     ...e,
-    status: e.type === 'CHALLENGE' ? challengeStatus(e, today) : null,
+    status:
+      e.type === 'CHALLENGE'
+        ? (e.participationStatus ?? challengeStatus(e, today))
+        : null,
   }));
 
 export const eventStart = (e: PassCalendarEvent) =>
