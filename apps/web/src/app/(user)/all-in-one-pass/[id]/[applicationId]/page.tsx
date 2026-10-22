@@ -35,8 +35,7 @@ export default function AllInOnePassDashboardPage() {
           <div className="flex flex-col gap-2">
             <div className="flex gap-2 md:gap-5">
               <RemainingPeriodCard
-                startDate={myPass.startDate}
-                endDate={myPass.endDate}
+                applicationId={applicationId}
                 onExtend={() => setExtensionOpen(true)}
               />
               <PassUsageCard
