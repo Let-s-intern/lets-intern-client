@@ -203,6 +203,8 @@ const ProfileImageUploadModal = ({
       isOpen={isOpen}
       onClose={onClose}
       className="max-w-[20rem] md:max-w-[28rem]"
+      // 라이브 멘토링 관리의 멘토 수정 MUI Dialog(z 1300) 위에서도 보이게 한다.
+      containerClassName="z-[1400]"
     >
       <div className="px-6 py-5">
         <div className="mb-4 flex items-center justify-between">
