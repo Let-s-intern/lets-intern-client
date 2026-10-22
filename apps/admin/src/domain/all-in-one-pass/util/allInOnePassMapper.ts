@@ -4,6 +4,7 @@ import {
   AllInOnePassPrivilegeType,
   AllInOnePassProgramType,
 } from '@/api/all-in-one-pass/allInOnePassSchema';
+import dayjs from '@/lib/dayjs';
 import {
   AllInOnePassListItem,
   PassCalendarEvent,
@@ -56,12 +57,22 @@ const privilegeToPermission = (
   return found ? found[0] : null;
 };
 
-// description 컬럼 JSON: 캘린더·외부링크·멘토링 (렉시컬=landingDescription, 연장=optionList 분리)
 interface DescriptionBlob {
   calendarEvents: PassCalendarEvent[];
   externalLinks: PassExternalLink[];
   mentoringCouponAutoIssue: boolean;
 }
+
+const migrateCalendarEvent = (
+  e: PassCalendarEvent & { date?: string | null },
+): PassCalendarEvent => ({
+  id: e.id,
+  startDate: e.startDate ?? e.date ?? null,
+  endDate: e.endDate ?? e.date ?? null,
+  type: e.type,
+  title: e.title,
+  url: e.url ?? null,
+});
 
 const parseDescription = (description?: string | null): DescriptionBlob => {
   const empty: DescriptionBlob = {
@@ -73,7 +84,7 @@ const parseDescription = (description?: string | null): DescriptionBlob => {
   try {
     const parsed = JSON.parse(description) as Partial<DescriptionBlob>;
     return {
-      calendarEvents: parsed.calendarEvents ?? [],
+      calendarEvents: (parsed.calendarEvents ?? []).map(migrateCalendarEvent),
       externalLinks: parsed.externalLinks ?? [],
       mentoringCouponAutoIssue: parsed.mentoringCouponAutoIssue ?? false,
     };
@@ -194,14 +205,20 @@ export const planToInMembershipDto = (plan: PassPlan) => ({
   })),
 });
 
+// 판매 시작일은 당일 00:00:00, 종료일은 당일 23:59:59 로 정규화해 전송(시간 선택 UI 없음).
+const toDayStart = (v: string | null) =>
+  v ? dayjs(v).startOf('day').format('YYYY-MM-DDTHH:mm:ss') : v;
+const toDayEnd = (v: string | null) =>
+  v ? dayjs(v).endOf('day').format('YYYY-MM-DDTHH:mm:ss') : v;
+
 /** 생성 요청 body */
 export const toCreateDto = (input: PassFormInput) => ({
   title: input.title,
   introduction: input.shortDescription || null,
   description: serializeDescription(input),
   landingDescription: serializeLandingDescription(input),
-  beginning: input.purchaseStartDate,
-  deadline: input.purchaseEndDate,
+  beginning: toDayStart(input.purchaseStartDate),
+  deadline: toDayEnd(input.purchaseEndDate),
   periodDays: input.passDays,
   thumbnail: input.thumbnailUrl,
   isVisible: false, // 개설 시 기본 비노출
@@ -216,8 +233,8 @@ export const toUpdateDto = (input: PassFormInput) => ({
   introduction: input.shortDescription || null,
   description: serializeDescription(input),
   landingDescription: serializeLandingDescription(input),
-  beginning: input.purchaseStartDate,
-  deadline: input.purchaseEndDate,
+  beginning: toDayStart(input.purchaseStartDate),
+  deadline: toDayEnd(input.purchaseEndDate),
   periodDays: input.passDays,
   thumbnail: input.thumbnailUrl,
   planList: input.plans.map(planToInMembershipDto),

@@ -48,7 +48,7 @@ export default function CalendarMobileRow({ week, variant }: Props) {
 
   const weekBars = bars.filter(
     (e) =>
-      (barLaneOf.get(e.id) ?? 0) < itemRows &&
+      (barLaneOf.get(e.id) ?? 0) < MONTH_VISIBLE_ITEMS &&
       !eventEnd(e).isBefore(weekStart) &&
       !eventStart(e).isAfter(weekEnd),
   );
@@ -100,7 +100,10 @@ export default function CalendarMobileRow({ week, variant }: Props) {
         style={{ top: LINE_TOP }}
       >
         {Array.from({ length: itemRows }, (_, row) => (
-          <div key={row} className="grid grid-cols-7 items-start">
+          <div
+            key={row}
+            className="grid grid-flow-dense grid-cols-7 items-start"
+          >
             {/* 기간 막대 (여러 칸 span) */}
             {weekBars
               .filter((e) => barLaneOf.get(e.id) === row)

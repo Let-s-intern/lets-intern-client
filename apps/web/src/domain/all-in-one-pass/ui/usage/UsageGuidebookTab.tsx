@@ -6,6 +6,7 @@ import AlertModal from '@/common/alert/AlertModal';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import { downloadContentAndTrack } from '@/domain/career-board/utils/contentDownload';
 import { useQueryClient } from '@tanstack/react-query';
+import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import type { PassProgramCardData } from './PassProgramCard';
 import UsageApplyModals from './UsageApplyModals';
@@ -15,7 +16,10 @@ import { useUsageGuidebook } from './useUsageGuidebook';
 
 const UsageGuidebookTab = ({ passTitle }: { passTitle?: string }) => {
   const queryClient = useQueryClient();
-  const { available, owned, isLoading, isError } = useUsageGuidebook();
+  const params = useParams<{ applicationId: string }>();
+  const applicationId = Number(params.applicationId);
+  const { available, owned, isLoading, isError } =
+    useUsageGuidebook(applicationId);
   const apply = usePassProgramApply('guidebook');
   const [downloadTarget, setDownloadTarget] =
     useState<PassProgramCardData | null>(null);

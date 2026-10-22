@@ -70,6 +70,22 @@ const CreditDetailContent = () => {
     vodPass,
   } = useCredit(paymentId);
 
+  const isMembershipApplied =
+    paymentDetail.paymentInfo.isMembershipApplied ?? false;
+  // 패스 혜택 할인 = 정가 − 할인 − 쿠폰 − 최종결제 (결제 내역 합이 맞도록 역산)
+  const membershipDiscount = Math.max(
+    productAmount -
+      discountAmount -
+      (couponDiscountAmount ?? 0) -
+      (paymentDetail.paymentInfo.finalPrice ?? 0),
+    0,
+  );
+  // 0원 신청: totalPayment=판매가·실결제0 → 패스할인=판매가(노출). 차액결제: totalPayment=실결제 → 0(미노출).
+  const canceledMembershipDiscount = Math.max(
+    totalPayment - (paymentDetail.paymentInfo.finalPrice ?? 0),
+    0,
+  );
+
   const {
     data: userData,
     isLoading: userDataIsLoading,
@@ -249,6 +265,15 @@ const CreditDetailContent = () => {
                 content={totalPayment.toLocaleString() + '원'}
               />
             )}
+            {/* 패스 혜택 할인 — 취소 내역에선 판매가−실결제 기준(차액결제는 0이라 미노출) */}
+            {isCanceled &&
+              isMembershipApplied &&
+              canceledMembershipDiscount > 0 && (
+                <ReportCreditSubRow
+                  title="패스 혜택 할인"
+                  content={`-${canceledMembershipDiscount.toLocaleString()}원`}
+                />
+              )}
             {/* 환불 내역에서는 숨김 */}
             {!isCanceled && (
               <ReportCreditSubRow
@@ -271,6 +296,13 @@ const CreditDetailContent = () => {
                 content={`+${payment.additionalAmount.toLocaleString()}원`}
               />
             ))}
+            {/* 패스 혜택 할인 (올인원패스 적용 결제) */}
+            {!isCanceled && isMembershipApplied && membershipDiscount > 0 && (
+              <ReportCreditSubRow
+                title="패스 혜택 할인"
+                content={`-${membershipDiscount.toLocaleString()}원`}
+              />
+            )}
             {/* [환불된 내역] 환불 차감 금액 표시 */}
             {isCanceled && (
               <ReportCreditSubRow

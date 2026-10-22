@@ -1,7 +1,3 @@
-import {
-  RefundMode,
-  RefundTarget,
-} from '@/domain/admin/program/program-user/ui/RefundModal';
 import Table from '@/domain/admin/ui/table/regacy/Table';
 import TD from '@/domain/admin/ui/table/regacy/TD';
 import TH, { THProps } from '@/domain/admin/ui/table/regacy/TH';
@@ -13,15 +9,13 @@ import ParticipantDetailRows, { appAmount } from './ParticipantDetailRows';
 
 interface Props {
   participants: PassParticipant[];
-  programTitle: string;
-  onRefundClick: (target: RefundTarget, mode: RefundMode) => void;
+  onRevokeClick: (participant: PassParticipant) => void;
   onUsedProgramsClick: (participant: PassParticipant) => void;
 }
 
 export default function ParticipantTable({
   participants,
-  programTitle,
-  onRefundClick,
+  onRevokeClick,
   onUsedProgramsClick,
 }: Props) {
   const [nameOrder, setNameOrder] = useState<THProps['inOrder']>(null);
@@ -62,21 +56,8 @@ export default function ParticipantTable({
     return result;
   }, [participants, nameOrder]);
 
-  const refundTargetOf = (p: PassParticipant): RefundTarget => ({
-    applicationId: p.id,
-    name: p.name,
-    email: p.email,
-    phoneNum: p.phoneNum,
-    programTitle,
-    orderId: p.orderId,
-    pricePlanType: null,
-    couponName: p.couponName,
-    couponDiscount: p.couponDiscount,
-    finalPrice: p.finalPrice,
-  });
-
   return (
-    <Table minWidth={1180}>
+    <Table minWidth={1280}>
       <colgroup>
         <col style={{ width: 1 }} />
         <col style={{ width: 120 }} />
@@ -85,7 +66,8 @@ export default function ParticipantTable({
         <col style={{ width: 170 }} />
         <col style={{ width: 150 }} />
         <col style={{ width: 230 }} />
-        <col style={{ width: 160 }} />
+        <col style={{ width: 120 }} />
+        <col style={{ width: 120 }} />
       </colgroup>
       <thead>
         <tr>
@@ -99,6 +81,7 @@ export default function ParticipantTable({
           <TH>총 결제금액</TH>
           <TH>참여 기간</TH>
           <TH>이용 프로그램</TH>
+          <TH>권한 회수</TH>
         </tr>
       </thead>
       <tbody>
@@ -111,8 +94,7 @@ export default function ParticipantTable({
               isOpen={expanded.has(email)}
               onToggle={() => toggle(email)}
               onUsedProgramsClick={onUsedProgramsClick}
-              onRefundClick={onRefundClick}
-              refundTargetOf={refundTargetOf}
+              onRevokeClick={onRevokeClick}
             />
           );
         })}
@@ -126,8 +108,7 @@ interface GroupRowsProps {
   isOpen: boolean;
   onToggle: () => void;
   onUsedProgramsClick: (participant: PassParticipant) => void;
-  onRefundClick: (target: RefundTarget, mode: RefundMode) => void;
-  refundTargetOf: (p: PassParticipant) => RefundTarget;
+  onRevokeClick: (participant: PassParticipant) => void;
 }
 
 function ParticipantGroupRows({
@@ -135,8 +116,7 @@ function ParticipantGroupRows({
   isOpen,
   onToggle,
   onUsedProgramsClick,
-  onRefundClick,
-  refundTargetOf,
+  onRevokeClick,
 }: GroupRowsProps) {
   const head = apps[0];
   const total = apps.reduce((sum, p) => sum + appAmount(p), 0);
@@ -176,24 +156,27 @@ function ParticipantGroupRows({
             className="border-primary text-primary hover:bg-primary-5 w-24 whitespace-nowrap rounded border py-1 text-xs"
             onClick={(e) => {
               e.stopPropagation();
-              onUsedProgramsClick({
-                ...head,
-                usedPrograms: apps.flatMap((p) => p.usedPrograms),
-              });
+              onUsedProgramsClick(head);
             }}
           >
             조회
           </button>
         </TD>
+        <TD>
+          <button
+            type="button"
+            className="w-24 whitespace-nowrap rounded border border-red-500 py-1 text-xs text-red-600 hover:bg-red-50"
+            onClick={(e) => {
+              e.stopPropagation();
+              onRevokeClick(head);
+            }}
+          >
+            권한 회수
+          </button>
+        </TD>
       </tr>
 
-      {isOpen && (
-        <ParticipantDetailRows
-          apps={apps}
-          onRefundClick={onRefundClick}
-          refundTargetOf={refundTargetOf}
-        />
-      )}
+      {isOpen && <ParticipantDetailRows apps={apps} />}
     </>
   );
 }

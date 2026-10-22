@@ -371,6 +371,8 @@ export const mypageApplicationsSchema = z
         isDownloaded: z.boolean().nullable().optional(),
         // 올인원패스(멤버십)로 신청된 건지 여부
         isMembershipApplied: z.boolean().nullable().optional(),
+        // 신청에 사용된 패스 id. 특정 패스 혜택인지 판별용(BE 추가 전까지 undefined → isMembershipApplied로 폴백)
+        membershipApplicationId: z.number().nullable().optional(),
         // 챌린지 오픈채팅방. 어드민이 챌린지 기본정보에서 입력한 값(Challenge.chatLink/chatPassword)이며
         // BE 응답 추가 전까지는 undefined 라 오픈채팅방 버튼이 렌더되지 않는다.
         chatLink: z.string().nullable().optional(),

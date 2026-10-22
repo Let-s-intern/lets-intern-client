@@ -6,7 +6,6 @@ import { useParams, usePathname } from 'next/navigation';
 
 type NavItem = { id: string; label: string; href: string };
 
-/** 올인원패스 대시보드 사이드바(4탭). 챌린지 NavBar 구조를 따르되 서브아이템 없이 평면. */
 const AllInOnePassNavBar = () => {
   const params = useParams<{ id: string; applicationId: string }>();
   const pathname = usePathname();
@@ -43,7 +42,6 @@ const AllInOnePassNavBar = () => {
           </li>
         ))}
       </ul>
-      {/* TODO: 사이드바 하단 외부 링크(오공고·플레이북·커뮤니티 등) — mock 붙일 때 추가 */}
     </nav>
   );
 };

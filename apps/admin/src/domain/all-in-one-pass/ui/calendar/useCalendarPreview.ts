@@ -108,13 +108,13 @@ export function useCalendarPreview({
       end: dayjs(c.endDate),
     }));
     const eventItems: BarItem[] = events
-      .filter((e) => e.date)
+      .filter((e) => e.startDate)
       .map((e) => ({
         id: e.id,
         title: e.title || (e.type === 'GUERRILLA' ? '게릴라세션' : '마일스톤'),
         kind: e.type,
-        start: dayjs(e.date as string),
-        end: dayjs(e.date as string),
+        start: dayjs(e.startDate as string),
+        end: dayjs((e.endDate ?? e.startDate) as string),
       }));
     return [...challengeItems, ...eventItems].sort(
       (a, b) => a.start.valueOf() - b.start.valueOf(),

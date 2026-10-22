@@ -1,3 +1,4 @@
+import { useGetUsedProgramsQuery } from '@/api/all-in-one-pass/useParticipants';
 import dayjs from '@/lib/dayjs';
 import { PassParticipant, UsedProgramType } from '../../types';
 import {
@@ -18,12 +19,21 @@ const usedProgramTypeToText: Record<UsedProgramType, string> = {
 
 interface Props {
   participant: PassParticipant | null;
+  passId?: number;
   onClose: () => void;
 }
 
 /** 참여자가 멤버십으로 이용한 프로그램 목록 모달 */
-export default function UsedProgramsModal({ participant, onClose }: Props) {
+export default function UsedProgramsModal({
+  participant,
+  passId,
+  onClose,
+}: Props) {
   const open = participant !== null;
+  const { data: programs = [], isLoading } = useGetUsedProgramsQuery(
+    passId,
+    participant?.id,
+  );
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
@@ -36,9 +46,13 @@ export default function UsedProgramsModal({ participant, onClose }: Props) {
         </IconButton>
       </DialogTitle>
       <DialogContent dividers>
-        {participant && participant.usedPrograms.length > 0 ? (
+        {isLoading ? (
+          <p className="text-xsmall14 text-neutral-45 py-6 text-center">
+            불러오는 중...
+          </p>
+        ) : programs.length > 0 ? (
           <ul className="flex flex-col gap-2">
-            {participant.usedPrograms.map((program) => (
+            {programs.map((program) => (
               <li
                 key={program.id}
                 className="border-neutral-80 flex items-center justify-between gap-3 rounded-sm border px-4 py-3"

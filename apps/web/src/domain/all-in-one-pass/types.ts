@@ -113,6 +113,8 @@ export interface PassCalendarEvent {
   programId?: number | null;
   /** 챌린지 참여 인스턴스 id. null = 미참여(참여 전). (BE 팩트) */
   challengeApplicationId?: number | null;
+  /** BE가 내려준 참여 상태(benefit/challenge 3분류). 있으면 FE 파생 대신 이걸 사용. */
+  participationStatus?: PassParticipationStatus | null;
 }
 
 /**
@@ -130,6 +132,55 @@ export type NormalizedCalendarEvent = PassCalendarEvent & {
 export interface PassExternalLink {
   id: number;
   name: string;
+  url: string;
+}
+
+// ─── 내 신청 상세 (GET /membership-application/{applicationId} 응답 shape) ───
+
+/** 연장 옵션 (연장 모달) */
+export interface AllInOnePassOption {
+  membershipOptionId: number;
+  title: string;
+  extensionDays: number;
+  price: number;
+  discount: number | null;
+}
+
+/** 내 신청 상세 — 대시보드 공통 소스. description 은 JSON(캘린더·외부링크·멘토링쿠폰) 문자열 */
+export interface AllInOnePassApplicationDetail {
+  membershipApplicationId: number;
+  membershipId: number;
+  title: string;
+  startDate: string;
+  endDate: string;
+  periodDays: number;
+  plan: { title: string; privilegeList: PassPrivilege[] };
+  description: string;
+  optionList: AllInOnePassOption[];
+}
+
+/** description(JSON) 파싱 결과 — 어드민 저장 형식 (게릴라/마일스톤·외부링크·멘토링쿠폰) */
+export interface PassDescriptionBlob {
+  calendarEvents: {
+    id: string;
+    startDate: string; // 시작(시간 포함)
+    endDate: string; // 종료(시간 포함)
+    type: 'GUERRILLA' | 'MILESTONE';
+    title: string;
+    url?: string | null;
+  }[];
+  externalLinks: { id: string; name: string; url: string }[];
+  mentoringCouponAutoIssue: boolean;
+}
+
+// ─── 나의 패스 이용 > VOD ───
+
+/** 세미나 VOD 1건 (seminar-vod 공개 API). url 은 외부 상세페이지. */
+export interface PassVod {
+  id: number;
+  title: string;
+  description: string | null;
+  thumbnailUrl: string;
   url: string;
 }
 
