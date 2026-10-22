@@ -2,24 +2,25 @@
 'use client';
 
 import LoadingContainer from '@/common/loading/LoadingContainer';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import type { PassProgramCardData } from './PassProgramCard';
 import UsageSection from './UsageSection';
-import { useUsageProgramTab } from './useUsageProgramTab';
+import { useUsageChallenge } from './useUsageChallenge';
 
 const UsageChallengeTab = () => {
   const router = useRouter();
+  const params = useParams<{ applicationId: string }>();
+  const applicationId = Number(params.applicationId);
   const { before, inProgress, done, isLoading, isError } =
-    useUsageProgramTab('CHALLENGE');
+    useUsageChallenge(applicationId);
 
   const handleCardClick = (item: PassProgramCardData) => {
-    if (item.participation === 'BEFORE') {
-      // TODO(BE): 참여하기 — 바텀시트 플랜 선택 → 베이직 0원 headless 신청 / 차액은 결제창.
-      // 신청 API 전까지는 상세로 이동(상세에서 신청 가능).
+    // 참여 전, 또는 applicationId 미확보 시 상세로 이동(상세에서 신청·입장).
+    if (item.participation === 'BEFORE' || item.applicationId == null) {
       router.push(`/program/challenge/${item.programId}`);
       return;
     }
-    // 참여 중/완료 → 대시보드 입장
+    // 참여 중/완료 → 개인 챌린지 대시보드 입장
     router.push(`/challenge/${item.applicationId}/${item.programId}`);
   };
 

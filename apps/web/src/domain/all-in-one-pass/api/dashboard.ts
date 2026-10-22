@@ -175,6 +175,35 @@ export const useGetBenefitChallenges = (applicationId: number) =>
     refetchOnWindowFocus: false,
   });
 
+// ─── GET /{id}/benefit/guidebook — 가이드북 탭 열람 가능 목록(패스로 볼 수 있는 전체). 보유 분리는 user/applications ───
+const benefitGuidebookSchema = z.object({
+  accessible: z.boolean().nullish(),
+  programList: z
+    .array(
+      z.object({
+        programId: z.number(),
+        title: z.string().nullish(),
+        shortDesc: z.string().nullish(),
+        thumbnail: z.string().nullish(),
+      }),
+    )
+    .default([]),
+});
+export type BenefitGuidebook = z.infer<typeof benefitGuidebookSchema>;
+
+export const useGetBenefitGuidebook = (applicationId: number) =>
+  useQuery({
+    queryKey: ['allInOnePass', 'benefitGuidebook', applicationId],
+    queryFn: async (): Promise<BenefitGuidebook> => {
+      const res = await axios.get(
+        `/membership-application/${applicationId}/benefit/guidebook`,
+      );
+      return benefitGuidebookSchema.parse(res.data.data);
+    },
+    enabled: Number.isFinite(applicationId) && applicationId > 0,
+    refetchOnWindowFocus: false,
+  });
+
 export const useGetPassExternalLinks = (applicationId: number) => {
   const { data, isLoading, isError } = useGetPassCalendarData(applicationId);
   return useMemo(
