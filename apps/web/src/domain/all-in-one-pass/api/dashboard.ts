@@ -102,6 +102,33 @@ export const useGetMyPassPlan = (applicationId: number) =>
     refetchOnWindowFocus: false,
   });
 
+// ─── GET /{id}/extension-option — 연장 모달 옵션(isVisible 은 BE가 필터) ───
+const extensionOptionSchema = z.object({
+  membershipOptionId: z.number(),
+  title: z.string().nullish(),
+  extensionDays: z.number(),
+  price: z.number(),
+  discount: z.number().nullish(),
+  isVisible: z.boolean().nullish(),
+});
+const extensionOptionsSchema = z.object({
+  optionList: z.array(extensionOptionSchema).default([]),
+});
+export type ExtensionOption = z.infer<typeof extensionOptionSchema>;
+
+export const useGetExtensionOptions = (applicationId: number) =>
+  useQuery({
+    queryKey: ['allInOnePass', 'extensionOption', applicationId],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/membership-application/${applicationId}/extension-option`,
+      );
+      return extensionOptionsSchema.parse(res.data.data);
+    },
+    enabled: Number.isFinite(applicationId) && applicationId > 0,
+    refetchOnWindowFocus: false,
+  });
+
 /**
  * 내 신청 상세(mock 단일 소스) — 기간/이용권/연장 파생. 섹션별 실 API로 순차 교체 예정.
  * // TODO(BE): 섹션별 엔드포인트로 분해 후 제거.

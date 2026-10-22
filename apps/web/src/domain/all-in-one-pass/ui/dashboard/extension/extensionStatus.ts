@@ -15,6 +15,16 @@ export interface ExtensionStatus {
 const diffDays = (endDate: string) =>
   dayjs(endDate).startOf('day').diff(dayjs().startOf('day'), 'day');
 
+/** 연장 가능 마지막 날 = min(만료+1일, 판매종료일). */
+export const getExtensionWindowEnd = (
+  endDate: string,
+  deadline?: string | null,
+) => {
+  const endPlus = dayjs(endDate).startOf('day').add(DAYS_AFTER_END, 'day');
+  const cap = deadline ? dayjs(deadline).startOf('day') : null;
+  return cap && cap.isBefore(endPlus) ? cap : endPlus; // 판매종료일 상한
+};
+
 /** 연장 창 = 만료 7일 전 ~ min(만료+1일, 판매종료일). 종료 여부·뱃지도 파생. */
 export const getExtensionStatus = (
   endDate: string,
@@ -26,9 +36,7 @@ export const getExtensionStatus = (
   const isEnded = daysLeft < 0;
 
   const windowStart = end.subtract(DAYS_BEFORE_END, 'day');
-  const endPlus = end.add(DAYS_AFTER_END, 'day');
-  const cap = deadline ? dayjs(deadline).startOf('day') : null;
-  const windowEnd = cap && cap.isBefore(endPlus) ? cap : endPlus; // 판매종료일 상한
+  const windowEnd = getExtensionWindowEnd(endDate, deadline);
   const canExtend = !today.isBefore(windowStart) && !today.isAfter(windowEnd);
 
   const badge: ExtensionStatus['badge'] = canExtend

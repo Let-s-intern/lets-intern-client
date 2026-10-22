@@ -5,13 +5,16 @@ import OutlinedButton from '@/common/button/OutlinedButton';
 import SolidButton from '@/common/button/SolidButton';
 import dayjs from '@/lib/dayjs';
 import clsx from 'clsx';
-import { useState } from 'react';
-import { useGetMembershipApplication } from '../../../api/dashboard';
-import type { AllInOnePassOption } from '../../../types';
+import { useEffect, useMemo, useState } from 'react';
+import {
+  useGetExtensionOptions,
+  useGetMyMembershipApplication,
+  type ExtensionOption,
+} from '../../../api/dashboard';
 import ExtensionSheet from './ExtensionSheet';
 import { getExtensionCopy } from './extensionStatus';
 
-const finalPrice = (o: AllInOnePassOption) => o.price - (o.discount ?? 0);
+const finalPrice = (o: ExtensionOption) => o.price - (o.discount ?? 0);
 const formatDate = (d: string) => dayjs(d).format('YYYY년 M월 D일');
 
 interface Props {
@@ -20,21 +23,26 @@ interface Props {
 }
 
 export default function ExtensionModal({ applicationId, onClose }: Props) {
-  const { data } = useGetMembershipApplication(applicationId);
-  const options = data?.optionList ?? [];
-  const [selectedId, setSelectedId] = useState<number | null>(
-    options[0]?.membershipOptionId ?? null,
-  );
+  const { data: base } = useGetMyMembershipApplication(applicationId);
+  const { data: optData } = useGetExtensionOptions(applicationId);
+  const options = useMemo(() => optData?.optionList ?? [], [optData]);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (selectedId == null && options.length)
+      setSelectedId(options[0].membershipOptionId);
+  }, [options, selectedId]);
+
   const selected =
     options.find((o) => o.membershipOptionId === selectedId) ?? null;
 
-  if (!data) return null;
+  if (!base?.endDate) return null;
 
   const price = selected ? finalPrice(selected) : 0;
   const extendedEnd = selected
-    ? dayjs(data.endDate).add(selected.extensionDays, 'day')
+    ? dayjs(base.endDate).add(selected.extensionDays, 'day')
     : null;
-  const copy = getExtensionCopy(data.title, data.endDate);
+  const copy = getExtensionCopy(base.title ?? '올인원패스', base.endDate);
 
   const handleConfirm = () => {
     if (!selected) return;
@@ -90,7 +98,7 @@ export default function ExtensionModal({ applicationId, onClose }: Props) {
               현재 이용 종료일
             </span>
             <span className="text-xsmall14 md:text-xsmall16 text-neutral-0 font-normal">
-              {formatDate(data.endDate)}
+              {formatDate(base.endDate)}
             </span>
           </div>
           <img src="/icons/Arrow_Right_LG.svg" alt="" className="p-1" />

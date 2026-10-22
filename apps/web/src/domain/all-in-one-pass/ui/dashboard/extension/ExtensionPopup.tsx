@@ -6,7 +6,11 @@ import dayjs from '@/lib/dayjs';
 import { useEffect, useState } from 'react';
 import { useGetMyMembershipApplication } from '../../../api/dashboard';
 import ExtensionSheet from './ExtensionSheet';
-import { getExtensionCopy, getExtensionStatus } from './extensionStatus';
+import {
+  getExtensionCopy,
+  getExtensionStatus,
+  getExtensionWindowEnd,
+} from './extensionStatus';
 
 const dismissKey = (applicationId: number) =>
   `pass-ext-popup-dismissed-${applicationId}`;
@@ -77,7 +81,11 @@ export default function ExtensionPopup({
           </span>
         </div>
         <p className="text-xsmall14 text-neutral-35">
-          기간 연장은 이용 종료 다음 날까지 가능해요.
+          기간 연장은{' '}
+          {getExtensionWindowEnd(base.endDate, base.deadline).format(
+            'YYYY년 M월 D일',
+          )}
+          까지 가능해요.
         </p>
 
         <SolidButton
