@@ -85,7 +85,10 @@ export default function CalendarDesktopWeek({ week, wi }: Props) {
         {Array.from({ length: MAX_ROWS }, (_, row) => {
           const rowBars = weekBars.filter((e) => barLaneOf.get(e.id) === row);
           return (
-            <div key={row} className="grid h-[18px] grid-cols-7">
+            <div
+              key={row}
+              className="grid h-[18px] grid-flow-dense grid-cols-7"
+            >
               {/* 기간 막대 (여러 칸 span) */}
               {rowBars.map((e) => {
                 const segStart = eventStart(e).isBefore(weekStart)
@@ -103,7 +106,7 @@ export default function CalendarDesktopWeek({ week, wi }: Props) {
                       gridColumn: `${colOf(segStart)} / ${colOf(segEnd) + 1}`,
                       backgroundColor: eventColor(e),
                     }}
-                    className="text-xxsmall10 rounded-xxs mx-0.5 flex items-center truncate px-1 tracking-tighter"
+                    className="text-xxsmall10 rounded-xxs row-start-1 mx-0.5 flex items-center truncate px-1 tracking-tighter"
                     title={e.title}
                   >
                     {showLabel && <span className="truncate">{e.title}</span>}
@@ -122,7 +125,7 @@ export default function CalendarDesktopWeek({ week, wi }: Props) {
                       gridColumn: di + 1,
                       backgroundColor: eventColor(p.event),
                     }}
-                    className="text-xxsmall10 text-neutral-10 rounded-xxs mx-0.5 flex items-center truncate px-1 tracking-tighter"
+                    className="text-xxsmall10 text-neutral-10 rounded-xxs row-start-1 mx-0.5 flex items-center truncate px-1 tracking-tighter"
                     title={p.event.title}
                   >
                     <span className="truncate">{p.event.title}</span>
@@ -137,7 +140,7 @@ export default function CalendarDesktopWeek({ week, wi }: Props) {
                     <div
                       key={`badge-${d.toString()}`}
                       style={{ gridColumn: di + 1 }}
-                      className="text-xxsmall10 rounded-xxs mx-0.5 flex items-center bg-[#EFEFEF] px-1 tracking-tighter"
+                      className="text-xxsmall10 rounded-xxs row-start-1 mx-0.5 flex items-center bg-[#EFEFEF] px-1 tracking-tighter"
                     >
                       + {n}개
                     </div>

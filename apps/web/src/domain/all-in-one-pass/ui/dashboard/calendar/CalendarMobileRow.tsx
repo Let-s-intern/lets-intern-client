@@ -100,7 +100,10 @@ export default function CalendarMobileRow({ week, variant }: Props) {
         style={{ top: LINE_TOP }}
       >
         {Array.from({ length: itemRows }, (_, row) => (
-          <div key={row} className="grid grid-cols-7 items-start">
+          <div
+            key={row}
+            className="grid grid-flow-dense grid-cols-7 items-start"
+          >
             {/* 기간 막대 (여러 칸 span) */}
             {weekBars
               .filter((e) => barLaneOf.get(e.id) === row)

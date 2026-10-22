@@ -23,6 +23,14 @@ const descriptionBlob: PassDescriptionBlob = {
       url: 'https://www.letscareer.co.kr/',
     },
     {
+      id: 'b5446bbe-a16e-48ad-bafa-f1bcca33d91d',
+      startDate: '2026-10-27T19:00:00',
+      endDate: '2026-10-27T21:00:00',
+      type: 'GUERRILLA',
+      title: '쥬디게릴라',
+      url: 'https://www.letscareer.co.kr/',
+    },
+    {
       id: 'a1a1a1a1-0000-0000-0000-000000000001',
       startDate: '2026-10-25T00:00:00',
       endDate: '2026-10-25T23:59:59',
@@ -30,11 +38,19 @@ const descriptionBlob: PassDescriptionBlob = {
       title: '중간 점검 마일스톤',
       url: null,
     },
+    {
+      id: 'a1a1a1a1-0000-0000-0000-000000000001',
+      startDate: '2026-11-01T00:00:00',
+      endDate: '2026-11-01T23:59:59',
+      type: 'MILESTONE',
+      title: '중간 점검 마일스톤',
+      url: null,
+    },
     // 오버플로(+n개) 확인용 — 한 날(10/25)에 8개 이상 몰아둔다
     ...Array.from({ length: 8 }, (_, i) => ({
       id: `overflow-${i}`,
-      startDate: '2026-10-25T10:00:00',
-      endDate: '2026-10-25T11:00:00',
+      startDate: '2026-10-28T10:00:00',
+      endDate: '2026-10-28T11:00:00',
       type: (i % 2 === 0 ? 'GUERRILLA' : 'MILESTONE') as
         | 'GUERRILLA'
         | 'MILESTONE',
