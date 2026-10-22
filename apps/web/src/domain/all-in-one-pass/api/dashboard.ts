@@ -78,6 +78,32 @@ export const useGetMyMembershipApplication = (applicationId: number) =>
     refetchOnWindowFocus: false,
   });
 
+// ─── GET /{id}/plan — 이용권 카드 ───
+const planPrivilegeSchema = z.object({
+  membershipPlanPrivilegeId: z.number().nullish(),
+  programType: z.string(),
+  privilegeType: z.string(),
+  programCount: z.number().nullish(),
+});
+const myPassPlanSchema = z.object({
+  title: z.string().nullish(),
+  privilegeList: z.array(planPrivilegeSchema).default([]),
+});
+export type MyPassPlan = z.infer<typeof myPassPlanSchema>;
+
+export const useGetMyPassPlan = (applicationId: number) =>
+  useQuery({
+    queryKey: ['allInOnePass', 'plan', applicationId],
+    queryFn: async (): Promise<MyPassPlan> => {
+      const res = await axios.get(
+        `/membership-application/${applicationId}/plan`,
+      );
+      return myPassPlanSchema.parse(res.data.data);
+    },
+    enabled: Number.isFinite(applicationId) && applicationId > 0,
+    refetchOnWindowFocus: false,
+  });
+
 /**
  * 내 신청 상세(mock 단일 소스) — 기간/이용권/연장 파생. 섹션별 실 API로 순차 교체 예정.
  * // TODO(BE): 섹션별 엔드포인트로 분해 후 제거.

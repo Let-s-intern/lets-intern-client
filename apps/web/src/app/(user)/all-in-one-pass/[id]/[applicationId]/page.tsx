@@ -31,21 +31,16 @@ export default function AllInOnePassDashboardPage() {
         </h1>
       </header>
       <div className="flex flex-col gap-6 md:gap-10">
-        {myPass && (
-          <div className="flex flex-col gap-2">
-            <div className="flex gap-2 md:gap-5">
-              <RemainingPeriodCard
-                applicationId={applicationId}
-                onExtend={() => setExtensionOpen(true)}
-              />
-              <PassUsageCard
-                plan={myPass.plan}
-                mentoringCoupons={myPass.mentoringCoupons}
-              />
-            </div>
-            <MobileExternalLinks applicationId={applicationId} />
+        <div className="flex flex-col gap-2">
+          <div className="flex gap-2 md:gap-5">
+            <RemainingPeriodCard
+              applicationId={applicationId}
+              onExtend={() => setExtensionOpen(true)}
+            />
+            <PassUsageCard applicationId={applicationId} />
           </div>
-        )}
+          <MobileExternalLinks applicationId={applicationId} />
+        </div>
         {calendarEvents && (
           <>
             <div className="hidden md:block">
