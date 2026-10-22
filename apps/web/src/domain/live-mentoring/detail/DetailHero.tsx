@@ -108,10 +108,10 @@ const DetailHero = ({
           멘토 사진은 소개 묶음 왼쪽에 작게 둔다. 큰 사진을 옆 칸에 세우면 사진 한 장이
           히어로 무게를 다 가져가고, 배경으로 깔면 구매 카드가 사진을 덮는다.
         */}
-        <div className="flex items-start gap-6">
+        <div className="flex flex-col items-start gap-6 md:flex-row">
           {/*
             정사각형에 모서리만 둥글린다. 라운드는 바로 아래 구매 카드와 같은 값이라 두 덩어리가
-            한 벌로 보인다. 작아서 모바일에서도 제목 옆에 함께 둔다.
+            한 벌로 보인다. 모바일은 제목 칸이 좁아 사진 아래로 배지·제목·불릿을 세로로 쌓는다.
             얼굴이 위쪽에 있는 사진이 많아 위 기준으로 자른다.
           */}
           {profile.profileImage && (
