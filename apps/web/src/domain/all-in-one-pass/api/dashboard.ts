@@ -2,18 +2,14 @@ import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { z } from 'zod';
-import { applicationDetailFixture } from '../mock/dashboardFixtures';
-import { mockDelay } from '../mock/mockDelay';
 import type {
-  AllInOnePassApplication,
-  AllInOnePassApplicationDetail,
   PassCalendarEvent,
   PassDescriptionBlob,
   PassExternalLink,
   PassParticipationStatus,
 } from '../types';
 
-// U-1 대시보드 훅. 모두 내 신청 상세(단일 소스)에서 파생 — 실 API 시 useGetMembershipApplication 만 교체.
+// U-1 대시보드 훅 — 섹션별 실 API(가드·이용권·연장옵션·캘린더·benefit/challenge).
 
 /** description(JSON) 파싱 → 캘린더(게릴라/마일스톤)·외부링크·멘토링쿠폰 */
 const parsePassDescription = (description: string) => {
@@ -128,48 +124,6 @@ export const useGetExtensionOptions = (applicationId: number) =>
     enabled: Number.isFinite(applicationId) && applicationId > 0,
     refetchOnWindowFocus: false,
   });
-
-/**
- * 내 신청 상세(mock 단일 소스) — 기간/이용권/연장 파생. 섹션별 실 API로 순차 교체 예정.
- * // TODO(BE): 섹션별 엔드포인트로 분해 후 제거.
- */
-export const useGetMembershipApplication = (applicationId: number) =>
-  useQuery({
-    queryKey: ['allInOnePass', 'application', applicationId],
-    queryFn: (): Promise<AllInOnePassApplicationDetail> =>
-      mockDelay(applicationDetailFixture),
-    enabled: Number.isFinite(applicationId) && applicationId > 0,
-    retry: false, // 403/404 는 즉시 에러로 (가드 redirect)
-    refetchOnWindowFocus: false,
-  });
-
-export const useGetMyPass = (applicationId: number) => {
-  const { data, isLoading, isError } =
-    useGetMembershipApplication(applicationId);
-  return useMemo(() => {
-    if (!data) return { data: undefined, isLoading, isError };
-    const { mentoringCouponAutoIssue } = parsePassDescription(data.description);
-    const myPass: AllInOnePassApplication = {
-      id: data.membershipApplicationId,
-      passTitle: data.title,
-      startDate: data.startDate,
-      endDate: data.endDate,
-      plan: {
-        id: 0,
-        title: data.plan.title,
-        description: null,
-        price: 0,
-        discount: null,
-        privileges: data.plan.privilegeList,
-      },
-      // 멘토링 쿠폰은 현재 고정 — 자동발급이면 쿠폰명 노출
-      mentoringCoupons: mentoringCouponAutoIssue
-        ? [{ name: '1:1 LIVE 멘토링 50% 할인 쿠폰', count: 1 }]
-        : [],
-    };
-    return { data: myPass, isLoading, isError };
-  }, [data, isLoading, isError]);
-};
 
 // ─── GET /{id}/calendar — 게릴라/마일스톤·외부링크(description). 챌린지는 benefit/challenge ───
 const calendarSchema = z.object({
