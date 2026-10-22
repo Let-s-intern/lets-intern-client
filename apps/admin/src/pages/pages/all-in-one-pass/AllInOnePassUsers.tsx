@@ -1,16 +1,6 @@
-import { AdminRefundRequest } from '@/api/adminRefund';
-import {
-  participantListQueryKey,
-  useGetParticipantsQuery,
-  useRefundParticipantMutation,
-} from '@/api/all-in-one-pass/useParticipants';
-import { useGetAllInOnePassListQuery } from '@/api/all-in-one-pass/usePassList';
+import { useGetParticipantsQuery } from '@/api/all-in-one-pass/useParticipants';
 import EmptyContainer from '@/common/container/EmptyContainer';
 import LoadingContainer from '@/common/loading/LoadingContainer';
-import RefundModal, {
-  RefundMode,
-  RefundTarget,
-} from '@/domain/admin/program/program-user/ui/RefundModal';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { PassParticipant } from '@/domain/all-in-one-pass/types';
@@ -18,53 +8,32 @@ import DownloadActions from '@/domain/all-in-one-pass/ui/participant/DownloadAct
 import ParticipantTable from '@/domain/all-in-one-pass/ui/participant/ParticipantTable';
 import UsedProgramsModal from '@/domain/all-in-one-pass/ui/participant/UsedProgramsModal';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import { useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { IoArrowBack } from 'react-icons/io5';
 import { Link, useParams } from 'react-router-dom';
 
-/** 올인원패스 참여자 조회 (기존 참여자 레이아웃 + 환불 + 이용 프로그램 조회) */
+/**
+ * 올인원패스 참여자 조회 (참여자 목록 + 이용 프로그램 조회 + 권한 회수).
+ * 환불은 멤버십 전용 환불 API 미구현이라 토스페이먼츠에서 직접 처리한다.
+ */
 export default function AllInOnePassUsers() {
   const { passId } = useParams();
   const numericPassId = passId ? Number(passId) : undefined;
-  const queryClient = useQueryClient();
   const { snackbar } = useAdminSnackbar();
 
-  const { data: passes } = useGetAllInOnePassListQuery();
-  const passTitle = useMemo(
-    () => passes?.find((p) => p.id === numericPassId)?.title ?? '올인원패스',
-    [passes, numericPassId],
-  );
-
   const { data, isLoading, error } = useGetParticipantsQuery(numericPassId);
-  const participants = useMemo(() => data ?? [], [data]);
+  const passTitle = data?.membershipTitle || '올인원패스';
+  const participants = useMemo(() => data?.participants ?? [], [data]);
 
-  const [refundRequest, setRefundRequest] = useState<{
-    target: RefundTarget;
-    mode: RefundMode;
-  } | null>(null);
   const [usedProgramsOf, setUsedProgramsOf] = useState<PassParticipant | null>(
     null,
   );
 
-  const refundMutation = useRefundParticipantMutation({
-    successCallback: () => {
-      queryClient.invalidateQueries({
-        queryKey: [participantListQueryKey],
-      });
-      snackbar('환불 처리되었습니다.');
-      setRefundRequest(null);
-    },
-    errorCallback: (e) =>
-      snackbar(e instanceof Error ? e.message : '환불에 실패했습니다.'),
-  });
-
-  const handleRefundSubmit = (body: AdminRefundRequest) => {
-    if (!refundRequest) return;
-    refundMutation.mutate({
-      applicationId: refundRequest.target.applicationId,
-      body,
-    });
+  // TODO: 권한 회수 API 연동 (BE 개발 후)
+  const handleRevoke = (participant: PassParticipant) => {
+    if (!window.confirm(`<${participant.name}>님의 권한을 회수하시겠습니까?`))
+      return;
+    snackbar('권한 회수 API 연동 예정입니다.');
   };
 
   return (
@@ -97,24 +66,14 @@ export default function AllInOnePassUsers() {
       ) : (
         <ParticipantTable
           participants={participants}
-          programTitle={passTitle}
-          onRefundClick={(target, mode) => setRefundRequest({ target, mode })}
+          onRevokeClick={handleRevoke}
           onUsedProgramsClick={setUsedProgramsOf}
-        />
-      )}
-
-      {refundRequest && (
-        <RefundModal
-          target={refundRequest.target}
-          mode={refundRequest.mode}
-          isSubmitting={refundMutation.isPending}
-          onSubmit={handleRefundSubmit}
-          onClose={() => setRefundRequest(null)}
         />
       )}
 
       <UsedProgramsModal
         participant={usedProgramsOf}
+        passId={numericPassId}
         onClose={() => setUsedProgramsOf(null)}
       />
     </main>
