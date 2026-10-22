@@ -129,6 +129,34 @@ function resolvePeriodRange(
 }
 
 /**
+ * 같은 회차 세션을 미션 일자로 다시 나눈다.
+ *
+ * 버전이 있는 챌린지는 같은 회차에 버전별 미션이 따로 있고(LC-3247), `feedback.th` 도
+ * 버전마다 센다. 미션 일자가 다르면 다른 미션이므로 기간 바를 따로 만든다.
+ * 미션 일자가 없는 세션(상세 조회 전·실패)은 첫 묶음에 붙여 기존 동작을 유지한다.
+ */
+export function splitByMissionWindow(
+  thSessions: FeedbackMentorWithAttendance[],
+): FeedbackMentorWithAttendance[][] {
+  const byWindow = new Map<string, FeedbackMentorWithAttendance[]>();
+  const undated: FeedbackMentorWithAttendance[] = [];
+  for (const s of thSessions) {
+    if (!s.missionStartDate || !s.missionEndDate) {
+      undated.push(s);
+      continue;
+    }
+    const key = `${s.missionStartDate}~${s.missionEndDate}`;
+    const bucket = byWindow.get(key);
+    if (bucket) bucket.push(s);
+    else byWindow.set(key, [s]);
+  }
+  const buckets = Array.from(byWindow.values());
+  if (buckets.length === 0) return [undated];
+  buckets[0].push(...undated);
+  return buckets;
+}
+
+/**
  * BE 라이브 세션 상태 → 캘린더 배지 상태 매핑.
  *
  * ⚠️ 종료된 RESERVED 보정: BE는 세션 종료 후에도 `status`를 RESERVED로 유지하고
@@ -250,7 +278,15 @@ export function deriveLiveFeedbackBars(
       else byTh.set(th, [s]);
     }
 
-    for (const [th, thSessions] of byTh) {
+    const missionBuckets = Array.from(byTh).flatMap(([th, thSessions]) =>
+      splitByMissionWindow(thSessions).map(
+        (sessionsOfMission, index) => [th, sessionsOfMission, index] as const,
+      ),
+    );
+
+    for (const [th, thSessions, missionIndex] of missionBuckets) {
+      // 같은 회차의 두 번째 미션부터 missionId 대역을 띄워 충돌을 피한다
+      const missionOffset = missionIndex * 10_000_000;
       const dates = thSessions.map((s) => toDate(s.startDate));
       const endDates = thSessions.map((s) => toDate(s.endDate));
       const min = dates.reduce((a, b) => (a < b ? a : b));
@@ -266,7 +302,7 @@ export function deriveLiveFeedbackBars(
         // 같은 챌린지의 세션과 동일 challengeId 유지(회차는 challengeId가 아닌 th로 구분)
         challengeId: buildSyntheticChallengeId(groupIndex),
         // (challengeId, th)마다 유일한 음수 missionId
-        missionId: -(2_000_000 + groupIndex * 100 + th),
+        missionId: -(2_000_000 + groupIndex * 100 + th + missionOffset),
         challengeTitle: title,
         th,
         startDate,
@@ -290,7 +326,7 @@ export function deriveLiveFeedbackBars(
         bars.push({
           barType: 'live-feedback-mentor-open',
           challengeId: buildSyntheticChallengeId(groupIndex),
-          missionId: -(3_100_000 + groupIndex * 100 + th),
+          missionId: -(3_100_000 + groupIndex * 100 + th + missionOffset),
           challengeTitle: title,
           th,
           startDate: openStart,

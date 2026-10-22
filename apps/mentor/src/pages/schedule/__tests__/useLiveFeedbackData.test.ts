@@ -389,6 +389,71 @@ describe('deriveLiveFeedbackBars', () => {
     expect(period.endDate).toBe('2026-07-13');
   });
 
+  it('같은 회차라도 미션 일자가 다르면(버전별 미션) period·오픈 바를 미션마다 따로 만든다', () => {
+    const bars = deriveLiveFeedbackBars(
+      [
+        makeSession({
+          feedbackId: 40,
+          th: 2,
+          startDate: '2026-07-13T10:00:00',
+          endDate: '2026-07-13T10:30:00',
+          missionStartDate: '2026-07-12T00:00:00',
+          missionEndDate: '2026-07-15T23:59:59',
+        }),
+        makeSession({
+          feedbackId: 41,
+          th: 2,
+          startDate: '2026-07-20T10:00:00',
+          endDate: '2026-07-20T10:30:00',
+          missionStartDate: '2026-07-19T00:00:00',
+          missionEndDate: '2026-07-22T23:59:59',
+        }),
+        // 상세 조회 전이라 미션 일자가 없는 세션은 첫 묶음에 붙는다
+        makeSession({
+          feedbackId: 42,
+          th: 2,
+          startDate: '2026-07-14T10:00:00',
+          endDate: '2026-07-14T10:30:00',
+        }),
+      ],
+      [],
+    );
+    const periods = bars.filter((b) => b.barType === 'live-feedback-period');
+    expect(periods.map((p) => [p.startDate, p.endDate])).toEqual([
+      ['2026-07-12', '2026-07-15'],
+      ['2026-07-19', '2026-07-22'],
+    ]);
+    expect(periods.map((p) => p.submittedCount)).toEqual([2, 1]);
+    expect(new Set(periods.map((p) => p.missionId)).size).toBe(2);
+
+    const opens = bars.filter((b) => b.barType === 'live-feedback-mentor-open');
+    expect(opens).toHaveLength(2);
+    expect(new Set(opens.map((o) => o.missionId)).size).toBe(2);
+  });
+
+  it('같은 회차·같은 미션 일자면 period 바 하나로 묶고 missionId 는 기존 값 그대로다', () => {
+    const bars = deriveLiveFeedbackBars(
+      [
+        makeSession({
+          feedbackId: 50,
+          th: 3,
+          missionStartDate: '2026-07-12T00:00:00',
+          missionEndDate: '2026-07-15T23:59:59',
+        }),
+        makeSession({
+          feedbackId: 51,
+          th: 3,
+          missionStartDate: '2026-07-12T00:00:00',
+          missionEndDate: '2026-07-15T23:59:59',
+        }),
+      ],
+      [],
+    );
+    const periods = bars.filter((b) => b.barType === 'live-feedback-period');
+    expect(periods).toHaveLength(1);
+    expect(periods[0].missionId).toBe(-(2_000_000 + 0 * 100 + 3));
+  });
+
   it('빈 입력은 빈 배열을 반환한다', () => {
     expect(deriveLiveFeedbackBars([], [])).toEqual([]);
   });
