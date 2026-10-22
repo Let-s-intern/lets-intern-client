@@ -4,6 +4,8 @@ import {
   useGetMyMembershipApplication,
   useGetMyPassPlan,
 } from '@/domain/all-in-one-pass/api/dashboard';
+import { isPassLocked } from '@/domain/all-in-one-pass/passLock';
+import LockedTab from '@/domain/all-in-one-pass/ui/LockedTab';
 import UsageTabs from '@/domain/all-in-one-pass/ui/usage/UsageTabs';
 import { useParams } from 'next/navigation';
 
@@ -12,6 +14,7 @@ export default function AllInOnePassUsagePage() {
   const applicationId = Number(params.applicationId);
   const { data: base } = useGetMyMembershipApplication(applicationId);
   const { data: plan } = useGetMyPassPlan(applicationId);
+  const locked = isPassLocked(base?.startDate, base?.endDate);
 
   return (
     <main className="flex flex-col px-5 pb-16 md:gap-10 md:pb-0 md:pl-12 md:pr-0 md:pt-0">
@@ -20,11 +23,15 @@ export default function AllInOnePassUsagePage() {
           {base?.title ? `${base.title}로 이용 가능한 혜택` : '나의 패스 이용'}
         </h1>
       </header>
-      {plan && (
-        <UsageTabs
-          privileges={plan.privilegeList}
-          passTitle={base?.title ?? undefined}
-        />
+      {locked ? (
+        <LockedTab />
+      ) : (
+        plan && (
+          <UsageTabs
+            privileges={plan.privilegeList}
+            passTitle={base?.title ?? undefined}
+          />
+        )
       )}
     </main>
   );
