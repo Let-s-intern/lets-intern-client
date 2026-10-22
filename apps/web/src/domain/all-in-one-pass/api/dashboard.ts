@@ -1,8 +1,10 @@
 import { useMypageApplicationsQuery } from '@/api/application';
 import { useGetUserProgramQuery } from '@/api/program';
 import dayjs from '@/lib/dayjs';
+import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
+import { z } from 'zod';
 import { applicationDetailFixture } from '../mock/dashboardFixtures';
 import { mockDelay } from '../mock/mockDelay';
 import type {
@@ -49,9 +51,36 @@ const parsePassDescription = (description: string) => {
   };
 };
 
+// ─── GET /membership-application/{id} — 접근 가드 + 기본 정보(실 API) ───
+const myMembershipApplicationSchema = z.object({
+  membershipApplicationId: z.number(),
+  membershipId: z.number(),
+  title: z.string().nullish(),
+  startDate: z.string().nullish(),
+  endDate: z.string().nullish(),
+  periodDays: z.number().nullish(),
+  deadline: z.string().nullish(), // 판매 종료일(연장 창 상한)
+});
+export type MyMembershipApplication = z.infer<
+  typeof myMembershipApplicationSchema
+>;
+
+/** 접근 가드 + 기본 정보(기간·판매종료일). 본인 아니면 403 → isError → 레이아웃 redirect. */
+export const useGetMyMembershipApplication = (applicationId: number) =>
+  useQuery({
+    queryKey: ['allInOnePass', 'myApplication', applicationId],
+    queryFn: async (): Promise<MyMembershipApplication> => {
+      const res = await axios.get(`/membership-application/${applicationId}`);
+      return myMembershipApplicationSchema.parse(res.data.data);
+    },
+    enabled: Number.isFinite(applicationId) && applicationId > 0,
+    retry: false, // 403/404 는 즉시 에러로(가드 redirect)
+    refetchOnWindowFocus: false,
+  });
+
 /**
- * 내 신청 상세 — 접근 가드 + 기간/이용권/연장 공통 소스. 403/404 → isError → 레이아웃 redirect.
- * // TODO(BE): queryFn 을 GET /membership-application/{applicationId} 로 교체.
+ * 내 신청 상세(mock 단일 소스) — 기간/이용권/연장 파생. 섹션별 실 API로 순차 교체 예정.
+ * // TODO(BE): 섹션별 엔드포인트로 분해 후 제거.
  */
 export const useGetMembershipApplication = (applicationId: number) =>
   useQuery({
