@@ -240,6 +240,7 @@ export const paymentDetailType = z.object({
     paybackPrice: z.number().nullable().optional(),
     couponDiscount: z.number().nullable().optional(),
     isRefunded: z.boolean().nullable().optional(),
+    isMembershipApplied: z.boolean().nullable().optional(), // 올인원패스 혜택 적용 여부
     lastModifiedDate: z.string().nullable().optional(),
     createDate: z.string().nullable().optional(),
   }),
