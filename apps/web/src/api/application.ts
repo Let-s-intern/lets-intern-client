@@ -501,7 +501,12 @@ export const usePatchApplicationVersionMutation = () => {
       // 서버가 공통 미션 + 내 버전 미션만 주므로 버전이 바뀌면 미션이 걸린 응답을 다시 받는다.
       // 'useChallengeDailyMission' 은 challenge.ts useChallengeMyDailyMission 의 키다
       client.invalidateQueries({ queryKey: ['useChallengeDailyMission'] });
-      client.invalidateQueries({ queryKey: [ChallengeMissionQueryKey] });
+      // 미션 상세는 미션 id 로 내용이 정해져 버전과 무관하다. 바로 다시 받으면 화면에 남은
+      // 이전 버전 미션까지 요청해 404 가 나므로, 낡은 값으로만 표시하고 다음에 쓸 때 받는다
+      client.invalidateQueries({
+        queryKey: [ChallengeMissionQueryKey],
+        refetchType: 'none',
+      });
       // 일정·미션 목록 3종(CurrentChallengeProvider)과 점수(대시보드 page.tsx)다.
       // 키의 두 번째 칸이 URL 문자열 id 와 숫자 id 로 섞여 있어 세 번째 칸으로 고른다
       client.invalidateQueries({
