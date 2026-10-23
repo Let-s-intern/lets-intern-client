@@ -142,19 +142,16 @@ describe('ChallengeDescriptionTabs', () => {
     expect(descriptions()).toEqual(['{"v":1}', '{"edited":true}']);
   });
 
-  it('고정 줄에 지금 편집 중인 버전을 표시한다', () => {
+  it('고정 줄의 탭이 지금 편집 중인 버전을 선택 상태로 보여준다', () => {
     render(<Harness initial={[draft('대학생'), draft('경력자')]} />);
 
-    expect(screen.getByText('편집 중: 대학생 버전')).toBeInTheDocument();
+    expect(
+      screen.getByRole('tab', { name: '대학생 (작성 전)' }),
+    ).toHaveAttribute('aria-selected', 'true');
 
     fireEvent.click(screen.getByRole('tab', { name: '경력자 (작성 전)' }));
-    expect(screen.getByText('편집 중: 경력자 버전')).toBeInTheDocument();
-
-    fireEvent.click(
-      screen.getByRole('tab', { name: '기본 (버전 설정 시 비노출)' }),
-    );
     expect(
-      screen.getByText('편집 중: 기본 (버전 설정 시 비노출)'),
-    ).toBeInTheDocument();
+      screen.getByRole('tab', { name: '경력자 (작성 전)' }),
+    ).toHaveAttribute('aria-selected', 'true');
   });
 });

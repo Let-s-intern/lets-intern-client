@@ -44,18 +44,11 @@ function ChallengeDescriptionTabs({
   const index = tab - 1;
   const version = versions[index];
 
-  const editingLabel = version
-    ? `${version.title.trim() || `${index + 1}번`} 버전`
-    : '기본 (버전 설정 시 비노출)';
-
   return (
     // 스크롤해도 어느 버전을 고치는지 보이도록 상자 색을 달리하고 탭 줄을 위에 고정한다.
     // 본문 편집기 툴바(.toolbar, sticky top 0)는 고정 줄(h-14) 아래에 붙인다
     <section className="mb-6 rounded-lg border-2 border-blue-400 bg-blue-50/40 px-4 pb-4 [&_.toolbar]:top-14">
-      <div className="sticky top-0 z-20 -mx-4 mb-4 flex h-14 items-center gap-4 rounded-t-md border-b border-blue-200 bg-blue-50 px-4">
-        <span className="shrink-0 rounded-md bg-blue-600 px-3 py-1 text-sm font-semibold text-white">
-          편집 중: {editingLabel}
-        </span>
+      <div className="sticky top-0 z-20 -mx-4 mb-4 flex h-14 items-center rounded-t-md border-b border-blue-200 bg-blue-50 px-4">
         <Tabs
           value={tab}
           onChange={(_, value: number) => setSelected(value)}
