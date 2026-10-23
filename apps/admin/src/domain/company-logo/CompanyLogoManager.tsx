@@ -8,7 +8,7 @@ import {
 import type { CompanyLogo } from '@/api/company-logo/companyLogoSchema';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 
-import CompanyLogoFormDialog from './ui/CompanyLogoFormDialog';
+import CompanyLogoFormDialog from '@/common/company-logo/CompanyLogoFormDialog';
 
 /** 열린 다이얼로그. 등록이면 null 로고, 닫혀 있으면 undefined */
 type DialogState = { logo: CompanyLogo | null } | undefined;

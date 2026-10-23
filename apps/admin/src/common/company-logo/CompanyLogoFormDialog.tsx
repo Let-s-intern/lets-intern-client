@@ -49,10 +49,16 @@ interface Props {
   /** null 이면 등록, 값이 있으면 그 로고를 수정 */
   logo: CompanyLogo | null;
   onClose: () => void;
+  /** 등록에 성공하면 만든 로고 id 를 알린다(닫히기 직전). 수정에는 부르지 않는다 */
+  onCreated?: (logoId: number) => void;
 }
 
 /** 회사 로고 등록·수정. 열 때마다 새로 마운트해 `logo` 로 시작한다 */
-export default function CompanyLogoFormDialog({ logo, onClose }: Props) {
+export default function CompanyLogoFormDialog({
+  logo,
+  onClose,
+  onCreated,
+}: Props) {
   const { snackbar } = useAdminSnackbar();
   const postLogo = usePostAdminCompanyLogoMutation();
   const patchLogo = usePatchAdminCompanyLogoMutation();
@@ -60,6 +66,8 @@ export default function CompanyLogoFormDialog({ logo, onClose }: Props) {
   const uploadFavicon = usePostAdminCompanyLogoFaviconMutation();
 
   const [name, setName] = useState(logo?.name ?? '');
+  // 회사명이 사이트 이름으로 채워진 그대로인지. 사용자가 고치면 false 가 되고 다시는 덮어쓰지 않는다
+  const [isNameFromSite, setIsNameFromSite] = useState(false);
   const [imageUrl, setImageUrl] = useState(logo?.imageUrl ?? '');
   const [siteUrl, setSiteUrl] = useState('');
   // 찾은 로고 후보. 찾기 전이거나 하나를 골라 올렸으면 null
@@ -100,8 +108,9 @@ export default function CompanyLogoFormDialog({ logo, onClose }: Props) {
   const handleFindCandidates = () => {
     setError(null);
     findCandidates.mutate(siteUrl.trim(), {
-      onSuccess: (found) => {
+      onSuccess: ({ candidates: found, siteName }) => {
         setCandidates(found);
+        fillNameFromSite(siteName);
         // 큰 것부터 오므로 첫 번째를 기본으로 고른다
         setSelectedCandidateUrl(found[0]?.url ?? '');
       },
@@ -109,7 +118,18 @@ export default function CompanyLogoFormDialog({ logo, onClose }: Props) {
     });
   };
 
-  // 고른 후보를 서버가 올린다. 회사명은 건드리지 않는다
+  /*
+    후보를 찾으면 사이트 이름을 회사명 기본값으로 넣는다. 등록 때만, 칸이 비었거나 앞서 사이트
+    이름으로 채운 그대로일 때만 — 사용자가 쓴 이름은 덮지 않는다.
+  */
+  const fillNameFromSite = (siteName: string | null | undefined) => {
+    if (logo || !siteName) return;
+    if (name.trim() !== '' && !isNameFromSite) return;
+    setName(siteName);
+    setIsNameFromSite(true);
+  };
+
+  // 고른 후보를 서버가 올린다
   const handleUseCandidate = () => {
     setError(null);
     uploadFavicon.mutate(
@@ -131,8 +151,9 @@ export default function CompanyLogoFormDialog({ logo, onClose }: Props) {
         await patchLogo.mutateAsync({ id: logo.id, ...body });
         snackbar('로고를 수정했습니다.');
       } else {
-        await postLogo.mutateAsync(body);
+        const createdId = await postLogo.mutateAsync(body);
         snackbar('로고를 등록했습니다.');
+        onCreated?.(createdId);
       }
       onClose();
     } catch (e) {
@@ -157,7 +178,15 @@ export default function CompanyLogoFormDialog({ logo, onClose }: Props) {
             label="회사명"
             value={name}
             inputProps={{ maxLength: 100 }}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+              setName(e.target.value);
+              setIsNameFromSite(false);
+            }}
+            helperText={
+              isNameFromSite
+                ? '사이트에서 가져온 이름입니다. 고쳐도 됩니다.'
+                : undefined
+            }
           />
           <div className="flex items-center gap-3">
             <div className="border-neutral-80 flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded border border-dashed">

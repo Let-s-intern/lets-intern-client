@@ -33,7 +33,7 @@ import { DEFAULT_CAREER } from '@/common/career/constants';
 import CareerEditDialog, {
   type CareerEditValues,
 } from '@/domain/admin/user/mentor-detail/ui/CareerEditDialog';
-import CompanyLogoPickerDialog from '@/domain/admin/user/mentor-detail/ui/CompanyLogoPickerDialog';
+import CompanyLogoPickerDialog from '@/common/company-logo/CompanyLogoPickerDialog';
 import MentorDescriptionField from '@/domain/admin/user/mentor-detail/ui/MentorDescriptionField';
 import ProfileImageUploadModal from '@/domain/admin/user/mentor-detail/ui/ProfileImageUploadModal';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';

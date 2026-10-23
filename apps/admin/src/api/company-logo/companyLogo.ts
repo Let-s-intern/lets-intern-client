@@ -2,6 +2,7 @@ import axios from '@/utils/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
+  companyLogoCreatedSchema,
   companyLogoFaviconCandidatesSchema,
   companyLogoFaviconSchema,
   companyLogoListSchema,
@@ -26,8 +27,8 @@ export const useAdminCompanyLogoListQuery = () =>
     refetchOnWindowFocus: false,
   });
 
-const useCompanyLogoMutation = <TVariables>(
-  request: (variables: TVariables) => Promise<unknown>,
+const useCompanyLogoMutation = <TVariables, TData = unknown>(
+  request: (variables: TVariables) => Promise<TData>,
 ) => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -37,9 +38,12 @@ const useCompanyLogoMutation = <TVariables>(
   });
 };
 
-/** POST /admin/company-logo */
+/** POST /admin/company-logo — 만든 로고의 id 를 돌려준다 */
 export const usePostAdminCompanyLogoMutation = () =>
-  useCompanyLogoMutation((body: CompanyLogoReq) => axios.post(PATH, body));
+  useCompanyLogoMutation(async (body: CompanyLogoReq) => {
+    const res = await axios.post(PATH, body);
+    return companyLogoCreatedSchema.parse(res.data.data).id;
+  });
 
 /** PATCH /admin/company-logo/{id} */
 export const usePatchAdminCompanyLogoMutation = () =>
@@ -58,7 +62,7 @@ export const usePostAdminCompanyLogoFaviconCandidatesMutation = () =>
   useMutation({
     mutationFn: async (siteUrl: string) => {
       const res = await axios.post(`${PATH}/favicon/candidates`, { siteUrl });
-      return companyLogoFaviconCandidatesSchema.parse(res.data.data).candidates;
+      return companyLogoFaviconCandidatesSchema.parse(res.data.data);
     },
   });
 

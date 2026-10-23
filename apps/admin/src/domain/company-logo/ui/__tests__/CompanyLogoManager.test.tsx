@@ -49,7 +49,7 @@ const renderManager = () =>
 describe('CompanyLogoManager', () => {
   beforeEach(() => {
     get.mockResolvedValue({ data: { data: { companyLogoList: logos } } });
-    post.mockResolvedValue({});
+    post.mockResolvedValue({ data: { data: { id: 99 } } });
     patch.mockResolvedValue({});
     del.mockResolvedValue({});
   });
@@ -213,7 +213,7 @@ describe('CompanyLogoManager', () => {
           return Promise.resolve({
             data: { data: { imageUrl: 'https://cdn.test/uploaded.png' } },
           });
-        return Promise.resolve({});
+        return Promise.resolve({ data: { data: { id: 99 } } });
       });
 
     const openRegisterDialog = async () => {
@@ -360,6 +360,115 @@ describe('CompanyLogoManager', () => {
       expect(
         screen.getByRole('radiogroup', { name: '로고 후보' }),
       ).toBeInTheDocument();
+    });
+  });
+
+  describe('CompanyLogoFormDialog 사이트 이름으로 회사명 채우기', () => {
+    const CANDIDATE = {
+      url: 'https://site.test/apple-touch-icon.png',
+      format: 'PNG',
+      width: 180,
+      height: 180,
+      byteSize: 4000,
+      source: 'APPLE_TOUCH_ICON',
+    };
+    const HINT = '사이트에서 가져온 이름입니다. 고쳐도 됩니다.';
+
+    // 사이트 주소마다 다른 siteName 을 돌려준다
+    const mockSiteNames = (names: Record<string, string | null>) =>
+      post.mockImplementation((url: string, body: { siteUrl: string }) =>
+        url === '/admin/company-logo/favicon/candidates'
+          ? Promise.resolve({
+              data: {
+                data: {
+                  candidates: [CANDIDATE],
+                  siteName: names[body.siteUrl],
+                },
+              },
+            })
+          : Promise.resolve({}),
+      );
+
+    const find = async (siteUrl: string) => {
+      fireEvent.change(screen.getByLabelText('회사 사이트 주소'), {
+        target: { value: siteUrl },
+      });
+      fireEvent.click(screen.getByRole('button', { name: '로고 후보 찾기' }));
+      await screen.findByRole('radiogroup', { name: '로고 후보' });
+    };
+
+    const nameInput = () => screen.getByLabelText('회사명');
+
+    const openRegister = async () => {
+      renderManager();
+      fireEvent.click(await screen.findByRole('button', { name: '로고 등록' }));
+    };
+
+    afterEach(() => vi.clearAllMocks());
+
+    it('회사명이 비어 있으면 사이트 이름으로 채우고 안내를 보인다', async () => {
+      mockSiteNames({ 'https://toss.im': '토스' });
+      await openRegister();
+      await find('https://toss.im');
+
+      expect(nameInput()).toHaveValue('토스');
+      expect(screen.getByText(HINT)).toBeInTheDocument();
+    });
+
+    it('사용자가 쓴 회사명은 덮어쓰지 않는다', async () => {
+      mockSiteNames({ 'https://toss.im': '토스' });
+      await openRegister();
+      fireEvent.change(nameInput(), { target: { value: '비바리퍼블리카' } });
+      await find('https://toss.im');
+
+      expect(nameInput()).toHaveValue('비바리퍼블리카');
+      expect(screen.queryByText(HINT)).not.toBeInTheDocument();
+    });
+
+    it('사이트 이름으로 채운 그대로면 다른 사이트로 다시 찾을 때 바꾼다', async () => {
+      mockSiteNames({
+        'https://toss.im': '토스',
+        'https://kakao.com': '카카오',
+      });
+      await openRegister();
+      await find('https://toss.im');
+      await find('https://kakao.com');
+
+      expect(nameInput()).toHaveValue('카카오');
+    });
+
+    it('사이트 이름으로 채운 뒤 고치면 안내를 숨기고, 다시 찾아도 그대로 둔다', async () => {
+      mockSiteNames({
+        'https://toss.im': '토스',
+        'https://kakao.com': '카카오',
+      });
+      await openRegister();
+      await find('https://toss.im');
+      fireEvent.change(nameInput(), { target: { value: '토스뱅크' } });
+      expect(screen.queryByText(HINT)).not.toBeInTheDocument();
+
+      await find('https://kakao.com');
+      expect(nameInput()).toHaveValue('토스뱅크');
+    });
+
+    it('사이트 이름이 null 이면 아무것도 하지 않는다', async () => {
+      mockSiteNames({ 'https://toss.im': null });
+      await openRegister();
+      await find('https://toss.im');
+
+      expect(nameInput()).toHaveValue('');
+      expect(screen.queryByText(HINT)).not.toBeInTheDocument();
+    });
+
+    it('기존 로고 수정에서는 채우지 않는다', async () => {
+      mockSiteNames({ 'https://kakao.com': '카카오 공식' });
+      renderManager();
+      await screen.findByText('카카오');
+      fireEvent.click(screen.getAllByRole('button', { name: '수정' })[1]);
+      await find('https://kakao.com');
+
+      expect(nameInput()).toHaveValue('카카오');
+      expect(screen.queryByText(HINT)).not.toBeInTheDocument();
     });
   });
 });

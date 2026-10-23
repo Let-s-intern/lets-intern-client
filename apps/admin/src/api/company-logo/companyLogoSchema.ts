@@ -36,12 +36,17 @@ export type CompanyLogoFaviconCandidate = z.infer<
 
 export const companyLogoFaviconCandidatesSchema = z.object({
   candidates: z.array(companyLogoFaviconCandidateSchema),
+  /** 사이트에서 읽은 이름. 등록 창의 회사명 기본값으로 쓴다. 못 읽었거나 서버 배포 전이면 없다 */
+  siteName: z.string().nullish(),
 });
 
 /** `POST /api/v1/admin/company-logo/favicon` 응답. 고른 후보를 올린 주소. 로고 행은 만들지 않는다 */
 export const companyLogoFaviconSchema = z.object({
   imageUrl: z.string(),
 });
+
+/** `POST /api/v1/admin/company-logo` 응답 */
+export const companyLogoCreatedSchema = z.object({ id: z.number() });
 
 /** `POST /api/v1/admin/company-logo` 본문. PATCH 는 같은 키를 선택으로 받는다. 이름이 겹치면 409 */
 export interface CompanyLogoReq {

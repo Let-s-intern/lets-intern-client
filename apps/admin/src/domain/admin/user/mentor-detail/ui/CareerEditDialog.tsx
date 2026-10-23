@@ -13,7 +13,7 @@ import { useState } from 'react';
 
 import { employeeTypeSchema } from '@/api/career/careerSchema';
 
-import CompanyLogoPickerDialog from './CompanyLogoPickerDialog';
+import CompanyLogoPickerDialog from '@/common/company-logo/CompanyLogoPickerDialog';
 
 export interface CareerEditValues {
   company: string;
