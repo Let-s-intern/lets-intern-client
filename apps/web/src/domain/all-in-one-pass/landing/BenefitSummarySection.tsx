@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { ChevronRight } from 'lucide-react';
 import type { CSSProperties } from 'react';
 import type { AllInOnePassPlan } from '../types';
+import CountUpNumber from './CountUpNumber';
 import LandingSectionHeader from './LandingSectionHeader';
 import {
   getBenefitCards,
@@ -21,6 +22,16 @@ interface Props {
 
 const SUMMARY_DESCRIPTION =
   '경험 정리부터 자소서·포폴, 인적성·면접까지.\n필요한 자료와 현직자의 도움을 한 번에 이용해 보세요.';
+
+// 신뢰 지표(하드코딩). value = 큰 숫자, unit = 뒤에 붙는 작은 단위.
+const METRICS = [
+  { label: '교육 만족도', value: '4.6', unit: '' },
+  { label: '누적 참여자 수', value: '5,000+', unit: '명' },
+  { label: '수료율', value: '80+', unit: '%' },
+  { label: '누적 후기 개수', value: '3,300+', unit: '개' },
+  { label: '인스타그램 팔로워 수', value: '1.8', unit: 'M' },
+  { label: '커뮤니티 참여자 수', value: '2,500+', unit: '명' },
+];
 
 /** 혜택 섹션(#benefit) — 혜택 요약 카드(플랜 union 코어 + 추가혜택). */
 export default function BenefitSummarySection({
@@ -77,7 +88,7 @@ export default function BenefitSummarySection({
 
   return (
     <section id="benefit" className="scroll-mt-20 bg-[#F7F8FC]">
-      <div className="mx-auto w-full max-w-[1040px] px-5 md:px-0">
+      <div className="mx-auto flex w-full max-w-[1040px] flex-col px-5 md:px-0">
         <div className="w-full py-12 md:py-[100px]">
           <LandingSectionHeader
             header="혜택 요약"
@@ -134,6 +145,33 @@ export default function BenefitSummarySection({
           <p className="text-xsmall14 md:text-small18 text-neutral-45 mt-8 text-center md:mt-[60px]">
             궁금한 혜택을 눌러 자세히 살펴보세요.
           </p>
+        </div>
+        <div className="flex w-full flex-col items-center gap-8 py-12 md:gap-12 md:py-[100px]">
+          <p className="text-xxlarge36 text-center font-bold md:text-[40px]">
+            <span className="text-[#4A76FF]">5,000명</span> 이상의 취준생이
+            렛츠커리어와 <span className="text-[#4A76FF]">함께</span>했어요.
+          </p>
+
+          <div className="bg-static-100 rounded-ms grid w-full grid-cols-2 gap-px overflow-hidden md:grid-cols-6 md:gap-6">
+            {METRICS.map((m) => (
+              <div
+                key={m.label}
+                className="flex flex-col items-center gap-3 bg-white px-2 py-6 md:py-7"
+              >
+                <span className="text-xsmall14 md:text-xsmall16 text-neutral-20 font-medium">
+                  {m.label}
+                </span>
+                <span className="text-xlarge28 md:text-xxlarge32 font-bold">
+                  <CountUpNumber value={m.value} />
+                  {m.unit && (
+                    <span className="text-xsmall16 md:text-medium24 ml-0.5 font-semibold">
+                      {m.unit}
+                    </span>
+                  )}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
