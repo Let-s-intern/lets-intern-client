@@ -148,6 +148,10 @@ const AdminMentorKeywordPage = lazy(
 const AdminLiveMentoringPage = lazy(
   () => import('./pages/pages/live-mentoring/AdminLiveMentoringPage'),
 );
+const AdminLiveMentoringDetailPageEditPage = lazy(
+  () =>
+    import('./pages/pages/live-mentoring/AdminLiveMentoringDetailPageEditPage'),
+);
 
 const Coupons = lazy(() => import('./pages/pages/coupon/Coupons'));
 const CouponEditor = lazy(() => import('./pages/coupon/CouponEditor'));
@@ -548,6 +552,10 @@ export const router = createBrowserRouter([
       {
         path: '/live-mentoring',
         element: withSuspense(<AdminLiveMentoringPage />),
+      },
+      {
+        path: '/live-mentoring/:mentorId/detail-page',
+        element: withSuspense(<AdminLiveMentoringDetailPageEditPage />),
       },
 
       // SSO
