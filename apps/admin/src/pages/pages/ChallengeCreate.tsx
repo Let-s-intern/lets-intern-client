@@ -498,7 +498,6 @@ const ChallengeCreate: React.FC = () => {
           onChange={setVersions}
           challengeTitle={input.title ?? ''}
           challengeShortDesc={input.shortDesc}
-          baseThumbnail={input.thumbnail}
           challengeType={input.challengeType}
         />
       </section>

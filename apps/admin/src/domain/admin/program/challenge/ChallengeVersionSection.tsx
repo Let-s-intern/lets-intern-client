@@ -1,5 +1,5 @@
 import { fileType, uploadFile } from '@/api/file';
-import { generateAndUploadVersionThumbnail } from '@/domain/admin/program/challenge/utils/generateThumbnail';
+import { generateAndUploadThumbnail } from '@/domain/admin/program/challenge/utils/generateThumbnail';
 import ImageUpload from '@/domain/admin/program/ui/form/ImageUpload';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
 import { ChallengeType, ChallengeVersionReq } from '@/schema';
@@ -49,9 +49,7 @@ interface Props {
   challengeTitle?: string;
   /** 한 줄 설명 기본값 */
   challengeShortDesc?: string | null;
-  /** 버전 썸네일 자동 생성의 바탕 이미지 */
-  baseThumbnail?: string | null;
-  /** 썸네일 배너 색 */
+  /** 버전 썸네일 자동 생성의 템플릿 유형. 챌린지 복제의 썸네일 생성과 같은 방식으로 만든다 */
   challengeType?: ChallengeType;
 }
 
@@ -60,7 +58,6 @@ function ChallengeVersionSection({
   onChange,
   challengeTitle = '',
   challengeShortDesc = null,
-  baseThumbnail = null,
   challengeType,
 }: Props) {
   // 펼친 카드 하나만 노출 정보 입력란을 렌더한다
@@ -71,7 +68,7 @@ function ChallengeVersionSection({
   // 자동 생성한 썸네일 주소. 이 주소면 버전명이 바뀔 때 다시 만들어도 된다
   const autoThumbnails = useRef(new Set<string>());
   const [thumbnailStatus, setThumbnailStatus] = useState<
-    Record<number, 'loading' | 'error'>
+    Record<number, 'loading' | 'unsupported' | 'error'>
   >({});
 
   // 챌린지 제목·한 줄 설명이 바뀌면 아직 기본값을 쓰는 버전도 따라 바꾼다
@@ -134,16 +131,27 @@ function ChallengeVersionSection({
 
   const generateThumbnail = async (index: number) => {
     const version = latestVersions.current[index];
-    if (!baseThumbnail || !version?.title.trim()) return;
+    if (!challengeType || !version?.title.trim()) return;
     setThumbnailStatus((prev) => ({ ...prev, [index]: 'loading' }));
     try {
-      const url = await generateAndUploadVersionThumbnail(
-        baseThumbnail,
-        version.title.trim(),
+      // 복제 모달과 같은 생성기. 제목의 [버전명] 으로 Ver 배너, N기 로 기수 배지를 그린다
+      const url = await generateAndUploadThumbnail(
         challengeType,
+        autoProgramTitle(version.title, challengeTitle),
       );
+      if (!url) {
+        setThumbnailStatus((prev) => ({ ...prev, [index]: 'unsupported' }));
+        return;
+      }
       autoThumbnails.current.add(url);
-      updateVersion(index, { thumbnail: url });
+      const current = latestVersions.current[index];
+      const followsAutoDesktop =
+        !current.desktopThumbnail ||
+        autoThumbnails.current.has(current.desktopThumbnail);
+      updateVersion(index, {
+        thumbnail: url,
+        ...(followsAutoDesktop ? { desktopThumbnail: url } : {}),
+      });
       setThumbnailStatus(({ [index]: _, ...rest }) => rest);
     } catch {
       setThumbnailStatus((prev) => ({ ...prev, [index]: 'error' }));
@@ -313,22 +321,22 @@ function ChallengeVersionSection({
                       variant="outlined"
                       size="small"
                       disabled={
-                        !baseThumbnail ||
+                        !challengeType ||
                         !version.title.trim() ||
                         thumbnailStatus[index] === 'loading'
                       }
                       onClick={() => generateThumbnail(index)}
                     >
-                      기본 썸네일로 다시 만들기
+                      썸네일 다시 만들기
                     </Button>
                     <Typography variant="caption" color="text.secondary">
                       {thumbnailStatus[index] === 'loading'
                         ? '버전 썸네일을 만드는 중입니다.'
-                        : thumbnailStatus[index] === 'error'
-                          ? '기본 썸네일을 불러오지 못해 자동으로 만들지 못했습니다. 직접 올려주세요.'
-                          : baseThumbnail
-                            ? '기본 썸네일에 버전명을 얹어 자동으로 만듭니다. 직접 올리면 그 이미지를 씁니다.'
-                            : '기본 정보에 모바일 썸네일을 올리면 버전 썸네일을 자동으로 만듭니다.'}
+                        : thumbnailStatus[index] === 'unsupported'
+                          ? '자동 생성 템플릿이 없는 유형이거나 챌린지 제목에 기수(N기)가 없습니다. 직접 올려주세요.'
+                          : thumbnailStatus[index] === 'error'
+                            ? '썸네일을 자동으로 만들지 못했습니다. 직접 올려주세요.'
+                            : '챌린지 복제와 같은 템플릿에 버전명 배너와 기수를 넣어 자동으로 만듭니다. 직접 올리면 그 이미지를 씁니다.'}
                     </Typography>
                   </div>
                   <div className="grid grid-cols-2 gap-3">

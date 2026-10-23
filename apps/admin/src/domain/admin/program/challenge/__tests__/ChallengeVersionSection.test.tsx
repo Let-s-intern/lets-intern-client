@@ -2,6 +2,8 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
+import { ChallengeType } from '@/schema';
+
 import ChallengeVersionSection, {
   ChallengeVersionDraft,
 } from '../ChallengeVersionSection';
@@ -12,7 +14,7 @@ const { uploadFile, generateVersionThumbnail } = vi.hoisted(() => ({
 }));
 
 vi.mock('../utils/generateThumbnail', () => ({
-  generateAndUploadVersionThumbnail: generateVersionThumbnail,
+  generateAndUploadThumbnail: generateVersionThumbnail,
 }));
 
 vi.mock('@/api/file', () => ({
@@ -299,7 +301,7 @@ describe('ChallengeVersionSection', () => {
     type BaseProps = {
       challengeTitle?: string;
       challengeShortDesc?: string | null;
-      baseThumbnail?: string | null;
+      challengeType?: ChallengeType;
     };
 
     function BaseHarness({
@@ -396,12 +398,13 @@ describe('ChallengeVersionSection', () => {
       ]);
     });
 
-    it('버전명 입력을 마치면 기본 썸네일에 버전명을 얹은 썸네일을 만든다', async () => {
+    it('버전명 입력을 마치면 복제와 같은 템플릿 생성기로 [버전명] 제목 썸네일을 만든다', async () => {
       generateVersionThumbnail.mockResolvedValueOnce('https://cdn/auto-a.png');
       render(
         <BaseHarness
           initial={[draft(null, '')]}
-          baseThumbnail="https://cdn/base.png"
+          challengeTitle="경험정리 챌린지 15기"
+          challengeType="EXPERIENCE_SUMMARY"
         />,
       );
 
@@ -411,11 +414,33 @@ describe('ChallengeVersionSection', () => {
       await waitFor(() =>
         expect(list()[0].thumbnail).toBe('https://cdn/auto-a.png'),
       );
+      expect(list()[0].desktopThumbnail).toBe('https://cdn/auto-a.png');
       expect(generateVersionThumbnail).toHaveBeenCalledWith(
-        'https://cdn/base.png',
-        '대학생',
-        undefined,
+        'EXPERIENCE_SUMMARY',
+        '[대학생] 경험정리 챌린지 15기',
       );
+    });
+
+    it('템플릿이 없거나 기수가 없어 만들 수 없으면 직접 올리라고 안내한다', async () => {
+      generateVersionThumbnail.mockResolvedValueOnce(null);
+      render(
+        <BaseHarness
+          initial={[draft(null, '')]}
+          challengeTitle="경험정리 챌린지"
+          challengeType="EXPERIENCE_SUMMARY"
+        />,
+      );
+      fireEvent.click(expandButton(1));
+
+      fireEvent.change(titleInput(1), { target: { value: '대학생' } });
+      fireEvent.blur(titleInput(1));
+
+      expect(
+        await screen.findByText(
+          '자동 생성 템플릿이 없는 유형이거나 챌린지 제목에 기수(N기)가 없습니다. 직접 올려주세요.',
+        ),
+      ).toBeInTheDocument();
+      expect(list()[0].thumbnail).toBe('');
     });
 
     it('직접 올린 썸네일은 버전명을 바꿔도 다시 만들지 않는다', () => {
@@ -425,7 +450,7 @@ describe('ChallengeVersionSection', () => {
           initial={[
             { ...draft(null, '대학생'), thumbnail: 'https://cdn/manual.png' },
           ]}
-          baseThumbnail="https://cdn/base.png"
+          challengeType="EXPERIENCE_SUMMARY"
         />,
       );
 
@@ -440,7 +465,7 @@ describe('ChallengeVersionSection', () => {
       render(
         <BaseHarness
           initial={[draft(null, '')]}
-          baseThumbnail="https://cdn/base.png"
+          challengeType="EXPERIENCE_SUMMARY"
         />,
       );
       fireEvent.click(expandButton(1));
@@ -450,7 +475,7 @@ describe('ChallengeVersionSection', () => {
 
       expect(
         await screen.findByText(
-          '기본 썸네일을 불러오지 못해 자동으로 만들지 못했습니다. 직접 올려주세요.',
+          '썸네일을 자동으로 만들지 못했습니다. 직접 올려주세요.',
         ),
       ).toBeInTheDocument();
     });
