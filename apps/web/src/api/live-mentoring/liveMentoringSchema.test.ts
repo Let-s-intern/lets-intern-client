@@ -282,6 +282,28 @@ describe('liveMentorDetailSchema', () => {
     ).not.toThrow();
   });
 
+  it('자유 입력란이 없는 응답(서버 배포 전)도 파싱한다', () => {
+    const parsed = liveMentorDetailSchema.parse(makeDetail());
+    expect(parsed.template.freeContent).toBeUndefined();
+  });
+
+  it('자유 입력란을 파싱한다. 꺼져 있으면 content 가 null 이다', () => {
+    const detail = makeDetail() as Record<string, unknown>;
+    const template = detail.template as Record<string, unknown>;
+    const parsed = liveMentorDetailSchema.parse({
+      ...detail,
+      template: {
+        ...template,
+        freeContent: { visible: false, content: null, position: 'AFTER_PLAN' },
+      },
+    });
+    expect(parsed.template.freeContent).toEqual({
+      visible: false,
+      content: null,
+      position: 'AFTER_PLAN',
+    });
+  });
+
   it('template이 빠지면 파싱 실패', () => {
     const detail = makeDetail();
     delete (detail as Record<string, unknown>).template;

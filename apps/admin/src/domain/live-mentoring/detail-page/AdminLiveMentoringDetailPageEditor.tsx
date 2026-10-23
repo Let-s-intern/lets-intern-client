@@ -5,13 +5,11 @@ import {
   useAdminLiveMentoringDetailPageQuery,
   useUpdateAdminLiveMentoringDetailPageMutation,
 } from '@/api/live-mentoring/liveMentoringDetailPage';
-import {
-  type AdminLiveMentoringDetailPageUpdate,
-  adminLiveMentoringDetailPageUpdateSchema,
-} from '@/api/live-mentoring/liveMentoringDetailPageSchema';
+import type { AdminLiveMentoringDetailPageUpdate } from '@/api/live-mentoring/liveMentoringDetailPageSchema';
 import { twMerge } from '@/lib/twMerge';
 
 import { publicDetailUrl } from '../constants';
+import FreeContentField from './ui/FreeContentField';
 import HeroField from './ui/HeroField';
 import MentoringTypesField from './ui/MentoringTypesField';
 import ResultsField from './ui/ResultsField';
@@ -20,6 +18,7 @@ import StrategyField from './ui/StrategyField';
 import VideoField from './ui/VideoField';
 import {
   findDetailPageBlock,
+  toDetailPageForm,
   toDetailPageUpdatePayload,
 } from './utils/toDetailPageUpdatePayload';
 
@@ -29,7 +28,8 @@ type TabId =
   | 'strategy'
   | 'video'
   | 'results'
-  | 'reviews';
+  | 'reviews'
+  | 'freeContent';
 
 const TABS: { id: TabId; label: string }[] = [
   { id: 'hero', label: '핵심 소개' },
@@ -38,6 +38,7 @@ const TABS: { id: TabId; label: string }[] = [
   { id: 'video', label: '소개 영상' },
   { id: 'results', label: '결과 사례' },
   { id: 'reviews', label: '후기' },
+  { id: 'freeContent', label: '자유 입력란' },
 ];
 
 const CONFLICT_MESSAGE =
@@ -68,13 +69,16 @@ export default function AdminLiveMentoringDetailPageEditor({
     useState<AdminLiveMentoringDetailPageUpdate | null>(null);
   const [activeTab, setActiveTab] = useState<TabId>('hero');
   const [message, setMessage] = useState<Message>(null);
+  // 자유 입력란 에디터는 비제어라, 폼을 통째로 바꿀 때(불러오기·취소) 이 값을 올려 다시 마운트한다
+  const [formVersion, setFormVersion] = useState(0);
 
   // 응답에서 편집 영역만 떼어 폼과 기준선으로 둔다. 저장 뒤 다시 불러오면 서버 값으로 맞춘다
   useEffect(() => {
     if (!data) return;
-    const editable = adminLiveMentoringDetailPageUpdateSchema.parse(data);
+    const editable = toDetailPageForm(data);
     setForm(editable);
     setOriginal(editable);
+    setFormVersion((prev) => prev + 1);
   }, [data]);
 
   const isDirty =
@@ -137,6 +141,7 @@ export default function AdminLiveMentoringDetailPageEditor({
   const handleCancel = () => {
     setForm(original);
     setMessage(null);
+    setFormVersion((prev) => prev + 1);
   };
 
   const nickname = data?.intro?.nickname || `멘토 #${mentorId}`;
@@ -199,10 +204,16 @@ export default function AdminLiveMentoringDetailPageEditor({
             value={form.results}
             onChange={(results) => patch({ results })}
           />
-        ) : (
+        ) : activeTab === 'reviews' ? (
           <ReviewsVisibleField
             value={form.reviews}
             onChange={(reviews) => patch({ reviews })}
+          />
+        ) : (
+          <FreeContentField
+            key={formVersion}
+            value={form.freeContent}
+            onChange={(freeContent) => patch({ freeContent })}
           />
         )}
       </div>

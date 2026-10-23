@@ -37,6 +37,28 @@ export const detailPageResultCaseSchema = z.object({
   afterCaption: z.string(),
 });
 
+/** 자유 입력란이 놓이는 자리. 값마다 「그 섹션 뒤」 다. 서버 `LiveMentoringFreeContentPosition` */
+export const freeContentPositionSchema = z.enum([
+  'AFTER_INTRO',
+  'AFTER_MENTORING_TYPES',
+  'AFTER_STRATEGY',
+  'AFTER_VIDEO',
+  'AFTER_RESULTS',
+  'AFTER_REVIEWS',
+  'AFTER_PLAN',
+]);
+
+export type FreeContentPosition = z.infer<typeof freeContentPositionSchema>;
+
+/** 자유 입력란. `content` 는 Lexical JSON, 비우면 null */
+export const detailPageFreeContentSchema = z.object({
+  visible: z.boolean(),
+  content: z.string().nullable(),
+  position: freeContentPositionSchema,
+});
+
+export type DetailPageFreeContent = z.infer<typeof detailPageFreeContentSchema>;
+
 /** PUT 요청 바디. 서버 `UpdateLiveMentoringDetailPageRequestDto` 와 같은 키다. */
 export const adminLiveMentoringDetailPageUpdateSchema = z.object({
   hero: z.object({ bullets: z.array(z.string()) }),
@@ -60,6 +82,8 @@ export const adminLiveMentoringDetailPageUpdateSchema = z.object({
     visible: z.boolean(),
     selectedReviewIds: z.array(z.number()),
   }),
+  /** 어드민만 고친다. 멘토 앱은 보내지 않아 서버가 기존 값을 지킨다 */
+  freeContent: detailPageFreeContentSchema,
 });
 
 export type AdminLiveMentoringDetailPageUpdate = z.infer<
@@ -76,6 +100,10 @@ export const adminLiveMentoringDetailPageSchema =
       })
       .nullish(),
     intro: z.object({ nickname: z.string().nullable() }).nullish(),
+    // 서버 배포 전에는 오지 않고, 저장한 적 없으면 position 이 null 일 수 있다
+    freeContent: detailPageFreeContentSchema
+      .extend({ position: freeContentPositionSchema.nullable() })
+      .nullish(),
   });
 
 export type AdminLiveMentoringDetailPage = z.infer<
