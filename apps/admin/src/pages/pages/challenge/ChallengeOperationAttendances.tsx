@@ -11,17 +11,22 @@ import LineTableBodyRow, {
 import LineTableHead from '@/domain/admin/challenge/ui/lineTable/LineTableHead';
 import MissionVersionTabs from '@/domain/admin/challenge/version/MissionVersionTabs';
 import {
-  formatMissionRoundLabel,
+  formatMissionVersions,
+  formatRoundAttendance,
+  groupMissionsByRound,
   isMissionForVersion,
 } from '@/domain/admin/challenge/version/utils/missionVersion';
 import { Mission } from '@/schema';
 import { TABLE_CONTENT } from '@/utils/convert';
+import { Button } from '@mui/material';
 import React, { useMemo, useState } from 'react';
 
 type Row = Mission &
   ItemWithStatus & {
-    roundLabel: string; // 회차: 버전 미션이면 버전명을 붙인다
-    currentAttendance: string; // 제출현황: n(제출)/m(전체)
+    roundLabel: string; // 회차
+    currentAttendance: string; // 제출현황: n(제출)/m(전체), 버전 미션은 버전명을 함께
+    /** 같은 회차의 버전 미션은 한 행으로 묶는다 */
+    roundMissions: Mission[];
   };
 
 const cellWidthList = [
@@ -47,17 +52,24 @@ const ChallengeOperationAttendances = () => {
   });
 
   const rows = useMemo(() => {
-    return (
-      missions
-        ?.filter((mission) => isMissionForVersion(mission, versionId))
-        .map((mission) => {
-          return {
-            ...mission,
-            roundLabel: formatMissionRoundLabel(mission),
-            currentAttendance: `${mission.attendanceCount ?? 0}(제출)/${mission.applicationCount ?? 0}(전체)`,
-          };
-        }) ?? []
-    );
+    return groupMissionsByRound(
+      missions?.filter((mission) => isMissionForVersion(mission, versionId)) ??
+        [],
+    ).map((roundMissions) => {
+      const waitingCounts = roundMissions
+        .map((mission) => mission.waitingCount)
+        .filter((count): count is number => count != null);
+      return {
+        ...roundMissions[0],
+        roundLabel: `${roundMissions[0].th}회차`,
+        currentAttendance: formatRoundAttendance(roundMissions),
+        waitingCount:
+          waitingCounts.length > 0
+            ? waitingCounts.reduce((sum, count) => sum + count, 0)
+            : null,
+        roundMissions,
+      };
+    });
   }, [missions, versionId]);
 
   return (
@@ -75,7 +87,8 @@ const ChallengeOperationAttendances = () => {
         />
         <LineTableBody>
           {rows?.map((row) => (
-            <React.Fragment key={row.id}>
+            // 탭을 바꾸면 같은 첫 미션이라도 묶음이 달라진다. 행은 처음 값을 들고 있어 key 로 새로 그린다
+            <React.Fragment key={`${row.id}-${versionId ?? 'all'}`}>
               <LineTableBodyRow<Row>
                 editable={false}
                 attrNames={[
@@ -116,26 +129,49 @@ const ChallengeOperationAttendances = () => {
                 key={row.id}
                 initialValues={row}
                 onClick={() => {
-                  if (detailedMission?.id === row.id) {
-                    setDetailedMission(null);
-                  } else {
-                    setDetailedMission(row);
-                  }
+                  const isOpen = row.roundMissions.some(
+                    (mission) => mission.id === detailedMission?.id,
+                  );
+                  setDetailedMission(isOpen ? null : row.roundMissions[0]);
                 }}
                 cellWidthList={cellWidthList}
               />
-              {detailedMission?.id === row.id ? (
-                <ChallengeSubmitDetail
-                  key={`detail-${row.id}`}
-                  mission={detailedMission}
-                  setIsDetailShown={(isDetailShown) => {
-                    if (!isDetailShown) {
-                      setDetailedMission(null);
-                    }
-                  }}
-                  attendances={detailedAttendances || []}
-                  refetch={refetch}
-                />
+              {detailedMission &&
+              row.roundMissions.some(
+                (mission) => mission.id === detailedMission.id,
+              ) ? (
+                <>
+                  {/* 같은 회차의 버전 미션이 여럿이면 어느 버전 제출자를 볼지 고른다 */}
+                  {row.roundMissions.length > 1 && (
+                    <div className="flex items-center gap-2 px-4 pt-3">
+                      {row.roundMissions.map((mission) => (
+                        <Button
+                          key={mission.id}
+                          size="small"
+                          variant={
+                            mission.id === detailedMission.id
+                              ? 'contained'
+                              : 'outlined'
+                          }
+                          onClick={() => setDetailedMission(mission)}
+                        >
+                          {formatMissionVersions(mission.challengeVersionList)}
+                        </Button>
+                      ))}
+                    </div>
+                  )}
+                  <ChallengeSubmitDetail
+                    key={`detail-${detailedMission.id}`}
+                    mission={detailedMission}
+                    setIsDetailShown={(isDetailShown) => {
+                      if (!isDetailShown) {
+                        setDetailedMission(null);
+                      }
+                    }}
+                    attendances={detailedAttendances || []}
+                    refetch={refetch}
+                  />
+                </>
               ) : null}
             </React.Fragment>
           ))}

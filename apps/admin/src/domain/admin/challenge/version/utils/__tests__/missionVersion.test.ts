@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest';
 import {
   formatMissionRoundLabel,
   formatMissionVersions,
+  formatRoundAttendance,
+  groupMissionsByRound,
   isMissionForVersion,
   isMissionVersionLocked,
 } from '../missionVersion';
@@ -116,5 +118,49 @@ describe('isMissionForVersion', () => {
     expect(isMissionForVersion(common, 2)).toBe(true);
     expect(isMissionForVersion(studentOnly, 2)).toBe(false);
     expect(isMissionForVersion(both, 2)).toBe(true);
+  });
+});
+
+describe('제출확인 회차 묶음', () => {
+  const STUDENT = { challengeVersionId: 1, title: '대학생' };
+  const WORKER = { challengeVersionId: 2, title: '직장인' };
+  const mission = (
+    id: number,
+    th: number,
+    challengeVersionList: { challengeVersionId: number; title: string }[],
+    attendanceCount = 0,
+    applicationCount = 0,
+  ) => ({ id, th, challengeVersionList, attendanceCount, applicationCount });
+
+  it('같은 회차의 버전 미션은 한 묶음, 공통 미션은 미션마다 한 묶음이다', () => {
+    const groups = groupMissionsByRound([
+      mission(1, 2, []),
+      mission(2, 2, []),
+      mission(3, 3, [STUDENT]),
+      mission(4, 3, [WORKER]),
+      mission(5, 4, [STUDENT]),
+    ]);
+
+    expect(groups.map((g) => g.map((m) => m.id))).toEqual([
+      [1],
+      [2],
+      [3, 4],
+      [5],
+    ]);
+  });
+
+  it('제출현황은 공통이면 숫자만, 한 버전이면 버전명을 뒤에, 여러 버전이면 버전별로 쓴다', () => {
+    expect(formatRoundAttendance([mission(1, 1, [], 2, 8)])).toBe(
+      '2(제출)/8(전체)',
+    );
+    expect(formatRoundAttendance([mission(5, 4, [STUDENT], 0, 1)])).toBe(
+      '0(제출)/1(전체) (대학생)',
+    );
+    expect(
+      formatRoundAttendance([
+        mission(3, 3, [STUDENT], 2, 3),
+        mission(4, 3, [WORKER], 0, 4),
+      ]),
+    ).toBe('대학생 2(제출)/3(전체) · 직장인 0(제출)/4(전체)');
   });
 });

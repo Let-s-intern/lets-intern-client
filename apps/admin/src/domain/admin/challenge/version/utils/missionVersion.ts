@@ -64,3 +64,59 @@ export const isMissionForVersion = (
   challengeVersionList.some(
     (version) => version.challengeVersionId === versionId,
   );
+
+type RoundMission = Pick<
+  Mission,
+  'th' | 'challengeVersionList' | 'attendanceCount' | 'applicationCount'
+>;
+
+/**
+ * 제출확인 행 묶음 (LC-3505). 같은 회차의 버전 미션은 한 행으로 묶고,
+ * 공통 미션(경험정리1·2 포함)은 미션마다 한 행으로 둔다. 순서는 처음 나온 순서를 따른다
+ */
+export const groupMissionsByRound = <T extends RoundMission>(
+  missions: T[],
+): T[][] => {
+  const groups: T[][] = [];
+  const versionGroupByTh = new Map<number, T[]>();
+  for (const mission of missions) {
+    if (mission.challengeVersionList.length === 0) {
+      groups.push([mission]);
+      continue;
+    }
+    const group = versionGroupByTh.get(mission.th);
+    if (group) {
+      group.push(mission);
+    } else {
+      const next = [mission];
+      versionGroupByTh.set(mission.th, next);
+      groups.push(next);
+    }
+  }
+  return groups;
+};
+
+const formatAttendanceCount = ({
+  attendanceCount,
+  applicationCount,
+}: RoundMission) =>
+  `${attendanceCount ?? 0}(제출)/${applicationCount ?? 0}(전체)`;
+
+/**
+ * 제출확인 제출현황 칸. 공통이면 `2(제출)/8(전체)`, 한 버전이면 `0(제출)/1(전체) (대학생)`,
+ * 버전 미션이 여럿이면 `대학생 2(제출)/3(전체) · 직장인 0(제출)/4(전체)`
+ */
+export const formatRoundAttendance = (missions: RoundMission[]) => {
+  if (missions.length === 1) {
+    const [mission] = missions;
+    return mission.challengeVersionList.length === 0
+      ? formatAttendanceCount(mission)
+      : `${formatAttendanceCount(mission)} (${formatMissionVersions(mission.challengeVersionList)})`;
+  }
+  return missions
+    .map(
+      (mission) =>
+        `${formatMissionVersions(mission.challengeVersionList)} ${formatAttendanceCount(mission)}`,
+    )
+    .join(' · ');
+};
