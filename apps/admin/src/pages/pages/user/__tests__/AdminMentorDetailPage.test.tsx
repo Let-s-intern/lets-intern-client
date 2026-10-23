@@ -17,6 +17,7 @@ vi.mock('@/api/user/user', () => ({
   AdminUserDetailQueryKey: 'adminUserDetailQuery',
   useAdminUserDetailQuery: () => ({ isLoading: false, data: userDetail }),
   usePatchUserAdminMutation: () => ({ mutate: vi.fn(), isPending: false }),
+  usePatchAdminUserCorpLogoMutation: () => ({ mutate: vi.fn() }),
 }));
 
 vi.mock('@/api/career/career', () => ({
@@ -25,6 +26,11 @@ vi.mock('@/api/career/career', () => ({
   useDeleteAdminCareerMutation: () => ({ mutate: vi.fn() }),
   usePatchAdminRepresentativeCareerMutation: () => ({ mutate: vi.fn() }),
   usePatchAdminUserCareerMutation: () => ({ mutate: vi.fn() }),
+  usePatchAdminCareerCompanyLogoMutation: () => ({ mutate: vi.fn() }),
+}));
+
+vi.mock('@/api/company-logo/companyLogo', () => ({
+  useAdminCompanyLogoListQuery: () => ({ data: [] }),
 }));
 
 vi.mock('@/api/mentor/mentor', () => ({

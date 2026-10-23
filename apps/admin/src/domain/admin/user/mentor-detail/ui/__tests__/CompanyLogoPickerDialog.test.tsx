@@ -34,7 +34,7 @@ describe('CompanyLogoPickerDialog', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /카카오/ }));
     fireEvent.click(screen.getByRole('button', { name: '선택' }));
-    expect(onSelect).toHaveBeenCalledWith('https://cdn.test/kakao.png');
+    expect(onSelect).toHaveBeenCalledWith(logos[1]);
   });
 
   it('회사명으로 거른다', async () => {

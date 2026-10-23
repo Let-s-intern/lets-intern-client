@@ -19,7 +19,9 @@ const initialValues: CareerEditValues = {
   employmentType: '정규직',
   startDate: '2020-01',
   endDate: '',
+  companyLogoId: 5,
   logoImgUrl: 'https://cdn.test/old.png',
+  logoName: '옛로고',
   isRepresentative: false,
 };
 
@@ -111,12 +113,19 @@ describe('CareerEditDialog 경력 로고 (LC-3499)', () => {
     fireEvent.click(screen.getByRole('button', { name: '선택' }));
     fireEvent.click(screen.getByRole('button', { name: '저장' }));
 
-    expect(onSubmit.mock.lastCall?.[0].logoImgUrl).toBe(
-      'https://cdn.test/naver.png',
-    );
+    expect(onSubmit.mock.lastCall?.[0]).toMatchObject({
+      companyLogoId: 3,
+      logoImgUrl: 'https://cdn.test/naver.png',
+      logoName: '네이버',
+    });
   });
 
-  it('로고를 해제하면 빈 문자열로 넘긴다', () => {
+  it('연결된 라이브러리 로고의 회사명을 보인다', () => {
+    renderDialog();
+    expect(screen.getByText('라이브러리: 옛로고')).toBeInTheDocument();
+  });
+
+  it('로고를 해제하면 연결 id 를 null 로 넘긴다', () => {
     const onSubmit = renderDialog();
     fireEvent.click(screen.getByRole('button', { name: '로고 해제' }));
     expect(
@@ -124,6 +133,9 @@ describe('CareerEditDialog 경력 로고 (LC-3499)', () => {
     ).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: '저장' }));
 
-    expect(onSubmit.mock.lastCall?.[0].logoImgUrl).toBe('');
+    expect(onSubmit.mock.lastCall?.[0]).toMatchObject({
+      companyLogoId: null,
+      logoImgUrl: '',
+    });
   });
 });

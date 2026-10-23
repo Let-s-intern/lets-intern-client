@@ -4,11 +4,13 @@ import { useEffect, useMemo, useState } from 'react';
 import {
   useDeleteAdminCareerMutation,
   useGetAdminUserCareerQuery,
+  usePatchAdminCareerCompanyLogoMutation,
   usePatchAdminRepresentativeCareerMutation,
   usePatchAdminUserCareerMutation,
   usePostAdminCareerMutation,
 } from '@/api/career/career';
 import { UserCareerType } from '@/api/career/careerSchema';
+import { useAdminCompanyLogoListQuery } from '@/api/company-logo/companyLogo';
 import { uploadFile } from '@/api/file';
 import {
   useAdminMentorHashTagListQuery,
@@ -17,6 +19,7 @@ import {
 import {
   AdminUserDetailQueryKey,
   useAdminUserDetailQuery,
+  usePatchAdminUserCorpLogoMutation,
   usePatchUserAdminMutation,
 } from '@/api/user/user';
 import CareerForm from '@/common/career/CareerForm';
@@ -39,6 +42,8 @@ interface BasicFormData {
   sns: string[];
   profileImgUrl: string;
   corpImgUrl: string;
+  /** 대표 로고에 연결한 라이브러리 로고. 직접 올린 로고면 null */
+  corpLogoId: number | null;
   introduction: string;
 }
 
@@ -50,6 +55,7 @@ const INITIAL_FORM: BasicFormData = {
   sns: [],
   profileImgUrl: '',
   corpImgUrl: '',
+  corpLogoId: null,
   introduction: '',
 };
 
@@ -73,6 +79,7 @@ interface LocalCareer {
   isAddedByAdmin: boolean;
   isRepresentative: boolean;
   logoImgUrl: string;
+  companyLogoId: number | null;
 }
 
 interface Props {
@@ -123,6 +130,20 @@ export default function MentorDetailEditor({ mentorId }: Props) {
   // 에디터를 건드리기 전에는 null. 본문을 고치지 않았으면 저장 요청에 넣지 않는다
   const [descriptionDraft, setDescriptionDraft] = useState<string | null>(null);
   const [selectedHashTagIds, setSelectedHashTagIds] = useState<number[]>([]);
+  /*
+    대표 로고를 직접 올렸는지. 올렸을 때만 corpImgUrl 을 보낸다 — 서버는 corpImgUrl 이 바뀌면
+    라이브러리 연결을 끊으므로, 연결된 로고의 주소를 그대로 돌려보내기만 해도 연결이 풀린다.
+  */
+  const [isCorpImageUploaded, setIsCorpImageUploaded] = useState(false);
+
+  // 연결된 라이브러리 로고의 회사명을 보여 주는 데 쓴다
+  const { data: companyLogos = [] } = useAdminCompanyLogoListQuery();
+  const logoNameOf = (logoId: number | null) =>
+    logoId === null
+      ? null
+      : (companyLogos.find((logo) => logo.id === logoId)?.name ?? `#${logoId}`);
+  const patchCorpLogo = usePatchAdminUserCorpLogoMutation(mentorId);
+  const patchCareerLogo = usePatchAdminCareerCompanyLogoMutation(mentorId);
 
   useEffect(() => {
     if (!userDetail) return;
@@ -135,8 +156,10 @@ export default function MentorDetailEditor({ mentorId }: Props) {
       sns: parseSnsList(userInfo.sns),
       profileImgUrl: userInfo.profileImgUrl ?? '',
       corpImgUrl: userInfo.corpImgUrl ?? '',
+      corpLogoId: userInfo.corpLogoId ?? null,
       introduction: userInfo.introduction ?? '',
     });
+    setIsCorpImageUploaded(false);
     setSelectedHashTagIds(
       (userDetail.mentorHashTagInfos ?? []).map((tag) => tag.id),
     );
@@ -158,6 +181,7 @@ export default function MentorDetailEditor({ mentorId }: Props) {
           isAddedByAdmin: c.isAddedByAdmin ?? false,
           isRepresentative: c.isRepresentative ?? false,
           logoImgUrl: c.logoImgUrl ?? '',
+          companyLogoId: c.companyLogoId ?? null,
         }))
         .sort((a, b) => b.startDate.localeCompare(a.startDate)),
     [careerData],
@@ -190,10 +214,18 @@ export default function MentorDetailEditor({ mentorId }: Props) {
       nickname: form.nickname || null,
       sns: serializeSnsList(validSnsUrls),
       profileImgUrl: form.profileImgUrl || null,
-      corpImgUrl: form.corpImgUrl || null,
+      ...(isCorpImageUploaded ? { corpImgUrl: form.corpImgUrl } : {}),
       ...(isIntroductionChanged ? { introduction: form.introduction } : {}),
       ...(isDescriptionChanged ? { description: descriptionDraft } : {}),
     });
+
+    // 직접 올렸으면 서버가 연결을 이미 끊는다. 그 밖에 연결이 바뀌었을 때만 따로 보낸다
+    const savedCorpLogoId = userDetail?.userInfo.corpLogoId ?? null;
+    if (!isCorpImageUploaded && form.corpLogoId !== savedCorpLogoId) {
+      patchCorpLogo.mutate(form.corpLogoId, {
+        onError: () => snackbar('대표 로고 연결에 실패했습니다.'),
+      });
+    }
 
     const savedHashTagIds = (userDetail?.mentorHashTagInfos ?? []).map(
       (tag) => tag.id,
@@ -287,8 +319,6 @@ export default function MentorDetailEditor({ mentorId }: Props) {
       startDate: values.startDate,
       // 서버는 null 이면 기존 값을 유지한다. 재직 중으로 되돌리는 수정은 아직 안 된다
       endDate: values.endDate || null,
-      // 로고 해제는 빈 문자열로 보낸다(null 은 기존 값 유지로 읽힐 수 있다)
-      logoImgUrl: values.logoImgUrl,
     };
     const formData = new FormData();
     formData.append(
@@ -301,6 +331,13 @@ export default function MentorDetailEditor({ mentorId }: Props) {
         onSuccess: () => {
           setEditingCareer(null);
           snackbar('경력이 수정되었습니다.');
+          // 로고는 경력 본문이 아니라 라이브러리 연결로 따로 저장한다. 바뀐 경우만
+          if (career.id && values.companyLogoId !== career.companyLogoId) {
+            patchCareerLogo.mutate(
+              { careerId: career.id, companyLogoId: values.companyLogoId },
+              { onError: () => snackbar('경력 로고 연결에 실패했습니다.') },
+            );
+          }
           if (values.isRepresentative && !career.isRepresentative) {
             handleSetRepresentative(career);
           }
@@ -326,7 +363,8 @@ export default function MentorDetailEditor({ mentorId }: Props) {
     }
     try {
       const fileUrl = await uploadFile({ file, type: 'USER_PROFILE' });
-      setForm((prev) => ({ ...prev, corpImgUrl: fileUrl }));
+      setForm((prev) => ({ ...prev, corpImgUrl: fileUrl, corpLogoId: null }));
+      setIsCorpImageUploaded(true);
     } catch {
       snackbar('이미지 업로드에 실패했습니다.');
     }
@@ -414,7 +452,7 @@ export default function MentorDetailEditor({ mentorId }: Props) {
                 className="hidden"
               />
             </label>
-            <div className="mt-2">
+            <div className="mt-2 flex flex-col items-start gap-1">
               <Button
                 variant="outlined"
                 size="small"
@@ -422,12 +460,31 @@ export default function MentorDetailEditor({ mentorId }: Props) {
               >
                 라이브러리에서 선택
               </Button>
+              {form.corpLogoId !== null ? (
+                <div className="text-xxsmall12 text-neutral-30 flex items-center gap-2">
+                  <span>라이브러리: {logoNameOf(form.corpLogoId)}</span>
+                  <button
+                    type="button"
+                    className="text-primary underline"
+                    onClick={() =>
+                      setForm((prev) => ({ ...prev, corpLogoId: null }))
+                    }
+                  >
+                    연결 해제
+                  </button>
+                </div>
+              ) : null}
             </div>
             {isLogoPickerOpen ? (
               <CompanyLogoPickerDialog
                 onClose={() => setIsLogoPickerOpen(false)}
-                onSelect={(corpImgUrl) => {
-                  setForm((prev) => ({ ...prev, corpImgUrl }));
+                onSelect={(logo) => {
+                  setForm((prev) => ({
+                    ...prev,
+                    corpImgUrl: logo.imageUrl,
+                    corpLogoId: logo.id,
+                  }));
+                  setIsCorpImageUploaded(false);
                   setIsLogoPickerOpen(false);
                 }}
               />
@@ -609,7 +666,9 @@ export default function MentorDetailEditor({ mentorId }: Props) {
                 employmentType: editingCareer.employmentType,
                 startDate: toYearMonth(editingCareer.startDate),
                 endDate: toYearMonth(editingCareer.endDate),
+                companyLogoId: editingCareer.companyLogoId,
                 logoImgUrl: editingCareer.logoImgUrl,
+                logoName: logoNameOf(editingCareer.companyLogoId),
                 isRepresentative: editingCareer.isRepresentative,
               }}
               isSaving={patchCareer.isPending}
@@ -643,6 +702,11 @@ export default function MentorDetailEditor({ mentorId }: Props) {
                           />
                         ) : null}
                         {career.job || '-'}
+                        {career.companyLogoId !== null ? (
+                          <span className="text-xxsmall12 text-neutral-40">
+                            라이브러리: {logoNameOf(career.companyLogoId)}
+                          </span>
+                        ) : null}
                       </span>
                       {isDeletable ? (
                         <div className="flex items-center gap-3">

@@ -26,8 +26,12 @@ export interface CareerEditValues {
   startDate: string;
   /** `YYYY-MM`. 비어 있으면 재직 중 */
   endDate: string;
-  /** 경력 로고 주소. 빈 문자열이면 로고 없음 */
+  /** 연결한 회사 로고 라이브러리 id. 저장에는 이 값만 쓴다. null 이면 연결 없음 */
+  companyLogoId: number | null;
+  /** 미리보기용 로고 주소. 빈 문자열이면 로고 없음 */
   logoImgUrl: string;
+  /** 연결한 라이브러리 로고의 회사명(표시용). 모르면 null */
+  logoName: string | null;
   isRepresentative: boolean;
 }
 
@@ -162,6 +166,11 @@ export default function CareerEditDialog({
               />
             ) : null}
           </div>
+          {values.logoName ? (
+            <span className="text-xsmall14 text-neutral-30">
+              라이브러리: {values.logoName}
+            </span>
+          ) : null}
           <Button
             variant="outlined"
             size="small"
@@ -173,7 +182,9 @@ export default function CareerEditDialog({
             <Button
               size="small"
               color="inherit"
-              onClick={() => set({ logoImgUrl: '' })}
+              onClick={() =>
+                set({ companyLogoId: null, logoImgUrl: '', logoName: null })
+              }
             >
               로고 해제
             </Button>
@@ -207,8 +218,12 @@ export default function CareerEditDialog({
       {isLogoPickerOpen ? (
         <CompanyLogoPickerDialog
           onClose={() => setIsLogoPickerOpen(false)}
-          onSelect={(logoImgUrl) => {
-            set({ logoImgUrl });
+          onSelect={(logo) => {
+            set({
+              companyLogoId: logo.id,
+              logoImgUrl: logo.imageUrl,
+              logoName: logo.name,
+            });
             setIsLogoPickerOpen(false);
           }}
         />

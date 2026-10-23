@@ -9,12 +9,13 @@ import {
 import { useState } from 'react';
 
 import { useAdminCompanyLogoListQuery } from '@/api/company-logo/companyLogo';
+import type { CompanyLogo } from '@/api/company-logo/companyLogoSchema';
 import { twMerge } from '@/lib/twMerge';
 
 interface Props {
   onClose: () => void;
-  /** 고른 로고의 이미지 주소. 지정은 주소를 복사하는 방식이다 */
-  onSelect: (imageUrl: string) => void;
+  /** 고른 로고. 지정은 라이브러리 로고에 연결하는 방식이라 id 로 저장한다 */
+  onSelect: (logo: CompanyLogo) => void;
 }
 
 /**
@@ -85,7 +86,7 @@ export default function CompanyLogoPickerDialog({ onClose, onSelect }: Props) {
         <Button
           variant="contained"
           disabled={!selectedLogo}
-          onClick={() => selectedLogo && onSelect(selectedLogo.imageUrl)}
+          onClick={() => selectedLogo && onSelect(selectedLogo)}
         >
           선택
         </Button>

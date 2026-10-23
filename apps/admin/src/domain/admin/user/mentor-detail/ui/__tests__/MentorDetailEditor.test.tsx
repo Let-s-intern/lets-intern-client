@@ -1,10 +1,17 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const get = vi.fn();
 const patch = vi.fn();
 const put = vi.fn();
+const post = vi.fn();
 const getV2 = vi.fn();
 
 vi.mock('@/utils/axios', () => ({
@@ -12,6 +19,7 @@ vi.mock('@/utils/axios', () => ({
     get: (...args: unknown[]) => get(...args),
     patch: (...args: unknown[]) => patch(...args),
     put: (...args: unknown[]) => put(...args),
+    post: (...args: unknown[]) => post(...args),
   },
 }));
 
@@ -300,8 +308,9 @@ describe('MentorDetailEditor 경력 수정·대표 지정', () => {
       employmentType: '계약직',
       startDate: '2019-03',
       endDate: '2021-12',
-      logoImgUrl: '',
     });
+    // 로고는 경력 본문으로 보내지 않는다(라이브러리 연결로 따로 저장)
+    expect(requestDto).not.toHaveProperty('logoImgUrl');
     // 대표 체크를 하지 않았으면 대표 지정은 부르지 않는다
     expect(patch).toHaveBeenCalledTimes(1);
   });
@@ -321,30 +330,41 @@ describe('MentorDetailEditor 경력 수정·대표 지정', () => {
   });
 });
 
-describe('MentorDetailEditor 대표 로고 라이브러리 선택 (LC-3499)', () => {
+const NAVER_LOGO = {
+  id: 3,
+  name: '네이버',
+  imageUrl: 'https://cdn.test/naver.png',
+};
+
+const mockLogoApis = (careerList: unknown[] = []) =>
+  get.mockImplementation((url: string) => {
+    if (url === '/admin/company-logo')
+      return Promise.resolve({
+        data: { data: { companyLogoList: [NAVER_LOGO] } },
+      });
+    if (url === '/admin/mentor-hash-tag')
+      return Promise.resolve({
+        data: { data: { mentorHashTagList: hashTagList } },
+      });
+    if (url.startsWith('/admin/user-career/user/7'))
+      return Promise.resolve({ data: { data: careerList } });
+    return Promise.resolve({ data: { data: [] } });
+  });
+
+const pickNaverLogo = async (
+  scope: Pick<typeof screen, 'findByRole'> = screen,
+) => {
+  fireEvent.click(
+    await scope.findByRole('button', { name: '라이브러리에서 선택' }),
+  );
+  fireEvent.click(await screen.findByRole('button', { name: /네이버/ }));
+  fireEvent.click(screen.getByRole('button', { name: '선택' }));
+};
+
+describe('MentorDetailEditor 대표 로고 라이브러리 연결', () => {
   beforeEach(() => {
     getV2.mockResolvedValue({ data: { data: userDetail } });
-    get.mockImplementation((url: string) => {
-      if (url === '/admin/company-logo')
-        return Promise.resolve({
-          data: {
-            data: {
-              companyLogoList: [
-                {
-                  id: 3,
-                  name: '네이버',
-                  imageUrl: 'https://cdn.test/naver.png',
-                },
-              ],
-            },
-          },
-        });
-      if (url === '/admin/mentor-hash-tag')
-        return Promise.resolve({
-          data: { data: { mentorHashTagList: hashTagList } },
-        });
-      return Promise.resolve({ data: { data: [] } });
-    });
+    mockLogoApis();
     patch.mockResolvedValue({});
   });
 
@@ -352,22 +372,177 @@ describe('MentorDetailEditor 대표 로고 라이브러리 선택 (LC-3499)', ()
     vi.clearAllMocks();
   });
 
-  it('라이브러리에서 고른 로고를 corpImgUrl 로 저장한다', async () => {
+  it('라이브러리에서 고르면 저장 때 corp-logo 로 연결하고, 프로필 PATCH 에 corpImgUrl 은 없다', async () => {
     renderEditor();
-    fireEvent.click(
-      await screen.findByRole('button', { name: '라이브러리에서 선택' }),
-    );
-    fireEvent.click(await screen.findByRole('button', { name: /네이버/ }));
-    fireEvent.click(screen.getByRole('button', { name: '선택' }));
+    await pickNaverLogo();
     expect(screen.getByAltText('로고')).toHaveAttribute(
       'src',
       'https://cdn.test/naver.png',
     );
+    expect(screen.getByText('라이브러리: 네이버')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
+    await waitFor(() =>
+      expect(patch).toHaveBeenCalledWith('/admin/user/7/corp-logo', {
+        companyLogoId: 3,
+      }),
+    );
+    const profileBody = patch.mock.calls.find(
+      ([url]) => url === '/user/7',
+    )?.[1];
+    expect(profileBody).not.toHaveProperty('corpImgUrl');
+  });
+
+  it('연결을 바꾸지 않으면 corp-logo 요청을 보내지 않는다', async () => {
+    renderEditor();
+    fireEvent.click(await screen.findByRole('button', { name: '저장' }));
+    await waitFor(() => expect(patch).toHaveBeenCalled());
+    expect(patch.mock.calls.map(([url]) => url)).not.toContain(
+      '/admin/user/7/corp-logo',
+    );
+  });
+
+  it('연결 해제하면 저장 때 null 로 보낸다', async () => {
+    getV2.mockResolvedValue({
+      data: {
+        data: {
+          ...userDetail,
+          userInfo: {
+            ...userDetail.userInfo,
+            corpImgUrl: NAVER_LOGO.imageUrl,
+            corpLogoId: 3,
+          },
+        },
+      },
+    });
+    renderEditor();
+    expect(await screen.findByText('라이브러리: 네이버')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: '연결 해제' }));
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
+
+    await waitFor(() =>
+      expect(patch).toHaveBeenCalledWith('/admin/user/7/corp-logo', {
+        companyLogoId: null,
+      }),
+    );
+  });
+
+  it('직접 올리면 corpImgUrl 로 보내고 corp-logo 요청은 따로 보내지 않는다', async () => {
+    post.mockResolvedValue({
+      data: { data: { fileUrl: 'https://cdn.test/uploaded.png' } },
+    });
+    getV2.mockResolvedValue({
+      data: {
+        data: {
+          ...userDetail,
+          userInfo: { ...userDetail.userInfo, corpLogoId: 3 },
+        },
+      },
+    });
+    const { container } = renderEditor();
+    await screen.findByText('라이브러리: 네이버');
+    const fileInput = container.querySelector(
+      'label input[type="file"]',
+    ) as HTMLInputElement;
+    fireEvent.change(fileInput, {
+      target: { files: [new File(['x'], 'logo.png', { type: 'image/png' })] },
+    });
+    await waitFor(() =>
+      expect(screen.getByAltText('로고')).toHaveAttribute(
+        'src',
+        'https://cdn.test/uploaded.png',
+      ),
+    );
+    expect(screen.queryByText('라이브러리: 네이버')).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: '저장' }));
     await waitFor(() => expect(patch).toHaveBeenCalled());
-    expect(lastPatchBody()).toMatchObject({
-      corpImgUrl: 'https://cdn.test/naver.png',
-    });
+    expect(
+      patch.mock.calls.find(([url]) => url === '/user/7')?.[1],
+    ).toMatchObject({ corpImgUrl: 'https://cdn.test/uploaded.png' });
+    expect(patch.mock.calls.map(([url]) => url)).not.toContain(
+      '/admin/user/7/corp-logo',
+    );
+  });
+});
+
+describe('MentorDetailEditor 경력 로고 연결', () => {
+  const career = {
+    id: 12,
+    company: '이전회사',
+    job: '마케팅',
+    employmentType: '계약직',
+    startDate: '2019-03',
+    endDate: '2021-12',
+    field: null,
+    position: null,
+    department: null,
+    isAddedByAdmin: true,
+    isRepresentative: false,
+  };
+
+  beforeEach(() => {
+    getV2.mockResolvedValue({ data: { data: userDetail } });
+    patch.mockResolvedValue({});
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('경력 수정에서 로고를 고르면 경력 PATCH 뒤 company-logo 로 연결한다', async () => {
+    mockLogoApis([{ ...career, companyLogoId: null, logoImgUrl: null }]);
+    renderEditor();
+    fireEvent.click(await screen.findByRole('button', { name: '수정' }));
+    const dialog = screen.getByRole('dialog');
+    await pickNaverLogo(within(dialog));
+    fireEvent.click(within(dialog).getByRole('button', { name: '저장' }));
+
+    await waitFor(() =>
+      expect(patch).toHaveBeenCalledWith(
+        '/admin/user-career/user/7/12/company-logo',
+        { companyLogoId: 3 },
+      ),
+    );
+    const urls = patch.mock.calls.map(([url]) => url);
+    expect(urls.indexOf('/admin/user-career/user/7/12')).toBeLessThan(
+      urls.indexOf('/admin/user-career/user/7/12/company-logo'),
+    );
+  });
+
+  it('연결된 경력 로고를 해제하면 null 로 보내고, 행에 연결 회사명을 보인다', async () => {
+    mockLogoApis([
+      { ...career, companyLogoId: 3, logoImgUrl: NAVER_LOGO.imageUrl },
+    ]);
+    renderEditor();
+    expect(await screen.findByText('라이브러리: 네이버')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: '수정' }));
+    const dialog = screen.getByRole('dialog');
+    fireEvent.click(within(dialog).getByRole('button', { name: '로고 해제' }));
+    fireEvent.click(within(dialog).getByRole('button', { name: '저장' }));
+
+    await waitFor(() =>
+      expect(patch).toHaveBeenCalledWith(
+        '/admin/user-career/user/7/12/company-logo',
+        { companyLogoId: null },
+      ),
+    );
+  });
+
+  it('로고를 바꾸지 않으면 company-logo 요청을 보내지 않는다', async () => {
+    mockLogoApis([{ ...career, companyLogoId: 3, logoImgUrl: null }]);
+    renderEditor();
+    fireEvent.click(await screen.findByRole('button', { name: '수정' }));
+    fireEvent.click(
+      within(screen.getByRole('dialog')).getByRole('button', { name: '저장' }),
+    );
+    await waitFor(() =>
+      expect(patch.mock.calls.map(([url]) => url)).toContain(
+        '/admin/user-career/user/7/12',
+      ),
+    );
+    expect(patch.mock.calls.map(([url]) => url)).not.toContain(
+      '/admin/user-career/user/7/12/company-logo',
+    );
   });
 });
