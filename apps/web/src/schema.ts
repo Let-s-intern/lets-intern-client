@@ -98,6 +98,10 @@ export const activeChallengeSchema = z.object({
   deadline: z.string(),
   startDate: z.string(),
   endDate: z.string(),
+  // 버전 행이면 버전 값, 버전 없는 챌린지면 null (LC-3247)
+  challengeVersionId: z.number().nullable().optional(),
+  versionTitle: z.string().nullable().optional(),
+  programTitle: z.string().nullable().optional(),
 });
 
 export type ActiveChallengeType = z.infer<typeof activeChallengeSchema>;
@@ -197,6 +201,8 @@ export const ProgramTypeEnum = z.enum([
   'VOD',
   'REPORT',
   'GUIDEBOOK',
+  // VOD 이용권(LC-3438). 결제 내역에 별도 행으로 내려온다. 모르는 값이면 응답 전체가 parse 에서 터진다.
+  'VOD_PASS',
   /*
     서버 `ProgramType` 에 있는 값이다. `GET /api/v2/user/applications` 가 실제로
     내려주므로 빠져 있으면 신청현황 응답 전체가 zod parse 에서 터진다.
@@ -335,6 +341,24 @@ export const getChallengeIdPrimitiveSchema = z.object({
     .optional(),
   priceInfo: z.array(challengePriceInfoSchema),
   faqInfo: z.array(faq),
+  // 챌린지 버전 (LC-3247). 버전을 등록하지 않았거나 서버 배포 전이면 빈 목록이다.
+  versionList: z
+    .array(
+      z.object({
+        challengeVersionId: z.number(),
+        title: z.string(),
+        sortOrder: z.number(),
+        // 노출 필드. 비어 있으면 서버가 챌린지 값으로 채워 내려준다
+        programTitle: z.string().nullable().optional(),
+        shortDesc: z.string().nullable().optional(),
+        thumbnail: z.string().nullable().optional(),
+        desktopThumbnail: z.string().nullable().optional(),
+        description: z.string().nullable().optional(),
+      }),
+    )
+    .nullable()
+    .optional()
+    .transform((versionList) => versionList ?? []),
 });
 
 export type ChallengeIdPrimitive = z.infer<
@@ -2176,6 +2200,8 @@ const programInfoSchema = z.object({
   endDate: z.string().nullable().optional(),
   beginning: z.string().nullable().optional(),
   deadline: z.string().nullable().optional(),
+  // 버전 행이면 버전 id. 같은 챌린지의 버전 카드가 여러 장 나온다 (LC-3247)
+  challengeVersionId: z.number().nullable().optional(),
 });
 
 /** GET /api/v1/program */

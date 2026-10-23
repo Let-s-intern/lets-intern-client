@@ -7,6 +7,7 @@ import {
   useUpdateLiveMentoringAttendanceMutation,
 } from '@/api/live-mentoring/liveMentoring';
 import type { LiveMentoringReservationDetail } from '@/api/live-mentoring/liveMentoringSchema';
+import { useMeetingServerBaseUrls } from '@/api/meetingServer';
 import BaseModal from '@/common/modal/BaseModal';
 import { twMerge } from '@/lib/twMerge';
 import { feedbackModalDesign } from '@/pages/feedback/feedbackModalDesign';
@@ -218,9 +219,11 @@ const AttachmentSection = ({
       );
     }
 
-    if (attachmentType === 'FILE') {
-      return <AttachmentNotice>파일 첨부됨 — 준비 중</AttachmentNotice>;
-    }
+    /*
+      FILE 도 URL 과 같은 자리로 내려온다 — 서버가 `attachmentType` 이 `FILE` 이면
+      `attachmentUrl` 에 파일 주소를 채워 보낸다(공유 동의한 건만). 갈리는 것은
+      링크의 생김새뿐이라 아래 링크 경로를 그대로 탄다.
+     */
 
     // 주소가 비었거나 http(s) 가 아니면 링크를 만들지 않는다. 링크로 만드는 순간
     // 스킴이 그대로 실행되므로, 여는 대신 못 연다고 알린다.
@@ -233,13 +236,22 @@ const AttachmentSection = ({
     return (
       <>
         <div className="flex flex-wrap items-center gap-2">
+          {/*
+            파일은 저장, 그 밖(멘티가 적어 낸 노션 등)은 새 탭이다.
+
+            저장을 만드는 것은 `download` 속성이 아니라 서버가 서명 URL 에 실은
+            `Content-Disposition: attachment` 다 — 교차 출처 링크의 `download` 는
+            브라우저가 무시하므로 붙여도 pdf 가 그냥 열린다. 같은 탭으로 두는 것도
+            그래서다. 첨부 응답은 문서를 그리지 않아 새 탭이면 빈 탭만 남는다.
+          */}
           <a
             href={attachmentUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+            {...(attachmentType === 'FILE'
+              ? {}
+              : { target: '_blank', rel: 'noopener noreferrer' })}
             className={feedbackModalDesign.panelEntryButton}
           >
-            새 탭에서 열기
+            {attachmentType === 'FILE' ? '저장하기' : '새 탭에서 열기'}
           </a>
           {showEmbed && (
             <button
@@ -360,6 +372,7 @@ const SubmissionModalBody = ({
 
   const [isJitsiOpen, setIsJitsiOpen] = useState(false);
   const [isPreparingRoom, setIsPreparingRoom] = useState(false);
+  const { baseUrls, loadBaseUrls } = useMeetingServerBaseUrls();
   // 입장 실패를 모달 안에 남긴다. 멘토 앱에는 토스트 인프라가 없어 alert 로 띄우면
   // 화면 밖으로 사라지고, 왜 못 들어갔는지 다시 볼 방법이 없다.
   const [enterError, setEnterError] = useState<string | null>(null);
@@ -401,10 +414,8 @@ const SubmissionModalBody = ({
     try {
       const result = await ensureLiveMeetingUrl({
         meetingUrl: data?.meetingUrl ?? null,
-        baseCandidates: [
-          import.meta.env.VITE_JITSI_BASE_URL,
-          import.meta.env.VITE_JITSI_FALLBACK_URL,
-        ],
+        // 이미 방이 있으면 후보가 필요 없다. 목록 조회 실패로 열린 방에 못 들어가는 일을 막는다.
+        baseCandidates: data?.meetingUrl ? [] : await loadBaseUrls(),
         // 서버가 base + 방 이름을 합성한다. 프론트는 base 만 보낸다.
         registerBaseUrl: async (base) => {
           await createMeetingRoom({ applicationId, meetingUrlBase: base });
@@ -580,10 +591,7 @@ const SubmissionModalBody = ({
             hasQuestion(data) ? (data.questionContent ?? undefined) : undefined
           }
           submissionUrl={sharedSubmissionUrl}
-          baseCandidates={[
-            import.meta.env.VITE_JITSI_BASE_URL,
-            import.meta.env.VITE_JITSI_FALLBACK_URL,
-          ]}
+          baseCandidates={baseUrls}
           registerBaseUrl={async (base) => {
             await createMeetingRoom({ applicationId, meetingUrlBase: base });
           }}

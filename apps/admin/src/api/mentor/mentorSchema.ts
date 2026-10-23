@@ -108,3 +108,58 @@ export interface MentorHashTagReq {
   type: string;
   title: string;
 }
+
+export const mentorReviewSourceSchema = z.enum([
+  'REVIEW',
+  'OLD_REVIEW',
+  'FEEDBACK',
+]);
+
+export const mentorReviewTypeSchema = z.enum([
+  'LIVE',
+  'FEEDBACK',
+  'LIVE_MENTORING',
+  'CHALLENGE',
+]);
+
+export type MentorReviewType = z.infer<typeof mentorReviewTypeSchema>;
+
+export const adminMentorReviewSchema = z.object({
+  source: mentorReviewSourceSchema,
+  sourceId: z.number(),
+  type: mentorReviewTypeSchema,
+  programTitle: z.string().nullable(),
+  // score·review 는 멘토 페이지에 나가는 값(수정값이 있으면 수정값), original* 은 원본이다
+  score: z.number().nullable(),
+  review: z.string().nullable(),
+  originalScore: z.number().nullable(),
+  originalReview: z.string().nullable(),
+  isEdited: z.boolean(),
+  createDate: z.string().nullable(),
+  isExposed: z.boolean(),
+});
+
+export type AdminMentorReview = z.infer<typeof adminMentorReviewSchema>;
+
+/** GET /api/v1/admin/mentor/{mentorId}/reviews 응답 */
+export const adminMentorReviewListSchema = z.object({
+  reviewList: z.array(adminMentorReviewSchema),
+});
+
+/** PATCH /api/v1/admin/mentor/{mentorId}/reviews/exposure 요청 바디 */
+export interface PatchMentorReviewExposureReq {
+  source: AdminMentorReview['source'];
+  sourceId: number;
+  isExposed: boolean;
+}
+
+/**
+ * PATCH /api/v1/admin/mentor/{mentorId}/reviews/content 요청 바디.
+ * score 는 1.0~5.0 의 0.5 단위, review 는 2000자 이하. null 로 보낸 항목은 원본으로 되돌린다
+ */
+export interface PatchMentorReviewContentReq {
+  source: AdminMentorReview['source'];
+  sourceId: number;
+  score: number | null;
+  review: string | null;
+}

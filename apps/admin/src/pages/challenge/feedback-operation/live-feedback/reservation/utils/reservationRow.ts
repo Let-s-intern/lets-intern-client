@@ -1,5 +1,6 @@
 import type { FeedbackAdminVo } from '@/api/feedback/feedbackSchema';
 import type { AdminLiveMentoringReservation } from '@/api/live-mentoring/liveMentoringSchema';
+import type { LiveSpecInput } from '../../utils/liveFeedbackSpec';
 
 /**
  * 예약 유형.
@@ -88,3 +89,29 @@ export const rowProgramTitle = (row: ReservationRow): string =>
   row.kind === 'CHALLENGE'
     ? row.feedback.programTitle || '-'
     : row.reservation.productName || '상품명 없음';
+
+/**
+ * 1대1 예약 → 진리표(`resolveAdminVoLiveSpec`) 입력.
+ *
+ * 진리표는 챌린지의 `FeedbackStatus` 를 받는다. 1대1 은 `LiveMentoringApplicationStatus`
+ * 라 이름이 같은 `CANCELED` 도 다른 타입이므로 여기서 옮긴다.
+ * - `CONFIRMED` → `RESERVED`. 시간과 출석으로 판정한다
+ * - 그 밖(`CANCELED`·`PAYMENT_PENDING`·`EXPIRED`) → `CANCELED`. 표시 없음.
+ *   결제 대기와 선점 만료는 서버가 목록에서 거르지만, 오더라도 잡힌 예약이 아니다
+ *
+ * 슬롯이 없으면 진행 시점을 가를 시각이 없어 null 을 돌려준다.
+ */
+export const toLiveSpecInput = (
+  reservation: AdminLiveMentoringReservation,
+): LiveSpecInput | null => {
+  const { reservationStartAt, reservationEndAt } = reservation;
+  if (reservationStartAt == null || reservationEndAt == null) return null;
+
+  return {
+    status: reservation.status === 'CONFIRMED' ? 'RESERVED' : 'CANCELED',
+    startDate: reservationStartAt,
+    endDate: reservationEndAt,
+    mentorStatus: reservation.mentorStatus,
+    menteeStatus: reservation.menteeStatus,
+  };
+};

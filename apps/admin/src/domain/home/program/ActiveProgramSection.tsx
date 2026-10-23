@@ -23,7 +23,11 @@ const ActiveProgramSection = () => {
   const filteredData = useMemo(() => {
     return data?.programList
       .filter(
-        (p) =>
+        (
+          p,
+        ): p is typeof p & {
+          programInfo: { programType: 'CHALLENGE' | 'LIVE' };
+        } =>
           p.programInfo.programType === 'CHALLENGE' ||
           p.programInfo.programType === 'LIVE',
       )

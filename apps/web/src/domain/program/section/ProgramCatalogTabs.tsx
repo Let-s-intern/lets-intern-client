@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import Link from 'next/link';
 
-import { SHOW_LIVE_MENTORING_NAV } from '@/domain/live-mentoring/constants';
+import { SHOW_LIVE_MENTORING_HEADER_NAV } from '@/domain/live-mentoring/constants';
 
 /** 카탈로그 탭을 구분하는 쿼리 키/값. `?catalog=mentoring` 이면 멘토링. */
 export const CATALOG_QUERY_KEY = 'catalog';
@@ -17,7 +17,7 @@ const TABS = [
 ] as const;
 
 /*
-  출시 전에는 「멘토링」 탭을 감춘다. 헤더 네비는 `SHOW_LIVE_MENTORING_NAV` 로 이미
+  출시 전에는 「멘토링」 탭을 감춘다. 헤더 네비는 `SHOW_LIVE_MENTORING_HEADER_NAV` 로 이미
   감추고 있었는데 이 탭이 그 플래그를 보지 않아, 네비에서 지운 뒤에도 프로그램 목록
   화면으로는 그대로 들어갈 수 있었다.
 
@@ -25,7 +25,7 @@ const TABS = [
   때문이다. `ProgramsPage` 에는 제목이 따로 없어 통째로 지우면 목록만 덩그러니 남는다.
 */
 const VISIBLE_TABS = TABS.filter(
-  (tab) => tab.key !== 'mentoring' || SHOW_LIVE_MENTORING_NAV,
+  (tab) => tab.key !== 'mentoring' || SHOW_LIVE_MENTORING_HEADER_NAV,
 );
 
 interface ProgramCatalogTabsProps {

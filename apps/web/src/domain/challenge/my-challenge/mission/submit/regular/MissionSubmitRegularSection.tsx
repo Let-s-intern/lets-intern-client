@@ -2,7 +2,10 @@ import DashboardCreateReviewModal from '@/domain/challenge/dashboard/modal/Dashb
 import { MissionPreQuestionInputSection } from '../ui/MissionPreQuestionInputSection';
 import { MissionReviewInputSection } from './MissionReviewInputSection';
 import BonusMissionModal from '@/domain/challenge/my-challenge/mission/submit/regular/BonusMissionModal';
+import { useChallengeChatLink } from '@/domain/challenge/hooks/useChallengeChatLink';
+import ChatEnterButton from '@/domain/challenge/my-challenge/mission/submit/ui/ChatEnterButton';
 import LinkInputSection from '@/domain/challenge/my-challenge/mission/submit/ui/LinkInputSection';
+import MissionShareModal from '@/domain/challenge/my-challenge/mission/submit/ui/MissionShareModal';
 import MissionSubmitButton from '@/domain/challenge/my-challenge/mission/ui/MissionSubmitButton';
 import MissionToast from '@/domain/challenge/my-challenge/mission/ui/MissionToast';
 import MobileReviewModal from './MobileReviewModal';
@@ -32,6 +35,7 @@ const MissionSubmitRegularSection = ({
   onSubmitLastMission,
 }: MissionSubmitRegularSectionProps) => {
   const params = useParams<{ applicationId: string; programId: string }>();
+  const { chatLink, chatPassword } = useChallengeChatLink();
 
   const {
     currentSelectedMission,
@@ -53,7 +57,9 @@ const MissionSubmitRegularSection = ({
     modalOpen,
     isBonusMissionModalOpen,
     setIsBonusMissionModalOpen,
-    setModalOpen,
+    isShareModalOpen,
+    setIsShareModalOpen,
+    closeReviewModal,
     isSubmitPeriodEnded,
     isResubmitBlocked,
     canSubmit,
@@ -87,8 +93,6 @@ const MissionSubmitRegularSection = ({
               onLinkVerified={handleLinkVerified}
               todayTh={selectedMissionTh}
               initialLink={linkValue}
-              text={`미션 링크는 .notion.site 형식의 퍼블릭 링크만 입력 가능합니다.
-          제출 후, 미션과 소감을 카카오톡으로 공유해야 제출이 인정됩니다.`}
             />
           </>
         ) : (
@@ -125,6 +129,15 @@ const MissionSubmitRegularSection = ({
             disabled={isResubmitBlocked}
           />
         )}
+        {/* 제출을 마친 뒤에도 공유가 남아 있다. 모달을 닫았을 때의 유일한 경로다. */}
+        {isSubmitted && chatLink && (
+          <ChatEnterButton
+            link={chatLink}
+            password={chatPassword}
+            label="미션 공유하기"
+            className="rounded-xs border-neutral-70 text-xsmall16 text-neutral-40 mt-3 flex w-full justify-center p-4"
+          />
+        )}
         <MissionToast
           message={toastMessage}
           isVisible={showToast}
@@ -137,14 +150,18 @@ const MissionSubmitRegularSection = ({
           className="hidden md:flex"
           programId={params.programId ?? ''}
           applicationId={params.applicationId ?? ''}
-          onClose={() => setModalOpen(false)}
+          onClose={closeReviewModal}
         />
       )}
 
-      <MobileReviewModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-      />
+      <MobileReviewModal isOpen={modalOpen} onClose={closeReviewModal} />
+      {isShareModalOpen && chatLink && (
+        <MissionShareModal
+          link={chatLink}
+          password={chatPassword}
+          onClose={() => setIsShareModalOpen(false)}
+        />
+      )}
       {bonusMission && (
         <BonusMissionModal
           isOpen={isBonusMissionModalOpen}

@@ -57,7 +57,7 @@ const HeroSection = memo(function HeroSection({
     <section
       ref={sectionRef}
       onClick={handleClick}
-      className="relative flex h-[calc(100vh-84px)] w-full cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#1a1145] via-[#0f0d2e] to-[#0C0A1D] md:h-[calc(100vh-116px)]"
+      className="relative flex h-[calc(100vh-84px)] w-full cursor-pointer flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#1a1145] via-[#0f0d2e] to-[#0C0A1D] md:h-[calc(100vh-156px)]"
     >
       <StarAnimation />
 

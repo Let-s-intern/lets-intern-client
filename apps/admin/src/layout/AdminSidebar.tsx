@@ -10,7 +10,7 @@ import StatsEmbedSection from './StatsEmbedSection';
 // VITE_WEB_URL 미설정 시 admin 자기 자신의 root 로 fallback (안전장치).
 const WEB_URL = import.meta.env.VITE_WEB_URL ?? '/';
 
-const navData = [
+export const navData = [
   {
     title: '프로그램 관리',
     itemList: [
@@ -83,6 +83,23 @@ const navData = [
     ],
   },
   {
+    title: 'VOD 관리',
+    itemList: [
+      {
+        name: 'VOD 이용권 설정',
+        url: '/vod-pass-product',
+      },
+      {
+        name: 'VOD 이용권 판매 설정',
+        url: '/vod-pass-sale-settings',
+      },
+      {
+        name: 'VOD 이용권 구매자',
+        url: '/vod-pass-applications',
+      },
+    ],
+  },
+  {
     // 다른 그룹과 달리 "관리"를 붙이지 않는다. 이 그룹은 읽기 전용 조회고,
     // 이용 이력은 결제가 아니라 행동이라 결제 그룹 아래에 두면 분류가 어긋난다.
     title: '히스토리',
@@ -124,12 +141,16 @@ const navData = [
     ],
   },
   {
-    // 계정·로그인에 딸린 설정이라 사용자 관리 바로 뒤에 둔다.
-    title: 'SSO 관리',
+    // 로그인·회의 입장처럼 서비스 동작을 바꾸는 설정이라 사용자 관리 바로 뒤에 둔다.
+    title: '시스템 관리',
     itemList: [
       {
-        name: '리다이렉트 화이트리스트',
+        name: 'SSO 리다이렉트 화이트리스트',
         url: '/sso/redirect-whitelist',
+      },
+      {
+        name: '회의 서버 관리',
+        url: '/meeting-servers',
       },
     ],
   },

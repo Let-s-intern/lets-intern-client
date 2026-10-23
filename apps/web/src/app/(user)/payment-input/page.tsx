@@ -12,6 +12,7 @@ import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import { MEMBERSHIP_CHALLENGE_ID as LEGACY_MEMBERSHIP_CHALLENGE_ID } from '@/domain/membership-legacy/lib/membershipChallenge';
 import { MEMBERSHIP_CHALLENGE_ID } from '@/domain/membership/lib/membershipChallenge';
 import { COUPON_DISABLED_CHALLENGE_TYPES } from '@/domain/program/program-detail/apply/constants';
+import AppliedVersionSection from '@/domain/program/program-detail/apply/section/AppliedVersionSection';
 import CouponSection, {
   CouponSectionProps,
 } from '@/domain/program/program-detail/apply/section/CouponSection';
@@ -19,6 +20,11 @@ import MotiveAnswerSection from '@/domain/program/program-detail/apply/section/M
 import PaymentSubmitSection from '@/domain/program/program-detail/apply/section/PaymentSubmitSection';
 import PriceSection from '@/domain/program/program-detail/apply/section/PriceSection';
 import UserInputSection from '@/domain/program/program-detail/apply/section/UserInputSection';
+import {
+  getAppliedVersionTitle,
+  isVersionSelectRequired,
+} from '@/domain/program/program-detail/apply/utils/challengeVersion';
+import { calculateChallengeTotalWithVodPass } from '@/domain/program/vodPassPurchase';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
 import { UserInfo } from '@/lib/order';
 import { ChallengePriceInfo } from '@/schema';
@@ -36,21 +42,6 @@ import { AxiosError } from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import OrderProgramInfo from '../../../domain/program/OrderProgramInfo';
-
-function calculateTotalPrice({
-  regularPrice = 0,
-  discount = 0,
-  couponPrice = 0,
-  membershipDiscount = 0,
-}: {
-  regularPrice?: number; // 프로그램 정가
-  discount?: number; // 프로그램 할인금액
-  couponPrice?: number;
-  membershipDiscount?: number; // 올인원패스 권한 할인액
-}) {
-  const totalDiscount = discount + couponPrice + membershipDiscount;
-  return regularPrice <= totalDiscount ? 0 : regularPrice - totalDiscount;
-}
 
 const PaymentInputContent = () => {
   const router = useRouter();
@@ -103,6 +94,26 @@ const PaymentInputContent = () => {
         (challengeBasicPriceInfo?.refund ?? 0) -
         (challengeBasicPriceInfo?.discount ?? 0)
       : Infinity;
+
+  // 챌린지 버전 (LC-3247). 상세 페이지의 버전으로 고정돼 들어온다. LIGHT 면 버전이 없다 (설계안 D1)
+  const versionList =
+    program && 'versionList' in program ? program.versionList : [];
+  const selectedPlanType =
+    program && 'priceInfo' in program && Array.isArray(program.priceInfo)
+      ? (program.priceInfo as ChallengePriceInfo[]).find(
+          (info) => info.priceId === programApplicationData.priceId,
+        )?.challengePricePlanType
+      : null;
+  const isVersionRequired = isVersionSelectRequired(
+    versionList,
+    selectedPlanType,
+  );
+  const challengeVersionId = programApplicationData.challengeVersionId ?? null;
+  const appliedVersionTitle = getAppliedVersionTitle(
+    versionList,
+    selectedPlanType,
+    challengeVersionId,
+  );
 
   /**
    * 쿠폰 섹션 노출 여부
@@ -160,10 +171,12 @@ const PaymentInputContent = () => {
             })
           : coupon;
 
-      const newTotalPrice = calculateTotalPrice({
-        regularPrice: programApplicationData.price ?? 0, // 총 정가
-        discount: programApplicationData.discount ?? 0,
+      // 서버 합계식: max(정가 - 할인 - 쿠폰, 0) + 이용권. 이용권은 쿠폰 적용 뒤에 더해진다
+      const newTotalPrice = calculateChallengeTotalWithVodPass({
+        regularPrice: programApplicationData.price, // 총 정가
+        discount: programApplicationData.discount,
         couponPrice: data.price,
+        vodPassPrice: programApplicationData.vodPassPrice,
         membershipDiscount: programApplicationData.membershipDiscount ?? 0,
       });
 
@@ -178,26 +191,28 @@ const PaymentInputContent = () => {
       programApplicationData.couponPrice,
       programApplicationData.discount,
       programApplicationData.price,
+      programApplicationData.vodPassPrice,
       programApplicationData.membershipDiscount,
     ],
   );
 
-  // 결제 금액
+  // 결제 금액. setCoupon 이 스토어에 담는 totalPrice 와 같은 함수에서 나온다
   const totalPrice = useMemo(() => {
     // 무료면 0원 (토스 스킵)
     if (programApplicationData.isFree) return 0;
-    const regularPrice = programApplicationData.price ?? 0;
-    const discountAmount = programApplicationData.discount ?? 0;
-    const couponPrice = programApplicationData.couponPrice ?? 0;
-    const membershipDiscount = programApplicationData.membershipDiscount ?? 0;
-    const totalDiscount = discountAmount + couponPrice + membershipDiscount;
-
-    return regularPrice <= totalDiscount ? 0 : regularPrice - totalDiscount;
+    return calculateChallengeTotalWithVodPass({
+      regularPrice: programApplicationData.price,
+      discount: programApplicationData.discount,
+      couponPrice: programApplicationData.couponPrice,
+      vodPassPrice: programApplicationData.vodPassPrice,
+      membershipDiscount: programApplicationData.membershipDiscount ?? 0,
+    });
   }, [
     programApplicationData.isFree,
     programApplicationData.couponPrice,
     programApplicationData.discount,
     programApplicationData.price,
+    programApplicationData.vodPassPrice,
     programApplicationData.membershipDiscount,
   ]);
 
@@ -213,6 +228,11 @@ const PaymentInputContent = () => {
 
   // 약관 동의 가드·흔들림은 PaymentSubmitSection이 담당한다(동의 시에만 호출됨).
   const onPaymentClick = useCallback(async () => {
+    // 버전이 들어가지 않는 신청(LIGHT 등)은 남아 있는 값이 있어도 비워서 보낸다
+    setProgramApplicationForm({
+      challengeVersionId: isVersionRequired ? challengeVersionId : null,
+    });
+
     try {
       await patchUserMutation.mutateAsync({
         contactEmail: programApplicationData.contactEmail,
@@ -242,7 +262,9 @@ const PaymentInputContent = () => {
       );
     }
   }, [
+    challengeVersionId,
     handleSafeNavigation,
+    isVersionRequired,
     patchUserMutation,
     programApplicationData.contactEmail,
     programApplicationData.programOrderId,
@@ -386,6 +408,10 @@ const PaymentInputContent = () => {
 
       <hr className="bg-neutral-95 my-10 block h-2 border-none" />
 
+      {appliedVersionTitle && (
+        <AppliedVersionSection versionTitle={appliedVersionTitle} />
+      )}
+
       {!programApplicationData.isFree && (
         <div className="mx-5 mb-10 flex flex-col gap-y-6">
           <div className="text-neutral-0 font-semibold">결제 정보</div>
@@ -395,6 +421,10 @@ const PaymentInputContent = () => {
                 setCoupon={setCoupon}
                 programType={programApplicationData.programType ?? 'live'}
                 maxAmount={maxCouponAmount}
+                salePrice={
+                  (programApplicationData.price ?? 0) -
+                  (programApplicationData.discount ?? 0)
+                }
                 // [LC-3219-MEMBERSHIP] 시즌 종료 시 이 줄을 지운다. 담당자 임성빈
                 allowFullDiscount={!isMembership}
               />
@@ -425,6 +455,8 @@ const PaymentInputContent = () => {
                 price: programApplicationData.couponPrice ?? 0,
               }}
               showCouponDiscount={showCouponSection}
+              vodPassPrice={programApplicationData.vodPassPrice ?? 0}
+              vodPassMonths={programApplicationData.vodPassMonths ?? 0}
               membershipDiscount={
                 programApplicationData.membershipDiscount ?? 0
               }

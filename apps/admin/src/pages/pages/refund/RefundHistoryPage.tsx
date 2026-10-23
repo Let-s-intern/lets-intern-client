@@ -5,6 +5,11 @@ import {
   UserRefundHistoryParams,
   useUserRefundHistoryQuery,
 } from '@/api/adminRefund';
+import {
+  PlanChangeHistoryParams,
+  usePlanChangeHistoryQuery,
+} from '@/api/planChange';
+import PlanChangeHistoryTable from '@/domain/admin/challenge/plan-change/PlanChangeHistoryTable';
 import RefundHistoryTable from '@/domain/admin/refund/ui/RefundHistoryTable';
 import UserRefundTable from '@/domain/admin/refund/ui/UserRefundTable';
 import { twMerge } from '@/lib/twMerge';
@@ -27,15 +32,16 @@ const STATUSES: { value: '' | AdminRefundStatus; label: string }[] = [
   { value: 'FAILED', label: '실패' },
 ];
 
-type Tab = 'admin' | 'user';
+type Tab = 'admin' | 'user' | 'plan-change';
 
 const tabs: { id: Tab; label: string }[] = [
   { id: 'admin', label: '어드민 주도 환불' },
   { id: 'user', label: '유저 환불' },
+  { id: 'plan-change', label: '플랜 변경' },
 ];
 
 function isTab(value: string | null): value is Tab {
-  return value === 'admin' || value === 'user';
+  return value === 'admin' || value === 'user' || value === 'plan-change';
 }
 
 /**
@@ -46,6 +52,7 @@ function isTab(value: string | null): value is Tab {
  * 프로그램별 조회는 필터로 해결한다.
  *
  * 어드민 주도 환불과 유저 환불은 출처도 컬럼도 다르므로 탭으로 나눈다.
+ * 플랜 변경은 받은 돈의 기록이라 환불 로그와 섞지 않고 탭을 따로 둔다 (설계안 "플랜 변경 로그" 절).
  */
 const RefundHistoryPage = () => {
   // 탭 상태를 URL(?tab=)에 둔다. 새로고침해도 보던 탭이 유지된다.
@@ -81,7 +88,9 @@ const RefundHistoryPage = () => {
         ))}
       </nav>
 
-      {activeTab === 'admin' ? <AdminRefundTab /> : <UserRefundTab />}
+      {activeTab === 'admin' && <AdminRefundTab />}
+      {activeTab === 'user' && <UserRefundTab />}
+      {activeTab === 'plan-change' && <PlanChangeTab />}
     </div>
   );
 };
@@ -303,6 +312,63 @@ const UserRefundTab = () => {
       </div>
 
       <UserRefundTable refunds={data?.refundList ?? []} isLoading={isLoading} />
+
+      <Pagination
+        page={page}
+        totalPages={data?.pageInfo.totalPages ?? 0}
+        onChange={setPage}
+      />
+    </>
+  );
+};
+
+/**
+ * 플랜 변경으로 받은 차액. 따로 받은 차액의 환불 완료를 운영이 여기서 기록한다
+ * (설계안 D12, 운영안 "따로 받은 차액"). 매출·정산 집계와는 무관하다 (설계안 D13).
+ */
+const PlanChangeTab = () => {
+  const [page, setPage] = useState(0);
+  const [filters, setFilters] = useState<PlanChangeHistoryParams>({});
+
+  const { data, isLoading } = usePlanChangeHistoryQuery({
+    ...filters,
+    page,
+    size: PAGE_SIZE,
+  });
+
+  const updateFilter = (patch: PlanChangeHistoryParams) => {
+    setFilters((prev) => ({ ...prev, ...patch }));
+    setPage(0);
+  };
+
+  return (
+    <>
+      <p className="mb-4 text-sm text-neutral-500">
+        플랜 변경으로 받은 차액입니다. 별도 수납 건은 환불할 때 시스템이
+        취소하지 않으니, 직접 환불한 뒤 환불 완료를 기록하세요.
+      </p>
+
+      <div className="mb-4 flex flex-wrap items-end gap-3">
+        <PeriodFilter onChange={updateFilter} />
+        <KeywordFilter onChange={(keyword) => updateFilter({ keyword })} />
+
+        <label className="flex items-center gap-2 py-1 text-sm">
+          <input
+            type="checkbox"
+            onChange={(e) =>
+              updateFilter({
+                pendingManualRefundOnly: e.target.checked || undefined,
+              })
+            }
+          />
+          별도 환불 대기만
+        </label>
+      </div>
+
+      <PlanChangeHistoryTable
+        logs={data?.planChangeLogList ?? []}
+        isLoading={isLoading}
+      />
 
       <Pagination
         page={page}

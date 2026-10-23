@@ -65,7 +65,8 @@
       "protobufjs@<7.5.5": "^7.5.5",
       "path-to-regexp@<6.3.0": "6.3.0",
       "undici@6": "^6.24.0",
-      "websocket-driver@<0.7.5": "^0.7.5"
+      "websocket-driver@<0.7.5": "^0.7.5",
+      "dompurify@<3.4.17": "^3.4.17"
     }
   }
 }

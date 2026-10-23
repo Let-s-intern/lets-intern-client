@@ -9,7 +9,7 @@ function Spacer({ hideMobileBottomNavBar, backgroundColor = '' }: Props) {
   const mobileSpace = hideMobileBottomNavBar ? 'h-[44px]' : 'h-[84px]';
   return (
     <div
-      className={twMerge(mobileSpace, 'md:h-[116px]', backgroundColor)}
+      className={twMerge(mobileSpace, 'md:h-[156px]', backgroundColor)}
       aria-hidden="true"
     />
   );

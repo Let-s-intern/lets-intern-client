@@ -9,6 +9,18 @@ interface AuthState {
   isLoggedIn: boolean;
 }
 let authState: AuthState = { isInitialized: true, isLoggedIn: true };
+// 회의 서버 목록(GET /meeting-servers) — 입장 후보는 서버 DB 에서 온다.
+const mockMeetingServerBaseUrls = [
+  'https://jitsi-main.example.com/',
+  'https://jitsi-fallback.example.com/',
+];
+jest.mock('@/api/meetingServer', () => ({
+  useMeetingServerBaseUrls: () => ({
+    baseUrls: mockMeetingServerBaseUrls,
+    loadBaseUrls: async () => mockMeetingServerBaseUrls,
+  }),
+}));
+
 jest.mock('@letscareer/store', () => ({
   useAuthStore: (selector: (s: AuthState) => unknown) => selector(authState),
 }));

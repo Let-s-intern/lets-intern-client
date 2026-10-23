@@ -67,18 +67,48 @@ describe('AdminSidebar 히스토리 그룹', () => {
 });
 
 /**
- * 화면을 만들어도 메뉴에 없으면 운영은 존재를 모른다 (LC-3208, PRD 6.3).
+ * 화면을 만들어도 메뉴에 없으면 운영은 존재를 모른다 (LC-3438, PRD 4.3 A-2).
  */
-describe('AdminSidebar SSO 그룹', () => {
-  it('리다이렉트 화이트리스트 메뉴가 목록 경로로 이어진다', () => {
+describe('AdminSidebar VOD 관리 그룹', () => {
+  it('VOD 관리 그룹은 올인원패스 관리와 히스토리 사이에 있다', () => {
     renderSidebar();
 
-    const group = screen
-      .getByRole('heading', { name: 'SSO 관리' })
+    const titles = screen
+      .getAllByRole('heading', { level: 3 })
+      .map((heading) => heading.textContent);
+
+    expect(titles.indexOf('VOD 관리')).toBe(
+      titles.indexOf('올인원패스 관리') + 1,
+    );
+    expect(titles.indexOf('히스토리')).toBe(titles.indexOf('VOD 관리') + 1);
+  });
+
+  const vodGroup = () =>
+    screen.getByRole('heading', { name: 'VOD 관리' }).closest('div')!
+      .parentElement!;
+
+  it.each([
+    ['VOD 이용권 설정', '/vod-pass-product'],
+    ['VOD 이용권 판매 설정', '/vod-pass-sale-settings'],
+    ['VOD 이용권 구매자', '/vod-pass-applications'],
+  ])('%s 메뉴가 %s 경로로 이어진다', (name, href) => {
+    renderSidebar();
+
+    expect(within(vodGroup()).getByRole('link', { name })).toHaveAttribute(
+      'href',
+      href,
+    );
+  });
+
+  it('VOD 이용권 메뉴를 프로그램 관리 그룹에서는 보이지 않는다', () => {
+    renderSidebar();
+
+    const programGroup = screen
+      .getByRole('heading', { name: '프로그램 관리' })
       .closest('div')!.parentElement!;
 
     expect(
-      within(group).getByRole('link', { name: '리다이렉트 화이트리스트' }),
-    ).toHaveAttribute('href', '/sso/redirect-whitelist');
+      within(programGroup).queryByRole('link', { name: /VOD 이용권/ }),
+    ).not.toBeInTheDocument();
   });
 });

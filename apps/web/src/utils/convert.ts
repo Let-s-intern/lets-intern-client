@@ -21,6 +21,7 @@ export const newProgramTypeToText: Record<string, string> = {
   REPORT: '서류 진단',
   GUIDEBOOK: '가이드북',
   MEMBERSHIP: '올인원패스',
+  VOD_PASS: 'VOD 이용권',
 };
 export const newProgramFeeTypeToText: Record<string, string> = {
   FREE: '무료',

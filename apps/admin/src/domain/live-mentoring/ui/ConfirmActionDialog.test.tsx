@@ -26,6 +26,8 @@ const row: AdminLiveMentoring = {
     createDate: '2026-08-01T00:00:00',
     lastModifiedDate: '2026-08-01T00:00:00',
   },
+  upcomingParticipantCount: 0,
+  mentorReviewCount: 0,
 };
 
 /**

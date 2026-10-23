@@ -15,6 +15,9 @@ export const liveMentoringCategorySchema = z.enum([
   'PERSONAL_STATEMENT',
   'RESUME',
   'PORTFOLIO',
+  'CAREER_COFFEE_CHAT',
+  'INTERVIEW',
+  'EXPERIENCE',
 ]);
 export type LiveMentoringCategory = z.infer<typeof liveMentoringCategorySchema>;
 

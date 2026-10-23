@@ -13,6 +13,7 @@ import LoginLink from './LoginLink';
 import LogoLink from './LogoLink';
 // [LC-3219-MEMBERSHIP] 멤버십 랜딩 진입 메뉴 라벨 — 시즌 종료 시 아래 GlobalNavItem 과 함께 제거한다
 import MembershipNavLabel from './MembershipNavLabel';
+import ServiceToggle from './ServiceToggle';
 import SignUpLink from './SignUpLink';
 import { SubNavItemProps } from './SubNavItem';
 
@@ -69,7 +70,11 @@ function GlobalNavTopBar({ loginRedirect, toggleMenu, isLoginPage }: Props) {
     <nav className="mw-1180 flex h-11 items-center justify-between md:h-full md:py-4">
       <div className="flex h-full items-center">
         {/* 로고 */}
-        <LogoLink className="mr-8" />
+        <LogoLink className="mr-3 md:mr-8" />
+        {/* 오늘의 공고로 오가는 토글. 데스크톱은 `NavBar` 맨 위 띠가 맡는다. */}
+        <div className="md:hidden">
+          <ServiceToggle size="mobile" />
+        </div>
         {/* 네비 메뉴 */}
         <GlobalNavItem
           className={twMerge(

@@ -1,4 +1,6 @@
 import { MypageApplication } from '@/api/application';
+import type { MyLiveMentoringApplication } from '@/api/live-mentoring/liveMentoringSchema';
+import MentoringApplicationCard from '@/domain/live-mentoring/mypage/MentoringApplicationCard';
 import { useMediaQuery } from '@mui/material';
 import { useState } from 'react';
 import Button from '../../ui/button/Button';
@@ -6,25 +8,37 @@ import NewApplicationCard from '../../ui/card/NewApplicationCard';
 
 interface CompleteSectionProps {
   applicationList: MypageApplication[];
+  /** 같은 구간의 1대1 라이브 멘토링. 프로그램과 한 목록으로 보인다(LC-3301). */
+  mentoringList?: MyLiveMentoringApplication[];
+  onMentoringQuestionClick?: (applicationId: number) => void;
+  /** 버전 `변경` 을 누른 신청 id. 모달은 ApplicationContent 가 연다. */
+  onVersionChangeClick?: (applicationId: number) => void;
   emptyText?: string;
 }
 
 const CompleteSection = ({
   applicationList,
+  mentoringList = [],
+  onMentoringQuestionClick = () => {},
+  onVersionChangeClick,
   emptyText = '참여 완료한 프로그램이 아직 없어요.',
 }: CompleteSectionProps) => {
   const [showMore, setShowMore] = useState(false);
   const isDesktop = useMediaQuery('(min-width:768px)');
 
   const visibleCount = isDesktop ? 3 : 4;
+  const totalCount = applicationList.length + mentoringList.length;
   const viewList = showMore
     ? applicationList
     : applicationList.slice(0, visibleCount);
+  const viewMentoringList = showMore
+    ? mentoringList
+    : mentoringList.slice(0, Math.max(visibleCount - viewList.length, 0));
 
   return (
     <section className="flex flex-col gap-6">
       <h1 className="text-lg font-semibold">참여 완료</h1>
-      {applicationList.length === 0 ? (
+      {totalCount === 0 ? (
         <div className="flex w-full flex-col items-center gap-4 py-20">
           <p className="text-xsmall14 text-neutral-20 font-normal">
             {emptyText}
@@ -37,10 +51,19 @@ const CompleteSection = ({
               <NewApplicationCard
                 key={application.id}
                 application={application}
+                onVersionChangeClick={onVersionChangeClick}
+              />
+            ))}
+            {viewMentoringList.map((application) => (
+              <MentoringApplicationCard
+                key={`mentoring-${application.applicationId}`}
+                application={application}
+                phase="ended"
+                onQuestionClick={onMentoringQuestionClick}
               />
             ))}
           </div>
-          {applicationList.length > visibleCount && !showMore && (
+          {totalCount > visibleCount && !showMore && (
             <Button
               className="md:flex"
               onClick={() => {

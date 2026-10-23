@@ -50,6 +50,15 @@ const RefundHistoryPage = lazy(
 const UsageHistoryPage = lazy(
   () => import('./pages/pages/usage/UsageHistoryPage'),
 );
+const VodPassProductSettings = lazy(
+  () => import('./pages/pages/vodpass/VodPassProductSettings'),
+);
+const VodPassApplications = lazy(
+  () => import('./pages/pages/vodpass/VodPassApplications'),
+);
+const VodPassSaleSettings = lazy(
+  () => import('./pages/pages/vodpass/VodPassSaleSettings'),
+);
 
 const ChallengeContents = lazy(
   () => import('./pages/pages/challenge/ChallengeContents'),
@@ -207,6 +216,14 @@ const SsoRedirectWhitelistCreate = lazy(
   () => import('./domain/admin/pages/sso/SsoRedirectWhitelistCreate'),
 );
 
+// 회의 서버 (LC-3439)
+const MeetingServers = lazy(
+  () => import('./domain/admin/pages/meeting-server/MeetingServers'),
+);
+const MeetingServerForm = lazy(
+  () => import('./domain/admin/pages/meeting-server/MeetingServerForm'),
+);
+
 // 커리어 DB (유저 목록)
 const AdminUsersPage = lazy(
   () => import('./domain/admin/pages/user/AdminUsersPage'),
@@ -362,6 +379,18 @@ export const router = createBrowserRouter([
       {
         path: '/programs/:programId/users',
         element: withSuspense(<ProgramUsers />),
+      },
+      {
+        path: '/vod-pass-product',
+        element: withSuspense(<VodPassProductSettings />),
+      },
+      {
+        path: '/vod-pass-applications',
+        element: withSuspense(<VodPassApplications />),
+      },
+      {
+        path: '/vod-pass-sale-settings',
+        element: withSuspense(<VodPassSaleSettings />),
       },
 
       // 챌린지 운영
@@ -529,6 +558,17 @@ export const router = createBrowserRouter([
       {
         path: '/sso/redirect-whitelist/new',
         element: withSuspense(<SsoRedirectWhitelistCreate />),
+      },
+
+      // 회의 서버
+      { path: '/meeting-servers', element: withSuspense(<MeetingServers />) },
+      {
+        path: '/meeting-servers/new',
+        element: withSuspense(<MeetingServerForm />),
+      },
+      {
+        path: '/meeting-servers/:id/edit',
+        element: withSuspense(<MeetingServerForm />),
       },
 
       // 쿠폰

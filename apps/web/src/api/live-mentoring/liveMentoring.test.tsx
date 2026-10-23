@@ -18,6 +18,7 @@ import {
   useLiveMentorDetailQuery,
   useLiveMentorListQuery,
   useLiveMentorSlotsQuery,
+  useMentorOpenLiveMentoringQuery,
   useLiveMentoringEntryQuery,
   useCreateLiveMentoringEntryMeetingRoomMutation,
   useUpdateLiveMentoringEntryAttendanceMutation,
@@ -87,6 +88,50 @@ beforeEach(() => {
   axiosGet.mockReset();
   axiosPost.mockReset();
   axiosPatch.mockReset();
+});
+
+describe('useMentorOpenLiveMentoringQuery', () => {
+  it('OPEN 개설 전체를 한 페이지로 받아 이 멘토의 개설을 찾는다', async () => {
+    axiosGet.mockResolvedValue({
+      data: {
+        data: {
+          openingList: [
+            makeOpening({ mentorId: 1 }),
+            makeOpening({ mentorId: 2, openingId: 501 }),
+          ],
+          pageInfo: {
+            pageNum: 1,
+            pageSize: 2000,
+            totalElements: 2,
+            totalPages: 1,
+          },
+        },
+      },
+    });
+
+    const { result } = renderHook(() => useMentorOpenLiveMentoringQuery('2'), {
+      wrapper: createWrapper(newClient()),
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(axiosGet).toHaveBeenCalledWith('/live-mentoring', {
+      params: { page: 1, size: 2000 },
+    });
+    expect(result.current.data?.openingId).toBe(501);
+  });
+
+  it('이 멘토의 OPEN 개설이 없으면 null 이다', async () => {
+    axiosGet.mockResolvedValue(listResponse());
+
+    const { result } = renderHook(() => useMentorOpenLiveMentoringQuery(2), {
+      wrapper: createWrapper(newClient()),
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(result.current.data).toBeNull();
+  });
 });
 
 describe('useLiveMentorListQuery', () => {

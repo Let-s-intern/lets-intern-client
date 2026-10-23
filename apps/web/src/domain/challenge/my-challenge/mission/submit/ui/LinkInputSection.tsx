@@ -1,5 +1,7 @@
+import { useChallengeChatLink } from '@/domain/challenge/hooks/useChallengeChatLink';
 import { clsx } from 'clsx';
 import { useEffect, useState } from 'react';
+import ChatEnterButton from './ChatEnterButton';
 
 interface LinkInputSectionProps {
   className?: string;
@@ -24,6 +26,7 @@ const LinkInputSection = ({
   isSubmitted = false,
   isEditing = false,
 }: LinkInputSectionProps) => {
+  const { chatLink, chatPassword, placeName } = useChallengeChatLink();
   const [linkValue, setLinkValue] = useState(initialLink);
   const [linkError, setLinkError] = useState('');
   const [linkSuccess, setLinkSuccess] = useState('');
@@ -147,9 +150,22 @@ const LinkInputSection = ({
             링크
           </span>
         </div>
-        <div className="bg-neutral-95 text-xsmall14 text-neutral-10 mb-3 whitespace-pre-line rounded px-3 py-3 md:mb-0">
-          {text ||
-            '미션 링크는 .notion.site 형식의 퍼블릭 링크만 입력 가능합니다.\n제출 후, 미션과 소감을 카카오톡으로 공유해야 제출이 인정됩니다.'}
+        <div className="bg-neutral-95 text-xsmall14 text-neutral-10 mb-3 flex items-start justify-between gap-3 rounded px-3 py-3 md:mb-0">
+          <span className="whitespace-pre-line">
+            {text ||
+              `미션 링크는 .notion.site 형식의 퍼블릭 링크만 입력 가능합니다.\n제출 후, 미션과 소감을 ${placeName}에 공유해야 제출이 인정됩니다.`}
+          </span>
+          {/*
+            기본 안내를 쓰는 화면에만 입장 버튼을 붙인다. text 를 직접 넘기는 화면
+            (보너스 미션)은 공유 안내 자체가 없어 버튼도 맞지 않는다.
+          */}
+          {!text && chatLink && (
+            <ChatEnterButton
+              link={chatLink}
+              password={chatPassword}
+              className="mt-0 shrink-0"
+            />
+          )}
         </div>
       </div>
       <div className="mt-3 flex gap-2 transition-all delay-200 duration-500 ease-out">

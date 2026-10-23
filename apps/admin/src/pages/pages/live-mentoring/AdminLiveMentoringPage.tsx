@@ -1,15 +1,29 @@
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from '@mui/material';
+import { useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
+import { ADMIN_LIVE_MENTORING_QUERY_KEY } from '@/api/live-mentoring/liveMentoring';
 import Heading from '@/domain/admin/ui/heading/Heading';
+import MentorDetailEditor from '@/domain/admin/user/mentor-detail/ui/MentorDetailEditor';
 import AdminLiveMentoringParticipantTable from '@/domain/live-mentoring/AdminLiveMentoringParticipantTable';
 import AdminLiveMentoringTable from '@/domain/live-mentoring/AdminLiveMentoringTable';
+import ReviewMentorBar from '@/domain/live-mentoring/ui/ReviewMentorBar';
+import MentorReviewExposureSection from '@/domain/mentor/review-exposure/ui/MentorReviewExposureSection';
 import { twMerge } from '@/lib/twMerge';
 
-type Tab = 'products' | 'participants';
+type Tab = 'products' | 'participants' | 'reviews';
 
 const tabs: { id: Tab; label: string }[] = [
   { id: 'products', label: '상품 관리' },
   { id: 'participants', label: '참여자' },
+  { id: 'reviews', label: '후기' },
 ];
 
 const TAB_DESCRIPTION: Record<Tab, string> = {
@@ -17,6 +31,8 @@ const TAB_DESCRIPTION: Record<Tab, string> = {
     '멘토가 만든 1:1 LIVE 멘토링 상품과 현재 개설을 조회합니다. 개설은 멘토가 직접 열고 닫으며, 필요하면 여기서 강제 종료할 수 있습니다.',
   participants:
     '1:1 LIVE 멘토링을 결제한 참여자를 조회합니다. 여기서 하는 조작은 환불뿐입니다.',
+  reviews:
+    '멘토 프로필과 1:1 LIVE 멘토링 상세에 뜨는 후기를 멘토별로 관리합니다. 노출을 끄거나 별점·내용을 고칠 수 있으며, 원본 후기는 바뀌지 않습니다.',
 };
 
 function isTab(value: string | null): value is Tab {
@@ -36,16 +52,26 @@ export default function AdminLiveMentoringPage() {
       ? mentorIdParam
       : undefined;
 
+  // 멘토 수정 모달. 상품 표에서 고른 멘토를 담고, 닫혀 있으면 null
+  const [editingMentorId, setEditingMentorId] = useState<number | null>(null);
+  const queryClient = useQueryClient();
+
+  // 모달에서 바꾼 닉네임·사진이 상품 표에 바로 보이도록 닫을 때 다시 불러온다
+  const closeMentorEditor = () => {
+    setEditingMentorId(null);
+    queryClient.invalidateQueries({ queryKey: ADMIN_LIVE_MENTORING_QUERY_KEY });
+  };
+
   const setActiveTab = (tab: Tab) => {
     const next = new URLSearchParams(searchParams);
     next.set('tab', tab);
     setSearchParams(next, { replace: true });
   };
 
-  /** 상품 표에서 고른 멘토의 참여자만 보러 간다. */
-  const showMentorParticipants = (nextMentorId: number) => {
+  /** 상품 표에서 고른 멘토의 참여자나 후기를 보러 간다. */
+  const showMentorTab = (tab: Tab, nextMentorId: number) => {
     const next = new URLSearchParams(searchParams);
-    next.set('tab', 'participants');
+    next.set('tab', tab);
     next.set('mentorId', String(nextMentorId));
     setSearchParams(next, { replace: true });
   };
@@ -82,7 +108,25 @@ export default function AdminLiveMentoringPage() {
       </nav>
 
       {activeTab === 'products' ? (
-        <AdminLiveMentoringTable onSelectMentor={showMentorParticipants} />
+        <AdminLiveMentoringTable
+          onSelectMentor={(id) => showMentorTab('participants', id)}
+          onSelectMentorReviews={(id) => showMentorTab('reviews', id)}
+          onEditMentor={setEditingMentorId}
+        />
+      ) : activeTab === 'reviews' ? (
+        mentorId ? (
+          <>
+            <ReviewMentorBar
+              mentorId={mentorId}
+              onChangeMentor={() => setActiveTab('products')}
+            />
+            <MentorReviewExposureSection key={mentorId} mentorId={mentorId} />
+          </>
+        ) : (
+          <p className="text-xsmall14 text-neutral-40 py-16 text-center">
+            상품 관리 탭에서 멘토의 후기 관리 버튼을 눌러 주세요.
+          </p>
+        )
       ) : (
         // 멘토가 바뀌면 다시 마운트해 페이지 번호를 1로 되돌린다.
         <AdminLiveMentoringParticipantTable
@@ -91,6 +135,29 @@ export default function AdminLiveMentoringPage() {
           onClearMentor={clearMentorFilter}
         />
       )}
+
+      {editingMentorId !== null ? (
+        // 에디터가 띄우는 프로필 업로드 모달은 Dialog 밖에 포털로 그려진다. 포커스를 빼앗지 않게 한다.
+        <Dialog
+          open
+          onClose={closeMentorEditor}
+          maxWidth="lg"
+          fullWidth
+          disableEnforceFocus
+        >
+          <DialogTitle className="text-base font-semibold">
+            멘토 수정
+          </DialogTitle>
+          <DialogContent>
+            <MentorDetailEditor mentorId={editingMentorId} />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={closeMentorEditor} color="inherit">
+              닫기
+            </Button>
+          </DialogActions>
+        </Dialog>
+      ) : null}
     </section>
   );
 }

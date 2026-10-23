@@ -38,6 +38,8 @@ describe('adminLiveMentoringSchema', () => {
       createDate: '2026-08-03T12:00:00',
       lastModifiedDate: '2026-08-03T12:00:00',
       currentOpening: null,
+      upcomingParticipantCount: 2,
+      mentorReviewCount: 5,
       ...overrides,
     };
   }
@@ -54,6 +56,18 @@ describe('adminLiveMentoringSchema', () => {
         makeRow({ approvedAt: '2026-08-04T14:30:00', approvedByUserId: 1 }),
       ),
     ).not.toThrow();
+  });
+
+  it('멘토별 진행 예정 참여자 수와 후기 수를 받는다', () => {
+    const parsed = adminLiveMentoringSchema.parse(makeRow());
+    expect(parsed.upcomingParticipantCount).toBe(2);
+    expect(parsed.mentorReviewCount).toBe(5);
+  });
+
+  it('건수가 빠진 응답은 거부한다', () => {
+    const { mentorReviewCount: _mentorReviewCount, ...withoutCount } =
+      makeRow();
+    expect(() => adminLiveMentoringSchema.parse(withoutCount)).toThrow();
   });
 
   // LC-3206 — currentOpening 에서 모집 기간이 사라졌다. 남겨 두면 목록이 통째로 죽는다.
@@ -184,6 +198,7 @@ describe('adminLiveMentoringParticipantListSchema', () => {
       refunded: false,
       refundAmount: 0,
       createDate: '2026-08-15T10:00:00',
+      paidAt: '2026-08-15T10:03:00',
       ...overrides,
     };
   }
@@ -202,5 +217,25 @@ describe('adminLiveMentoringParticipantListSchema', () => {
       pageInfo: { pageNum: 0, pageSize: 20, totalElements: 1, totalPages: 1 },
     });
     expect(parsed.participantList[0].couponName).toBeNull();
+  });
+
+  it('결제 시각이 있으면 그대로 파싱한다', () => {
+    const parsed = adminLiveMentoringParticipantListSchema.parse({
+      participantList: [makeParticipant()],
+      pageInfo: { pageNum: 0, pageSize: 20, totalElements: 1, totalPages: 1 },
+    });
+    expect(parsed.participantList[0].paidAt).toBe('2026-08-15T10:03:00');
+  });
+
+  it('결제 시각이 null 이거나 키가 없어도 파싱된다', () => {
+    const withoutKey = makeParticipant();
+    delete (withoutKey as Record<string, unknown>).paidAt;
+
+    const parsed = adminLiveMentoringParticipantListSchema.parse({
+      participantList: [makeParticipant({ paidAt: null }), withoutKey],
+      pageInfo: { pageNum: 0, pageSize: 20, totalElements: 2, totalPages: 1 },
+    });
+    expect(parsed.participantList[0].paidAt).toBeNull();
+    expect(parsed.participantList[1].paidAt).toBeUndefined();
   });
 });

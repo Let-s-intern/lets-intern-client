@@ -26,6 +26,9 @@ const baseChallenge: MypageApplication = {
   challengeOptionList: [],
   chatLink: 'https://open.kakao.com/o/abc123',
   chatPassword: '1234',
+  challengeVersionTitle: null,
+  canChangeVersion: false,
+  canUpgradePlan: false,
 };
 
 const openChatOf = (application: MypageApplication) =>
@@ -173,5 +176,117 @@ describe('toMypageApplicationCardConfig - 멤버십 기수 (LC-3219)', () => {
         programId: 309,
       }),
     ).toEqual({ label: '클래스 입장', href: '/program/live/309' });
+  });
+});
+
+describe('toMypageApplicationCardConfig - 버전 (LC-3247)', () => {
+  const versionOf = (application: MypageApplication) =>
+    toMypageApplicationCardConfig(application).version;
+
+  it('버전을 바꿀 수 있으면 버전명과 변경 가능을 넘긴다', () => {
+    expect(
+      versionOf({
+        ...baseChallenge,
+        challengeVersionTitle: '대학생',
+        canChangeVersion: true,
+      }),
+    ).toEqual({ title: '대학생', changeable: true });
+  });
+
+  it('바꿀 수 없으면 버전명만 넘긴다', () => {
+    expect(
+      versionOf({
+        ...baseChallenge,
+        challengeVersionTitle: '대학생',
+        canChangeVersion: false,
+      }),
+    ).toEqual({ title: '대학생', changeable: false });
+  });
+
+  it('LIGHT 플랜은 버전을 노출하지 않는다', () => {
+    expect(
+      versionOf({
+        ...baseChallenge,
+        pricePlanType: 'LIGHT',
+        challengeVersionTitle: '대학생',
+        canChangeVersion: true,
+      }),
+    ).toBeUndefined();
+  });
+
+  it('버전 없이 신청했지만 고를 수 있으면 버전명 없이 선택 가능을 넘긴다', () => {
+    expect(
+      versionOf({
+        ...baseChallenge,
+        challengeVersionTitle: null,
+        canChangeVersion: true,
+      }),
+    ).toEqual({ title: null, changeable: true });
+  });
+
+  it('LIGHT 플랜은 고를 수 있다고 와도 노출하지 않는다', () => {
+    expect(
+      versionOf({
+        ...baseChallenge,
+        pricePlanType: 'LIGHT',
+        challengeVersionTitle: null,
+        canChangeVersion: true,
+      }),
+    ).toBeUndefined();
+  });
+
+  it('버전이 없는 챌린지는 노출하지 않는다', () => {
+    expect(
+      versionOf({
+        ...baseChallenge,
+        challengeVersionTitle: null,
+        canChangeVersion: false,
+      }),
+    ).toBeUndefined();
+  });
+});
+
+describe('toMypageApplicationCardConfig - 플랜 업그레이드 (LC-3247)', () => {
+  const planUpgradeHrefOf = (application: MypageApplication) =>
+    toMypageApplicationCardConfig(application).planUpgradeHref;
+
+  it('업그레이드할 수 있으면 신청 id 로 업그레이드 화면 주소를 넘긴다', () => {
+    expect(planUpgradeHrefOf({ ...baseChallenge, canUpgradePlan: true })).toBe(
+      '/plan-upgrade/1',
+    );
+  });
+
+  it('업그레이드할 수 없으면 주소를 두지 않는다', () => {
+    expect(
+      planUpgradeHrefOf({ ...baseChallenge, canUpgradePlan: false }),
+    ).toBeUndefined();
+  });
+
+  it('LIGHT 플랜은 가능하다고 와도 주소를 두지 않는다', () => {
+    expect(
+      planUpgradeHrefOf({
+        ...baseChallenge,
+        pricePlanType: 'LIGHT',
+        canUpgradePlan: true,
+      }),
+    ).toBeUndefined();
+  });
+
+  it('챌린지가 아닌 신청은 가능하다고 와도 주소를 두지 않는다', () => {
+    expect(
+      planUpgradeHrefOf({
+        ...baseChallenge,
+        programType: 'LIVE',
+        canUpgradePlan: true,
+      }),
+    ).toBeUndefined();
+  });
+
+  it('필드가 없는 응답은 업그레이드 불가로 읽는다', () => {
+    const parsed = mypageApplicationsSchema.parse({
+      applicationList: [{ id: 1, programType: 'CHALLENGE' }],
+    });
+
+    expect(parsed.applicationList[0].canUpgradePlan).toBe(false);
   });
 });

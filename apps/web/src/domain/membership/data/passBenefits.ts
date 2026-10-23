@@ -5,6 +5,10 @@
 //
 // `anchor` 는 "자세히 보기" 가 스크롤할 대상 섹션 id 다. 랜딩 안에서 해당 혜택을 자세히
 // 다루는 섹션으로 내려보낸다 — 외부 링크로 내보내면 랜딩을 이탈한다.
+//
+// 챌린지·가이드북·VOD·멘토링 네 섹션이 패스 소개(`pass-intro`)의 혜택 모달로 들어가고
+// 쥬디 클리닉이 `live-clinic` 으로 다시 만들어지면서 앵커를 옮겼다. 없는 id 를 가리키면
+// 눌러도 아무 일이 일어나지 않는다.
 
 export interface PassBenefitCard {
   title: string;
@@ -36,19 +40,19 @@ export const PASS_BENEFITS = {
       body: [
         '경험정리, 이력서, 자소서, 포트폴리오, 면접까지 필요한 과정부터 참여 하세요.',
       ],
-      anchor: 'challenges',
+      anchor: 'pass-intro',
     },
     {
       title: '합격 가이드북 7종',
       body: [
         '자기소개서부터 면접까지 취업에 필요한 준비를 내 속도에 맞춰 진행할 수 있어요.',
       ],
-      anchor: 'guidebooks',
+      anchor: 'pass-intro',
     },
     {
       title: '마케팅 현직자 VOD 3종',
       body: ['직무별 실무 이야기와 채용 기준을 통해 준비 방향을 구체화 해요.'],
-      anchor: 'vod',
+      anchor: 'pass-intro',
       wide: true,
     },
     {
@@ -56,7 +60,7 @@ export const PASS_BENEFITS = {
       body: [
         '현직자와 1:1 멘토링으로 준비 우선순위를 정하고, 방향을 바로잡을 수 있어요.',
       ],
-      anchor: 'mentoring-coupon',
+      anchor: 'pass-intro',
       wide: true,
     },
     {
@@ -64,7 +68,7 @@ export const PASS_BENEFITS = {
       body: [
         '경험 정리와 포트폴리오 구성에 대한 피드백을 받아 보완점을 빠르게 채우세요.',
       ],
-      anchor: 'special-live',
+      anchor: 'live-clinic',
       accent: true,
       wide: true,
     },
@@ -73,7 +77,7 @@ export const PASS_BENEFITS = {
       body: [
         '현직자와 함께하는 실무 세션으로 준비 방향을 바로 확인할 수 있어요.',
       ],
-      anchor: 'special-live',
+      anchor: 'live-clinic',
       wide: true,
     },
   ] satisfies PassBenefitCard[],
