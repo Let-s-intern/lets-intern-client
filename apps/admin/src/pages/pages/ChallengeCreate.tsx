@@ -6,6 +6,9 @@ import ChallengeBasic from '@/domain/admin/program/challenge/ChallengeBasic';
 import ChallengeCurriculum from '@/domain/admin/program/challenge/ChallengeCurriculum';
 import ChallengePoint from '@/domain/admin/program/challenge/ChallengePoint';
 import ChallengeOptionSection from '@/domain/admin/program/challenge/ChallengeOptionSection';
+import ChallengeDescriptionTabs from '@/domain/admin/program/challenge/ChallengeDescriptionTabs';
+import ChallengeEditorActionBar from '@/domain/admin/program/challenge/ChallengeEditorActionBar';
+import { useLeaveGuard } from '@/domain/admin/program/challenge/hooks/useLeaveGuard';
 import ChallengeVersionSection, {
   ChallengeVersionDraft,
 } from '@/domain/admin/program/challenge/ChallengeVersionSection';
@@ -49,9 +52,7 @@ import {
   fetchAutoFillBlogReviews,
   fetchAutoFillChallengeReviews,
 } from '@/api/review/review';
-import { useNavigate } from 'react-router-dom';
 import { lazy, Suspense, useCallback, useState } from 'react';
-import { FaSave } from 'react-icons/fa';
 import ChallengeLecture from '../program/challenge/ChallengeLecture';
 import ChallengeMentorRegistrationSection from './program/ChallengeMentorRegistrationSection';
 import ProgramSchedule from './program/ProgramSchedule';
@@ -98,7 +99,6 @@ const initialInput: Omit<CreateChallengeReq, 'desc'> = {
  * 챌린지 생성 페이지
  */
 const ChallengeCreate: React.FC = () => {
-  const navigate = useNavigate();
   const { snackbar } = useAdminSnackbar();
 
   /** 챌린지  */
@@ -115,6 +115,8 @@ const ChallengeCreate: React.FC = () => {
     curationCard: { visible: true },
   });
   const [isFreeTemplate, setIsFreeTemplate] = useState(false);
+  // 생성에 성공하면 같은 화면에 머물되 다시 저장하지 못하게 한다
+  const [created, setCreated] = useState(false);
   const [versions, setVersions] = useState<ChallengeVersionDraft[]>([]);
 
   const [input, setInput] = useState(initialInput);
@@ -165,6 +167,25 @@ const ChallengeCreate: React.FC = () => {
       isFreeTemplate: checked,
     }));
   }, []);
+
+  const { trackInteraction, markSaved } = useLeaveGuard(
+    () =>
+      JSON.stringify({
+        input,
+        content,
+        versions,
+        isFreeTemplate,
+        basicInfo,
+        standardInfo,
+        premiumInfo,
+        basicOptIds,
+        standardOptIds,
+        premiumOptIds,
+        isLightEnabled,
+        lightInfo,
+      }),
+    !created,
+  );
 
   const onClickSave = useCallback(async () => {
     const versionInfoError = getVersionInfoError(versions);
@@ -263,15 +284,20 @@ const ChallengeCreate: React.FC = () => {
     }
 
     setLoading(false);
-    snackbar('챌린지가 생성되었습니다.');
-    navigate('/programs');
+    // 목록으로 나가지 않고 머문다. 생성 API 가 새 id 를 주지 않아 이어서 저장할 수는 없으므로
+    // 중복 생성을 막으려 저장을 잠근다
+    markSaved();
+    setCreated(true);
+    snackbar(
+      '챌린지가 생성되었습니다. 이어서 고치려면 프로그램 목록에서 수정 화면을 여세요.',
+    );
   }, [
     input,
     content,
     versions,
     postChallenge,
     snackbar,
-    navigate,
+    markSaved,
     basicInfo,
     basicOptIds,
     isLightEnabled,
@@ -288,7 +314,11 @@ const ChallengeCreate: React.FC = () => {
   }
 
   return (
-    <div className="mx-3 mb-40 mt-3">
+    <div
+      className="mx-3 mb-40 mt-3"
+      onPointerDownCapture={trackInteraction}
+      onKeyDownCapture={trackInteraction}
+    >
       <Header>
         <div className="flex items-center gap-4">
           <Heading>챌린지 생성</Heading>
@@ -342,6 +372,7 @@ const ChallengeCreate: React.FC = () => {
         </div>
       </Header>
 
+      <span id="challenge-section-basic" className="block scroll-mt-4" />
       <Heading2>기본 정보</Heading2>
       <section className="mb-6 mt-3">
         <div className="mb-6 grid w-full grid-cols-3 gap-3">
@@ -384,6 +415,7 @@ const ChallengeCreate: React.FC = () => {
             onChange={onChangeImage}
           />
         </div>
+        <span id="challenge-section-price" className="block scroll-mt-4" />
         <div className="grid w-full grid-cols-2 gap-3">
           <ChallengePrice
             challengePrice={challengePrice}
@@ -453,206 +485,226 @@ const ChallengeCreate: React.FC = () => {
         </div>
       </section>
 
+      <span id="challenge-section-option" className="block scroll-mt-4" />
       <section className="pb-8 pt-4">
         <ChallengeOptionSection
           options={challengeOptions?.challengeOptionList ?? []}
         />
       </section>
+      <span id="challenge-section-version" className="block scroll-mt-4" />
       <section className="pb-8 pt-4">
         <ChallengeVersionSection
           versions={versions}
           onChange={setVersions}
+          challengeTitle={input.title ?? ''}
+          challengeShortDesc={input.shortDesc}
           challengeType={input.challengeType}
-          challengeContent={content}
         />
       </section>
-      {isFreeTemplate ? (
-        <>
-          <Heading2>프로그램 설명 (자유 템플릿 전용)</Heading2>
-          <section className="mt-6">
-            <Suspense fallback={null}>
-              <EditorApp
-                onChangeSerializedEditorState={(json) =>
-                  setContent((prev) => ({
-                    ...prev,
-                    isFreeTemplate: true,
-                    freeContent: json,
-                  }))
-                }
-              />
-            </Suspense>
-          </section>
-        </>
-      ) : (
-        <>
-          <Heading2>프로그램 소개</Heading2>
+      <span id="challenge-section-description" className="block scroll-mt-4" />
+      <ChallengeDescriptionTabs
+        versions={versions}
+        onChangeVersionDescription={(index, description) =>
+          setVersions((prev) =>
+            prev.map((version, i) =>
+              i === index ? { ...version, description } : version,
+            ),
+          )
+        }
+        challengeContent={content}
+        challengeType={input.challengeType}
+      >
+        {isFreeTemplate ? (
+          <>
+            <Heading2>프로그램 설명 (자유 템플릿 전용)</Heading2>
+            <section className="mt-6">
+              <Suspense fallback={null}>
+                <EditorApp
+                  onChangeSerializedEditorState={(json) =>
+                    setContent((prev) => ({
+                      ...prev,
+                      isFreeTemplate: true,
+                      freeContent: json,
+                    }))
+                  }
+                />
+              </Suspense>
+            </section>
+          </>
+        ) : (
+          <>
+            <Heading2>프로그램 소개</Heading2>
 
-          <section className="mt-6">
-            <Heading3>인트로</Heading3>
-            <Suspense fallback={null}>
-              <EditorApp
-                onChangeSerializedEditorState={(json) =>
-                  setContent((prev) => ({
-                    ...prev,
-                    intro: json,
-                  }))
-                }
-              />
-            </Suspense>
+            <section className="mt-6">
+              <Heading3>인트로</Heading3>
+              <Suspense fallback={null}>
+                <EditorApp
+                  onChangeSerializedEditorState={(json) =>
+                    setContent((prev) => ({
+                      ...prev,
+                      intro: json,
+                    }))
+                  }
+                />
+              </Suspense>
 
-            <ChallengePoint
-              challengePoint={content.challengePoint}
-              setContent={setContent}
-            />
-
-            {input.challengeType && (
-              <ChallengeLecture
-                challengeType={input.challengeType}
-                content={content}
+              <ChallengePoint
+                challengePoint={content.challengePoint}
                 setContent={setContent}
               />
-            )}
 
-            <Heading3>상세 설명</Heading3>
-            <Suspense fallback={null}>
-              <EditorApp
-                onChangeSerializedEditorState={(json) =>
-                  setContent((prev) => ({
-                    ...prev,
-                    mainDescription: json,
-                  }))
+              {input.challengeType && (
+                <ChallengeLecture
+                  challengeType={input.challengeType}
+                  content={content}
+                  setContent={setContent}
+                />
+              )}
+
+              <Heading3>상세 설명</Heading3>
+              <Suspense fallback={null}>
+                <EditorApp
+                  onChangeSerializedEditorState={(json) =>
+                    setContent((prev) => ({
+                      ...prev,
+                      mainDescription: json,
+                    }))
+                  }
+                />
+              </Suspense>
+            </section>
+
+            {/* 프로그램 추천 */}
+            <section className="mb-6">
+              <ProgramRecommendEditor
+                programRecommend={content.programRecommend ?? { list: [] }}
+                setProgramRecommend={(programRecommend) =>
+                  setContent((prev) => ({ ...prev, programRecommend }))
+                }
+                maxCount={
+                  (content.curationCard?.visible ?? true) ? 2 : undefined
                 }
               />
-            </Suspense>
-          </section>
-
-          {/* 프로그램 추천 */}
-          <section className="mb-6">
-            <ProgramRecommendEditor
-              programRecommend={content.programRecommend ?? { list: [] }}
-              setProgramRecommend={(programRecommend) =>
-                setContent((prev) => ({ ...prev, programRecommend }))
-              }
-              maxCount={(content.curationCard?.visible ?? true) ? 2 : undefined}
-            />
-            {(content.programRecommend?.list?.length ?? 0) > 0 && (
-              <div className="mt-2">
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={content.curationCard?.visible ?? true}
-                      onChange={(e) => {
-                        const nextVisible = e.target.checked;
-                        setContent((prev) => {
-                          const next = {
-                            ...prev,
-                            curationCard: { visible: nextVisible },
-                          };
-                          // OFF → ON 토글 시 추천이 3개 이상이면 즉시 2개로 잘라냄
-                          // (로드 시점에는 발동하지 않음; onChange 액션에만 작동)
-                          const list = prev.programRecommend?.list ?? [];
-                          if (nextVisible && list.length > 2) {
-                            next.programRecommend = {
-                              ...prev.programRecommend,
-                              list: list.slice(0, 2),
+              {(content.programRecommend?.list?.length ?? 0) > 0 && (
+                <div className="mt-2">
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={content.curationCard?.visible ?? true}
+                        onChange={(e) => {
+                          const nextVisible = e.target.checked;
+                          setContent((prev) => {
+                            const next = {
+                              ...prev,
+                              curationCard: { visible: nextVisible },
                             };
-                          }
-                          return next;
-                        });
-                      }}
-                    />
-                  }
-                  label="큐레이션 카드 노출 (기본 켜짐)"
-                />
-                <Typography
-                  variant="caption"
-                  color="text.secondary"
-                  component="p"
-                >
-                  추천 프로그램 슬라이더 마지막 슬롯에 &lsquo;맞춤 챌린지 탐색
-                  큐레이션&rsquo; 카드를 노출합니다. 추천 프로그램을 3개 모두
-                  채우려면 이 옵션을 꺼주세요.
-                </Typography>
-                {(content.curationCard?.visible ?? true) &&
-                  (content.programRecommend?.list?.length ?? 0) > 2 && (
-                    <Typography
-                      variant="caption"
-                      color="warning.main"
-                      component="p"
-                    >
-                      ⚠ 현재 추천이{' '}
-                      {content.programRecommend?.list?.length ?? 0}개입니다.
-                      사용자 페이지에는 처음 2개만 노출됩니다.
-                    </Typography>
+                            // OFF → ON 토글 시 추천이 3개 이상이면 즉시 2개로 잘라냄
+                            // (로드 시점에는 발동하지 않음; onChange 액션에만 작동)
+                            const list = prev.programRecommend?.list ?? [];
+                            if (nextVisible && list.length > 2) {
+                              next.programRecommend = {
+                                ...prev.programRecommend,
+                                list: list.slice(0, 2),
+                              };
+                            }
+                            return next;
+                          });
+                        }}
+                      />
+                    }
+                    label="큐레이션 카드 노출 (기본 켜짐)"
+                  />
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    component="p"
+                  >
+                    추천 프로그램 슬라이더 마지막 슬롯에 &lsquo;맞춤 챌린지 탐색
+                    큐레이션&rsquo; 카드를 노출합니다. 추천 프로그램을 3개 모두
+                    채우려면 이 옵션을 꺼주세요.
+                  </Typography>
+                  {(content.curationCard?.visible ?? true) &&
+                    (content.programRecommend?.list?.length ?? 0) > 2 && (
+                      <Typography
+                        variant="caption"
+                        color="warning.main"
+                        component="p"
+                      >
+                        ⚠ 현재 추천이{' '}
+                        {content.programRecommend?.list?.length ?? 0}개입니다.
+                        사용자 페이지에는 처음 2개만 노출됩니다.
+                      </Typography>
+                    )}
+                  {(content.curationCard?.visible ?? true) && (
+                    <div className="mt-3">
+                      <CurationCardPreview />
+                    </div>
                   )}
-                {(content.curationCard?.visible ?? true) && (
-                  <div className="mt-3">
-                    <CurationCardPreview />
-                  </div>
-                )}
-              </div>
-            )}
-          </section>
+                </div>
+              )}
+            </section>
 
-          <ChallengeCurriculum
-            curriculum={content.curriculum}
-            setContent={setContent}
-            curriculumImage={content.curriculumImage}
-            weekText={content.challengePoint?.weekText}
-            content={content}
-          />
-
-          <ProgramBestReview
-            reviewFields={content.challengeReview ?? []}
-            setReviewFields={(reviewFields) =>
-              setContent((prev) => ({
-                ...prev,
-                challengeReview: reviewFields,
-              }))
-            }
-          />
-
-          <ChallengeBlogReviewSection
-            isCreate
-            externalBlogReviews={content.externalBlogReviews ?? []}
-            onExternalChange={(externalBlogReviews) =>
-              setContent((prev) => ({ ...prev, externalBlogReviews }))
-            }
-            blogReview={content.blogReview || { list: [] }}
-            onBlogReviewChange={(blogReview) =>
-              setContent((prev) => ({ ...prev, blogReview }))
-            }
-          />
-
-          <section className="my-6">
-            <FaqSection
-              programType={ProgramTypeEnum.enum.CHALLENGE}
-              faqInfo={input.faqInfo}
-              setFaqInfo={(faqInfo) =>
-                setInput((prev) => ({ ...prev, faqInfo: faqInfo ?? [] }))
-              }
-              isCreate
+            <ChallengeCurriculum
+              curriculum={content.curriculum}
+              setContent={setContent}
+              curriculumImage={content.curriculumImage}
+              weekText={content.challengePoint?.weekText}
+              content={content}
             />
-          </section>
-        </>
+
+            <ProgramBestReview
+              reviewFields={content.challengeReview ?? []}
+              setReviewFields={(reviewFields) =>
+                setContent((prev) => ({
+                  ...prev,
+                  challengeReview: reviewFields,
+                }))
+              }
+            />
+
+            <ChallengeBlogReviewSection
+              isCreate
+              externalBlogReviews={content.externalBlogReviews ?? []}
+              onExternalChange={(externalBlogReviews) =>
+                setContent((prev) => ({ ...prev, externalBlogReviews }))
+              }
+              blogReview={content.blogReview || { list: [] }}
+              onBlogReviewChange={(blogReview) =>
+                setContent((prev) => ({ ...prev, blogReview }))
+              }
+            />
+          </>
+        )}
+      </ChallengeDescriptionTabs>
+
+      <span id="challenge-section-faq" className="block scroll-mt-4" />
+      {/* FAQ 는 챌린지 단위라 버전 탭 밖에 둔다 */}
+      {!isFreeTemplate && (
+        <section className="my-6">
+          <FaqSection
+            programType={ProgramTypeEnum.enum.CHALLENGE}
+            faqInfo={input.faqInfo}
+            setFaqInfo={(faqInfo) =>
+              setInput((prev) => ({ ...prev, faqInfo: faqInfo ?? [] }))
+            }
+            isCreate
+          />
+        </section>
       )}
 
-      <footer className="flex items-center justify-end gap-3">
-        <ChallengePreviewButton
-          input={input}
-          content={content}
-          existing={null}
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          disabled={loading}
-          startIcon={<FaSave size={12} />}
-          onClick={onClickSave}
-        >
-          저장
-        </Button>
-      </footer>
+      <ChallengeEditorActionBar
+        onSave={onClickSave}
+        saving={loading}
+        saveDisabled={created}
+        saveLabel={created ? '생성 완료' : '저장'}
+        extra={
+          <ChallengePreviewButton
+            input={input}
+            content={content}
+            existing={null}
+          />
+        }
+      />
     </div>
   );
 };

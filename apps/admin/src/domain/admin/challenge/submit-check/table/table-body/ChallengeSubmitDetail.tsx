@@ -3,7 +3,7 @@ import AlertModal from '@/common/alert/AlertModal';
 import { AttendanceItem, Mission } from '@/schema';
 import { attendanceResultToText } from '@/utils/convert';
 import { useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import TableRow from '../../../submit-check-detail/table/table-body/TableRow';
 import TableHead from '../../../submit-check-detail/table/table-head/TableHead';
 import Button from '../../../ui/button/Button';
@@ -17,6 +17,13 @@ interface Props {
   setIsDetailShown: (isDetailShown: boolean) => void;
   attendances: AttendanceItem[];
   refetch: () => void;
+  /** 여러 미션의 제출자를 한 목록에 보일 때 행마다 자기 미션을 준다. 없으면 mission */
+  missionOf?: (item: AttendanceItem) => Mission;
+  /**
+   * 목록을 구역으로 나눌 때 각 제출의 구역 이름(예: 버전명). 같은 구역끼리 붙어 있어야 한다.
+   * 구역이 바뀌는 자리에 '이름 · 제출 N명' 머리줄을 넣는다
+   */
+  sectionOf?: (item: AttendanceItem) => string | null;
 }
 
 const ChallengeSubmitDetail = ({
@@ -24,6 +31,8 @@ const ChallengeSubmitDetail = ({
   setIsDetailShown,
   attendances,
   refetch,
+  missionOf,
+  sectionOf,
 }: Props) => {
   const queryClient = useQueryClient();
 
@@ -94,18 +103,41 @@ const ChallengeSubmitDetail = ({
             statusFilter={statusFilter}
             setStatusFilter={setStatusFilter}
           />
-          {attendances?.map((item, index) => (
-            <TableRow
-              key={item.attendance.id}
-              attendanceItem={item}
-              missionDetail={mission}
-              th={index + 1}
-              bgColor={(index + 1) % 2 === 1 ? 'DARK' : 'LIGHT'}
-              isChecked={isCheckedList.includes(item.attendance.id)}
-              setIsCheckedList={setIsCheckedList}
-              refetch={refetch}
-            />
-          ))}
+          {attendances?.map((item, index) => {
+            const section = sectionOf?.(item) ?? null;
+            const isSectionStart =
+              section !== null &&
+              (index === 0 || sectionOf?.(attendances[index - 1]) !== section);
+            return (
+              <Fragment key={item.attendance.id}>
+                {isSectionStart && (
+                  <div className="flex items-center gap-2 border-l-4 border-blue-500 bg-blue-50 px-6 py-2 text-sm">
+                    <span className="font-semibold text-blue-700">
+                      {section}
+                    </span>
+                    <span className="text-gray-500">
+                      · 제출{' '}
+                      {
+                        attendances.filter(
+                          (other) => sectionOf?.(other) === section,
+                        ).length
+                      }
+                      명
+                    </span>
+                  </div>
+                )}
+                <TableRow
+                  attendanceItem={item}
+                  missionDetail={missionOf?.(item) ?? mission}
+                  th={index + 1}
+                  bgColor={(index + 1) % 2 === 1 ? 'DARK' : 'LIGHT'}
+                  isChecked={isCheckedList.includes(item.attendance.id)}
+                  setIsCheckedList={setIsCheckedList}
+                  refetch={refetch}
+                />
+              </Fragment>
+            );
+          })}
         </div>
       </div>
       <div className="mb-2 mt-4 flex justify-center">
