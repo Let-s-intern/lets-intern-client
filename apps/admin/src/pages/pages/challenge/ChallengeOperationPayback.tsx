@@ -304,7 +304,7 @@ const ChallengeOperationPayback = () => {
         ths.add(score.th);
       });
     });
-    return Array.from(ths).sort();
+    return Array.from(ths).sort((a, b) => a - b);
   }, [paybackRes?.missionApplications]);
 
   // 미제출 조건은 challengeId 234부터 적용
