@@ -1,5 +1,6 @@
 import { expect, type Locator } from '@playwright/test';
 import { BasePage } from './BasePage';
+import { escapeRegExp } from '../support/lc3492';
 
 /**
  * 웹 멘토 프로필 (/mentors/:mentorId). 한줄소개·소개 본문(LC-3501), 경력 로고(LC-3499),
@@ -7,7 +8,10 @@ import { BasePage } from './BasePage';
  */
 export class MentorProfilePage extends BasePage {
   async goto(mentorId: number): Promise<this> {
-    await this.page.goto(`/mentors/${mentorId}`);
+    // 외부 이미지 로딩에 묶이지 않게 load 를 기다리지 않고, 멘토 이름이 보이는지로 판단한다
+    await this.page.goto(`/mentors/${mentorId}`, {
+      waitUntil: 'domcontentloaded',
+    });
     // 헤더 로고도 h1 이라, 본문 히어로 섹션 안의 멘토 이름으로 한정한다
     await expect(this.heroName()).toBeVisible({ timeout: 30_000 });
     await this.settle();
@@ -27,7 +31,9 @@ export class MentorProfilePage extends BasePage {
   careerRow(company: string): Locator {
     return this.page
       .locator('div.flex.items-center')
-      .filter({ has: this.page.getByText(new RegExp(`^${company} \\|`)) })
+      .filter({
+        has: this.page.getByText(new RegExp(`^${escapeRegExp(company)} \\|`)),
+      })
       .last();
   }
 

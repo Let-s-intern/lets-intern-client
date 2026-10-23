@@ -4,7 +4,9 @@ import { BasePage } from './BasePage';
 /** 웹 1:1 라이브 멘토링 목록 (/live-mentoring). 렛커 픽 정렬·라벨(LC-3500) */
 export class LiveMentoringListPage extends BasePage {
   async goto(): Promise<this> {
-    await this.page.goto('/live-mentoring');
+    await this.page.goto('/live-mentoring', {
+      waitUntil: 'domcontentloaded',
+    });
     await expect(this.cards.first()).toBeVisible({ timeout: 30_000 });
     await this.settle();
     return this;

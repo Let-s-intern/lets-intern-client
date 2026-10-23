@@ -7,7 +7,7 @@ const mentorIdOf = (href: string | null) =>
 /** 웹 멘토 목록 (/mentors). 렛커 픽 라벨(LC-3500), 키워드 필터(LC-3501), 대표 경력 표시(LC-3497) */
 export class MentorListPage extends BasePage {
   async goto(): Promise<this> {
-    await this.page.goto('/mentors');
+    await this.page.goto('/mentors', { waitUntil: 'domcontentloaded' });
     await expect(this.cards.first()).toBeVisible({ timeout: 30_000 });
     await this.settle();
     return this;

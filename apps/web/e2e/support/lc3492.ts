@@ -74,6 +74,10 @@ export async function mockFileUpload(
   return true;
 }
 
+/** 문자열을 정규식에 그대로 넣을 수 있게 특수문자를 이스케이프한다. 시드 회사명에 `[` 같은 글자가 있다 */
+export const escapeRegExp = (text: string) =>
+  text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 /** 실행마다 다른 문구. 앞 실행이 남긴 값과 섞이지 않게 한다 */
 export const uniqueText = (prefix: string) =>
   `${prefix} ${new Date().toISOString().slice(5, 19).replace(/[-:T]/g, '')}`;

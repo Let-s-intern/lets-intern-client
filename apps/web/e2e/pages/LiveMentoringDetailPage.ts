@@ -7,7 +7,9 @@ import { BasePage } from './BasePage';
  */
 export class LiveMentoringDetailPage extends BasePage {
   async goto(mentorId: number): Promise<this> {
-    await this.page.goto(`/live-mentoring/${mentorId}`);
+    await this.page.goto(`/live-mentoring/${mentorId}`, {
+      waitUntil: 'domcontentloaded',
+    });
     await expect(this.page.getByText(/멘토가 함께해요$/).first()).toBeVisible({
       timeout: 30_000,
     });
@@ -35,7 +37,7 @@ export class LiveMentoringDetailPage extends BasePage {
   oneLinerBox(): Locator {
     return this.page
       .locator('div')
-      .filter({ has: this.page.getByText('멘토님의 한마디', { exact: true }) })
+      .filter({ has: this.page.getByText(/멘토님의 한마디$/) })
       .last();
   }
 
