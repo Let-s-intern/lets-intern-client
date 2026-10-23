@@ -219,29 +219,24 @@ export interface PassMaterial {
 
 // ─── U-4 회고록 ───
 
-/** 회고 질문 1개 (BE questions[]). review=기존 답변, membershipReviewId=수정 PATCH 대상. */
+/** 회고 질문 1개 (BE questions[]) */
 export interface RetroQuestion {
   membershipQuestionId: number;
-  common: boolean; // 공통질문 여부
   question: string;
-  answerGuide: string; // placeholder
-  membershipReviewId: number | null; // 미작성이면 null → 신규 POST
-  review: string | null; // 기존 답변
-  submittedAt: string | null;
+  answerGuide: string;
+  membershipReviewId: number | null;
+  review: string | null;
 }
 
-/**
- * 회고 회차 1건 (BE MembershipOrdinal). 노출/작성 상태·일정은 BE가 계산해 내려준다.
- * submissionDeadline === null = 마감 없음(상시 = 마무리 회고). visible=false면 questions=[].
- */
+/** 회고 회차 1건 (BE MembershipOrdinal). 상태·일정은 BE 계산값. visible=false면 questions=[]. */
 export interface PassRetrospectiveRound {
   id: number; // ordinalId
   th: number;
-  visibleAt: string | null; // 노출 시작
-  submissionDeadline: string | null; // 제출 마감(null=상시)
-  visible: boolean; // 현재 노출 여부
-  writable: boolean; // 현재 작성 가능 여부
-  submitted: boolean; // 회차 질문 전부 응답?
-  adminFeedback: string | null; // 운영자 코멘트(회차 단위)
+  visibleAt: string | null;
+  submissionDeadline: string | null;
+  visible: boolean;
+  writable: boolean;
+  submitted: boolean;
+  adminFeedback: string | null;
   questions: RetroQuestion[];
 }

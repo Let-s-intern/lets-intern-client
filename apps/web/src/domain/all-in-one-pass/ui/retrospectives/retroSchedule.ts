@@ -1,5 +1,4 @@
-// 회고 상태/일정 파생. 상태는 BE가 내려준 visible/writable/submitted를,
-// 일정은 visibleAt/submissionDeadline을 그대로 쓴다(FE 날짜 계산 없음).
+// 회고 상태/일정은 BE 값(visible/writable/submitted, visibleAt/submissionDeadline)을 그대로 쓴다.
 import dayjs from '@/lib/dayjs';
 import type { PassRetrospectiveRound } from '../../types';
 
@@ -12,7 +11,7 @@ export interface RetroSchedule {
   dueAt: Dayjs | null; // null = 상시(마무리)
 }
 
-/** submissionDeadline 없음 = 마감 없는 상시 회고(= 마무리). */
+// 마감 없음 = 상시 = 마무리 회고
 export const isWrapUpRound = (round: PassRetrospectiveRound): boolean =>
   round.submissionDeadline === null;
 
@@ -23,7 +22,6 @@ export const getRetroSchedule = (
   dueAt: round.submissionDeadline ? dayjs(round.submissionDeadline) : null,
 });
 
-/** BE 상태 플래그로 회차 상태 파생. */
 export const getRetroStatus = (round: PassRetrospectiveRound): RetroStatus => {
   if (!round.visible) return 'UPCOMING';
   if (round.submitted) return 'DONE';

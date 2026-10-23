@@ -1,4 +1,4 @@
-// U-4 회고록. 회차 가로 목록(챌린지 미션 스타일) + 선택 회차 작성폼. 상태/일정은 BE 응답.
+// 회고록. 회차 가로 목록 + 선택 회차 폼 (상태/일정은 BE 값).
 'use client';
 
 import LoadingContainer from '@/common/loading/LoadingContainer';
@@ -16,12 +16,12 @@ import {
 } from './retroSchedule';
 
 type ComputedRound = PassRetrospectiveRound & {
-  isWrapUp: boolean; // 파생: submissionDeadline === null(상시)
+  isWrapUp: boolean;
   schedule: RetroSchedule;
   status: RetroStatus;
 };
 
-// 챌린지 미션 카드와 동일 규격. 상태 → 아이콘/라벨/색 (missionSubmitToBadge 패턴).
+// 상태별 카드 아이콘/라벨/색
 const STATUS_META: Record<
   RetroStatus,
   { icon: string; text: string; style: string }

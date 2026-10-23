@@ -1,4 +1,4 @@
-// U-4 회고. 회차 조회(GET membership-ordinal) + 답변 제출/수정(membership-review).
+// 회고 조회(GET membership-ordinal) + 답변 제출/수정(membership-review).
 import axios from '@/utils/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
@@ -10,12 +10,10 @@ const retrospectivesQueryKey = (applicationId: number) =>
 // ─── GET /membership-ordinal — 회차별 질문·기존답변·코멘트·상태 ───
 const retroQuestionSchema = z.object({
   membershipQuestionId: z.number(),
-  common: z.boolean().nullish(),
   question: z.string().nullish(),
   answerGuide: z.string().nullish(),
   membershipReviewId: z.number().nullish(),
   review: z.string().nullish(),
-  submittedAt: z.string().nullish(),
 });
 
 const retroRoundSchema = z.object({
@@ -43,12 +41,10 @@ const toRound = (
   adminFeedback: dto.adminFeedback ?? null,
   questions: dto.questions.map((q) => ({
     membershipQuestionId: q.membershipQuestionId,
-    common: q.common ?? false,
     question: q.question ?? '',
     answerGuide: q.answerGuide ?? '',
     membershipReviewId: q.membershipReviewId ?? null,
     review: q.review ?? null,
-    submittedAt: q.submittedAt ?? null,
   })),
 });
 

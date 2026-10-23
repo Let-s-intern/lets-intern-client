@@ -1,4 +1,4 @@
-// 선택 회차 작성폼. BE questions(공통2+주차1) + 기존답변 prefill. 상태별(예정/작성가능/완료/마감) 분기.
+// 선택 회차 작성/조회 폼. 공통2+주차1 질문, 상태별 분기.
 'use client';
 
 import OutlinedButton from '@/common/button/OutlinedButton';
@@ -19,7 +19,6 @@ interface Props {
   status: RetroStatus;
 }
 
-// 질문별 기존 답변(review)으로 초기 answers 구성
 const buildInitial = (round: PassRetrospectiveRound) => {
   const init: Record<number, string> = {};
   round.questions.forEach((q) => {
@@ -53,15 +52,14 @@ const RetroForm = ({
   const [answers, setAnswers] = useState<Record<number, string>>(() =>
     buildInitial(round),
   );
+  // 회차 변경 시 기존 답변으로 리셋
   useEffect(() => {
     setAnswers(buildInitial(round));
-    // 회차가 바뀌면 해당 회차의 기존 답변으로 다시 채운다
   }, [round.id]);
 
   const submit = useSubmitRetrospective(applicationId);
   const label = isWrapUp ? '마무리 회고' : `${round.th}회차 회고`;
 
-  // 작성 기간 밖: 미제출이면 예정/마감 안내, 제출했으면(아래로) 읽기 전용 폼 + 코멘트
   if (!isWritable && status === 'UPCOMING') {
     return (
       <Notice icon="/icons/lock-keyhole-neutral.svg">
@@ -75,9 +73,9 @@ const RetroForm = ({
       </Notice>
     );
   }
-  // CLOSED(작성 마감) / DONE(제출 완료)도 노출 회차는 읽기 전용으로 조회 가능
-  const readOnly = !isWritable; // 작성 기간 밖 → 읽기 전용(+코멘트)
-  const isEdit = status === 'DONE'; // 이미 제출 → 수정하기
+  // 마감/완료 회차는 읽기 전용 조회
+  const readOnly = !isWritable;
+  const isEdit = status === 'DONE';
   const canSubmit = questions.every(
     (q) => (answers[q.membershipQuestionId] ?? '').trim() !== '',
   );
