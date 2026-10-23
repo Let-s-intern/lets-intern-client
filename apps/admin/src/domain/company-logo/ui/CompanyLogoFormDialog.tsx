@@ -228,8 +228,8 @@ export default function CompanyLogoFormDialog({ logo, onClose }: Props) {
             </p>
           ) : null}
           <p className="text-xxsmall12 text-neutral-40">
-            같은 회사명은 등록할 수 없습니다. 로고를 지우거나 바꿔도 이미 멘토에
-            지정된 로고는 그대로입니다.
+            같은 회사명은 등록할 수 없습니다. 이 로고를 바꾸면 연결된 멘토
+            로고도 함께 바뀝니다.
           </p>
         </div>
       </DialogContent>

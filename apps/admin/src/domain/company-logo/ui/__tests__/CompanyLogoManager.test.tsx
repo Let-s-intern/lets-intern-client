@@ -21,6 +21,8 @@ vi.mock('@/api/file', () => ({
   uploadFile: (...args: unknown[]) => uploadFile(...args),
 }));
 
+import { AdminSnackbarProvider } from '@/hooks/useAdminSnackbar';
+
 import CompanyLogoManager from '../../CompanyLogoManager';
 
 const logos = [
@@ -132,6 +134,37 @@ describe('CompanyLogoManager', () => {
         imageUrl: 'https://cdn.test/kakao.png',
       }),
     );
+  });
+
+  it('쓰는 곳이 있어 409 면 서버 문구(사용 건수)를 그대로 알린다', async () => {
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    del.mockRejectedValue({
+      status: 409,
+      code: 'COMPANY_LOGO_IN_USE',
+      message: '멘토 2명이 이 로고를 쓰고 있어 삭제할 수 없습니다.',
+    });
+    render(
+      <QueryClientProvider client={new QueryClient()}>
+        <AdminSnackbarProvider>
+          <CompanyLogoManager />
+        </AdminSnackbarProvider>
+      </QueryClientProvider>,
+    );
+    await screen.findByText('카카오');
+    fireEvent.click(screen.getAllByRole('button', { name: '삭제' })[1]);
+
+    expect(
+      await screen.findByText(
+        '멘토 2명이 이 로고를 쓰고 있어 삭제할 수 없습니다.',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('바꾸면 연결된 멘토 로고도 바뀐다고 안내한다', async () => {
+    renderManager();
+    expect(
+      await screen.findByText(/연결된 멘토 로고도 함께 바뀝니다/),
+    ).toBeInTheDocument();
   });
 
   it('삭제는 확인을 받은 뒤에만 부른다', async () => {
