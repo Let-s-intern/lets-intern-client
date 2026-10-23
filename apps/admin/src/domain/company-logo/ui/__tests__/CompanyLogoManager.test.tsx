@@ -259,6 +259,7 @@ describe('CompanyLogoManager', () => {
       expect(post).toHaveBeenCalledWith(
         '/admin/company-logo/favicon/candidates',
         { siteUrl: 'https://toss.im' },
+        expect.anything(),
       );
     });
 

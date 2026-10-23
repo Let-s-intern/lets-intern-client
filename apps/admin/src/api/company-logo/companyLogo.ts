@@ -38,12 +38,14 @@ const useCompanyLogoMutation = <TVariables, TData = unknown>(
   });
 };
 
-/** POST /admin/company-logo — 만든 로고의 id 를 돌려준다 */
+/** POST /admin/company-logo — 만든 로고의 id. 일괄 등록이 여러 건을 직접 부르므로 함수로도 둔다 */
+export const createCompanyLogo = async (body: CompanyLogoReq) => {
+  const res = await axios.post(PATH, body);
+  return companyLogoCreatedSchema.parse(res.data.data).id;
+};
+
 export const usePostAdminCompanyLogoMutation = () =>
-  useCompanyLogoMutation(async (body: CompanyLogoReq) => {
-    const res = await axios.post(PATH, body);
-    return companyLogoCreatedSchema.parse(res.data.data).id;
-  });
+  useCompanyLogoMutation(createCompanyLogo);
 
 /** PATCH /admin/company-logo/{id} */
 export const usePatchAdminCompanyLogoMutation = () =>
@@ -57,24 +59,36 @@ export const usePatchAdminCompanyLogoMutation = () =>
  * (COMPANY_LOGO_FAVICON_INVALID_URL · FETCH_FAILED(후보 0개 포함) · TOO_LARGE)
  */
 
-/** POST /admin/company-logo/favicon/candidates — 회사 사이트의 아이콘 후보를 찾는다. 올리지는 않는다 */
+/** POST /admin/company-logo/favicon/candidates — 회사 사이트의 아이콘 후보와 사이트 이름을 찾는다. 올리지는 않는다 */
+export const fetchCompanyLogoFaviconCandidates = async (
+  siteUrl: string,
+  signal?: AbortSignal,
+) => {
+  const res = await axios.post(
+    `${PATH}/favicon/candidates`,
+    { siteUrl },
+    { signal },
+  );
+  return companyLogoFaviconCandidatesSchema.parse(res.data.data);
+};
+
 export const usePostAdminCompanyLogoFaviconCandidatesMutation = () =>
   useMutation({
-    mutationFn: async (siteUrl: string) => {
-      const res = await axios.post(`${PATH}/favicon/candidates`, { siteUrl });
-      return companyLogoFaviconCandidatesSchema.parse(res.data.data);
-    },
+    mutationFn: (siteUrl: string) => fetchCompanyLogoFaviconCandidates(siteUrl),
   });
 
 /** POST /admin/company-logo/favicon — 고른 후보를 서버가 올리고 주소를 돌려준다 */
-export const usePostAdminCompanyLogoFaviconMutation = () =>
-  useMutation({
-    mutationFn: async (body: { siteUrl: string; candidateUrl: string }) => {
-      const res = await axios.post(`${PATH}/favicon`, body);
-      return companyLogoFaviconSchema.parse(res.data.data).imageUrl;
-    },
-  });
+export const uploadCompanyLogoFavicon = async (body: {
+  siteUrl: string;
+  candidateUrl: string;
+}) => {
+  const res = await axios.post(`${PATH}/favicon`, body);
+  return companyLogoFaviconSchema.parse(res.data.data).imageUrl;
+};
 
-/** DELETE /admin/company-logo/{id}. 이미 지정된 로고는 주소를 복사해 둔 것이라 그대로 남는다 */
+export const usePostAdminCompanyLogoFaviconMutation = () =>
+  useMutation({ mutationFn: uploadCompanyLogoFavicon });
+
+/** DELETE /admin/company-logo/{id}. 멘토에 연결돼 있으면 서버가 409(COMPANY_LOGO_IN_USE)로 막는다 */
 export const useDeleteAdminCompanyLogoMutation = () =>
   useCompanyLogoMutation((id: number) => axios.delete(`${PATH}/${id}`));
