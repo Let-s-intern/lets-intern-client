@@ -18,18 +18,20 @@ export class AdminLiveMentoringDetailPageEditPage extends BasePage {
   }
 
   heroBullet(index: number): Locator {
-    return this.page.getByLabel(`소개 문구 ${index + 1}`);
+    return this.page.getByLabel(`소개 문구 ${index + 1}`, { exact: true });
   }
 
   /** 지금 탭의 「상세페이지에 표시」 체크 */
   async setVisible(visible: boolean): Promise<void> {
-    await this.page.getByLabel('상세페이지에 표시').setChecked(visible);
+    await this.page
+      .getByLabel('상세페이지에 표시', { exact: true })
+      .setChecked(visible);
   }
 
   /** 자유 입력란 위치. 드롭다운에 보이는 이름으로 고른다(예: 「취업 성공 전략 뒤」) */
   async selectFreeContentPosition(label: string): Promise<void> {
     await this.page.getByRole('combobox').click();
-    await this.page.getByRole('option', { name: label }).click();
+    await this.page.getByRole('option', { name: label, exact: true }).click();
   }
 
   private get editor(): Locator {
@@ -71,6 +73,8 @@ export class AdminLiveMentoringDetailPageEditPage extends BasePage {
     await this.page.getByRole('button', { name: '저장', exact: true }).click();
     const res = await saved;
     expect(res.ok(), `상세페이지 저장 응답 ${res.status()}`).toBe(true);
-    await expect(this.page.getByText('저장했습니다.')).toBeVisible();
+    await expect(
+      this.page.getByText('저장했습니다.', { exact: true }),
+    ).toBeVisible();
   }
 }

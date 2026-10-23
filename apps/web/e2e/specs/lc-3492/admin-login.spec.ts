@@ -16,7 +16,7 @@ test.describe('LC-3492 어드민 로그인', () => {
       async () => {
         await new AdminMentorPickPage(page).goto();
         await expect(
-          page.getByRole('button', { name: '순서 저장' }),
+          page.getByRole('button', { name: '순서 저장', exact: true }),
         ).toBeVisible();
       },
       '렛커픽',

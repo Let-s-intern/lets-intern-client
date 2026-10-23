@@ -13,7 +13,7 @@ export class AdminCompanyLogoPage extends BasePage {
   async goto(): Promise<this> {
     await this.page.goto(`${ADMIN_URL}/mentors/company-logos`);
     await expect(
-      this.page.getByRole('heading', { name: '회사 로고' }),
+      this.page.getByRole('heading', { name: '회사 로고', exact: true }),
     ).toBeVisible({ timeout: 15_000 });
     await this.settle();
     return this;
@@ -24,15 +24,17 @@ export class AdminCompanyLogoPage extends BasePage {
   }
 
   async register(name: string): Promise<void> {
-    await this.page.getByRole('button', { name: '로고 등록' }).click();
+    await this.page
+      .getByRole('button', { name: '로고 등록', exact: true })
+      .click();
     const dialog = this.page.getByRole('dialog');
-    await dialog.getByLabel('회사명').fill(name);
+    await dialog.getByLabel('회사명', { exact: true }).fill(name);
     await dialog.getByLabel('로고 이미지 업로드').setInputFiles({
       name: 'logo.png',
       mimeType: 'image/png',
       buffer: PNG_1PX,
     });
-    const save = dialog.getByRole('button', { name: '저장' });
+    const save = dialog.getByRole('button', { name: '저장', exact: true });
     await expect(save, '이미지가 올라가면 저장이 켜져야 한다').toBeEnabled({
       timeout: 15_000,
     });
@@ -48,6 +50,6 @@ export class AdminCompanyLogoPage extends BasePage {
   }
 
   async search(keyword: string): Promise<void> {
-    await this.page.getByLabel('회사명 검색').fill(keyword);
+    await this.page.getByLabel('회사명 검색', { exact: true }).fill(keyword);
   }
 }

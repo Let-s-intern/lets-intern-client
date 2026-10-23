@@ -8,11 +8,14 @@ import { BasePage } from './BasePage';
 export class MentorProfilePage extends BasePage {
   async goto(mentorId: number): Promise<this> {
     await this.page.goto(`/mentors/${mentorId}`);
-    await expect(this.page.getByRole('heading', { level: 1 })).toBeVisible({
-      timeout: 30_000,
-    });
+    // 헤더 로고도 h1 이라, 본문 히어로 섹션 안의 멘토 이름으로 한정한다
+    await expect(this.heroName()).toBeVisible({ timeout: 30_000 });
     await this.settle();
     return this;
+  }
+
+  heroName(): Locator {
+    return this.page.locator('section').getByRole('heading', { level: 1 });
   }
 
   /** 히어로의 「대표 회사 | 대표 직무」 줄 */
@@ -30,7 +33,7 @@ export class MentorProfilePage extends BasePage {
 
   introSection(): Locator {
     return this.page.locator('section').filter({
-      has: this.page.getByRole('heading', { name: '멘토 소개' }),
+      has: this.page.getByRole('heading', { name: '멘토 소개', exact: true }),
     });
   }
 

@@ -30,7 +30,9 @@ test.describe('LC-3492 어드민 상세페이지 수정', () => {
       async () => {
         await editor.goto(mentorId);
         if ((await editor.heroBullet(0).count()) === 0) {
-          await page.getByRole('button', { name: '소개 문구 추가 +' }).click();
+          await page
+            .getByRole('button', { name: '소개 문구 추가 +', exact: true })
+            .click();
         }
         await editor.heroBullet(0).fill(bullet);
         await editor.save();

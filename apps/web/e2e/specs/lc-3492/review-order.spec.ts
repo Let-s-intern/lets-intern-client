@@ -61,7 +61,9 @@ test.describe('LC-3492 후기 노출 순서', () => {
       '4. 웹 1:1 상세 — 추천순',
       async () => {
         const detail = await new LiveMentoringDetailPage(page).goto(mentorId);
-        await expect(page.getByRole('radio', { name: '추천순' })).toBeChecked();
+        await expect(
+          page.getByRole('radio', { name: '추천순', exact: true }),
+        ).toBeChecked();
         expect(sameOrder(await detail.reviewTexts())).toEqual(expected);
       },
       '웹-1on1-추천순',

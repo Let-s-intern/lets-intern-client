@@ -10,9 +10,11 @@ import { ADMIN_URL } from '../../support/lc3492';
 export class AdminMentorDetailPage extends BasePage {
   async goto(mentorId: number): Promise<this> {
     await this.page.goto(`${ADMIN_URL}/mentors/${mentorId}`);
-    await expect(this.page.getByText('기본 정보')).toBeVisible({
-      timeout: 15_000,
-    });
+    await expect(this.page.getByText('기본 정보', { exact: true })).toBeVisible(
+      {
+        timeout: 15_000,
+      },
+    );
     await this.settle();
     return this;
   }
@@ -70,7 +72,7 @@ export class AdminMentorDetailPage extends BasePage {
   /** 대표 회사 로고를 라이브러리에서 고른다. 저장은 기본 정보 저장 버튼이 한다 */
   async pickCorpLogo(logoName: string): Promise<void> {
     await this.page
-      .getByRole('button', { name: '라이브러리에서 선택' })
+      .getByRole('button', { name: '라이브러리에서 선택', exact: true })
       .first()
       .click();
     await this.pickLogoInDialog(logoName);
@@ -79,9 +81,9 @@ export class AdminMentorDetailPage extends BasePage {
   private async pickLogoInDialog(logoName: string): Promise<void> {
     const picker = this.page
       .getByRole('dialog')
-      .filter({ has: this.page.getByText('로고 선택') });
-    await picker.getByRole('button', { name: logoName }).click();
-    await picker.getByRole('button', { name: '선택' }).click();
+      .filter({ has: this.page.getByText('로고 선택', { exact: true }) });
+    await picker.getByRole('button', { name: logoName, exact: true }).click();
+    await picker.getByRole('button', { name: '선택', exact: true }).click();
     await expect(picker).toBeHidden();
   }
 
@@ -96,7 +98,7 @@ export class AdminMentorDetailPage extends BasePage {
   /** 대표가 아닌 경력의 회사명 목록 */
   async nonRepresentativeCompanies(): Promise<string[]> {
     const rows = this.page.locator('div.rounded.border.p-4').filter({
-      has: this.page.getByRole('button', { name: '대표로 지정' }),
+      has: this.page.getByRole('button', { name: '대표로 지정', exact: true }),
     });
     return rows.locator('div.font-medium').allInnerTexts();
   }
@@ -108,7 +110,7 @@ export class AdminMentorDetailPage extends BasePage {
         res.request().method() === 'PATCH',
     );
     await this.careerRow(company)
-      .getByRole('button', { name: '대표로 지정' })
+      .getByRole('button', { name: '대표로 지정', exact: true })
       .click();
     expect((await patched).ok(), '대표 경력 지정이 성공해야 한다').toBe(true);
     await this.settle();
@@ -119,13 +121,17 @@ export class AdminMentorDetailPage extends BasePage {
     company: string,
     changes: { job?: string; logoName?: string },
   ): Promise<void> {
-    await this.careerRow(company).getByRole('button', { name: '수정' }).click();
+    await this.careerRow(company)
+      .getByRole('button', { name: '수정', exact: true })
+      .click();
     const dialog = this.page
       .getByRole('dialog')
-      .filter({ has: this.page.getByText('경력 수정') });
+      .filter({ has: this.page.getByText('경력 수정', { exact: true }) });
     if (changes.job) await dialog.getByLabel(/^직무/).fill(changes.job);
     if (changes.logoName) {
-      await dialog.getByRole('button', { name: '라이브러리에서 선택' }).click();
+      await dialog
+        .getByRole('button', { name: '라이브러리에서 선택', exact: true })
+        .click();
       await this.pickLogoInDialog(changes.logoName);
     }
     const patched = this.page.waitForResponse(
@@ -134,7 +140,7 @@ export class AdminMentorDetailPage extends BasePage {
           new URL(res.url()).pathname,
         ) && res.request().method() === 'PATCH',
     );
-    await dialog.getByRole('button', { name: '저장' }).click();
+    await dialog.getByRole('button', { name: '저장', exact: true }).click();
     expect((await patched).ok(), '경력 수정이 성공해야 한다').toBe(true);
     await expect(dialog).toBeHidden();
     await this.settle();
@@ -152,13 +158,15 @@ export class AdminMentorDetailPage extends BasePage {
   /** 노출 후기의 본문(순위 순서). 숨긴 후기는 빠진다 */
   async exposedReviewTexts(): Promise<string[]> {
     const rows = this.reviewRows.filter({
-      has: this.page.getByLabel('노출 순위'),
+      has: this.page.getByLabel('노출 순위', { exact: true }),
     });
     return rows.locator('td:nth-child(5) p').allInnerTexts();
   }
 
   async setReviewRank(index: number, rank: number): Promise<void> {
-    const input = this.reviewRows.getByLabel('노출 순위').nth(index);
+    const input = this.reviewRows
+      .getByLabel('노출 순위', { exact: true })
+      .nth(index);
     await input.fill(String(rank));
     await input.press('Enter');
   }
@@ -169,7 +177,9 @@ export class AdminMentorDetailPage extends BasePage {
         res.url().includes('/reviews/order') &&
         res.request().method() === 'PUT',
     );
-    await this.page.getByRole('button', { name: '순서 저장' }).click();
+    await this.page
+      .getByRole('button', { name: '순서 저장', exact: true })
+      .click();
     expect((await saved).ok(), '후기 순서 저장이 성공해야 한다').toBe(true);
     await this.settle();
   }

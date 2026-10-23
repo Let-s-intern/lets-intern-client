@@ -16,13 +16,15 @@ export class AdminLoginPage extends BasePage {
   async loginWith(email: string, password: string): Promise<void> {
     await this.page.locator('#admin-email').fill(email);
     await this.page.locator('#admin-password').fill(password);
-    await this.page.getByRole('button', { name: '로그인' }).click();
+    await this.page
+      .getByRole('button', { name: '로그인', exact: true })
+      .click();
     // 로그인되면 폼이 사라지고 사이드바가 그려진다
     await expect(this.page.locator('#admin-email')).toBeHidden({
       timeout: 15_000,
     });
     await expect(
-      this.page.getByRole('link', { name: '멘토 관리' }),
+      this.page.getByRole('link', { name: '멘토 관리', exact: true }),
       '어드민 사이드바가 보여야 한다',
     ).toBeVisible({ timeout: 15_000 });
     await this.settle();

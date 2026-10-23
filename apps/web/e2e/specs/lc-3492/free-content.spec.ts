@@ -63,8 +63,12 @@ test.describe('LC-3492 자유 입력란', () => {
         await editor.goto(mentorId);
         // 전략 섹션을 켜 둔다. 제목·설명이 비어 있으면 켜는 순간 저장이 막히므로 그때는 그대로 둔다
         await editor.openTab('취업 성공 전략');
-        const title = await page.getByLabel('섹션 제목').inputValue();
-        const subtitle = await page.getByLabel('섹션 설명').inputValue();
+        const title = await page
+          .getByLabel('섹션 제목', { exact: true })
+          .inputValue();
+        const subtitle = await page
+          .getByLabel('섹션 설명', { exact: true })
+          .inputValue();
         if (title.trim() && subtitle.trim()) await editor.setVisible(true);
         else flow.note('전략 제목·설명이 비어 전략 노출을 켜지 않음');
         await editor.openTab('자유 입력란');

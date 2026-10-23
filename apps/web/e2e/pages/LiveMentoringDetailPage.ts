@@ -35,7 +35,7 @@ export class LiveMentoringDetailPage extends BasePage {
   oneLinerBox(): Locator {
     return this.page
       .locator('div')
-      .filter({ has: this.page.getByText('멘토님의 한마디') })
+      .filter({ has: this.page.getByText('멘토님의 한마디', { exact: true }) })
       .last();
   }
 

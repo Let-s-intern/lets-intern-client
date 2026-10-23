@@ -43,7 +43,8 @@ test.describe('LC-3492 렛커 픽 노출', () => {
       '2. 어드민 픽 목록 — 비노출 표시',
       async () => {
         await new AdminMentorPickPage(page).goto();
-        if (hiddenId) await expect(page.getByText('비노출')).toBeVisible();
+        if (hiddenId)
+          await expect(page.getByText('비노출', { exact: true })).toBeVisible();
       },
       '어드민-픽',
     );

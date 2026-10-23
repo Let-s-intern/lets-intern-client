@@ -7,7 +7,7 @@ export class AdminMentorPickPage extends BasePage {
   async goto(): Promise<this> {
     await this.page.goto(`${ADMIN_URL}/mentors/pick`);
     await expect(
-      this.page.getByRole('heading', { name: '렛커 픽' }),
+      this.page.getByRole('heading', { name: '렛커 픽', exact: true }),
     ).toBeVisible({ timeout: 15_000 });
     await this.settle();
     return this;
@@ -23,15 +23,15 @@ export class AdminMentorPickPage extends BasePage {
   }
 
   rankInput(index: number): Locator {
-    return this.page.getByLabel('노출 순위').nth(index);
+    return this.page.getByLabel('노출 순위', { exact: true }).nth(index);
   }
 
   upButton(index: number): Locator {
-    return this.page.getByLabel('위로 이동').nth(index);
+    return this.page.getByLabel('위로 이동', { exact: true }).nth(index);
   }
 
   downButton(index: number): Locator {
-    return this.page.getByLabel('아래로 이동').nth(index);
+    return this.page.getByLabel('아래로 이동', { exact: true }).nth(index);
   }
 
   /** 순위 칸에 값을 넣고 Enter 로 반영한다 */
@@ -47,7 +47,9 @@ export class AdminMentorPickPage extends BasePage {
         res.url().includes('/admin/mentor/pick') &&
         res.request().method() === 'PUT',
     );
-    await this.page.getByRole('button', { name: '순서 저장' }).click();
+    await this.page
+      .getByRole('button', { name: '순서 저장', exact: true })
+      .click();
     expect((await saved).ok(), '픽 저장 응답이 성공이어야 한다').toBe(true);
     await this.settle();
   }
