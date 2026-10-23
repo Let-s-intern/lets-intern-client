@@ -14,6 +14,7 @@ import {
   type PatchMentorReviewExposureReq,
   type PutAdminMentorHashTagOfMentorReq,
   type PutAdminMentorPickReq,
+  type PutMentorReviewOrderReq,
   PostAdminChallengeMentorReq,
 } from './mentorSchema';
 
@@ -239,6 +240,21 @@ export const usePatchAdminMentorReviewExposure = (mentorId: number) => {
       return axios.patch(`/admin/mentor/${mentorId}/reviews/exposure`, body);
     },
     // 다시 불러올 때까지 pending 으로 두어 스위치가 이전 값으로 튀지 않게 한다
+    onSuccess: () => {
+      return queryClient.invalidateQueries({
+        queryKey: [AdminMentorReviewListQueryKey, mentorId],
+      });
+    },
+  });
+};
+
+/** PUT 멘토 페이지 후기 노출 순서 /api/v1/admin/mentor/{mentorId}/reviews/order */
+export const usePutAdminMentorReviewOrder = (mentorId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: PutMentorReviewOrderReq) => {
+      return axios.put(`/admin/mentor/${mentorId}/reviews/order`, body);
+    },
     onSuccess: () => {
       return queryClient.invalidateQueries({
         queryKey: [AdminMentorReviewListQueryKey, mentorId],
