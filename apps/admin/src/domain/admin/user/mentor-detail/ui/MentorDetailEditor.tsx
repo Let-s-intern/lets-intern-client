@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from 'react';
 import {
   useDeleteAdminCareerMutation,
   useGetAdminUserCareerQuery,
+  usePatchAdminRepresentativeCareerMutation,
+  usePatchAdminUserCareerMutation,
   usePostAdminCareerMutation,
 } from '@/api/career/career';
 import { UserCareerType } from '@/api/career/careerSchema';
@@ -19,6 +21,9 @@ import {
 } from '@/api/user/user';
 import CareerForm from '@/common/career/CareerForm';
 import { DEFAULT_CAREER } from '@/common/career/constants';
+import CareerEditDialog, {
+  type CareerEditValues,
+} from '@/domain/admin/user/mentor-detail/ui/CareerEditDialog';
 import MentorDescriptionField from '@/domain/admin/user/mentor-detail/ui/MentorDescriptionField';
 import ProfileImageUploadModal from '@/domain/admin/user/mentor-detail/ui/ProfileImageUploadModal';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
@@ -72,6 +77,9 @@ interface Props {
   mentorId: number;
 }
 
+/** 경력 날짜는 `2020-01`, `2020.01`, `2020-01-01` 로 올 수 있다. 수정 폼은 `2020-01` 만 쓴다 */
+const toYearMonth = (date: string) => date.replace('.', '-').slice(0, 7);
+
 /**
  * 멘토 기본 정보·경력사항·키워드 편집. 멘토 상세 페이지와 1:1 LIVE 멘토링 관리의
  * 멘토 수정 모달이 함께 쓴다.
@@ -103,6 +111,10 @@ export default function MentorDetailEditor({ mentorId }: Props) {
 
   const postCareer = usePostAdminCareerMutation(mentorId);
   const deleteCareer = useDeleteAdminCareerMutation(mentorId);
+  const patchRepresentative =
+    usePatchAdminRepresentativeCareerMutation(mentorId);
+  const patchCareer = usePatchAdminUserCareerMutation(mentorId);
+  const [editingCareer, setEditingCareer] = useState<LocalCareer | null>(null);
   const [isCareerFormOpen, setIsCareerFormOpen] = useState(false);
 
   const [form, setForm] = useState<BasicFormData>(INITIAL_FORM);
@@ -245,6 +257,49 @@ export default function MentorDetailEditor({ mentorId }: Props) {
       onSuccess: () => snackbar('경력이 삭제되었습니다.'),
       onError: () => snackbar('경력 삭제에 실패했습니다.'),
     });
+  };
+
+  // 지정은 다른 필드 저장과 별개로 바로 반영한다. 웹 멘토 카드의 회사·직무가 이 경력으로 바뀐다
+  const handleSetRepresentative = (career: LocalCareer) => {
+    if (!career.id) return;
+    patchRepresentative.mutate(career.id, {
+      onSuccess: () => snackbar('대표 경력으로 지정했습니다.'),
+      onError: () => snackbar('대표 경력 지정에 실패했습니다.'),
+    });
+  };
+
+  const handleUpdateCareer = (values: CareerEditValues) => {
+    const career = editingCareer;
+    if (!career?.id) return;
+    const requestDto = {
+      company: values.company.trim(),
+      job: values.job.trim(),
+      field: values.field.trim(),
+      position: values.position.trim(),
+      department: values.department.trim(),
+      employmentType: values.employmentType,
+      startDate: values.startDate,
+      // 서버는 null 이면 기존 값을 유지한다. 재직 중으로 되돌리는 수정은 아직 안 된다
+      endDate: values.endDate || null,
+    };
+    const formData = new FormData();
+    formData.append(
+      'requestDto',
+      new Blob([JSON.stringify(requestDto)], { type: 'application/json' }),
+    );
+    patchCareer.mutate(
+      { careerId: career.id, careerData: formData },
+      {
+        onSuccess: () => {
+          setEditingCareer(null);
+          snackbar('경력이 수정되었습니다.');
+          if (values.isRepresentative && !career.isRepresentative) {
+            handleSetRepresentative(career);
+          }
+        },
+        onError: () => snackbar('경력 수정에 실패했습니다.'),
+      },
+    );
   };
 
   // 멘토 앱과 같은 블러·영역 선택 모달로 올린다. 업로드만 하고 반영은 아래 저장 버튼이 한다
@@ -515,6 +570,26 @@ export default function MentorDetailEditor({ mentorId }: Props) {
             </div>
           ) : null}
 
+          {editingCareer ? (
+            <CareerEditDialog
+              key={editingCareer.id}
+              initialValues={{
+                company: editingCareer.company,
+                job: editingCareer.job,
+                field: editingCareer.field,
+                position: editingCareer.position,
+                department: editingCareer.department,
+                employmentType: editingCareer.employmentType,
+                startDate: toYearMonth(editingCareer.startDate),
+                endDate: toYearMonth(editingCareer.endDate),
+                isRepresentative: editingCareer.isRepresentative,
+              }}
+              isSaving={patchCareer.isPending}
+              onClose={() => setEditingCareer(null)}
+              onSubmit={handleUpdateCareer}
+            />
+          ) : null}
+
           {careers.length === 0 ? (
             <div className="text-xsmall14 text-neutral-40 py-8 text-center">
               등록된 경력이 없습니다.
@@ -535,13 +610,32 @@ export default function MentorDetailEditor({ mentorId }: Props) {
                         {career.job || '-'}
                       </span>
                       {isDeletable ? (
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteCareer(career)}
-                          className="text-xxsmall12 text-red-500 hover:text-red-700"
-                        >
-                          삭제
-                        </button>
+                        <div className="flex items-center gap-3">
+                          {!career.isRepresentative ? (
+                            <button
+                              type="button"
+                              onClick={() => handleSetRepresentative(career)}
+                              disabled={patchRepresentative.isPending}
+                              className="text-xxsmall12 text-primary hover:underline"
+                            >
+                              대표로 지정
+                            </button>
+                          ) : null}
+                          <button
+                            type="button"
+                            onClick={() => setEditingCareer(career)}
+                            className="text-xxsmall12 text-primary hover:underline"
+                          >
+                            수정
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteCareer(career)}
+                            className="text-xxsmall12 text-red-500 hover:text-red-700"
+                          >
+                            삭제
+                          </button>
+                        </div>
                       ) : null}
                     </div>
                     <div className="text-xsmall14 text-neutral-0 font-medium">

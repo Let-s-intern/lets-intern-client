@@ -100,6 +100,14 @@ const renderEditor = () =>
     </QueryClientProvider>,
   );
 
+// jsdom 의 Blob 에는 text() 가 없다
+const readBlob = (blob: Blob) =>
+  new Promise<string>((resolve) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.readAsText(blob);
+  });
+
 const lastPatchBody = () => patch.mock.calls.at(-1)?.[1];
 
 describe('MentorDetailEditor 프로필 소개·키워드', () => {
@@ -179,5 +187,127 @@ describe('MentorDetailEditor 프로필 소개·키워드', () => {
     expect(put).toHaveBeenCalledWith('/admin/mentor-hash-tag/mentors/7', {
       mentorHashTagIdList: [2],
     });
+  });
+});
+
+describe('MentorDetailEditor 경력 수정·대표 지정', () => {
+  const careers = [
+    {
+      id: 11,
+      company: '대표회사',
+      job: '기획',
+      employmentType: '정규직',
+      startDate: '2022-01',
+      endDate: null,
+      field: null,
+      position: null,
+      department: null,
+      isAddedByAdmin: false,
+      isRepresentative: true,
+    },
+    {
+      id: 12,
+      company: '이전회사',
+      job: '마케팅',
+      employmentType: '계약직',
+      startDate: '2019-03',
+      endDate: '2021-12',
+      field: null,
+      position: '매니저',
+      department: null,
+      isAddedByAdmin: true,
+      isRepresentative: false,
+    },
+  ];
+
+  const isCareerUrl = (url: string) =>
+    url.startsWith('/admin/user-career/user/7');
+
+  beforeEach(() => {
+    getV2.mockResolvedValue({ data: { data: userDetail } });
+    get.mockImplementation((url: string) => {
+      if (url === '/admin/mentor-hash-tag')
+        return Promise.resolve({
+          data: { data: { mentorHashTagList: hashTagList } },
+        });
+      if (isCareerUrl(url)) return Promise.resolve({ data: { data: careers } });
+      return Promise.resolve({ data: { data: [] } });
+    });
+    patch.mockResolvedValue({});
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  const careerFetchCount = () =>
+    get.mock.calls.filter(([url]) => isCareerUrl(url)).length;
+
+  it('「대표로 지정」 은 대표가 아닌 경력에만 있다', async () => {
+    renderEditor();
+    expect(
+      await screen.findAllByRole('button', { name: '대표로 지정' }),
+    ).toHaveLength(1);
+    expect(screen.getAllByRole('button', { name: '수정' })).toHaveLength(2);
+  });
+
+  it('대표로 지정하면 바로 저장하고 경력 목록을 다시 불러온다', async () => {
+    renderEditor();
+    fireEvent.click(await screen.findByRole('button', { name: '대표로 지정' }));
+
+    await waitFor(() =>
+      expect(patch).toHaveBeenCalledWith(
+        '/admin/user-career/user/7/12/representative',
+      ),
+    );
+    await waitFor(() => expect(careerFetchCount()).toBe(2));
+  });
+
+  it('수정 다이얼로그에 기존 값을 채우고, 저장하면 multipart 로 PATCH 한다', async () => {
+    renderEditor();
+    await screen.findByText('이전회사');
+    fireEvent.click(screen.getAllByRole('button', { name: '수정' })[1]);
+
+    expect(screen.getByLabelText(/^회사/)).toHaveValue('이전회사');
+    expect(screen.getByLabelText(/^직책/)).toHaveValue('매니저');
+    expect(screen.getByLabelText(/^종료/)).toHaveValue('2021-12');
+
+    fireEvent.change(screen.getByLabelText(/^직무/), {
+      target: { value: '그로스 마케팅' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
+
+    await waitFor(() => expect(patch).toHaveBeenCalled());
+    const [url, formData] = patch.mock.calls[0];
+    expect(url).toBe('/admin/user-career/user/7/12');
+    const requestDto = JSON.parse(
+      await readBlob((formData as FormData).get('requestDto') as Blob),
+    );
+    expect(requestDto).toEqual({
+      company: '이전회사',
+      job: '그로스 마케팅',
+      field: '',
+      position: '매니저',
+      department: '',
+      employmentType: '계약직',
+      startDate: '2019-03',
+      endDate: '2021-12',
+    });
+    // 대표 체크를 하지 않았으면 대표 지정은 부르지 않는다
+    expect(patch).toHaveBeenCalledTimes(1);
+  });
+
+  it('수정 다이얼로그에서 대표로 설정하면 저장 뒤 대표 지정도 부른다', async () => {
+    renderEditor();
+    await screen.findByText('이전회사');
+    fireEvent.click(screen.getAllByRole('button', { name: '수정' })[1]);
+    fireEvent.click(screen.getByLabelText(/대표 경력으로 설정/));
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
+
+    await waitFor(() =>
+      expect(patch).toHaveBeenCalledWith(
+        '/admin/user-career/user/7/12/representative',
+      ),
+    );
   });
 });
