@@ -4,6 +4,7 @@ import axiosV2 from '@/utils/axiosV2';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   adminChallengeMentorListSchema,
+  adminMentorPickListSchema,
   adminMentorReviewListSchema,
   adminUserMentorList,
   mentorHashTagListSchema,
@@ -12,6 +13,7 @@ import {
   type PatchMentorReviewContentReq,
   type PatchMentorReviewExposureReq,
   type PutAdminMentorHashTagOfMentorReq,
+  type PutAdminMentorPickReq,
   PostAdminChallengeMentorReq,
 } from './mentorSchema';
 
@@ -181,6 +183,35 @@ export const usePutAdminMentorHashTagOfMentor = (mentorId: number) => {
   return useMutation({
     mutationFn: async (body: PutAdminMentorHashTagOfMentorReq) => {
       return axios.put(`/admin/mentor-hash-tag/mentors/${mentorId}`, body);
+    },
+  });
+};
+
+export const AdminMentorPickQueryKey = 'adminMentorPickListQuery';
+
+/** GET 렛커 픽 목록 /api/v1/admin/mentor/pick */
+export const useAdminMentorPickListQuery = () => {
+  return useQuery({
+    queryKey: [AdminMentorPickQueryKey],
+    queryFn: async () => {
+      const res = await axios.get('/admin/mentor/pick');
+      return adminMentorPickListSchema.parse(res.data.data).pickList;
+    },
+    refetchOnWindowFocus: false,
+  });
+};
+
+/** PUT 렛커 픽 전체 교체 /api/v1/admin/mentor/pick */
+export const usePutAdminMentorPickMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: PutAdminMentorPickReq) => {
+      return axios.put('/admin/mentor/pick', body);
+    },
+    onSuccess: () => {
+      return queryClient.invalidateQueries({
+        queryKey: [AdminMentorPickQueryKey],
+      });
     },
   });
 };

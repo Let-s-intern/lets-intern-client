@@ -114,6 +114,27 @@ export interface PutAdminMentorHashTagOfMentorReq {
   mentorHashTagIdList: number[];
 }
 
+/** 렛커 픽 1건 — `GET /api/v1/admin/mentor/pick` 의 `pickList[]`. 순서대로 온다 */
+export const adminMentorPickSchema = z.object({
+  mentorId: z.number(),
+  name: z.string(),
+  nickname: z.string().nullable(),
+  /** 비노출 멘토는 픽에 있어도 공개 목록에 나가지 않는다 */
+  isVisible: z.boolean().nullable(),
+  sortOrder: z.number(),
+});
+
+export type AdminMentorPick = z.infer<typeof adminMentorPickSchema>;
+
+export const adminMentorPickListSchema = z.object({
+  pickList: z.array(adminMentorPickSchema),
+});
+
+/** PUT /api/v1/admin/mentor/pick 요청 바디. 받은 순서대로 1위부터 전체 교체한다 */
+export interface PutAdminMentorPickReq {
+  mentorIds: number[];
+}
+
 export const mentorReviewSourceSchema = z.enum([
   'REVIEW',
   'OLD_REVIEW',

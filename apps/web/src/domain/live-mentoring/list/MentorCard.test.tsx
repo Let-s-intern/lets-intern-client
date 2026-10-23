@@ -169,4 +169,17 @@ describe('MentorCard', () => {
       '/live-mentoring/42',
     );
   });
+
+  it('isPick 이면 썸네일에 「렛커 픽」 라벨을 단다 (LC-3500)', () => {
+    render(<MentorCard opening={makeOpening({ isPick: true })} />);
+    expect(screen.getByText('렛커 픽')).toBeInTheDocument();
+  });
+
+  it('isPick 이 없거나 false 면 라벨이 없다', () => {
+    const { unmount } = render(<MentorCard opening={makeOpening()} />);
+    expect(screen.queryByText('렛커 픽')).not.toBeInTheDocument();
+    unmount();
+    render(<MentorCard opening={makeOpening({ isPick: false })} />);
+    expect(screen.queryByText('렛커 픽')).not.toBeInTheDocument();
+  });
 });

@@ -14,6 +14,8 @@ export default function AdminCompanyLogoPage() {
       navigate('/mentors/register');
     } else if (newValue === 2) {
       navigate('/mentors/keywords');
+    } else if (newValue === 3) {
+      navigate('/mentors/pick');
     }
   };
 
@@ -21,10 +23,11 @@ export default function AdminCompanyLogoPage() {
     <section className="p-5">
       <Heading className="mb-4">멘토 관리</Heading>
 
-      <Tabs value={3} onChange={handleTabChange} className="mb-4">
+      <Tabs value={4} onChange={handleTabChange} className="mb-4">
         <Tab label="멘토 관리" />
         <Tab label="멘토 등록" />
         <Tab label="멘토 키워드" />
+        <Tab label="렛커 픽" />
         <Tab label="회사 로고" />
       </Tabs>
 

@@ -244,6 +244,8 @@ export default function AdminMentorPage() {
     } else if (newValue === 2) {
       navigate('/mentors/keywords');
     } else if (newValue === 3) {
+      navigate('/mentors/pick');
+    } else if (newValue === 4) {
       navigate('/mentors/company-logos');
     }
   };
@@ -256,6 +258,7 @@ export default function AdminMentorPage() {
         <Tab label="멘토 관리" />
         <Tab label="멘토 등록" />
         <Tab label="멘토 키워드" />
+        <Tab label="렛커 픽" />
         <Tab label="회사 로고" />
       </Tabs>
 
