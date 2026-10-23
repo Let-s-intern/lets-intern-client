@@ -23,8 +23,14 @@ test.describe('LC-3492 멘토 프로필 소개·키워드', () => {
     request,
   }) => {
     const flow = startRun(page);
-    const mentorId = await flow.run('0. 멘토 A id(API)', async () =>
-      (await Lc3492Api.admin(request)).mentorIdByEmail(MENTOR_A_EMAIL),
+    const mentorId = await flow.run(
+      '0. 멘토 A id + 키워드를 시드 상태로(API)',
+      async () => {
+        const api = await Lc3492Api.admin(request);
+        const id = await api.mentorIdByEmail(MENTOR_A_EMAIL);
+        await api.resetMentorKeywords(id);
+        return id;
+      },
     );
     const admin = new AdminMentorDetailPage(page);
     const intro1 = uniqueText('QA 한줄소개');

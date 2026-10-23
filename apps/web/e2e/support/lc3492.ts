@@ -27,6 +27,11 @@ export const ADMIN_PASSWORD = process.env.E2E_ADMIN_PW ?? 'fptcmdjemals99!';
 /** 시드의 멘토 A. 경력·키워드·LIVE·VOD·후기 시드가 이 멘토에 붙는다 */
 export const MENTOR_A_EMAIL =
   process.env.E2E_LC3492_MENTOR_A_EMAIL ?? 'lm-mentor1@letscareer.test';
+/** 시드가 멘토 A 에 붙여 두는 키워드 하나(seed-lc3492.sql §5). 키워드 단계는 이 상태에서 시작한다 */
+export const MENTOR_A_SEED_KEYWORD = {
+  type: 'LC3492 직무',
+  title: 'LC3492 기획',
+};
 /** 시드 멘토 비밀번호(seed-live-mentoring.sql 과 같다) */
 export const MENTOR_PASSWORD =
   process.env.E2E_LC3492_MENTOR_PW ?? ADMIN_PASSWORD;
@@ -159,6 +164,28 @@ export class Lc3492Api {
       throw new Error(`멘토 ${email} 가 없습니다. 시드를 먼저 넣으세요.`);
     }
     return mentor.id;
+  }
+
+  /**
+   * 멘토 A 키워드를 시드 상태(사전 키워드 하나)로 되돌린다. 앞 실행이 지정한 키워드가 쌓이면
+   * 「고르지 않은 키워드」 가 모자라 키워드 단계가 건너뛰어진다. PUT 은 전체 교체다
+   */
+  async resetMentorKeywords(mentorId: number): Promise<void> {
+    const { type, title } = MENTOR_A_SEED_KEYWORD;
+    const { mentorHashTagList } = await this.get<{
+      mentorHashTagList: { id: number; type: string; title: string }[];
+    }>('/v1/admin/mentor-hash-tag');
+    const seed = mentorHashTagList.find(
+      (tag) => tag.type === type && tag.title === title,
+    );
+    if (!seed) {
+      throw new Error(
+        `키워드 ${type}/${title} 가 없습니다. 시드를 먼저 넣으세요.`,
+      );
+    }
+    await this.put(`/v1/admin/mentor-hash-tag/mentors/${mentorId}`, {
+      mentorHashTagIdList: [seed.id],
+    });
   }
 
   /** 렛커 픽을 통째로 바꾼다(PUT 은 전체 교체) */
