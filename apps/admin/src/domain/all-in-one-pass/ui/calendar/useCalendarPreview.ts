@@ -1,4 +1,3 @@
-import { calendarChallengeFixtures } from '@/api/all-in-one-pass/mock/calendarChallengeFixtures';
 import { PassCalendarEvent } from '@/domain/all-in-one-pass/types';
 import dayjs from '@/lib/dayjs';
 import { ChallengeType } from '@/schema';
@@ -97,17 +96,9 @@ export function useCalendarPreview({
     return best;
   }, [windowStart]);
 
-  // 표시 항목: (데모) 챌린지 막대 + 폼에 입력한 게릴라세션/마일스톤
+  // 표시 항목: 폼에 입력한 게릴라세션/마일스톤
   const items = useMemo<BarItem[]>(() => {
-    const challengeItems: BarItem[] = calendarChallengeFixtures.map((c) => ({
-      id: c.id,
-      title: c.title,
-      kind: 'CHALLENGE',
-      challengeType: c.challengeType,
-      start: dayjs(c.startDate),
-      end: dayjs(c.endDate),
-    }));
-    const eventItems: BarItem[] = events
+    return events
       .filter((e) => e.startDate)
       .map((e) => ({
         id: e.id,
@@ -115,10 +106,8 @@ export function useCalendarPreview({
         kind: e.type,
         start: dayjs(e.startDate as string),
         end: dayjs((e.endDate ?? e.startDate) as string),
-      }));
-    return [...challengeItems, ...eventItems].sort(
-      (a, b) => a.start.valueOf() - b.start.valueOf(),
-    );
+      }))
+      .sort((a, b) => a.start.valueOf() - b.start.valueOf());
   }, [events]);
 
   // lane 패킹: 겹치면 다른 줄, 안 겹치면 재사용
