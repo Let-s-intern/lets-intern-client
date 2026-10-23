@@ -82,7 +82,7 @@ describe('ChallengeVersionSection', () => {
 
     expect(
       screen.getByText(
-        '버전이 없으면 모든 참여자가 같은 자료를 봅니다. 참여자는 신청할 때 버전을 하나 고릅니다.',
+        '버전마다 목록 카드와 상세 페이지가 따로 보이고, 참여자는 들어온 버전 페이지의 버전으로 신청합니다. 버전별 미션은 미션 등록에서 지정합니다.',
       ),
     ).toBeInTheDocument();
   });
