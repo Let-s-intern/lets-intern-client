@@ -10,6 +10,7 @@ import { useState } from 'react';
 
 import {
   usePatchAdminCompanyLogoMutation,
+  usePostAdminCompanyLogoFaviconMutation,
   usePostAdminCompanyLogoMutation,
 } from '@/api/company-logo/companyLogo';
 import type { CompanyLogo } from '@/api/company-logo/companyLogoSchema';
@@ -27,6 +28,17 @@ const errorMessage = (error: unknown, fallback: string) => {
   return message ?? fallback;
 };
 
+const FAVICON_ERROR_MESSAGES: Record<string, string> = {
+  COMPANY_LOGO_FAVICON_INVALID_URL: '사이트 주소를 확인해 주세요.',
+  COMPANY_LOGO_FAVICON_FETCH_FAILED:
+    '파비콘을 가져오지 못했습니다. 이미지를 직접 올려 주세요.',
+  COMPANY_LOGO_FAVICON_TOO_LARGE: '파비콘 파일이 너무 큽니다.',
+};
+
+const faviconErrorMessage = (error: unknown) =>
+  FAVICON_ERROR_MESSAGES[(error as { code?: string } | null)?.code ?? ''] ??
+  '파비콘을 가져오지 못했습니다.';
+
 interface Props {
   /** null 이면 등록, 값이 있으면 그 로고를 수정 */
   logo: CompanyLogo | null;
@@ -38,9 +50,11 @@ export default function CompanyLogoFormDialog({ logo, onClose }: Props) {
   const { snackbar } = useAdminSnackbar();
   const postLogo = usePostAdminCompanyLogoMutation();
   const patchLogo = usePatchAdminCompanyLogoMutation();
+  const fetchFavicon = usePostAdminCompanyLogoFaviconMutation();
 
   const [name, setName] = useState(logo?.name ?? '');
   const [imageUrl, setImageUrl] = useState(logo?.imageUrl ?? '');
+  const [siteUrl, setSiteUrl] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -63,6 +77,15 @@ export default function CompanyLogoFormDialog({ logo, onClose }: Props) {
     } finally {
       setIsUploading(false);
     }
+  };
+
+  // 회사 사이트 주소로 파비콘을 가져와 이미지로 쓴다. 회사명은 건드리지 않는다
+  const handleFetchFavicon = () => {
+    setError(null);
+    fetchFavicon.mutate(siteUrl.trim(), {
+      onSuccess: setImageUrl,
+      onError: (e) => setError(faviconErrorMessage(e)),
+    });
   };
 
   const handleSubmit = async () => {
@@ -126,6 +149,25 @@ export default function CompanyLogoFormDialog({ logo, onClose }: Props) {
               />
             </Button>
           </div>
+          <div className="flex items-center gap-2">
+            <TextField
+              size="small"
+              fullWidth
+              label="회사 사이트 주소"
+              placeholder="https://example.com"
+              value={siteUrl}
+              onChange={(e) => setSiteUrl(e.target.value)}
+            />
+            <Button
+              variant="outlined"
+              size="small"
+              className="shrink-0"
+              disabled={!siteUrl.trim() || fetchFavicon.isPending}
+              onClick={handleFetchFavicon}
+            >
+              {fetchFavicon.isPending ? '가져오는 중...' : '파비콘 가져오기'}
+            </Button>
+          </div>
           {error ? (
             <p role="alert" className="text-system-error text-xs">
               {error}
@@ -143,7 +185,13 @@ export default function CompanyLogoFormDialog({ logo, onClose }: Props) {
         </Button>
         <Button
           variant="contained"
-          disabled={!name.trim() || !imageUrl || isUploading || isSaving}
+          disabled={
+            !name.trim() ||
+            !imageUrl ||
+            isUploading ||
+            fetchFavicon.isPending ||
+            isSaving
+          }
           onClick={handleSubmit}
         >
           {isSaving ? '저장 중...' : '저장'}

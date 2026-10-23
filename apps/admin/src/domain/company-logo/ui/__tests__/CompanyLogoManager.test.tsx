@@ -149,4 +149,85 @@ describe('CompanyLogoManager', () => {
       expect(del).toHaveBeenCalledWith('/admin/company-logo/2'),
     );
   });
+
+  describe('CompanyLogoFormDialog 파비콘 가져오기', () => {
+    const openRegisterDialog = async () => {
+      get.mockResolvedValue({ data: { data: { companyLogoList: logos } } });
+      renderManager();
+      fireEvent.click(await screen.findByRole('button', { name: '로고 등록' }));
+      return screen.getByRole('dialog');
+    };
+
+    const fetchFavicon = (siteUrl: string) => {
+      fireEvent.change(screen.getByLabelText('회사 사이트 주소'), {
+        target: { value: siteUrl },
+      });
+      fireEvent.click(screen.getByRole('button', { name: '파비콘 가져오기' }));
+    };
+
+    afterEach(() => vi.clearAllMocks());
+
+    it('주소가 비어 있으면 가져오기 버튼이 꺼져 있다', async () => {
+      await openRegisterDialog();
+      expect(
+        screen.getByRole('button', { name: '파비콘 가져오기' }),
+      ).toBeDisabled();
+      fireEvent.change(screen.getByLabelText('회사 사이트 주소'), {
+        target: { value: '   ' },
+      });
+      expect(
+        screen.getByRole('button', { name: '파비콘 가져오기' }),
+      ).toBeDisabled();
+    });
+
+    it('가져온 파비콘을 미리보기와 저장 값에 쓰고, 회사명은 건드리지 않는다', async () => {
+      post.mockImplementation((url: string) =>
+        url === '/admin/company-logo/favicon'
+          ? Promise.resolve({
+              data: { data: { imageUrl: 'https://cdn.test/favicon.png' } },
+            })
+          : Promise.resolve({}),
+      );
+      await openRegisterDialog();
+      fetchFavicon(' https://toss.im ');
+
+      await waitFor(() =>
+        expect(screen.getByAltText('로고')).toHaveAttribute(
+          'src',
+          'https://cdn.test/favicon.png',
+        ),
+      );
+      expect(post).toHaveBeenCalledWith('/admin/company-logo/favicon', {
+        siteUrl: 'https://toss.im',
+      });
+      expect(screen.getByLabelText('회사명')).toHaveValue('');
+
+      fireEvent.change(screen.getByLabelText('회사명'), {
+        target: { value: '토스' },
+      });
+      fireEvent.click(screen.getByRole('button', { name: '저장' }));
+      await waitFor(() =>
+        expect(post).toHaveBeenCalledWith('/admin/company-logo', {
+          name: '토스',
+          imageUrl: 'https://cdn.test/favicon.png',
+        }),
+      );
+    });
+
+    it.each([
+      ['COMPANY_LOGO_FAVICON_INVALID_URL', '사이트 주소를 확인해 주세요.'],
+      [
+        'COMPANY_LOGO_FAVICON_FETCH_FAILED',
+        '파비콘을 가져오지 못했습니다. 이미지를 직접 올려 주세요.',
+      ],
+      ['COMPANY_LOGO_FAVICON_TOO_LARGE', '파비콘 파일이 너무 큽니다.'],
+      ['SOMETHING_ELSE', '파비콘을 가져오지 못했습니다.'],
+    ])('%s 이면 「%s」 를 알린다', async (code, message) => {
+      post.mockRejectedValue({ status: 400, code });
+      await openRegisterDialog();
+      fetchFavicon('https://toss.im');
+
+      expect(await screen.findByRole('alert')).toHaveTextContent(message);
+    });
+  });
 });

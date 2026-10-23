@@ -2,6 +2,7 @@ import axios from '@/utils/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
+  companyLogoFaviconSchema,
   companyLogoListSchema,
   type CompanyLogoReq,
 } from './companyLogoSchema';
@@ -45,6 +46,18 @@ export const usePatchAdminCompanyLogoMutation = () =>
     ({ id, ...body }: Partial<CompanyLogoReq> & { id: number }) =>
       axios.patch(`${PATH}/${id}`, body),
   );
+
+/**
+ * POST /admin/company-logo/favicon — 회사 사이트의 파비콘을 서버가 가져와 올리고 주소를 돌려준다.
+ * 실패하면 400 과 code(COMPANY_LOGO_FAVICON_INVALID_URL·FETCH_FAILED·TOO_LARGE)
+ */
+export const usePostAdminCompanyLogoFaviconMutation = () =>
+  useMutation({
+    mutationFn: async (siteUrl: string) => {
+      const res = await axios.post(`${PATH}/favicon`, { siteUrl });
+      return companyLogoFaviconSchema.parse(res.data.data).imageUrl;
+    },
+  });
 
 /** DELETE /admin/company-logo/{id}. 이미 지정된 로고는 주소를 복사해 둔 것이라 그대로 남는다 */
 export const useDeleteAdminCompanyLogoMutation = () =>
