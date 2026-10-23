@@ -2,10 +2,15 @@ import { expect, type Locator } from '@playwright/test';
 import { BasePage } from '../BasePage';
 import { ADMIN_URL } from '../../support/lc3492';
 
-/** 어드민 1:1 상세페이지 수정 (/live-mentoring/:mentorId/detail-page, LC-3496·3494·3495) */
+/**
+ * 어드민 1:1 상세페이지 수정 — 1:1 화면의 「상세페이지」 탭 (/live-mentoring?tab=detailPage&mentorId=, LC-3496·3494·3495).
+ * 예전 주소 /live-mentoring/:mentorId/detail-page 는 이 탭으로 리다이렉트된다.
+ */
 export class AdminLiveMentoringDetailPageEditPage extends BasePage {
   async goto(mentorId: number): Promise<this> {
-    await this.page.goto(`${ADMIN_URL}/live-mentoring/${mentorId}/detail-page`);
+    await this.page.goto(
+      `${ADMIN_URL}/live-mentoring?tab=detailPage&mentorId=${mentorId}`,
+    );
     await expect(
       this.page.getByRole('heading', { name: /멘토 상세페이지 수정$/ }),
     ).toBeVisible({ timeout: 15_000 });
@@ -13,8 +18,12 @@ export class AdminLiveMentoringDetailPageEditPage extends BasePage {
     return this;
   }
 
+  /** 편집기 안의 섹션 탭. 바깥 1:1 탭(「후기」 등)과 이름이 겹쳐 섹션 탭 영역으로 한정한다 */
   async openTab(label: string): Promise<void> {
-    await this.page.getByRole('button', { name: label, exact: true }).click();
+    await this.page
+      .getByRole('navigation', { name: '상세페이지 섹션' })
+      .getByRole('button', { name: label, exact: true })
+      .click();
   }
 
   heroBullet(index: number): Locator {
