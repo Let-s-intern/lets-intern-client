@@ -105,6 +105,21 @@ export const useUserAdminQuery = ({
   });
 };
 
+/**
+ * GET /api/v2/admin/user — 이름·이메일·전화번호 중 하나로 유저를 찾는다(0부터 세는 page).
+ * 메뉴 검색 패널이 입력마다 부르므로 요청을 취소할 수 있게 signal 을 받는다.
+ */
+export const fetchAdminUsers = async (
+  params: Pick<UserAdminQueryParams, 'email' | 'name' | 'phoneNum'> & {
+    page: number;
+    size: number;
+  },
+  signal?: AbortSignal,
+) => {
+  const res = await axiosV2.get('/admin/user', { params, signal });
+  return userAdminType.parse(res.data.data).userAdminList;
+};
+
 export const UseUserDetailAdminQueryKey = 'useUserDetailQueryKey';
 
 export const useUserDetailAdminQuery = ({

@@ -1,11 +1,23 @@
 import { ClickAwayListener } from '@mui/material';
-import { Fragment, useEffect, useId, useMemo, useRef, useState } from 'react';
+import {
+  type ReactNode,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { createPortal } from 'react-dom';
 
 import { twMerge } from '@/lib/twMerge';
 
 import { matchEntries, splitHighlight } from './matchEntries';
 import type { SearchEntry } from './searchEntries';
+import { useDebouncedValue } from './useDebouncedValue';
+import { useUserSearch } from './useUserSearch';
+
+/** 유저처럼 서버에서 찾는 묶음이 입력이 멈추길 기다리는 시간 */
+const REMOTE_DEBOUNCE_MS = 300;
 
 const Highlight = ({ text, query }: { text: string; query: string }) => (
   <>
@@ -20,6 +32,13 @@ const Highlight = ({ text, query }: { text: string; query: string }) => (
     )}
   </>
 );
+
+/** 목록 한 줄. option 만 키보드로 고를 수 있다 */
+type Block =
+  | { kind: 'heading'; key: string; text: string }
+  | { kind: 'note'; key: string; text: string }
+  | { kind: 'header'; key: string; node: ReactNode }
+  | { kind: 'option'; key: string; entry: SearchEntry; isNested?: boolean };
 
 interface Props {
   /** 검색 대상 전체(메뉴 + 화면 안 탭) */
@@ -42,6 +61,7 @@ interface Props {
 /**
  * 화면 위쪽 가운데에 뜨는 메뉴 검색(Spotlight 식). 모달이 아니다 — 배경을 가리거나 스크롤·포커스를
  * 묶지 않아 뒤 화면을 그대로 보고 만질 수 있다. Esc·바깥 클릭·이동으로 닫힌다.
+ * 메뉴는 바로 거르고, 그 아래 유저는 서버에서 찾아 갈 곳을 하위 항목으로 보여 준다.
  */
 export default function SearchPanel({
   entries,
@@ -55,12 +75,109 @@ export default function SearchPanel({
   const listId = useId();
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
+  const debouncedQuery = useDebouncedValue(query, REMOTE_DEBOUNCE_MS);
 
   const isEmptyQuery = query.trim() === '';
-  const results = useMemo(
+  const menuResults = useMemo(
     () => (isEmptyQuery ? menuEntries : matchEntries(entries, query)),
     [entries, menuEntries, query, isEmptyQuery],
   );
+  const userSearch = useUserSearch(query, debouncedQuery);
+
+  const blocks = useMemo<Block[]>(() => {
+    if (isEmptyQuery) {
+      // 검색어가 비었을 때는 사이드바처럼 섹션 제목을 끼운다
+      return menuResults.flatMap((entry, index) => {
+        const section = entry.parents[0];
+        const option: Block = {
+          kind: 'option',
+          key: `menu-${entry.path}`,
+          entry,
+        };
+        return section !== menuResults[index - 1]?.parents[0]
+          ? [
+              { kind: 'heading', key: `section-${section}`, text: section },
+              option,
+            ]
+          : [option];
+      });
+    }
+
+    const list: Block[] = [];
+    const hasUserGroup = userSearch.status !== 'idle';
+    if (hasUserGroup)
+      list.push({ kind: 'heading', key: 'h-menu', text: '메뉴' });
+    if (menuResults.length === 0) {
+      list.push({
+        kind: 'note',
+        key: 'menu-empty',
+        text: '일치하는 메뉴가 없습니다',
+      });
+    }
+    menuResults.forEach((entry) =>
+      list.push({
+        kind: 'option',
+        key: `menu-${entry.path}-${entry.label}`,
+        entry,
+      }),
+    );
+
+    if (hasUserGroup) {
+      list.push({ kind: 'heading', key: 'h-user', text: '유저' });
+      userSearch.users.forEach((user) => {
+        list.push({
+          kind: 'header',
+          key: `user-${user.id}`,
+          node: (
+            <div className="flex items-center gap-2">
+              <span className="text-[15px] font-semibold text-white">
+                <Highlight text={user.title} query={query} />
+              </span>
+              {user.isMentor ? (
+                <span className="rounded bg-[#8E9BFF]/20 px-1.5 py-0.5 text-[11px] font-semibold text-[#8E9BFF]">
+                  멘토
+                </span>
+              ) : null}
+              <span className="text-[13px] text-[#9AA4B2]">
+                {user.maskedEmail}
+              </span>
+            </div>
+          ),
+        });
+        user.destinations.forEach((entry) =>
+          list.push({
+            kind: 'option',
+            key: `user-${user.id}-${entry.path}`,
+            entry,
+            isNested: true,
+          }),
+        );
+      });
+      if (userSearch.status === 'loading') {
+        list.push({ kind: 'note', key: 'user-loading', text: '유저 찾는 중…' });
+      } else if (userSearch.status === 'error') {
+        list.push({
+          kind: 'note',
+          key: 'user-error',
+          text: '유저를 불러오지 못했습니다',
+        });
+      } else if (userSearch.users.length === 0) {
+        list.push({
+          kind: 'note',
+          key: 'user-empty',
+          text: '일치하는 유저가 없습니다',
+        });
+      }
+    }
+    return list;
+  }, [isEmptyQuery, menuResults, userSearch, query]);
+
+  const options = blocks.filter(
+    (block): block is Extract<Block, { kind: 'option' }> =>
+      block.kind === 'option',
+  );
+  // 결과가 줄어 고른 자리가 사라지면 맨 위로
+  const safeActiveIndex = activeIndex < options.length ? activeIndex : 0;
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -72,7 +189,7 @@ export default function SearchPanel({
     listRef.current
       ?.querySelector('[aria-selected="true"]')
       ?.scrollIntoView?.({ block: 'nearest' });
-  }, [activeIndex]);
+  }, [safeActiveIndex]);
 
   const optionId = (index: number) => `${listId}-option-${index}`;
 
@@ -82,18 +199,20 @@ export default function SearchPanel({
       onClose();
       return;
     }
-    if (results.length === 0) return;
+    if (options.length === 0) return;
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setActiveIndex((prev) => (prev + 1) % results.length);
+      setActiveIndex((safeActiveIndex + 1) % options.length);
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      setActiveIndex((prev) => (prev - 1 + results.length) % results.length);
+      setActiveIndex((safeActiveIndex - 1 + options.length) % options.length);
     } else if (e.key === 'Enter') {
       e.preventDefault();
-      onSelect(results[activeIndex]);
+      onSelect(options[safeActiveIndex].entry);
     }
   };
+
+  let optionIndex = -1;
 
   return createPortal(
     <ClickAwayListener onClickAway={onClose}>
@@ -112,7 +231,7 @@ export default function SearchPanel({
           aria-controls={listId}
           aria-autocomplete="list"
           aria-activedescendant={
-            results.length > 0 ? optionId(activeIndex) : undefined
+            options.length > 0 ? optionId(safeActiveIndex) : undefined
           }
           placeholder="메뉴·탭 검색 (예: 렛커 픽, 상세페이지, 일괄 등록)"
           value={query}
@@ -130,55 +249,74 @@ export default function SearchPanel({
           aria-label="메뉴 검색 결과"
           className="max-h-[60vh] overflow-y-auto py-2"
         >
-          {results.length === 0 ? (
-            <li className="px-5 py-6 text-center text-sm text-[#9AA4B2]">
-              일치하는 메뉴가 없습니다
-            </li>
-          ) : (
-            results.map((entry, index) => {
-              const section = entry.parents[0];
-              // 검색어가 비었을 때는 사이드바처럼 섹션 제목을 끼운다
-              const showSection =
-                isEmptyQuery && section !== results[index - 1]?.parents[0];
+          {blocks.map((block) => {
+            if (block.kind === 'heading') {
               return (
-                <Fragment key={`${entry.path}-${entry.label}`}>
-                  {showSection ? (
-                    <li
-                      role="presentation"
-                      className="px-5 pb-1 pt-3 text-[11px] font-semibold uppercase tracking-wide text-[#8B949E]"
-                    >
-                      {section}
-                    </li>
-                  ) : null}
-                  <li
-                    id={optionId(index)}
-                    role="option"
-                    aria-selected={index === activeIndex}
-                    // 누르기 전에 입력칸이 포커스를 잃지 않게 한다
-                    onMouseDown={(e) => e.preventDefault()}
-                    onClick={() => onSelect(entry)}
-                    onMouseMove={() => setActiveIndex(index)}
-                    className={twMerge(
-                      'mx-2 cursor-pointer rounded-lg px-3 py-2.5',
-                      index === activeIndex && 'bg-[#2D333B]',
-                    )}
-                  >
-                    <div className="text-[16px] font-semibold text-white">
-                      <Highlight text={entry.label} query={query} />
-                    </div>
-                    <div className="text-[13px] text-[#9AA4B2]">
-                      {[...entry.parents, entry.label].map((segment, i) => (
-                        <span key={i}>
-                          {i > 0 ? ' › ' : null}
-                          <Highlight text={segment} query={query} />
-                        </span>
-                      ))}
-                    </div>
-                  </li>
-                </Fragment>
+                <li
+                  key={block.key}
+                  role="presentation"
+                  className="px-5 pb-1 pt-3 text-[11px] font-semibold uppercase tracking-wide text-[#8B949E]"
+                >
+                  {block.text}
+                </li>
               );
-            })
-          )}
+            }
+            if (block.kind === 'note') {
+              return (
+                <li
+                  key={block.key}
+                  role="presentation"
+                  className="px-5 py-3 text-center text-sm text-[#9AA4B2]"
+                >
+                  {block.text}
+                </li>
+              );
+            }
+            if (block.kind === 'header') {
+              return (
+                <li key={block.key} role="presentation" className="px-5 pt-2">
+                  {block.node}
+                </li>
+              );
+            }
+            optionIndex += 1;
+            const index = optionIndex;
+            const { entry } = block;
+            return (
+              <li
+                key={block.key}
+                id={optionId(index)}
+                role="option"
+                aria-selected={index === safeActiveIndex}
+                // 누르기 전에 입력칸이 포커스를 잃지 않게 한다
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => onSelect(entry)}
+                onMouseMove={() => setActiveIndex(index)}
+                className={twMerge(
+                  'mx-2 cursor-pointer rounded-lg px-3 py-2.5',
+                  block.isNested && 'ml-6 py-1.5',
+                  index === safeActiveIndex && 'bg-[#2D333B]',
+                )}
+              >
+                <div
+                  className={twMerge(
+                    'font-semibold text-white',
+                    block.isNested ? 'text-[14px]' : 'text-[16px]',
+                  )}
+                >
+                  <Highlight text={entry.label} query={query} />
+                </div>
+                <div className="text-[13px] text-[#9AA4B2]">
+                  {[...entry.parents, entry.label].map((segment, i) => (
+                    <span key={i}>
+                      {i > 0 ? ' › ' : null}
+                      <Highlight text={segment} query={query} />
+                    </span>
+                  ))}
+                </div>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </ClickAwayListener>,

@@ -1,6 +1,23 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+
+// 패널을 열면 유저 묶음이 서버를 부른다. 이 파일은 메뉴만 보므로 빈 결과로 답한다
+vi.mock('@/utils/axiosV2', () => ({
+  default: {
+    get: (url: string) =>
+      Promise.resolve({
+        data: {
+          data:
+            url === '/admin/user/mentor'
+              ? { mentorList: [] }
+              : { userAdminList: [], pageInfo: {} },
+        },
+      }),
+  },
+}));
+vi.mock('@/utils/axios', () => ({ default: {} }));
 
 import AdminSidebarSearch from '../AdminSidebarSearch';
 import type { SearchNavSection } from '../searchEntries';
@@ -31,16 +48,18 @@ const onBackgroundClick = vi.fn();
 
 const renderSearch = () =>
   render(
-    <MemoryRouter initialEntries={['/']}>
-      <AdminSidebarSearch navData={NAV} />
-      <textarea aria-label="다른 입력칸" />
-      <button type="button" onClick={onBackgroundClick}>
-        뒤 화면 버튼
-      </button>
-      <Routes>
-        <Route path="*" element={<CurrentLocation />} />
-      </Routes>
-    </MemoryRouter>,
+    <QueryClientProvider client={new QueryClient()}>
+      <MemoryRouter initialEntries={['/']}>
+        <AdminSidebarSearch navData={NAV} />
+        <textarea aria-label="다른 입력칸" />
+        <button type="button" onClick={onBackgroundClick}>
+          뒤 화면 버튼
+        </button>
+        <Routes>
+          <Route path="*" element={<CurrentLocation />} />
+        </Routes>
+      </MemoryRouter>
+    </QueryClientProvider>,
   );
 
 const openButton = () => screen.getByRole('button', { name: '메뉴 검색 열기' });
