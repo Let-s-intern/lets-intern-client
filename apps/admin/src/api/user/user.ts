@@ -164,6 +164,23 @@ export type PatchUserType = {
   sns?: string | null;
 };
 
+/**
+ * PATCH /api/v1/admin/user/{userId}/corp-logo — 대표 로고를 회사 로고 라이브러리에 연결(null 이면 해제).
+ * 연결하면 라이브러리 이미지가 바뀔 때 대표 로고도 같이 바뀐다
+ */
+export const usePatchAdminUserCorpLogoMutation = (userId: number) => {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: async (companyLogoId: number | null) => {
+      await axios.patch(`/admin/user/${userId}/corp-logo`, { companyLogoId });
+    },
+    onSuccess: () =>
+      client.invalidateQueries({
+        queryKey: [AdminUserDetailQueryKey, userId],
+      }),
+  });
+};
+
 export const usePatchUserAdminMutation = ({
   userId,
   successCallback,
