@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 
 import { client } from '@/utils/client';
 import {
@@ -172,21 +177,46 @@ export const useGetProgramAdminQuery = (params: {
   startDate?: string;
   endDate?: string;
   isActive?: boolean;
+  /** 제목 부분 일치(대소문자 무시). 숫자만이면 id 일치도 함께 찾는다 */
+  keyword?: string;
   page: number | string;
   size: number | string;
   enabled?: boolean;
+  /** 조건이 바뀌어 다시 받는 동안 이전 목록을 그대로 둔다 */
+  keepPrevious?: boolean;
 }) => {
   return useQuery({
     queryKey: [useGetProgramAdminQueryKey, params],
     queryFn: async () => {
-      const { enabled: _enabled, ...apiParams } = params;
+      const {
+        enabled: _enabled,
+        keepPrevious: _keepPrevious,
+        ...apiParams
+      } = params;
       const res = await axios.get(`/program/admin`, {
         params: { ...apiParams, status: params.status?.join(',') },
       });
       return programAdminSchema.parse(res.data.data);
     },
     enabled: params.enabled,
+    placeholderData: params.keepPrevious ? keepPreviousData : undefined,
   });
+};
+
+/**
+ * GET /program/admin?type=CHALLENGE&keyword= — 챌린지를 제목·id 로 찾는다. 메뉴 검색 패널이 입력마다
+ * 부르므로 요청을 취소할 수 있게 signal 을 받는다. 이 API 는 page 를 1부터 센다.
+ */
+export const fetchAdminChallenges = async (
+  keyword: string,
+  size: number,
+  signal?: AbortSignal,
+) => {
+  const res = await axios.get(`/program/admin`, {
+    params: { type: 'CHALLENGE', keyword, page: 1, size },
+    signal,
+  });
+  return programAdminSchema.parse(res.data.data).programList;
 };
 
 export const useGetProgramRecommend = () => {

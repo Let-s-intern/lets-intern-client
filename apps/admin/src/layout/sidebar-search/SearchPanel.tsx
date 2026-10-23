@@ -9,14 +9,15 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { twMerge } from '@/lib/twMerge';
 
 import { matchEntries, splitHighlight } from './matchEntries';
 import type { SearchEntry } from './searchEntries';
-import { useDebouncedValue } from './useDebouncedValue';
+import { useChallengeSearch } from './useChallengeSearch';
 import { useUserSearch } from './useUserSearch';
 
-/** 유저처럼 서버에서 찾는 묶음이 입력이 멈추길 기다리는 시간 */
+/** 유저·챌린지처럼 서버에서 찾는 묶음이 입력이 멈추길 기다리는 시간 */
 const REMOTE_DEBOUNCE_MS = 300;
 
 const Highlight = ({ text, query }: { text: string; query: string }) => (
@@ -61,7 +62,7 @@ interface Props {
 /**
  * 화면 위쪽 가운데에 뜨는 메뉴 검색(Spotlight 식). 모달이 아니다 — 배경을 가리거나 스크롤·포커스를
  * 묶지 않아 뒤 화면을 그대로 보고 만질 수 있다. Esc·바깥 클릭·이동으로 닫힌다.
- * 메뉴는 바로 거르고, 그 아래 유저는 서버에서 찾아 갈 곳을 하위 항목으로 보여 준다.
+ * 메뉴는 바로 거르고, 그 아래 유저·챌린지는 서버에서 찾아 갈 곳을 하위 항목으로 보여 준다.
  */
 export default function SearchPanel({
   entries,
@@ -83,6 +84,7 @@ export default function SearchPanel({
     [entries, menuEntries, query, isEmptyQuery],
   );
   const userSearch = useUserSearch(query, debouncedQuery);
+  const challengeSearch = useChallengeSearch(query, debouncedQuery);
 
   const blocks = useMemo<Block[]>(() => {
     if (isEmptyQuery) {
@@ -169,8 +171,56 @@ export default function SearchPanel({
         });
       }
     }
+
+    if (challengeSearch.status !== 'idle') {
+      list.push({ kind: 'heading', key: 'h-challenge', text: '챌린지' });
+      challengeSearch.challenges.forEach((challenge) => {
+        list.push({
+          kind: 'header',
+          key: `challenge-${challenge.id}`,
+          node: (
+            <div className="flex items-center gap-2">
+              <span className="text-[15px] font-semibold text-white">
+                <Highlight text={`[챌린지] ${challenge.title}`} query={query} />
+              </span>
+              <span className="text-[13px] text-[#9AA4B2]">
+                #{challenge.id}
+                {challenge.summary ? ` · ${challenge.summary}` : null}
+              </span>
+            </div>
+          ),
+        });
+        challenge.destinations.forEach((entry) =>
+          list.push({
+            kind: 'option',
+            key: `challenge-${challenge.id}-${entry.path}`,
+            entry,
+            isNested: true,
+          }),
+        );
+      });
+      if (challengeSearch.status === 'loading') {
+        list.push({
+          kind: 'note',
+          key: 'challenge-loading',
+          text: '챌린지 찾는 중…',
+        });
+      } else if (challengeSearch.status === 'error') {
+        list.push({
+          kind: 'note',
+          key: 'challenge-error',
+          text: '챌린지를 불러오지 못했습니다',
+        });
+      } else if (challengeSearch.challenges.length === 0) {
+        list.push({
+          kind: 'note',
+          key: 'challenge-empty',
+          text: '일치하는 챌린지가 없습니다',
+        });
+      }
+    }
     return list;
-  }, [isEmptyQuery, menuResults, userSearch, query]);
+  }, [isEmptyQuery, menuResults, userSearch, challengeSearch, query]);
 
   const options = blocks.filter(
     (block): block is Extract<Block, { kind: 'option' }> =>

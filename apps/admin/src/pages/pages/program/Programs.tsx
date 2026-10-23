@@ -7,6 +7,7 @@ import LoadingContainer from '@/common/loading/LoadingContainer';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { useDeleteProgram } from '@/hooks/useDeleteProgram';
 import { useDuplicateProgram } from '@/hooks/useDuplicateProgram';
 import { usePaginationModelWithSearchParams } from '@/hooks/usePaginationModelWithSearchParams';
@@ -33,6 +34,7 @@ import {
   FormGroup,
   Popover,
   Switch,
+  TextField,
 } from '@mui/material';
 import {
   DataGrid,
@@ -42,14 +44,17 @@ import {
 } from '@mui/x-data-grid';
 import { useQueryClient } from '@tanstack/react-query';
 import { Pencil } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import ChallengeDuplicateModal from '@/domain/admin/program/challenge/ChallengeDuplicateModal';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { FaCopy, FaList, FaPlus, FaTrashCan } from 'react-icons/fa6';
 
 // 메인 web 으로 이동하는 외부 링크의 호스트.
 // VITE_WEB_URL 미설정 시 admin 자기 자신의 root 로 fallback (안전장치).
 const WEB_URL = import.meta.env.VITE_WEB_URL ?? '/';
+
+/** 제목·ID 검색어를 서버에 묻기 전에 입력이 멈추길 기다리는 시간 */
+const KEYWORD_DEBOUNCE_MS = 300;
 
 type Row = ProgramAdminListItem & {
   id: number | string;
@@ -60,13 +65,40 @@ const Programs = () => {
   const queryClient = useQueryClient();
   const { snackbar } = useAdminSnackbar();
 
+  // 검색어는 URL(?keyword=)이 원본이다. 입력칸은 멈춘 뒤에 URL 로 옮긴다
+  const [searchParams, setSearchParams] = useSearchParams();
+  const keyword = searchParams.get('keyword') ?? '';
+  const [keywordInput, setKeywordInput] = useState(keyword);
+  const debouncedKeyword = useDebouncedValue(
+    keywordInput.trim(),
+    KEYWORD_DEBOUNCE_MS,
+  );
+
   const { data, isLoading, error } = useGetProgramAdminQuery({
+    keyword: keyword || undefined,
     page: 1,
     size: 1000,
+    keepPrevious: true,
   });
 
   const { paginationModel, handlePaginationModelChange } =
     usePaginationModelWithSearchParams({ defaultPage: 0, defaultPageSize: 20 });
+
+  // 검색어가 바뀌면 첫 페이지로. page 를 URL 에 함께 쓰면 페이지 훅이 그 값으로 맞춘다
+  useEffect(() => {
+    if (debouncedKeyword === keyword) return;
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        if (debouncedKeyword) next.set('keyword', debouncedKeyword);
+        else next.delete('keyword');
+        next.set('page', '0');
+        next.set('pageSize', paginationModel.pageSize.toString());
+        return next;
+      },
+      { replace: true },
+    );
+  }, [debouncedKeyword, keyword, paginationModel.pageSize, setSearchParams]);
 
   const deleteProgram = useDeleteProgram({
     successCallback: () => {
@@ -397,12 +429,25 @@ const Programs = () => {
         </div>
       </Header>
       <main>
+        <TextField
+          size="small"
+          label="제목·ID 검색"
+          value={keywordInput}
+          onChange={(e) => setKeywordInput(e.target.value)}
+          sx={{ width: 320, mb: 2 }}
+        />
         {isLoading ? (
           <LoadingContainer />
         ) : error ? (
           <div className="py-4 text-center">에러 발생</div>
         ) : programList.length === 0 ? (
-          <EmptyContainer text="프로그램이 없습니다." />
+          <EmptyContainer
+            text={
+              keyword
+                ? '검색어와 일치하는 프로그램이 없습니다.'
+                : '프로그램이 없습니다.'
+            }
+          />
         ) : (
           <>
             <DataGrid
