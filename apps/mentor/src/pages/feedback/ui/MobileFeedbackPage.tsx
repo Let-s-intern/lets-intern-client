@@ -43,6 +43,7 @@ const MobileFeedbackPage = ({
     selectedAttendanceId,
     editorContent,
     setEditorContent,
+    isAutoSaving,
     currentMentee,
     preQuestion,
     isReadOnly,
@@ -97,6 +98,7 @@ const MobileFeedbackPage = ({
       editorContent={editorContent}
       feedbackStatus={currentMentee?.feedbackStatus ?? null}
       submissionState={submissionState}
+      isAutoSaving={isAutoSaving}
       onSaveSuccess={handleMutationSuccess}
       onSubmitSuccess={handleMutationSuccess}
       onAlert={(opts) =>

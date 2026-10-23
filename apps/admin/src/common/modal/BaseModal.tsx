@@ -18,6 +18,8 @@ interface BaseModalProps {
   onClose: () => void;
   children?: React.ReactNode;
   className?: string;
+  /** 바깥 고정 레이어 클래스. MUI Dialog(z 1300) 안에서 띄울 때 z-index 를 올리는 데 쓴다. */
+  containerClassName?: string;
   isLoading?: boolean;
 }
 const BaseModal = ({
@@ -25,6 +27,7 @@ const BaseModal = ({
   onClose,
   children,
   className,
+  containerClassName,
   isLoading,
 }: BaseModalProps) => {
   // 스크롤 제어
@@ -35,7 +38,10 @@ const BaseModal = ({
   return (
     <ModalPortal>
       <div
-        className="fixed inset-0 z-50 flex items-center justify-center"
+        className={twMerge(
+          'fixed inset-0 z-50 flex items-center justify-center',
+          containerClassName,
+        )}
         role="dialog"
         aria-modal="true"
       >

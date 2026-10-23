@@ -8,6 +8,18 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import axios from '@/utils/axios';
 
+// 회의 서버 목록(GET /meeting-servers) — 입장 후보는 서버 DB 에서 온다.
+const mockMeetingServerBaseUrls = [
+  'https://jitsi-main.example.com/',
+  'https://jitsi-fallback.example.com/',
+];
+vi.mock('@/api/meetingServer', () => ({
+  useMeetingServerBaseUrls: () => ({
+    baseUrls: mockMeetingServerBaseUrls,
+    loadBaseUrls: async () => mockMeetingServerBaseUrls,
+  }),
+}));
+
 vi.mock('@/utils/axios', () => ({
   default: {
     get: vi.fn(),
@@ -113,7 +125,6 @@ beforeEach(() => {
   });
   axiosMock.patch.mockResolvedValue({ data: { data: null } });
   ensureLiveMeetingUrlMock.mockResolvedValue({ ok: true as const });
-  vi.stubEnv('VITE_JITSI_BASE_URL', 'https://meet.jit.si/');
 });
 
 afterEach(() => {
@@ -145,7 +156,6 @@ describe('LiveFeedbackReservationModal — 디자인 개편 영역', () => {
   });
 
   it('액션 패널에 "줌 회의실" 행이 더 이상 노출되지 않는다', () => {
-    vi.stubEnv('VITE_JITSI_BASE_URL', 'https://meet.jit.si/');
     renderModal(makeBar());
     expect(screen.queryByText('줌 회의실')).not.toBeInTheDocument();
     // 줌 회의실 행에서만 쓰이던 상태 라벨도 사라진다.

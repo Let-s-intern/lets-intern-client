@@ -5,6 +5,7 @@ import { useRef, useState } from 'react';
 import { ensureLiveMeetingUrl } from '@letscareer/live-session/JitsiEmbed/jitsiHealthCheck';
 
 import { usePatchFeedbackMeetingUrl } from '@/api/feedback/feedback';
+import { useMeetingServerBaseUrls } from '@/api/meetingServer';
 import JitsiEmbedModal from '@/common/modal/JitsiEmbedModal';
 import LiveFeedbackReviewModal from '@/domain/live-feedback/ui/LiveFeedbackReviewModal';
 
@@ -30,6 +31,7 @@ const ReservationInfoSection = ({
   const [isJitsiOpen, setIsJitsiOpen] = useState(false);
   // 회의실 URL 준비(헬스체크 + PATCH) 진행 상태
   const [isPreparingRoom, setIsPreparingRoom] = useState(false);
+  const { baseUrls, loadBaseUrls } = useMeetingServerBaseUrls();
   // 종료 직후 정리 모달. 실제로 회의에 참가했던 세션에서만 연다.
   const [isReviewOpen, setIsReviewOpen] = useState(false);
   const hasJoinedRef = useRef(false);
@@ -74,10 +76,8 @@ const ReservationInfoSection = ({
     try {
       const result = await ensureLiveMeetingUrl({
         meetingUrl,
-        baseCandidates: [
-          process.env.NEXT_PUBLIC_JITSI_BASE_URL,
-          process.env.NEXT_PUBLIC_JITSI_FALLBACK_URL,
-        ],
+        // 이미 방이 있으면 후보가 필요 없다. 목록 조회 실패로 열린 방에 못 들어가는 일을 막는다.
+        baseCandidates: meetingUrl ? [] : await loadBaseUrls(),
         // BE 가 base + meetingRoom 을 합성하므로 FE 는 base URL 만 보낸다.
         registerBaseUrl: async (base) => {
           await patchMeetingUrl.mutateAsync({ meetingUrl: base });
@@ -195,10 +195,7 @@ const ReservationInfoSection = ({
           submissionUrl={feedbackInfo?.attendanceUrl ?? undefined}
           // 입장 후 현재 서버가 죽어있으면(external_api.js 로드 실패) 다음 후보로 자동
           // 재등록(failover). BE 는 base + meetingRoom 을 덮어써 합성한다.
-          baseCandidates={[
-            process.env.NEXT_PUBLIC_JITSI_BASE_URL,
-            process.env.NEXT_PUBLIC_JITSI_FALLBACK_URL,
-          ]}
+          baseCandidates={baseUrls}
           registerBaseUrl={async (base) => {
             await patchMeetingUrl.mutateAsync({ meetingUrl: base });
           }}

@@ -503,6 +503,8 @@ export const getLiveIdPrimitiveSchema = z.object({
   mentorJob: z.string().optional().nullable(),
   mentorCareer: z.string().optional().nullable(),
   mentorIntroduction: z.string().optional().nullable(),
+  // 멘토 계정(user) id. 멘토 프로필 후기 집계 기준이며 위 표시용 멘토 정보와 별개다
+  mentorId: z.number().optional().nullable(),
   job: z.string().optional().nullable(),
   place: z.string().optional().nullable(),
   startDate: z.string().optional(),
@@ -570,6 +572,7 @@ export type CreateLiveReq = {
   mentorJob: string;
   mentorCareer: string;
   mentorIntroduction: string;
+  mentorId?: number;
   job: string;
   place: string;
   vod: boolean;
@@ -619,6 +622,7 @@ export type UpdateLiveReq = {
   mentorJob?: string;
   mentorCareer?: string;
   mentorIntroduction?: string;
+  mentorId?: number;
   job?: string;
   place?: string;
   vod?: boolean;
@@ -835,6 +839,7 @@ const vodInfoSchema = z.object({
   contentUrl: z.string().nullable().optional(),
   contentFileUrl: z.string().nullable().optional(),
   isVisible: z.boolean().nullable().optional(),
+  mentorId: z.number().nullable().optional(),
 });
 
 /** GET /api/v1/vod/{id} VOD 상세 조회 (어드민) */
@@ -920,6 +925,7 @@ export type CreateVodReq = {
       programAdminClassification: ProgramAdminClassification;
     };
   }[];
+  mentorId?: number;
 };
 
 /** PATCH /api/v1/vod/{vodId} VOD 수정 */
@@ -957,6 +963,7 @@ export type UpdateVodReq = {
       programAdminClassification: ProgramAdminClassification;
     };
   }[];
+  mentorId?: number;
 };
 
 // /**  DELETE /api/v1/vod/{vodId} vod 삭제 */

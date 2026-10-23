@@ -37,6 +37,31 @@ describe('formatMissionVersions', () => {
       ]),
     ).toBe('A · B');
   });
+
+  describe('챌린지 전체 버전 목록을 넘기면', () => {
+    const allVersions = [
+      { challengeVersionId: 1, title: 'A' },
+      { challengeVersionId: 2, title: 'B' },
+    ];
+
+    it('모든 버전을 선택한 경우 전체 버전으로 표시한다', () => {
+      expect(formatMissionVersions(allVersions, allVersions)).toBe('전체 버전');
+    });
+
+    it('일부 버전만 선택한 경우 버전명을 그대로 표시한다', () => {
+      expect(formatMissionVersions([allVersions[0]], allVersions)).toBe('A');
+    });
+
+    it('버전이 하나뿐인 챌린지는 버전명을 그대로 표시한다', () => {
+      expect(formatMissionVersions([allVersions[0]], [allVersions[0]])).toBe(
+        'A',
+      );
+    });
+
+    it('선택이 비어 있으면 공통으로 표시한다', () => {
+      expect(formatMissionVersions([], allVersions)).toBe('공통');
+    });
+  });
 });
 
 describe('formatMissionRoundLabel', () => {

@@ -5,6 +5,7 @@ import ProgramContentPriceSection from '@/domain/admin/program/ProgramContentPri
 import ProgramContentThumbnailSection from '@/domain/admin/program/ProgramContentThumbnailSection';
 import ProgramContentUrlFileSection from '@/domain/admin/program/ProgramContentUrlFileSection';
 import FormSection from '@/domain/admin/program/ui/FormSection';
+import VodMentorSelect from '@/domain/admin/program/vod/VodMentorSelect';
 import { useVodForm } from '@/domain/admin/program/vod/hooks/useVodForm';
 import { buildUpdateVodReq } from '@/domain/admin/program/vod/utils/vodMapping';
 import Header from '@/domain/admin/ui/header/Header';
@@ -85,6 +86,14 @@ const VodEdit: React.FC = () => {
           <ProgramContentBasicSection input={input} setInput={setInput} />
         </FormSection>
         <div className="flex flex-col gap-4">
+          <FormSection title="멘토">
+            <VodMentorSelect
+              value={input.mentorId}
+              onChange={(mentorId) =>
+                setInput((prev) => ({ ...prev, mentorId }))
+              }
+            />
+          </FormSection>
           <FormSection title="가격 정보">
             <ProgramContentPriceSection input={input} setInput={setInput} />
           </FormSection>

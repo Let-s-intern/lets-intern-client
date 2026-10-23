@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { ensureLiveMeetingUrl } from '@letscareer/live-session/JitsiEmbed/jitsiHealthCheck';
@@ -10,14 +10,22 @@ import {
   useUpdateFeedbackMeetingUrlMutation,
 } from '@/api/feedback/feedback';
 import { usePatchAttendanceMentorMutation } from '@/api/mentor/mentor';
+import { useMeetingServerBaseUrls } from '@/api/meetingServer';
 import type { FeedbackStatus } from '@/api/challenge/challengeSchema';
 import BaseModal from '@/common/modal/BaseModal';
 import MentorAlertModal from '@/common/modal/MentorAlertModal';
+import mentorConfig from '@/constants/config';
 import { useMentorAlert } from '@/hooks/useMentorAlert';
 import { twMerge } from '@/lib/twMerge';
 import { feedbackModalDesign } from '@/pages/feedback/feedbackModalDesign';
+import { useFeedbackAutosave } from '@/pages/feedback/hooks/useFeedbackAutosave';
 import { useFeedbackCountdown } from '@/pages/feedback/hooks/useFeedbackCountdown';
 import FeedbackComposer from '@/pages/feedback/ui/FeedbackComposer';
+import { isBlankFeedback } from '@/pages/feedback/utils/feedbackContent';
+import {
+  clearFeedbackDraft,
+  loadFeedbackDraft,
+} from '@/pages/feedback/utils/feedbackLocalDraft';
 import FeedbackPreviewCard from '@/pages/feedback/ui/FeedbackPreviewCard';
 import FeedbackHeader from '@/pages/feedback/ui/FeedbackHeader';
 import FeedbackLayout from '@/pages/feedback/ui/FeedbackLayout';
@@ -95,30 +103,6 @@ const CheckCircleIcon = () => (
   </svg>
 );
 
-/** Lexical editor state JSON 에서 순수 텍스트만 뽑는다(공백 판정용). */
-function extractLexicalText(node: unknown): string {
-  if (node == null || typeof node !== 'object') return '';
-  const n = node as { text?: unknown; children?: unknown };
-  const own = typeof n.text === 'string' ? n.text : '';
-  const kids = Array.isArray(n.children)
-    ? n.children.map(extractLexicalText).join('')
-    : '';
-  return own + kids;
-}
-
-/**
- * 본문이 실질적으로 비었는지. 빈 에디터도 `{"root":{...}}` 형태의 JSON 이라
- * 문자열 비교만으로는 "내용 없음" 을 알 수 없다.
- */
-function isBlankFeedback(json?: string | null): boolean {
-  if (!json) return true;
-  try {
-    return extractLexicalText(JSON.parse(json)?.root).trim().length === 0;
-  } catch {
-    return true;
-  }
-}
-
 const LiveFeedbackReservationModal = ({
   isOpen,
   onClose,
@@ -131,6 +115,7 @@ const LiveFeedbackReservationModal = ({
   const [isAttendanceOpen, setIsAttendanceOpen] = useState(false);
   // 멘토 입장 시 회의실 URL 준비(헬스체크 + PATCH) 진행 상태
   const [isPreparingRoom, setIsPreparingRoom] = useState(false);
+  const { baseUrls, loadBaseUrls } = useMeetingServerBaseUrls();
   // 왼쪽 사이드 패널 — 제출물(노션)을 보면서 입장/확인. 한번 더 클릭하면 닫힘(토글).
   const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
   // 오른쪽 사이드 패널 — 사전 Q&A. 작성 중 참조용이라 열어둔 채 유지한다.
@@ -140,7 +125,7 @@ const LiveFeedbackReservationModal = ({
   // 라이브 중 작성하는 서면 피드백 본문 (Lexical editor state JSON).
   const [feedbackContent, setFeedbackContent] = useState('');
   /**
-   * 마지막으로 저장에 성공한 본문.
+   * 마지막으로 저장에 성공한 본문(수동·자동 저장 모두).
    *
    * dirty 판정을 서버 refetch 에 의존하면, 저장 직후 refetch 가 도착하기 전에 닫을 때
    * "미저장" 경고가 잘못 뜬다(invalidate 는 fire-and-forget 이다). 저장 성공은 그 자체로
@@ -203,6 +188,71 @@ const LiveFeedbackReservationModal = ({
     isOpen ? feedbackId : null,
   );
 
+  // ── 라이브 중 서면 피드백 작성 (LC-3181) ──────────────────────────────────
+  // 저장 계약은 서면 피드백과 동일: PATCH /attendance/{attendanceId}/mentor
+  const attendanceId = feedbackDetail?.attendanceId ?? null;
+  const savedFeedbackStatus = feedbackDetail?.feedbackStatus ?? null;
+  const isFeedbackSubmitted =
+    savedFeedbackStatus === 'COMPLETED' || savedFeedbackStatus === 'CONFIRMED';
+  // attendanceId 가 없으면(BE 미배포) 저장할 키가 없으므로 읽기 전용으로 잠근다.
+  const canEditWrittenFeedback = attendanceId != null && !isFeedbackSubmitted;
+  const savedFeedbackBaseline =
+    lastSavedFeedback ?? feedbackDetail?.feedback ?? '';
+
+  /**
+   * 저장되지 않은 로컬 초안 복원 — 멘티(출석)마다 열 때 한 번만 한다.
+   *
+   * 상세가 다시 조회될 때마다 복원하면 입력 중인 본문을 초안으로 덮어쓴다.
+   * 에디터는 마운트 때만 초기값을 읽으므로 복원 횟수를 editorKey 에 섞어 다시 마운트한다.
+   * 이 effect 는 위의 "멘티를 바꾸면 초안을 비운다" effect 보다 뒤에 있어야 한다 —
+   * 같은 커밋에서 돌 때 비운 뒤 복원해야 한다.
+   */
+  const [isDraftRestored, setIsDraftRestored] = useState(false);
+  const [draftRestoreCount, setDraftRestoreCount] = useState(0);
+  const restoredAttendanceIdRef = useRef<number | null>(null);
+  useEffect(() => {
+    if (!isOpen) {
+      restoredAttendanceIdRef.current = null;
+      setIsDraftRestored(false);
+      return;
+    }
+    if (!canEditWrittenFeedback || attendanceId == null) return;
+    if (restoredAttendanceIdRef.current === attendanceId) return;
+    restoredAttendanceIdRef.current = attendanceId;
+
+    const draft = loadFeedbackDraft(attendanceId);
+    const serverFeedback = feedbackDetail?.feedback ?? '';
+    if (draft == null) return;
+    if (
+      draft === serverFeedback ||
+      (isBlankFeedback(draft) && isBlankFeedback(serverFeedback))
+    ) {
+      clearFeedbackDraft(attendanceId);
+      return;
+    }
+    setFeedbackContent(draft);
+    setIsDraftRestored(true);
+    setDraftRestoreCount((count) => count + 1);
+  }, [isOpen, canEditWrittenFeedback, attendanceId, feedbackDetail]);
+
+  // 화면 세 곳(미리보기·전체화면 에디터·화상 위 패널)이 같은 본문을 쓰므로 자동 저장도
+  // 여기 한 곳에서 한다. 에디터를 연 적이 없으면(feedbackContent === '') 저장할 것이 없다.
+  const { isAutoSaving } = useFeedbackAutosave({
+    attendanceId,
+    content: feedbackContent,
+    savedContent: savedFeedbackBaseline,
+    enabled: isOpen && canEditWrittenFeedback && feedbackContent !== '',
+    onServerSaved: (content) => {
+      setLastSavedFeedback(content);
+      setIsDraftRestored(false);
+      // 이 모달의 editorKey 는 조회 시각과 무관해 다시 조회해도 에디터가 재마운트되지 않는다.
+      queryClient.invalidateQueries({
+        queryKey: mentorDetailQueryKey(feedbackId),
+      });
+    },
+  });
+  const isSavingWrittenFeedback = isSavingFeedback || isAutoSaving;
+
   // 카운트다운 — BE startDate/endDate 우선, 없으면 mock(bar.startDate + HH:mm) 사용
   const startIso =
     feedbackDetail?.startDate ??
@@ -247,10 +297,8 @@ const LiveFeedbackReservationModal = ({
     try {
       const result = await ensureLiveMeetingUrl({
         meetingUrl,
-        baseCandidates: [
-          import.meta.env.VITE_JITSI_BASE_URL,
-          import.meta.env.VITE_JITSI_FALLBACK_URL,
-        ],
+        // 이미 방이 있으면 후보가 필요 없다. 목록 조회 실패로 열린 방에 못 들어가는 일을 막는다.
+        baseCandidates: meetingUrl ? [] : await loadBaseUrls(),
         // BE 가 base + meetingRoom 을 합성하므로 FE 는 base URL 만 보낸다.
         registerBaseUrl: async (base) => {
           await updateMeetingUrl({ feedbackId, meetingUrl: base });
@@ -396,22 +444,16 @@ const LiveFeedbackReservationModal = ({
   const hasPreQuestion = preQuestionText.trim().length > 0;
   const showPreQuestionPanel = isPreQuestionPanelOpen && hasPreQuestion;
 
-  // ── 라이브 중 서면 피드백 작성 (LC-3181) ──────────────────────────────────
-  // 저장 계약은 서면 피드백과 동일: PATCH /attendance/{attendanceId}/mentor
-  const attendanceId = feedbackDetail?.attendanceId ?? null;
-  const savedFeedbackStatus = feedbackDetail?.feedbackStatus ?? null;
-  const isFeedbackSubmitted =
-    savedFeedbackStatus === 'COMPLETED' || savedFeedbackStatus === 'CONFIRMED';
-  // attendanceId 가 없으면(BE 미배포) 저장할 키가 없으므로 읽기 전용으로 잠근다.
-  const canEditWrittenFeedback = attendanceId != null && !isFeedbackSubmitted;
   const writtenFeedbackHint =
     attendanceId == null
       ? '작성 기능 준비 중입니다'
       : isFeedbackSubmitted
         ? '제출 완료되어 수정할 수 없습니다'
-        : null;
+        : isDraftRestored
+          ? mentorConfig.feedback.draftRestoredHint
+          : null;
   // 멘티를 바꾸면 에디터를 새로 마운트해 이전 본문이 남지 않게 한다.
-  const editorKey = `live-feedback-${feedbackId ?? 'none'}`;
+  const editorKey = `live-feedback-${feedbackId ?? 'none'}-${draftRestoreCount}`;
   const initialFeedbackContent = feedbackDetail?.feedback ?? undefined;
 
   // 미리보기 카드에 붙일 상태 문구.
@@ -431,8 +473,6 @@ const LiveFeedbackReservationModal = ({
    * 문자열만 비교하면 **아무것도 입력하지 않아도** 다르게 나온다(에디터 마운트 시
    * OnChangePlugin 이 빈 상태를 한 번 흘린다). 양쪽이 실질적으로 비었으면 같다고 본다.
    */
-  const savedFeedbackBaseline =
-    lastSavedFeedback ?? feedbackDetail?.feedback ?? '';
   const isFeedbackDirty =
     feedbackContent !== '' &&
     feedbackContent !== savedFeedbackBaseline &&
@@ -441,8 +481,8 @@ const LiveFeedbackReservationModal = ({
     );
 
   /**
-   * 모달 닫기 — 미저장 초안이 있으면 먼저 알린다.
-   * 닫는 순간 초안 state 가 초기화되어(useEffect) 작성한 내용이 사라진다.
+   * 모달 닫기 — 서버에 저장되지 않은 초안이 있으면 먼저 알린다.
+   * 닫으면 화면의 초안 state 는 비지만(useEffect) 로컬 초안이 남아 다시 열 때 복원된다.
    */
   const handleCloseModal = () => {
     if (!isFeedbackDirty) {
@@ -452,7 +492,7 @@ const LiveFeedbackReservationModal = ({
     showConfirm({
       title: '작성 중인 피드백이 저장되지 않았습니다',
       description:
-        '지금 닫으면 작성한 내용이 사라집니다. 임시저장 후 닫아 주세요.',
+        '작성한 내용은 이 브라우저에만 남아 있습니다. 임시저장 후 닫아 주세요.',
       confirmText: '저장하지 않고 닫기',
       cancelText: '계속 작성',
       onConfirm: onClose,
@@ -474,7 +514,7 @@ const LiveFeedbackReservationModal = ({
     showConfirm({
       title: '아직 임시저장하지 않았습니다',
       description:
-        '작성한 내용은 유지되지만 모달을 닫으면 사라집니다. 임시저장을 권장합니다.',
+        '작성한 내용은 이 브라우저에만 남아 있습니다. 임시저장을 권장합니다.',
       confirmText: '그대로 나가기',
       cancelText: '계속 작성',
       onConfirm: () => setIsFullscreen(false),
@@ -982,7 +1022,7 @@ const LiveFeedbackReservationModal = ({
                 <button
                   type="button"
                   onClick={handleSaveWrittenFeedback}
-                  disabled={!canEditWrittenFeedback || isSavingFeedback}
+                  disabled={!canEditWrittenFeedback || isSavingWrittenFeedback}
                   className={feedbackModalDesign.writtenSaveButton}
                 >
                   임시저장
@@ -990,7 +1030,7 @@ const LiveFeedbackReservationModal = ({
                 <button
                   type="button"
                   onClick={handleSubmitWrittenFeedback}
-                  disabled={!canEditWrittenFeedback || isSavingFeedback}
+                  disabled={!canEditWrittenFeedback || isSavingWrittenFeedback}
                   className={feedbackModalDesign.writtenSubmitButton}
                 >
                   피드백 제출
@@ -1045,10 +1085,7 @@ const LiveFeedbackReservationModal = ({
           spaceName={selectedBar?.challengeTitle}
           // 입장 후 현재 서버가 죽어있으면(external_api.js 로드 실패) 다음 후보로 자동
           // 재등록(failover). BE 는 base + meetingRoom 을 덮어써 합성한다.
-          baseCandidates={[
-            import.meta.env.VITE_JITSI_BASE_URL,
-            import.meta.env.VITE_JITSI_FALLBACK_URL,
-          ]}
+          baseCandidates={baseUrls}
           registerBaseUrl={async (base) => {
             await updateMeetingUrl({ feedbackId, meetingUrl: base });
           }}
@@ -1081,7 +1118,7 @@ const LiveFeedbackReservationModal = ({
           feedbackHint={writtenFeedbackHint}
           onSaveFeedback={handleSaveWrittenFeedback}
           onSubmitFeedback={handleSubmitWrittenFeedback}
-          isSavingFeedback={isSavingFeedback}
+          isSavingFeedback={isSavingWrittenFeedback}
         />
       )}
 

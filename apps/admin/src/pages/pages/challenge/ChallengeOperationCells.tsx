@@ -211,7 +211,9 @@ function MissionVersionEditCell({
       fullWidth
       size="small"
       value={selectedIds}
-      renderValue={() => formatMissionVersions(params.row.challengeVersionList)}
+      renderValue={() =>
+        formatMissionVersions(params.row.challengeVersionList, versions)
+      }
       onChange={(e) => {
         const ids = e.target.value as number[];
         params.api.setEditCellValue({
@@ -255,7 +257,7 @@ export const getMissionColumns = (
             editable: true,
             sortable: false,
             valueFormatter(_, row) {
-              return formatMissionVersions(row.challengeVersionList);
+              return formatMissionVersions(row.challengeVersionList, versions);
             },
             renderEditCell(params) {
               return (
