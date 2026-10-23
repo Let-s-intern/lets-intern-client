@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import routerSource from '../../../router.tsx?raw';
+import { matchEntries } from '../matchEntries';
 import { buildSearchEntries } from '../searchEntries';
 
 vi.mock('@/api/user/user', () => ({ useIsAdminQuery: vi.fn() }));
@@ -49,5 +50,14 @@ describe('buildSearchEntries', () => {
       .map((entry) => entry.path.split('?')[0])
       .filter((path) => !routePaths.has(path));
     expect(missing).toEqual([]);
+  });
+
+  it('「벌크」 로 회사 로고 › 일괄 등록 탭을 찾는다', () => {
+    const [first] = matchEntries(buildSearchEntries(navData), '벌크');
+    expect(first).toMatchObject({
+      label: '일괄 등록',
+      path: '/mentors/company-logos?tab=bulk',
+      parents: ['멘토 관리', '회사 로고'],
+    });
   });
 });

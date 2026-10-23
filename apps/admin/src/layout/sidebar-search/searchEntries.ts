@@ -50,6 +50,18 @@ const TAB_ENTRIES: SearchEntry[] = [
     parents: ['프로그램 관리', '1:1 LIVE 멘토링'],
     keywords: ['상세 페이지 수정', '자유 입력란'],
   },
+  {
+    label: '로고 목록',
+    path: '/mentors/company-logos?tab=list',
+    parents: ['멘토 관리', '회사 로고'],
+    keywords: ['로고 라이브러리'],
+  },
+  {
+    label: '일괄 등록',
+    path: '/mentors/company-logos?tab=bulk',
+    parents: ['멘토 관리', '회사 로고'],
+    keywords: ['벌크', '일괄', '로고 일괄'],
+  },
   ...REVIEW_TABS.map((tab) => ({
     label: tab.label,
     path: tab.href,
