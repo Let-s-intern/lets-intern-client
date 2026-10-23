@@ -40,7 +40,7 @@ export default function AllInOnePassRetrospectives() {
           </div>
         )}
       </Header>
-      <CommonQuestionSection />
+      {passId != null && <CommonQuestionSection passId={passId} />}
 
       {passId != null && <RoundListSection passId={passId} />}
     </main>

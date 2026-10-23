@@ -1,4 +1,7 @@
-import { RetrospectiveRound } from '@/domain/all-in-one-pass/types';
+import {
+  RetrospectiveCommonQuestion,
+  RetrospectiveRound,
+} from '@/domain/all-in-one-pass/types';
 import axios from '@/utils/axios';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
@@ -8,9 +11,8 @@ import { retrospectiveResponseFixtures } from './mock/retrospectiveResponseFixtu
 /**
  * A-4/A-5 회고 훅.
  *
- * 회차 질문은 실 API(GET/PATCH). answerGuide·responseCount 는 BE 반영 전엔 응답에
- * 없어 nullish 로 두고, 생기면 자동으로 채워진다. 공통 질문은 읽기전용 상수
- * (CommonQuestionSection). 응답 조회(A-5)는 BE 미완이라 아직 mock.
+ * 공통·회차 질문은 실 API(GET/PATCH). 공통 질문은 조회 전용(수정 불가).
+ * 응답 조회(A-5)는 BE 미완이라 아직 mock.
  */
 
 type MutationCallbacks = {
@@ -18,9 +20,41 @@ type MutationCallbacks = {
   errorCallback?: (error: Error) => void;
 };
 
+export const commonQuestionsQueryKey = 'allInOnePassCommonQuestions';
 export const retrospectiveRoundsQueryKey = 'allInOnePassRetrospectiveRounds';
 export const retrospectiveResponsesQueryKey =
   'allInOnePassRetrospectiveResponses';
+
+// ── 공통 질문 (전 회차 공유, 읽기 전용) ──────
+const commonQuestionSchema = z.object({
+  id: z.number(),
+  question: z.string().nullish(),
+  answerGuide: z.string().nullish(),
+  count: z.number().nullish(),
+});
+
+const toCommonQuestion = (
+  dto: z.infer<typeof commonQuestionSchema>,
+): RetrospectiveCommonQuestion => ({
+  id: dto.id,
+  question: dto.question ?? '',
+  answerGuide: dto.answerGuide ?? '',
+});
+
+/** 특정 패스의 공통 질문 목록 (수정 불가, 조회만) */
+export const useGetCommonQuestionsQuery = (passId?: number) =>
+  useQuery({
+    queryKey: [commonQuestionsQueryKey, passId],
+    enabled: passId != null,
+    queryFn: async () => {
+      const res = await axios.get(`/admin/membershipQuestion/common/${passId}`);
+      return z
+        .array(commonQuestionSchema)
+        .parse(res.data.data)
+        .sort((a, b) => (a.count ?? 0) - (b.count ?? 0))
+        .map(toCommonQuestion);
+    },
+  });
 
 const ordinalQuestionSchema = z.object({
   id: z.number(),
@@ -30,6 +64,8 @@ const ordinalQuestionSchema = z.object({
   answerNumber: z.number().nullish(),
   visiblePeriodType: z.string().nullish(),
   visiblePeriodValue: z.number().nullish(),
+  periodType: z.string().nullish(),
+  periodValue: z.number().nullish(),
 });
 type OrdinalQuestionDto = z.infer<typeof ordinalQuestionSchema>;
 
@@ -41,6 +77,8 @@ const toRetrospectiveRound = (dto: OrdinalQuestionDto): RetrospectiveRound => ({
   responseCount: dto.answerNumber ?? 0,
   visiblePeriodType: dto.visiblePeriodType ?? null,
   visiblePeriodValue: dto.visiblePeriodValue ?? null,
+  periodType: dto.periodType ?? null,
+  periodValue: dto.periodValue ?? null,
 });
 
 export const useGetRetrospectiveRoundsQuery = (passId?: number) =>

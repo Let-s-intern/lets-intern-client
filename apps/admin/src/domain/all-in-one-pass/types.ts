@@ -236,8 +236,10 @@ export interface RetrospectiveRound {
   weeklyQuestion: string;
   answerGuide: string;
   responseCount: number;
-  visiblePeriodType: string | null;
-  visiblePeriodValue: number | null;
+  visiblePeriodType: string | null; // 노출 시점 단위
+  visiblePeriodValue: number | null; // 노출 시점 값(패스 시작일 + N)
+  periodType: string | null; // 작성 기간 단위 (INFINITY = 상시)
+  periodValue: number | null; // 작성 기간 값(노출 시작 + N)
 }
 
 /**
