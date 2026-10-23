@@ -38,7 +38,7 @@ test.describe('LC-3492 경력·회사 로고', () => {
     await flow.run('1. 어드민 로그인', () => adminLoginFlow(page));
 
     const company = await flow.run(
-      '2. 대표가 아닌 경력에 「대표로 지정」 → 웹 /mentors 카드 회사·직무가 바뀜',
+      '2. 대표가 아닌 경력에 「대표로 지정」(확인 창) → 웹 /mentors 카드 회사·직무가 바뀜',
       async () => {
         await admin.goto(mentorId);
         const [target] = await admin.nonRepresentativeCompanies();
@@ -72,10 +72,11 @@ test.describe('LC-3492 경력·회사 로고', () => {
     );
 
     await flow.run(
-      '4. 경력 수정(직무·경력 로고 연결) + 대표 로고 라이브러리 연결 → 저장',
+      '4. 경력 수정(직무) + 경력 로고 칸에서 바로 연결 + 대표 로고 라이브러리 연결 → 저장',
       async () => {
         await admin.goto(mentorId);
-        await admin.editCareer(company, { job: newJob, logoName });
+        await admin.editCareer(company, { job: newJob });
+        await admin.setCareerLogo(company, logoName);
         await admin.pickCorpLogo(logoName);
         const corpLogoLinked = page.waitForResponse(
           (res) =>

@@ -112,7 +112,28 @@ export class AdminMentorDetailPage extends BasePage {
     await this.careerRow(company)
       .getByRole('button', { name: '대표로 지정', exact: true })
       .click();
+    // 확인 창에서 한 번 더 누른다
+    await this.page
+      .getByRole('dialog')
+      .getByRole('button', { name: '대표로 지정', exact: true })
+      .click();
     expect((await patched).ok(), '대표 경력 지정이 성공해야 한다').toBe(true);
+    await this.settle();
+  }
+
+  /** 경력 행의 로고 칸을 눌러 수정 창 없이 로고를 바로 연결한다 */
+  async setCareerLogo(company: string, logoName: string): Promise<void> {
+    await this.page
+      .getByRole('button', { name: `${company} 경력 로고 변경`, exact: true })
+      .click();
+    const linked = this.page.waitForResponse(
+      (res) =>
+        res.url().includes('/company-logo') &&
+        res.url().includes('/admin/user-career/') &&
+        res.request().method() === 'PATCH',
+    );
+    await this.pickLogoInDialog(logoName);
+    expect((await linked).ok(), '경력 로고 연결이 성공해야 한다').toBe(true);
     await this.settle();
   }
 
