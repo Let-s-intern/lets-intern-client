@@ -2,31 +2,25 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { ChallengeContent } from '@/types/interface';
+import { ChallengeType } from '@/schema';
 
 import ChallengeVersionSection, {
   ChallengeVersionDraft,
 } from '../ChallengeVersionSection';
 
-const { uploadFile } = vi.hoisted(() => ({ uploadFile: vi.fn() }));
+const { uploadFile, generateVersionThumbnail } = vi.hoisted(() => ({
+  uploadFile: vi.fn(),
+  generateVersionThumbnail: vi.fn(),
+}));
+
+vi.mock('../utils/generateThumbnail', () => ({
+  generateAndUploadThumbnail: generateVersionThumbnail,
+}));
 
 vi.mock('@/api/file', () => ({
   fileType: { enum: { CHALLENGE: 'CHALLENGE' } },
   uploadFile,
 }));
-
-// 무거운 lexical 편집기 대신 받은 본문만 보여준다
-vi.mock('../ChallengeVersionContentEditor', () => ({
-  default: ({ description }: { description: string }) => (
-    <div data-testid="version-content-editor">{description}</div>
-  ),
-}));
-
-const CHALLENGE_CONTENT = {
-  initialized: true,
-  curriculum: [],
-} as unknown as ChallengeContent;
-const CHALLENGE_DESC = JSON.stringify(CHALLENGE_CONTENT);
 
 const draft = (
   challengeVersionId: number | null,
@@ -49,26 +43,14 @@ const versions: ChallengeVersionDraft[] = [
 
 const renderSection = (initial: ChallengeVersionDraft[] = versions) => {
   const onChange = vi.fn();
-  render(
-    <ChallengeVersionSection
-      versions={initial}
-      onChange={onChange}
-      challengeContent={CHALLENGE_CONTENT}
-    />,
-  );
+  render(<ChallengeVersionSection versions={initial} onChange={onChange} />);
   return onChange;
 };
 
 /** 펼침 상태가 목록 변경을 따라가는지 보려면 실제로 목록이 바뀌어야 한다 */
 function Harness({ initial }: { initial: ChallengeVersionDraft[] }) {
   const [list, setList] = useState(initial);
-  return (
-    <ChallengeVersionSection
-      versions={list}
-      onChange={setList}
-      challengeContent={CHALLENGE_CONTENT}
-    />
-  );
+  return <ChallengeVersionSection versions={list} onChange={setList} />;
 }
 
 const expandButton = (order: number) =>
@@ -82,7 +64,7 @@ describe('ChallengeVersionSection', () => {
 
     expect(
       screen.getByText(
-        '버전이 없으면 모든 참여자가 같은 자료를 봅니다. 참여자는 신청할 때 버전을 하나 고릅니다.',
+        '버전마다 목록 카드와 상세 페이지가 따로 보이고, 참여자는 들어온 버전 페이지의 버전으로 신청합니다. 버전별 미션은 미션 등록에서 지정합니다.',
       ),
     ).toBeInTheDocument();
   });
@@ -102,9 +84,10 @@ describe('ChallengeVersionSection', () => {
       target: { value: '직장인' },
     });
 
+    // 노출 제목이 비어 있으면 버전명으로 채운다 (LC-3505)
     expect(onChange).toHaveBeenCalledWith([
       versions[0],
-      draft(2, '직장인'),
+      { ...draft(2, '직장인'), programTitle: '[직장인]' },
       versions[2],
     ]);
   });
@@ -299,59 +282,202 @@ describe('ChallengeVersionSection', () => {
     );
   });
 
-  describe('버전 상세 본문', () => {
-    const toggleLabel =
-      '버전 전용 상세 본문 사용 (끄면 챌린지 상세 본문을 씁니다)';
+  it('펼친 카드는 상세 설명을 프로그램 소개의 버전 탭에서 쓴다고 안내하고 편집기는 없다', () => {
+    renderSection([{ ...versions[0], description: '{"version":1}' }]);
+    fireEvent.click(expandButton(1));
 
-    it('켜면 챌린지 본문을 복사해 시작한다', () => {
-      const onChange = renderSection();
-      fireEvent.click(expandButton(1));
+    expect(
+      screen.getByText(
+        '상세 설명은 아래 프로그램 소개의 버전 탭에서 작성합니다.',
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByLabelText(
+        '버전 전용 상세 본문 사용 (끄면 챌린지 상세 본문을 씁니다)',
+      ),
+    ).not.toBeInTheDocument();
+  });
+  describe('기본값 (LC-3505)', () => {
+    type BaseProps = {
+      challengeTitle?: string;
+      challengeShortDesc?: string | null;
+      challengeType?: ChallengeType;
+    };
 
-      fireEvent.click(screen.getByLabelText(toggleLabel));
+    function BaseHarness({
+      initial,
+      ...base
+    }: BaseProps & { initial: ChallengeVersionDraft[] }) {
+      const [list, setList] = useState(initial);
+      return (
+        <>
+          <ChallengeVersionSection
+            versions={list}
+            onChange={setList}
+            {...base}
+          />
+          <output data-testid="list">{JSON.stringify(list)}</output>
+        </>
+      );
+    }
 
-      expect(onChange).toHaveBeenCalledWith([
-        { ...versions[0], description: CHALLENGE_DESC },
-        versions[1],
-        versions[2],
-      ]);
+    const list = (): ChallengeVersionDraft[] =>
+      JSON.parse(screen.getByTestId('list').textContent ?? '[]');
+
+    const titleInput = (order: number) =>
+      screen.getAllByRole('textbox', { name: '버전 제목' })[order - 1];
+
+    it('버전을 추가하면 한 줄 설명이 기본 정보 값으로 채워진다', () => {
+      render(<BaseHarness initial={[]} challengeShortDesc="기본 한 줄 설명" />);
+
+      fireEvent.click(screen.getByRole('button', { name: '버전 추가' }));
+
+      expect(list()[0].shortDesc).toBe('기본 한 줄 설명');
     });
 
-    it('끄면 null 로 돌려 챌린지 본문을 쓰게 한다', () => {
-      const withDescription = [
-        { ...versions[0], description: '{"version":1}' },
-        versions[1],
-      ];
-      const onChange = renderSection(withDescription);
-      fireEvent.click(expandButton(1));
-
-      fireEvent.click(screen.getByLabelText(toggleLabel));
-
-      expect(onChange).toHaveBeenCalledWith([
-        { ...versions[0], description: null },
-        versions[1],
-      ]);
-    });
-
-    it('본문 편집기는 펼친 카드에만 렌더한다', () => {
+    it('버전명을 넣으면 노출 제목이 [버전명] 챌린지 제목으로 채워지고 버전명을 따라간다', () => {
       render(
-        <Harness
-          initial={[
-            { ...versions[0], description: '{"version":1}' },
-            { ...versions[1], description: '{"version":2}' },
-          ]}
+        <BaseHarness
+          initial={[draft(null, '')]}
+          challengeTitle="마케팅 챌린지 15기"
         />,
       );
 
-      expect(
-        screen.queryByTestId('version-content-editor'),
-      ).not.toBeInTheDocument();
+      fireEvent.change(titleInput(1), { target: { value: '대학생' } });
+      expect(list()[0].programTitle).toBe('[대학생] 마케팅 챌린지 15기');
 
-      fireEvent.click(expandButton(2));
+      fireEvent.change(titleInput(1), { target: { value: '경력자' } });
+      expect(list()[0].programTitle).toBe('[경력자] 마케팅 챌린지 15기');
+    });
 
-      expect(screen.getAllByTestId('version-content-editor')).toHaveLength(1);
-      expect(screen.getByTestId('version-content-editor')).toHaveTextContent(
-        '{"version":2}',
+    it('노출 제목을 직접 고치면 버전명을 바꿔도 따라가지 않는다', () => {
+      render(
+        <BaseHarness
+          initial={[{ ...draft(null, '대학생'), programTitle: '직접 쓴 제목' }]}
+          challengeTitle="마케팅 챌린지 15기"
+        />,
       );
+
+      fireEvent.change(titleInput(1), { target: { value: '경력자' } });
+
+      expect(list()[0].programTitle).toBe('직접 쓴 제목');
+    });
+
+    it('챌린지 제목·한 줄 설명이 바뀌면 기본값을 쓰는 버전만 따라 바뀐다', () => {
+      const initial = [
+        {
+          ...draft(1, '대학생'),
+          programTitle: '[대학생] 마케팅 챌린지 15기',
+          shortDesc: '기본',
+        },
+        {
+          ...draft(2, '경력자'),
+          programTitle: '직접 쓴 제목',
+          shortDesc: '직접',
+        },
+      ];
+      const { rerender } = render(
+        <BaseHarness
+          initial={initial}
+          challengeTitle="마케팅 챌린지 15기"
+          challengeShortDesc="기본"
+        />,
+      );
+
+      rerender(
+        <BaseHarness
+          initial={initial}
+          challengeTitle="마케팅 챌린지 16기"
+          challengeShortDesc="새 기본"
+        />,
+      );
+
+      expect(list().map((v) => [v.programTitle, v.shortDesc])).toEqual([
+        ['[대학생] 마케팅 챌린지 16기', '새 기본'],
+        ['직접 쓴 제목', '직접'],
+      ]);
+    });
+
+    it('버전명 입력을 마치면 복제와 같은 템플릿 생성기로 [버전명] 제목 썸네일을 만든다', async () => {
+      generateVersionThumbnail.mockResolvedValueOnce('https://cdn/auto-a.png');
+      render(
+        <BaseHarness
+          initial={[draft(null, '')]}
+          challengeTitle="경험정리 챌린지 15기"
+          challengeType="EXPERIENCE_SUMMARY"
+        />,
+      );
+
+      fireEvent.change(titleInput(1), { target: { value: '대학생' } });
+      fireEvent.blur(titleInput(1));
+
+      await waitFor(() =>
+        expect(list()[0].thumbnail).toBe('https://cdn/auto-a.png'),
+      );
+      expect(list()[0].desktopThumbnail).toBe('https://cdn/auto-a.png');
+      expect(generateVersionThumbnail).toHaveBeenCalledWith(
+        'EXPERIENCE_SUMMARY',
+        '[대학생] 경험정리 챌린지 15기',
+      );
+    });
+
+    it('템플릿이 없거나 기수가 없어 만들 수 없으면 직접 올리라고 안내한다', async () => {
+      generateVersionThumbnail.mockResolvedValueOnce(null);
+      render(
+        <BaseHarness
+          initial={[draft(null, '')]}
+          challengeTitle="경험정리 챌린지"
+          challengeType="EXPERIENCE_SUMMARY"
+        />,
+      );
+      fireEvent.click(expandButton(1));
+
+      fireEvent.change(titleInput(1), { target: { value: '대학생' } });
+      fireEvent.blur(titleInput(1));
+
+      expect(
+        await screen.findByText(
+          '자동 생성 템플릿이 없는 유형이거나 챌린지 제목에 기수(N기)가 없습니다. 직접 올려주세요.',
+        ),
+      ).toBeInTheDocument();
+      expect(list()[0].thumbnail).toBe('');
+    });
+
+    it('직접 올린 썸네일은 버전명을 바꿔도 다시 만들지 않는다', () => {
+      generateVersionThumbnail.mockClear();
+      render(
+        <BaseHarness
+          initial={[
+            { ...draft(null, '대학생'), thumbnail: 'https://cdn/manual.png' },
+          ]}
+          challengeType="EXPERIENCE_SUMMARY"
+        />,
+      );
+
+      fireEvent.change(titleInput(1), { target: { value: '경력자' } });
+      fireEvent.blur(titleInput(1));
+
+      expect(generateVersionThumbnail).not.toHaveBeenCalled();
+    });
+
+    it('자동 생성에 실패하면 직접 올리라고 안내한다', async () => {
+      generateVersionThumbnail.mockRejectedValueOnce(new Error('tainted'));
+      render(
+        <BaseHarness
+          initial={[draft(null, '')]}
+          challengeType="EXPERIENCE_SUMMARY"
+        />,
+      );
+      fireEvent.click(expandButton(1));
+
+      fireEvent.change(titleInput(1), { target: { value: '대학생' } });
+      fireEvent.blur(titleInput(1));
+
+      expect(
+        await screen.findByText(
+          '썸네일을 자동으로 만들지 못했습니다. 직접 올려주세요.',
+        ),
+      ).toBeInTheDocument();
     });
   });
 });

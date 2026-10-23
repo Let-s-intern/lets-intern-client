@@ -239,6 +239,26 @@ describe('usePatchApplicationVersionMutation', () => {
     ]);
   });
 
+  it('미션 상세는 바로 다시 받지 않는다 - 이전 버전 미션이 404 로 다시 요청되지 않게', async () => {
+    axiosPatch.mockResolvedValue({ data: { data: null } });
+    const client = newClient();
+    const invalidateQueries = jest.spyOn(client, 'invalidateQueries');
+
+    const { result } = renderHook(() => usePatchApplicationVersionMutation(), {
+      wrapper: createWrapper(client),
+    });
+
+    result.current.mutate({ applicationId: 7, challengeVersionId: 2 });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    const missionDetail = invalidateQueries.mock.calls.find(
+      ([filters]) =>
+        filters?.queryKey?.[0] === 'useChallengeMissionAttendanceInfo',
+    );
+    expect(missionDetail?.[0]).toMatchObject({ refetchType: 'none' });
+  });
+
   // 키는 CurrentChallengeProvider(일정·미션 목록)와 대시보드 page.tsx(점수)에서 옮겼다.
   // 일정·미션은 URL 의 문자열 id, 점수는 숫자 id 라 둘 다 맞아야 한다.
   it('성공하면 일정·미션 목록 3종·점수 쿼리를 무효화하고, 다른 키는 그대로 둔다', async () => {

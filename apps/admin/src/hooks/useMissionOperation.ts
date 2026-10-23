@@ -17,6 +17,7 @@ import {
 import { Content, Row } from '@/types/interface';
 import axios from '@/utils/axios';
 import { END_OF_SECONDS } from '@/utils/constants';
+import { ApiError } from '@letscareer/api';
 import { GridApiCommunity } from '@mui/x-data-grid/internals';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
@@ -27,6 +28,7 @@ const ALL_TEMPLATES_PAGE_SIZE = 1000;
 
 // 서버 불변식 위반(MISSION_VERSION_OVERLAP 등)은 응답 message 에 회차·미션·버전이 담겨 온다
 const toErrorMessage = (error: Error) =>
+  (error instanceof ApiError && error.message) ||
   (isAxiosError<{ message?: string }>(error) &&
     error.response?.data?.message) ||
   String(error);

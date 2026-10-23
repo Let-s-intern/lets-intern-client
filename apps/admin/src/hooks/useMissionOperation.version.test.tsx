@@ -1,3 +1,4 @@
+import { ApiError } from '@letscareer/api';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
@@ -188,6 +189,29 @@ describe('미션 저장 실패 메시지 (6.4)', () => {
         data: { code: 'MISSION_VERSION_OVERLAP', message },
       },
     });
+    mocks.missions = [{ id: 42, challengeVersionList: [] }];
+
+    await expect(runAction('edit', createRow([STUDENT]))).rejects.toBeDefined();
+
+    await waitFor(() =>
+      expect(mocks.snackbar).toHaveBeenCalledWith(
+        '미션 수정에 실패했습니다. ' + message,
+      ),
+    );
+  });
+
+  it('공용 axios 가 재포장한 ApiError 도 클래스명 없이 서버 메시지만 보여 준다', async () => {
+    const message = "3회차의 'X3 B 서면' 미션과 대상 버전(경력자)이 겹칩니다.";
+    mocks.patch.mockRejectedValueOnce(
+      new ApiError({
+        code: 'MISSION_VERSION_OVERLAP',
+        message,
+        status: 409,
+        endpoint: '/mission/42',
+        method: 'PATCH',
+        serverMessage: message,
+      }),
+    );
     mocks.missions = [{ id: 42, challengeVersionList: [] }];
 
     await expect(runAction('edit', createRow([STUDENT]))).rejects.toBeDefined();

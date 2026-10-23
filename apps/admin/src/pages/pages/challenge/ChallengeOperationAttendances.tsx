@@ -1,4 +1,4 @@
-import { useGetChallengeAttendances } from '@/api/challenge/challenge';
+import { useGetChallengeRoundAttendances } from '@/api/challenge/challenge';
 import {
   useAdminCurrentChallenge,
   useAdminMissionsOfCurrentChallenge,
@@ -9,15 +9,23 @@ import LineTableBodyRow, {
   ItemWithStatus,
 } from '@/domain/admin/challenge/ui/lineTable/LineTableBodyRow';
 import LineTableHead from '@/domain/admin/challenge/ui/lineTable/LineTableHead';
-import { formatMissionRoundLabel } from '@/domain/admin/challenge/version/utils/missionVersion';
-import { Mission } from '@/schema';
+import MissionVersionTabs from '@/domain/admin/challenge/version/MissionVersionTabs';
+import {
+  formatMissionVersions,
+  formatRoundAttendance,
+  groupMissionsByRound,
+  isMissionForVersion,
+} from '@/domain/admin/challenge/version/utils/missionVersion';
+import { AttendanceItem, Mission } from '@/schema';
 import { TABLE_CONTENT } from '@/utils/convert';
 import React, { useMemo, useState } from 'react';
 
 type Row = Mission &
   ItemWithStatus & {
-    roundLabel: string; // 회차: 버전 미션이면 버전명을 붙인다
-    currentAttendance: string; // 제출현황: n(제출)/m(전체)
+    roundLabel: string; // 회차
+    currentAttendance: string; // 제출현황: n(제출)/m(전체), 버전 미션은 버전명을 함께
+    /** 같은 회차의 버전 미션은 한 행으로 묶는다 */
+    roundMissions: Mission[];
   };
 
 const cellWidthList = [
@@ -33,27 +41,66 @@ const colNames = ['회차', '미션명', '공개일', '마감일', '제출현황
 const ChallengeOperationAttendances = () => {
   const { currentChallenge } = useAdminCurrentChallenge();
   const missions = useAdminMissionsOfCurrentChallenge();
-  const [detailedMission, setDetailedMission] = useState<Mission | null>(null);
+  // 펼친 행의 미션들. 같은 회차 버전 미션은 한 행이라 여럿일 수 있다
+  const [detailedRound, setDetailedRound] = useState<Mission[] | null>(null);
+  // null 은 전체. 버전 탭은 그 버전 참여자가 받는 미션만 보여준다
+  const [versionId, setVersionId] = useState<number | null>(null);
 
-  const { data: detailedAttendances, refetch } = useGetChallengeAttendances({
+  const { byMission, refetch } = useGetChallengeRoundAttendances({
     challengeId: currentChallenge?.id,
-    detailedMissionId: detailedMission?.id,
+    missionIds: detailedRound?.map((mission) => mission.id) ?? [],
   });
 
-  const rows = useMemo(() => {
-    return (
-      missions?.map((mission) => {
-        return {
-          ...mission,
-          roundLabel: formatMissionRoundLabel(mission),
-          currentAttendance: `${mission.attendanceCount ?? 0}(제출)/${mission.applicationCount ?? 0}(전체)`,
-        };
-      }) ?? []
+  // 묶인 미션들의 제출자를 미션 순서대로 한 목록에. 행마다 자기 미션을 찾을 수 있게 둔다
+  const { detailedAttendances, missionByAttendanceId } = useMemo(() => {
+    const missionById = new Map(
+      (detailedRound ?? []).map((mission) => [mission.id, mission]),
     );
-  }, [missions]);
+    const missionOfAttendance = new Map<number, Mission>();
+    const list: AttendanceItem[] = byMission.flatMap(
+      ({ missionId, attendances }) => {
+        const mission = missionById.get(missionId);
+        if (!mission) return [];
+        attendances.forEach((item) =>
+          missionOfAttendance.set(item.attendance.id, mission),
+        );
+        return attendances;
+      },
+    );
+    return {
+      detailedAttendances: list,
+      missionByAttendanceId: missionOfAttendance,
+    };
+  }, [byMission, detailedRound]);
+
+  const rows = useMemo(() => {
+    return groupMissionsByRound(
+      missions?.filter((mission) => isMissionForVersion(mission, versionId)) ??
+        [],
+    ).map((roundMissions) => {
+      const waitingCounts = roundMissions
+        .map((mission) => mission.waitingCount)
+        .filter((count): count is number => count != null);
+      return {
+        ...roundMissions[0],
+        roundLabel: `${roundMissions[0].th}회차`,
+        currentAttendance: formatRoundAttendance(roundMissions),
+        waitingCount:
+          waitingCounts.length > 0
+            ? waitingCounts.reduce((sum, count) => sum + count, 0)
+            : null,
+        roundMissions,
+      };
+    });
+  }, [missions, versionId]);
 
   return (
     <main>
+      <MissionVersionTabs
+        versions={currentChallenge?.versionList ?? []}
+        value={versionId}
+        onChange={setVersionId}
+      />
       <div className="min-w-[1400px]">
         <LineTableHead
           cellWidthList={cellWidthList}
@@ -62,7 +109,8 @@ const ChallengeOperationAttendances = () => {
         />
         <LineTableBody>
           {rows?.map((row) => (
-            <React.Fragment key={row.id}>
+            // 탭을 바꾸면 같은 첫 미션이라도 묶음이 달라진다. 행은 처음 값을 들고 있어 key 로 새로 그린다
+            <React.Fragment key={`${row.id}-${versionId ?? 'all'}`}>
               <LineTableBodyRow<Row>
                 editable={false}
                 attrNames={[
@@ -103,24 +151,41 @@ const ChallengeOperationAttendances = () => {
                 key={row.id}
                 initialValues={row}
                 onClick={() => {
-                  if (detailedMission?.id === row.id) {
-                    setDetailedMission(null);
-                  } else {
-                    setDetailedMission(row);
-                  }
+                  const isOpen = detailedRound?.[0]?.id === row.id;
+                  setDetailedRound(isOpen ? null : row.roundMissions);
                 }}
                 cellWidthList={cellWidthList}
               />
-              {detailedMission?.id === row.id ? (
+              {detailedRound?.[0]?.id === row.id ? (
                 <ChallengeSubmitDetail
                   key={`detail-${row.id}`}
-                  mission={detailedMission}
+                  mission={detailedRound[0]}
+                  missionOf={(item) =>
+                    missionByAttendanceId.get(item.attendance.id) ??
+                    detailedRound[0]
+                  }
                   setIsDetailShown={(isDetailShown) => {
                     if (!isDetailShown) {
-                      setDetailedMission(null);
+                      setDetailedRound(null);
                     }
                   }}
-                  attendances={detailedAttendances || []}
+                  // 전체 탭에서는 버전 미션 제출을 버전별 구역으로 나눠 보여준다
+                  sectionOf={
+                    versionId === null
+                      ? (item) => {
+                          const mission = missionByAttendanceId.get(
+                            item.attendance.id,
+                          );
+                          return mission &&
+                            mission.challengeVersionList.length > 0
+                            ? formatMissionVersions(
+                                mission.challengeVersionList,
+                              )
+                            : null;
+                        }
+                      : undefined
+                  }
+                  attendances={detailedAttendances}
                   refetch={refetch}
                 />
               ) : null}
