@@ -131,6 +131,10 @@ export const navData = [
         url: '/mentors',
       },
       {
+        name: '렛커 픽',
+        url: '/mentors/pick',
+      },
+      {
         name: '회사 로고',
         url: '/mentors/company-logos',
       },

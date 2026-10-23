@@ -145,6 +145,9 @@ const AdminMentorRegisterPage = lazy(
 const AdminMentorKeywordPage = lazy(
   () => import('./pages/pages/user/AdminMentorKeywordPage'),
 );
+const AdminMentorPickPage = lazy(
+  () => import('./pages/pages/user/AdminMentorPickPage'),
+);
 const AdminCompanyLogoPage = lazy(
   () => import('./pages/pages/user/AdminCompanyLogoPage'),
 );
@@ -547,6 +550,10 @@ export const router = createBrowserRouter([
       {
         path: '/mentors/keywords',
         element: withSuspense(<AdminMentorKeywordPage />),
+      },
+      {
+        path: '/mentors/pick',
+        element: withSuspense(<AdminMentorPickPage />),
       },
       {
         path: '/mentors/company-logos',
