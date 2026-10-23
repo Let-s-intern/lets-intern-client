@@ -14,7 +14,7 @@ export default function IntroSection({ introLexical }: Props) {
 
   return (
     <section id="intro" className="scroll-mt-20 bg-white">
-      <div className="mx-auto w-full max-w-[1000px] break-words px-5 py-16 md:py-24">
+      <div className="mx-auto w-full max-w-[1040px] break-words px-5 md:px-0">
         <LexicalContent node={root} />
       </div>
     </section>

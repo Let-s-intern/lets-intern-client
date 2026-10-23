@@ -5,6 +5,7 @@
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import { useGetAllInOnePassLanding } from '@/domain/all-in-one-pass/api/landing';
 import { useGetMembershipApplicationForm } from '@/domain/all-in-one-pass/api/purchase';
+import BenefitDetailSection from '@/domain/all-in-one-pass/landing/BenefitDetailSection';
 import BenefitSummarySection from '@/domain/all-in-one-pass/landing/BenefitSummarySection';
 import HeroSection from '@/domain/all-in-one-pass/landing/HeroSection';
 import IntroSection from '@/domain/all-in-one-pass/landing/IntroSection';
@@ -75,7 +76,16 @@ export default function AllInOnePassLandingPage() {
         periodDays={pass.periodDays}
         plans={pass.plans}
         additionalBenefits={landing.additionalBenefits}
+        vodCount={landing.vodCount}
         onBenefitClick={scrollToBenefit}
+      />
+      <BenefitDetailSection
+        passTitle={pass.title}
+        plans={pass.plans}
+        vods={landing.vods}
+        vodCount={landing.vodCount}
+        playbookLexical={landing.lexical.playbookSection}
+        benefitLexical={landing.lexical.benefitSection}
       />
 
       <MembershipPlanBottomSheet

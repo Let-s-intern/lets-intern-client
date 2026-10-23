@@ -15,6 +15,12 @@ export interface LandingReview {
   summary: string;
 }
 
+export interface LandingVod {
+  title: string;
+  thumbnail: string;
+  description: string;
+}
+
 export interface LandingDescription {
   hero: { title: string; description: string; recruitFootnote: string };
   lexical: {
@@ -24,6 +30,8 @@ export interface LandingDescription {
     reviewSection: string;
   };
   additionalBenefits: LandingBenefit[];
+  vods: LandingVod[];
+  vodCount: number;
   reviews: LandingReview[];
   finalCta: { title: string; description: string };
 }
@@ -37,6 +45,8 @@ export const emptyLandingDescription = (): LandingDescription => ({
     reviewSection: '',
   },
   additionalBenefits: [],
+  vods: [],
+  vodCount: 0,
   reviews: [],
   finalCta: { title: '', description: '' },
 });
@@ -70,6 +80,12 @@ export const parseLandingDescription = (
       description: b.description ?? '',
       iconKey: b.iconKey ?? DEFAULT_BENEFIT_ICON_KEY,
     })),
+    vods: (parsed.vods ?? []).map((v) => ({
+      title: v.title ?? '',
+      thumbnail: v.thumbnail ?? '',
+      description: v.description ?? '',
+    })),
+    vodCount: parsed.vodCount ?? 0,
     reviews: (parsed.reviews ?? []).map((r) => ({
       source: r.source ?? '',
       resultTags: r.resultTags ?? [],
@@ -123,25 +139,35 @@ export interface BenefitCard {
 /** 혜택요약에 노출되는 총 카드 수 상한 (어드민과 동일) */
 const MAX_BENEFIT_CARDS = 6;
 
-// 플랜 권한(programType)별 자동 포함 혜택 프리셋 — 어드민 CORE_BENEFIT_PRESETS 미러
-const CORE_BENEFIT_PRESETS: Record<PassProgramType, BenefitCard> = {
+/** 혜택요약·VOD탭 개수 표기에 쓰는 동적 개수 (챌린지=고정 10, 가이드북=목록 fetch, VOD=어드민 집계) */
+export interface BenefitCounts {
+  challenge: number;
+  guidebook: number;
+  vod: number;
+}
+
+// 플랜 권한(programType)별 자동 포함 혜택 프리셋 — 이름의 개수는 counts 로 주입. LIVE 는 개수 없음.
+const CORE_BENEFIT_PRESETS: Record<
+  PassProgramType,
+  { name: (c: BenefitCounts) => string; description: string; iconSrc: string }
+> = {
   CHALLENGE: {
-    name: '챌린지 10종',
+    name: (c) => `챌린지 ${c.challenge}종`,
     description: '자소서·포폴부터 면접·인적성까지',
     iconSrc: BENEFIT_ICON_SRC.challenge,
   },
   VOD: {
-    name: 'VOD 20종',
+    name: (c) => `VOD ${c.vod}종`,
     description: '현직자가 알려주는 직무·취업 노하우',
     iconSrc: BENEFIT_ICON_SRC.vod,
   },
   GUIDEBOOK: {
-    name: '가이드북 7종',
+    name: (c) => `가이드북 ${c.guidebook}종`,
     description: '막막할 때 꺼내 보는 취준 가이드',
     iconSrc: BENEFIT_ICON_SRC.guidebook,
   },
   LIVE: {
-    name: 'LIVE 세미나',
+    name: () => 'LIVE 세미나',
     description: '현직자가 전하는 실시간 세미나',
     iconSrc: BENEFIT_ICON_SRC.liveSeminar,
   },
@@ -160,13 +186,18 @@ const MENTORING_BENEFIT: BenefitCard = {
   iconSrc: BENEFIT_ICON_SRC.mentoring,
 };
 
-/** 플랜 권한 union → 자동 포함 혜택 (+ 멘토링 항상) */
-export const getCoreBenefits = (plans: AllInOnePassPlan[]): BenefitCard[] => {
+/** 플랜 권한 union → 자동 포함 혜택 (+ 멘토링 항상). counts 로 개수 주입. */
+export const getCoreBenefits = (
+  plans: AllInOnePassPlan[],
+  counts: BenefitCounts,
+): BenefitCard[] => {
   const union = new Set<PassProgramType>();
   plans.forEach((p) => p.privileges.forEach((pv) => union.add(pv.programType)));
-  const fromPlans = CORE_BENEFIT_ORDER.filter((t) => union.has(t)).map(
-    (t) => CORE_BENEFIT_PRESETS[t],
-  );
+  const fromPlans = CORE_BENEFIT_ORDER.filter((t) => union.has(t)).map((t) => ({
+    name: CORE_BENEFIT_PRESETS[t].name(counts),
+    description: CORE_BENEFIT_PRESETS[t].description,
+    iconSrc: CORE_BENEFIT_PRESETS[t].iconSrc,
+  }));
   return [...fromPlans, MENTORING_BENEFIT];
 };
 
@@ -174,8 +205,9 @@ export const getCoreBenefits = (plans: AllInOnePassPlan[]): BenefitCard[] => {
 export const getBenefitCards = (
   plans: AllInOnePassPlan[],
   additionalBenefits: LandingBenefit[],
+  counts: BenefitCounts,
 ): BenefitCard[] => {
-  const core = getCoreBenefits(plans);
+  const core = getCoreBenefits(plans, counts);
   const additional = additionalBenefits.map((b) => ({
     name: b.name,
     description: b.description,
