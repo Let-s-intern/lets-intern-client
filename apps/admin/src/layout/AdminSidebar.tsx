@@ -4,6 +4,7 @@ import { IoIosArrowDown } from 'react-icons/io';
 import { Link, useLocation } from 'react-router-dom';
 
 import { useIsAdminQuery } from '@/api/user/user';
+import AdminSidebarSearch from './sidebar-search/AdminSidebarSearch';
 import StatsEmbedSection from './StatsEmbedSection';
 
 // 메인 web 으로 이동하는 외부 링크의 호스트.
@@ -285,6 +286,7 @@ export const AdminSidebar = () => {
   return (
     <aside>
       <nav className="sticky left-0 top-0 z-50 flex h-screen w-48 flex-col gap-4 overflow-y-auto bg-[#353535] py-20 pt-4 text-white shadow-xl">
+        <AdminSidebarSearch navData={navData} />
         {navData.map((navSection, index) => (
           <Fragment key={index}>
             {/* 통계(PostHog 임베드) 드롭다운은 나가기 바로 위에 둔다. */}

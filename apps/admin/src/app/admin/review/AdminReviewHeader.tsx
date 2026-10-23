@@ -6,7 +6,8 @@ type Tab = {
   label: string;
 };
 
-const TABS: readonly Tab[] = [
+/** 후기 관리 유형 탭. 사이드바 검색(`layout/sidebar-search`)도 이 목록을 그대로 쓴다 */
+export const REVIEW_TABS: readonly Tab[] = [
   { href: '/review/mission', label: '미션' },
   { href: '/review/challenge', label: '챌린지' },
   { href: '/review/live', label: '라이브' },
@@ -29,7 +30,7 @@ export default function AdminReviewHeader() {
       <h1 className="text-medium22 mb-2 font-bold">후기 관리</h1>
       <nav aria-label="Review navigation">
         <ul className="flex py-5">
-          {TABS.map((tab) => {
+          {REVIEW_TABS.map((tab) => {
             const active = isActive(pathname, tab.href);
             const className = clsx(
               'px-4 py-2 text-gray-500',
