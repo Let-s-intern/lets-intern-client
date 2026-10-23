@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  within,
+} from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { AdminLiveMentoring } from '@/api/live-mentoring/liveMentoringSchema';
@@ -384,5 +390,15 @@ describe('AdminLiveMentoringTable — 멘토별 참여자', () => {
     expect(
       screen.queryByRole('button', { name: '멘토 수정' }),
     ).not.toBeInTheDocument();
+  });
+
+  it('상세페이지 수정을 누르면 그 멘토 id 로 onEditDetailPage 를 부른다', () => {
+    const onEditDetailPage = vi.fn();
+    renderTable([draftRow]);
+    cleanup();
+    render(<AdminLiveMentoringTable onEditDetailPage={onEditDetailPage} />);
+
+    fireEvent.click(screen.getByRole('button', { name: '상세페이지 수정' }));
+    expect(onEditDetailPage).toHaveBeenCalledWith(draftRow.mentorId);
   });
 });

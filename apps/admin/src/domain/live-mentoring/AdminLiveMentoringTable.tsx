@@ -44,6 +44,8 @@ interface AdminLiveMentoringTableProps {
   onSelectMentorReviews?: (mentorId: number) => void;
   /** 멘토 정보 수정 모달 열기. 주면 멘토 이름 밑에 버튼을 내건다. 모달은 페이지가 띄운다. */
   onEditMentor?: (mentorId: number) => void;
+  /** 1:1 상세페이지 수정 화면으로 가기. 주면 「멘토 수정」 옆에 버튼을 내건다. */
+  onEditDetailPage?: (mentorId: number) => void;
 }
 
 /**
@@ -56,6 +58,7 @@ const AdminLiveMentoringTable = ({
   onSelectMentor,
   onSelectMentorReviews,
   onEditMentor,
+  onEditDetailPage,
 }: AdminLiveMentoringTableProps = {}) => {
   const { snackbar } = useAdminSnackbar();
   const [opened, setOpened] = useState<boolean | undefined>(undefined);
@@ -191,6 +194,15 @@ const AdminLiveMentoringTable = ({
                               className="text-primary whitespace-nowrap text-xs underline"
                             >
                               멘토 수정
+                            </button>
+                          )}
+                          {onEditDetailPage && (
+                            <button
+                              type="button"
+                              onClick={() => onEditDetailPage(row.mentorId)}
+                              className="text-primary whitespace-nowrap text-xs underline"
+                            >
+                              상세페이지 수정
                             </button>
                           )}
                         </div>

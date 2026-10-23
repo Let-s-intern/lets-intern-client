@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { ADMIN_LIVE_MENTORING_QUERY_KEY } from '@/api/live-mentoring/liveMentoring';
 import Heading from '@/domain/admin/ui/heading/Heading';
@@ -42,6 +42,7 @@ function isTab(value: string | null): value is Tab {
 export default function AdminLiveMentoringPage() {
   // 탭 상태를 URL(?tab=)에 둔다. 새로고침해도 보던 탭이 유지된다.
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const tabParam = searchParams.get('tab');
   const activeTab: Tab = isTab(tabParam) ? tabParam : 'products';
 
@@ -112,6 +113,9 @@ export default function AdminLiveMentoringPage() {
           onSelectMentor={(id) => showMentorTab('participants', id)}
           onSelectMentorReviews={(id) => showMentorTab('reviews', id)}
           onEditMentor={setEditingMentorId}
+          onEditDetailPage={(id) =>
+            navigate(`/live-mentoring/${id}/detail-page`)
+          }
         />
       ) : activeTab === 'reviews' ? (
         mentorId ? (
