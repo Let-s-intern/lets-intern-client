@@ -156,6 +156,22 @@ describe('AdminLiveMentoringDetailPageEditor', () => {
     });
   });
 
+  it('저장하지 않은 변경이 생기고 사라지는 것을 바깥에 알린다', async () => {
+    const onDirtyChange = vi.fn();
+    render(
+      <QueryClientProvider client={new QueryClient()}>
+        <AdminLiveMentoringDetailPageEditor
+          mentorId={7}
+          onDirtyChange={onDirtyChange}
+        />
+      </QueryClientProvider>,
+    );
+    await editFirstBullet('바뀐 불릿');
+    expect(onDirtyChange).toHaveBeenLastCalledWith(true);
+    fireEvent.click(screen.getByRole('button', { name: '취소' }));
+    expect(onDirtyChange).toHaveBeenLastCalledWith(false);
+  });
+
   it('취소하면 불러온 값으로 되돌린다', async () => {
     renderEditor();
     await editFirstBullet('바뀐 불릿');

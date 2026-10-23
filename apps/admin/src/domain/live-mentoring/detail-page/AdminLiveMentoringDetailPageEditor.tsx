@@ -48,6 +48,8 @@ type Message = { type: 'error' | 'success'; text: string } | null;
 
 interface Props {
   mentorId: number;
+  /** 저장하지 않은 변경이 생기거나 사라질 때 알린다. 바깥 탭 이동을 막는 데 쓴다 */
+  onDirtyChange?: (isDirty: boolean) => void;
 }
 
 /**
@@ -56,6 +58,7 @@ interface Props {
  */
 export default function AdminLiveMentoringDetailPageEditor({
   mentorId,
+  onDirtyChange,
 }: Props) {
   const { data, isLoading, isError } =
     useAdminLiveMentoringDetailPageQuery(mentorId);
@@ -83,6 +86,10 @@ export default function AdminLiveMentoringDetailPageEditor({
 
   const isDirty =
     form !== null && JSON.stringify(form) !== JSON.stringify(original);
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
 
   useEffect(() => {
     if (!isDirty) return;
@@ -162,7 +169,8 @@ export default function AdminLiveMentoringDetailPageEditor({
         </Button>
       </div>
 
-      <nav className="border-neutral-80 flex gap-1 border-b">
+      {/* 1:1 화면의 바깥 탭 아래에 있으므로 밑줄 탭 대신 한 단계 작은 칩으로 구분한다 */}
+      <nav aria-label="상세페이지 섹션" className="flex flex-wrap gap-2">
         {TABS.map((tab) => (
           <button
             key={tab.id}
@@ -170,10 +178,10 @@ export default function AdminLiveMentoringDetailPageEditor({
             aria-pressed={activeTab === tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={twMerge(
-              'text-xsmall14 -mb-px border-b-2 px-4 py-2',
+              'text-xxsmall12 rounded-full border px-3 py-1.5',
               activeTab === tab.id
-                ? 'border-neutral-0 text-neutral-0 font-semibold'
-                : 'text-neutral-40 border-transparent',
+                ? 'border-neutral-0 bg-neutral-0 font-semibold text-white'
+                : 'border-neutral-80 text-neutral-40',
             )}
           >
             {tab.label}
