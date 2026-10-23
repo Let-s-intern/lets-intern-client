@@ -18,6 +18,7 @@ import PassFormViewTabs, {
 import { PassFormInput } from '@/domain/all-in-one-pass/types';
 import ImportExportBar from '@/domain/all-in-one-pass/ui/ImportExportBar';
 import { isServerPlanId } from '@/domain/all-in-one-pass/util/allInOnePassMapper';
+import { useVodDefaults } from '@/domain/all-in-one-pass/util/useVodDefaults';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { Button } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
@@ -48,6 +49,7 @@ export default function AllInOnePassEdit() {
   const updateMutation = useUpdateAllInOnePassMutation();
   const deletePlanMutation = useDeleteAllInOnePassPlanMutation();
   const syncOptionsMutation = useSyncAllInOnePassOptionsMutation();
+  const applyVodDefaults = useVodDefaults();
 
   /**
    * 저장: 폼에서 빠진 기존 플랜을 DELETE 한 뒤, 기본정보 + 플랜/권한을
@@ -69,7 +71,10 @@ export default function AllInOnePassEdit() {
         });
       }
 
-      await updateMutation.mutateAsync({ id: numericPassId, input });
+      await updateMutation.mutateAsync({
+        id: numericPassId,
+        input: applyVodDefaults(input),
+      });
       await syncOptionsMutation.mutateAsync({
         membershipId: numericPassId,
         original: data?.extensionOptions ?? [],
