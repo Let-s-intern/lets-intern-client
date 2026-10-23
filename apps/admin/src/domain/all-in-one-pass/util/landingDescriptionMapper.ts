@@ -6,7 +6,7 @@ import {
   PassLandingVod,
 } from '@/domain/all-in-one-pass/types';
 import {
-  createEmptyReview,
+  createDefaultReviews,
   DEFAULT_BENEFIT_ICON_KEY,
   getAdditionalBenefitSlots,
   isReviewEmpty,
@@ -45,8 +45,8 @@ export const createEmptyLandingConfig = (): PassLandingConfig => ({
   manualBenefits: [],
   vods: [],
   vodCount: 0,
-  // 최소 3개 시작 — 생성 폼 기본으로 빈 후기 3장 노출
-  reviews: [createEmptyReview(), createEmptyReview(), createEmptyReview()],
+  // 생성 폼 기본 후기 6장(수정·삭제·추가 가능, 최대 9). 안 건드려도 저장돼 랜딩에 노출.
+  reviews: createDefaultReviews(),
   finalCta: { title: '', description: '' },
 });
 
@@ -111,7 +111,7 @@ export const toLandingConfig = (
       description: v.description ?? '',
     })),
     vodCount: parsed.vodCount ?? 0,
-    // 저장된 후기가 있으면 그대로, 없으면 기본 3개(최소 3개 시작)
+    // 저장된 후기가 있으면 그대로, 없으면 기본 6개
     reviews: parsed.reviews?.length
       ? parsed.reviews.map((r) => ({
           id: crypto.randomUUID(),
@@ -120,7 +120,7 @@ export const toLandingConfig = (
           imageUrl: r.imageUrl ?? '',
           summary: r.summary ?? '',
         }))
-      : [createEmptyReview(), createEmptyReview(), createEmptyReview()],
+      : createDefaultReviews(),
     finalCta: {
       title: parsed.finalCta?.title ?? '',
       description: parsed.finalCta?.description ?? '',

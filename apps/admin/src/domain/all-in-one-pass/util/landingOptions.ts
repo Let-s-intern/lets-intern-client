@@ -102,14 +102,16 @@ export const REVIEW_SOURCE_OPTIONS = [
   '인스타그램 DM',
   '카카오톡 오픈채팅',
   '챌린지 커뮤니티',
+  '멘토에게 온 메시지',
+  '미션 소감',
   '기타',
 ] as const;
 
 /** 후기 결과태그 */
 export const REVIEW_RESULT_TAG_OPTIONS = [
-  '서류 합격',
-  '최종 합격',
-  '인턴 합격',
+  '서류 합격 🎉',
+  '최종 합격 🎉',
+  '인턴 합격 🎉',
   '면접 준비',
   '취준 루틴',
   '동기부여',
@@ -128,3 +130,54 @@ export const createEmptyReview = (): PassLandingReview => ({
 /** 내용이 하나도 없는 후기 (저장 시 제외 — 빈 후기만 있으면 랜딩 후기 섹션 미노출) */
 export const isReviewEmpty = (r: PassLandingReview): boolean =>
   !r.source && !r.imageUrl && !r.summary && r.resultTags.length === 0;
+
+// 생성 폼 기본 후기 6종(출처·결과태그·요약·이미지 프리필). 아무것도 안 건드리고 저장해도
+// 이 6개가 랜딩에 노출된다. 수정·삭제·추가(최대 9) 가능. 이미지는 web·admin public 공통 경로.
+const DEFAULT_REVIEW_SEEDS: Array<Omit<PassLandingReview, 'id'>> = [
+  {
+    source: '인스타그램 DM',
+    resultTags: ['서류 합격 🎉', '최종 합격 🎉'],
+    imageUrl: '/images/all-in-one-pass/review-instagram.jpg',
+    summary:
+      '렛커 챌린지로 이력서·자소서까지 참고해 교육기업 서류 합격, 식품계 최종 합격했어요.',
+  },
+  {
+    source: '멘토에게 온 메시지',
+    resultTags: ['서류 합격 🎉'],
+    imageUrl: '/images/all-in-one-pass/review-companies.png',
+    summary:
+      '경험 정리로 강점을 발견한 덕분에 주요 대기업 6개사 서류 합격이라는 값진 결과를 얻었어요.',
+  },
+  {
+    source: '카카오톡 오픈채팅',
+    resultTags: ['최종 합격 🎉'],
+    imageUrl: '/images/all-in-one-pass/review-coverletter.png',
+    summary:
+      '자기소개서 챌린지에서 방향성·경험 정리에 큰 도움을 받아 준대기업 PM 정규직으로 합격했어요.',
+  },
+  {
+    source: '챌린지 커뮤니티',
+    resultTags: ['면접 준비'],
+    imageUrl: '/images/all-in-one-pass/review-interview.png',
+    summary:
+      '기업 분석 방법을 배우고 100개 넘는 질문을 접하며 자신감 있게 실전에 임하게 됐어요.',
+  },
+  {
+    source: '챌린지 커뮤니티',
+    resultTags: ['콘텐츠 만족'],
+    imageUrl: '/images/all-in-one-pass/review-renewal.jpg',
+    summary:
+      '리뉴얼된 챌린지 콘텐츠가 양질이라 계속 들여다보며 큰 도움을 받았어요.',
+  },
+  {
+    source: '미션 소감',
+    resultTags: ['동기부여'],
+    imageUrl: '/images/all-in-one-pass/review-mission.png',
+    summary:
+      '취준 일기처럼 소감을 적으니 심리적 안정과 동기부여에 큰 도움이 돼요.',
+  },
+];
+
+/** 생성 폼 기본 후기 6건 (매 호출 새 id 부여) */
+export const createDefaultReviews = (): PassLandingReview[] =>
+  DEFAULT_REVIEW_SEEDS.map((seed) => ({ id: crypto.randomUUID(), ...seed }));

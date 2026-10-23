@@ -46,7 +46,7 @@ export default function LandingReviewEditor({ reviews, onChange }: Props) {
 
   return (
     <>
-      {/* 높이 고정 — 후기 3개 넘어가면 세로 스크롤 */}
+      {/* 높이 고정 — 넘어가면 세로 스크롤(기본 6개는 스크롤로 확인) */}
       <div
         ref={containerRef}
         className="flex max-h-[600px] flex-col gap-3 overflow-y-auto pr-1"
@@ -100,15 +100,21 @@ export default function LandingReviewEditor({ reviews, onChange }: Props) {
                     },
                   }}
                 >
-                  {REVIEW_RESULT_TAG_OPTIONS.map((opt) => (
-                    <MenuItem key={opt} value={opt}>
-                      <Checkbox
-                        size="small"
-                        checked={review.resultTags.includes(opt)}
-                      />
-                      <ListItemText primary={opt} />
-                    </MenuItem>
-                  ))}
+                  {REVIEW_RESULT_TAG_OPTIONS.map((opt) => {
+                    const checked = review.resultTags.includes(opt);
+                    // 최대 2개 — 2개 선택되면 나머지는 비활성
+                    const disabled = !checked && review.resultTags.length >= 2;
+                    return (
+                      <MenuItem key={opt} value={opt} disabled={disabled}>
+                        <Checkbox
+                          size="small"
+                          checked={checked}
+                          disabled={disabled}
+                        />
+                        <ListItemText primary={opt} />
+                      </MenuItem>
+                    );
+                  })}
                 </TextField>
               </div>
               <TextField

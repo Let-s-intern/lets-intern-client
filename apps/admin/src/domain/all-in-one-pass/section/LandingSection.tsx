@@ -211,7 +211,10 @@ export default function LandingSection({
         </div>
 
         {/* 후기 */}
-        <Block title="후기" description="최소 3개, 최대 9까지 입력 가능합니다.">
+        <Block
+          title="후기"
+          description="6개 후기가 기본세팅 되어있으며(수정 가능) 최대 9개까지 입력 가능합니다."
+        >
           <LandingReviewEditor
             reviews={value.reviews}
             onChange={(reviews) => patch({ reviews })}
