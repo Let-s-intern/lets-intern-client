@@ -1,16 +1,8 @@
 import { fileType, uploadFile } from '@/api/file';
-import ChallengeVersionContentEditor from '@/domain/admin/program/challenge/ChallengeVersionContentEditor';
 import ImageUpload from '@/domain/admin/program/ui/form/ImageUpload';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
-import { ChallengeType, ChallengeVersionReq } from '@/schema';
-import { ChallengeContent } from '@/types/interface';
-import {
-  Button,
-  Checkbox,
-  FormControlLabel,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { ChallengeVersionReq } from '@/schema';
+import { Button, TextField, Typography } from '@mui/material';
 import { useRef, useState } from 'react';
 import { FaArrowDown, FaArrowUp } from 'react-icons/fa';
 import { FaTrashCan } from 'react-icons/fa6';
@@ -43,19 +35,10 @@ interface Props {
   /** 배열 순서가 곧 노출 순서 */
   versions: ChallengeVersionDraft[];
   onChange: (next: ChallengeVersionDraft[]) => void;
-  /** 버전 상세 본문 편집기의 강의 섹션이 쓴다 */
-  challengeType?: ChallengeType;
-  /** 버전 전용 상세 본문을 켤 때 시작값으로 복사하는 챌린지 본문 */
-  challengeContent: ChallengeContent;
 }
 
-function ChallengeVersionSection({
-  versions,
-  onChange,
-  challengeType,
-  challengeContent,
-}: Props) {
-  // 펼친 카드 하나만 본문 편집기를 렌더한다
+function ChallengeVersionSection({ versions, onChange }: Props) {
+  // 펼친 카드 하나만 노출 정보 입력란을 렌더한다
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   // 업로드처럼 await 뒤에 바꾸는 경우에도 최신 목록을 기준으로 바꾼다
   const latestVersions = useRef(versions);
@@ -237,30 +220,9 @@ function ChallengeVersionSection({
                       )}
                     />
                   </div>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={version.description !== null}
-                        onChange={(e) =>
-                          updateVersion(index, {
-                            description: e.target.checked
-                              ? JSON.stringify(challengeContent)
-                              : null,
-                          })
-                        }
-                      />
-                    }
-                    label="버전 전용 상세 본문 사용 (끄면 챌린지 상세 본문을 씁니다)"
-                  />
-                  {version.description !== null && (
-                    <ChallengeVersionContentEditor
-                      description={version.description}
-                      challengeType={challengeType}
-                      onChange={(description) =>
-                        updateVersion(index, { description })
-                      }
-                    />
-                  )}
+                  <Typography variant="caption" color="text.secondary">
+                    상세 설명은 아래 프로그램 소개의 버전 탭에서 작성합니다.
+                  </Typography>
                 </div>
               )}
             </div>

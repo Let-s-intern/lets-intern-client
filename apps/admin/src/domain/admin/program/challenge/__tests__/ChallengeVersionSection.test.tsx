@@ -2,8 +2,6 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { ChallengeContent } from '@/types/interface';
-
 import ChallengeVersionSection, {
   ChallengeVersionDraft,
 } from '../ChallengeVersionSection';
@@ -14,19 +12,6 @@ vi.mock('@/api/file', () => ({
   fileType: { enum: { CHALLENGE: 'CHALLENGE' } },
   uploadFile,
 }));
-
-// 무거운 lexical 편집기 대신 받은 본문만 보여준다
-vi.mock('../ChallengeVersionContentEditor', () => ({
-  default: ({ description }: { description: string }) => (
-    <div data-testid="version-content-editor">{description}</div>
-  ),
-}));
-
-const CHALLENGE_CONTENT = {
-  initialized: true,
-  curriculum: [],
-} as unknown as ChallengeContent;
-const CHALLENGE_DESC = JSON.stringify(CHALLENGE_CONTENT);
 
 const draft = (
   challengeVersionId: number | null,
@@ -49,26 +34,14 @@ const versions: ChallengeVersionDraft[] = [
 
 const renderSection = (initial: ChallengeVersionDraft[] = versions) => {
   const onChange = vi.fn();
-  render(
-    <ChallengeVersionSection
-      versions={initial}
-      onChange={onChange}
-      challengeContent={CHALLENGE_CONTENT}
-    />,
-  );
+  render(<ChallengeVersionSection versions={initial} onChange={onChange} />);
   return onChange;
 };
 
 /** 펼침 상태가 목록 변경을 따라가는지 보려면 실제로 목록이 바뀌어야 한다 */
 function Harness({ initial }: { initial: ChallengeVersionDraft[] }) {
   const [list, setList] = useState(initial);
-  return (
-    <ChallengeVersionSection
-      versions={list}
-      onChange={setList}
-      challengeContent={CHALLENGE_CONTENT}
-    />
-  );
+  return <ChallengeVersionSection versions={list} onChange={setList} />;
 }
 
 const expandButton = (order: number) =>
@@ -299,59 +272,19 @@ describe('ChallengeVersionSection', () => {
     );
   });
 
-  describe('버전 상세 본문', () => {
-    const toggleLabel =
-      '버전 전용 상세 본문 사용 (끄면 챌린지 상세 본문을 씁니다)';
+  it('펼친 카드는 상세 설명을 프로그램 소개의 버전 탭에서 쓴다고 안내하고 편집기는 없다', () => {
+    renderSection([{ ...versions[0], description: '{"version":1}' }]);
+    fireEvent.click(expandButton(1));
 
-    it('켜면 챌린지 본문을 복사해 시작한다', () => {
-      const onChange = renderSection();
-      fireEvent.click(expandButton(1));
-
-      fireEvent.click(screen.getByLabelText(toggleLabel));
-
-      expect(onChange).toHaveBeenCalledWith([
-        { ...versions[0], description: CHALLENGE_DESC },
-        versions[1],
-        versions[2],
-      ]);
-    });
-
-    it('끄면 null 로 돌려 챌린지 본문을 쓰게 한다', () => {
-      const withDescription = [
-        { ...versions[0], description: '{"version":1}' },
-        versions[1],
-      ];
-      const onChange = renderSection(withDescription);
-      fireEvent.click(expandButton(1));
-
-      fireEvent.click(screen.getByLabelText(toggleLabel));
-
-      expect(onChange).toHaveBeenCalledWith([
-        { ...versions[0], description: null },
-        versions[1],
-      ]);
-    });
-
-    it('본문 편집기는 펼친 카드에만 렌더한다', () => {
-      render(
-        <Harness
-          initial={[
-            { ...versions[0], description: '{"version":1}' },
-            { ...versions[1], description: '{"version":2}' },
-          ]}
-        />,
-      );
-
-      expect(
-        screen.queryByTestId('version-content-editor'),
-      ).not.toBeInTheDocument();
-
-      fireEvent.click(expandButton(2));
-
-      expect(screen.getAllByTestId('version-content-editor')).toHaveLength(1);
-      expect(screen.getByTestId('version-content-editor')).toHaveTextContent(
-        '{"version":2}',
-      );
-    });
+    expect(
+      screen.getByText(
+        '상세 설명은 아래 프로그램 소개의 버전 탭에서 작성합니다.',
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByLabelText(
+        '버전 전용 상세 본문 사용 (끄면 챌린지 상세 본문을 씁니다)',
+      ),
+    ).not.toBeInTheDocument();
   });
 });

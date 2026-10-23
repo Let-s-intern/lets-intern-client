@@ -17,6 +17,7 @@ import ChallengeBasic from '@/domain/admin/program/challenge/ChallengeBasic';
 import ChallengeCurriculumEditor from '@/domain/admin/program/challenge/ChallengeCurriculum';
 import ChallengePointEditor from '@/domain/admin/program/challenge/ChallengePoint';
 import ChallengeOptionSection from '@/domain/admin/program/challenge/ChallengeOptionSection';
+import ChallengeDescriptionTabs from '@/domain/admin/program/challenge/ChallengeDescriptionTabs';
 import ChallengeVersionSection, {
   ChallengeVersionDraft,
 } from '@/domain/admin/program/challenge/ChallengeVersionSection';
@@ -593,181 +594,206 @@ const ChallengeEdit: React.FC = () => {
             toVersionDrafts(challenge.versionList, challenge.desc)
           }
           onChange={setVersionDrafts}
-          challengeType={input.challengeType}
-          challengeContent={content}
         />
       </section>
 
-      {isFreeTemplate ? (
-        <>
-          <Heading2>프로그램 설명 (자유 템플릿 전용)</Heading2>
-          <section className="mt-6">
-            <EditorApp
-              initialEditorStateJsonString={
-                content.freeContent
-                  ? JSON.stringify(content.freeContent)
-                  : undefined
-              }
-              onChangeSerializedEditorState={(json) =>
-                setContent((prev) => ({
-                  ...prev,
-                  isFreeTemplate: true,
-                  freeContent: json,
-                }))
-              }
-            />
-          </section>
-        </>
-      ) : (
-        <>
-          <Heading2>프로그램 소개</Heading2>
-          <section className="mt-6">
-            <Heading3>인트로</Heading3>
-            <EditorApp
-              initialEditorStateJsonString={JSON.stringify(content.intro)}
-              onChangeSerializedEditorState={(json) =>
-                setContent((prev) => ({
-                  ...prev,
-                  intro: json,
-                }))
-              }
-            />
+      <ChallengeDescriptionTabs
+        versions={
+          versionDrafts ??
+          toVersionDrafts(challenge.versionList, challenge.desc)
+        }
+        onChangeVersionDescription={(index, description) =>
+          setVersionDrafts((prev) =>
+            (
+              prev ?? toVersionDrafts(challenge.versionList, challenge.desc)
+            ).map((version, i) =>
+              i === index ? { ...version, description } : version,
+            ),
+          )
+        }
+        challengeContent={content}
+        challengeType={input.challengeType}
+      >
+        {isFreeTemplate ? (
+          <>
+            <Heading2>프로그램 설명 (자유 템플릿 전용)</Heading2>
+            <section className="mt-6">
+              <EditorApp
+                initialEditorStateJsonString={
+                  content.freeContent
+                    ? JSON.stringify(content.freeContent)
+                    : undefined
+                }
+                onChangeSerializedEditorState={(json) =>
+                  setContent((prev) => ({
+                    ...prev,
+                    isFreeTemplate: true,
+                    freeContent: json,
+                  }))
+                }
+              />
+            </section>
+          </>
+        ) : (
+          <>
+            <Heading2>프로그램 소개</Heading2>
+            <section className="mt-6">
+              <Heading3>인트로</Heading3>
+              <EditorApp
+                initialEditorStateJsonString={JSON.stringify(content.intro)}
+                onChangeSerializedEditorState={(json) =>
+                  setContent((prev) => ({
+                    ...prev,
+                    intro: json,
+                  }))
+                }
+              />
 
-            <ChallengePointEditor
-              challengePoint={content.challengePoint}
-              setContent={setContent}
-            />
-
-            {input.challengeType && (
-              <ChallengeLecture
-                challengeType={input.challengeType}
-                content={content}
+              <ChallengePointEditor
+                challengePoint={content.challengePoint}
                 setContent={setContent}
               />
-            )}
 
-            <Heading3>상세 설명 (특별 챌린지 및 합격자 후기)</Heading3>
-            <EditorApp
-              initialEditorStateJsonString={JSON.stringify(
-                content.mainDescription,
+              {input.challengeType && (
+                <ChallengeLecture
+                  challengeType={input.challengeType}
+                  content={content}
+                  setContent={setContent}
+                />
               )}
-              onChangeSerializedEditorState={(json) =>
+
+              <Heading3>상세 설명 (특별 챌린지 및 합격자 후기)</Heading3>
+              <EditorApp
+                initialEditorStateJsonString={JSON.stringify(
+                  content.mainDescription,
+                )}
+                onChangeSerializedEditorState={(json) =>
+                  setContent((prev) => ({
+                    ...prev,
+                    mainDescription: json,
+                  }))
+                }
+              />
+            </section>
+
+            {/* 프로그램 추천 */}
+            <section className="mb-6">
+              <ProgramRecommendEditor
+                programRecommend={content.programRecommend ?? { list: [] }}
+                setProgramRecommend={(programRecommend) =>
+                  setContent((prev) => ({ ...prev, programRecommend }))
+                }
+                maxCount={
+                  (content.curationCard?.visible ?? true) ? 2 : undefined
+                }
+              />
+              {(content.programRecommend?.list?.length ?? 0) > 0 && (
+                <div className="mt-2">
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={content.curationCard?.visible ?? true}
+                        onChange={(e) => {
+                          const nextVisible = e.target.checked;
+                          setContent((prev) => {
+                            const next = {
+                              ...prev,
+                              curationCard: { visible: nextVisible },
+                            };
+                            // OFF → ON 토글 시 추천이 3개 이상이면 즉시 2개로 잘라냄
+                            // (로드 시점에는 발동하지 않음; onChange 액션에만 작동)
+                            const list = prev.programRecommend?.list ?? [];
+                            if (nextVisible && list.length > 2) {
+                              next.programRecommend = {
+                                ...prev.programRecommend,
+                                list: list.slice(0, 2),
+                              };
+                            }
+                            return next;
+                          });
+                        }}
+                      />
+                    }
+                    label="큐레이션 카드 노출 (기본 켜짐)"
+                  />
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    component="p"
+                  >
+                    추천 프로그램 슬라이더 마지막 슬롯에 &lsquo;맞춤 챌린지 탐색
+                    큐레이션&rsquo; 카드를 노출합니다. 추천 프로그램을 3개 모두
+                    채우려면 이 옵션을 꺼주세요.
+                  </Typography>
+                  {(content.curationCard?.visible ?? true) &&
+                    (content.programRecommend?.list?.length ?? 0) > 2 && (
+                      <Typography
+                        variant="caption"
+                        color="warning.main"
+                        component="p"
+                      >
+                        ⚠ 현재 추천이{' '}
+                        {content.programRecommend?.list?.length ?? 0}개입니다.
+                        사용자 페이지에는 처음 2개만 노출됩니다.
+                      </Typography>
+                    )}
+                  {(content.curationCard?.visible ?? true) && (
+                    <div className="mt-3">
+                      <CurationCardPreview />
+                    </div>
+                  )}
+                </div>
+              )}
+            </section>
+
+            <ChallengeCurriculumEditor
+              curriculum={content.curriculum}
+              setContent={setContent}
+              curriculumImage={content.curriculumImage}
+              weekText={content.challengePoint?.weekText}
+              content={content}
+            />
+
+            <ProgramBestReview
+              reviewFields={content.challengeReview ?? []}
+              setReviewFields={(reviewFields) =>
                 setContent((prev) => ({
                   ...prev,
-                  mainDescription: json,
+                  challengeReview: reviewFields,
                 }))
               }
             />
-          </section>
-
-          {/* 프로그램 추천 */}
-          <section className="mb-6">
-            <ProgramRecommendEditor
-              programRecommend={content.programRecommend ?? { list: [] }}
-              setProgramRecommend={(programRecommend) =>
-                setContent((prev) => ({ ...prev, programRecommend }))
+            <ChallengeBlogReviewSection
+              externalBlogReviews={content.externalBlogReviews ?? []}
+              onExternalChange={(externalBlogReviews) =>
+                setContent((prev) => ({ ...prev, externalBlogReviews }))
               }
-              maxCount={(content.curationCard?.visible ?? true) ? 2 : undefined}
-            />
-            {(content.programRecommend?.list?.length ?? 0) > 0 && (
-              <div className="mt-2">
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={content.curationCard?.visible ?? true}
-                      onChange={(e) => {
-                        const nextVisible = e.target.checked;
-                        setContent((prev) => {
-                          const next = {
-                            ...prev,
-                            curationCard: { visible: nextVisible },
-                          };
-                          // OFF → ON 토글 시 추천이 3개 이상이면 즉시 2개로 잘라냄
-                          // (로드 시점에는 발동하지 않음; onChange 액션에만 작동)
-                          const list = prev.programRecommend?.list ?? [];
-                          if (nextVisible && list.length > 2) {
-                            next.programRecommend = {
-                              ...prev.programRecommend,
-                              list: list.slice(0, 2),
-                            };
-                          }
-                          return next;
-                        });
-                      }}
-                    />
-                  }
-                  label="큐레이션 카드 노출 (기본 켜짐)"
-                />
-                <Typography
-                  variant="caption"
-                  color="text.secondary"
-                  component="p"
-                >
-                  추천 프로그램 슬라이더 마지막 슬롯에 &lsquo;맞춤 챌린지 탐색
-                  큐레이션&rsquo; 카드를 노출합니다. 추천 프로그램을 3개 모두
-                  채우려면 이 옵션을 꺼주세요.
-                </Typography>
-                {(content.curationCard?.visible ?? true) &&
-                  (content.programRecommend?.list?.length ?? 0) > 2 && (
-                    <Typography
-                      variant="caption"
-                      color="warning.main"
-                      component="p"
-                    >
-                      ⚠ 현재 추천이{' '}
-                      {content.programRecommend?.list?.length ?? 0}개입니다.
-                      사용자 페이지에는 처음 2개만 노출됩니다.
-                    </Typography>
-                  )}
-                {(content.curationCard?.visible ?? true) && (
-                  <div className="mt-3">
-                    <CurationCardPreview />
-                  </div>
-                )}
-              </div>
-            )}
-          </section>
-
-          <ChallengeCurriculumEditor
-            curriculum={content.curriculum}
-            setContent={setContent}
-            curriculumImage={content.curriculumImage}
-            weekText={content.challengePoint?.weekText}
-            content={content}
-          />
-
-          <ProgramBestReview
-            reviewFields={content.challengeReview ?? []}
-            setReviewFields={(reviewFields) =>
-              setContent((prev) => ({ ...prev, challengeReview: reviewFields }))
-            }
-          />
-          <ChallengeBlogReviewSection
-            externalBlogReviews={content.externalBlogReviews ?? []}
-            onExternalChange={(externalBlogReviews) =>
-              setContent((prev) => ({ ...prev, externalBlogReviews }))
-            }
-            blogReview={content.blogReview ?? { list: [] }}
-            onBlogReviewChange={(blogReview) =>
-              setContent((prev) => ({ ...prev, blogReview }))
-            }
-          />
-          <div className="my-6">
-            <FaqSection
-              programType={ProgramTypeEnum.enum.CHALLENGE}
-              faqInfo={
-                input.faqInfo ??
-                challenge.faqInfo.map((info) => ({ faqId: info.id }))
-              }
-              setFaqInfo={(faqInfo) =>
-                setInput((prev) => ({ ...prev, faqInfo: faqInfo ?? [] }))
+              blogReview={content.blogReview ?? { list: [] }}
+              onBlogReviewChange={(blogReview) =>
+                setContent((prev) => ({ ...prev, blogReview }))
               }
             />
-          </div>
-        </>
+          </>
+        )}
+      </ChallengeDescriptionTabs>
+
+      {/* FAQ 는 챌린지 단위라 버전 탭 밖에 둔다 */}
+      {!isFreeTemplate && (
+        <div className="my-6">
+          <FaqSection
+            programType={ProgramTypeEnum.enum.CHALLENGE}
+            faqInfo={
+              input.faqInfo ??
+              challenge.faqInfo.map((info) => ({ faqId: info.id }))
+            }
+            setFaqInfo={(faqInfo) =>
+              setInput((prev) => ({ ...prev, faqInfo: faqInfo ?? [] }))
+            }
+          />
+        </div>
       )}
 
-      <footer className="flex items-center justify-end gap-3">
+      <footer className="fixed bottom-8 right-8 z-50 flex items-center gap-3 rounded-full border border-gray-200 bg-white/95 py-2 pl-3 pr-2 shadow-xl backdrop-blur">
         <ChallengePreviewButton
           input={input}
           content={content}
