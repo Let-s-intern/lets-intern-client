@@ -202,6 +202,8 @@ export default function AdminMentorRegisterPage() {
       navigate('/mentors');
     } else if (newValue === 2) {
       navigate('/mentors/keywords');
+    } else if (newValue === 3) {
+      navigate('/mentors/company-logos');
     }
   };
 
@@ -213,6 +215,7 @@ export default function AdminMentorRegisterPage() {
         <Tab label="멘토 관리" />
         <Tab label="멘토 등록" />
         <Tab label="멘토 키워드" />
+        <Tab label="회사 로고" />
       </Tabs>
 
       <MentorFilter />

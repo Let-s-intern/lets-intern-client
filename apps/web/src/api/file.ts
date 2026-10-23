@@ -24,6 +24,8 @@ export const fileType = z.enum([
     parse 에서 터진다 — 1대1 멘토링 질문의 파일 첨부가 이것 없이는 동작하지 않는다.
   */
   'LIVE_MENTORING',
+  // 어드민 회사 로고 라이브러리(LC-3498). 서버 `FileType.COMPANY_LOGO("company-logo")`
+  'COMPANY_LOGO',
 ]);
 
 export type FileType = z.infer<typeof fileType>;

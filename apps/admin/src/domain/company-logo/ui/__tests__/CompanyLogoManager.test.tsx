@@ -1,0 +1,152 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+const get = vi.fn();
+const post = vi.fn();
+const patch = vi.fn();
+const del = vi.fn();
+const uploadFile = vi.fn();
+
+vi.mock('@/utils/axios', () => ({
+  default: {
+    get: (...args: unknown[]) => get(...args),
+    post: (...args: unknown[]) => post(...args),
+    patch: (...args: unknown[]) => patch(...args),
+    delete: (...args: unknown[]) => del(...args),
+  },
+}));
+
+vi.mock('@/api/file', () => ({
+  uploadFile: (...args: unknown[]) => uploadFile(...args),
+}));
+
+import CompanyLogoManager from '../../CompanyLogoManager';
+
+const logos = [
+  { id: 1, name: '렛츠커리어', imageUrl: 'https://cdn.test/lc.png' },
+  { id: 2, name: '카카오', imageUrl: 'https://cdn.test/kakao.png' },
+];
+
+const renderManager = () =>
+  render(
+    <QueryClientProvider
+      client={
+        new QueryClient({
+          defaultOptions: {
+            queries: { retry: false },
+            mutations: { retry: false },
+          },
+        })
+      }
+    >
+      <CompanyLogoManager />
+    </QueryClientProvider>,
+  );
+
+describe('CompanyLogoManager', () => {
+  beforeEach(() => {
+    get.mockResolvedValue({ data: { data: { companyLogoList: logos } } });
+    post.mockResolvedValue({});
+    patch.mockResolvedValue({});
+    del.mockResolvedValue({});
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    vi.restoreAllMocks();
+  });
+
+  it('회사명으로 거른다', async () => {
+    renderManager();
+    await screen.findByText('카카오');
+    fireEvent.change(screen.getByLabelText('회사명 검색'), {
+      target: { value: '카카' },
+    });
+    expect(screen.getByText('카카오')).toBeInTheDocument();
+    expect(screen.queryByText('렛츠커리어')).not.toBeInTheDocument();
+  });
+
+  it('회사명과 올린 이미지로 등록한다', async () => {
+    uploadFile.mockResolvedValue('https://cdn.test/new.png');
+    renderManager();
+    fireEvent.click(await screen.findByRole('button', { name: '로고 등록' }));
+
+    fireEvent.change(screen.getByLabelText('회사명'), {
+      target: { value: ' 네이버 ' },
+    });
+    const file = new File(['x'], 'naver.png', { type: 'image/png' });
+    fireEvent.change(screen.getByLabelText('로고 이미지 업로드'), {
+      target: { files: [file] },
+    });
+    await waitFor(() =>
+      expect(uploadFile).toHaveBeenCalledWith({ file, type: 'COMPANY_LOGO' }),
+    );
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: '저장' })).toBeEnabled(),
+    );
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
+
+    await waitFor(() =>
+      expect(post).toHaveBeenCalledWith('/admin/company-logo', {
+        name: '네이버',
+        imageUrl: 'https://cdn.test/new.png',
+      }),
+    );
+  });
+
+  it('이름이 겹쳐 409 면 다이얼로그에 알린다', async () => {
+    post.mockRejectedValue({ status: 409, message: 'conflict' });
+    uploadFile.mockResolvedValue('https://cdn.test/new.png');
+    renderManager();
+    fireEvent.click(await screen.findByRole('button', { name: '로고 등록' }));
+    fireEvent.change(screen.getByLabelText('회사명'), {
+      target: { value: '카카오' },
+    });
+    fireEvent.change(screen.getByLabelText('로고 이미지 업로드'), {
+      target: { files: [new File(['x'], 'a.png', { type: 'image/png' })] },
+    });
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: '저장' })).toBeEnabled(),
+    );
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      '같은 회사명이 이미 있습니다.',
+    );
+  });
+
+  it('수정은 기존 값을 채워 PATCH 한다', async () => {
+    renderManager();
+    await screen.findByText('카카오');
+    fireEvent.click(screen.getAllByRole('button', { name: '수정' })[1]);
+    expect(screen.getByLabelText('회사명')).toHaveValue('카카오');
+    fireEvent.change(screen.getByLabelText('회사명'), {
+      target: { value: '카카오뱅크' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
+
+    await waitFor(() =>
+      expect(patch).toHaveBeenCalledWith('/admin/company-logo/2', {
+        name: '카카오뱅크',
+        imageUrl: 'https://cdn.test/kakao.png',
+      }),
+    );
+  });
+
+  it('삭제는 확인을 받은 뒤에만 부른다', async () => {
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    renderManager();
+    await screen.findByText('카카오');
+
+    fireEvent.click(screen.getAllByRole('button', { name: '삭제' })[1]);
+    expect(confirm).toHaveBeenCalled();
+    expect(del).not.toHaveBeenCalled();
+
+    confirm.mockReturnValue(true);
+    fireEvent.click(screen.getAllByRole('button', { name: '삭제' })[1]);
+    await waitFor(() =>
+      expect(del).toHaveBeenCalledWith('/admin/company-logo/2'),
+    );
+  });
+});
