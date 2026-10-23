@@ -54,6 +54,8 @@ export const mentorCareerItemSchema = z.object({
   endDate: z.string().nullable(),
   isAddedByAdmin: z.boolean(),
   isRepresentative: z.boolean(),
+  /** 경력 로고(LC-3499). 어드민이 회사 로고 라이브러리에서 지정한다. 서버 배포 전에는 없다 */
+  logoImgUrl: z.string().nullish(),
 });
 
 export type MentorCareerItem = z.infer<typeof mentorCareerItemSchema>;
