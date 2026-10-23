@@ -1,11 +1,11 @@
 import {
+  PassExtensionOption,
   PassFormInput,
-  PassPermission,
-  PassPlan,
 } from '@/domain/all-in-one-pass/types';
 import {
-  permissionToPrivilegeDto,
-  planToUpdateDto,
+  isServerOptionId,
+  optionToCreateDto,
+  optionToUpdateDto,
   toCreateDto,
   toUpdateDto,
 } from '@/domain/all-in-one-pass/util/allInOnePassMapper';
@@ -15,9 +15,10 @@ import { useMutation } from '@tanstack/react-query';
 /**
  * 올인원패스(멤버십) 생성/수정 뮤테이션.
  *
- * 생성은 plan/faq 를 한 번에 전송(POST), 수정(PATCH)은 basic + faq.
- * 기존 플랜 기본정보 수정은 별도 PATCH 엔드포인트로 반영한다(권한 변경·플랜
- * 추가/삭제는 BE 스펙 확정 후). 자료집은 별도 글로벌 풀(useBenefits)로 관리.
+ * 생성은 plan/option/faq 를 한 번에 POST. 수정(PATCH)은 basic + faq + planList
+ * 를 함께 보내 플랜·권한을 full-sync 한다(생성/수정/권한 add·remove 자동 반영).
+ * 플랜 "삭제"만 planList 로 처리되지 않아 전용 DELETE 엔드포인트를 쓴다.
+ * 자료집은 별도 글로벌 풀(useBenefits)로 관리.
  */
 
 type MutationCallbacks = {
@@ -54,31 +55,6 @@ export const useUpdateAllInOnePassMutation = ({
     onError: errorCallback,
   });
 
-/** 기존 플랜 기본정보 수정 (PATCH /membership/{id}/plan/{planId}) */
-export const useUpdateAllInOnePassPlanMutation = ({
-  successCallback,
-  errorCallback,
-}: MutationCallbacks = {}) =>
-  useMutation({
-    mutationFn: async ({
-      membershipId,
-      planId,
-      plan,
-    }: {
-      membershipId: number;
-      planId: number;
-      plan: PassPlan;
-    }) => {
-      const res = await axios.patch(
-        `/admin/membership/${membershipId}/plan/${planId}`,
-        planToUpdateDto(plan),
-      );
-      return res.data;
-    },
-    onSuccess: successCallback,
-    onError: errorCallback,
-  });
-
 /** 플랜 삭제 (DELETE /membership/{id}/plan/{planId}) */
 export const useDeleteAllInOnePassPlanMutation = ({
   successCallback,
@@ -102,54 +78,45 @@ export const useDeleteAllInOnePassPlanMutation = ({
   });
 
 /**
- * 플랜 권한 수정 (PATCH .../privilege/{privilegeId}).
- * 기존 권한 슬롯을 다른 권한으로 바꿔치기(교체)할 때 사용.
+ * 연장 옵션 sync (수정 페이지). 신규=POST / 기존=PATCH / 빠진 것=DELETE.
+ * ※ 상세 응답에 optionList 가 생기기 전엔 original 이 비어 매번 POST(중복 생성) 된다.
  */
-export const useUpdateAllInOnePassPlanPrivilegeMutation = ({
+export const useSyncAllInOnePassOptionsMutation = ({
   successCallback,
   errorCallback,
 }: MutationCallbacks = {}) =>
   useMutation({
     mutationFn: async ({
       membershipId,
-      planId,
-      privilegeId,
-      permission,
+      original,
+      current,
     }: {
       membershipId: number;
-      planId: number;
-      privilegeId: number;
-      permission: PassPermission;
+      original: PassExtensionOption[];
+      current: PassExtensionOption[];
     }) => {
-      const res = await axios.patch(
-        `/admin/membership/${membershipId}/plan/${planId}/privilege/${privilegeId}`,
-        permissionToPrivilegeDto(permission),
+      const currentServerIds = new Set(
+        current.filter((o) => isServerOptionId(o.id)).map((o) => o.id),
       );
-      return res.data;
-    },
-    onSuccess: successCallback,
-    onError: errorCallback,
-  });
-
-/** 플랜 권한 삭제 (DELETE .../privilege/{privilegeId}) */
-export const useDeleteAllInOnePassPlanPrivilegeMutation = ({
-  successCallback,
-  errorCallback,
-}: MutationCallbacks = {}) =>
-  useMutation({
-    mutationFn: async ({
-      membershipId,
-      planId,
-      privilegeId,
-    }: {
-      membershipId: number;
-      planId: number;
-      privilegeId: number;
-    }) => {
-      const res = await axios.delete(
-        `/admin/membership/${membershipId}/plan/${planId}/privilege/${privilegeId}`,
+      const removed = original.filter(
+        (o) => isServerOptionId(o.id) && !currentServerIds.has(o.id),
       );
-      return res.data;
+      await Promise.all([
+        ...removed.map((o) =>
+          axios.delete(`/admin/membership/${membershipId}/option/${o.id}`),
+        ),
+        ...current.map((o) =>
+          isServerOptionId(o.id)
+            ? axios.patch(
+                `/admin/membership/${membershipId}/option/${o.id}`,
+                optionToUpdateDto(o),
+              )
+            : axios.post(
+                `/admin/membership/${membershipId}/option`,
+                optionToCreateDto(o),
+              ),
+        ),
+      ]);
     },
     onSuccess: successCallback,
     onError: errorCallback,

@@ -75,7 +75,17 @@ const ApplicationContent = () => {
         application.programType !== 'GUIDEBOOK' &&
         application.programType !== 'VOD' &&
         application.programType !== 'LIVE_MENTORING' &&
-        application.programType !== 'VOD_PASS',
+        application.programType !== 'VOD_PASS' &&
+        application.programType !== 'MEMBERSHIP',
+    ) ?? [];
+
+  // 올인원패스(멤버십) 신청 — 참여중/완료만, 프로그램 섹션과 멘토링 사이에 별도 노출
+  const membershipList =
+    applications?.filter(
+      (application) =>
+        application.programType === 'MEMBERSHIP' &&
+        (application.programStatusType === 'PROCEEDING' ||
+          application.programStatusType === 'POST'),
     ) ?? [];
   const programWaitingList = programApplications.filter(
     (application) => application.programStatusType === 'PREV',
@@ -106,6 +116,13 @@ const ApplicationContent = () => {
     mentoringList.find(
       (application) => application.applicationId === openMentoringId,
     ) ?? null;
+
+  const membershipInProgressList = membershipList.filter(
+    (application) => application.programStatusType === 'PROCEEDING',
+  );
+  const membershipCompletedList = membershipList.filter(
+    (application) => application.programStatusType === 'POST',
+  );
 
   return (
     <main className="flex w-full flex-col gap-8 md:gap-10">
@@ -161,6 +178,19 @@ const ApplicationContent = () => {
                 />
               </>
             )}
+          </>
+        )}
+
+        {category === 'MEMBERSHIP' && (
+          <>
+            <ParticipateSection
+              applicationList={membershipInProgressList}
+              emptyText="참여 중인 올인원패스가 없어요."
+            />
+            <CompleteSection
+              applicationList={membershipCompletedList}
+              emptyText="참여 완료한 올인원패스가 없어요."
+            />
           </>
         )}
 

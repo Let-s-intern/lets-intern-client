@@ -115,6 +115,7 @@ const ChallengeCTAButtons = ({
         challengeId={challengeId}
         challengeVersionId={challengeVersionId}
         onClose={() => setIsOpen(false)}
+        showMembershipBenefit
       />
     </>
   );

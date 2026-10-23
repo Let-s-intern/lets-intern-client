@@ -5,6 +5,7 @@ import {
   useProgramApplicationQueryKey,
 } from '@/api/application';
 import { useProgramQuery } from '@/api/program';
+import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import {
   getPaymentMethodLabel,
   paymentResultSearchParamsSchema,
@@ -25,7 +26,6 @@ import axios from '@/utils/axios';
 import { searchParamsToObject } from '@/utils/network';
 import { useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
-import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -255,6 +255,12 @@ const PaymentResultContent = () => {
                       title={`쿠폰할인`}
                       content={`-${(programApplicationData.couponPrice === -1 ? (programApplicationData.price || 0) - (programApplicationData.discount || 0) : programApplicationData.couponPrice)?.toLocaleString()}원`}
                     />
+                    {(programApplicationData.membershipDiscount ?? 0) > 0 && (
+                      <PaymentInfoRow
+                        title="패스 혜택 할인"
+                        content={`-${programApplicationData.membershipDiscount.toLocaleString()}원`}
+                      />
+                    )}
                   </div>
                   <hr className="border-neutral-85" />
                   <div className="flex w-full flex-col items-center justify-center">

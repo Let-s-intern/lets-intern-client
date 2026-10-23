@@ -455,6 +455,27 @@ input[type='number'] {
   }
 }
 
+/* 중앙 허브 쪽으로 안쪽으로 통통 찌르는 효과
+.landing-poke {
+  animation: landing-poke 1.1s ease-in-out infinite;
+}
+@keyframes landing-poke {
+  0%,
+  100% {
+    transform: translateX(var(--rest-x, 0px));
+  }
+  55% {
+    transform: translateX(calc(var(--rest-x, 0px) + var(--poke-x, 0px)));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing-poke {
+    animation: none;
+    transform: translateX(var(--rest-x, 0px));
+  }
+}
+*/
+
 /* 1:1 LIVE 멘토링 상세 히어로의 멘토 프로필 입구 — 몇 초에 한 번 오른쪽으로 톡톡(DetailHero) */
 /* 대부분은 가만히 있고 주기의 끝에서만 화살표 방향으로 두 번 민다. 회전은 요란해 보여 뺐다 */
 /* 마우스를 올리면 끈다 — 멈추면 밀린 채 서기 때문 */

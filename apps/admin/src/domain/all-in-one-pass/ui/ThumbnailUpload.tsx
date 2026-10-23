@@ -9,12 +9,19 @@ interface Props {
   onChange: (url: string) => void;
   /** 크기 등 오버라이드 (기본 aspect-[4/3] w-40) */
   className?: string;
+  /** 업로드 문구·alt 라벨 (기본 '썸네일'). 예) '후기 이미지' */
+  label?: string;
 }
 
 /**
- * 썸네일 업로드. 파일을 S3 로 업로드하고 반환된 URL 을 onChange 로 넘긴다.
+ * 썸네일/이미지 업로드. 파일을 S3 로 업로드하고 반환된 URL 을 onChange 로 넘긴다.
  */
-export default function ThumbnailUpload({ value, onChange, className }: Props) {
+export default function ThumbnailUpload({
+  value,
+  onChange,
+  className,
+  label = '썸네일',
+}: Props) {
   const [isUploading, setIsUploading] = useState(false);
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,7 +54,7 @@ export default function ThumbnailUpload({ value, onChange, className }: Props) {
         <>
           <img
             src={value}
-            alt="썸네일"
+            alt={label}
             className="max-h-full max-w-full object-contain"
           />
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-black/40 text-white opacity-0 transition-opacity group-hover:opacity-100">
@@ -57,7 +64,7 @@ export default function ThumbnailUpload({ value, onChange, className }: Props) {
       ) : (
         <div className="text-neutral-40 flex flex-col items-center gap-2">
           <FiUpload className="text-2xl" />
-          <span className="text-xxsmall12">썸네일 업로드</span>
+          <span className="text-xxsmall12">{label} 업로드</span>
         </div>
       )}
       <input

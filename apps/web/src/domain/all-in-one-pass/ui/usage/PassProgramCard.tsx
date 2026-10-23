@@ -18,6 +18,11 @@ export interface PassProgramCardData {
   programStatusType?: ProgramStatus | null;
   participation: PassParticipation;
   applicationId?: number | null;
+  /** 올인원패스 혜택으로 구매·참여한 프로그램이면 true */
+  isMembershipApplied?: boolean;
+  isDownloaded?: boolean;
+  contentUrl?: string | null;
+  contentFileUrl?: string | null;
 }
 
 const recruitmentPill = (item: PassProgramCardData): string | null => {
@@ -60,9 +65,16 @@ const PassProgramCard = ({ item, onClick }: Props) => {
       />
 
       <div className="flex flex-1 flex-col justify-between gap-2.5">
-        <h3 className="text-xsmall14 md:text-xsmall16 text-neutral-0 line-clamp-2 font-semibold">
-          {item.title}
-        </h3>
+        <div className="flex flex-col gap-1.5">
+          {item.isMembershipApplied && (
+            <span className="rounded-xxs text-xxsmall12 w-fit bg-[#edeffe] px-2 py-1 font-medium text-[#4A76FF]">
+              올인원패스 혜택
+            </span>
+          )}
+          <h3 className="text-xsmall14 md:text-xsmall16 text-neutral-0 line-clamp-2 font-semibold">
+            {item.title}
+          </h3>
+        </div>
 
         <div className="flex flex-col gap-2">
           {item.periodText && (

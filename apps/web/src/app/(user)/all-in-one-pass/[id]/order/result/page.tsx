@@ -2,9 +2,14 @@
 
 // 올인원패스 결제 결과 — 스토어+토스 쿼리로 신청 생성 POST 후 성공/실패 표시. postDone으로 중복 POST 방지.
 
+import { PostApplicationResult } from '@/api/application';
 import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import LoadingContainer from '@/common/loading/LoadingContainer';
-import { postMembershipApplication } from '@/domain/all-in-one-pass/api/purchase';
+import {
+  postMembershipApplication,
+  postMembershipExtension,
+} from '@/domain/all-in-one-pass/api/purchase';
+import dayjs from '@/lib/dayjs';
 import useMembershipOrderStore from '@/domain/all-in-one-pass/store/useMembershipOrderStore';
 import DescriptionBox from '@/domain/program/paymentSuccess/DescriptionBox';
 import PaymentInfoRow from '@/domain/program/paymentSuccess/PaymentInfoRow';
@@ -21,6 +26,7 @@ const MembershipOrderResult = () => {
   const searchParams = useSearchParams();
   const requested = useRef(false);
   const [state, setState] = useState<ResultState>('pending');
+  const [result, setResult] = useState<PostApplicationResult | null>(null);
 
   const { data, _hasHydrated } = useMembershipOrderStore();
 
@@ -43,19 +49,36 @@ const MembershipOrderResult = () => {
     const amount = searchParams.get('amount') ?? String(data.totalPrice ?? 0);
     const paymentKey = data.isFree ? null : searchParams.get('paymentKey');
 
-    if (!data.membershipPlanId || !orderId) {
+    const request =
+      data.orderType === 'EXTENSION'
+        ? data.applicationId && data.membershipOptionId && orderId
+          ? postMembershipExtension(data.applicationId, {
+              membershipOptionId: data.membershipOptionId,
+              couponCode: data.couponCode,
+              paymentKey,
+              orderId,
+              amount,
+            })
+          : null
+        : data.membershipPlanId && orderId
+          ? postMembershipApplication(membershipId, {
+              membershipPlanId: data.membershipPlanId,
+              orderId,
+              amount,
+              paymentKey,
+              couponCode: data.couponCode,
+              contactEmail: data.contactEmail,
+            })
+          : null;
+
+    if (!request) {
       setState('fail');
       return;
     }
 
-    postMembershipApplication(membershipId, {
-      membershipPlanId: data.membershipPlanId,
-      orderId,
-      amount,
-      paymentKey,
-      couponCode: data.couponCode,
-    })
-      .then(() => {
+    request
+      .then((res) => {
+        setResult(res.data.data);
         setState('success');
         const next = new URLSearchParams(searchParams.toString());
         next.set('postDone', 'true');
@@ -121,7 +144,33 @@ const MembershipOrderResult = () => {
                 />
               </div>
               <hr className="border-neutral-85" />
-              {/* 영수증·결제수단·결제일자: POST 빈 응답이라 미표시(BE tossInfo 추가 시). */}
+              {isSuccess && result?.tossInfo && (
+                <div className="flex w-full flex-col items-center justify-center">
+                  <PaymentInfoRow
+                    title="결제일자"
+                    content={dayjs(result.tossInfo.approvedAt).format(
+                      'YYYY.MM.DD(ddd) HH:mm',
+                    )}
+                  />
+                  <PaymentInfoRow
+                    title="결제수단"
+                    content={result.tossInfo.method ?? ''}
+                  />
+                  <div className="flex w-full items-center justify-start gap-x-2 px-3 py-2">
+                    <div className="text-neutral-40">영수증</div>
+                    <div className="text-neutral-0 flex grow items-center justify-end">
+                      <Link
+                        href={result.tossInfo.receipt?.url ?? '#'}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="border-neutral-60 flex items-center justify-center rounded-sm border bg-white px-3 py-2 text-sm font-medium"
+                      >
+                        영수증 보기
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              )}
               {isSuccess ? (
                 <Link
                   href="/mypage/application"

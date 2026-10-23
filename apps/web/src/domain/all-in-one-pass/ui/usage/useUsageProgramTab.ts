@@ -82,6 +82,7 @@ export const useUsageProgramTab = (
       ),
       participation: a.programStatusType === 'POST' ? 'DONE' : 'IN_PROGRESS',
       applicationId: a.id,
+      isMembershipApplied: a.isMembershipApplied ?? false,
     });
 
     return {

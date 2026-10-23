@@ -5,8 +5,7 @@ import HybridLink from '@/common/HybridLink';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import { CategoryChips } from '@letscareer/ui';
 import { useState } from 'react';
-import { useGetPassMaterials } from '../../api/materials';
-import type { PassMaterial } from '../../types';
+import { useGetPassLibrary, type LibraryItem } from '../../api/materials';
 
 const ALL = 'ALL';
 
@@ -29,12 +28,12 @@ const parseIntro = (introduction: string) => {
 };
 
 // 자료집 카드 1장. 카드 전체 클릭 = link 새 탭.
-const MaterialCard = ({ material }: { material: PassMaterial }) => {
-  const { summary, bullets } = parseIntro(material.introduction);
+const MaterialCard = ({ material }: { material: LibraryItem }) => {
+  const { summary, bullets } = parseIntro(material.introduction ?? '');
 
   return (
     <HybridLink
-      href={material.link}
+      href={material.link ?? '#'}
       target="_blank"
       rel="noopener noreferrer"
       className="border-neutral-80 group flex flex-col gap-3 rounded-md border p-4"
@@ -80,16 +79,18 @@ const MaterialCard = ({ material }: { material: PassMaterial }) => {
 
 const MaterialsView = ({ applicationId }: { applicationId: number }) => {
   const [selected, setSelected] = useState<string>(ALL);
-  const { data, isLoading, isError } = useGetPassMaterials(applicationId);
-  const materials = data ?? [];
+  const { data, isLoading, isError } = useGetPassLibrary(applicationId);
+  const typeList = data?.typeList ?? [];
+  const libraryList = data?.libraryList ?? [];
 
-  const types = Array.from(new Set(materials.map((m) => m.type)));
   const options = [
     { value: ALL, label: '전체' },
-    ...types.map((type) => ({ value: type, label: type })),
+    ...typeList.map((type) => ({ value: type, label: type })),
   ];
   const filtered =
-    selected === ALL ? materials : materials.filter((m) => m.type === selected);
+    selected === ALL
+      ? libraryList
+      : libraryList.filter((m) => m.type === selected);
 
   return (
     <div className="flex flex-col gap-5 md:gap-10">
@@ -116,7 +117,10 @@ const MaterialsView = ({ applicationId }: { applicationId: number }) => {
       ) : (
         <div className="flex flex-col gap-4 md:gap-5">
           {filtered.map((material) => (
-            <MaterialCard key={material.id} material={material} />
+            <MaterialCard
+              key={material.membershipBenefitId}
+              material={material}
+            />
           ))}
         </div>
       )}

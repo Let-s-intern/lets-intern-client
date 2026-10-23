@@ -26,6 +26,7 @@ const FORM: FormData = {
   vodPassPrice: 0,
   vodPassDurationDays: 0,
   vodPassMonths: 0,
+  membershipDiscount: 0,
 };
 
 const PAID_PARAMS = { orderId: 'order-1', paymentKey: 'pk_1', amount: 85000 };

@@ -70,12 +70,34 @@ const CreditDetailContent = () => {
     vodPass,
   } = useCredit(paymentId);
 
+  const isMembershipApplied =
+    paymentDetail.paymentInfo.isMembershipApplied ?? false;
+  // 패스 혜택 할인 = 정가 − 할인 − 쿠폰 − 최종결제 (결제 내역 합이 맞도록 역산)
+  const membershipDiscount = Math.max(
+    productAmount -
+      discountAmount -
+      (couponDiscountAmount ?? 0) -
+      (paymentDetail.paymentInfo.finalPrice ?? 0),
+    0,
+  );
+  // 0원 신청: totalPayment=판매가·실결제0 → 패스할인=판매가(노출). 차액결제: totalPayment=실결제 → 0(미노출).
+  const canceledMembershipDiscount = Math.max(
+    totalPayment - (paymentDetail.paymentInfo.finalPrice ?? 0),
+    0,
+  );
+
   const {
     data: userData,
     isLoading: userDataIsLoading,
     isError: userDataIsError,
   } = useUserQuery();
 
+  const isMembership = paymentDetail.programInfo.programType === 'MEMBERSHIP';
+  // 현재 멤버십 환불은 어드민 수동 처리: 이용기간 중이면 취소 대신 1:1 문의 안내(disabled)로 노출, 추후 개발 진행 예정
+  const isMembershipRefundable =
+    isMembership &&
+    !isCanceled &&
+    dayjs().isBefore(dayjs(paymentDetail.programInfo.endDate));
   // 환불할 수 없는 이용권은 버튼을 없애는 대신 이유를 알려준다
   const vodPassRefundBlockedReason =
     vodPass && !isCancelable && !isCanceled
@@ -243,6 +265,15 @@ const CreditDetailContent = () => {
                 content={totalPayment.toLocaleString() + '원'}
               />
             )}
+            {/* 패스 혜택 할인 — 취소 내역에선 판매가−실결제 기준(차액결제는 0이라 미노출) */}
+            {isCanceled &&
+              isMembershipApplied &&
+              canceledMembershipDiscount > 0 && (
+                <ReportCreditSubRow
+                  title="패스 혜택 할인"
+                  content={`-${canceledMembershipDiscount.toLocaleString()}원`}
+                />
+              )}
             {/* 환불 내역에서는 숨김 */}
             {!isCanceled && (
               <ReportCreditSubRow
@@ -265,6 +296,13 @@ const CreditDetailContent = () => {
                 content={`+${payment.additionalAmount.toLocaleString()}원`}
               />
             ))}
+            {/* 패스 혜택 할인 (올인원패스 적용 결제) */}
+            {!isCanceled && isMembershipApplied && membershipDiscount > 0 && (
+              <ReportCreditSubRow
+                title="패스 혜택 할인"
+                content={`-${membershipDiscount.toLocaleString()}원`}
+              />
+            )}
             {/* [환불된 내역] 환불 차감 금액 표시 */}
             {isCanceled && (
               <ReportCreditSubRow
@@ -348,12 +386,18 @@ const CreditDetailContent = () => {
             {vodPassRefundBlockedReason}
           </p>
         )}
-        {isCancelable ? (
+        {(isMembership ? isMembershipRefundable : isCancelable) ? (
           <button
-            className="bg-neutral-80 text-neutral-40 flex w-full items-center justify-center rounded-sm px-5 py-2.5 font-medium"
-            onClick={() => router.push(`/mypage/credit/${paymentId}/delete`)}
+            type="button"
+            disabled={isMembership}
+            className="bg-neutral-80 text-neutral-40 flex w-full items-center justify-center rounded-sm px-5 py-2.5 font-medium disabled:cursor-not-allowed"
+            onClick={
+              isMembership
+                ? undefined
+                : () => router.push(`/mypage/credit/${paymentId}/delete`)
+            }
           >
-            결제 취소하기
+            {isMembership ? '환불은 1:1 문의 부탁드립니다.' : '결제 취소하기'}
           </button>
         ) : (
           <MoreButton

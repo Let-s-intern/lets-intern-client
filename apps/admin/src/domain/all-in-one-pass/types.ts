@@ -28,7 +28,8 @@ export type CalendarEventType = 'GUERRILLA' | 'MILESTONE';
 /** 1.3 캘린더 관리 일정 한 개 (게릴라세션/마일스톤 수기 입력) */
 export interface PassCalendarEvent {
   id: string; // 폼 로컬 식별자
-  date: string | null; // 일정 날짜(ISO)
+  startDate: string | null; // 시작일(ISO)
+  endDate: string | null; // 종료일(ISO)
   type: CalendarEventType;
   title: string;
   url: string | null; // URL(선택)
@@ -73,7 +74,7 @@ export interface PassLandingManualBenefit {
 export interface PassLandingReview {
   id: string; // 폼 로컬 식별자
   source: string; // 출처(드롭다운)
-  resultTag: string; // 결과태그(드롭다운)
+  resultTags: string[]; // 결과태그(다중 선택)
   imageUrl: string; // width 고정 이미지
   summary: string; // 요약, 최대 70자
 }
@@ -223,23 +224,22 @@ export interface ActivePassParticipant {
   periods: PassParticipationPeriod[]; // [0]=최초, 이후 연장. 요약=첫 시작~마지막 종료
 }
 
-/** A-4 공통 질문 (하드코딩 상수, 모든 회차에 포함) */
 export interface RetrospectiveCommonQuestion {
   id: number;
   question: string;
+  answerGuide: string;
 }
 
-/**
- * A-4 회고 회차 한 개.
- *
- * 노출 시점·작성 가능 기간은 저장하지 않는다. 회차 번호와 유저의 패스 시작일로
- * 프론트에서 파생한다(회차 N = 패스 시작 +2N주에 2주간 작성 가능).
- */
 export interface RetrospectiveRound {
   id: number;
-  round: number; // 회차 번호
-  weeklyQuestion: string; // 주차별 질문(1개)
-  responseCount: number; // 응답 수
+  round: number;
+  weeklyQuestion: string;
+  answerGuide: string;
+  responseCount: number;
+  visiblePeriodType: string | null; // 노출 시점 단위
+  visiblePeriodValue: number | null; // 노출 시점 값(패스 시작일 + N)
+  periodType: string | null; // 작성 기간 단위 (INFINITY = 상시)
+  periodValue: number | null; // 작성 기간 값(노출 시작 + N)
 }
 
 /**
@@ -257,7 +257,7 @@ export interface RetrospectiveAnswer {
 /** A-5 회고 응답 한 건 */
 export interface RetrospectiveResponse {
   id: number;
-  submitterName: string; // 제출자 이름
-  submittedAt: string; // 제출일(ISO)
+  submitterName: string;
+  submittedAt: string;
   answers: RetrospectiveAnswer[];
 }

@@ -1,11 +1,4 @@
-import {
-  RefundMode,
-  RefundTarget,
-} from '@/domain/admin/program/program-user/ui/RefundModal';
-import {
-  resolveRefundableState,
-  resolveRefundLabel,
-} from '@/domain/admin/program/program-user/utils/refundState';
+import { resolveRefundLabel } from '@/domain/admin/program/program-user/utils/refundState';
 import { PassParticipant } from '@/domain/all-in-one-pass/types';
 import { periodKindLabel } from '@/domain/all-in-one-pass/util/periodKindLabel';
 import dayjs from '@/lib/dayjs';
@@ -24,16 +17,10 @@ export const appAmount = (p: PassParticipant) =>
 
 interface Props {
   apps: PassParticipant[];
-  onRefundClick: (target: RefundTarget, mode: RefundMode) => void;
-  refundTargetOf: (p: PassParticipant) => RefundTarget;
 }
 
 /** 참여자 건별(최초/연장) 내역 행들. 메인 테이블의 <tr> 로 직접 렌더해 컬럼을 공유한다. */
-export default function ParticipantDetailRows({
-  apps,
-  onRefundClick,
-  refundTargetOf,
-}: Props) {
+export default function ParticipantDetailRows({ apps }: Props) {
   return (
     <>
       <tr>
@@ -43,8 +30,9 @@ export default function ParticipantDetailRows({
         <td className={`${SUB_HEAD} ${BOLD_T}`}>결제일</td>
         <td className={`${SUB_HEAD} ${BOLD_T}`}>쿠폰명</td>
         <td className={`${SUB_HEAD} ${BOLD_T}`}>결제금액</td>
-        <td className={`${SUB_HEAD} ${BOLD_T}`}>환불여부</td>
-        <td className={`${SUB_HEAD} ${BOLD_T} ${BOLD_R}`}>관리</td>
+        <td className={`${SUB_HEAD} ${BOLD_T}`}>관리</td>
+        <td className={`${SUB_HEAD} ${BOLD_T} ${BOLD_R}`}>환불여부</td>
+        <td />
       </tr>
       {apps.map((p, index) => {
         const amount = appAmount(p);
@@ -53,11 +41,6 @@ export default function ParticipantDetailRows({
           isAdminRefunded: p.isAdminRefunded,
           finalPrice: p.finalPrice,
           originalPrice: p.originalPrice,
-        });
-        const refundable = resolveRefundableState({
-          isCanceled: p.isCanceled,
-          hasUser: !!p.name,
-          finalPrice: p.finalPrice,
         });
 
         const isLast = index === apps.length - 1;
@@ -89,7 +72,23 @@ export default function ParticipantDetailRows({
             <td className={`${SUB_CELL}${edge}`}>
               {amount.toLocaleString()}원
             </td>
+            {/* 멤버십 전용 환불 API 미구현 → 토스에서 직접 처리. BE 환불 나오면 아래 주석 복구.
             <td className={`${SUB_CELL}${edge}`}>
+              {refundable.canRefund ? (
+                <div className="flex justify-center gap-1">
+                  <button onClick={() => onRefundClick(refundTargetOf(p), 'full')}>환불</button>
+                  <button onClick={() => onRefundClick(refundTargetOf(p), 'partial')} disabled={!refundable.canPartialRefund}>부분환불</button>
+                </div>
+              ) : (
+                <span>{refundable.reason}</span>
+              )}
+            </td> */}
+            <td className={`${SUB_CELL}${edge}`}>
+              <span className="text-xxsmall12 text-neutral-45">
+                토스에서 환불 후 <strong>권한 회수</strong>
+              </span>
+            </td>
+            <td className={`${SUB_CELL} ${BOLD_R}${edge}`}>
               {refundLabel.isAdmin ? (
                 <span className="font-bold text-red-600">
                   {refundLabel.text}
@@ -100,36 +99,7 @@ export default function ParticipantDetailRows({
                 <span className="text-gray-300">{refundLabel.text}</span>
               )}
             </td>
-            <td className={`${SUB_CELL} ${BOLD_R}${edge}`}>
-              {refundable.canRefund ? (
-                <div className="flex justify-center gap-1">
-                  <button
-                    type="button"
-                    className="whitespace-nowrap rounded border border-red-500 px-2 py-1 text-xs text-red-600 hover:bg-red-50"
-                    onClick={() => onRefundClick(refundTargetOf(p), 'full')}
-                  >
-                    환불
-                  </button>
-                  <button
-                    type="button"
-                    className="whitespace-nowrap rounded border border-red-500 px-2 py-1 text-xs text-red-600 hover:bg-red-50 disabled:border-neutral-300 disabled:text-neutral-400 disabled:hover:bg-transparent"
-                    onClick={() => onRefundClick(refundTargetOf(p), 'partial')}
-                    disabled={!refundable.canPartialRefund}
-                    title={
-                      refundable.canPartialRefund
-                        ? undefined
-                        : '실결제액이 0원이라 나눌 금액이 없습니다.'
-                    }
-                  >
-                    부분환불
-                  </button>
-                </div>
-              ) : (
-                <span className="text-xs text-gray-400">
-                  {refundable.reason}
-                </span>
-              )}
-            </td>
+            <td />
           </tr>
         );
       })}

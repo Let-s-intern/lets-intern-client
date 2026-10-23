@@ -35,6 +35,7 @@ export const couponProgramTypeToText: Record<string, string> = {
   REPORT: '서류 진단',
   GUIDEBOOK: '가이드북',
   LIVE_MENTORING: '1:1 LIVE 멘토링',
+  MEMBERSHIP: '올인원패스',
 };
 export const newProgramFeeTypeToText: Record<string, string> = {
   FREE: '무료',

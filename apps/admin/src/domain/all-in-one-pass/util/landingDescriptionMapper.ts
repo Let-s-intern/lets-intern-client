@@ -4,7 +4,12 @@ import {
   PassLandingConfig,
   PassLandingReview,
 } from '@/domain/all-in-one-pass/types';
-import { DEFAULT_BENEFIT_ICON_KEY } from '@/domain/all-in-one-pass/util/landingOptions';
+import {
+  createEmptyReview,
+  DEFAULT_BENEFIT_ICON_KEY,
+  getAdditionalBenefitSlots,
+  isReviewEmpty,
+} from '@/domain/all-in-one-pass/util/landingOptions';
 
 /**
  * 랜딩 페이지용 `landingDescription`(JSON) ↔ 폼 PassLandingConfig 변환.
@@ -35,7 +40,8 @@ export const createEmptyLandingConfig = (): PassLandingConfig => ({
   },
   benefitExtras: {},
   manualBenefits: [],
-  reviews: [],
+  // 최소 3개 시작 — 생성 폼 기본으로 빈 후기 3장 노출
+  reviews: [createEmptyReview(), createEmptyReview(), createEmptyReview()],
   finalCta: { title: '', description: '' },
 });
 
@@ -94,13 +100,16 @@ export const toLandingConfig = (
     },
     benefitExtras: config.benefitExtras,
     manualBenefits: config.manualBenefits,
-    reviews: (parsed.reviews ?? []).map((r) => ({
-      id: crypto.randomUUID(),
-      source: r.source ?? '',
-      resultTag: r.resultTag ?? '',
-      imageUrl: r.imageUrl ?? '',
-      summary: r.summary ?? '',
-    })),
+    // 저장된 후기가 있으면 그대로, 없으면 기본 3개(최소 3개 시작)
+    reviews: parsed.reviews?.length
+      ? parsed.reviews.map((r) => ({
+          id: crypto.randomUUID(),
+          source: r.source ?? '',
+          resultTags: r.resultTags ?? [],
+          imageUrl: r.imageUrl ?? '',
+          summary: r.summary ?? '',
+        }))
+      : [createEmptyReview(), createEmptyReview(), createEmptyReview()],
     finalCta: {
       title: parsed.finalCta?.title ?? '',
       description: parsed.finalCta?.description ?? '',
@@ -121,11 +130,19 @@ export const serializeLandingDescription = (input: PassFormInput): string => {
     description: b.description,
     iconKey: b.iconKey,
   }));
+  // 자동 포함 혜택이 차지한 뒤 남는 슬롯만큼만 저장 (외부링크 우선, 그다음 수동)
+  const additionalBenefits = [...linkBenefits, ...manualBenefits].slice(
+    0,
+    getAdditionalBenefitSlots(input.plans),
+  );
   return JSON.stringify({
     hero: landing.hero,
     lexical: landing.lexical,
-    additionalBenefits: [...linkBenefits, ...manualBenefits],
-    reviews: landing.reviews.map(({ id: _id, ...rest }) => rest),
+    additionalBenefits,
+    // 빈 후기는 저장 안 함 — 전부 비어 있으면 reviews:[] 로 랜딩 후기 섹션 미노출
+    reviews: landing.reviews
+      .filter((r) => !isReviewEmpty(r))
+      .map(({ id: _id, ...rest }) => rest),
     finalCta: landing.finalCta,
   } satisfies LandingDescriptionBlob);
 };

@@ -9,17 +9,19 @@ import NewApplicationCard from '../../ui/card/NewApplicationCard';
 interface ParticipateSectionProps {
   applicationList: MypageApplication[];
   /** 같은 구간의 1대1 라이브 멘토링. 프로그램과 한 목록으로 보인다(LC-3301). */
-  mentoringList: MyLiveMentoringApplication[];
-  onMentoringQuestionClick: (applicationId: number) => void;
+  mentoringList?: MyLiveMentoringApplication[];
+  onMentoringQuestionClick?: (applicationId: number) => void;
   /** 버전 `변경` 을 누른 신청 id. 모달은 ApplicationContent 가 연다. */
   onVersionChangeClick?: (applicationId: number) => void;
+  emptyText?: string;
 }
 
 const ParticipateSection = ({
   applicationList,
-  mentoringList,
-  onMentoringQuestionClick,
+  mentoringList = [],
+  onMentoringQuestionClick = () => {},
   onVersionChangeClick,
+  emptyText = '참여 중인 프로그램이 아직 없어요.',
 }: ParticipateSectionProps) => {
   const [showMore, setShowMore] = useState(false);
   const isDesktop = useMediaQuery('(min-width:768px)');
@@ -39,7 +41,7 @@ const ParticipateSection = ({
       {totalCount === 0 ? (
         <div className="flex w-full flex-col items-center gap-4 py-14">
           <p className="text-xsmall14 text-neutral-20 font-normal">
-            참여 중인 프로그램이 아직 없어요.
+            {emptyText}
           </p>
         </div>
       ) : (

@@ -21,6 +21,7 @@ function makeItem(overrides: Partial<CareerGrowthItem> = {}): CareerGrowthItem {
     isDownloaded: false,
     chatLink: '',
     chatPassword: '',
+    isMembershipApplied: false,
     ...overrides,
   };
 }

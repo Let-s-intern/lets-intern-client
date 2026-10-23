@@ -2,20 +2,28 @@
 
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import useAuthStore from '@/store/useAuthStore';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useGetMyMembershipApplication } from '../../api/dashboard';
 import AllInOnePassNavBar from './AllInOnePassNavBar';
 
 /**
- * 올인원패스 대시보드 공통 셸. 챌린지 ChallengeLayout 의 큰 골격(사이드바 + 본문)을 따른다.
- *
- * 접근 가드: 로그인 게이트만 실제로 걸고, 본인(구매자) 소유 검증은 API 대기.
- * // TODO(BE): 소유 검증 API 나오면 챌린지 useGetChallengeValideUser 자리처럼 훅을 끼워
- * 비구매자는 리다이렉트한다.
+ * 올인원패스 대시보드 공통 셸 + 접근 가드(로그인 + 본인 신청 소유: 403/404면 홈으로).
+ * GET /membership-application/{id} 로 본인 소유 검증 + URL [id]와 membershipId 일치 확인.
  */
 const AllInOnePassLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
+  const params = useParams<{ id: string; applicationId: string }>();
+  const membershipId = Number(params.id);
+  const applicationId = Number(params.applicationId);
+  const isValidRoute =
+    Number.isInteger(membershipId) &&
+    membershipId > 0 &&
+    Number.isInteger(applicationId) &&
+    applicationId > 0;
   const { isLoggedIn, isInitialized } = useAuthStore();
+  const { data, isError, isLoading } =
+    useGetMyMembershipApplication(applicationId);
   const [redirecting, setRedirecting] = useState(true);
 
   useEffect(() => {
@@ -29,10 +37,38 @@ const AllInOnePassLayout = ({ children }: { children: React.ReactNode }) => {
       return;
     }
 
-    setRedirecting(false);
-  }, [isInitialized, isLoggedIn, router]);
+    if (!isValidRoute) {
+      router.replace('/');
+      return;
+    }
 
-  if (redirecting) {
+    if (isLoading) return;
+
+    if (isError) {
+      alert('접근 권한이 없습니다.');
+      router.push('/');
+      return;
+    }
+
+    // 소유했지만 URL의 [id](membershipId)와 짝이 안 맞으면 차단
+    if (data && data.membershipId !== membershipId) {
+      router.replace('/');
+      return;
+    }
+
+    setRedirecting(false);
+  }, [
+    isInitialized,
+    isLoggedIn,
+    isValidRoute,
+    isLoading,
+    isError,
+    data,
+    membershipId,
+    router,
+  ]);
+
+  if (redirecting || isLoading) {
     return <LoadingContainer />;
   }
 

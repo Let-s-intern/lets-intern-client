@@ -57,6 +57,8 @@ export interface CareerGrowthCardConfig {
     label: string;
     onClick: () => void;
   };
+  /** 올인원패스 혜택으로 구매·참여한 프로그램이면 true (카드에 뱃지 노출) */
+  isMembershipApplied?: boolean;
 }
 
 /** 프로그램 탭용 카드 */
@@ -187,6 +189,24 @@ export const toGuidebookCardConfig = (
   };
 };
 
+export const toMembershipCardConfig = (
+  item: CareerGrowthItem,
+): CareerGrowthCardConfig => ({
+  id: item.id,
+  programId: item.programId,
+  thumbnail: item.thumbnail,
+  title: item.title,
+  description: item.description,
+  statusLabel: item.status,
+  categoryLabel: item.programType,
+  dateLabel: '이용기간',
+  dateText: `${item.startDate} ~ ${item.endDate}`,
+  actionButton: {
+    label: '대시보드 입장',
+    href: `/all-in-one-pass/${item.programId}/${item.id}`,
+  },
+});
+
 const MAGNET_TYPE_LABEL: Record<string, string> = {
   MATERIAL: '직무 자료집',
   VOD: '무료 VOD',
@@ -244,15 +264,26 @@ export const toCareerGrowthCardConfigs = (
   items: CareerGrowthItem[],
   category: ApplicationCategory,
 ): CareerGrowthCardConfig[] => {
+  const withBadge = (
+    config: CareerGrowthCardConfig,
+    item: CareerGrowthItem,
+  ): CareerGrowthCardConfig => ({
+    ...config,
+    isMembershipApplied: item.isMembershipApplied,
+  });
+
   // 멘토링 칩은 프로그램 칩에서 멘토링만 거른 목록이라 같은 카드를 쓴다.
   if (category === 'PROGRAM' || category === 'MENTORING') {
-    return items.map((p) => toProgramCardConfig(p));
+    return items.map((p) => withBadge(toProgramCardConfig(p), p));
   }
   if (category === 'GUIDEBOOK') {
-    return items.map((p) => toGuidebookCardConfig(p));
+    return items.map((p) => withBadge(toGuidebookCardConfig(p), p));
   }
   if (category === 'VOD') {
-    return items.map((p) => toVodCardConfig(p));
+    return items.map((p) => withBadge(toVodCardConfig(p), p));
+  }
+  if (category === 'MEMBERSHIP') {
+    return items.map((p) => toMembershipCardConfig(p));
   }
   return [];
 };

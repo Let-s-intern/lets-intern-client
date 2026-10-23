@@ -13,7 +13,7 @@ function PriceView(props: Props) {
   const hasDiscount = discount > 0;
 
   return (
-    <div className="flex shrink-0 flex-col items-end">
+    <div className="flex shrink-0 flex-col items-end gap-0.5">
       {hasDiscount && (
         <span className="text-xxsmall12 inline-flex gap-1 font-medium leading-none">
           <span className="text-system-error/90">{percent}%</span>

@@ -58,9 +58,23 @@ export interface CreateMembershipApplicationBody {
   paymentKey?: string | null;
   orderId: string;
   amount: string;
+  contactEmail?: string | null;
 }
 
 export const postMembershipApplication = (
   membershipId: number,
   body: CreateMembershipApplicationBody,
 ) => axios.post(`/membership-application/${membershipId}`, body);
+
+export interface CreateMembershipExtensionBody {
+  membershipOptionId: number;
+  couponCode?: string | null;
+  paymentKey?: string | null;
+  orderId: string;
+  amount: string;
+}
+
+export const postMembershipExtension = (
+  applicationId: number,
+  body: CreateMembershipExtensionBody,
+) => axios.post(`/membership-application/${applicationId}/extension`, body);
