@@ -1,5 +1,12 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+
+const get = vi.fn();
+
+vi.mock('@/utils/axios', () => ({
+  default: { get: (...args: unknown[]) => get(...args) },
+}));
 
 import CareerEditDialog, { type CareerEditValues } from '../CareerEditDialog';
 
@@ -12,18 +19,21 @@ const initialValues: CareerEditValues = {
   employmentType: '정규직',
   startDate: '2020-01',
   endDate: '',
+  logoImgUrl: 'https://cdn.test/old.png',
   isRepresentative: false,
 };
 
 const renderDialog = (values = initialValues) => {
   const onSubmit = vi.fn();
   render(
-    <CareerEditDialog
-      initialValues={values}
-      isSaving={false}
-      onClose={vi.fn()}
-      onSubmit={onSubmit}
-    />,
+    <QueryClientProvider client={new QueryClient()}>
+      <CareerEditDialog
+        initialValues={values}
+        isSaving={false}
+        onClose={vi.fn()}
+        onSubmit={onSubmit}
+      />
+    </QueryClientProvider>,
   );
   return onSubmit;
 };
@@ -79,5 +89,41 @@ describe('CareerEditDialog', () => {
     const checkbox = screen.getByLabelText(/대표 경력으로 설정/);
     expect(checkbox).toBeChecked();
     expect(checkbox).toBeDisabled();
+  });
+});
+
+describe('CareerEditDialog 경력 로고 (LC-3499)', () => {
+  it('라이브러리에서 고른 로고 주소를 넘긴다', async () => {
+    get.mockResolvedValue({
+      data: {
+        data: {
+          companyLogoList: [
+            { id: 3, name: '네이버', imageUrl: 'https://cdn.test/naver.png' },
+          ],
+        },
+      },
+    });
+    const onSubmit = renderDialog();
+    fireEvent.click(
+      screen.getByRole('button', { name: '라이브러리에서 선택' }),
+    );
+    fireEvent.click(await screen.findByRole('button', { name: /네이버/ }));
+    fireEvent.click(screen.getByRole('button', { name: '선택' }));
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
+
+    expect(onSubmit.mock.lastCall?.[0].logoImgUrl).toBe(
+      'https://cdn.test/naver.png',
+    );
+  });
+
+  it('로고를 해제하면 빈 문자열로 넘긴다', () => {
+    const onSubmit = renderDialog();
+    fireEvent.click(screen.getByRole('button', { name: '로고 해제' }));
+    expect(
+      screen.queryByRole('button', { name: '로고 해제' }),
+    ).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
+
+    expect(onSubmit.mock.lastCall?.[0].logoImgUrl).toBe('');
   });
 });

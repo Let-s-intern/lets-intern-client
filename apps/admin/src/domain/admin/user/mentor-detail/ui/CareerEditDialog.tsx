@@ -13,6 +13,8 @@ import { useState } from 'react';
 
 import { employeeTypeSchema } from '@/api/career/careerSchema';
 
+import CompanyLogoPickerDialog from './CompanyLogoPickerDialog';
+
 export interface CareerEditValues {
   company: string;
   job: string;
@@ -24,6 +26,8 @@ export interface CareerEditValues {
   startDate: string;
   /** `YYYY-MM`. 비어 있으면 재직 중 */
   endDate: string;
+  /** 경력 로고 주소. 빈 문자열이면 로고 없음 */
+  logoImgUrl: string;
   isRepresentative: boolean;
 }
 
@@ -50,6 +54,7 @@ export default function CareerEditDialog({
   onSubmit,
 }: Props) {
   const [values, setValues] = useState(initialValues);
+  const [isLogoPickerOpen, setIsLogoPickerOpen] = useState(false);
 
   const set = (patch: Partial<CareerEditValues>) =>
     setValues((prev) => ({ ...prev, ...patch }));
@@ -144,6 +149,36 @@ export default function CareerEditDialog({
             onChange={(e) => set({ endDate: e.target.value })}
           />
         </div>
+        <div className="mt-4 flex items-center gap-3">
+          <span className="text-xsmall14 text-neutral-30 font-medium">
+            경력 로고
+          </span>
+          <div className="border-neutral-80 flex h-10 w-10 items-center justify-center overflow-hidden rounded border">
+            {values.logoImgUrl ? (
+              <img
+                src={values.logoImgUrl}
+                alt="경력 로고"
+                className="h-full w-full object-contain"
+              />
+            ) : null}
+          </div>
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={() => setIsLogoPickerOpen(true)}
+          >
+            라이브러리에서 선택
+          </Button>
+          {values.logoImgUrl ? (
+            <Button
+              size="small"
+              color="inherit"
+              onClick={() => set({ logoImgUrl: '' })}
+            >
+              로고 해제
+            </Button>
+          ) : null}
+        </div>
         <FormControlLabel
           className="mt-4"
           control={
@@ -169,6 +204,15 @@ export default function CareerEditDialog({
           {isSaving ? '저장 중...' : '저장'}
         </Button>
       </DialogActions>
+      {isLogoPickerOpen ? (
+        <CompanyLogoPickerDialog
+          onClose={() => setIsLogoPickerOpen(false)}
+          onSelect={(logoImgUrl) => {
+            set({ logoImgUrl });
+            setIsLogoPickerOpen(false);
+          }}
+        />
+      ) : null}
     </Dialog>
   );
 }

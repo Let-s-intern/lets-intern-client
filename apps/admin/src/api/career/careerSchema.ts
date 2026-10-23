@@ -35,6 +35,8 @@ export const userCareerSchema = z.object({
   department: z.string().nullable().optional(),
   isAddedByAdmin: z.boolean().nullable().optional(),
   isRepresentative: z.boolean().nullable().optional(),
+  /** 경력 줄 앞에 보이는 회사 로고(LC-3499). 회사 로고 라이브러리에서 고른 주소를 복사해 둔다 */
+  logoImgUrl: z.string().nullable().optional(),
 });
 
 export const userCareerListSchema = z.object({

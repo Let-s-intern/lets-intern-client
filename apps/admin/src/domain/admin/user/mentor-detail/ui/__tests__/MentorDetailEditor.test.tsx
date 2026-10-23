@@ -292,6 +292,7 @@ describe('MentorDetailEditor 경력 수정·대표 지정', () => {
       employmentType: '계약직',
       startDate: '2019-03',
       endDate: '2021-12',
+      logoImgUrl: '',
     });
     // 대표 체크를 하지 않았으면 대표 지정은 부르지 않는다
     expect(patch).toHaveBeenCalledTimes(1);
@@ -309,5 +310,56 @@ describe('MentorDetailEditor 경력 수정·대표 지정', () => {
         '/admin/user-career/user/7/12/representative',
       ),
     );
+  });
+});
+
+describe('MentorDetailEditor 대표 로고 라이브러리 선택 (LC-3499)', () => {
+  beforeEach(() => {
+    getV2.mockResolvedValue({ data: { data: userDetail } });
+    get.mockImplementation((url: string) => {
+      if (url === '/admin/company-logo')
+        return Promise.resolve({
+          data: {
+            data: {
+              companyLogoList: [
+                {
+                  id: 3,
+                  name: '네이버',
+                  imageUrl: 'https://cdn.test/naver.png',
+                },
+              ],
+            },
+          },
+        });
+      if (url === '/admin/mentor-hash-tag')
+        return Promise.resolve({
+          data: { data: { mentorHashTagList: hashTagList } },
+        });
+      return Promise.resolve({ data: { data: [] } });
+    });
+    patch.mockResolvedValue({});
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('라이브러리에서 고른 로고를 corpImgUrl 로 저장한다', async () => {
+    renderEditor();
+    fireEvent.click(
+      await screen.findByRole('button', { name: '라이브러리에서 선택' }),
+    );
+    fireEvent.click(await screen.findByRole('button', { name: /네이버/ }));
+    fireEvent.click(screen.getByRole('button', { name: '선택' }));
+    expect(screen.getByAltText('로고')).toHaveAttribute(
+      'src',
+      'https://cdn.test/naver.png',
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
+    await waitFor(() => expect(patch).toHaveBeenCalled());
+    expect(lastPatchBody()).toMatchObject({
+      corpImgUrl: 'https://cdn.test/naver.png',
+    });
   });
 });

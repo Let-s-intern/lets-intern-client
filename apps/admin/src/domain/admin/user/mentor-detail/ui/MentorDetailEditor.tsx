@@ -24,6 +24,7 @@ import { DEFAULT_CAREER } from '@/common/career/constants';
 import CareerEditDialog, {
   type CareerEditValues,
 } from '@/domain/admin/user/mentor-detail/ui/CareerEditDialog';
+import CompanyLogoPickerDialog from '@/domain/admin/user/mentor-detail/ui/CompanyLogoPickerDialog';
 import MentorDescriptionField from '@/domain/admin/user/mentor-detail/ui/MentorDescriptionField';
 import ProfileImageUploadModal from '@/domain/admin/user/mentor-detail/ui/ProfileImageUploadModal';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
@@ -71,6 +72,7 @@ interface LocalCareer {
   department: string;
   isAddedByAdmin: boolean;
   isRepresentative: boolean;
+  logoImgUrl: string;
 }
 
 interface Props {
@@ -155,6 +157,7 @@ export default function MentorDetailEditor({ mentorId }: Props) {
           department: c.department ?? '',
           isAddedByAdmin: c.isAddedByAdmin ?? false,
           isRepresentative: c.isRepresentative ?? false,
+          logoImgUrl: c.logoImgUrl ?? '',
         }))
         .sort((a, b) => b.startDate.localeCompare(a.startDate)),
     [careerData],
@@ -281,6 +284,8 @@ export default function MentorDetailEditor({ mentorId }: Props) {
       startDate: values.startDate,
       // 서버는 null 이면 기존 값을 유지한다. 재직 중으로 되돌리는 수정은 아직 안 된다
       endDate: values.endDate || null,
+      // 로고 해제는 빈 문자열로 보낸다(null 은 기존 값 유지로 읽힐 수 있다)
+      logoImgUrl: values.logoImgUrl,
     };
     const formData = new FormData();
     formData.append(
@@ -304,6 +309,7 @@ export default function MentorDetailEditor({ mentorId }: Props) {
 
   // 멘토 앱과 같은 블러·영역 선택 모달로 올린다. 업로드만 하고 반영은 아래 저장 버튼이 한다
   const [isProfileUploadOpen, setIsProfileUploadOpen] = useState(false);
+  const [isLogoPickerOpen, setIsLogoPickerOpen] = useState(false);
 
   const handleCorpImageUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -405,6 +411,24 @@ export default function MentorDetailEditor({ mentorId }: Props) {
                 className="hidden"
               />
             </label>
+            <div className="mt-2">
+              <Button
+                variant="outlined"
+                size="small"
+                onClick={() => setIsLogoPickerOpen(true)}
+              >
+                라이브러리에서 선택
+              </Button>
+            </div>
+            {isLogoPickerOpen ? (
+              <CompanyLogoPickerDialog
+                onClose={() => setIsLogoPickerOpen(false)}
+                onSelect={(corpImgUrl) => {
+                  setForm((prev) => ({ ...prev, corpImgUrl }));
+                  setIsLogoPickerOpen(false);
+                }}
+              />
+            ) : null}
           </div>
         </div>
 
@@ -582,6 +606,7 @@ export default function MentorDetailEditor({ mentorId }: Props) {
                 employmentType: editingCareer.employmentType,
                 startDate: toYearMonth(editingCareer.startDate),
                 endDate: toYearMonth(editingCareer.endDate),
+                logoImgUrl: editingCareer.logoImgUrl,
                 isRepresentative: editingCareer.isRepresentative,
               }}
               isSaving={patchCareer.isPending}
@@ -606,7 +631,14 @@ export default function MentorDetailEditor({ mentorId }: Props) {
                     className="border-neutral-80 flex w-full flex-col gap-1 rounded border p-4"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-xsmall14 text-neutral-0">
+                      <span className="text-xsmall14 text-neutral-0 flex items-center gap-2">
+                        {career.logoImgUrl ? (
+                          <img
+                            src={career.logoImgUrl}
+                            alt="경력 로고"
+                            className="h-6 w-6 rounded object-contain"
+                          />
+                        ) : null}
                         {career.job || '-'}
                       </span>
                       {isDeletable ? (
