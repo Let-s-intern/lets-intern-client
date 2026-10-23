@@ -219,35 +219,24 @@ export interface PassMaterial {
 
 // ─── U-4 회고록 ───
 
-/** 질문 기간 타입 (BE MembershipOrdinalQuestionPeriodType). INFINITY = 무기한(상시). */
-export type PassQuestionPeriodType =
-  | 'YEAR'
-  | 'MONTH'
-  | 'WEEK'
-  | 'DAY'
-  | 'INFINITY';
-
-/** 회고 질문 1개 (질문 + 답변 가이드=placeholder). */
+/** 회고 질문 1개 (BE questions[]) */
 export interface RetroQuestion {
-  id: number;
+  membershipQuestionId: number;
   question: string;
   answerGuide: string;
+  membershipReviewId: number | null;
+  review: string | null;
 }
 
-/**
- * 회고 회차 1건 (BE MembershipOrdinalQuestion 대응). 날짜는 저장 안 하고 visiblePeriod(노출)·
- * period(작성기간) config + 패스 시작일로 FE 계산. periodType === 'INFINITY' = 마감 없음(상시 = 마무리).
- * 공통질문은 BE MembershipCommonQuestion (여기선 COMMON_QUESTIONS mock).
- * // TODO(BE): 유저 조회 API 나오면 api/retrospectives queryFn 교체. 응답 저장 뮤테이션 미구현(mock).
- */
+/** 회고 회차 1건 (BE MembershipOrdinal). 상태·일정은 BE 계산값. visible=false면 questions=[]. */
 export interface PassRetrospectiveRound {
-  id: number;
+  id: number; // ordinalId
   th: number;
-  weeklyQuestion: RetroQuestion;
-  visiblePeriodType: PassQuestionPeriodType;
-  visiblePeriodValue: number;
-  periodType: PassQuestionPeriodType;
-  periodValue: number;
-  /** 유저 제출 여부. // TODO(BE): 유저 응답 조회에서 회차별로 내려줌. */
-  isSubmitted: boolean;
+  visibleAt: string | null;
+  submissionDeadline: string | null;
+  visible: boolean;
+  writable: boolean;
+  submitted: boolean;
+  adminFeedback: string | null;
+  questions: RetroQuestion[];
 }

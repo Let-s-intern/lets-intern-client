@@ -1,8 +1,7 @@
-// U-4 회고록. 회차 가로 목록(챌린지 미션 스타일) + 선택 회차 작성폼. 날짜/상태는 FE 파생.
+// 회고록. 회차 가로 목록 + 선택 회차 폼 (상태/일정은 BE 값).
 'use client';
 
 import LoadingContainer from '@/common/loading/LoadingContainer';
-import dayjs from '@/lib/dayjs';
 import clsx from 'clsx';
 import { useMemo, useState } from 'react';
 import { useGetPassRetrospectives } from '../../api/retrospectives';
@@ -11,20 +10,18 @@ import RetroForm from './RetroForm';
 import {
   getRetroSchedule,
   getRetroStatus,
-  isRetroWritable,
   isWrapUpRound,
   type RetroSchedule,
   type RetroStatus,
 } from './retroSchedule';
 
 type ComputedRound = PassRetrospectiveRound & {
-  isWrapUp: boolean; // 파생: periodType === 'INFINITY'(상시)
+  isWrapUp: boolean;
   schedule: RetroSchedule;
   status: RetroStatus;
-  isWritable: boolean;
 };
 
-// 챌린지 미션 카드와 동일 규격. 상태 → 아이콘/라벨/색 (missionSubmitToBadge 패턴).
+// 상태별 카드 아이콘/라벨/색
 const STATUS_META: Record<
   RetroStatus,
   { icon: string; text: string; style: string }
@@ -90,7 +87,9 @@ const RoundCard = ({
             item.status === 'OPEN' && 'text-primary',
           )}
         >
-          {item.schedule.openAt.format('MM.DD(ddd)')}
+          {item.schedule.openAt
+            ? item.schedule.openAt.format('MM.DD(ddd)')
+            : '-'}
           <br />~{' '}
           {item.schedule.dueAt
             ? item.schedule.dueAt.format('MM.DD(ddd)')
@@ -103,25 +102,21 @@ const RoundCard = ({
 
 interface Props {
   applicationId: number;
-  passStart: string;
 }
 
-const RetrospectivesView = ({ applicationId, passStart }: Props) => {
+const RetrospectivesView = ({ applicationId }: Props) => {
   const { data, isLoading, isError } = useGetPassRetrospectives(applicationId);
-  const now = useMemo(() => dayjs(), []);
 
-  const rounds = useMemo<ComputedRound[]>(() => {
-    return (data ?? []).map((r) => {
-      const schedule = getRetroSchedule(r, passStart);
-      return {
+  const rounds = useMemo<ComputedRound[]>(
+    () =>
+      (data ?? []).map((r) => ({
         ...r,
         isWrapUp: isWrapUpRound(r),
-        schedule,
-        status: getRetroStatus(schedule, r.isSubmitted, now),
-        isWritable: isRetroWritable(schedule, now),
-      };
-    });
-  }, [data, passStart, now]);
+        schedule: getRetroSchedule(r),
+        status: getRetroStatus(r),
+      })),
+    [data],
+  );
 
   const openRound = rounds.find((r) => r.status === 'OPEN');
   const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -169,11 +164,11 @@ const RetrospectivesView = ({ applicationId, passStart }: Props) => {
       </div>
       {selected && (
         <RetroForm
+          applicationId={applicationId}
           round={selected}
           isWrapUp={selected.isWrapUp}
           schedule={selected.schedule}
           status={selected.status}
-          isWritable={selected.isWritable}
         />
       )}
     </div>

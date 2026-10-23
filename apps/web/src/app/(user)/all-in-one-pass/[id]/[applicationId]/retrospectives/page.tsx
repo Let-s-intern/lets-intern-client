@@ -18,10 +18,7 @@ export default function AllInOnePassRetrospectivesPage() {
         </h1>
       </header>
       {base?.startDate && (
-        <RetrospectivesView
-          applicationId={Number(params.applicationId)}
-          passStart={base.startDate}
-        />
+        <RetrospectivesView applicationId={Number(params.applicationId)} />
       )}
     </main>
   );
