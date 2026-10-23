@@ -1,17 +1,20 @@
 'use client';
 
-// 올인원패스 결제정보 입력 — 프로그램 /payment-input 섹션 재사용, 멤버십 전용 스토어. 쿠폰 보류.
+// 올인원패스 결제정보 입력 — 프로그램 /payment-input 섹션 재사용, 멤버십 전용 스토어.
 
+import { useMyCoupons } from '@/api/coupon/coupon';
 import { Duration } from '@/common/Duration';
 import BackHeader from '@/common/header/BackHeader';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import useMembershipOrderStore from '@/domain/all-in-one-pass/store/useMembershipOrderStore';
 import OrderProgramInfo from '@/domain/program/OrderProgramInfo';
+import CouponSection from '@/domain/program/program-detail/apply/section/CouponSection';
 import PaymentSubmitSection from '@/domain/program/program-detail/apply/section/PaymentSubmitSection';
 import PriceSection from '@/domain/program/program-detail/apply/section/PriceSection';
 import UserInputSection from '@/domain/program/program-detail/apply/section/UserInputSection';
 import dayjs from '@/lib/dayjs';
 import useAuthStore from '@/store/useAuthStore';
+import { ICouponForm } from '@/types/interface';
 import { isValidEmail } from '@/utils/valid';
 import { NoticeDialog } from '@letscareer/ui';
 import { useParams, useRouter } from 'next/navigation';
@@ -40,6 +43,32 @@ export default function MembershipPaymentInputPage() {
     contactEmail: data.contactEmail ?? '',
     question: '',
     initialized: true,
+  };
+
+  const { data: myCoupons = [] } = useMyCoupons('MEMBERSHIP');
+  const [coupon, setCouponState] = useState<ICouponForm>({
+    id: null,
+    price: 0,
+  });
+  const basePrice = data.price ?? 0;
+  const baseDiscount = data.discount ?? 0;
+  const originalTotal = Math.max(basePrice - baseDiscount, 0);
+
+  // CouponSection 은 {id, price} 만 주므로 내 쿠폰 목록에서 code 를 역매핑해 store 에 저장
+  const handleCoupon = (
+    next: ((prev: ICouponForm) => ICouponForm) | ICouponForm,
+  ) => {
+    const resolved = typeof next === 'function' ? next(coupon) : next;
+    const code =
+      myCoupons.find((c) => c.couponId === resolved.id)?.code ?? null;
+    const total = Math.max(originalTotal - resolved.price, 0);
+    setCouponState(resolved);
+    setOrder({
+      couponCode: code,
+      couponPrice: resolved.price,
+      totalPrice: total,
+      isFree: total === 0,
+    });
   };
 
   const totalPrice = data.totalPrice ?? 0;
@@ -92,7 +121,7 @@ export default function MembershipPaymentInputPage() {
           startDate={data.beginning ?? undefined}
           endDate={data.deadline ?? undefined}
         />
-        {data.deadline ? (
+        {data.orderType !== 'EXTENSION' && data.deadline ? (
           <div className="bg-primary-10 text-xsmall14 -mx-5 mb-10 mt-8 flex items-center justify-center gap-2 px-2.5 py-5 lg:mx-0 lg:rounded-sm">
             <span>마감까지</span>
             <Duration
@@ -118,17 +147,21 @@ export default function MembershipPaymentInputPage() {
 
       <hr className="bg-neutral-95 my-10 block h-2 border-none" />
 
-      {!data.isFree && (
+      {originalTotal > 0 && (
         <div className="mx-5 mb-10 flex flex-col gap-y-6">
           <div className="text-neutral-0 font-semibold">결제 정보</div>
+          <CouponSection
+            setCoupon={handleCoupon}
+            programType="MEMBERSHIP"
+            maxAmount={originalTotal}
+            salePrice={originalTotal}
+            allowFullDiscount={false}
+          />
           <div className="flex flex-col gap-y-5">
             <PriceSection
-              payInfo={{
-                price: data.price ?? 0,
-                discount: data.discount ?? 0,
-              }}
-              coupon={{ id: null, price: 0 }}
-              showCouponDiscount={false}
+              payInfo={{ price: basePrice, discount: baseDiscount }}
+              coupon={coupon}
+              showCouponDiscount={true}
             />
             <hr className="bg-neutral-85" />
             <div className="text-neutral-0 flex h-10 items-center justify-between px-3 font-semibold">
