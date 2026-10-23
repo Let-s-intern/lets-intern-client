@@ -45,11 +45,6 @@ const MentorCard = ({ mentor }: MentorCardProps) => {
         )}
       </div>
 
-      {mentor.isPick && (
-        <span className="bg-primary text-xxsmall10 md:text-xxsmall12 mt-2 rounded-full px-2 py-0.5 font-semibold text-white">
-          렛커 픽
-        </span>
-      )}
       {mentor.company && (
         <p className="text-xxsmall10 md:text-xsmall14 text-neutral-40 mt-2 line-clamp-1">
           {mentor.company}

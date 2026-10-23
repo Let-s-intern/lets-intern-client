@@ -7,7 +7,8 @@ import { Lc3492Api, setupRun } from '../../support/lc3492';
 
 /**
  * 렛커 픽 (LC-3500) — 어드민 픽 하나가 웹 /mentors 와 /live-mentoring 두 목록에 같이 적용된다.
- * 픽은 1페이지 맨 앞에 픽 순서대로, 「렛커 픽」 라벨. 비노출 멘토는 픽이어도 나가지 않는다.
+ * 픽은 1페이지 맨 앞에 픽 순서대로 온다. 웹에는 「렛커 픽」 을 드러내지 않는다(정렬만 보정).
+ * 비노출 멘토는 픽이어도 나가지 않는다.
  */
 test.describe('LC-3492 렛커 픽 노출', () => {
   const startRun = setupRun('LC-3492 mentor-pick');
@@ -50,12 +51,12 @@ test.describe('LC-3492 렛커 픽 노출', () => {
     );
 
     await flow.run(
-      '3. 웹 /mentors — 1페이지 맨 앞에 픽 순서대로, 렛커 픽 라벨',
+      '3. 웹 /mentors — 1페이지 맨 앞에 픽 순서대로, 라벨 없음',
       async () => {
         const list = await new MentorListPage(page).goto();
         const ids = await list.mentorIds();
         expect(ids.slice(0, visiblePickIds.length)).toEqual(visiblePickIds);
-        expect(await list.pickedMentorIds()).toEqual(visiblePickIds);
+        await expect(page.getByText('렛커 픽')).toHaveCount(0);
         if (hiddenId) expect(ids).not.toContain(hiddenId);
       },
       '웹-멘토목록',
@@ -68,7 +69,7 @@ test.describe('LC-3492 렛커 픽 노출', () => {
         const ids = await list.mentorIds();
         const pickedInList = visiblePickIds.filter((id) => ids.includes(id));
         expect(ids.slice(0, pickedInList.length)).toEqual(pickedInList);
-        expect(await list.pickedCount()).toBe(pickedInList.length);
+        await expect(page.getByText('렛커 픽')).toHaveCount(0);
         if (hiddenId) expect(ids).not.toContain(hiddenId);
       },
       '웹-1on1목록',
