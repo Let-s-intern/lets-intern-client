@@ -9,6 +9,7 @@ import {
 import type { ProgramAdminListItem } from '@/schema';
 import { programStatusToText } from '@/utils/convert';
 
+import { fixSearchTypos } from './matchEntries';
 import type { SearchEntry } from './searchEntries';
 import { MIN_REMOTE_QUERY, type UserSearchStatus } from './useUserSearch';
 
@@ -96,7 +97,8 @@ const summaryOf = (info: ProgramAdminListItem['programInfo']) => {
  */
 export const useProgramSearch = (query: string, debouncedQuery: string) => {
   const isActive = normalize(query).length >= MIN_REMOTE_QUERY;
-  const keyword = debouncedQuery.trim();
+  // 「첼린지」 처럼 흔한 오타는 고쳐서 묻는다. 고칠 것이 없으면 친 그대로다
+  const keyword = fixSearchTypos(debouncedQuery.trim());
   const isRemoteActive = normalize(keyword).length >= MIN_REMOTE_QUERY;
 
   const remote = useQuery({

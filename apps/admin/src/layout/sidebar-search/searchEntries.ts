@@ -62,13 +62,13 @@ const CHALLENGE_OPERATION_KEYWORDS: Record<string, string[]> = {
 };
 
 /**
- * 챌린지 운영 화면 안 탭. 어느 챌린지인지 아직 모르므로 /challenge/operation 으로 보낸다.
- * 그 화면은 탭을 고르는 쿼리를 받지 않고 첫 챌린지의 홈으로 넘긴다. 탭은 거기서 고른다
+ * 챌린지 운영 화면 안 탭. 어느 챌린지인지 아직 모르므로 /challenge/operation?tab= 으로 보낸다.
+ * 그 화면이 첫 챌린지의 그 탭으로 넘긴다
  */
 const CHALLENGE_OPERATION_ENTRIES: SearchEntry[] = CHALLENGE_OPERATION_TABS.map(
   (tab) => ({
     label: tab.text,
-    path: '/challenge/operation',
+    path: `/challenge/operation?tab=${tab.id}`,
     parents: ['챌린지 관리', '챌린지 운영'],
     keywords: CHALLENGE_OPERATION_KEYWORDS[tab.id] ?? [],
   }),

@@ -100,21 +100,51 @@ describe('buildSearchEntries', () => {
     ]);
   });
 
-  it('챌린지 운영 화면의 탭을 화면 라벨 그대로 「챌린지 관리 › 챌린지 운영 › …」 로 찾고, 챌린지 고르는 주소로 보낸다', () => {
+  it('챌린지 운영 화면의 탭을 화면 라벨 그대로 「챌린지 관리 › 챌린지 운영 › …」 로 찾고, /challenge/operation?tab= 으로 보낸다', () => {
     const entries = buildSearchEntries(navData).filter(
       (entry) => entry.parents.join('/') === '챌린지 관리/챌린지 운영',
     );
     expect(entries.map((entry) => entry.label)).toEqual(
       CHALLENGE_OPERATION_TABS.map((tab) => tab.text),
     );
-    expect(
-      entries.every((entry) => entry.path === '/challenge/operation'),
-    ).toBe(true);
+    expect(entries.map((entry) => entry.path)).toEqual(
+      CHALLENGE_OPERATION_TABS.map(
+        (tab) => `/challenge/operation?tab=${tab.id}`,
+      ),
+    );
     expect(
       matchEntries(buildSearchEntries(navData), '제출 관리')[0],
     ).toMatchObject({
       label: '제출확인',
+      path: '/challenge/operation?tab=attendances',
       parents: ['챌린지 관리', '챌린지 운영'],
+    });
+  });
+
+  it('오타 「첼린지」·「첼린저」 로도 챌린지 관리 메뉴와 챌린지 운영 탭을 찾는다', () => {
+    const entries = buildSearchEntries(navData);
+    const expected = matchEntries(entries, '챌린지');
+    expect(matchEntries(entries, '첼린지')).toEqual(expected);
+    expect(matchEntries(entries, '첼린저')).toEqual(expected);
+    expect(
+      matchEntries(entries, '첼린지 운영').map((entry) =>
+        [...entry.parents, entry.label].join(' › '),
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        '챌린지 관리 › 챌린지 운영',
+        '챌린지 관리 › 챌린지 운영 › 제출확인',
+      ]),
+    );
+  });
+
+  it('「브이오디」·「라이브 클래스」 로 등록 버튼을 찾는다', () => {
+    const entries = buildSearchEntries(navData);
+    expect(matchEntries(entries, '브이오디 등록')[0]).toMatchObject({
+      label: 'VOD 클래스 등록',
+    });
+    expect(matchEntries(entries, '라이브 클래스')[0]).toMatchObject({
+      label: 'LIVE 클래스 등록',
     });
   });
 

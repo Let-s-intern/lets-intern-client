@@ -1,7 +1,18 @@
 import type { SearchEntry } from './searchEntries';
 
-/** 공백을 빼고 소문자로. 「렛커 픽」 과 「렛커픽」 을 같게 본다 */
-const normalize = (text: string) => text.replace(/\s+/g, '').toLowerCase();
+/** 자주 틀리는 표기 → 화면 표기. 「라이브 클래스」·「라이브클래스」 는 공백을 빼면 같아 따로 두지 않는다 */
+const TYPO_FIXES: [RegExp, string][] = [
+  [/첼린지|첼린저/g, '챌린지'],
+  [/브이오디/gi, 'VOD'],
+];
+
+/** 오타만 고친다. 공백·대소문자는 그대로라 서버에 보내는 검색어로도 쓴다 */
+export const fixSearchTypos = (text: string) =>
+  TYPO_FIXES.reduce((fixed, [from, to]) => fixed.replace(from, to), text);
+
+/** 오타를 고치고 공백을 빼고 소문자로. 「렛커 픽」 과 「렛커픽」, 「첼린지」 와 「챌린지」 를 같게 본다 */
+const normalize = (text: string) =>
+  fixSearchTypos(text).replace(/\s+/g, '').toLowerCase();
 
 const includes = (text: string, query: string) =>
   normalize(text).includes(query);

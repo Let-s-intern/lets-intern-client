@@ -118,6 +118,17 @@ describe('SearchPanel 프로그램 묶음', () => {
     expect(programCalls()[0][1].signal).toBeInstanceOf(AbortSignal);
   });
 
+  it('오타 「첼린지」 는 고쳐서 keyword 「챌린지」 로 묻는다. 고칠 것이 없으면 친 그대로다', async () => {
+    renderPanel();
+    type('첼린지 3기');
+    await waitFor(() => expect(programCalls()).toHaveLength(1));
+    expect(programCalls()[0][1].params.keyword).toBe('챌린지 3기');
+
+    type('현직자 세미나');
+    await waitFor(() => expect(programCalls()).toHaveLength(2));
+    expect(programCalls()[1][1].params.keyword).toBe('현직자 세미나');
+  });
+
   it('찾는 동안 안내하고, 없으면 없다고 한다', async () => {
     renderPanel();
     type('없는프로그램');

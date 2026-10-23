@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { matchEntries, splitHighlight } from '../matchEntries';
+import { fixSearchTypos, matchEntries, splitHighlight } from '../matchEntries';
 import type { SearchEntry } from '../searchEntries';
 
 const entry = (
@@ -58,6 +58,22 @@ describe('splitHighlight', () => {
   it('맞지 않으면 통째로 둔다', () => {
     expect(splitHighlight('멘토 목록', '로고')).toEqual([
       { text: '멘토 목록', isMatch: false },
+    ]);
+  });
+});
+
+describe('오타 보정', () => {
+  it('첼린지·첼린저 → 챌린지, 브이오디 → VOD. 공백은 그대로, 고칠 것이 없으면 원문', () => {
+    expect(fixSearchTypos('첼린지 운영')).toBe('챌린지 운영');
+    expect(fixSearchTypos('첼린저')).toBe('챌린지');
+    expect(fixSearchTypos('브이오디 등록')).toBe('VOD 등록');
+    expect(fixSearchTypos('현직자 세미나')).toBe('현직자 세미나');
+  });
+
+  it('오타로 찾아도 화면 표기 쪽을 강조한다', () => {
+    expect(splitHighlight('챌린지 운영', '첼린지')).toEqual([
+      { text: '챌린지', isMatch: true },
+      { text: ' 운영', isMatch: false },
     ]);
   });
 });
