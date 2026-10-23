@@ -132,6 +132,22 @@ const sectionWithVisible = <T extends z.ZodRawShape>(extra: T) =>
   });
 
 /**
+ * 자유 입력란이 놓이는 자리 — 백엔드 `LiveMentoringFreeContentPosition`. 값마다 「그 섹션 뒤」 다.
+ */
+export const liveMentoringFreeContentPositionSchema = z.enum([
+  'AFTER_INTRO',
+  'AFTER_MENTORING_TYPES',
+  'AFTER_STRATEGY',
+  'AFTER_VIDEO',
+  'AFTER_RESULTS',
+  'AFTER_REVIEWS',
+  'AFTER_PLAN',
+]);
+export type LiveMentoringFreeContentPosition = z.infer<
+  typeof liveMentoringFreeContentPositionSchema
+>;
+
+/**
  * 상세 페이지 템플릿 — 멘토가 상세 페이지 설정에서 편집한 시안 1~5번 섹션 + 고정 섹션.
  * mentor 앱(`apps/mentor/src/api/live-mentoring/liveMentoringSchema.ts`)과 **동일 형태**여야
  * 같은 목/응답을 양쪽에서 파싱할 수 있다.
@@ -205,6 +221,17 @@ export const liveMentoringTemplateSchema = z.object({
     visible: z.boolean(),
     selectedReviewIds: z.array(z.number()),
   }),
+  /**
+   * 자유 입력란 — 어드민만 편집한다(LC-3494). `content` 는 Lexical JSON 이고, 꺼져 있으면
+   * 공개 응답에서 null 이다. 서버 배포 전 응답에는 없으므로 nullish.
+   */
+  freeContent: z
+    .object({
+      visible: z.boolean(),
+      content: z.string().nullable(),
+      position: liveMentoringFreeContentPositionSchema.nullable(),
+    })
+    .nullish(),
   /*
    * 시안 7(진행 프로세스)·10(FAQ)은 계약에 없다.
    * 멘토가 편집하지 않고 운영 확정 문구라, 서버를 거치지 않고
