@@ -3,8 +3,9 @@ import {
   PassLandingConfig,
   PassPlan,
 } from '@/domain/all-in-one-pass/types';
-import { TextField } from '@mui/material';
-import { lazy, Suspense } from 'react';
+import VodExposureModal from '@/domain/all-in-one-pass/ui/VodExposureModal';
+import { Button, TextField } from '@mui/material';
+import { lazy, Suspense, useState } from 'react';
 import LandingBenefitEditor from './LandingBenefitEditor';
 import LandingReviewEditor from './LandingReviewEditor';
 
@@ -83,6 +84,8 @@ export default function LandingSection({
     patch({ lexical: { ...value.lexical, ...partial } });
   const patchFinalCta = (partial: Partial<PassLandingConfig['finalCta']>) =>
     patch({ finalCta: { ...value.finalCta, ...partial } });
+
+  const [vodModalOpen, setVodModalOpen] = useState(false);
 
   return (
     <div className="flex flex-col gap-10">
@@ -169,6 +172,42 @@ export default function LandingSection({
               }
             />
           </Block>
+
+          {/* 노출 VOD */}
+          <Block
+            title="노출 VOD"
+            description="VOD 탭에 노출할 3개를 선택해주세요. (선택하지 않으면 자동 선택되어 노출됩니다.)"
+          >
+            <div className="flex flex-col gap-3">
+              {value.vods.length > 0 && (
+                <ul className="flex flex-col gap-2">
+                  {value.vods.map((vod, i) => (
+                    <li
+                      key={`${vod.title}-${i}`}
+                      className="flex items-center gap-2"
+                    >
+                      <img
+                        src={vod.thumbnail}
+                        alt=""
+                        className="h-10 w-16 shrink-0 rounded object-cover"
+                      />
+                      <span className="text-xsmall14 text-neutral-0 line-clamp-1">
+                        {vod.title}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <Button
+                variant="outlined"
+                size="small"
+                onClick={() => setVodModalOpen(true)}
+                className="self-start"
+              >
+                {value.vods.length > 0 ? 'VOD 변경' : 'VOD 선택'}
+              </Button>
+            </div>
+          </Block>
         </div>
 
         {/* 후기 */}
@@ -207,6 +246,13 @@ export default function LandingSection({
           />
         </div>
       </Block>
+
+      <VodExposureModal
+        open={vodModalOpen}
+        initialVods={value.vods}
+        onSave={(vods, vodCount) => patch({ vods, vodCount })}
+        onClose={() => setVodModalOpen(false)}
+      />
     </div>
   );
 }

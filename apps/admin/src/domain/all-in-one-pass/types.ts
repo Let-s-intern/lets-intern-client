@@ -70,6 +70,12 @@ export interface PassLandingManualBenefit {
   iconKey: string;
 }
 
+export interface PassLandingVod {
+  title: string;
+  thumbnail: string;
+  description: string;
+}
+
 /** 후기 한 개 (어드민 직접 입력) */
 export interface PassLandingReview {
   id: string; // 폼 로컬 식별자
@@ -100,6 +106,8 @@ export interface PassLandingConfig {
   };
   benefitExtras: Record<string, PassLandingBenefitExtra>; // key = externalLink.id
   manualBenefits: PassLandingManualBenefit[];
+  vods: PassLandingVod[]; // 노출 VOD 3개(필수). 저장 시 url 제거된 형태 그대로
+  vodCount: number; // 전체 VOD 수(seminar-vod 목록 길이). 랜딩 "VOD N종" 표기용
   reviews: PassLandingReview[];
   finalCta: {
     title: string;

@@ -3,6 +3,7 @@ import {
   PassFormInput,
   PassLandingConfig,
   PassLandingReview,
+  PassLandingVod,
 } from '@/domain/all-in-one-pass/types';
 import {
   createEmptyReview,
@@ -26,6 +27,8 @@ interface LandingDescriptionBlob {
     description: string;
     iconKey: string;
   }>;
+  vods: PassLandingVod[];
+  vodCount: number; // 전체 VOD 수(목록 길이)
   reviews: Array<Omit<PassLandingReview, 'id'>>; // 폼 로컬 id 는 저장 안 함
   finalCta: PassLandingConfig['finalCta'];
 }
@@ -40,6 +43,8 @@ export const createEmptyLandingConfig = (): PassLandingConfig => ({
   },
   benefitExtras: {},
   manualBenefits: [],
+  vods: [],
+  vodCount: 0,
   // 최소 3개 시작 — 생성 폼 기본으로 빈 후기 3장 노출
   reviews: [createEmptyReview(), createEmptyReview(), createEmptyReview()],
   finalCta: { title: '', description: '' },
@@ -100,6 +105,12 @@ export const toLandingConfig = (
     },
     benefitExtras: config.benefitExtras,
     manualBenefits: config.manualBenefits,
+    vods: (parsed.vods ?? []).map((v) => ({
+      title: v.title ?? '',
+      thumbnail: v.thumbnail ?? '',
+      description: v.description ?? '',
+    })),
+    vodCount: parsed.vodCount ?? 0,
     // 저장된 후기가 있으면 그대로, 없으면 기본 3개(최소 3개 시작)
     reviews: parsed.reviews?.length
       ? parsed.reviews.map((r) => ({
@@ -139,6 +150,8 @@ export const serializeLandingDescription = (input: PassFormInput): string => {
     hero: landing.hero,
     lexical: landing.lexical,
     additionalBenefits,
+    vods: landing.vods,
+    vodCount: landing.vodCount,
     // 빈 후기는 저장 안 함 — 전부 비어 있으면 reviews:[] 로 랜딩 후기 섹션 미노출
     reviews: landing.reviews
       .filter((r) => !isReviewEmpty(r))
