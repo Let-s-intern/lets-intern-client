@@ -10,11 +10,23 @@ import MentorLiveMentoringItem from '../ui/MentorLiveMentoringItem';
 import type { MentorProgramItemProps } from '../ui/MentorProgramItem';
 import MentorProgramContainer from './MentorProgramContainer';
 
-const getDuration = (startDate: string, endDate: string) =>
-  `${dayjs(startDate).format(YY_MM_DD)} ~ ${dayjs(endDate).format(YY_MM_DD)}`;
+const getDuration = (startDate: string | null, endDate: string | null) =>
+  startDate && endDate
+    ? `${dayjs(startDate).format(YY_MM_DD)} ~ ${dayjs(endDate).format(YY_MM_DD)}`
+    : undefined;
 
-const getDeadlineLabel = (deadline: string, isPost: boolean) =>
-  isPost ? undefined : `~${dayjs(deadline).format(MMDD)} 모집 마감`;
+/** VOD 는 마감이 없는 상시 판매라 마감 대신 「상시」 를 단다 */
+const getDeadlineLabel = (deadline: string | null, isPost: boolean) => {
+  if (isPost) return undefined;
+  if (!deadline) return '상시';
+  return `~${dayjs(deadline).format(MMDD)} 모집 마감`;
+};
+
+/** 챌린지는 지금처럼 라벨 없이 두고, 함께 섞여 나오는 LIVE·VOD 만 표시한다 */
+const PROGRAM_TYPE_LABEL: Record<string, string> = {
+  LIVE: 'LIVE',
+  VOD: 'VOD',
+};
 
 const toProgramItem = (
   program: MentorProgramListItem,
@@ -29,6 +41,7 @@ const toProgramItem = (
   }),
   duration: getDuration(program.startDate, program.endDate),
   deadlineLabel: getDeadlineLabel(program.deadline, isPost),
+  typeLabel: PROGRAM_TYPE_LABEL[program.programType.toUpperCase()],
   gaTitle: program.title,
 });
 
