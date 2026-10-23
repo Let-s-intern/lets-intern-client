@@ -9,12 +9,17 @@ import {
 import { UserCareerType } from '@/api/career/careerSchema';
 import { uploadFile } from '@/api/file';
 import {
+  useAdminMentorHashTagListQuery,
+  usePutAdminMentorHashTagOfMentor,
+} from '@/api/mentor/mentor';
+import {
   AdminUserDetailQueryKey,
   useAdminUserDetailQuery,
   usePatchUserAdminMutation,
 } from '@/api/user/user';
 import CareerForm from '@/common/career/CareerForm';
 import { DEFAULT_CAREER } from '@/common/career/constants';
+import MentorDescriptionField from '@/domain/admin/user/mentor-detail/ui/MentorDescriptionField';
 import ProfileImageUploadModal from '@/domain/admin/user/mentor-detail/ui/ProfileImageUploadModal';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { parseSnsList, serializeSnsList, toSnsUrl } from '@/utils/sns';
@@ -93,11 +98,17 @@ export default function MentorDetailEditor({ mentorId }: Props) {
     errorCallback: () => snackbar('저장에 실패했습니다.'),
   });
 
+  const { data: hashTagList = [] } = useAdminMentorHashTagListQuery();
+  const putHashTags = usePutAdminMentorHashTagOfMentor(mentorId);
+
   const postCareer = usePostAdminCareerMutation(mentorId);
   const deleteCareer = useDeleteAdminCareerMutation(mentorId);
   const [isCareerFormOpen, setIsCareerFormOpen] = useState(false);
 
   const [form, setForm] = useState<BasicFormData>(INITIAL_FORM);
+  // 에디터를 건드리기 전에는 null. 본문을 고치지 않았으면 저장 요청에 넣지 않는다
+  const [descriptionDraft, setDescriptionDraft] = useState<string | null>(null);
+  const [selectedHashTagIds, setSelectedHashTagIds] = useState<number[]>([]);
 
   useEffect(() => {
     if (!userDetail) return;
@@ -112,6 +123,9 @@ export default function MentorDetailEditor({ mentorId }: Props) {
       corpImgUrl: userInfo.corpImgUrl ?? '',
       introduction: userInfo.introduction ?? '',
     });
+    setSelectedHashTagIds(
+      (userDetail.mentorHashTagInfos ?? []).map((tag) => tag.id),
+    );
   }, [userDetail]);
 
   const careers: LocalCareer[] = useMemo(
@@ -145,6 +159,11 @@ export default function MentorDetailEditor({ mentorId }: Props) {
       return;
     }
 
+    // 같은 시간에 멘토가 고친 본문을 덮지 않도록, 본문은 바뀐 경우에만 보낸다
+    const isDescriptionChanged =
+      descriptionDraft !== null &&
+      descriptionDraft !== userDetail?.userInfo.description;
+
     patchUser.mutate({
       name: form.name || undefined,
       email: form.email || undefined,
@@ -153,8 +172,37 @@ export default function MentorDetailEditor({ mentorId }: Props) {
       sns: serializeSnsList(validSnsUrls),
       profileImgUrl: form.profileImgUrl || null,
       corpImgUrl: form.corpImgUrl || null,
-      introduction: form.introduction || null,
+      // null 은 서버가 기존 값을 유지하므로, 비운 한줄소개는 빈 문자열로 보내야 지워진다
+      introduction: form.introduction,
+      ...(isDescriptionChanged ? { description: descriptionDraft } : {}),
     });
+
+    const savedHashTagIds = (userDetail?.mentorHashTagInfos ?? []).map(
+      (tag) => tag.id,
+    );
+    const isHashTagChanged =
+      savedHashTagIds.length !== selectedHashTagIds.length ||
+      savedHashTagIds.some((id) => !selectedHashTagIds.includes(id));
+    if (isHashTagChanged) {
+      putHashTags.mutate(
+        { mentorHashTagIdList: selectedHashTagIds },
+        {
+          onSuccess: () =>
+            queryClient.invalidateQueries({
+              queryKey: [AdminUserDetailQueryKey, mentorId],
+            }),
+          onError: () => snackbar('키워드 저장에 실패했습니다.'),
+        },
+      );
+    }
+  };
+
+  const handleHashTagToggle = (hashTagId: number) => {
+    setSelectedHashTagIds((prev) =>
+      prev.includes(hashTagId)
+        ? prev.filter((id) => id !== hashTagId)
+        : [...prev, hashTagId],
+    );
   };
 
   const handleSnsChange = (index: number, value: string) => {
@@ -375,6 +423,39 @@ export default function MentorDetailEditor({ mentorId }: Props) {
               </button>
             </div>
           </div>
+
+          {/* 멘토 키워드. 멘토 앱에서 멘토가 고르는 것과 같은 키워드 */}
+          <div className="flex items-start gap-3">
+            <label className="text-xsmall14 text-neutral-30 w-20 flex-shrink-0 pt-1.5 font-medium">
+              멘토 키워드
+            </label>
+            {hashTagList.length === 0 ? (
+              <span className="text-xsmall14 text-neutral-40 pt-1.5">
+                등록된 키워드가 없습니다.
+              </span>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {hashTagList.map((tag) => {
+                  const isSelected = selectedHashTagIds.includes(tag.id);
+                  return (
+                    <button
+                      key={tag.id}
+                      type="button"
+                      aria-pressed={isSelected}
+                      onClick={() => handleHashTagToggle(tag.id)}
+                      className={`text-xxsmall12 rounded-full border px-2.5 py-1.5 ${
+                        isSelected
+                          ? 'border-primary text-primary font-medium'
+                          : 'border-neutral-80 text-neutral-30'
+                      }`}
+                    >
+                      #{tag.title}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="mt-4">
@@ -391,12 +472,18 @@ export default function MentorDetailEditor({ mentorId }: Props) {
           />
         </div>
 
+        <MentorDescriptionField
+          key={mentorId}
+          initialDescription={userDetail.userInfo.description}
+          onChange={setDescriptionDraft}
+        />
+
         <div className="mt-4 flex justify-end">
           <Button
             variant="contained"
             size="small"
             onClick={handleSave}
-            disabled={patchUser.isPending}
+            disabled={patchUser.isPending || putHashTags.isPending}
           >
             {patchUser.isPending ? '저장 중...' : '저장'}
           </Button>
@@ -497,28 +584,6 @@ export default function MentorDetailEditor({ mentorId }: Props) {
                   </div>
                 );
               })}
-            </div>
-          )}
-        </div>
-
-        {/* 키워드 */}
-        <div className="border-neutral-80 min-h-40 rounded-lg border p-6">
-          <h2 className="text-medium18 mb-4 font-semibold">키워드</h2>
-          {userDetail.mentorHashTagInfos &&
-          userDetail.mentorHashTagInfos.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              {userDetail.mentorHashTagInfos.map((tag) => (
-                <span
-                  key={tag.id}
-                  className="text-xxsmall12 border-neutral-80 bg-neutral-95 text-neutral-20 rounded-full border px-2.5 py-1.5"
-                >
-                  #{tag.title}
-                </span>
-              ))}
-            </div>
-          ) : (
-            <div className="text-xsmall14 text-neutral-40 py-4 text-center">
-              등록된 해시태그가 없습니다.
             </div>
           )}
         </div>

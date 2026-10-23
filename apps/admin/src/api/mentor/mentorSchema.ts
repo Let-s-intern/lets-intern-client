@@ -109,6 +109,11 @@ export interface MentorHashTagReq {
   title: string;
 }
 
+/** PUT /api/v1/admin/mentor-hash-tag/mentors/{mentorId} 요청 바디. 전달한 목록이 최종 목록이 된다 */
+export interface PutAdminMentorHashTagOfMentorReq {
+  mentorHashTagIdList: number[];
+}
+
 export const mentorReviewSourceSchema = z.enum([
   'REVIEW',
   'OLD_REVIEW',
