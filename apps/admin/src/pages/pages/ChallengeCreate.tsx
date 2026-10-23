@@ -7,6 +7,8 @@ import ChallengeCurriculum from '@/domain/admin/program/challenge/ChallengeCurri
 import ChallengePoint from '@/domain/admin/program/challenge/ChallengePoint';
 import ChallengeOptionSection from '@/domain/admin/program/challenge/ChallengeOptionSection';
 import ChallengeDescriptionTabs from '@/domain/admin/program/challenge/ChallengeDescriptionTabs';
+import ChallengeEditorActionBar from '@/domain/admin/program/challenge/ChallengeEditorActionBar';
+import { useLeaveGuard } from '@/domain/admin/program/challenge/hooks/useLeaveGuard';
 import ChallengeVersionSection, {
   ChallengeVersionDraft,
 } from '@/domain/admin/program/challenge/ChallengeVersionSection';
@@ -52,7 +54,6 @@ import {
 } from '@/api/review/review';
 import { useNavigate } from 'react-router-dom';
 import { lazy, Suspense, useCallback, useState } from 'react';
-import { FaSave } from 'react-icons/fa';
 import ChallengeLecture from '../program/challenge/ChallengeLecture';
 import ChallengeMentorRegistrationSection from './program/ChallengeMentorRegistrationSection';
 import ProgramSchedule from './program/ProgramSchedule';
@@ -167,6 +168,23 @@ const ChallengeCreate: React.FC = () => {
     }));
   }, []);
 
+  const { trackInteraction, markSaved } = useLeaveGuard(() =>
+    JSON.stringify({
+      input,
+      content,
+      versions,
+      isFreeTemplate,
+      basicInfo,
+      standardInfo,
+      premiumInfo,
+      basicOptIds,
+      standardOptIds,
+      premiumOptIds,
+      isLightEnabled,
+      lightInfo,
+    }),
+  );
+
   const onClickSave = useCallback(async () => {
     const versionInfoError = getVersionInfoError(versions);
     if (versionInfoError) {
@@ -265,6 +283,8 @@ const ChallengeCreate: React.FC = () => {
 
     setLoading(false);
     snackbar('챌린지가 생성되었습니다.');
+    // 저장했으니 나가기 확인 없이 목록으로 간다
+    markSaved();
     navigate('/programs');
   }, [
     input,
@@ -273,6 +293,7 @@ const ChallengeCreate: React.FC = () => {
     postChallenge,
     snackbar,
     navigate,
+    markSaved,
     basicInfo,
     basicOptIds,
     isLightEnabled,
@@ -289,7 +310,11 @@ const ChallengeCreate: React.FC = () => {
   }
 
   return (
-    <div className="mx-3 mb-40 mt-3">
+    <div
+      className="mx-3 mb-40 mt-3"
+      onPointerDownCapture={trackInteraction}
+      onKeyDownCapture={trackInteraction}
+    >
       <Header>
         <div className="flex items-center gap-4">
           <Heading>챌린지 생성</Heading>
@@ -343,6 +368,7 @@ const ChallengeCreate: React.FC = () => {
         </div>
       </Header>
 
+      <span id="challenge-section-basic" className="block scroll-mt-4" />
       <Heading2>기본 정보</Heading2>
       <section className="mb-6 mt-3">
         <div className="mb-6 grid w-full grid-cols-3 gap-3">
@@ -385,6 +411,7 @@ const ChallengeCreate: React.FC = () => {
             onChange={onChangeImage}
           />
         </div>
+        <span id="challenge-section-price" className="block scroll-mt-4" />
         <div className="grid w-full grid-cols-2 gap-3">
           <ChallengePrice
             challengePrice={challengePrice}
@@ -454,11 +481,13 @@ const ChallengeCreate: React.FC = () => {
         </div>
       </section>
 
+      <span id="challenge-section-option" className="block scroll-mt-4" />
       <section className="pb-8 pt-4">
         <ChallengeOptionSection
           options={challengeOptions?.challengeOptionList ?? []}
         />
       </section>
+      <span id="challenge-section-version" className="block scroll-mt-4" />
       <section className="pb-8 pt-4">
         <ChallengeVersionSection
           versions={versions}
@@ -469,6 +498,7 @@ const ChallengeCreate: React.FC = () => {
           challengeType={input.challengeType}
         />
       </section>
+      <span id="challenge-section-description" className="block scroll-mt-4" />
       <ChallengeDescriptionTabs
         versions={versions}
         onChangeVersionDescription={(index, description) =>
@@ -644,6 +674,7 @@ const ChallengeCreate: React.FC = () => {
         )}
       </ChallengeDescriptionTabs>
 
+      <span id="challenge-section-faq" className="block scroll-mt-4" />
       {/* FAQ 는 챌린지 단위라 버전 탭 밖에 둔다 */}
       {!isFreeTemplate && (
         <section className="my-6">
@@ -658,22 +689,17 @@ const ChallengeCreate: React.FC = () => {
         </section>
       )}
 
-      <footer className="fixed bottom-8 right-8 z-50 flex items-center gap-3 rounded-full border border-gray-200 bg-white/95 py-2 pl-3 pr-2 shadow-xl backdrop-blur">
-        <ChallengePreviewButton
-          input={input}
-          content={content}
-          existing={null}
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          disabled={loading}
-          startIcon={<FaSave size={12} />}
-          onClick={onClickSave}
-        >
-          저장
-        </Button>
-      </footer>
+      <ChallengeEditorActionBar
+        onSave={onClickSave}
+        saving={loading}
+        extra={
+          <ChallengePreviewButton
+            input={input}
+            content={content}
+            existing={null}
+          />
+        }
+      />
     </div>
   );
 };

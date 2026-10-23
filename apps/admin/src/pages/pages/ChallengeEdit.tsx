@@ -18,6 +18,8 @@ import ChallengeCurriculumEditor from '@/domain/admin/program/challenge/Challeng
 import ChallengePointEditor from '@/domain/admin/program/challenge/ChallengePoint';
 import ChallengeOptionSection from '@/domain/admin/program/challenge/ChallengeOptionSection';
 import ChallengeDescriptionTabs from '@/domain/admin/program/challenge/ChallengeDescriptionTabs';
+import ChallengeEditorActionBar from '@/domain/admin/program/challenge/ChallengeEditorActionBar';
+import { useLeaveGuard } from '@/domain/admin/program/challenge/hooks/useLeaveGuard';
 import ChallengeVersionSection, {
   ChallengeVersionDraft,
 } from '@/domain/admin/program/challenge/ChallengeVersionSection';
@@ -63,7 +65,6 @@ import {
 } from '@/api/review/review';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { FaSave } from 'react-icons/fa';
 import ChallengeLecture from '../program/challenge/ChallengeLecture';
 import ChallengeMentorRegistrationSection from './program/ChallengeMentorRegistrationSection';
 import ProgramSchedule from './program/ProgramSchedule';
@@ -229,6 +230,23 @@ const ChallengeEdit: React.FC = () => {
     }));
   }, []);
 
+  const { trackInteraction, markSaved } = useLeaveGuard(() =>
+    JSON.stringify({
+      input,
+      content,
+      versionDrafts,
+      isFreeTemplate,
+      basicInfo,
+      standardInfo,
+      premiumInfo,
+      basicOptIds,
+      standardOptIds,
+      premiumOptIds,
+      isLightEnabled,
+      lightInfo,
+    }),
+  );
+
   const onClickSave = useCallback(async () => {
     if (!challengeIdString) {
       throw new Error('challengeId is required');
@@ -358,6 +376,7 @@ const ChallengeEdit: React.FC = () => {
     });
     // 새로 추가한 버전의 id 는 다시 받은 상세에만 있다. 편집본을 버리고 상세를 보여준다
     setVersionDrafts(null);
+    markSaved();
 
     setLoading(false);
     snackbar('저장되었습니다.');
@@ -430,7 +449,11 @@ const ChallengeEdit: React.FC = () => {
   }
 
   return (
-    <div className="mx-3 mb-40 mt-3">
+    <div
+      className="mx-3 mb-40 mt-3"
+      onPointerDownCapture={trackInteraction}
+      onKeyDownCapture={trackInteraction}
+    >
       <Header>
         <div className="flex items-center gap-4">
           <Heading>챌린지 수정</Heading>
@@ -462,6 +485,7 @@ const ChallengeEdit: React.FC = () => {
         </div>
       </Header>
 
+      <span id="challenge-section-basic" className="block scroll-mt-4" />
       <Heading2>기본 정보</Heading2>
       <section className="mb-6 mt-3">
         <div className="mb-6 grid w-full grid-cols-3 gap-3">
@@ -487,6 +511,7 @@ const ChallengeEdit: React.FC = () => {
           />
         </div>
 
+        <span id="challenge-section-price" className="block scroll-mt-4" />
         <Heading2>가격 정보 & 일정</Heading2>
         <div className="mt-5 grid w-full grid-cols-2 gap-3">
           {/* 가격 정보 */}
@@ -581,12 +606,14 @@ const ChallengeEdit: React.FC = () => {
         </div>
       </section>
 
+      <span id="challenge-section-option" className="block scroll-mt-4" />
       <section className="pb-8 pt-4">
         <ChallengeOptionSection
           options={challengeOptions?.challengeOptionList ?? []}
         />
       </section>
 
+      <span id="challenge-section-version" className="block scroll-mt-4" />
       <section className="pb-8 pt-4">
         <ChallengeVersionSection
           versions={
@@ -601,6 +628,7 @@ const ChallengeEdit: React.FC = () => {
         />
       </section>
 
+      <span id="challenge-section-description" className="block scroll-mt-4" />
       <ChallengeDescriptionTabs
         versions={
           versionDrafts ??
@@ -781,6 +809,7 @@ const ChallengeEdit: React.FC = () => {
         )}
       </ChallengeDescriptionTabs>
 
+      <span id="challenge-section-faq" className="block scroll-mt-4" />
       {/* FAQ 는 챌린지 단위라 버전 탭 밖에 둔다 */}
       {!isFreeTemplate && (
         <div className="my-6">
@@ -797,22 +826,17 @@ const ChallengeEdit: React.FC = () => {
         </div>
       )}
 
-      <footer className="fixed bottom-8 right-8 z-50 flex items-center gap-3 rounded-full border border-gray-200 bg-white/95 py-2 pl-3 pr-2 shadow-xl backdrop-blur">
-        <ChallengePreviewButton
-          input={input}
-          content={content}
-          existing={challenge}
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          disabled={loading}
-          startIcon={<FaSave size={12} />}
-          onClick={onClickSave}
-        >
-          저장
-        </Button>
-      </footer>
+      <ChallengeEditorActionBar
+        onSave={onClickSave}
+        saving={loading}
+        extra={
+          <ChallengePreviewButton
+            input={input}
+            content={content}
+            existing={challenge}
+          />
+        }
+      />
     </div>
   );
 };
