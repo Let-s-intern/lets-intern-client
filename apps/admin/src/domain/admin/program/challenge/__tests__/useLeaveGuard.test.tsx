@@ -9,10 +9,10 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { LEAVE_MESSAGE, useLeaveGuard } from '../hooks/useLeaveGuard';
 
-function Editor() {
+function Editor({ enabled = true }: { enabled?: boolean }) {
   const [value, setValue] = useState('');
   const navigate = useNavigate();
-  const { trackInteraction, markSaved } = useLeaveGuard(() => value);
+  const { trackInteraction, markSaved } = useLeaveGuard(() => value, enabled);
   return (
     <div
       onPointerDownCapture={trackInteraction}
@@ -33,10 +33,10 @@ function Editor() {
   );
 }
 
-const renderEditor = () => {
+const renderEditor = (enabled = true) => {
   const router = createMemoryRouter(
     [
-      { path: '/edit', element: <Editor /> },
+      { path: '/edit', element: <Editor enabled={enabled} /> },
       { path: '/other', element: <div>다른 화면</div> },
     ],
     { initialEntries: ['/edit'] },
@@ -120,5 +120,16 @@ describe('useLeaveGuard', () => {
     window.dispatchEvent(event);
 
     expect(event.defaultPrevented).toBe(true);
+  });
+
+  it('꺼 두면 바꿔도 묻지 않는다 - 생성 완료처럼 더 저장할 수 없는 화면', async () => {
+    const confirm = vi.spyOn(window, 'confirm');
+    renderEditor(false);
+    type('수정');
+
+    fireEvent.click(screen.getByRole('button', { name: '나가기' }));
+
+    expect(await screen.findByText('다른 화면')).toBeInTheDocument();
+    expect(confirm).not.toHaveBeenCalled();
   });
 });

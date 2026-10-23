@@ -141,4 +141,20 @@ describe('ChallengeDescriptionTabs', () => {
     fireEvent.click(screen.getByRole('button', { name: '본문 수정' }));
     expect(descriptions()).toEqual(['{"v":1}', '{"edited":true}']);
   });
+
+  it('고정 줄에 지금 편집 중인 버전을 표시한다', () => {
+    render(<Harness initial={[draft('대학생'), draft('경력자')]} />);
+
+    expect(screen.getByText('편집 중: 대학생 버전')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('tab', { name: '경력자 (작성 전)' }));
+    expect(screen.getByText('편집 중: 경력자 버전')).toBeInTheDocument();
+
+    fireEvent.click(
+      screen.getByRole('tab', { name: '기본 (버전 설정 시 비노출)' }),
+    );
+    expect(
+      screen.getByText('편집 중: 기본 (버전 설정 시 비노출)'),
+    ).toBeInTheDocument();
+  });
 });

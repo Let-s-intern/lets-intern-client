@@ -20,6 +20,9 @@ export const CHALLENGE_EDITOR_SECTIONS: ChallengeEditorSection[] = [
 interface Props {
   onSave: () => void;
   saving: boolean;
+  /** 저장을 더 받지 않을 때. 버튼 문구는 saveLabel */
+  saveDisabled?: boolean;
+  saveLabel?: string;
   sections?: ChallengeEditorSection[];
   /** 저장 버튼 앞에 둘 버튼 (미리보기 등) */
   extra?: ReactNode;
@@ -37,6 +40,8 @@ const scrollToSection = (id: string) =>
 function ChallengeEditorActionBar({
   onSave,
   saving,
+  saveDisabled = false,
+  saveLabel = '저장',
   sections = CHALLENGE_EDITOR_SECTIONS,
   extra,
 }: Props) {
@@ -59,12 +64,12 @@ function ChallengeEditorActionBar({
       <Button
         variant="contained"
         color="primary"
-        disabled={saving}
+        disabled={saving || saveDisabled}
         startIcon={<FaSave size={12} />}
         onClick={onSave}
         sx={{ borderRadius: '8px', px: 3, boxShadow: 'none' }}
       >
-        {saving ? '저장 중' : '저장'}
+        {saving ? '저장 중' : saveLabel}
       </Button>
     </div>
   );

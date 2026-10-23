@@ -44,4 +44,17 @@ describe('ChallengeEditorActionBar', () => {
     rerender(<ChallengeEditorActionBar onSave={onSave} saving />);
     expect(screen.getByRole('button', { name: '저장 중' })).toBeDisabled();
   });
+
+  it('저장을 잠그면 문구를 바꾸고 누를 수 없다', () => {
+    render(
+      <ChallengeEditorActionBar
+        onSave={vi.fn()}
+        saving={false}
+        saveDisabled
+        saveLabel="생성 완료"
+      />,
+    );
+
+    expect(screen.getByRole('button', { name: '생성 완료' })).toBeDisabled();
+  });
 });

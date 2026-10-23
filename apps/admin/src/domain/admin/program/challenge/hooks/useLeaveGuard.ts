@@ -11,14 +11,20 @@ export const LEAVE_MESSAGE =
  *   본문 JSON 이 커서 입력마다 비교하지 않는다
  *
  * @param getSnapshot 저장 대상 상태를 문자열로. 렌더마다 최신 값을 쓴다
+ * @param enabled false 면 묻지 않는다. 더 저장할 수 없는 화면(생성 완료 등)에서 끈다
  */
-export function useLeaveGuard(getSnapshot: () => string) {
+export function useLeaveGuard(getSnapshot: () => string, enabled = true) {
   const baseline = useRef<string | null>(null);
   const latest = useRef(getSnapshot);
   latest.current = getSnapshot;
+  const enabledRef = useRef(enabled);
+  enabledRef.current = enabled;
 
   const isDirty = useCallback(
-    () => baseline.current !== null && baseline.current !== latest.current(),
+    () =>
+      enabledRef.current &&
+      baseline.current !== null &&
+      baseline.current !== latest.current(),
     [],
   );
 

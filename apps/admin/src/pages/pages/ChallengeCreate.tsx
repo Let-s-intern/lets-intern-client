@@ -52,7 +52,6 @@ import {
   fetchAutoFillBlogReviews,
   fetchAutoFillChallengeReviews,
 } from '@/api/review/review';
-import { useNavigate } from 'react-router-dom';
 import { lazy, Suspense, useCallback, useState } from 'react';
 import ChallengeLecture from '../program/challenge/ChallengeLecture';
 import ChallengeMentorRegistrationSection from './program/ChallengeMentorRegistrationSection';
@@ -100,7 +99,6 @@ const initialInput: Omit<CreateChallengeReq, 'desc'> = {
  * 챌린지 생성 페이지
  */
 const ChallengeCreate: React.FC = () => {
-  const navigate = useNavigate();
   const { snackbar } = useAdminSnackbar();
 
   /** 챌린지  */
@@ -117,6 +115,8 @@ const ChallengeCreate: React.FC = () => {
     curationCard: { visible: true },
   });
   const [isFreeTemplate, setIsFreeTemplate] = useState(false);
+  // 생성에 성공하면 같은 화면에 머물되 다시 저장하지 못하게 한다
+  const [created, setCreated] = useState(false);
   const [versions, setVersions] = useState<ChallengeVersionDraft[]>([]);
 
   const [input, setInput] = useState(initialInput);
@@ -168,21 +168,23 @@ const ChallengeCreate: React.FC = () => {
     }));
   }, []);
 
-  const { trackInteraction, markSaved } = useLeaveGuard(() =>
-    JSON.stringify({
-      input,
-      content,
-      versions,
-      isFreeTemplate,
-      basicInfo,
-      standardInfo,
-      premiumInfo,
-      basicOptIds,
-      standardOptIds,
-      premiumOptIds,
-      isLightEnabled,
-      lightInfo,
-    }),
+  const { trackInteraction, markSaved } = useLeaveGuard(
+    () =>
+      JSON.stringify({
+        input,
+        content,
+        versions,
+        isFreeTemplate,
+        basicInfo,
+        standardInfo,
+        premiumInfo,
+        basicOptIds,
+        standardOptIds,
+        premiumOptIds,
+        isLightEnabled,
+        lightInfo,
+      }),
+    !created,
   );
 
   const onClickSave = useCallback(async () => {
@@ -282,17 +284,19 @@ const ChallengeCreate: React.FC = () => {
     }
 
     setLoading(false);
-    snackbar('챌린지가 생성되었습니다.');
-    // 저장했으니 나가기 확인 없이 목록으로 간다
+    // 목록으로 나가지 않고 머문다. 생성 API 가 새 id 를 주지 않아 이어서 저장할 수는 없으므로
+    // 중복 생성을 막으려 저장을 잠근다
     markSaved();
-    navigate('/programs');
+    setCreated(true);
+    snackbar(
+      '챌린지가 생성되었습니다. 이어서 고치려면 프로그램 목록에서 수정 화면을 여세요.',
+    );
   }, [
     input,
     content,
     versions,
     postChallenge,
     snackbar,
-    navigate,
     markSaved,
     basicInfo,
     basicOptIds,
@@ -692,6 +696,8 @@ const ChallengeCreate: React.FC = () => {
       <ChallengeEditorActionBar
         onSave={onClickSave}
         saving={loading}
+        saveDisabled={created}
+        saveLabel={created ? '생성 완료' : '저장'}
         extra={
           <ChallengePreviewButton
             input={input}
