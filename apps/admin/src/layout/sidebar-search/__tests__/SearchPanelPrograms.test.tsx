@@ -14,7 +14,12 @@ vi.mock('@/utils/axiosV2', () => ({
   default: { get: (...args: unknown[]) => getV2(...args) },
 }));
 
+vi.mock('@/api/user/user', () => ({ useIsAdminQuery: vi.fn() }));
+
+import { navData } from '../../AdminSidebar';
 import SearchPanel from '../SearchPanel';
+import { buildMenuEntries, buildSearchEntries } from '../searchEntries';
+import type { SearchEntry } from '../searchEntries';
 import { programDestinations } from '../useProgramSearch';
 
 const program = (id: number, title: string, programType = 'CHALLENGE') => ({
@@ -34,7 +39,10 @@ let programs: unknown[] = [];
 const programCalls = () =>
   getV1.mock.calls.filter(([url]) => url === '/program/admin');
 
-const renderPanel = () => {
+const renderPanel = (
+  entries: SearchEntry[] = [],
+  menuEntries: SearchEntry[] = entries,
+) => {
   const onSelect = vi.fn();
   render(
     <QueryClientProvider
@@ -43,8 +51,8 @@ const renderPanel = () => {
       }
     >
       <SearchPanel
-        entries={[]}
-        menuEntries={[]}
+        entries={entries}
+        menuEntries={menuEntries}
         focusSignal={1}
         onSelect={onSelect}
         onClose={vi.fn()}
@@ -128,7 +136,7 @@ describe('SearchPanel 프로그램 묶음', () => {
     ).toBeInTheDocument();
   });
 
-  it('챌린지는 「[챌린지] 제목」·#id·기간·상태와 갈 곳 7개를 둔다', async () => {
+  it('챌린지는 「[챌린지] 제목」·#id·기간·상태와 운영 탭 전부를 포함한 갈 곳을 둔다', async () => {
     programs = [program(12, '취업 챌린지 3기')];
     renderPanel();
     type('취업');
@@ -140,9 +148,11 @@ describe('SearchPanel 프로그램 묶음', () => {
     );
     expect(optionLabels()).toEqual([
       '프로그램 수정',
-      '대시보드',
-      '출석·미션',
+      '홈',
+      '미션등록',
+      '제출확인',
       '참여자',
+      '페이백',
       '피드백',
       '멘토 배정',
       '신청자 목록',
@@ -185,6 +195,26 @@ describe('SearchPanel 프로그램 묶음', () => {
     );
   });
 
+  it('「챌린지」 로 찾으면 챌린지 프로그램 결과가 와도 메뉴 묶음에 챌린지 관리 메뉴가 모두 남는다', async () => {
+    programs = [program(12, '취업 챌린지 3기'), program(13, '마케팅 챌린지')];
+    renderPanel(buildSearchEntries(navData), buildMenuEntries(navData));
+    type('챌린지');
+    await waitFor(() => expect(programHeaders()).toHaveLength(2));
+
+    const menuOptions = screen
+      .getAllByRole('option')
+      .map((option) => option.lastChild?.textContent ?? '')
+      .filter((path) => path.startsWith('챌린지 관리 › '));
+    expect(menuOptions.slice(0, 6)).toEqual([
+      '챌린지 관리 › 챌린지 운영',
+      '챌린지 관리 › 콘텐츠 관리',
+      '챌린지 관리 › 미션 관리',
+      '챌린지 관리 › 전체 공지 관리',
+      '챌린지 관리 › 피드백 운영',
+      '챌린지 관리 › 1:1 문의',
+    ]);
+  });
+
   it('키보드로 챌린지 하위 항목을 골라 그 화면으로 간다', async () => {
     programs = [program(12, '취업 챌린지 3기')];
     const onSelect = renderPanel();
@@ -195,7 +225,7 @@ describe('SearchPanel 프로그램 묶음', () => {
     fireEvent.keyDown(input(), { key: 'Enter' });
     expect(onSelect).toHaveBeenCalledWith(
       expect.objectContaining({
-        label: '대시보드',
+        label: '홈',
         path: '/challenge/operation/12/home',
         parents: ['챌린지 운영'],
       }),

@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import routerSource from '../../../router.tsx?raw';
 import { matchEntries } from '../matchEntries';
+import { CHALLENGE_OPERATION_TABS } from '../../../pages/challenge/ui/challengeOperationTabs';
 import { buildSearchEntries } from '../searchEntries';
 
 vi.mock('@/api/user/user', () => ({ useIsAdminQuery: vi.fn() }));
@@ -59,5 +60,68 @@ describe('buildSearchEntries', () => {
       path: '/mentors/company-logos?tab=bulk',
       parents: ['멘토 관리', '회사 로고'],
     });
+  });
+
+  it('「프로그램 개설」 상단 등록 버튼 넷을 「프로그램 관리 › 프로그램 개설 › …」 로 찾는다', () => {
+    const entries = buildSearchEntries(navData);
+    expect(matchEntries(entries, '등록').map((entry) => entry.path)).toEqual(
+      expect.arrayContaining([
+        '/challenge/create',
+        '/live/create',
+        '/vod/create',
+        '/guidebook/create',
+      ]),
+    );
+    expect(matchEntries(entries, '라이브클래스')[0]).toMatchObject({
+      label: 'LIVE 클래스 등록',
+      path: '/live/create',
+      parents: ['프로그램 관리', '프로그램 개설'],
+    });
+    expect(matchEntries(entries, '챌린지 만들기')[0]).toMatchObject({
+      label: '챌린지 등록',
+      path: '/challenge/create',
+    });
+  });
+
+  it('「챌린지」 로 챌린지 관리 섹션 메뉴가 모두 나온다', () => {
+    const labels = matchEntries(buildSearchEntries(navData), '챌린지')
+      .filter(
+        (entry) =>
+          entry.parents.length === 1 && entry.parents[0] === '챌린지 관리',
+      )
+      .map((entry) => entry.label);
+    expect(labels).toEqual([
+      '챌린지 운영',
+      '콘텐츠 관리',
+      '미션 관리',
+      '전체 공지 관리',
+      '피드백 운영',
+      '1:1 문의',
+    ]);
+  });
+
+  it('챌린지 운영 화면의 탭을 화면 라벨 그대로 「챌린지 관리 › 챌린지 운영 › …」 로 찾고, 챌린지 고르는 주소로 보낸다', () => {
+    const entries = buildSearchEntries(navData).filter(
+      (entry) => entry.parents.join('/') === '챌린지 관리/챌린지 운영',
+    );
+    expect(entries.map((entry) => entry.label)).toEqual(
+      CHALLENGE_OPERATION_TABS.map((tab) => tab.text),
+    );
+    expect(
+      entries.every((entry) => entry.path === '/challenge/operation'),
+    ).toBe(true);
+    expect(
+      matchEntries(buildSearchEntries(navData), '제출 관리')[0],
+    ).toMatchObject({
+      label: '제출확인',
+      parents: ['챌린지 관리', '챌린지 운영'],
+    });
+  });
+
+  it('챌린지 운영 탭마다 router.tsx 에 자식 라우트가 있다', () => {
+    const missing = CHALLENGE_OPERATION_TABS.filter(
+      (tab) => !routePaths.has(tab.id),
+    ).map((tab) => tab.id);
+    expect(missing).toEqual([]);
   });
 });

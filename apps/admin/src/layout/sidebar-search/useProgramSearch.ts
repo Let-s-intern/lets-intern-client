@@ -2,6 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 
 import { fetchAdminPrograms } from '@/api/program';
 import dayjs from '@/lib/dayjs';
+import {
+  CHALLENGE_OPERATION_TABS,
+  challengeOperationTabPath,
+} from '@/pages/challenge/ui/challengeOperationTabs';
 import type { ProgramAdminListItem } from '@/schema';
 import { programStatusToText } from '@/utils/convert';
 
@@ -60,14 +64,11 @@ export const programDestinations = (
     case 'CHALLENGE':
       return [
         entry('프로그램 수정', `/challenge/${id}/edit`),
-        entry('대시보드', `/challenge/operation/${id}/home`, ['챌린지 운영']),
-        entry('출석·미션', `/challenge/operation/${id}/attendances`, [
-          '챌린지 운영',
-        ]),
-        entry('참여자', `/challenge/operation/${id}/participants`, [
-          '챌린지 운영',
-        ]),
-        entry('피드백', `/challenge/operation/${id}/feedback`, ['챌린지 운영']),
+        ...CHALLENGE_OPERATION_TABS.map((tab) =>
+          entry(tab.text, challengeOperationTabPath(id, tab.id), [
+            '챌린지 운영',
+          ]),
+        ),
         entry('멘토 배정', `/challenge/mentor-assignment/${id}`),
         users,
       ];
