@@ -16,13 +16,19 @@ interface Props {
   onClose: () => void;
   /** 고른 로고. 지정은 라이브러리 로고에 연결하는 방식이라 id 로 저장한다 */
   onSelect: (logo: CompanyLogo) => void;
+  /** 주면 「로고 해제」 버튼을 둔다 */
+  onClear?: () => void;
 }
 
 /**
  * 회사 로고 라이브러리에서 하나 고르기. 멘토 대표 로고와 경력 로고가 같이 쓴다.
  * 라이브러리 관리 화면(`domain/company-logo`)과는 API 만 공유한다.
  */
-export default function CompanyLogoPickerDialog({ onClose, onSelect }: Props) {
+export default function CompanyLogoPickerDialog({
+  onClose,
+  onSelect,
+  onClear,
+}: Props) {
   const { data: logos = [], isLoading } = useAdminCompanyLogoListQuery();
   const [keyword, setKeyword] = useState('');
   const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -80,6 +86,11 @@ export default function CompanyLogoPickerDialog({ onClose, onSelect }: Props) {
         )}
       </DialogContent>
       <DialogActions>
+        {onClear ? (
+          <Button color="error" className="mr-auto" onClick={onClear}>
+            로고 해제
+          </Button>
+        ) : null}
         <Button color="inherit" onClick={onClose}>
           취소
         </Button>

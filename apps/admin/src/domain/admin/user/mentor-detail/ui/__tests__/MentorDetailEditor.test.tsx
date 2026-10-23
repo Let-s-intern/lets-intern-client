@@ -46,6 +46,8 @@ vi.mock('@/common/lexical/EditorApp', () => ({
   ),
 }));
 
+import { AdminSnackbarProvider } from '@/hooks/useAdminSnackbar';
+
 import MentorDetailEditor from '../MentorDetailEditor';
 
 const userDetail = {
@@ -104,7 +106,10 @@ const renderEditor = () =>
         })
       }
     >
-      <MentorDetailEditor mentorId={7} />
+      {/* 스낵바 문구를 확인할 수 있게 실제 Provider 로 감싼다 */}
+      <AdminSnackbarProvider>
+        <MentorDetailEditor mentorId={7} />
+      </AdminSnackbarProvider>
     </QueryClientProvider>,
   );
 
@@ -259,17 +264,43 @@ describe('MentorDetailEditor 경력 수정·대표 지정', () => {
   const careerFetchCount = () =>
     get.mock.calls.filter(([url]) => isCareerUrl(url)).length;
 
-  it('「대표로 지정」 은 대표가 아닌 경력에만 있다', async () => {
+  it('「대표로 지정」 은 대표가 아닌 경력에만 있고, 오른쪽 수정·삭제 묶음에는 없다', async () => {
     renderEditor();
     expect(
       await screen.findAllByRole('button', { name: '대표로 지정' }),
     ).toHaveLength(1);
     expect(screen.getAllByRole('button', { name: '수정' })).toHaveLength(2);
+    for (const editButton of screen.getAllByRole('button', { name: '수정' })) {
+      expect(
+        within(editButton.parentElement!)
+          .getAllByRole('button')
+          .map((button) => button.textContent),
+      ).toEqual(['수정', '삭제']);
+    }
   });
 
-  it('대표로 지정하면 바로 저장하고 경력 목록을 다시 불러온다', async () => {
+  it('대표로 지정은 확인 창에서 취소하면 요청하지 않는다', async () => {
     renderEditor();
     fireEvent.click(await screen.findByRole('button', { name: '대표로 지정' }));
+    const dialog = screen.getByRole('dialog');
+    expect(dialog).toHaveTextContent(
+      '이 경력을 대표 경력으로 바꿀까요? 웹 멘토 카드의 회사·직무가 바뀝니다.',
+    );
+    fireEvent.click(within(dialog).getByRole('button', { name: '취소' }));
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+    expect(patch).not.toHaveBeenCalled();
+  });
+
+  it('대표로 지정을 확인하면 저장하고 경력 목록을 다시 불러온다', async () => {
+    renderEditor();
+    fireEvent.click(await screen.findByRole('button', { name: '대표로 지정' }));
+    fireEvent.click(
+      within(screen.getByRole('dialog')).getByRole('button', {
+        name: '대표로 지정',
+      }),
+    );
 
     await waitFor(() =>
       expect(patch).toHaveBeenCalledWith(
@@ -544,5 +575,88 @@ describe('MentorDetailEditor 경력 로고 연결', () => {
     expect(patch.mock.calls.map(([url]) => url)).not.toContain(
       '/admin/user-career/user/7/12/company-logo',
     );
+  });
+});
+
+describe('MentorDetailEditor 경력 로고 칸에서 바로 변경', () => {
+  const career = {
+    id: 12,
+    company: '이전회사',
+    job: '마케팅',
+    employmentType: '계약직',
+    startDate: '2019-03',
+    endDate: '2021-12',
+    field: null,
+    position: null,
+    department: null,
+    isAddedByAdmin: true,
+    isRepresentative: false,
+  };
+
+  beforeEach(() => {
+    getV2.mockResolvedValue({ data: { data: userDetail } });
+    patch.mockResolvedValue({});
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('로고 칸을 누르면 수정 창 없이 고른 로고를 바로 연결한다', async () => {
+    mockLogoApis([{ ...career, companyLogoId: null, logoImgUrl: null }]);
+    renderEditor();
+    const cell = await screen.findByRole('button', {
+      name: '이전회사 경력 로고 변경',
+    });
+    expect(cell).toHaveTextContent('없음');
+    fireEvent.click(cell);
+    expect(screen.queryByText('경력 수정')).not.toBeInTheDocument();
+    // 로고가 없으면 해제할 것도 없다
+    expect(
+      screen.queryByRole('button', { name: '로고 해제' }),
+    ).not.toBeInTheDocument();
+    fireEvent.click(await screen.findByRole('button', { name: /네이버/ }));
+    fireEvent.click(screen.getByRole('button', { name: '선택' }));
+
+    await waitFor(() =>
+      expect(patch).toHaveBeenCalledWith(
+        '/admin/user-career/user/7/12/company-logo',
+        { companyLogoId: 3 },
+      ),
+    );
+    expect(patch).toHaveBeenCalledTimes(1);
+  });
+
+  it('선택 창의 로고 해제는 null 로 보낸다', async () => {
+    mockLogoApis([
+      { ...career, companyLogoId: 3, logoImgUrl: NAVER_LOGO.imageUrl },
+    ]);
+    renderEditor();
+    fireEvent.click(
+      await screen.findByRole('button', { name: '이전회사 경력 로고 변경' }),
+    );
+    fireEvent.click(await screen.findByRole('button', { name: '로고 해제' }));
+
+    await waitFor(() =>
+      expect(patch).toHaveBeenCalledWith(
+        '/admin/user-career/user/7/12/company-logo',
+        { companyLogoId: null },
+      ),
+    );
+  });
+
+  it('바꾸지 못하면 스낵바로 알린다', async () => {
+    patch.mockRejectedValue(new Error('500'));
+    mockLogoApis([{ ...career, companyLogoId: null, logoImgUrl: null }]);
+    renderEditor();
+    fireEvent.click(
+      await screen.findByRole('button', { name: '이전회사 경력 로고 변경' }),
+    );
+    fireEvent.click(await screen.findByRole('button', { name: /네이버/ }));
+    fireEvent.click(screen.getByRole('button', { name: '선택' }));
+
+    expect(
+      await screen.findByText('경력 로고를 바꾸지 못했습니다.'),
+    ).toBeInTheDocument();
   });
 });

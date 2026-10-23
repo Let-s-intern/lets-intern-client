@@ -1,4 +1,10 @@
-import { Button } from '@mui/material';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 
 import {
@@ -124,6 +130,11 @@ export default function MentorDetailEditor({ mentorId }: Props) {
     usePatchAdminRepresentativeCareerMutation(mentorId);
   const patchCareer = usePatchAdminUserCareerMutation(mentorId);
   const [editingCareer, setEditingCareer] = useState<LocalCareer | null>(null);
+  // 경력 행의 로고 칸에서 바로 바꾸는 경력, 대표로 바꿀지 묻는 경력
+  const [logoPickingCareer, setLogoPickingCareer] =
+    useState<LocalCareer | null>(null);
+  const [representativeTarget, setRepresentativeTarget] =
+    useState<LocalCareer | null>(null);
   const [isCareerFormOpen, setIsCareerFormOpen] = useState(false);
 
   const [form, setForm] = useState<BasicFormData>(INITIAL_FORM);
@@ -304,6 +315,17 @@ export default function MentorDetailEditor({ mentorId }: Props) {
       onSuccess: () => snackbar('대표 경력으로 지정했습니다.'),
       onError: () => snackbar('대표 경력 지정에 실패했습니다.'),
     });
+  };
+
+  // 로고 칸에서 고르면 수정 다이얼로그 없이 바로 연결한다
+  const handleChangeCareerLogo = (companyLogoId: number | null) => {
+    const career = logoPickingCareer;
+    setLogoPickingCareer(null);
+    if (!career?.id) return;
+    patchCareerLogo.mutate(
+      { careerId: career.id, companyLogoId },
+      { onError: () => snackbar('경력 로고를 바꾸지 못했습니다.') },
+    );
   };
 
   const handleUpdateCareer = (values: CareerEditValues) => {
@@ -687,93 +709,126 @@ export default function MentorDetailEditor({ mentorId }: Props) {
                 const isDeletable = career.id !== null;
                 const hasDetails =
                   career.field || career.position || career.department;
+                const isLogoSaving =
+                  patchCareerLogo.isPending &&
+                  patchCareerLogo.variables?.careerId === career.id;
                 return (
                   <div
                     key={career.id ?? index}
-                    className="border-neutral-80 flex w-full flex-col gap-1 rounded border p-4"
+                    className="border-neutral-80 flex w-full gap-3 rounded border p-4"
                   >
-                    <div className="flex items-center justify-between">
-                      <span className="text-xsmall14 text-neutral-0 flex items-center gap-2">
-                        {career.logoImgUrl ? (
-                          <img
-                            src={career.logoImgUrl}
-                            alt="경력 로고"
-                            className="h-6 w-6 rounded object-contain"
-                          />
-                        ) : null}
-                        {career.job || '-'}
-                        {career.companyLogoId !== null ? (
-                          <span className="text-xxsmall12 text-neutral-40">
-                            라이브러리: {logoNameOf(career.companyLogoId)}
-                          </span>
-                        ) : null}
+                    {/* 로고 칸을 누르면 수정 다이얼로그 없이 로고만 바로 바꾼다 */}
+                    <button
+                      type="button"
+                      aria-label={`${career.company || '경력'} 경력 로고 변경`}
+                      disabled={!career.id || isLogoSaving}
+                      onClick={() => setLogoPickingCareer(career)}
+                      className={`group relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded ${
+                        career.logoImgUrl
+                          ? 'border-neutral-80 border'
+                          : 'border-neutral-70 border border-dashed'
+                      }`}
+                    >
+                      {career.logoImgUrl ? (
+                        <img
+                          src={career.logoImgUrl}
+                          alt="경력 로고"
+                          className="h-full w-full object-contain"
+                        />
+                      ) : (
+                        <span className="text-xxsmall10 text-neutral-40">
+                          없음
+                        </span>
+                      )}
+                      <span
+                        className={`text-xxsmall10 absolute inset-0 flex items-center justify-center bg-black/50 text-center leading-tight text-white transition-opacity ${
+                          isLogoSaving
+                            ? 'opacity-100'
+                            : 'opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100'
+                        }`}
+                      >
+                        {isLogoSaving ? '저장 중' : '로고 변경'}
                       </span>
-                      {isDeletable ? (
-                        <div className="flex items-center gap-3">
-                          {!career.isRepresentative ? (
+                    </button>
+                    <div className="flex min-w-0 flex-1 flex-col gap-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xsmall14 text-neutral-0 flex items-center gap-2">
+                          {career.job || '-'}
+                          {career.companyLogoId !== null ? (
+                            <span className="text-xxsmall12 text-neutral-40">
+                              라이브러리: {logoNameOf(career.companyLogoId)}
+                            </span>
+                          ) : null}
+                        </span>
+                        {isDeletable ? (
+                          <div className="flex items-center gap-3">
                             <button
                               type="button"
-                              onClick={() => handleSetRepresentative(career)}
-                              disabled={patchRepresentative.isPending}
+                              onClick={() => setEditingCareer(career)}
                               className="text-xxsmall12 text-primary hover:underline"
                             >
-                              대표로 지정
+                              수정
                             </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteCareer(career)}
+                              className="text-xxsmall12 text-red-500 hover:text-red-700"
+                            >
+                              삭제
+                            </button>
+                          </div>
+                        ) : null}
+                      </div>
+                      <div className="text-xsmall14 text-neutral-0 font-medium">
+                        {career.company || '-'}
+                      </div>
+                      <div className="text-xsmall14 text-neutral-0 flex items-center gap-2">
+                        <span>{career.employmentType || '-'}</span>
+                        <span className="text-neutral-40">
+                          {career.startDate || '-'}
+                          {career.endDate
+                            ? ` - ${career.endDate}`
+                            : ' - 재직중'}
+                        </span>
+                      </div>
+                      {isDeletable && !career.isRepresentative ? (
+                        <button
+                          type="button"
+                          onClick={() => setRepresentativeTarget(career)}
+                          disabled={patchRepresentative.isPending}
+                          className="text-xxsmall12 text-primary w-fit hover:underline"
+                        >
+                          대표로 지정
+                        </button>
+                      ) : null}
+                      {hasDetails ? (
+                        <div className="text-xsmall14 text-neutral-35 mt-1 flex flex-wrap gap-x-3 gap-y-0.5">
+                          {career.field ? (
+                            <span>업무분야: {career.field}</span>
                           ) : null}
-                          <button
-                            type="button"
-                            onClick={() => setEditingCareer(career)}
-                            className="text-xxsmall12 text-primary hover:underline"
-                          >
-                            수정
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteCareer(career)}
-                            className="text-xxsmall12 text-red-500 hover:text-red-700"
-                          >
-                            삭제
-                          </button>
+                          {career.position ? (
+                            <span>직책: {career.position}</span>
+                          ) : null}
+                          {career.department ? (
+                            <span>부서: {career.department}</span>
+                          ) : null}
+                        </div>
+                      ) : null}
+                      {!career.isAddedByAdmin || career.isRepresentative ? (
+                        <div className="mt-1 flex items-center gap-1.5">
+                          {!career.isAddedByAdmin ? (
+                            <span className="text-xxsmall12 text-neutral-50">
+                              멘토 등록
+                            </span>
+                          ) : null}
+                          {career.isRepresentative ? (
+                            <span className="text-xxsmall12 border-neutral-70 text-neutral-40 rounded-full border px-2 py-0.5">
+                              대표 경력
+                            </span>
+                          ) : null}
                         </div>
                       ) : null}
                     </div>
-                    <div className="text-xsmall14 text-neutral-0 font-medium">
-                      {career.company || '-'}
-                    </div>
-                    <div className="text-xsmall14 text-neutral-0 flex items-center gap-2">
-                      <span>{career.employmentType || '-'}</span>
-                      <span className="text-neutral-40">
-                        {career.startDate || '-'}
-                        {career.endDate ? ` - ${career.endDate}` : ' - 재직중'}
-                      </span>
-                    </div>
-                    {hasDetails ? (
-                      <div className="text-xsmall14 text-neutral-35 mt-1 flex flex-wrap gap-x-3 gap-y-0.5">
-                        {career.field ? (
-                          <span>업무분야: {career.field}</span>
-                        ) : null}
-                        {career.position ? (
-                          <span>직책: {career.position}</span>
-                        ) : null}
-                        {career.department ? (
-                          <span>부서: {career.department}</span>
-                        ) : null}
-                      </div>
-                    ) : null}
-                    {!career.isAddedByAdmin || career.isRepresentative ? (
-                      <div className="mt-1 flex items-center gap-1.5">
-                        {!career.isAddedByAdmin ? (
-                          <span className="text-xxsmall12 text-neutral-50">
-                            멘토 등록
-                          </span>
-                        ) : null}
-                        {career.isRepresentative ? (
-                          <span className="text-xxsmall12 border-neutral-70 text-neutral-40 rounded-full border px-2 py-0.5">
-                            대표 경력
-                          </span>
-                        ) : null}
-                      </div>
-                    ) : null}
                   </div>
                 );
               })}
@@ -781,6 +836,46 @@ export default function MentorDetailEditor({ mentorId }: Props) {
           )}
         </div>
       </div>
+
+      {logoPickingCareer ? (
+        <CompanyLogoPickerDialog
+          onClose={() => setLogoPickingCareer(null)}
+          onSelect={(logo) => handleChangeCareerLogo(logo.id)}
+          onClear={
+            logoPickingCareer.logoImgUrl
+              ? () => handleChangeCareerLogo(null)
+              : undefined
+          }
+        />
+      ) : null}
+
+      <Dialog
+        open={representativeTarget !== null}
+        onClose={() => setRepresentativeTarget(null)}
+      >
+        <DialogTitle className="text-base font-semibold">
+          대표 경력 지정
+        </DialogTitle>
+        <DialogContent>
+          이 경력을 대표 경력으로 바꿀까요? 웹 멘토 카드의 회사·직무가 바뀝니다.
+        </DialogContent>
+        <DialogActions>
+          <Button color="inherit" onClick={() => setRepresentativeTarget(null)}>
+            취소
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => {
+              if (representativeTarget) {
+                handleSetRepresentative(representativeTarget);
+              }
+              setRepresentativeTarget(null);
+            }}
+          >
+            대표로 지정
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }
