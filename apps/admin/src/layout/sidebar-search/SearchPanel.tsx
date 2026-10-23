@@ -11,7 +11,7 @@ const Highlight = ({ text, query }: { text: string; query: string }) => (
   <>
     {splitHighlight(text, query).map((part, index) =>
       part.isMatch ? (
-        <mark key={index} className="text-primary bg-transparent font-bold">
+        <mark key={index} className="bg-transparent font-bold text-[#8E9BFF]">
           {part.text}
         </mark>
       ) : (
@@ -31,6 +31,13 @@ interface Props {
   onSelect: (entry: SearchEntry) => void;
   onClose: () => void;
 }
+
+/*
+ * 다크 패널 색(대비는 WCAG 기준으로 확인)
+ *   배경 #1F2328 · 입력칸 #262B31 · 선택 행 #2D333B · 테두리 흰색 10%
+ *   글자 흰색 · 경로·placeholder #9AA4B2(5.0~6.3:1) · 섹션 제목 #8B949E(배경 위 5.1:1)
+ *   · 일치 #8E9BFF(5.0~6.2:1)
+ */
 
 /**
  * 화면 위쪽 가운데에 뜨는 메뉴 검색(Spotlight 식). 모달이 아니다 — 배경을 가리거나 스크롤·포커스를
@@ -94,7 +101,7 @@ export default function SearchPanel({
         role="search"
         aria-label="메뉴 검색"
         // MUI 모달(1300) 위, 스낵바(1400) 아래
-        className="border-neutral-80 fixed left-1/2 top-[12vh] z-[1350] w-[640px] max-w-[calc(100vw-32px)] -translate-x-1/2 overflow-hidden rounded-xl border bg-white shadow-2xl"
+        className="fixed left-1/2 top-[12vh] z-[1350] w-[640px] max-w-[calc(100vw-32px)] -translate-x-1/2 overflow-hidden rounded-xl border border-white/10 bg-[#1F2328] shadow-[0_24px_64px_rgba(0,0,0,0.55)]"
       >
         <input
           ref={inputRef}
@@ -114,7 +121,7 @@ export default function SearchPanel({
             setActiveIndex(0);
           }}
           onKeyDown={handleKeyDown}
-          className="border-neutral-80 text-neutral-0 h-14 w-full border-b px-5 text-[18px] outline-none placeholder:text-neutral-50"
+          className="h-14 w-full border-b border-white/10 bg-[#262B31] px-5 text-[18px] text-white outline-none placeholder:text-[#9AA4B2]"
         />
         <ul
           ref={listRef}
@@ -124,7 +131,7 @@ export default function SearchPanel({
           className="max-h-[60vh] overflow-y-auto py-2"
         >
           {results.length === 0 ? (
-            <li className="text-neutral-40 px-5 py-6 text-center text-sm">
+            <li className="px-5 py-6 text-center text-sm text-[#9AA4B2]">
               일치하는 메뉴가 없습니다
             </li>
           ) : (
@@ -138,7 +145,7 @@ export default function SearchPanel({
                   {showSection ? (
                     <li
                       role="presentation"
-                      className="text-neutral-40 px-5 pb-1 pt-3 text-xs font-semibold"
+                      className="px-5 pb-1 pt-3 text-[11px] font-semibold uppercase tracking-wide text-[#8B949E]"
                     >
                       {section}
                     </li>
@@ -153,13 +160,13 @@ export default function SearchPanel({
                     onMouseMove={() => setActiveIndex(index)}
                     className={twMerge(
                       'mx-2 cursor-pointer rounded-lg px-3 py-2.5',
-                      index === activeIndex && 'bg-neutral-95',
+                      index === activeIndex && 'bg-[#2D333B]',
                     )}
                   >
-                    <div className="text-neutral-0 text-[16px] font-semibold">
+                    <div className="text-[16px] font-semibold text-white">
                       <Highlight text={entry.label} query={query} />
                     </div>
-                    <div className="text-neutral-40 text-[13px]">
+                    <div className="text-[13px] text-[#9AA4B2]">
                       {[...entry.parents, entry.label].map((segment, i) => (
                         <span key={i}>
                           {i > 0 ? ' › ' : null}
