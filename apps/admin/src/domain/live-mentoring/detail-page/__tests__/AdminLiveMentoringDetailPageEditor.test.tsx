@@ -12,6 +12,15 @@ vi.mock('@/utils/axios', () => ({
   },
 }));
 
+vi.mock('@/common/lexical/EditorApp', () => ({
+  emptyEditorState: 'EMPTY',
+  default: ({ onChange }: { onChange: (json: string) => void }) => (
+    <button type="button" onClick={() => onChange('FREE_CONTENT')}>
+      본문 입력
+    </button>
+  ),
+}));
+
 import AdminLiveMentoringDetailPageEditor from '../AdminLiveMentoringDetailPageEditor';
 
 const detailPage = {
@@ -115,6 +124,36 @@ describe('AdminLiveMentoringDetailPageEditor', () => {
 
     expect(await screen.findByRole('alert')).toHaveTextContent('멘토링 유형');
     expect(put).not.toHaveBeenCalled();
+  });
+
+  it('자유 입력란을 고치지 않아도 기본값으로 함께 PUT 한다', async () => {
+    put.mockResolvedValue({ data: { data: detailPage } });
+    renderEditor();
+    await editFirstBullet('바뀐 불릿');
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
+
+    await waitFor(() => expect(put).toHaveBeenCalled());
+    expect(put.mock.calls[0][1].freeContent).toEqual({
+      visible: false,
+      content: null,
+      position: 'AFTER_MENTORING_TYPES',
+    });
+  });
+
+  it('자유 입력란 탭에서 고친 노출·본문을 PUT 한다', async () => {
+    put.mockResolvedValue({ data: { data: detailPage } });
+    renderEditor();
+    fireEvent.click(await screen.findByRole('button', { name: '자유 입력란' }));
+    fireEvent.click(screen.getByLabelText('상세페이지에 표시'));
+    fireEvent.click(screen.getByRole('button', { name: '본문 입력' }));
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
+
+    await waitFor(() => expect(put).toHaveBeenCalled());
+    expect(put.mock.calls[0][1].freeContent).toEqual({
+      visible: true,
+      content: 'FREE_CONTENT',
+      position: 'AFTER_MENTORING_TYPES',
+    });
   });
 
   it('취소하면 불러온 값으로 되돌린다', async () => {
