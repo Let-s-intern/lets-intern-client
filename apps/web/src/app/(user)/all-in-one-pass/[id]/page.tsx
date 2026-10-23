@@ -7,6 +7,8 @@ import { useGetAllInOnePassLanding } from '@/domain/all-in-one-pass/api/landing'
 import { useGetMembershipApplicationForm } from '@/domain/all-in-one-pass/api/purchase';
 import BenefitDetailSection from '@/domain/all-in-one-pass/landing/BenefitDetailSection';
 import BenefitSummarySection from '@/domain/all-in-one-pass/landing/BenefitSummarySection';
+import LandingLexicalSection from '@/domain/all-in-one-pass/landing/LandingLexicalSection';
+import ReviewsSection from '@/domain/all-in-one-pass/landing/ReviewsSection';
 import HeroSection from '@/domain/all-in-one-pass/landing/HeroSection';
 import IntroSection from '@/domain/all-in-one-pass/landing/IntroSection';
 import LandingNav from '@/domain/all-in-one-pass/landing/LandingNav';
@@ -87,6 +89,8 @@ export default function AllInOnePassLandingPage() {
         playbookLexical={landing.lexical.playbookSection}
         benefitLexical={landing.lexical.benefitSection}
       />
+      <ReviewsSection reviews={landing.reviews} />
+      <LandingLexicalSection lexical={landing.lexical.reviewSection} />
 
       <MembershipPlanBottomSheet
         membershipId={membershipId}

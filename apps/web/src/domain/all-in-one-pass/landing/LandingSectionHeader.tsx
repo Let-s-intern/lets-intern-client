@@ -27,7 +27,7 @@ export default function LandingSectionHeader({
       <SectionHeader className="py-2 text-left text-[#F36D32] md:text-center">
         {header}
       </SectionHeader>
-      <h2 className="text-medium24 md:text-xlarge28 text-neutral-0 whitespace-pre-line text-left font-bold md:text-center">
+      <h2 className="text-medium24 text-neutral-0 whitespace-pre-line text-left font-bold md:text-center md:text-[40px]">
         {mainHeader}
       </h2>
       {subHeader && (
