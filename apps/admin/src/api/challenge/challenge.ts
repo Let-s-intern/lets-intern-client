@@ -20,7 +20,12 @@ import {
 } from '@/schema';
 import axios from '@/utils/axios';
 import axiosV2 from '@/utils/axiosV2';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQueries,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { z } from 'zod';
 import {
   challengeApplicationSchema,
@@ -390,6 +395,38 @@ export const useGetChallengeAttendances = ({
       return attendances.parse(res.data.data).attendanceList ?? [];
     },
   });
+};
+
+/**
+ * 제출확인에서 한 행으로 묶은 같은 회차 버전 미션들의 제출자를 미션마다 받는다 (LC-3505).
+ * 키는 단건 조회와 같아 캐시를 함께 쓴다
+ */
+export const useGetChallengeRoundAttendances = ({
+  challengeId,
+  missionIds,
+}: {
+  challengeId?: number;
+  missionIds: number[];
+}) => {
+  const results = useQueries({
+    queries: missionIds.map((missionId) => ({
+      queryKey: getChallengeAttendancesQueryKey(challengeId, missionId),
+      enabled: Boolean(challengeId),
+      queryFn: async () => {
+        const res = await axios.get(
+          `/challenge/${challengeId}/mission/${missionId}/attendances`,
+        );
+        return attendances.parse(res.data.data).attendanceList ?? [];
+      },
+    })),
+  });
+  return {
+    byMission: missionIds.map((missionId, i) => ({
+      missionId,
+      attendances: results[i]?.data ?? [],
+    })),
+    refetch: () => results.forEach((result) => result.refetch()),
+  };
 };
 
 export const getClickCopy = async (fromId: number, toId: number) => {

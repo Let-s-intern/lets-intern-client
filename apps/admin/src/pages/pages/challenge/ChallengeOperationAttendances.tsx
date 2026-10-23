@@ -1,4 +1,4 @@
-import { useGetChallengeAttendances } from '@/api/challenge/challenge';
+import { useGetChallengeRoundAttendances } from '@/api/challenge/challenge';
 import {
   useAdminCurrentChallenge,
   useAdminMissionsOfCurrentChallenge,
@@ -16,9 +16,8 @@ import {
   groupMissionsByRound,
   isMissionForVersion,
 } from '@/domain/admin/challenge/version/utils/missionVersion';
-import { Mission } from '@/schema';
+import { AttendanceItem, Mission } from '@/schema';
 import { TABLE_CONTENT } from '@/utils/convert';
-import { Button } from '@mui/material';
 import React, { useMemo, useState } from 'react';
 
 type Row = Mission &
@@ -42,14 +41,37 @@ const colNames = ['회차', '미션명', '공개일', '마감일', '제출현황
 const ChallengeOperationAttendances = () => {
   const { currentChallenge } = useAdminCurrentChallenge();
   const missions = useAdminMissionsOfCurrentChallenge();
-  const [detailedMission, setDetailedMission] = useState<Mission | null>(null);
+  // 펼친 행의 미션들. 같은 회차 버전 미션은 한 행이라 여럿일 수 있다
+  const [detailedRound, setDetailedRound] = useState<Mission[] | null>(null);
   // null 은 전체. 버전 탭은 그 버전 참여자가 받는 미션만 보여준다
   const [versionId, setVersionId] = useState<number | null>(null);
 
-  const { data: detailedAttendances, refetch } = useGetChallengeAttendances({
+  const { byMission, refetch } = useGetChallengeRoundAttendances({
     challengeId: currentChallenge?.id,
-    detailedMissionId: detailedMission?.id,
+    missionIds: detailedRound?.map((mission) => mission.id) ?? [],
   });
+
+  // 묶인 미션들의 제출자를 미션 순서대로 한 목록에. 행마다 자기 미션을 찾을 수 있게 둔다
+  const { detailedAttendances, missionByAttendanceId } = useMemo(() => {
+    const missionById = new Map(
+      (detailedRound ?? []).map((mission) => [mission.id, mission]),
+    );
+    const missionOfAttendance = new Map<number, Mission>();
+    const list: AttendanceItem[] = byMission.flatMap(
+      ({ missionId, attendances }) => {
+        const mission = missionById.get(missionId);
+        if (!mission) return [];
+        attendances.forEach((item) =>
+          missionOfAttendance.set(item.attendance.id, mission),
+        );
+        return attendances;
+      },
+    );
+    return {
+      detailedAttendances: list,
+      missionByAttendanceId: missionOfAttendance,
+    };
+  }, [byMission, detailedRound]);
 
   const rows = useMemo(() => {
     return groupMissionsByRound(
@@ -129,49 +151,43 @@ const ChallengeOperationAttendances = () => {
                 key={row.id}
                 initialValues={row}
                 onClick={() => {
-                  const isOpen = row.roundMissions.some(
-                    (mission) => mission.id === detailedMission?.id,
-                  );
-                  setDetailedMission(isOpen ? null : row.roundMissions[0]);
+                  const isOpen = detailedRound?.[0]?.id === row.id;
+                  setDetailedRound(isOpen ? null : row.roundMissions);
                 }}
                 cellWidthList={cellWidthList}
               />
-              {detailedMission &&
-              row.roundMissions.some(
-                (mission) => mission.id === detailedMission.id,
-              ) ? (
-                <>
-                  {/* 같은 회차의 버전 미션이 여럿이면 어느 버전 제출자를 볼지 고른다 */}
-                  {row.roundMissions.length > 1 && (
-                    <div className="flex items-center gap-2 px-4 pt-3">
-                      {row.roundMissions.map((mission) => (
-                        <Button
-                          key={mission.id}
-                          size="small"
-                          variant={
-                            mission.id === detailedMission.id
-                              ? 'contained'
-                              : 'outlined'
-                          }
-                          onClick={() => setDetailedMission(mission)}
-                        >
-                          {formatMissionVersions(mission.challengeVersionList)}
-                        </Button>
-                      ))}
-                    </div>
-                  )}
-                  <ChallengeSubmitDetail
-                    key={`detail-${detailedMission.id}`}
-                    mission={detailedMission}
-                    setIsDetailShown={(isDetailShown) => {
-                      if (!isDetailShown) {
-                        setDetailedMission(null);
-                      }
-                    }}
-                    attendances={detailedAttendances || []}
-                    refetch={refetch}
-                  />
-                </>
+              {detailedRound?.[0]?.id === row.id ? (
+                <ChallengeSubmitDetail
+                  key={`detail-${row.id}`}
+                  mission={detailedRound[0]}
+                  missionOf={(item) =>
+                    missionByAttendanceId.get(item.attendance.id) ??
+                    detailedRound[0]
+                  }
+                  setIsDetailShown={(isDetailShown) => {
+                    if (!isDetailShown) {
+                      setDetailedRound(null);
+                    }
+                  }}
+                  // 전체 탭에서는 버전 미션 제출을 버전별 구역으로 나눠 보여준다
+                  sectionOf={
+                    versionId === null
+                      ? (item) => {
+                          const mission = missionByAttendanceId.get(
+                            item.attendance.id,
+                          );
+                          return mission &&
+                            mission.challengeVersionList.length > 0
+                            ? formatMissionVersions(
+                                mission.challengeVersionList,
+                              )
+                            : null;
+                        }
+                      : undefined
+                  }
+                  attendances={detailedAttendances}
+                  refetch={refetch}
+                />
               ) : null}
             </React.Fragment>
           ))}
