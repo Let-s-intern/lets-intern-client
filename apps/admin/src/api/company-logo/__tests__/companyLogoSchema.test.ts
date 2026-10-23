@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { companyLogoListSchema } from '../companyLogoSchema';
+import {
+  companyLogoFaviconCandidatesSchema,
+  companyLogoListSchema,
+} from '../companyLogoSchema';
 
 describe('companyLogoListSchema', () => {
   it('목록 응답을 파싱한다', () => {
@@ -24,5 +27,23 @@ describe('companyLogoListSchema', () => {
         companyLogoList: [{ id: 1, name: '렛츠커리어' }],
       }),
     ).toThrow();
+  });
+});
+
+describe('companyLogoFaviconCandidatesSchema', () => {
+  it('후보 목록을 파싱한다. 크기는 null 일 수 있다', () => {
+    const { candidates } = companyLogoFaviconCandidatesSchema.parse({
+      candidates: [
+        {
+          url: 'https://toss.test/favicon.ico',
+          format: 'ICO',
+          width: null,
+          height: null,
+          byteSize: 1000,
+          source: 'FAVICON_ICO',
+        },
+      ],
+    });
+    expect(candidates[0].width).toBeNull();
   });
 });

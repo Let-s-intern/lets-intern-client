@@ -10,12 +10,18 @@ import { useState } from 'react';
 
 import {
   usePatchAdminCompanyLogoMutation,
+  usePostAdminCompanyLogoFaviconCandidatesMutation,
   usePostAdminCompanyLogoFaviconMutation,
   usePostAdminCompanyLogoMutation,
 } from '@/api/company-logo/companyLogo';
-import type { CompanyLogo } from '@/api/company-logo/companyLogoSchema';
+import type {
+  CompanyLogo,
+  CompanyLogoFaviconCandidate,
+} from '@/api/company-logo/companyLogoSchema';
 import { uploadFile } from '@/api/file';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+
+import FaviconCandidateGrid from './FaviconCandidateGrid';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
@@ -50,11 +56,17 @@ export default function CompanyLogoFormDialog({ logo, onClose }: Props) {
   const { snackbar } = useAdminSnackbar();
   const postLogo = usePostAdminCompanyLogoMutation();
   const patchLogo = usePatchAdminCompanyLogoMutation();
-  const fetchFavicon = usePostAdminCompanyLogoFaviconMutation();
+  const findCandidates = usePostAdminCompanyLogoFaviconCandidatesMutation();
+  const uploadFavicon = usePostAdminCompanyLogoFaviconMutation();
 
   const [name, setName] = useState(logo?.name ?? '');
   const [imageUrl, setImageUrl] = useState(logo?.imageUrl ?? '');
   const [siteUrl, setSiteUrl] = useState('');
+  // 찾은 로고 후보. 찾기 전이거나 하나를 골라 올렸으면 null
+  const [candidates, setCandidates] = useState<
+    CompanyLogoFaviconCandidate[] | null
+  >(null);
+  const [selectedCandidateUrl, setSelectedCandidateUrl] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -79,13 +91,37 @@ export default function CompanyLogoFormDialog({ logo, onClose }: Props) {
     }
   };
 
-  // 회사 사이트 주소로 파비콘을 가져와 이미지로 쓴다. 회사명은 건드리지 않는다
-  const handleFetchFavicon = () => {
+  // 사이트가 바뀌면 이전 사이트의 후보는 쓸 수 없다
+  const handleSiteUrlChange = (value: string) => {
+    setSiteUrl(value);
+    setCandidates(null);
+  };
+
+  const handleFindCandidates = () => {
     setError(null);
-    fetchFavicon.mutate(siteUrl.trim(), {
-      onSuccess: setImageUrl,
+    findCandidates.mutate(siteUrl.trim(), {
+      onSuccess: (found) => {
+        setCandidates(found);
+        // 큰 것부터 오므로 첫 번째를 기본으로 고른다
+        setSelectedCandidateUrl(found[0]?.url ?? '');
+      },
       onError: (e) => setError(faviconErrorMessage(e)),
     });
+  };
+
+  // 고른 후보를 서버가 올린다. 회사명은 건드리지 않는다
+  const handleUseCandidate = () => {
+    setError(null);
+    uploadFavicon.mutate(
+      { siteUrl: siteUrl.trim(), candidateUrl: selectedCandidateUrl },
+      {
+        onSuccess: (uploadedUrl) => {
+          setImageUrl(uploadedUrl);
+          setCandidates(null);
+        },
+        onError: (e) => setError(faviconErrorMessage(e)),
+      },
+    );
   };
 
   const handleSubmit = async () => {
@@ -110,7 +146,7 @@ export default function CompanyLogoFormDialog({ logo, onClose }: Props) {
   };
 
   return (
-    <Dialog open onClose={onClose} maxWidth="xs" fullWidth>
+    <Dialog open onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle className="text-base font-semibold">
         {logo ? '로고 수정' : '로고 등록'}
       </DialogTitle>
@@ -156,18 +192,36 @@ export default function CompanyLogoFormDialog({ logo, onClose }: Props) {
               label="회사 사이트 주소"
               placeholder="https://example.com"
               value={siteUrl}
-              onChange={(e) => setSiteUrl(e.target.value)}
+              onChange={(e) => handleSiteUrlChange(e.target.value)}
             />
             <Button
               variant="outlined"
               size="small"
               className="shrink-0"
-              disabled={!siteUrl.trim() || fetchFavicon.isPending}
-              onClick={handleFetchFavicon}
+              disabled={!siteUrl.trim() || findCandidates.isPending}
+              onClick={handleFindCandidates}
             >
-              {fetchFavicon.isPending ? '가져오는 중...' : '파비콘 가져오기'}
+              {findCandidates.isPending ? '찾는 중...' : '로고 후보 찾기'}
             </Button>
           </div>
+          {candidates ? (
+            <div className="flex flex-col gap-2">
+              <FaviconCandidateGrid
+                candidates={candidates}
+                selectedUrl={selectedCandidateUrl}
+                onSelect={setSelectedCandidateUrl}
+              />
+              <Button
+                variant="outlined"
+                size="small"
+                className="self-end"
+                disabled={!selectedCandidateUrl || uploadFavicon.isPending}
+                onClick={handleUseCandidate}
+              >
+                {uploadFavicon.isPending ? '올리는 중...' : '이 로고 사용'}
+              </Button>
+            </div>
+          ) : null}
           {error ? (
             <p role="alert" className="text-system-error text-xs">
               {error}
@@ -189,7 +243,7 @@ export default function CompanyLogoFormDialog({ logo, onClose }: Props) {
             !name.trim() ||
             !imageUrl ||
             isUploading ||
-            fetchFavicon.isPending ||
+            uploadFavicon.isPending ||
             isSaving
           }
           onClick={handleSubmit}

@@ -14,7 +14,31 @@ export const companyLogoListSchema = z.object({
   companyLogoList: z.array(companyLogoSchema),
 });
 
-/** `POST /api/v1/admin/company-logo/favicon` 응답. 사이트 파비콘을 올린 주소. 로고 행은 만들지 않는다 */
+/**
+ * 로고 후보 1건 — `POST /api/v1/admin/company-logo/favicon/candidates` 의 `candidates[]`.
+ * 서버가 사이트에서 찾은 아이콘 주소다(아직 올리지 않음). 큰 것부터 온다.
+ * format·source 는 화면 라벨에만 쓰므로, 서버가 값을 늘려도 깨지지 않게 문자열로 받는다.
+ */
+export const companyLogoFaviconCandidateSchema = z.object({
+  url: z.string(),
+  /** PNG · ICO · GIF · JPEG · WEBP */
+  format: z.string(),
+  width: z.number().nullable(),
+  height: z.number().nullable(),
+  byteSize: z.number(),
+  /** APPLE_TOUCH_ICON · ICON · DEFAULT_APPLE_TOUCH_ICON · FAVICON_ICO */
+  source: z.string(),
+});
+
+export type CompanyLogoFaviconCandidate = z.infer<
+  typeof companyLogoFaviconCandidateSchema
+>;
+
+export const companyLogoFaviconCandidatesSchema = z.object({
+  candidates: z.array(companyLogoFaviconCandidateSchema),
+});
+
+/** `POST /api/v1/admin/company-logo/favicon` 응답. 고른 후보를 올린 주소. 로고 행은 만들지 않는다 */
 export const companyLogoFaviconSchema = z.object({
   imageUrl: z.string(),
 });

@@ -2,6 +2,7 @@ import axios from '@/utils/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
+  companyLogoFaviconCandidatesSchema,
   companyLogoFaviconSchema,
   companyLogoListSchema,
   type CompanyLogoReq,
@@ -47,14 +48,25 @@ export const usePatchAdminCompanyLogoMutation = () =>
       axios.patch(`${PATH}/${id}`, body),
   );
 
-/**
- * POST /admin/company-logo/favicon — 회사 사이트의 파비콘을 서버가 가져와 올리고 주소를 돌려준다.
- * 실패하면 400 과 code(COMPANY_LOGO_FAVICON_INVALID_URL·FETCH_FAILED·TOO_LARGE)
+/*
+ * 파비콘 두 단계. 실패하면 둘 다 400 과 code
+ * (COMPANY_LOGO_FAVICON_INVALID_URL · FETCH_FAILED(후보 0개 포함) · TOO_LARGE)
  */
-export const usePostAdminCompanyLogoFaviconMutation = () =>
+
+/** POST /admin/company-logo/favicon/candidates — 회사 사이트의 아이콘 후보를 찾는다. 올리지는 않는다 */
+export const usePostAdminCompanyLogoFaviconCandidatesMutation = () =>
   useMutation({
     mutationFn: async (siteUrl: string) => {
-      const res = await axios.post(`${PATH}/favicon`, { siteUrl });
+      const res = await axios.post(`${PATH}/favicon/candidates`, { siteUrl });
+      return companyLogoFaviconCandidatesSchema.parse(res.data.data).candidates;
+    },
+  });
+
+/** POST /admin/company-logo/favicon — 고른 후보를 서버가 올리고 주소를 돌려준다 */
+export const usePostAdminCompanyLogoFaviconMutation = () =>
+  useMutation({
+    mutationFn: async (body: { siteUrl: string; candidateUrl: string }) => {
+      const res = await axios.post(`${PATH}/favicon`, body);
       return companyLogoFaviconSchema.parse(res.data.data).imageUrl;
     },
   });
