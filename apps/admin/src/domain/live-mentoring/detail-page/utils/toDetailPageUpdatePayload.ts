@@ -1,4 +1,8 @@
-import type { AdminLiveMentoringDetailPageUpdate } from '@/api/live-mentoring/liveMentoringDetailPageSchema';
+import {
+  type AdminLiveMentoringDetailPage,
+  type AdminLiveMentoringDetailPageUpdate,
+  adminLiveMentoringDetailPageUpdateSchema,
+} from '@/api/live-mentoring/liveMentoringDetailPageSchema';
 
 /*
  * 멘토 앱 상세페이지 저장(`apps/mentor/src/pages/live-mentoring/settings/` 의 `saveTemplate`,
@@ -7,6 +11,23 @@ import type { AdminLiveMentoringDetailPageUpdate } from '@/api/live-mentoring/li
  */
 
 const isBlank = (value: string | null | undefined) => !value?.trim();
+
+/**
+ * 조회 응답 → 편집 폼. 편집 영역만 떼어 낸다.
+ * 자유 입력란이 아직 없으면(서버 배포 전, 저장한 적 없음) 꺼진 빈 입력란·기본 위치로 시작한다.
+ */
+export const toDetailPageForm = (
+  data: AdminLiveMentoringDetailPage,
+): AdminLiveMentoringDetailPageUpdate => ({
+  ...adminLiveMentoringDetailPageUpdateSchema
+    .omit({ freeContent: true })
+    .parse(data),
+  freeContent: {
+    visible: data.freeContent?.visible ?? false,
+    content: data.freeContent?.content ?? null,
+    position: data.freeContent?.position ?? 'AFTER_MENTORING_TYPES',
+  },
+});
 
 /**
  * YouTube 링크를 서버가 받는 `https://www.youtube.com/embed/{id}` 로 바꾼다.
@@ -94,7 +115,15 @@ export const findDetailPageBlock = (
 export const toDetailPageUpdatePayload = (
   form: AdminLiveMentoringDetailPageUpdate,
 ): AdminLiveMentoringDetailPageUpdate => {
-  const { hero, mentoringTypes, strategy, video, results, reviews } = form;
+  const {
+    hero,
+    mentoringTypes,
+    strategy,
+    video,
+    results,
+    reviews,
+    freeContent,
+  } = form;
 
   const videoUrl = video.videoUrl?.trim()
     ? toYoutubeEmbedUrl(video.videoUrl)
@@ -138,5 +167,6 @@ export const toDetailPageUpdatePayload = (
         .filter((item) => item.beforeCaption && item.afterCaption),
     },
     reviews,
+    freeContent,
   };
 };

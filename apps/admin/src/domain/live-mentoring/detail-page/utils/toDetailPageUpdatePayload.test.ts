@@ -4,6 +4,7 @@ import type { AdminLiveMentoringDetailPageUpdate } from '@/api/live-mentoring/li
 
 import {
   findDetailPageBlock,
+  toDetailPageForm,
   toDetailPageUpdatePayload,
   toYoutubeEmbedUrl,
 } from './toDetailPageUpdatePayload';
@@ -51,6 +52,11 @@ const base = (): AdminLiveMentoringDetailPageUpdate => ({
     ],
   },
   reviews: { visible: true, selectedReviewIds: [3] },
+  freeContent: {
+    visible: true,
+    content: '{"root":{}}',
+    position: 'AFTER_STRATEGY',
+  },
 });
 
 describe('toYoutubeEmbedUrl', () => {
@@ -127,6 +133,14 @@ describe('toDetailPageUpdatePayload', () => {
     expect(toDetailPageUpdatePayload(form).strategy.title).toBe('');
   });
 
+  it('자유 입력란은 항상 함께 보낸다', () => {
+    expect(toDetailPageUpdatePayload(base()).freeContent).toEqual({
+      visible: true,
+      content: '{"root":{}}',
+      position: 'AFTER_STRATEGY',
+    });
+  });
+
   it('후기 선택 목록은 그대로 돌려보낸다', () => {
     expect(toDetailPageUpdatePayload(base()).reviews).toEqual({
       visible: true,
@@ -158,5 +172,33 @@ describe('findDetailPageBlock', () => {
     const form = base();
     form.video.videoUrl = 'https://vimeo.com/123';
     expect(findDetailPageBlock(form)).toContain('YouTube');
+  });
+});
+
+describe('toDetailPageForm', () => {
+  it('자유 입력란이 없는 응답은 꺼진 빈 입력란·기본 위치로 채운다', () => {
+    const { freeContent: _, ...withoutFreeContent } = base();
+    expect(toDetailPageForm(withoutFreeContent).freeContent).toEqual({
+      visible: false,
+      content: null,
+      position: 'AFTER_MENTORING_TYPES',
+    });
+  });
+
+  it('위치가 null 이면 기본 위치로, 나머지는 응답 값을 쓴다', () => {
+    const form = toDetailPageForm({
+      ...base(),
+      freeContent: { visible: true, content: 'X', position: null },
+    });
+    expect(form.freeContent).toEqual({
+      visible: true,
+      content: 'X',
+      position: 'AFTER_MENTORING_TYPES',
+    });
+  });
+
+  it('읽기 전용 값은 폼에 넣지 않는다', () => {
+    const form = toDetailPageForm({ ...base(), intro: { nickname: '멘토' } });
+    expect(form).not.toHaveProperty('intro');
   });
 });
