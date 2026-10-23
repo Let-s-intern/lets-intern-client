@@ -594,6 +594,10 @@ const ChallengeEdit: React.FC = () => {
             toVersionDrafts(challenge.versionList, challenge.desc)
           }
           onChange={setVersionDrafts}
+          challengeTitle={input.title ?? challenge.title ?? ''}
+          challengeShortDesc={input.shortDesc ?? challenge.shortDesc}
+          baseThumbnail={input.thumbnail ?? challenge.thumbnail}
+          challengeType={input.challengeType}
         />
       </section>
 

@@ -1,9 +1,10 @@
 import { fileType, uploadFile } from '@/api/file';
+import { generateAndUploadVersionThumbnail } from '@/domain/admin/program/challenge/utils/generateThumbnail';
 import ImageUpload from '@/domain/admin/program/ui/form/ImageUpload';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
-import { ChallengeVersionReq } from '@/schema';
+import { ChallengeType, ChallengeVersionReq } from '@/schema';
 import { Button, TextField, Typography } from '@mui/material';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FaArrowDown, FaArrowUp } from 'react-icons/fa';
 import { FaTrashCan } from 'react-icons/fa6';
 
@@ -31,18 +32,80 @@ const inputLabelProps = {
 
 const iconButtonStyle = { minWidth: 0, padding: 12 };
 
+/** 노출 제목 기본값. 버전명이 비면 만들지 않는다 */
+export const autoProgramTitle = (
+  versionTitle: string,
+  challengeTitle: string,
+) =>
+  versionTitle.trim()
+    ? `[${versionTitle.trim()}] ${challengeTitle}`.trimEnd()
+    : '';
+
 interface Props {
   /** 배열 순서가 곧 노출 순서 */
   versions: ChallengeVersionDraft[];
   onChange: (next: ChallengeVersionDraft[]) => void;
+  /** 노출 제목 기본값 '[버전명] 챌린지 제목' 의 챌린지 제목 */
+  challengeTitle?: string;
+  /** 한 줄 설명 기본값 */
+  challengeShortDesc?: string | null;
+  /** 버전 썸네일 자동 생성의 바탕 이미지 */
+  baseThumbnail?: string | null;
+  /** 썸네일 배너 색 */
+  challengeType?: ChallengeType;
 }
 
-function ChallengeVersionSection({ versions, onChange }: Props) {
+function ChallengeVersionSection({
+  versions,
+  onChange,
+  challengeTitle = '',
+  challengeShortDesc = null,
+  baseThumbnail = null,
+  challengeType,
+}: Props) {
   // 펼친 카드 하나만 노출 정보 입력란을 렌더한다
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   // 업로드처럼 await 뒤에 바꾸는 경우에도 최신 목록을 기준으로 바꾼다
   const latestVersions = useRef(versions);
   latestVersions.current = versions;
+  // 자동 생성한 썸네일 주소. 이 주소면 버전명이 바뀔 때 다시 만들어도 된다
+  const autoThumbnails = useRef(new Set<string>());
+  const [thumbnailStatus, setThumbnailStatus] = useState<
+    Record<number, 'loading' | 'error'>
+  >({});
+
+  // 챌린지 제목·한 줄 설명이 바뀌면 아직 기본값을 쓰는 버전도 따라 바꾼다
+  const previousBase = useRef({ challengeTitle, challengeShortDesc });
+  useEffect(() => {
+    const prev = previousBase.current;
+    previousBase.current = { challengeTitle, challengeShortDesc };
+    if (
+      prev.challengeTitle === challengeTitle &&
+      prev.challengeShortDesc === challengeShortDesc
+    )
+      return;
+    let changed = false;
+    const next = latestVersions.current.map((version) => {
+      const followsTitle =
+        version.programTitle !== '' &&
+        version.programTitle ===
+          autoProgramTitle(version.title, prev.challengeTitle);
+      const followsShortDesc =
+        (version.shortDesc || null) === (prev.challengeShortDesc || null);
+      if (!followsTitle && !followsShortDesc) return version;
+      changed = true;
+      return {
+        ...version,
+        programTitle: followsTitle
+          ? autoProgramTitle(version.title, challengeTitle)
+          : version.programTitle,
+        shortDesc: followsShortDesc
+          ? challengeShortDesc || null
+          : version.shortDesc,
+      };
+    });
+    if (changed) onChange(next);
+  }, [challengeTitle, challengeShortDesc, onChange]);
 
   const updateVersion = (
     index: number,
@@ -55,8 +118,51 @@ function ChallengeVersionSection({ versions, onChange }: Props) {
     );
   };
 
+  const handleTitleChange = (index: number, title: string) => {
+    const version = latestVersions.current[index];
+    // 노출 제목이 비었거나 기본값 그대로면 새 버전명으로 다시 만든다
+    const followsAuto =
+      version.programTitle === '' ||
+      version.programTitle === autoProgramTitle(version.title, challengeTitle);
+    updateVersion(index, {
+      title,
+      ...(followsAuto
+        ? { programTitle: autoProgramTitle(title, challengeTitle) }
+        : {}),
+    });
+  };
+
+  const generateThumbnail = async (index: number) => {
+    const version = latestVersions.current[index];
+    if (!baseThumbnail || !version?.title.trim()) return;
+    setThumbnailStatus((prev) => ({ ...prev, [index]: 'loading' }));
+    try {
+      const url = await generateAndUploadVersionThumbnail(
+        baseThumbnail,
+        version.title.trim(),
+        challengeType,
+      );
+      autoThumbnails.current.add(url);
+      updateVersion(index, { thumbnail: url });
+      setThumbnailStatus(({ [index]: _, ...rest }) => rest);
+    } catch {
+      setThumbnailStatus((prev) => ({ ...prev, [index]: 'error' }));
+    }
+  };
+
+  // 썸네일이 비었거나 자동으로 만든 것일 때만 버전명에 맞춰 다시 만든다
+  const handleTitleBlur = (index: number) => {
+    const version = latestVersions.current[index];
+    if (!version.thumbnail || autoThumbnails.current.has(version.thumbnail)) {
+      void generateThumbnail(index);
+    }
+  };
+
   const handleAdd = () => {
-    onChange([...versions, emptyVersion]);
+    onChange([
+      ...versions,
+      { ...emptyVersion, shortDesc: challengeShortDesc || null },
+    ]);
     setExpandedIndex(versions.length);
   };
 
@@ -144,9 +250,8 @@ function ChallengeVersionSection({ versions, onChange }: Props) {
                   label="버전 제목"
                   placeholder="예: 대학생"
                   value={version.title}
-                  onChange={(e) =>
-                    updateVersion(index, { title: e.target.value })
-                  }
+                  onChange={(e) => handleTitleChange(index, e.target.value)}
+                  onBlur={() => handleTitleBlur(index)}
                   error={isTitleEmpty}
                   helperText={
                     isTitleEmpty ? '버전 제목을 입력해주세요.' : undefined
@@ -179,7 +284,7 @@ function ChallengeVersionSection({ versions, onChange }: Props) {
                     variant="outlined"
                     size="small"
                     label="노출 제목"
-                    placeholder="목록 카드와 상세 페이지에 보이는 제목"
+                    placeholder="버전명을 넣으면 [버전명] 챌린지 제목으로 채워집니다"
                     value={version.programTitle}
                     onChange={(e) =>
                       updateVersion(index, { programTitle: e.target.value })
@@ -196,13 +301,36 @@ function ChallengeVersionSection({ versions, onChange }: Props) {
                     variant="outlined"
                     size="small"
                     label="한 줄 설명"
-                    placeholder="비우면 챌린지 한 줄 설명을 씁니다"
+                    placeholder="기본 정보의 한 줄 설명으로 채워집니다"
                     value={version.shortDesc ?? ''}
                     onChange={(e) =>
                       updateVersion(index, { shortDesc: e.target.value })
                     }
                     InputLabelProps={inputLabelProps}
                   />
+                  <div className="flex items-center gap-3">
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      disabled={
+                        !baseThumbnail ||
+                        !version.title.trim() ||
+                        thumbnailStatus[index] === 'loading'
+                      }
+                      onClick={() => generateThumbnail(index)}
+                    >
+                      기본 썸네일로 다시 만들기
+                    </Button>
+                    <Typography variant="caption" color="text.secondary">
+                      {thumbnailStatus[index] === 'loading'
+                        ? '버전 썸네일을 만드는 중입니다.'
+                        : thumbnailStatus[index] === 'error'
+                          ? '기본 썸네일을 불러오지 못해 자동으로 만들지 못했습니다. 직접 올려주세요.'
+                          : baseThumbnail
+                            ? '기본 썸네일에 버전명을 얹어 자동으로 만듭니다. 직접 올리면 그 이미지를 씁니다.'
+                            : '기본 정보에 모바일 썸네일을 올리면 버전 썸네일을 자동으로 만듭니다.'}
+                    </Typography>
+                  </div>
                   <div className="grid grid-cols-2 gap-3">
                     <ImageUpload
                       label="모바일 썸네일 (필수)"

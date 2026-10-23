@@ -79,14 +79,29 @@ describe('ChallengeDescriptionTabs', () => {
     expect(screen.queryByRole('tab')).not.toBeInTheDocument();
   });
 
-  it('버전이 있으면 공통 편집부 없이 버전마다 탭을 보여준다', () => {
+  it('버전이 있으면 기본 탭과 버전마다 탭을 두고, 처음에는 첫 버전을 연다', () => {
     render(<Harness initial={[draft('대학생'), draft('', '{"v":2}')]} />);
 
-    expect(screen.queryByTestId('common-editor')).not.toBeInTheDocument();
     expect(screen.getAllByRole('tab').map((t) => t.textContent)).toEqual([
+      '기본 (버전 설정 시 비노출)',
       '대학생 (작성 전)',
       '2번 버전',
     ]);
+    expect(screen.queryByTestId('common-editor')).not.toBeInTheDocument();
+    expect(screen.getByTestId('version-content-editor')).toBeInTheDocument();
+  });
+
+  it('기본 탭을 누르면 챌린지 본문 편집부를 폼 원본으로 보여준다', () => {
+    render(<Harness initial={[draft('대학생')]} />);
+
+    fireEvent.click(
+      screen.getByRole('tab', { name: '기본 (버전 설정 시 비노출)' }),
+    );
+
+    expect(screen.getByTestId('common-editor')).toBeInTheDocument();
+    expect(
+      screen.queryByTestId('version-content-editor'),
+    ).not.toBeInTheDocument();
   });
 
   it('작성 전인 버전은 챌린지 본문으로 시작하고, 고치기 전에는 값을 바꾸지 않는다', () => {
@@ -105,6 +120,7 @@ describe('ChallengeDescriptionTabs', () => {
 
     expect(descriptions()).toEqual(['{"edited":true}', null]);
     expect(screen.getAllByRole('tab').map((t) => t.textContent)).toEqual([
+      '기본 (버전 설정 시 비노출)',
       '대학생',
       '경력자 (작성 전)',
     ]);

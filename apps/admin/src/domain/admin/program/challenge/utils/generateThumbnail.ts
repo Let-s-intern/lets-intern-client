@@ -126,6 +126,52 @@ function loadFont(font: string, text: string): Promise<FontFace[] | void> {
   return document.fonts ? document.fonts.load(font, text) : Promise.resolve();
 }
 
+/**
+ * 오른쪽 위에 Ver 배너를 그린다. 크기는 템플릿 폭(CANVAS_WIDTH) 기준이고 캔버스 폭에 비례해 맞춘다.
+ */
+function drawVerBanner(
+  ctx: CanvasRenderingContext2D,
+  canvasWidth: number,
+  version: string,
+  challengeType?: ChallengeType,
+) {
+  const scale = canvasWidth / CANVAS_WIDTH;
+  ctx.font = `bold ${VER_FONT_SIZE * scale}px "Pretendard Variable"`;
+  const verFontSize = fitVerFontSize(ctx.measureText(version).width / scale);
+  if (verFontSize !== VER_FONT_SIZE) {
+    ctx.font = `bold ${verFontSize * scale}px "Pretendard Variable"`;
+  }
+
+  const paddingX = VER_BANNER_PADDING_X * scale;
+  const bannerHeight = VER_BANNER_HEIGHT * scale;
+  const bannerWidth = ctx.measureText(version).width + paddingX * 2;
+  const bannerX = canvasWidth - bannerWidth;
+
+  ctx.fillStyle =
+    (challengeType && VER_BANNER_COLORS[challengeType]) ??
+    VER_BANNER_DEFAULT_COLOR;
+  ctx.beginPath();
+  // 위·오른쪽은 캔버스에 붙고 좌하단만 둥글다
+  ctx.roundRect(bannerX, 0, bannerWidth, bannerHeight, [
+    0,
+    0,
+    0,
+    VER_BANNER_RADIUS * scale,
+  ]);
+  ctx.fill();
+
+  // textBaseline 'middle' 은 em 박스 기준이라 한글이 위로 뜬다.
+  // 실제 글리프 박스 높이로 배너 정중앙에 맞춘다
+  const metrics = ctx.measureText(version);
+  const textY =
+    bannerHeight / 2 +
+    (metrics.actualBoundingBoxAscent - metrics.actualBoundingBoxDescent) / 2;
+
+  ctx.fillStyle = '#FFFFFF';
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillText(version, bannerX + paddingX, textY);
+}
+
 export async function drawBadgeOnCanvas(
   challengeType: ChallengeType,
   title: string,
@@ -162,38 +208,7 @@ export async function drawBadgeOnCanvas(
   ctx.drawImage(img, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
   if (version) {
-    ctx.font = `bold ${VER_FONT_SIZE}px "Pretendard Variable"`;
-    const verFontSize = fitVerFontSize(ctx.measureText(version).width);
-    if (verFontSize !== VER_FONT_SIZE) {
-      ctx.font = `bold ${verFontSize}px "Pretendard Variable"`;
-    }
-
-    const bannerWidth =
-      ctx.measureText(version).width + VER_BANNER_PADDING_X * 2;
-    const bannerX = CANVAS_WIDTH - bannerWidth;
-
-    ctx.fillStyle =
-      VER_BANNER_COLORS[challengeType] ?? VER_BANNER_DEFAULT_COLOR;
-    ctx.beginPath();
-    // 위·오른쪽은 캔버스에 붙고 좌하단만 둥글다
-    ctx.roundRect(bannerX, 0, bannerWidth, VER_BANNER_HEIGHT, [
-      0,
-      0,
-      0,
-      VER_BANNER_RADIUS,
-    ]);
-    ctx.fill();
-
-    // textBaseline 'middle' 은 em 박스 기준이라 한글이 위로 뜬다.
-    // 실제 글리프 박스 높이로 배너 정중앙에 맞춘다
-    const metrics = ctx.measureText(version);
-    const textY =
-      VER_BANNER_HEIGHT / 2 +
-      (metrics.actualBoundingBoxAscent - metrics.actualBoundingBoxDescent) / 2;
-
-    ctx.fillStyle = '#FFFFFF';
-    ctx.textBaseline = 'alphabetic';
-    ctx.fillText(version, bannerX + VER_BANNER_PADDING_X, textY);
+    drawVerBanner(ctx, CANVAS_WIDTH, version, challengeType);
   }
 
   if (titleText) {
@@ -250,6 +265,45 @@ export async function generateAndUploadThumbnail(
   if (!blob) return null;
 
   const file = new File([blob], `challengethumbnail${Date.now()}.png`, {
+    type: 'image/png',
+  });
+  return uploadFile({ file, type: 'CHALLENGE' });
+}
+
+/**
+ * 챌린지 기본 썸네일 오른쪽 위에 버전명 배너를 얹어 버전 썸네일을 만든다 (LC-3505).
+ * 원격 이미지는 S3 CORS 가 허용한 origin(운영 어드민 등)에서만 캔버스로 내보낼 수 있다.
+ * 막히면 toBlob 이 SecurityError 를 던지므로 호출부가 직접 업로드로 안내한다.
+ */
+export async function generateAndUploadVersionThumbnail(
+  baseImageUrl: string,
+  version: string,
+  challengeType?: ChallengeType,
+): Promise<string> {
+  const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+    const image = new Image();
+    image.crossOrigin = 'anonymous';
+    image.onload = () => resolve(image);
+    image.onerror = reject;
+    // CORS 헤더 없이 캐시된 응답을 피한다
+    image.src = `${baseImageUrl}${baseImageUrl.includes('?') ? '&' : '?'}cors=1`;
+  });
+  await loadFont(`bold ${VER_FONT_SIZE}px "Pretendard Variable"`, version);
+
+  const canvas = document.createElement('canvas');
+  canvas.width = img.naturalWidth;
+  canvas.height = img.naturalHeight;
+  const ctx = canvas.getContext('2d')!;
+  ctx.drawImage(img, 0, 0);
+  drawVerBanner(ctx, canvas.width, version, challengeType);
+
+  const blob = await new Promise<Blob>((resolve, reject) => {
+    canvas.toBlob((b) => {
+      if (b) resolve(b);
+      else reject(new Error('canvas.toBlob 실패'));
+    }, 'image/png');
+  });
+  const file = new File([blob], `challengeversionthumbnail${Date.now()}.png`, {
     type: 'image/png',
   });
   return uploadFile({ file, type: 'CHALLENGE' });

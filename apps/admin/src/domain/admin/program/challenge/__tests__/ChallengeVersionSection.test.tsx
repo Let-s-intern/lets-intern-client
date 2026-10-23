@@ -6,7 +6,14 @@ import ChallengeVersionSection, {
   ChallengeVersionDraft,
 } from '../ChallengeVersionSection';
 
-const { uploadFile } = vi.hoisted(() => ({ uploadFile: vi.fn() }));
+const { uploadFile, generateVersionThumbnail } = vi.hoisted(() => ({
+  uploadFile: vi.fn(),
+  generateVersionThumbnail: vi.fn(),
+}));
+
+vi.mock('../utils/generateThumbnail', () => ({
+  generateAndUploadVersionThumbnail: generateVersionThumbnail,
+}));
 
 vi.mock('@/api/file', () => ({
   fileType: { enum: { CHALLENGE: 'CHALLENGE' } },
@@ -75,9 +82,10 @@ describe('ChallengeVersionSection', () => {
       target: { value: '직장인' },
     });
 
+    // 노출 제목이 비어 있으면 버전명으로 채운다 (LC-3505)
     expect(onChange).toHaveBeenCalledWith([
       versions[0],
-      draft(2, '직장인'),
+      { ...draft(2, '직장인'), programTitle: '[직장인]' },
       versions[2],
     ]);
   });
@@ -286,5 +294,165 @@ describe('ChallengeVersionSection', () => {
         '버전 전용 상세 본문 사용 (끄면 챌린지 상세 본문을 씁니다)',
       ),
     ).not.toBeInTheDocument();
+  });
+  describe('기본값 (LC-3505)', () => {
+    type BaseProps = {
+      challengeTitle?: string;
+      challengeShortDesc?: string | null;
+      baseThumbnail?: string | null;
+    };
+
+    function BaseHarness({
+      initial,
+      ...base
+    }: BaseProps & { initial: ChallengeVersionDraft[] }) {
+      const [list, setList] = useState(initial);
+      return (
+        <>
+          <ChallengeVersionSection
+            versions={list}
+            onChange={setList}
+            {...base}
+          />
+          <output data-testid="list">{JSON.stringify(list)}</output>
+        </>
+      );
+    }
+
+    const list = (): ChallengeVersionDraft[] =>
+      JSON.parse(screen.getByTestId('list').textContent ?? '[]');
+
+    const titleInput = (order: number) =>
+      screen.getAllByRole('textbox', { name: '버전 제목' })[order - 1];
+
+    it('버전을 추가하면 한 줄 설명이 기본 정보 값으로 채워진다', () => {
+      render(<BaseHarness initial={[]} challengeShortDesc="기본 한 줄 설명" />);
+
+      fireEvent.click(screen.getByRole('button', { name: '버전 추가' }));
+
+      expect(list()[0].shortDesc).toBe('기본 한 줄 설명');
+    });
+
+    it('버전명을 넣으면 노출 제목이 [버전명] 챌린지 제목으로 채워지고 버전명을 따라간다', () => {
+      render(
+        <BaseHarness
+          initial={[draft(null, '')]}
+          challengeTitle="마케팅 챌린지 15기"
+        />,
+      );
+
+      fireEvent.change(titleInput(1), { target: { value: '대학생' } });
+      expect(list()[0].programTitle).toBe('[대학생] 마케팅 챌린지 15기');
+
+      fireEvent.change(titleInput(1), { target: { value: '경력자' } });
+      expect(list()[0].programTitle).toBe('[경력자] 마케팅 챌린지 15기');
+    });
+
+    it('노출 제목을 직접 고치면 버전명을 바꿔도 따라가지 않는다', () => {
+      render(
+        <BaseHarness
+          initial={[{ ...draft(null, '대학생'), programTitle: '직접 쓴 제목' }]}
+          challengeTitle="마케팅 챌린지 15기"
+        />,
+      );
+
+      fireEvent.change(titleInput(1), { target: { value: '경력자' } });
+
+      expect(list()[0].programTitle).toBe('직접 쓴 제목');
+    });
+
+    it('챌린지 제목·한 줄 설명이 바뀌면 기본값을 쓰는 버전만 따라 바뀐다', () => {
+      const initial = [
+        {
+          ...draft(1, '대학생'),
+          programTitle: '[대학생] 마케팅 챌린지 15기',
+          shortDesc: '기본',
+        },
+        {
+          ...draft(2, '경력자'),
+          programTitle: '직접 쓴 제목',
+          shortDesc: '직접',
+        },
+      ];
+      const { rerender } = render(
+        <BaseHarness
+          initial={initial}
+          challengeTitle="마케팅 챌린지 15기"
+          challengeShortDesc="기본"
+        />,
+      );
+
+      rerender(
+        <BaseHarness
+          initial={initial}
+          challengeTitle="마케팅 챌린지 16기"
+          challengeShortDesc="새 기본"
+        />,
+      );
+
+      expect(list().map((v) => [v.programTitle, v.shortDesc])).toEqual([
+        ['[대학생] 마케팅 챌린지 16기', '새 기본'],
+        ['직접 쓴 제목', '직접'],
+      ]);
+    });
+
+    it('버전명 입력을 마치면 기본 썸네일에 버전명을 얹은 썸네일을 만든다', async () => {
+      generateVersionThumbnail.mockResolvedValueOnce('https://cdn/auto-a.png');
+      render(
+        <BaseHarness
+          initial={[draft(null, '')]}
+          baseThumbnail="https://cdn/base.png"
+        />,
+      );
+
+      fireEvent.change(titleInput(1), { target: { value: '대학생' } });
+      fireEvent.blur(titleInput(1));
+
+      await waitFor(() =>
+        expect(list()[0].thumbnail).toBe('https://cdn/auto-a.png'),
+      );
+      expect(generateVersionThumbnail).toHaveBeenCalledWith(
+        'https://cdn/base.png',
+        '대학생',
+        undefined,
+      );
+    });
+
+    it('직접 올린 썸네일은 버전명을 바꿔도 다시 만들지 않는다', () => {
+      generateVersionThumbnail.mockClear();
+      render(
+        <BaseHarness
+          initial={[
+            { ...draft(null, '대학생'), thumbnail: 'https://cdn/manual.png' },
+          ]}
+          baseThumbnail="https://cdn/base.png"
+        />,
+      );
+
+      fireEvent.change(titleInput(1), { target: { value: '경력자' } });
+      fireEvent.blur(titleInput(1));
+
+      expect(generateVersionThumbnail).not.toHaveBeenCalled();
+    });
+
+    it('자동 생성에 실패하면 직접 올리라고 안내한다', async () => {
+      generateVersionThumbnail.mockRejectedValueOnce(new Error('tainted'));
+      render(
+        <BaseHarness
+          initial={[draft(null, '')]}
+          baseThumbnail="https://cdn/base.png"
+        />,
+      );
+      fireEvent.click(expandButton(1));
+
+      fireEvent.change(titleInput(1), { target: { value: '대학생' } });
+      fireEvent.blur(titleInput(1));
+
+      expect(
+        await screen.findByText(
+          '기본 썸네일을 불러오지 못해 자동으로 만들지 못했습니다. 직접 올려주세요.',
+        ),
+      ).toBeInTheDocument();
+    });
   });
 });
