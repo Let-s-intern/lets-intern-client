@@ -405,7 +405,12 @@ describe('MentorDetailEditor 대표 로고 라이브러리 연결', () => {
 
   it('라이브러리에서 고르면 저장 때 corp-logo 로 연결하고, 프로필 PATCH 에 corpImgUrl 은 없다', async () => {
     renderEditor();
-    await pickNaverLogo();
+    // 대표 로고는 이미지를 누르면 라이브러리 선택 창이 바로 열린다
+    fireEvent.click(
+      await screen.findByRole('button', { name: '대표 회사 로고 변경' }),
+    );
+    fireEvent.click(await screen.findByRole('button', { name: /네이버/ }));
+    fireEvent.click(screen.getByRole('button', { name: '선택' }));
     expect(screen.getByAltText('로고')).toHaveAttribute(
       'src',
       'https://cdn.test/naver.png',
@@ -422,6 +427,19 @@ describe('MentorDetailEditor 대표 로고 라이브러리 연결', () => {
       ([url]) => url === '/user/7',
     )?.[1];
     expect(profileBody).not.toHaveProperty('corpImgUrl');
+  });
+
+  it('대표 로고 칸은 「로고 변경」 버튼이고, 아래에는 「개별 로고 설정」 만 있다', async () => {
+    renderEditor();
+    const logoButton = await screen.findByRole('button', {
+      name: '대표 회사 로고 변경',
+    });
+    expect(logoButton).toHaveTextContent('로고 변경');
+    expect(screen.getByText('개별 로고 설정')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: '라이브러리에서 선택' }),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText('직접 업로드')).not.toBeInTheDocument();
   });
 
   it('연결을 바꾸지 않으면 corp-logo 요청을 보내지 않는다', async () => {
@@ -470,11 +488,10 @@ describe('MentorDetailEditor 대표 로고 라이브러리 연결', () => {
         },
       },
     });
-    const { container } = renderEditor();
+    renderEditor();
     await screen.findByText('라이브러리: 네이버');
-    const fileInput = container.querySelector(
-      'label input[type="file"]',
-    ) as HTMLInputElement;
+    // 「개별 로고 설정」 = 직접 업로드
+    const fileInput = screen.getByLabelText('개별 로고 이미지 업로드');
     fireEvent.change(fileInput, {
       target: { files: [new File(['x'], 'logo.png', { type: 'image/png' })] },
     });

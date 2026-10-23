@@ -460,7 +460,13 @@ export default function MentorDetailEditor({ mentorId, headerSlot }: Props) {
             <label className="text-xsmall14 text-neutral-30 mb-1 block w-20 font-medium">
               로고 이미지
             </label>
-            <label className="border-neutral-80 bg-neutral-95 group relative flex h-20 w-20 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full border">
+            {/* 대표 로고는 라이브러리에서 고르는 것이 기본이다. 라이브러리에 없는 로고만 「개별 로고 설정」 으로 올린다 */}
+            <button
+              type="button"
+              aria-label="대표 회사 로고 변경"
+              onClick={() => setIsLogoPickerOpen(true)}
+              className="border-neutral-80 bg-neutral-95 group relative flex h-20 w-20 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full border"
+            >
               {form.corpImgUrl ? (
                 <img
                   src={form.corpImgUrl}
@@ -470,25 +476,20 @@ export default function MentorDetailEditor({ mentorId, headerSlot }: Props) {
               ) : (
                 <span className="text-xsmall14 text-neutral-40">로고</span>
               )}
-              <div className="text-xxsmall12 absolute inset-0 flex items-center justify-center bg-black/50 text-center text-white opacity-0 transition-opacity group-hover:opacity-100">
-                이미지
-                <br />
-                업로드
+              <div className="text-xxsmall12 absolute inset-0 flex items-center justify-center bg-black/50 text-center text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+                로고 변경
               </div>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleCorpImageUpload}
-                className="hidden"
-              />
-            </label>
+            </button>
             <div className="mt-2 flex flex-col items-start gap-1">
-              <Button
-                variant="outlined"
-                size="small"
-                onClick={() => setIsLogoPickerOpen(true)}
-              >
-                라이브러리에서 선택
+              <Button component="label" variant="outlined" size="small">
+                개별 로고 설정
+                <input
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  aria-label="개별 로고 이미지 업로드"
+                  onChange={handleCorpImageUpload}
+                />
               </Button>
               {form.corpLogoId !== null ? (
                 <div className="text-xxsmall12 text-neutral-30 flex items-center gap-2">

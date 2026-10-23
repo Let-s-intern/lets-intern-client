@@ -71,9 +71,9 @@ export class AdminMentorDetailPage extends BasePage {
 
   /** 대표 회사 로고를 라이브러리 로고에 연결한다. 저장(기본 정보 저장 버튼) 때 corp-logo PATCH 로 나간다 */
   async pickCorpLogo(logoName: string): Promise<void> {
+    // 대표 로고 이미지를 누르면 라이브러리 선택 창이 바로 열린다
     await this.page
-      .getByRole('button', { name: '라이브러리에서 선택', exact: true })
-      .first()
+      .getByRole('button', { name: '대표 회사 로고 변경', exact: true })
       .click();
     await this.pickLogoInDialog(logoName);
   }
