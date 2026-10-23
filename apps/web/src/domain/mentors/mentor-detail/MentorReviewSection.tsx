@@ -19,9 +19,11 @@ interface MentorReviewSectionProps {
   averageScore: number;
 }
 
-type SortValue = 'HIGH_SCORE' | 'LATEST';
+type SortValue = 'RECOMMENDED' | 'HIGH_SCORE' | 'LATEST';
 
 const SORT_OPTIONS = [
+  // 서버가 내려준 순서 그대로다. 어드민이 정한 후기 노출 순서가 곧 추천순이다(LC-3502)
+  { value: 'RECOMMENDED', label: '추천순' },
   { value: 'HIGH_SCORE', label: '높은 평점순' },
   { value: 'LATEST', label: '최신순' },
 ];
@@ -112,10 +114,11 @@ const MentorReviewSection = ({
   reviewCount,
   averageScore,
 }: MentorReviewSectionProps) => {
-  const [sortValue, setSortValue] = useState<SortValue>('HIGH_SCORE');
+  const [sortValue, setSortValue] = useState<SortValue>('RECOMMENDED');
 
   const sortedReviews = useMemo(() => {
     const list = [...reviewList];
+    if (sortValue === 'RECOMMENDED') return list;
     if (sortValue === 'HIGH_SCORE') {
       return list.sort(
         (a, b) =>
