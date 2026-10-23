@@ -110,11 +110,27 @@ describe('DetailMentorReviewSection', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('기본은 높은 평점순이고, 최신순으로 바꾸면 다시 5개부터 보여준다', async () => {
+  it('기본은 서버 순서 그대로인 추천순이다 (LC-3502)', async () => {
     mockApis(reviews(12));
     renderSection();
 
     await screen.findByText('40개의 후기');
+    expect(screen.getByRole('radio', { name: '추천순' })).toBeChecked();
+    expect(shownReviews()).toEqual([
+      '후기 1',
+      '후기 2',
+      '후기 3',
+      '후기 4',
+      '후기 5',
+    ]);
+  });
+
+  it('높은 평점순으로 바꿀 수 있고, 최신순으로 바꾸면 다시 5개부터 보여준다', async () => {
+    mockApis(reviews(12));
+    renderSection();
+
+    await screen.findByText('40개의 후기');
+    fireEvent.click(screen.getByRole('radio', { name: '높은 평점순' }));
     // 5점은 5·10번째 후기 — 같은 점수면 최신이 먼저다
     expect(shownReviews().slice(0, 2)).toEqual(['후기 10', '후기 5']);
 

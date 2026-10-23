@@ -105,6 +105,21 @@ export const useUserAdminQuery = ({
   });
 };
 
+/**
+ * GET /api/v2/admin/user — 이름·이메일·전화번호 중 하나로 유저를 찾는다(0부터 세는 page).
+ * 메뉴 검색 패널이 입력마다 부르므로 요청을 취소할 수 있게 signal 을 받는다.
+ */
+export const fetchAdminUsers = async (
+  params: Pick<UserAdminQueryParams, 'email' | 'name' | 'phoneNum'> & {
+    page: number;
+    size: number;
+  },
+  signal?: AbortSignal,
+) => {
+  const res = await axiosV2.get('/admin/user', { params, signal });
+  return userAdminType.parse(res.data.data).userAdminList;
+};
+
 export const UseUserDetailAdminQueryKey = 'useUserDetailQueryKey';
 
 export const useUserDetailAdminQuery = ({
@@ -157,9 +172,28 @@ export type PatchUserType = {
   memo?: string | null;
   nickname?: string | null;
   introduction?: string | null;
+  /** 프로필 상세페이지 본문(Lexical JSON). 보내지 않으면 서버가 기존 값을 유지한다 */
+  description?: string | null;
   profileImgUrl?: string | null;
   corpImgUrl?: string | null;
   sns?: string | null;
+};
+
+/**
+ * PATCH /api/v1/admin/user/{userId}/corp-logo — 대표 로고를 회사 로고 라이브러리에 연결(null 이면 해제).
+ * 연결하면 라이브러리 이미지가 바뀔 때 대표 로고도 같이 바뀐다
+ */
+export const usePatchAdminUserCorpLogoMutation = (userId: number) => {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: async (companyLogoId: number | null) => {
+      await axios.patch(`/admin/user/${userId}/corp-logo`, { companyLogoId });
+    },
+    onSuccess: () =>
+      client.invalidateQueries({
+        queryKey: [AdminUserDetailQueryKey, userId],
+      }),
+  });
 };
 
 export const usePatchUserAdminMutation = ({

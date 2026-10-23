@@ -1,0 +1,275 @@
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+} from '@mui/material';
+import { useState } from 'react';
+
+import {
+  usePatchAdminCompanyLogoMutation,
+  usePostAdminCompanyLogoFaviconCandidatesMutation,
+  usePostAdminCompanyLogoFaviconMutation,
+  usePostAdminCompanyLogoMutation,
+} from '@/api/company-logo/companyLogo';
+import type {
+  CompanyLogo,
+  CompanyLogoFaviconCandidate,
+} from '@/api/company-logo/companyLogoSchema';
+import { uploadFile } from '@/api/file';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+
+import FaviconCandidateGrid from './FaviconCandidateGrid';
+import { faviconErrorMessage } from './faviconErrorMessage';
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+
+const errorMessage = (error: unknown, fallback: string) => {
+  const { status, message } = (error ?? {}) as {
+    status?: number;
+    message?: string;
+  };
+  if (status === 409) return '같은 회사명이 이미 있습니다.';
+  return message ?? fallback;
+};
+
+interface Props {
+  /** null 이면 등록, 값이 있으면 그 로고를 수정 */
+  logo: CompanyLogo | null;
+  onClose: () => void;
+  /** 등록에 성공하면 만든 로고 id 를 알린다(닫히기 직전). 수정에는 부르지 않는다 */
+  onCreated?: (logoId: number) => void;
+}
+
+/** 회사 로고 등록·수정. 열 때마다 새로 마운트해 `logo` 로 시작한다 */
+export default function CompanyLogoFormDialog({
+  logo,
+  onClose,
+  onCreated,
+}: Props) {
+  const { snackbar } = useAdminSnackbar();
+  const postLogo = usePostAdminCompanyLogoMutation();
+  const patchLogo = usePatchAdminCompanyLogoMutation();
+  const findCandidates = usePostAdminCompanyLogoFaviconCandidatesMutation();
+  const uploadFavicon = usePostAdminCompanyLogoFaviconMutation();
+
+  const [name, setName] = useState(logo?.name ?? '');
+  // 회사명이 사이트 이름으로 채워진 그대로인지. 사용자가 고치면 false 가 되고 다시는 덮어쓰지 않는다
+  const [isNameFromSite, setIsNameFromSite] = useState(false);
+  const [imageUrl, setImageUrl] = useState(logo?.imageUrl ?? '');
+  const [siteUrl, setSiteUrl] = useState('');
+  // 찾은 로고 후보. 찾기 전이거나 하나를 골라 올렸으면 null
+  const [candidates, setCandidates] = useState<
+    CompanyLogoFaviconCandidate[] | null
+  >(null);
+  const [selectedCandidateUrl, setSelectedCandidateUrl] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const isSaving = postLogo.isPending || patchLogo.isPending;
+
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    if (file.size > MAX_FILE_SIZE) {
+      setError('파일 크기는 5MB 이하여야 합니다.');
+      return;
+    }
+    setError(null);
+    setIsUploading(true);
+    try {
+      setImageUrl(await uploadFile({ file, type: 'COMPANY_LOGO' }));
+    } catch {
+      setError('이미지 업로드에 실패했습니다.');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  // 사이트가 바뀌면 이전 사이트의 후보는 쓸 수 없다
+  const handleSiteUrlChange = (value: string) => {
+    setSiteUrl(value);
+    setCandidates(null);
+  };
+
+  const handleFindCandidates = () => {
+    setError(null);
+    findCandidates.mutate(siteUrl.trim(), {
+      onSuccess: ({ candidates: found, siteName }) => {
+        setCandidates(found);
+        fillNameFromSite(siteName);
+        // 큰 것부터 오므로 첫 번째를 기본으로 고른다
+        setSelectedCandidateUrl(found[0]?.url ?? '');
+      },
+      onError: (e) => setError(faviconErrorMessage(e)),
+    });
+  };
+
+  /*
+    후보를 찾으면 사이트 이름을 회사명 기본값으로 넣는다. 등록 때만, 칸이 비었거나 앞서 사이트
+    이름으로 채운 그대로일 때만 — 사용자가 쓴 이름은 덮지 않는다.
+  */
+  const fillNameFromSite = (siteName: string | null | undefined) => {
+    if (logo || !siteName) return;
+    if (name.trim() !== '' && !isNameFromSite) return;
+    setName(siteName);
+    setIsNameFromSite(true);
+  };
+
+  // 고른 후보를 서버가 올린다
+  const handleUseCandidate = () => {
+    setError(null);
+    uploadFavicon.mutate(
+      { siteUrl: siteUrl.trim(), candidateUrl: selectedCandidateUrl },
+      {
+        onSuccess: (uploadedUrl) => {
+          setImageUrl(uploadedUrl);
+          setCandidates(null);
+        },
+        onError: (e) => setError(faviconErrorMessage(e)),
+      },
+    );
+  };
+
+  const handleSubmit = async () => {
+    const body = { name: name.trim(), imageUrl };
+    try {
+      if (logo) {
+        await patchLogo.mutateAsync({ id: logo.id, ...body });
+        snackbar('로고를 수정했습니다.');
+      } else {
+        const createdId = await postLogo.mutateAsync(body);
+        snackbar('로고를 등록했습니다.');
+        onCreated?.(createdId);
+      }
+      onClose();
+    } catch (e) {
+      setError(
+        errorMessage(
+          e,
+          logo ? '로고 수정에 실패했습니다.' : '로고 등록에 실패했습니다.',
+        ),
+      );
+    }
+  };
+
+  return (
+    <Dialog open onClose={onClose} maxWidth="sm" fullWidth>
+      <DialogTitle className="text-base font-semibold">
+        {logo ? '로고 수정' : '로고 등록'}
+      </DialogTitle>
+      <DialogContent>
+        <div className="flex flex-col gap-4 pt-2">
+          <TextField
+            size="small"
+            label="회사명"
+            value={name}
+            inputProps={{ maxLength: 100 }}
+            onChange={(e) => {
+              setName(e.target.value);
+              setIsNameFromSite(false);
+            }}
+            helperText={
+              isNameFromSite
+                ? '사이트에서 가져온 이름입니다. 고쳐도 됩니다.'
+                : undefined
+            }
+          />
+          <div className="flex items-center gap-3">
+            <div className="border-neutral-80 flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded border border-dashed">
+              {imageUrl ? (
+                <img
+                  src={imageUrl}
+                  alt={name || '로고'}
+                  className="h-full w-full object-contain"
+                />
+              ) : null}
+            </div>
+            <Button
+              component="label"
+              variant="outlined"
+              size="small"
+              disabled={isUploading}
+            >
+              {isUploading ? '올리는 중...' : '이미지 업로드'}
+              <input
+                type="file"
+                accept="image/*"
+                hidden
+                aria-label="로고 이미지 업로드"
+                onChange={handleFile}
+              />
+            </Button>
+          </div>
+          <div className="flex items-center gap-2">
+            <TextField
+              size="small"
+              fullWidth
+              label="회사 사이트 주소"
+              placeholder="https://example.com"
+              value={siteUrl}
+              onChange={(e) => handleSiteUrlChange(e.target.value)}
+            />
+            <Button
+              variant="outlined"
+              size="small"
+              className="shrink-0"
+              disabled={!siteUrl.trim() || findCandidates.isPending}
+              onClick={handleFindCandidates}
+            >
+              {findCandidates.isPending ? '찾는 중...' : '로고 후보 찾기'}
+            </Button>
+          </div>
+          {candidates ? (
+            <div className="flex flex-col gap-2">
+              <FaviconCandidateGrid
+                candidates={candidates}
+                selectedUrl={selectedCandidateUrl}
+                onSelect={setSelectedCandidateUrl}
+              />
+              <Button
+                variant="outlined"
+                size="small"
+                className="self-end"
+                disabled={!selectedCandidateUrl || uploadFavicon.isPending}
+                onClick={handleUseCandidate}
+              >
+                {uploadFavicon.isPending ? '올리는 중...' : '이 로고 사용'}
+              </Button>
+            </div>
+          ) : null}
+          {error ? (
+            <p role="alert" className="text-system-error text-xs">
+              {error}
+            </p>
+          ) : null}
+          <p className="text-xxsmall12 text-neutral-40">
+            같은 회사명은 등록할 수 없습니다. 이 로고를 바꾸면 연결된 멘토
+            로고도 함께 바뀝니다.
+          </p>
+        </div>
+      </DialogContent>
+      <DialogActions>
+        <Button color="inherit" onClick={onClose}>
+          취소
+        </Button>
+        <Button
+          variant="contained"
+          disabled={
+            !name.trim() ||
+            !imageUrl ||
+            isUploading ||
+            uploadFavicon.isPending ||
+            isSaving
+          }
+          onClick={handleSubmit}
+        >
+          {isSaving ? '저장 중...' : '저장'}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}

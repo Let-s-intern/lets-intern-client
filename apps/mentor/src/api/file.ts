@@ -18,6 +18,8 @@ export const fileType = z.enum([
   'BANNER_MAIN_BOTTOM',
   'COMMON_BANNER',
   'USER_PROFILE',
+  // 어드민 회사 로고 라이브러리(LC-3498). 서버 `FileType.COMPANY_LOGO("company-logo")`
+  'COMPANY_LOGO',
 ]);
 
 export type FileType = z.infer<typeof fileType>;

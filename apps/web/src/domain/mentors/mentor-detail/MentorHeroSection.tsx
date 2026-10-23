@@ -138,10 +138,11 @@ const MentorHeroSection = ({ mentor, stats }: MentorHeroSectionProps) => {
                 <CareerRow
                   key={career.id}
                   career={career}
+                  // 경력 로고가 먼저다. 없으면 대표 경력만 대표 로고, 나머지는 기본 아이콘(LC-3499)
                   iconSrc={
-                    career.isRepresentative
-                      ? (mentorInfo.corpImgUrl ?? '/icons/company.svg')
-                      : '/icons/company.svg'
+                    career.logoImgUrl ||
+                    (career.isRepresentative ? mentorInfo.corpImgUrl : null) ||
+                    '/icons/company.svg'
                   }
                 />
               ))}

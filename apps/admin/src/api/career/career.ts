@@ -191,6 +191,75 @@ export const useDeleteAdminCareerMutation = (userId: number) => {
   });
 };
 
+/** PATCH /admin/user-career/user/{userId}/{userCareerId} — 어드민 경력 수정. 멘토 본인 수정과 같은 multipart 본문 */
+export const usePatchAdminUserCareerMutation = (userId: number) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      careerId,
+      careerData,
+    }: {
+      careerId: number;
+      careerData: FormData;
+    }) => {
+      await axios.patch(
+        `/admin/user-career/user/${userId}/${careerId}`,
+        careerData,
+        { headers: { 'Content-Type': 'multipart/form-data' } },
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [AdminUserCareerQueryKey, userId],
+      });
+    },
+  });
+};
+
+/** PATCH /admin/user-career/user/{userId}/{userCareerId}/company-logo — 경력 로고를 라이브러리에 연결(null 이면 해제) */
+export const usePatchAdminCareerCompanyLogoMutation = (userId: number) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      careerId,
+      companyLogoId,
+    }: {
+      careerId: number;
+      companyLogoId: number | null;
+    }) => {
+      await axios.patch(
+        `/admin/user-career/user/${userId}/${careerId}/company-logo`,
+        { companyLogoId },
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [AdminUserCareerQueryKey, userId],
+      });
+    },
+  });
+};
+
+/** PATCH /admin/user-career/user/{userId}/{userCareerId}/representative — 대표 경력 지정. 기존 대표는 서버가 해제한다 */
+export const usePatchAdminRepresentativeCareerMutation = (userId: number) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (careerId: number) => {
+      await axios.patch(
+        `/admin/user-career/user/${userId}/${careerId}/representative`,
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [AdminUserCareerQueryKey, userId],
+      });
+    },
+  });
+};
+
 export const usePostAdminExperienceMutation = (userId: number) => {
   const queryClient = useQueryClient();
 

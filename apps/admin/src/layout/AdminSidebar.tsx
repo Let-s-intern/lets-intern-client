@@ -1,9 +1,10 @@
 import { Fragment } from 'react';
 import { ImExit } from 'react-icons/im';
 import { IoIosArrowDown } from 'react-icons/io';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import { useIsAdminQuery } from '@/api/user/user';
+import AdminSidebarSearch from './sidebar-search/AdminSidebarSearch';
 import StatsEmbedSection from './StatsEmbedSection';
 
 // 메인 web 으로 이동하는 외부 링크의 호스트.
@@ -116,6 +117,32 @@ export const navData = [
     ],
   },
   {
+    // 멘토 목록·등록·키워드·렛커 픽·회사 로고. 화면 안 탭으로 오가던 것을 메뉴로 옮겼다(LC-3492)
+    title: '멘토 관리',
+    itemList: [
+      {
+        name: '멘토 목록',
+        url: '/mentors',
+      },
+      {
+        name: '멘토 등록',
+        url: '/mentors/register',
+      },
+      {
+        name: '키워드',
+        url: '/mentors/keywords',
+      },
+      {
+        name: '렛커 픽',
+        url: '/mentors/pick',
+      },
+      {
+        name: '회사 로고',
+        url: '/mentors/company-logos',
+      },
+    ],
+  },
+  {
     title: '사용자 관리',
     itemList: [
       {
@@ -125,10 +152,6 @@ export const navData = [
       {
         name: '쿠폰 관리',
         url: '/coupons',
-      },
-      {
-        name: '멘토 관리',
-        url: '/mentors',
       },
       {
         name: '리드 관리',
@@ -241,14 +264,29 @@ export const navData = [
   },
 ];
 
+/**
+ * 지금 주소에 해당하는 메뉴 주소. 같은 주소거나 그 아래 경로면 맞고, 여럿이 맞으면 가장 긴 것을 고른다.
+ * `/mentors/7`(멘토 상세)은 「멘토 목록」 이지만 `/mentors/pick` 은 「렛커 픽」 하나만 켜진다.
+ */
+export const findActiveNavUrl = (pathname: string): string | undefined =>
+  navData
+    .flatMap((section) => section.itemList)
+    .filter((item) => !('external' in item && item.external))
+    .map((item) => item.url)
+    .filter((url) => pathname === url || pathname.startsWith(`${url}/`))
+    .sort((a, b) => b.length - a.length)[0];
+
 export const AdminSidebar = () => {
   const { data: isAdmin, isLoading } = useIsAdminQuery();
+  const { pathname } = useLocation();
+  const activeUrl = findActiveNavUrl(pathname);
 
   if (isLoading || !isAdmin) return null;
 
   return (
     <aside>
       <nav className="sticky left-0 top-0 z-50 flex h-screen w-48 flex-col gap-4 overflow-y-auto bg-[#353535] py-20 pt-4 text-white shadow-xl">
+        <AdminSidebarSearch navData={navData} />
         {navData.map((navSection, index) => (
           <Fragment key={index}>
             {/* 통계(PostHog 임베드) 드롭다운은 나가기 바로 위에 둔다. */}
@@ -266,8 +304,10 @@ export const AdminSidebar = () => {
                 {navSection.itemList.map((navItem, index) => {
                   const isExternal =
                     'external' in navItem && navItem.external === true;
-                  const className =
-                    'flex items-center gap-1 py-2 pl-6 text-xsmall14 hover:bg-[#2A2A2A]';
+                  const isActive = !isExternal && navItem.url === activeUrl;
+                  const className = `flex items-center gap-1 py-2 pl-6 text-xsmall14 hover:bg-[#2A2A2A]${
+                    isActive ? ' bg-[#2A2A2A] font-semibold' : ''
+                  }`;
                   const content = (
                     <>
                       {navItem.name}
@@ -286,7 +326,11 @@ export const AdminSidebar = () => {
                           {content}
                         </a>
                       ) : (
-                        <Link to={navItem.url} className={className}>
+                        <Link
+                          to={navItem.url}
+                          className={className}
+                          aria-current={isActive ? 'page' : undefined}
+                        >
                           {content}
                         </Link>
                       )}

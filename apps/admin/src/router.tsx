@@ -145,8 +145,18 @@ const AdminMentorRegisterPage = lazy(
 const AdminMentorKeywordPage = lazy(
   () => import('./pages/pages/user/AdminMentorKeywordPage'),
 );
+const AdminMentorPickPage = lazy(
+  () => import('./pages/pages/user/AdminMentorPickPage'),
+);
+const AdminCompanyLogoPage = lazy(
+  () => import('./pages/pages/user/AdminCompanyLogoPage'),
+);
 const AdminLiveMentoringPage = lazy(
   () => import('./pages/pages/live-mentoring/AdminLiveMentoringPage'),
+);
+const AdminLiveMentoringDetailPageEditPage = lazy(
+  () =>
+    import('./pages/pages/live-mentoring/AdminLiveMentoringDetailPageEditPage'),
 );
 
 const Coupons = lazy(() => import('./pages/pages/coupon/Coupons'));
@@ -542,12 +552,24 @@ export const router = createBrowserRouter([
         element: withSuspense(<AdminMentorKeywordPage />),
       },
       {
+        path: '/mentors/pick',
+        element: withSuspense(<AdminMentorPickPage />),
+      },
+      {
+        path: '/mentors/company-logos',
+        element: withSuspense(<AdminCompanyLogoPage />),
+      },
+      {
         path: '/mentors/:mentorId',
         element: withSuspense(<AdminMentorDetailPage />),
       },
       {
         path: '/live-mentoring',
         element: withSuspense(<AdminLiveMentoringPage />),
+      },
+      {
+        path: '/live-mentoring/:mentorId/detail-page',
+        element: withSuspense(<AdminLiveMentoringDetailPageEditPage />),
       },
 
       // SSO

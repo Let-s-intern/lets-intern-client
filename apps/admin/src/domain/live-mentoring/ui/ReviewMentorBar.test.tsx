@@ -26,6 +26,20 @@ describe('ReviewMentorBar', () => {
     );
   });
 
+  it('설명을 주면 멘토 이름 뒤에 그 말을 붙인다', () => {
+    userDetailQuery.mockReturnValue({ data: undefined });
+    render(
+      <ReviewMentorBar
+        mentorId={21}
+        onChangeMentor={vi.fn()}
+        description="상세페이지를 수정하고 있습니다."
+      />,
+    );
+    expect(screen.getByRole('group', { name: '멘토 필터' })).toHaveTextContent(
+      '멘토의 상세페이지를 수정하고 있습니다.',
+    );
+  });
+
   it('닉네임이 없으면 이름만, 불러오기 전이면 번호로 적는다', () => {
     userDetailQuery.mockReturnValue({
       data: {

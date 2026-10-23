@@ -109,6 +109,32 @@ export interface MentorHashTagReq {
   title: string;
 }
 
+/** PUT /api/v1/admin/mentor-hash-tag/mentors/{mentorId} 요청 바디. 전달한 목록이 최종 목록이 된다 */
+export interface PutAdminMentorHashTagOfMentorReq {
+  mentorHashTagIdList: number[];
+}
+
+/** 렛커 픽 1건 — `GET /api/v1/admin/mentor/pick` 의 `pickList[]`. 순서대로 온다 */
+export const adminMentorPickSchema = z.object({
+  mentorId: z.number(),
+  name: z.string(),
+  nickname: z.string().nullable(),
+  /** 비노출 멘토는 픽에 있어도 공개 목록에 나가지 않는다 */
+  isVisible: z.boolean().nullable(),
+  sortOrder: z.number(),
+});
+
+export type AdminMentorPick = z.infer<typeof adminMentorPickSchema>;
+
+export const adminMentorPickListSchema = z.object({
+  pickList: z.array(adminMentorPickSchema),
+});
+
+/** PUT /api/v1/admin/mentor/pick 요청 바디. 받은 순서대로 1위부터 전체 교체한다 */
+export interface PutAdminMentorPickReq {
+  mentorIds: number[];
+}
+
 export const mentorReviewSourceSchema = z.enum([
   'REVIEW',
   'OLD_REVIEW',
@@ -137,6 +163,8 @@ export const adminMentorReviewSchema = z.object({
   isEdited: z.boolean(),
   createDate: z.string().nullable(),
   isExposed: z.boolean(),
+  /** 어드민이 정한 노출 순위(1부터, LC-3502). 정하지 않은 후기는 null. 서버 배포 전에는 없다 */
+  displayOrder: z.number().nullish(),
 });
 
 export type AdminMentorReview = z.infer<typeof adminMentorReviewSchema>;
@@ -151,6 +179,14 @@ export interface PatchMentorReviewExposureReq {
   source: AdminMentorReview['source'];
   sourceId: number;
   isExposed: boolean;
+}
+
+/**
+ * PUT /api/v1/admin/mentor/{mentorId}/reviews/order 요청 바디. 앞에서부터 1위다.
+ * 목록에 없는 후기는 순위가 지워져 최신순으로 뒤에 붙는다
+ */
+export interface PutMentorReviewOrderReq {
+  items: Pick<AdminMentorReview, 'source' | 'sourceId'>[];
 }
 
 /**

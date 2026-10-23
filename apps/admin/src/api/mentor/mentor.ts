@@ -4,6 +4,7 @@ import axiosV2 from '@/utils/axiosV2';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   adminChallengeMentorListSchema,
+  adminMentorPickListSchema,
   adminMentorReviewListSchema,
   adminUserMentorList,
   mentorHashTagListSchema,
@@ -11,6 +12,9 @@ import {
   type PatchAttendanceMentorReq,
   type PatchMentorReviewContentReq,
   type PatchMentorReviewExposureReq,
+  type PutAdminMentorHashTagOfMentorReq,
+  type PutAdminMentorPickReq,
+  type PutMentorReviewOrderReq,
   PostAdminChallengeMentorReq,
 } from './mentorSchema';
 
@@ -32,8 +36,12 @@ export const useAdminChallengeMentorListQuery = (
 export const UseAdminUserMentorListQueryKey = 'useAdminUserMentorListQuery';
 
 /** GET 멘토 전체 목록 /api/v2/admin/user/mentor */
-export const useAdminUserMentorListQuery = (pageable?: IPageable) => {
+export const useAdminUserMentorListQuery = (
+  pageable?: IPageable,
+  options: { enabled?: boolean; staleTime?: number } = {},
+) => {
   return useQuery({
+    ...options,
     queryKey: [UseAdminUserMentorListQueryKey, pageable],
     queryFn: async () => {
       const res = await axiosV2.get('/admin/user/mentor', {
@@ -175,6 +183,44 @@ export const useDeleteAdminMentorHashTag = () => {
   });
 };
 
+/** PUT 멘토에게 지정한 해시태그 교체 /api/v1/admin/mentor-hash-tag/mentors/{mentorId} */
+export const usePutAdminMentorHashTagOfMentor = (mentorId: number) => {
+  return useMutation({
+    mutationFn: async (body: PutAdminMentorHashTagOfMentorReq) => {
+      return axios.put(`/admin/mentor-hash-tag/mentors/${mentorId}`, body);
+    },
+  });
+};
+
+export const AdminMentorPickQueryKey = 'adminMentorPickListQuery';
+
+/** GET 렛커 픽 목록 /api/v1/admin/mentor/pick */
+export const useAdminMentorPickListQuery = () => {
+  return useQuery({
+    queryKey: [AdminMentorPickQueryKey],
+    queryFn: async () => {
+      const res = await axios.get('/admin/mentor/pick');
+      return adminMentorPickListSchema.parse(res.data.data).pickList;
+    },
+    refetchOnWindowFocus: false,
+  });
+};
+
+/** PUT 렛커 픽 전체 교체 /api/v1/admin/mentor/pick */
+export const usePutAdminMentorPickMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: PutAdminMentorPickReq) => {
+      return axios.put('/admin/mentor/pick', body);
+    },
+    onSuccess: () => {
+      return queryClient.invalidateQueries({
+        queryKey: [AdminMentorPickQueryKey],
+      });
+    },
+  });
+};
+
 export const AdminMentorReviewListQueryKey = 'adminMentorReviewListQuery';
 
 /** GET 멘토 페이지 후기 목록 /api/v1/admin/mentor/{mentorId}/reviews */
@@ -198,6 +244,21 @@ export const usePatchAdminMentorReviewExposure = (mentorId: number) => {
       return axios.patch(`/admin/mentor/${mentorId}/reviews/exposure`, body);
     },
     // 다시 불러올 때까지 pending 으로 두어 스위치가 이전 값으로 튀지 않게 한다
+    onSuccess: () => {
+      return queryClient.invalidateQueries({
+        queryKey: [AdminMentorReviewListQueryKey, mentorId],
+      });
+    },
+  });
+};
+
+/** PUT 멘토 페이지 후기 노출 순서 /api/v1/admin/mentor/{mentorId}/reviews/order */
+export const usePutAdminMentorReviewOrder = (mentorId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: PutMentorReviewOrderReq) => {
+      return axios.put(`/admin/mentor/${mentorId}/reviews/order`, body);
+    },
     onSuccess: () => {
       return queryClient.invalidateQueries({
         queryKey: [AdminMentorReviewListQueryKey, mentorId],

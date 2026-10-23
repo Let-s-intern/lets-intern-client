@@ -15,9 +15,11 @@ import DetailSection from './DetailSection';
 
 const PAGE_SIZE = 5;
 
-type SortValue = 'HIGH_SCORE' | 'LATEST';
+type SortValue = 'RECOMMENDED' | 'HIGH_SCORE' | 'LATEST';
 
 const SORT_OPTIONS: { value: SortValue; label: string }[] = [
+  // 서버가 내려준 순서 그대로다. 어드민이 정한 후기 노출 순서가 곧 추천순이다(LC-3502)
+  { value: 'RECOMMENDED', label: '추천순' },
   { value: 'HIGH_SCORE', label: '높은 평점순' },
   { value: 'LATEST', label: '최신순' },
 ];
@@ -138,12 +140,13 @@ const DetailMentorReviewSection = ({
 }: DetailMentorReviewSectionProps) => {
   const { data: mentor } = useQuery(mentorDetailQueryOptions(mentorId));
   const { data: stats } = useQuery(mentorStatsQueryOptions(mentorId));
-  const [sortValue, setSortValue] = useState<SortValue>('HIGH_SCORE');
+  const [sortValue, setSortValue] = useState<SortValue>('RECOMMENDED');
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   const reviewList = mentor?.reviewList;
   const sortedReviews = useMemo(() => {
     if (!reviewList) return [];
+    if (sortValue === 'RECOMMENDED') return reviewList;
     return [...reviewList].sort(
       sortValue === 'HIGH_SCORE'
         ? (a, b) => b.score - a.score || byLatest(a, b)

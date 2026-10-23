@@ -22,6 +22,7 @@ import { formatDetailPeriod, slotPeriod } from '../constants';
 import { DetailFaqSection, DetailProcessSection } from './DetailFixedSections';
 import DetailHero from './DetailHero';
 import DetailCTAButtons from './DetailCTAButtons';
+import DetailFreeContentSection from './DetailFreeContentSection';
 import DetailMentoringIntroSection from './DetailMentoringIntroSection';
 import DetailMentorReviewSection from './DetailMentorReviewSection';
 import DetailPainSection from './DetailPainSection';
@@ -153,7 +154,8 @@ const LiveMentoringDetailPage = ({
     ? { ...data, template: previewTemplate }
     : data;
   const { profile, template } = detail;
-  const { intro, mentoringTypes, strategy, video, results } = template;
+  const { intro, mentoringTypes, strategy, video, results, freeContent } =
+    template;
   // 프로필을 덜 채운 멘토는 닉네임이 null 로 온다. 문구가 "null 멘토가 함께해요"가 되지 않게 폴백한다.
   const nickname = profile.nickname ?? '멘토';
   const period = slotPeriod(slots?.liveMentoringSlotList ?? []);
@@ -237,11 +239,28 @@ const LiveMentoringDetailPage = ({
             )}
             {intro.careerLines.length > 0 && (
               <ul className="mt-2 flex flex-col gap-1.5">
-                {intro.careerLines.map((line, i) => (
-                  <li key={i} className="text-neutral-30 text-xsmall14">
-                    {line}
-                  </li>
-                ))}
+                {intro.careerLines.map((line, i) => {
+                  /*
+                    경력 로고(LC-3499). 서버가 careerLines 와 profile.careers 를 같은 경력
+                    목록에서 같은 순서로 만들므로 i 번째가 같은 경력이다. 없으면 글만 둔다.
+                  */
+                  const logoImgUrl = profile.careers[i]?.logoImgUrl;
+                  return (
+                    <li
+                      key={i}
+                      className="text-neutral-30 text-xsmall14 flex items-center gap-2"
+                    >
+                      {logoImgUrl ? (
+                        <img
+                          src={logoImgUrl}
+                          alt=""
+                          className="h-5 w-5 shrink-0 rounded-sm object-contain"
+                        />
+                      ) : null}
+                      {line}
+                    </li>
+                  );
+                })}
               </ul>
             )}
             {/*
@@ -261,6 +280,12 @@ const LiveMentoringDetailPage = ({
           </div>
         </div>
       </DetailSection>
+
+      {/*
+        자유 입력란 슬롯(LC-3495). 섹션마다 하나씩 두고 위치가 맞는 하나만 그려진다.
+        기준 섹션의 렌더 조건 밖에 둔다 — 기준 섹션이 꺼져도 자리는 그대로다.
+      */}
+      <DetailFreeContentSection freeContent={freeContent} at="AFTER_INTRO" />
 
       {/* 시안 2 · 멘토링 유형 */}
       {mentoringTypes.items.length > 0 && (
@@ -314,6 +339,10 @@ const LiveMentoringDetailPage = ({
           </ul>
         </DetailSection>
       )}
+      <DetailFreeContentSection
+        freeContent={freeContent}
+        at="AFTER_MENTORING_TYPES"
+      />
 
       {/* 시안 3 · 취업 성공 전략 — visible=false 면 섹션 자체를 렌더하지 않는다 */}
       {strategy.visible && strategy.points.length > 0 && (
@@ -374,6 +403,7 @@ const LiveMentoringDetailPage = ({
           </ul>
         </DetailSection>
       )}
+      <DetailFreeContentSection freeContent={freeContent} at="AFTER_STRATEGY" />
 
       {/* 시안 4 · 이렇게 도와드려요(영상) — 다크 배경 */}
       {video.visible && video.videoUrl && (
@@ -400,6 +430,7 @@ const LiveMentoringDetailPage = ({
           )}
         </DetailSection>
       )}
+      <DetailFreeContentSection freeContent={freeContent} at="AFTER_VIDEO" />
 
       {/* 시안 5 · 결과 사례(Before/After) — 다크 배경 */}
       {results.visible && results.cases.length > 0 && (
@@ -489,12 +520,15 @@ const LiveMentoringDetailPage = ({
           </ul>
         </DetailSection>
       )}
+      <DetailFreeContentSection freeContent={freeContent} at="AFTER_RESULTS" />
 
       {/* 후기 — 멘토 프로필과 같은 멘토 전체 후기. 없거나 조회에 실패하면 섹션째 빠진다 */}
       <DetailMentorReviewSection id={LM_REVIEW_ID} mentorId={mentorId} />
+      <DetailFreeContentSection freeContent={freeContent} at="AFTER_REVIEWS" />
 
       {/* 시안 6 · 플랜 */}
       <DetailPlanSection durationPrices={detail.durationPrices} />
+      <DetailFreeContentSection freeContent={freeContent} at="AFTER_PLAN" />
 
       {/* 시안 7 · 진행 프로세스 */}
       <DetailProcessSection period={periodLabel} />

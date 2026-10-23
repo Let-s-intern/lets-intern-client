@@ -181,3 +181,32 @@ describe('상세 페이지 조회 응답', () => {
     expect(toTemplateUpdatePayload(parsed)).not.toHaveProperty('mentoring');
   });
 });
+
+describe('자유 입력란 (LC-3494) — 어드민만 편집', () => {
+  const FREE_CONTENT = {
+    visible: true,
+    content: '{"root":{}}',
+    position: 'AFTER_STRATEGY',
+  };
+
+  it('응답에 있으면 받아 둔다(미리보기로 그대로 넘긴다)', () => {
+    const parsed = liveMentoringDetailPageSchema.parse({
+      ...DETAIL_PAGE_RESPONSE,
+      freeContent: FREE_CONTENT,
+    });
+    expect(parsed.freeContent).toEqual(FREE_CONTENT);
+  });
+
+  it('응답에 없어도 파싱한다', () => {
+    const parsed = liveMentoringDetailPageSchema.parse(DETAIL_PAGE_RESPONSE);
+    expect(parsed.freeContent).toBeUndefined();
+  });
+
+  it('저장 payload 에는 넣지 않는다 — 서버가 어드민 입력을 지킨다', () => {
+    const template = liveMentoringTemplateSchema.parse({
+      ...DETAIL_PAGE_RESPONSE,
+      freeContent: FREE_CONTENT,
+    });
+    expect(toTemplateUpdatePayload(template)).not.toHaveProperty('freeContent');
+  });
+});

@@ -130,6 +130,22 @@ export const templateResultCaseSchema = z.object({
 });
 
 /**
+ * 자유 입력란이 놓이는 자리 — 백엔드 `LiveMentoringFreeContentPosition`. 값마다 「그 섹션 뒤」 다.
+ */
+export const liveMentoringFreeContentPositionSchema = z.enum([
+  'AFTER_INTRO',
+  'AFTER_MENTORING_TYPES',
+  'AFTER_STRATEGY',
+  'AFTER_VIDEO',
+  'AFTER_RESULTS',
+  'AFTER_REVIEWS',
+  'AFTER_PLAN',
+]);
+export type LiveMentoringFreeContentPosition = z.infer<
+  typeof liveMentoringFreeContentPositionSchema
+>;
+
+/**
  * 상세 페이지 템플릿 — 시안 10개 섹션 중 **멘토가 편집하는 1~5번**과
  * 편집 불가 고정 섹션으로 나뉜다.
  *
@@ -168,6 +184,18 @@ export const liveMentoringTemplateSchema = z.object({
     visible: z.boolean(),
     selectedReviewIds: z.array(z.number()),
   }),
+  /**
+   * 자유 입력란 — **어드민만 편집한다**(LC-3494). 멘토 앱은 읽기만 하고 저장 요청
+   * (`liveMentoringTemplateUpdateSchema`)에 넣지 않는다. 서버는 요청에 없으면 기존 값을 지킨다.
+   * 미리보기(`TemplatePreview`)는 템플릿을 통째로 넘기므로 여기서 받아 두면 그대로 전달된다.
+   */
+  freeContent: z
+    .object({
+      visible: z.boolean(),
+      content: z.string().nullable(),
+      position: liveMentoringFreeContentPositionSchema.nullable(),
+    })
+    .nullish(),
   /*
    * 시안 7(진행 프로세스)·10(FAQ)은 계약에 없다.
    * 멘토가 편집하지 않고 운영 확정 문구라, 서버를 거치지 않고

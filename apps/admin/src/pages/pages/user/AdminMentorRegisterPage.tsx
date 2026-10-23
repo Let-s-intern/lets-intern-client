@@ -6,7 +6,7 @@ import {
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { usePaginationModelWithSearchParams } from '@/hooks/usePaginationModelWithSearchParams';
-import { Button, Checkbox, Tab, Tabs, TextField } from '@mui/material';
+import { Button, Checkbox, TextField } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
@@ -182,8 +182,6 @@ const MentorFilter = () => {
 };
 
 export default function AdminMentorRegisterPage() {
-  const navigate = useNavigate();
-
   const { paginationModel, handlePaginationModelChange } =
     usePaginationModelWithSearchParams({
       defaultPage: 0,
@@ -197,23 +195,9 @@ export default function AdminMentorRegisterPage() {
   });
   const rowCount = pageInfo?.totalElements;
 
-  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
-    if (newValue === 0) {
-      navigate('/mentors');
-    } else if (newValue === 2) {
-      navigate('/mentors/keywords');
-    }
-  };
-
   return (
     <section className="p-5">
       <Heading className="mb-4">멘토 관리</Heading>
-
-      <Tabs value={1} onChange={handleTabChange} className="mb-4">
-        <Tab label="멘토 관리" />
-        <Tab label="멘토 등록" />
-        <Tab label="멘토 키워드" />
-      </Tabs>
 
       <MentorFilter />
       <span className="text-xsmall14 text-system-error">

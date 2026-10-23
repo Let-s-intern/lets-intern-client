@@ -290,6 +290,8 @@ export const adminUserDetailSchema = z.object({
     isPoolUp: z.boolean().nullable(),
     profileImgUrl: z.string().nullable(),
     corpImgUrl: z.string().nullable(),
+    /** 대표 로고에 연결한 회사 로고 라이브러리 id. 직접 올린 로고거나 연결이 없으면 null. 서버 배포 전에는 없다 */
+    corpLogoId: z.number().nullish(),
   }),
   applicationInfo: z.array(
     z.object({

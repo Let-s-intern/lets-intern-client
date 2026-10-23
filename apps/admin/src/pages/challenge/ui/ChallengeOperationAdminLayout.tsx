@@ -16,43 +16,19 @@ import { twMerge } from '@/lib/twMerge';
 import { Button, Checkbox } from '@mui/material';
 import { useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import {
+  CHALLENGE_OPERATION_TABS,
+  challengeOperationTabPath,
+} from './challengeOperationTabs';
 
 const WEB_URL = import.meta.env.VITE_WEB_URL ?? '';
 
-const getNavLinks = (programId?: string | number) => {
-  return [
-    {
-      id: 'home',
-      to: `/challenge/operation/${programId}/home`,
-      text: '홈',
-    },
-    {
-      id: 'register-mission',
-      to: `/challenge/operation/${programId}/register-mission`,
-      text: '미션등록',
-    },
-    {
-      id: 'attendances',
-      to: `/challenge/operation/${programId}/attendances`,
-      text: '제출확인',
-    },
-    {
-      id: 'participants',
-      to: `/challenge/operation/${programId}/participants`,
-      text: '참여자',
-    },
-    {
-      id: 'payback',
-      to: `/challenge/operation/${programId}/payback`,
-      text: '페이백',
-    },
-    {
-      id: 'feedback',
-      to: `/challenge/operation/${programId}/feedback`,
-      text: '피드백',
-    },
-  ];
-};
+const getNavLinks = (programId?: string | number) =>
+  CHALLENGE_OPERATION_TABS.map((tab) => ({
+    id: tab.id,
+    to: challengeOperationTabPath(programId, tab.id),
+    text: tab.text,
+  }));
 
 const Actions = ({ openModal }: { openModal: () => void }) => {
   const navigate = useNavigate();

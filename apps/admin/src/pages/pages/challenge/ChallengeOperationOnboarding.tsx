@@ -1,11 +1,21 @@
 import { challengeSchema } from '@/schema';
 import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
+import {
+  CHALLENGE_OPERATION_TABS,
+  challengeOperationTabPath,
+} from '@/pages/challenge/ui/challengeOperationTabs';
+
+/** ?tab= 이 운영 탭 id 면 그 탭, 없거나 모르는 값이면 홈 */
+const tabOf = (tab: string | null) =>
+  CHALLENGE_OPERATION_TABS.find(({ id }) => id === tab)?.id ?? 'home';
 
 const ChallengeOnboarding = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const tab = tabOf(searchParams.get('tab'));
 
   const { data } = useQuery({
     queryKey: ['challenge', 'admin'],
@@ -18,9 +28,9 @@ const ChallengeOnboarding = () => {
 
   useEffect(() => {
     if (data) {
-      navigate(`/challenge/operation/${data.programList[0]?.id}/home`);
+      navigate(challengeOperationTabPath(data.programList[0]?.id, tab));
     }
-  }, [data, navigate]);
+  }, [data, navigate, tab]);
 
   return null;
 };

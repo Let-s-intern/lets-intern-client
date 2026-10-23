@@ -14,16 +14,18 @@ import Heading from '@/domain/admin/ui/heading/Heading';
 import MentorDetailEditor from '@/domain/admin/user/mentor-detail/ui/MentorDetailEditor';
 import AdminLiveMentoringParticipantTable from '@/domain/live-mentoring/AdminLiveMentoringParticipantTable';
 import AdminLiveMentoringTable from '@/domain/live-mentoring/AdminLiveMentoringTable';
+import AdminLiveMentoringDetailPageEditor from '@/domain/live-mentoring/detail-page/AdminLiveMentoringDetailPageEditor';
 import ReviewMentorBar from '@/domain/live-mentoring/ui/ReviewMentorBar';
 import MentorReviewExposureSection from '@/domain/mentor/review-exposure/ui/MentorReviewExposureSection';
 import { twMerge } from '@/lib/twMerge';
 
-type Tab = 'products' | 'participants' | 'reviews';
+type Tab = 'products' | 'participants' | 'reviews' | 'detailPage';
 
 const tabs: { id: Tab; label: string }[] = [
   { id: 'products', label: '상품 관리' },
   { id: 'participants', label: '참여자' },
   { id: 'reviews', label: '후기' },
+  { id: 'detailPage', label: '상세페이지' },
 ];
 
 const TAB_DESCRIPTION: Record<Tab, string> = {
@@ -33,7 +35,12 @@ const TAB_DESCRIPTION: Record<Tab, string> = {
     '1:1 LIVE 멘토링을 결제한 참여자를 조회합니다. 여기서 하는 조작은 환불뿐입니다.',
   reviews:
     '멘토 프로필과 1:1 LIVE 멘토링 상세에 뜨는 후기를 멘토별로 관리합니다. 노출을 끄거나 별점·내용을 고칠 수 있으며, 원본 후기는 바뀌지 않습니다.',
+  detailPage:
+    '멘토의 1:1 LIVE 멘토링 상세페이지를 멘토 대신 고칩니다. 저장하면 공개 페이지에 바로 반영됩니다.',
 };
+
+const LEAVE_DETAIL_PAGE_MESSAGE =
+  '저장하지 않은 변경 사항이 있습니다. 이동할까요?';
 
 function isTab(value: string | null): value is Tab {
   return tabs.some((tab) => tab.id === value);
@@ -62,13 +69,25 @@ export default function AdminLiveMentoringPage() {
     queryClient.invalidateQueries({ queryKey: ADMIN_LIVE_MENTORING_QUERY_KEY });
   };
 
+  // 상세페이지 탭의 저장하지 않은 변경. 탭을 옮기거나 멘토를 바꾸면 편집 중인 내용이 사라지므로 묻는다
+  const [isDetailPageDirty, setIsDetailPageDirty] = useState(false);
+
   const setActiveTab = (tab: Tab) => {
+    if (tab === activeTab) return;
+    if (
+      activeTab === 'detailPage' &&
+      isDetailPageDirty &&
+      !window.confirm(LEAVE_DETAIL_PAGE_MESSAGE)
+    ) {
+      return;
+    }
+    setIsDetailPageDirty(false);
     const next = new URLSearchParams(searchParams);
     next.set('tab', tab);
     setSearchParams(next, { replace: true });
   };
 
-  /** 상품 표에서 고른 멘토의 참여자나 후기를 보러 간다. */
+  /** 상품 표에서 고른 멘토의 참여자·후기·상세페이지를 보러 간다. */
   const showMentorTab = (tab: Tab, nextMentorId: number) => {
     const next = new URLSearchParams(searchParams);
     next.set('tab', tab);
@@ -112,6 +131,7 @@ export default function AdminLiveMentoringPage() {
           onSelectMentor={(id) => showMentorTab('participants', id)}
           onSelectMentorReviews={(id) => showMentorTab('reviews', id)}
           onEditMentor={setEditingMentorId}
+          onEditDetailPage={(id) => showMentorTab('detailPage', id)}
         />
       ) : activeTab === 'reviews' ? (
         mentorId ? (
@@ -125,6 +145,25 @@ export default function AdminLiveMentoringPage() {
         ) : (
           <p className="text-xsmall14 text-neutral-40 py-16 text-center">
             상품 관리 탭에서 멘토의 후기 관리 버튼을 눌러 주세요.
+          </p>
+        )
+      ) : activeTab === 'detailPage' ? (
+        mentorId ? (
+          <>
+            <ReviewMentorBar
+              mentorId={mentorId}
+              description="상세페이지를 수정하고 있습니다."
+              onChangeMentor={() => setActiveTab('products')}
+            />
+            <AdminLiveMentoringDetailPageEditor
+              key={mentorId}
+              mentorId={mentorId}
+              onDirtyChange={setIsDetailPageDirty}
+            />
+          </>
+        ) : (
+          <p className="text-xsmall14 text-neutral-40 py-16 text-center">
+            상품 관리 탭에서 멘토의 상세페이지 수정 버튼을 눌러 주세요.
           </p>
         )
       ) : (

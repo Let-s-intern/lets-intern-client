@@ -54,19 +54,23 @@ export const mentorCareerItemSchema = z.object({
   endDate: z.string().nullable(),
   isAddedByAdmin: z.boolean(),
   isRepresentative: z.boolean(),
+  /** 경력 로고(LC-3499). 어드민이 회사 로고 라이브러리에서 지정한다. 서버 배포 전에는 없다 */
+  logoImgUrl: z.string().nullish(),
 });
 
 export type MentorCareerItem = z.infer<typeof mentorCareerItemSchema>;
 
 export const mentorProgramListItemSchema = z.object({
+  /** CHALLENGE · LIVE · VOD (LC-3503 부터 LIVE·VOD 도 온다) */
   programType: z.string(),
   programId: z.number(),
   title: z.string(),
   thumbnail: z.string().nullable(),
-  startDate: z.string(),
-  endDate: z.string(),
-  beginning: z.string(),
-  deadline: z.string(),
+  /** VOD 는 상시 판매라 기간 네 칸이 모두 null 이다 */
+  startDate: z.string().nullable(),
+  endDate: z.string().nullable(),
+  beginning: z.string().nullable(),
+  deadline: z.string().nullable(),
 });
 
 export type MentorProgramListItem = z.infer<typeof mentorProgramListItemSchema>;
