@@ -1,6 +1,6 @@
 import { Button, Switch } from '@mui/material';
 import dayjs from 'dayjs';
-import { useEffect, useRef, useState } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 
 import { usePatchAdminMentorReviewExposure } from '@/api/mentor/mentor';
 import type { AdminMentorReview } from '@/api/mentor/mentorSchema';
@@ -10,9 +10,15 @@ import MentorReviewEditDialog from './MentorReviewEditDialog';
 interface Props {
   mentorId: number;
   review: AdminMentorReview;
+  /** 노출 후기의 순위 조작. 숨긴 후기는 순위가 없다 */
+  rankControl?: ReactNode;
 }
 
-export default function MentorReviewExposureRow({ mentorId, review }: Props) {
+export default function MentorReviewExposureRow({
+  mentorId,
+  review,
+  rankControl,
+}: Props) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isClamped, setIsClamped] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -49,6 +55,9 @@ export default function MentorReviewExposureRow({ mentorId, review }: Props) {
 
   return (
     <tr className="border-neutral-80 border-t align-top">
+      <td className="whitespace-nowrap px-3 py-2">
+        {rankControl ?? <span className="text-neutral-40">순위 없음</span>}
+      </td>
       <td className="whitespace-nowrap px-3 py-2">
         {MENTOR_REVIEW_TYPE_LABEL[review.type]}
       </td>
