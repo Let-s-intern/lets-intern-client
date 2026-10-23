@@ -24,7 +24,7 @@ export class AdminLoginPage extends BasePage {
       timeout: 15_000,
     });
     await expect(
-      this.page.getByRole('link', { name: '멘토 관리', exact: true }),
+      this.page.getByRole('link', { name: '멘토 목록', exact: true }),
       '어드민 사이드바가 보여야 한다',
     ).toBeVisible({ timeout: 15_000 });
     await this.settle();
