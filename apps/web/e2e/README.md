@@ -115,6 +115,26 @@ const home = await loginFlow(page, {
 
 - `chromium-anonymous` — `*.anonymous.spec.ts` (storageState 미사용, 명시적 로그인)
 - `chromium-authenticated` — `*.authenticated.spec.ts` (storageState 사용, globalSetup 의존)
+- `chromium-lc3492` — `specs/lc-3492/*.spec.ts` (LC-3492 통합 QA. 로컬 스택 대상, 스펙이 어드민에 직접 로그인, 워커 1)
+
+### LC-3492 통합 QA
+
+로컬 스택(백엔드 8080 · web 3000 · admin 3001, 로컬 Docker MySQL)과 시드
+(`seed.sh` → `seed-live-mentoring.sql` → `seed-lc3492.sql`)가 있어야 한다.
+
+```bash
+pnpm --filter @letscareer/web exec playwright test --project=chromium-lc3492
+```
+
+| 변수                               | 기본값                       | 의미                                          |
+| ---------------------------------- | ---------------------------- | --------------------------------------------- |
+| `E2E_ADMIN_URL`                    | `http://localhost:3001`      | 어드민 주소                                   |
+| `E2E_API_URL`                      | `http://localhost:8080/api`  | 준비 단계에서 부르는 백엔드 API               |
+| `E2E_ADMIN_EMAIL` / `E2E_ADMIN_PW` | 로컬 어드민 계정             | `seed.sh` 의 계정                             |
+| `E2E_LC3492_MENTOR_A_EMAIL`        | `lm-mentor1@letscareer.test` | 시드 멘토 A                                   |
+| `E2E_REAL_FILE_UPLOAD`             | 비움                         | `1` 이면 `POST /file` 을 목으로 바꾸지 않는다 |
+
+공용 헬퍼는 `support/lc3492.ts`, 어드민 POM 은 `pages/admin/`, 로그인은 `flows/AdminLoginFlow.ts`.
 
 ## 정책
 

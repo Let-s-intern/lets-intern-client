@@ -7,6 +7,12 @@ import path from 'node:path';
 dotenv.config({ path: path.resolve(__dirname, '.env.test.local') });
 dotenv.config({ path: path.resolve(__dirname, '.env.local') });
 
+/*
+  LC-3492 통합 QA 는 스펙끼리 같은 멘토 데이터를 바꾸므로 한 번에 하나씩 돌린다.
+  워커 수는 프로젝트별로 정할 수 없어, 이 프로젝트만 골라 실행할 때 1로 내린다.
+*/
+const isLc3492Run = process.argv.some((arg) => arg.includes('chromium-lc3492'));
+
 const baseURL =
   process.env.PLAYWRIGHT_BASE_URL ??
   process.env.E2E_BASE_URL ??
@@ -20,7 +26,7 @@ export default defineConfig({
   timeout: 120_000,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: process.env.CI || isLc3492Run ? 1 : undefined,
   reporter: process.env.CI ? [['html', { open: 'never' }], ['github']] : 'list',
   // globalSetup 은 한 번 실행되어 storageState.json 을 생성한다.
   // 환경변수가 비어 있으면 setup 은 noop 으로 통과한다.
@@ -56,6 +62,13 @@ export default defineConfig({
         storageState: 'e2e/.auth/storageState.json',
       },
       testMatch: /.*\.authenticated\.spec\.ts/,
+    },
+    // LC-3492 통합 QA — 로컬 스택(admin 3001 · web 3000 · 백엔드 8080) 대상. 로그인은 스펙이 직접 한다
+    {
+      name: 'chromium-lc3492',
+      use: { browserName: 'chromium' },
+      testMatch: /lc-3492\/.*\.spec\.ts/,
+      fullyParallel: false,
     },
   ],
   // webServer 자동 spawn 은 의도적으로 사용하지 않는다.
