@@ -106,6 +106,8 @@ export const liveMentoringCareerSchema = z.object({
   position: z.string(),
   period: z.string(),
   visible: z.boolean(),
+  /** 경력 로고(LC-3499). 서버 배포 전에는 없다 */
+  logoImgUrl: z.string().nullish(),
 });
 export type LiveMentoringCareer = z.infer<typeof liveMentoringCareerSchema>;
 

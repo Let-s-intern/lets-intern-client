@@ -239,11 +239,28 @@ const LiveMentoringDetailPage = ({
             )}
             {intro.careerLines.length > 0 && (
               <ul className="mt-2 flex flex-col gap-1.5">
-                {intro.careerLines.map((line, i) => (
-                  <li key={i} className="text-neutral-30 text-xsmall14">
-                    {line}
-                  </li>
-                ))}
+                {intro.careerLines.map((line, i) => {
+                  /*
+                    경력 로고(LC-3499). 서버가 careerLines 와 profile.careers 를 같은 경력
+                    목록에서 같은 순서로 만들므로 i 번째가 같은 경력이다. 없으면 글만 둔다.
+                  */
+                  const logoImgUrl = profile.careers[i]?.logoImgUrl;
+                  return (
+                    <li
+                      key={i}
+                      className="text-neutral-30 text-xsmall14 flex items-center gap-2"
+                    >
+                      {logoImgUrl ? (
+                        <img
+                          src={logoImgUrl}
+                          alt=""
+                          className="h-5 w-5 shrink-0 rounded-sm object-contain"
+                        />
+                      ) : null}
+                      {line}
+                    </li>
+                  );
+                })}
               </ul>
             )}
             {/*

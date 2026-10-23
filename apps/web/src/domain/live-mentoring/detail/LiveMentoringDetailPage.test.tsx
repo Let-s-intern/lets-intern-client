@@ -342,6 +342,39 @@ describe('LiveMentoringDetailPage', () => {
     expect(screen.queryByText('서류 완성도 UP!')).not.toBeInTheDocument();
   });
 
+  it('경력 로고가 있으면 멘토 소개의 같은 순서 경력 줄 앞에 그린다 (LC-3499)', async () => {
+    const detailData = detail();
+    Object.assign(detailData.data.data.profile, {
+      careers: [
+        {
+          company: '카카오',
+          position: '디자이너',
+          period: '2020-현재',
+          visible: true,
+          logoImgUrl: 'https://cdn.test/kakao.png',
+        },
+      ],
+    });
+    mockApis(detailData);
+    const { container } = renderDetail();
+
+    const line = await screen.findByText('카카오 | 디자이너 (3년)');
+    expect(line.querySelector('img')).toHaveAttribute(
+      'src',
+      'https://cdn.test/kakao.png',
+    );
+    expect(
+      container.querySelectorAll('img[src="https://cdn.test/kakao.png"]'),
+    ).toHaveLength(1);
+  });
+
+  it('경력 로고가 없으면 경력 줄은 글만 둔다', async () => {
+    mockApis(detail());
+    renderDetail();
+    const line = await screen.findByText('카카오 | 디자이너 (3년)');
+    expect(line.querySelector('img')).toBeNull();
+  });
+
   describe('자유 입력란 배치 (LC-3495)', () => {
     const freeContent = (position: string) => ({
       visible: true,
