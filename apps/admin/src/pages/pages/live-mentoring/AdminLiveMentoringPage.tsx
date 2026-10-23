@@ -16,6 +16,7 @@ import AdminLiveMentoringParticipantTable from '@/domain/live-mentoring/AdminLiv
 import AdminLiveMentoringTable from '@/domain/live-mentoring/AdminLiveMentoringTable';
 import AdminLiveMentoringDetailPageEditor from '@/domain/live-mentoring/detail-page/AdminLiveMentoringDetailPageEditor';
 import ReviewMentorBar from '@/domain/live-mentoring/ui/ReviewMentorBar';
+import MentorPickStatus from '@/domain/mentor/pick/ui/MentorPickStatus';
 import MentorReviewExposureSection from '@/domain/mentor/review-exposure/ui/MentorReviewExposureSection';
 import { twMerge } from '@/lib/twMerge';
 
@@ -188,7 +189,10 @@ export default function AdminLiveMentoringPage() {
             멘토 수정
           </DialogTitle>
           <DialogContent>
-            <MentorDetailEditor mentorId={editingMentorId} />
+            <MentorDetailEditor
+              mentorId={editingMentorId}
+              headerSlot={<MentorPickStatus mentorId={editingMentorId} />}
+            />
           </DialogContent>
           <DialogActions>
             <Button onClick={closeMentorEditor} color="inherit">

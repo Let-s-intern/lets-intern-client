@@ -94,8 +94,23 @@ vi.mock(
   }),
 );
 vi.mock('@/domain/admin/user/mentor-detail/ui/MentorDetailEditor', () => ({
+  default: ({
+    mentorId,
+    headerSlot,
+  }: {
+    mentorId: number;
+    headerSlot?: React.ReactNode;
+  }) => (
+    <div>
+      <span>멘토편집 {mentorId}</span>
+      {headerSlot}
+    </div>
+  ),
+}));
+
+vi.mock('@/domain/mentor/pick/ui/MentorPickStatus', () => ({
   default: ({ mentorId }: { mentorId: number }) => (
-    <span>멘토편집 {mentorId}</span>
+    <span>렛커픽 {mentorId}</span>
   ),
 }));
 
@@ -185,13 +200,14 @@ describe('AdminLiveMentoringPage', () => {
     expect(screen.getByText('상품표목')).toBeInTheDocument();
   });
 
-  it('상품 표에서 멘토 수정을 누르면 그 멘토의 편집 모달을 띄우고, 닫으면 내린다', () => {
+  it('상품 표에서 멘토 수정을 누르면 렛커 픽 순위와 함께 편집 모달을 띄우고, 닫으면 내린다', () => {
     renderPage();
     expect(screen.queryByText(/멘토편집/)).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: '멘토수정목' }));
     expect(screen.getByText('멘토편집 21')).toBeInTheDocument();
     expect(screen.getByText('멘토 수정')).toBeInTheDocument();
+    expect(screen.getByText('렛커픽 21')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: '닫기' }));
     expect(screen.queryByText('멘토편집 21')).not.toBeInTheDocument();
