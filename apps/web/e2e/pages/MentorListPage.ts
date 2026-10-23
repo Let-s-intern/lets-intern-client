@@ -4,7 +4,7 @@ import { BasePage } from './BasePage';
 const mentorIdOf = (href: string | null) =>
   Number(href?.match(/\/mentors\/(\d+)/)?.[1]);
 
-/** 웹 멘토 목록 (/mentors). 렛커 픽 라벨(LC-3500), 키워드 필터(LC-3501), 대표 경력 표시(LC-3497) */
+/** 웹 멘토 목록 (/mentors). 렛커 픽 정렬(LC-3500, 라벨 없음), 키워드 필터(LC-3501), 대표 경력 표시(LC-3497) */
 export class MentorListPage extends BasePage {
   async goto(): Promise<this> {
     await this.page.goto('/mentors', { waitUntil: 'domcontentloaded' });
@@ -26,14 +26,6 @@ export class MentorListPage extends BasePage {
     const hrefs = await this.cards.evaluateAll((links) =>
       links.map((link) => link.getAttribute('href')),
     );
-    return hrefs.map(mentorIdOf);
-  }
-
-  /** 「렛커 픽」 라벨이 붙은 카드의 멘토 id */
-  async pickedMentorIds(): Promise<number[]> {
-    const hrefs = await this.cards
-      .filter({ hasText: '렛커 픽' })
-      .evaluateAll((links) => links.map((link) => link.getAttribute('href')));
     return hrefs.map(mentorIdOf);
   }
 

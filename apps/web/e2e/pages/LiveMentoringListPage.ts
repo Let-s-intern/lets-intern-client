@@ -1,7 +1,7 @@
 import { expect, type Locator } from '@playwright/test';
 import { BasePage } from './BasePage';
 
-/** 웹 1:1 라이브 멘토링 목록 (/live-mentoring). 렛커 픽 정렬·라벨(LC-3500) */
+/** 웹 1:1 라이브 멘토링 목록 (/live-mentoring). 렛커 픽 정렬(LC-3500, 라벨 없음) */
 export class LiveMentoringListPage extends BasePage {
   async goto(): Promise<this> {
     await this.page.goto('/live-mentoring', {
@@ -26,9 +26,5 @@ export class LiveMentoringListPage extends BasePage {
     return hrefs.map((href) =>
       Number(href?.match(/\/live-mentoring\/(\d+)/)?.[1]),
     );
-  }
-
-  async pickedCount(): Promise<number> {
-    return this.cards.filter({ hasText: '렛커 픽' }).count();
   }
 }
