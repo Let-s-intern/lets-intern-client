@@ -58,14 +58,11 @@ const TAB_ENTRIES: SearchEntry[] = [
   })),
 ];
 
-/**
- * 검색 대상 전체. 사이드바 메뉴는 navData 를 그대로 읽어 넣고(복사본을 두지 않는다),
- * 메뉴 별칭과 화면 안 탭을 더한다.
- */
-export const buildSearchEntries = (
+/** 사이드바 메뉴만. navData 를 그대로 읽는다(복사본을 두지 않는다). 검색어가 비었을 때 전체 메뉴로도 보인다 */
+export const buildMenuEntries = (
   navData: readonly SearchNavSection[],
-): SearchEntry[] => [
-  ...navData.flatMap((section) =>
+): SearchEntry[] =>
+  navData.flatMap((section) =>
     section.itemList
       .filter((item) => !item.external)
       .map((item) => ({
@@ -74,6 +71,9 @@ export const buildSearchEntries = (
         parents: [section.title],
         keywords: MENU_KEYWORDS[item.url] ?? [],
       })),
-  ),
-  ...TAB_ENTRIES,
-];
+  );
+
+/** 검색 대상 전체. 사이드바 메뉴에 화면 안 탭을 더한다 */
+export const buildSearchEntries = (
+  navData: readonly SearchNavSection[],
+): SearchEntry[] => [...buildMenuEntries(navData), ...TAB_ENTRIES];
