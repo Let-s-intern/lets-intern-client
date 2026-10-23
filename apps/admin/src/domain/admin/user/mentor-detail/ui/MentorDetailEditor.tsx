@@ -5,7 +5,7 @@ import {
   DialogContent,
   DialogTitle,
 } from '@mui/material';
-import { useEffect, useMemo, useState } from 'react';
+import { type ReactNode, useEffect, useMemo, useState } from 'react';
 
 import {
   useDeleteAdminCareerMutation,
@@ -90,6 +90,11 @@ interface LocalCareer {
 
 interface Props {
   mentorId: number;
+  /**
+   * 기본 정보 제목 옆에 붙일 내용. 멘토 상세 페이지가 렛커 픽 순위(domain/mentor/pick)를 넣는다.
+   * 도메인 간 import 를 피하려고 페이지가 조립한다
+   */
+  headerSlot?: ReactNode;
 }
 
 /** 경력 날짜는 `2020-01`, `2020.01`, `2020-01-01` 로 올 수 있다. 수정 폼은 `2020-01` 만 쓴다 */
@@ -99,7 +104,7 @@ const toYearMonth = (date: string) => date.replace('.', '-').slice(0, 7);
  * 멘토 기본 정보·경력사항·키워드 편집. 멘토 상세 페이지와 1:1 LIVE 멘토링 관리의
  * 멘토 수정 모달이 함께 쓴다.
  */
-export default function MentorDetailEditor({ mentorId }: Props) {
+export default function MentorDetailEditor({ mentorId, headerSlot }: Props) {
   const queryClient = useQueryClient();
   const { snackbar } = useAdminSnackbar();
 
@@ -412,7 +417,10 @@ export default function MentorDetailEditor({ mentorId }: Props) {
     <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
       {/* 기본 정보 */}
       <div className="border-neutral-80 rounded-lg border p-6">
-        <h2 className="text-medium18 mb-4 font-semibold">기본 정보</h2>
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-medium18 font-semibold">기본 정보</h2>
+          {headerSlot}
+        </div>
 
         <div className="mb-10 flex items-center gap-5">
           <div className="flex w-[200px] flex-col">

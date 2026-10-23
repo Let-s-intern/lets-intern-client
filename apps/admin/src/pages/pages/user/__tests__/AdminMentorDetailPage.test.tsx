@@ -60,6 +60,13 @@ vi.mock(
   }),
 );
 
+// 순위 표시·창은 MentorPickStatus.test.tsx 에서 본다. 여기서는 기본 정보 옆에 붙는지만 확인한다
+vi.mock('@/domain/mentor/pick/ui/MentorPickStatus', () => ({
+  default: ({ mentorId }: { mentorId: number }) => (
+    <span data-testid="mentor-pick-status">{mentorId}</span>
+  ),
+}));
+
 import AdminMentorDetailPage from '../AdminMentorDetailPage';
 
 describe('AdminMentorDetailPage', () => {
@@ -90,5 +97,26 @@ describe('AdminMentorDetailPage', () => {
     const grid = careerHeading.closest('.grid');
     expect(grid).not.toBeNull();
     expect(grid?.contains(section)).toBe(false);
+  });
+
+  it('기본 정보 제목 옆에 렛커 픽 순위를 mentorId 와 함께 붙인다', () => {
+    render(
+      <QueryClientProvider client={new QueryClient()}>
+        <MemoryRouter initialEntries={['/mentors/7']}>
+          <Routes>
+            <Route
+              path="/mentors/:mentorId"
+              element={<AdminMentorDetailPage />}
+            />
+          </Routes>
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+
+    const status = screen.getByTestId('mentor-pick-status');
+    expect(status).toHaveTextContent('7');
+    expect(screen.getByText('기본 정보').parentElement?.contains(status)).toBe(
+      true,
+    );
   });
 });

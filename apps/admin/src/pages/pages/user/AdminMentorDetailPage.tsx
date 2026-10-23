@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import Heading from '@/domain/admin/ui/heading/Heading';
 import MentorDetailEditor from '@/domain/admin/user/mentor-detail/ui/MentorDetailEditor';
+import MentorPickStatus from '@/domain/mentor/pick/ui/MentorPickStatus';
 import MentorReviewExposureSection from '@/domain/mentor/review-exposure/ui/MentorReviewExposureSection';
 
 export default function AdminMentorDetailPage() {
@@ -23,7 +24,10 @@ export default function AdminMentorDetailPage() {
         <Heading>멘토 상세 정보</Heading>
       </div>
 
-      <MentorDetailEditor mentorId={mentorId} />
+      <MentorDetailEditor
+        mentorId={mentorId}
+        headerSlot={<MentorPickStatus mentorId={mentorId} />}
+      />
 
       {/* 표가 넓어 반쪽 칸에서는 후기 내용이 잘린다. 그리드 밖에서 전체 폭을 쓴다 */}
       <div className="mt-8">
