@@ -168,6 +168,14 @@ describe('MentorDetailEditor 프로필 소개·키워드', () => {
     expect(lastPatchBody()).toMatchObject({ introduction: '' });
   });
 
+  it('한줄소개를 고치지 않으면 요청에 introduction 이 없다', async () => {
+    renderEditor();
+    fireEvent.click(await screen.findByRole('button', { name: '저장' }));
+
+    await waitFor(() => expect(patch).toHaveBeenCalled());
+    expect(lastPatchBody()).not.toHaveProperty('introduction');
+  });
+
   it('키워드를 바꾸지 않으면 키워드 요청을 보내지 않는다', async () => {
     renderEditor();
     await screen.findByRole('button', { name: '#개발' });

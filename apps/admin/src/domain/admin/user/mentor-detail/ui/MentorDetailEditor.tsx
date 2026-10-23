@@ -178,6 +178,10 @@ export default function MentorDetailEditor({ mentorId }: Props) {
     const isDescriptionChanged =
       descriptionDraft !== null &&
       descriptionDraft !== userDetail?.userInfo.description;
+    // 한줄소개도 바뀐 경우에만 보낸다. 원래 null 인 멘토가 다른 필드 저장만으로 '' 가 되지 않게 한다.
+    // 비워서 바꿨으면 '' 를 그대로 보낸다(null 은 서버가 기존 값을 유지한다)
+    const isIntroductionChanged =
+      form.introduction !== (userDetail?.userInfo.introduction ?? '');
 
     patchUser.mutate({
       name: form.name || undefined,
@@ -187,8 +191,7 @@ export default function MentorDetailEditor({ mentorId }: Props) {
       sns: serializeSnsList(validSnsUrls),
       profileImgUrl: form.profileImgUrl || null,
       corpImgUrl: form.corpImgUrl || null,
-      // null 은 서버가 기존 값을 유지하므로, 비운 한줄소개는 빈 문자열로 보내야 지워진다
-      introduction: form.introduction,
+      ...(isIntroductionChanged ? { introduction: form.introduction } : {}),
       ...(isDescriptionChanged ? { description: descriptionDraft } : {}),
     });
 
