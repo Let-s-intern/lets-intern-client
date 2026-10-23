@@ -6,11 +6,15 @@ import SolidButton from '@/common/button/SolidButton';
 import dayjs from '@/lib/dayjs';
 import clsx from 'clsx';
 import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { generateOrderId } from '@/lib/order';
+import useMembershipOrderStore from '../../../store/useMembershipOrderStore';
 import {
   useGetExtensionOptions,
   useGetMyMembershipApplication,
   type ExtensionOption,
 } from '../../../api/dashboard';
+import { useGetMembershipApplicationForm } from '../../../api/purchase';
 import ExtensionSheet from './ExtensionSheet';
 import { getExtensionCopy } from './extensionStatus';
 
@@ -23,8 +27,13 @@ interface Props {
 }
 
 export default function ExtensionModal({ applicationId, onClose }: Props) {
+  const router = useRouter();
+  const { setOrder } = useMembershipOrderStore();
   const { data: base } = useGetMyMembershipApplication(applicationId);
   const { data: optData } = useGetExtensionOptions(applicationId);
+  const { data: form } = useGetMembershipApplicationForm(
+    base?.membershipId ?? 0,
+  );
   const options = useMemo(() => optData?.optionList ?? [], [optData]);
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
@@ -45,9 +54,31 @@ export default function ExtensionModal({ applicationId, onClose }: Props) {
   const copy = getExtensionCopy(base.title ?? '올인원패스', base.endDate);
 
   const handleConfirm = () => {
-    if (!selected) return;
-    // TODO: 결제 플로우 연결 — 주문 스토어 세팅 후 /payment-input 이동(POST /extension).
+    if (!selected || !base?.membershipId || !form) return;
+    setOrder({
+      orderType: 'EXTENSION',
+      membershipId: base.membershipId,
+      applicationId,
+      membershipOptionId: selected.membershipOptionId,
+      membershipPlanId: null,
+      passTitle: base.title ?? '올인원패스',
+      thumbnail: null,
+      price: selected.price,
+      discount: selected.discount ?? 0,
+      couponCode: null,
+      couponPrice: 0,
+      totalPrice: price,
+      contactEmail: form.contactEmail ?? form.email ?? '',
+      email: form.email ?? '',
+      name: form.name ?? '',
+      phone: form.phoneNumber ?? '',
+      orderId: generateOrderId(),
+      isFree: price === 0,
+      beginning: null,
+      deadline: null,
+    });
     onClose();
+    router.push(`/all-in-one-pass/${base.membershipId}/payment-input`);
   };
 
   return (

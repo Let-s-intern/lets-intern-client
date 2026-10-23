@@ -1,10 +1,15 @@
-// 올인원패스 결제 플로우 전용 상태
+// 올인원패스 결제 플로우 전용 상태 (구매·연장 공용)
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+export type MembershipOrderType = 'PURCHASE' | 'EXTENSION';
+
 export interface MembershipOrderData {
+  orderType: MembershipOrderType;
   membershipId: number | null;
   membershipPlanId: number | null;
+  applicationId: number | null;
+  membershipOptionId: number | null;
   passTitle: string | null;
   thumbnail: string | null;
   price: number | null;
@@ -32,8 +37,11 @@ interface MembershipOrderStore {
 }
 
 const EMPTY: MembershipOrderData = {
+  orderType: 'PURCHASE',
   membershipId: null,
   membershipPlanId: null,
+  applicationId: null,
+  membershipOptionId: null,
   passTitle: null,
   thumbnail: null,
   price: null,
@@ -51,10 +59,8 @@ const EMPTY: MembershipOrderData = {
   deadline: null,
 };
 
-// couponCode·thumbnail·기간은 null 허용이라 필수 검사에서 제외.
-const REQUIRED_KEYS: (keyof MembershipOrderData)[] = [
+const COMMON_REQUIRED: (keyof MembershipOrderData)[] = [
   'membershipId',
-  'membershipPlanId',
   'passTitle',
   'price',
   'discount',
@@ -77,7 +83,10 @@ const useMembershipOrderStore = create(
       initOrder: () => set({ data: EMPTY }),
       checkInvalidate: () => {
         const d = get().data;
-        return REQUIRED_KEYS.some((k) => d[k] === null);
+        if (COMMON_REQUIRED.some((k) => d[k] === null)) return true;
+        return d.orderType === 'EXTENSION'
+          ? d.applicationId === null || d.membershipOptionId === null
+          : d.membershipPlanId === null;
       },
     }),
     {

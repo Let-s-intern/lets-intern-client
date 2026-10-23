@@ -5,7 +5,10 @@
 import { PostApplicationResult } from '@/api/application';
 import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import LoadingContainer from '@/common/loading/LoadingContainer';
-import { postMembershipApplication } from '@/domain/all-in-one-pass/api/purchase';
+import {
+  postMembershipApplication,
+  postMembershipExtension,
+} from '@/domain/all-in-one-pass/api/purchase';
 import dayjs from '@/lib/dayjs';
 import useMembershipOrderStore from '@/domain/all-in-one-pass/store/useMembershipOrderStore';
 import DescriptionBox from '@/domain/program/paymentSuccess/DescriptionBox';
@@ -46,19 +49,34 @@ const MembershipOrderResult = () => {
     const amount = searchParams.get('amount') ?? String(data.totalPrice ?? 0);
     const paymentKey = data.isFree ? null : searchParams.get('paymentKey');
 
-    if (!data.membershipPlanId || !orderId) {
+    const request =
+      data.orderType === 'EXTENSION'
+        ? data.applicationId && data.membershipOptionId && orderId
+          ? postMembershipExtension(data.applicationId, {
+              membershipOptionId: data.membershipOptionId,
+              couponCode: data.couponCode,
+              paymentKey,
+              orderId,
+              amount,
+            })
+          : null
+        : data.membershipPlanId && orderId
+          ? postMembershipApplication(membershipId, {
+              membershipPlanId: data.membershipPlanId,
+              orderId,
+              amount,
+              paymentKey,
+              couponCode: data.couponCode,
+              contactEmail: data.contactEmail,
+            })
+          : null;
+
+    if (!request) {
       setState('fail');
       return;
     }
 
-    postMembershipApplication(membershipId, {
-      membershipPlanId: data.membershipPlanId,
-      orderId,
-      amount,
-      paymentKey,
-      couponCode: data.couponCode,
-      contactEmail: data.contactEmail,
-    })
+    request
       .then((res) => {
         setResult(res.data.data);
         setState('success');
