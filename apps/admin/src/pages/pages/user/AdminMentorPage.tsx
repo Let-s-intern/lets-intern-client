@@ -16,13 +16,11 @@ import {
   DialogTitle,
   IconButton,
   Switch,
-  Tab,
-  Tabs,
 } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { IoCloseOutline } from 'react-icons/io5';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 // VITE_WEB_URL 미설정 시 admin 자기 자신의 root 로 fallback (안전장치).
 const WEB_URL = import.meta.env.VITE_WEB_URL ?? '/';
@@ -236,31 +234,9 @@ function MentorManagementTable() {
 }
 
 export default function AdminMentorPage() {
-  const navigate = useNavigate();
-
-  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
-    if (newValue === 1) {
-      navigate('/mentors/register');
-    } else if (newValue === 2) {
-      navigate('/mentors/keywords');
-    } else if (newValue === 3) {
-      navigate('/mentors/pick');
-    } else if (newValue === 4) {
-      navigate('/mentors/company-logos');
-    }
-  };
-
   return (
     <section className="p-5">
       <Heading className="mb-4">멘토 관리</Heading>
-
-      <Tabs value={0} onChange={handleTabChange} className="mb-4">
-        <Tab label="멘토 관리" />
-        <Tab label="멘토 등록" />
-        <Tab label="멘토 키워드" />
-        <Tab label="렛커 픽" />
-        <Tab label="회사 로고" />
-      </Tabs>
 
       <MentorManagementTable />
     </section>

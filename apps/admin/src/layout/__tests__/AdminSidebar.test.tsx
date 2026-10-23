@@ -11,9 +11,9 @@ vi.mock('@/api/user/user', () => ({
   useIsAdminQuery: () => isAdminQuery(),
 }));
 
-const renderSidebar = () =>
+const renderSidebar = (path = '/') =>
   render(
-    <MemoryRouter>
+    <MemoryRouter initialEntries={[path]}>
       <AdminSidebar />
     </MemoryRouter>,
   );
@@ -110,5 +110,70 @@ describe('AdminSidebar VOD 관리 그룹', () => {
     expect(
       within(programGroup).queryByRole('link', { name: /VOD 이용권/ }),
     ).not.toBeInTheDocument();
+  });
+});
+
+const groupLinks = (title: string) =>
+  within(
+    screen.getByRole('heading', { name: title }).closest('div')!.parentElement!,
+  ).getAllByRole('link');
+
+describe('AdminSidebar 멘토 관리 그룹 (LC-3492)', () => {
+  it('멘토 화면 다섯 개를 이 순서로 둔다', () => {
+    renderSidebar();
+
+    expect(
+      groupLinks('멘토 관리').map((link) => [
+        link.textContent,
+        link.getAttribute('href'),
+      ]),
+    ).toEqual([
+      ['멘토 목록', '/mentors'],
+      ['멘토 등록', '/mentors/register'],
+      ['키워드', '/mentors/keywords'],
+      ['렛커 픽', '/mentors/pick'],
+      ['회사 로고', '/mentors/company-logos'],
+    ]);
+  });
+
+  it('사용자 관리 바로 앞에 있고, 사용자 관리에는 멘토 항목이 없다', () => {
+    renderSidebar();
+
+    const titles = screen
+      .getAllByRole('heading', { level: 3 })
+      .map((heading) => heading.textContent);
+    expect(titles.indexOf('멘토 관리')).toBe(titles.indexOf('사용자 관리') - 1);
+    expect(groupLinks('사용자 관리').map((link) => link.textContent)).toEqual([
+      '커리어 DB',
+      '쿠폰 관리',
+      '리드 관리',
+      '합격 인증 관리',
+    ]);
+  });
+
+  it('멘토 상세(/mentors/:id)에서는 멘토 목록이 켜진다', () => {
+    renderSidebar('/mentors/7');
+
+    expect(screen.getByRole('link', { name: '멘토 목록' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
+  });
+
+  it('/mentors/pick 에서는 렛커 픽만 켜지고 멘토 목록은 꺼진다', () => {
+    renderSidebar('/mentors/pick');
+
+    expect(screen.getByRole('link', { name: '렛커 픽' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
+    expect(screen.getByRole('link', { name: '멘토 목록' })).not.toHaveAttribute(
+      'aria-current',
+    );
+    expect(
+      screen
+        .getAllByRole('link')
+        .filter((link) => link.hasAttribute('aria-current')),
+    ).toHaveLength(1);
   });
 });
