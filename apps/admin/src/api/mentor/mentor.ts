@@ -11,6 +11,7 @@ import {
   type PatchAttendanceMentorReq,
   type PatchMentorReviewContentReq,
   type PatchMentorReviewExposureReq,
+  type PutAdminMentorHashTagOfMentorReq,
   PostAdminChallengeMentorReq,
 } from './mentorSchema';
 
@@ -171,6 +172,15 @@ export const useDeleteAdminMentorHashTag = () => {
       queryClient.invalidateQueries({
         queryKey: [AdminMentorHashTagQueryKey],
       });
+    },
+  });
+};
+
+/** PUT 멘토에게 지정한 해시태그 교체 /api/v1/admin/mentor-hash-tag/mentors/{mentorId} */
+export const usePutAdminMentorHashTagOfMentor = (mentorId: number) => {
+  return useMutation({
+    mutationFn: async (body: PutAdminMentorHashTagOfMentorReq) => {
+      return axios.put(`/admin/mentor-hash-tag/mentors/${mentorId}`, body);
     },
   });
 };
