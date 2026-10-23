@@ -14,10 +14,10 @@ import { twMerge } from '@/lib/twMerge';
 
 import { matchEntries, splitHighlight } from './matchEntries';
 import type { SearchEntry } from './searchEntries';
-import { useChallengeSearch } from './useChallengeSearch';
+import { useProgramSearch } from './useProgramSearch';
 import { useUserSearch } from './useUserSearch';
 
-/** 유저·챌린지처럼 서버에서 찾는 묶음이 입력이 멈추길 기다리는 시간 */
+/** 유저·프로그램처럼 서버에서 찾는 묶음이 입력이 멈추길 기다리는 시간 */
 const REMOTE_DEBOUNCE_MS = 300;
 
 const Highlight = ({ text, query }: { text: string; query: string }) => (
@@ -62,7 +62,7 @@ interface Props {
 /**
  * 화면 위쪽 가운데에 뜨는 메뉴 검색(Spotlight 식). 모달이 아니다 — 배경을 가리거나 스크롤·포커스를
  * 묶지 않아 뒤 화면을 그대로 보고 만질 수 있다. Esc·바깥 클릭·이동으로 닫힌다.
- * 메뉴는 바로 거르고, 그 아래 유저·챌린지는 서버에서 찾아 갈 곳을 하위 항목으로 보여 준다.
+ * 메뉴는 바로 거르고, 그 아래 유저·프로그램은 서버에서 찾아 갈 곳을 하위 항목으로 보여 준다.
  */
 export default function SearchPanel({
   entries,
@@ -84,7 +84,7 @@ export default function SearchPanel({
     [entries, menuEntries, query, isEmptyQuery],
   );
   const userSearch = useUserSearch(query, debouncedQuery);
-  const challengeSearch = useChallengeSearch(query, debouncedQuery);
+  const programSearch = useProgramSearch(query, debouncedQuery);
 
   const blocks = useMemo<Block[]>(() => {
     if (isEmptyQuery) {
@@ -172,55 +172,55 @@ export default function SearchPanel({
       }
     }
 
-    if (challengeSearch.status !== 'idle') {
-      list.push({ kind: 'heading', key: 'h-challenge', text: '챌린지' });
-      challengeSearch.challenges.forEach((challenge) => {
+    if (programSearch.status !== 'idle') {
+      list.push({ kind: 'heading', key: 'h-program', text: '프로그램' });
+      programSearch.programs.forEach((program) => {
         list.push({
           kind: 'header',
-          key: `challenge-${challenge.id}`,
+          key: `program-${program.type}-${program.id}`,
           node: (
             <div className="flex items-center gap-2">
               <span className="text-[15px] font-semibold text-white">
-                <Highlight text={`[챌린지] ${challenge.title}`} query={query} />
+                <Highlight text={program.title} query={query} />
               </span>
               <span className="text-[13px] text-[#9AA4B2]">
-                #{challenge.id}
-                {challenge.summary ? ` · ${challenge.summary}` : null}
+                #{program.id}
+                {program.summary ? ` · ${program.summary}` : null}
               </span>
             </div>
           ),
         });
-        challenge.destinations.forEach((entry) =>
+        program.destinations.forEach((entry) =>
           list.push({
             kind: 'option',
-            key: `challenge-${challenge.id}-${entry.path}`,
+            key: `program-${program.type}-${program.id}-${entry.path}`,
             entry,
             isNested: true,
           }),
         );
       });
-      if (challengeSearch.status === 'loading') {
+      if (programSearch.status === 'loading') {
         list.push({
           kind: 'note',
-          key: 'challenge-loading',
-          text: '챌린지 찾는 중…',
+          key: 'program-loading',
+          text: '프로그램 찾는 중…',
         });
-      } else if (challengeSearch.status === 'error') {
+      } else if (programSearch.status === 'error') {
         list.push({
           kind: 'note',
-          key: 'challenge-error',
-          text: '챌린지를 불러오지 못했습니다',
+          key: 'program-error',
+          text: '프로그램을 불러오지 못했습니다',
         });
-      } else if (challengeSearch.challenges.length === 0) {
+      } else if (programSearch.programs.length === 0) {
         list.push({
           kind: 'note',
-          key: 'challenge-empty',
-          text: '일치하는 챌린지가 없습니다',
+          key: 'program-empty',
+          text: '일치하는 프로그램이 없습니다',
         });
       }
     }
     return list;
-  }, [isEmptyQuery, menuResults, userSearch, challengeSearch, query]);
+  }, [isEmptyQuery, menuResults, userSearch, programSearch, query]);
 
   const options = blocks.filter(
     (block): block is Extract<Block, { kind: 'option' }> =>

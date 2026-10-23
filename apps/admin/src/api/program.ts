@@ -204,16 +204,16 @@ export const useGetProgramAdminQuery = (params: {
 };
 
 /**
- * GET /program/admin?type=CHALLENGE&keyword= — 챌린지를 제목·id 로 찾는다. 메뉴 검색 패널이 입력마다
+ * GET /program/admin?keyword= — 유형과 상관없이 프로그램을 제목·id 로 찾는다. 메뉴 검색 패널이 입력마다
  * 부르므로 요청을 취소할 수 있게 signal 을 받는다. 이 API 는 page 를 1부터 센다.
  */
-export const fetchAdminChallenges = async (
+export const fetchAdminPrograms = async (
   keyword: string,
   size: number,
   signal?: AbortSignal,
 ) => {
   const res = await axios.get(`/program/admin`, {
-    params: { type: 'CHALLENGE', keyword, page: 1, size },
+    params: { keyword, page: 1, size },
     signal,
   });
   return programAdminSchema.parse(res.data.data).programList;

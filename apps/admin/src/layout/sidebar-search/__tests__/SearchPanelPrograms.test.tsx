@@ -15,12 +15,12 @@ vi.mock('@/utils/axiosV2', () => ({
 }));
 
 import SearchPanel from '../SearchPanel';
-import { challengeDestinations } from '../useChallengeSearch';
+import { programDestinations } from '../useProgramSearch';
 
-const challenge = (id: number, title: string) => ({
+const program = (id: number, title: string, programType = 'CHALLENGE') => ({
   programInfo: {
     id,
-    programType: 'CHALLENGE',
+    programType,
     programStatusType: 'PROCEEDING',
     title,
     startDate: '2026-01-05T00:00:00',
@@ -29,9 +29,9 @@ const challenge = (id: number, title: string) => ({
   classificationList: [],
 });
 
-let challenges: unknown[] = [];
+let programs: unknown[] = [];
 
-const challengeCalls = () =>
+const programCalls = () =>
   getV1.mock.calls.filter(([url]) => url === '/program/admin');
 
 const renderPanel = () => {
@@ -58,24 +58,24 @@ const input = () => screen.getByRole('combobox', { name: '메뉴 검색어' });
 const type = (value: string) =>
   fireEvent.change(input(), { target: { value } });
 /** 머리 줄. 강조 때문에 글자가 쪼개져 있어 textContent 로 본다 */
-const challengeHeaders = () =>
+const programHeaders = () =>
   [...document.querySelectorAll('li[role="presentation"]')]
     .map((item) => item.textContent ?? '')
-    .filter((text) => text.startsWith('[챌린지]'));
+    .filter((text) => text.startsWith('['));
 const optionLabels = () =>
   screen.getAllByRole('option').map((option) => option.firstChild?.textContent);
 
 beforeEach(() => {
-  challenges = [];
+  programs = [];
   getV1.mockImplementation(() =>
     Promise.resolve({
       data: {
         data: {
-          programList: challenges,
+          programList: programs,
           pageInfo: {
             pageNum: 1,
-            pageSize: 5,
-            totalElements: challenges.length,
+            pageSize: 8,
+            totalElements: programs.length,
             totalPages: 1,
           },
         },
@@ -91,32 +91,31 @@ beforeEach(() => {
 
 afterEach(() => vi.clearAllMocks());
 
-describe('SearchPanel 챌린지 묶음', () => {
-  it('2글자 이상, 멈춘 뒤 한 번만 type=CHALLENGE·keyword·size 5 로 묻는다', async () => {
+describe('SearchPanel 프로그램 묶음', () => {
+  it('2글자 이상, 멈춘 뒤 한 번만 유형 없이 keyword·size 8 로 묻는다', async () => {
     renderPanel();
     type('취');
     await new Promise((resolve) => setTimeout(resolve, 350));
-    expect(challengeCalls()).toHaveLength(0);
+    expect(programCalls()).toHaveLength(0);
 
     type('취업');
     type('취업 챌린지');
-    expect(challengeCalls()).toHaveLength(0);
-    await waitFor(() => expect(challengeCalls()).toHaveLength(1));
-    expect(challengeCalls()[0][1].params).toEqual({
-      type: 'CHALLENGE',
+    expect(programCalls()).toHaveLength(0);
+    await waitFor(() => expect(programCalls()).toHaveLength(1));
+    expect(programCalls()[0][1].params).toEqual({
       keyword: '취업 챌린지',
       page: 1,
-      size: 5,
+      size: 8,
     });
-    expect(challengeCalls()[0][1].signal).toBeInstanceOf(AbortSignal);
+    expect(programCalls()[0][1].signal).toBeInstanceOf(AbortSignal);
   });
 
   it('찾는 동안 안내하고, 없으면 없다고 한다', async () => {
     renderPanel();
-    type('없는챌린지');
-    expect(screen.getByText('챌린지 찾는 중…')).toBeInTheDocument();
+    type('없는프로그램');
+    expect(screen.getByText('프로그램 찾는 중…')).toBeInTheDocument();
     expect(
-      await screen.findByText('일치하는 챌린지가 없습니다'),
+      await screen.findByText('일치하는 프로그램이 없습니다'),
     ).toBeInTheDocument();
   });
 
@@ -125,17 +124,17 @@ describe('SearchPanel 챌린지 묶음', () => {
     renderPanel();
     type('취업');
     expect(
-      await screen.findByText('챌린지를 불러오지 못했습니다'),
+      await screen.findByText('프로그램을 불러오지 못했습니다'),
     ).toBeInTheDocument();
   });
 
-  it('「[챌린지] 제목」·#id·기간·상태를 보이고 갈 곳 7개를 하위 항목으로 둔다', async () => {
-    challenges = [challenge(12, '취업 챌린지 3기')];
+  it('챌린지는 「[챌린지] 제목」·#id·기간·상태와 갈 곳 7개를 둔다', async () => {
+    programs = [program(12, '취업 챌린지 3기')];
     renderPanel();
     type('취업');
 
     await waitFor(() =>
-      expect(challengeHeaders()).toEqual([
+      expect(programHeaders()).toEqual([
         '[챌린지] 취업 챌린지 3기#12 · 26.01.05~26.02.01 · 모집 중',
       ]),
     );
@@ -150,11 +149,47 @@ describe('SearchPanel 챌린지 묶음', () => {
     ]);
   });
 
-  it('키보드로 하위 항목을 골라 그 챌린지의 화면으로 간다', async () => {
-    challenges = [challenge(12, '취업 챌린지 3기')];
+  it('「세미나」 로 LIVE 가 나오고, 수정·신청자 목록 둘을 둔다', async () => {
+    programs = [program(5, '현직자 세미나', 'LIVE')];
+    const onSelect = renderPanel();
+    type('세미나');
+
+    await waitFor(() =>
+      expect(programHeaders()).toEqual([
+        '[LIVE] 현직자 세미나#5 · 26.01.05~26.02.01 · 모집 중',
+      ]),
+    );
+    expect(optionLabels()).toEqual(['프로그램 수정', '신청자 목록']);
+
+    fireEvent.keyDown(input(), { key: 'ArrowDown' });
+    fireEvent.keyDown(input(), { key: 'Enter' });
+    expect(onSelect).toHaveBeenCalledWith(
+      expect.objectContaining({ path: '/programs/5/users?programType=LIVE' }),
+    );
+  });
+
+  it('VOD·가이드북은 라벨을 달고, 갈 화면이 없는 유형(서류 진단)은 뺀다', async () => {
+    programs = [
+      program(3, '취업 VOD', 'VOD'),
+      program(3, '취업 가이드북', 'GUIDEBOOK'),
+      program(9, '취업 서류 진단', 'REPORT'),
+    ];
+    renderPanel();
+    type('취업');
+
+    await waitFor(() =>
+      expect(programHeaders().map((text) => text.split('#')[0])).toEqual([
+        '[VOD] 취업 VOD',
+        '[가이드북] 취업 가이드북',
+      ]),
+    );
+  });
+
+  it('키보드로 챌린지 하위 항목을 골라 그 화면으로 간다', async () => {
+    programs = [program(12, '취업 챌린지 3기')];
     const onSelect = renderPanel();
     type('취업');
-    await waitFor(() => expect(challengeHeaders()).toHaveLength(1));
+    await waitFor(() => expect(programHeaders()).toHaveLength(1));
 
     fireEvent.keyDown(input(), { key: 'ArrowDown' });
     fireEvent.keyDown(input(), { key: 'Enter' });
@@ -188,16 +223,20 @@ const matchesRoute = (path: string) =>
     new RegExp(`^${pattern.replace(/:[^/]+/g, '[^/]+')}$`).test(path),
   );
 
-describe('challengeDestinations', () => {
-  it('모든 갈 곳이 router.tsx 의 파라미터 라우트와 맞는다', () => {
-    const missing = challengeDestinations(12)
-      .map((entry) => entry.path)
-      .filter((path) => !matchesRoute(path));
-    expect(missing).toEqual([]);
-  });
+describe('programDestinations', () => {
+  it.each(['CHALLENGE', 'LIVE', 'VOD', 'GUIDEBOOK'] as const)(
+    '%s 의 갈 곳이 모두 router.tsx 의 파라미터 라우트와 맞는다',
+    (type) => {
+      const missing = programDestinations(type, 12)
+        .map((entry) => entry.path.split('?')[0])
+        .filter((path) => !matchesRoute(path));
+      expect(missing).toEqual([]);
+    },
+  );
 
   it('패턴 검사가 없는 경로는 걸러 낸다', () => {
     expect(matchesRoute('/challenge/operation/12/home')).toBe(true);
     expect(matchesRoute('/challenge/operation/12/nope')).toBe(false);
+    expect(matchesRoute('/live/12/operation')).toBe(false);
   });
 });
