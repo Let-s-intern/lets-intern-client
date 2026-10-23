@@ -31,6 +31,17 @@ jest.mock('next/navigation', () => ({
   useRouter: () => ({ push: routerPush, replace: jest.fn(), back: jest.fn() }),
 }));
 
+// 실제 LexicalContent 는 swiper CSS 를 끌고 와 jest 가 파싱하지 못한다. 글자만 이어 그리는 목으로 바꾼다
+jest.mock('@/common/lexical/LexicalContent', () => {
+  type Node = { text?: string; children?: Node[] };
+  const collect = (node: Node): string =>
+    (node.text ?? '') + (node.children ?? []).map(collect).join('');
+  return {
+    __esModule: true,
+    default: ({ node }: { node: Node }) => <div>{collect(node)}</div>,
+  };
+});
+
 const axiosGet = axios.get as jest.Mock;
 
 // jsdom 에는 IntersectionObserver 가 없다 — 앵커 네비의 스크롤 스파이용 폴리필.
@@ -329,6 +340,124 @@ describe('LiveMentoringDetailPage', () => {
     );
     expect(screen.queryByText('핵심 키워드 5가지')).not.toBeInTheDocument();
     expect(screen.queryByText('서류 완성도 UP!')).not.toBeInTheDocument();
+  });
+
+  describe('자유 입력란 배치 (LC-3495)', () => {
+    const freeContent = (position: string) => ({
+      visible: true,
+      position,
+      content: JSON.stringify({
+        root: {
+          type: 'root',
+          version: 1,
+          children: [
+            {
+              type: 'paragraph',
+              version: 1,
+              children: [
+                {
+                  type: 'text',
+                  version: 1,
+                  text: '운영 자유 입력',
+                  format: 0,
+                },
+              ],
+            },
+          ],
+        },
+      }),
+    });
+
+    const isBefore = (a: Element, b: Element) =>
+      Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
+
+    it('전략 뒤로 두면 전략과 영상 사이에 한 번만 그린다', async () => {
+      const detailData = detail();
+      Object.assign(detailData.data.data.template, {
+        freeContent: freeContent('AFTER_STRATEGY'),
+      });
+      mockApis(detailData);
+      renderDetail();
+
+      const free = await screen.findByText('운영 자유 입력');
+      expect(screen.getAllByText('운영 자유 입력')).toHaveLength(1);
+      expect(isBefore(screen.getByText('핵심 키워드 5가지'), free)).toBe(true);
+      expect(isBefore(free, screen.getByText('서류 완성도 UP!'))).toBe(true);
+    });
+
+    it('전략이 꺼져 있어도 자리는 그대로라 유형과 영상 사이에 그린다', async () => {
+      const detailData = detail();
+      detailData.data.data.template.strategy.visible = false;
+      Object.assign(detailData.data.data.template, {
+        freeContent: freeContent('AFTER_STRATEGY'),
+      });
+      mockApis(detailData);
+      renderDetail();
+
+      const free = await screen.findByText('운영 자유 입력');
+      expect(screen.queryByText('핵심 키워드 5가지')).not.toBeInTheDocument();
+      expect(isBefore(screen.getByText('포트폴리오 피드백'), free)).toBe(true);
+      expect(isBefore(free, screen.getByText('서류 완성도 UP!'))).toBe(true);
+    });
+
+    it('멘토 소개 뒤로 두면 유형보다 앞에 그린다', async () => {
+      const detailData = detail();
+      Object.assign(detailData.data.data.template, {
+        freeContent: freeContent('AFTER_INTRO'),
+      });
+      mockApis(detailData);
+      renderDetail();
+
+      const free = await screen.findByText('운영 자유 입력');
+      expect(isBefore(screen.getByText('멘토 자기소개 본문'), free)).toBe(true);
+      expect(isBefore(free, screen.getByText('포트폴리오 피드백'))).toBe(true);
+    });
+
+    it('플랜 뒤로 두면 플랜과 진행 프로세스 사이에 그린다', async () => {
+      const detailData = detail();
+      Object.assign(detailData.data.data.template, {
+        freeContent: freeContent('AFTER_PLAN'),
+      });
+      mockApis(detailData);
+      renderDetail();
+
+      const free = await screen.findByText('운영 자유 입력');
+      expect(
+        isBefore(
+          screen.getByText('내게 알맞은 구성을 선택할 수 있어요!'),
+          free,
+        ),
+      ).toBe(true);
+      expect(
+        isBefore(free, screen.getByText('멘토링은 이렇게 진행돼요!')),
+      ).toBe(true);
+    });
+
+    it('미리보기 템플릿의 자유 입력란도 같은 규칙으로 그린다', async () => {
+      const detailData = detail();
+      mockApis(detailData);
+      const client = new QueryClient({
+        defaultOptions: { queries: { retry: false, gcTime: 0 } },
+      });
+      render(
+        <QueryClientProvider client={client}>
+          <LiveMentoringDetailPage
+            mentorId="3"
+            isPreview
+            previewTemplate={
+              {
+                ...detailData.data.data.template,
+                freeContent: freeContent('AFTER_VIDEO'),
+              } as never
+            }
+          />
+        </QueryClientProvider>,
+      );
+
+      const free = await screen.findByText('운영 자유 입력');
+      expect(isBefore(screen.getByText('서류 완성도 UP!'), free)).toBe(true);
+      expect(isBefore(free, screen.getByText('✓ 경험 연결'))).toBe(true);
+    });
   });
 
   it('멘토 후기 조회에 실패하면 후기 섹션만 빠지고 상세는 그대로 뜬다', async () => {
