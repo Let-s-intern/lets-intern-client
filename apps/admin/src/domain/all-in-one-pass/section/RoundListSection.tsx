@@ -29,17 +29,34 @@ const guideFieldSx = {
   '& .MuiInputBase-input': { fontSize: 13, color: '#4c4f56' },
 };
 
-const visibleOffsetLabel = (row: RetrospectiveRound) => {
-  const v = row.visiblePeriodValue;
-  if (v == null || row.visiblePeriodType == null)
-    return `패스 시작일 + ${row.round * 2}주`;
-  if (row.visiblePeriodType === 'DAY' && v % 7 === 0)
-    return `패스 시작일 + ${v / 7}주`;
-  if (row.visiblePeriodType === 'WEEK') return `패스 시작일 + ${v}주`;
-  const unit = { YEAR: '년', MONTH: '개월', WEEK: '주', DAY: '일' }[
-    row.visiblePeriodType
-  ];
-  return `패스 시작일 + ${v}${unit ?? '일'}`;
+// 패스 시작일 기준 offset(기간)을 "N주/N일" 등 단위 문자열로
+const offsetText = (type: string | null, value: number | null) => {
+  if (value == null || type == null) return null;
+  if (type === 'DAY') return value % 7 === 0 ? `${value / 7}주` : `${value}일`;
+  if (type === 'WEEK') return `${value}주`;
+  const unit = { YEAR: '년', MONTH: '개월' }[type];
+  return `${value}${unit ?? '일'}`;
+};
+
+const visibleOffsetLabel = (row: RetrospectiveRound) =>
+  `패스 시작일 + ${
+    offsetText(row.visiblePeriodType, row.visiblePeriodValue) ??
+    `${row.round * 2}주`
+  }`;
+
+// 제출 가능 일정 (노출 시작 ~ 작성 마감). 마무리 회고(INFINITY)는 상시.
+const submitRangeLabel = (row: RetrospectiveRound) => {
+  const start =
+    offsetText(row.visiblePeriodType, row.visiblePeriodValue) ??
+    `${row.round * 2}주`;
+  if (row.periodType === 'INFINITY') return `${start} ~ 상시`;
+  if (row.visiblePeriodValue == null || row.periodValue == null)
+    return `${start} ~`;
+  const end = offsetText(
+    row.visiblePeriodType,
+    row.visiblePeriodValue + row.periodValue,
+  );
+  return `${start} ~ ${end}`;
 };
 
 /** A-4 회차별 질문·답변 가이드 수정 (회차는 BE 자동 생성) */
@@ -48,14 +65,14 @@ export default function RoundListSection({ passId }: Props) {
   const queryClient = useQueryClient();
   const { snackbar } = useAdminSnackbar();
   const {
-    data: rounds = [],
+    data: rounds,
     isLoading,
     error,
   } = useGetRetrospectiveRoundsQuery(passId);
 
   const [rows, setRows] = useState<RetrospectiveRound[]>([]);
   useEffect(() => {
-    setRows(rounds);
+    if (rounds) setRows(rounds);
   }, [rounds]);
 
   const update = (id: number, partial: Partial<RetrospectiveRound>) =>
@@ -72,7 +89,7 @@ export default function RoundListSection({ passId }: Props) {
 
   const handleSave = async () => {
     const changed = rows.filter((r) => {
-      const orig = rounds.find((o) => o.id === r.id);
+      const orig = rounds?.find((o) => o.id === r.id);
       return (
         orig &&
         (orig.weeklyQuestion !== r.weeklyQuestion ||
@@ -125,7 +142,8 @@ export default function RoundListSection({ passId }: Props) {
             <TableHead>
               <TableRow>
                 <TableCell sx={{ width: 100 }}>회차</TableCell>
-                <TableCell sx={{ width: 136 }}>노출 시점</TableCell>
+                <TableCell sx={{ width: 150 }}>노출 시점</TableCell>
+                <TableCell sx={{ width: 140 }}>제출 활성 일정</TableCell>
                 <TableCell>질문 · 답변 가이드</TableCell>
                 <TableCell sx={{ width: 80 }} align="right">
                   응답 수
@@ -154,7 +172,16 @@ export default function RoundListSection({ passId }: Props) {
                       sx={{ pt: 2.5 }}
                       className="text-xsmall14 text-neutral-40"
                     >
-                      {isFinal ? '패스 종료 시점' : visibleOffsetLabel(row)}
+                      {visibleOffsetLabel(row)}
+                    </TableCell>
+
+                    <TableCell
+                      sx={{ pt: 2.5 }}
+                      className={`text-xsmall14 ${
+                        isFinal ? 'text-primary' : 'text-neutral-40'
+                      }`}
+                    >
+                      {submitRangeLabel(row)}
                     </TableCell>
 
                     <TableCell>
