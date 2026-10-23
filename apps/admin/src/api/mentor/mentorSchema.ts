@@ -163,6 +163,8 @@ export const adminMentorReviewSchema = z.object({
   isEdited: z.boolean(),
   createDate: z.string().nullable(),
   isExposed: z.boolean(),
+  /** 어드민이 정한 노출 순위(1부터, LC-3502). 정하지 않은 후기는 null. 서버 배포 전에는 없다 */
+  displayOrder: z.number().nullish(),
 });
 
 export type AdminMentorReview = z.infer<typeof adminMentorReviewSchema>;
@@ -177,6 +179,14 @@ export interface PatchMentorReviewExposureReq {
   source: AdminMentorReview['source'];
   sourceId: number;
   isExposed: boolean;
+}
+
+/**
+ * PUT /api/v1/admin/mentor/{mentorId}/reviews/order 요청 바디. 앞에서부터 1위다.
+ * 목록에 없는 후기는 순위가 지워져 최신순으로 뒤에 붙는다
+ */
+export interface PutMentorReviewOrderReq {
+  items: Pick<AdminMentorReview, 'source' | 'sourceId'>[];
 }
 
 /**

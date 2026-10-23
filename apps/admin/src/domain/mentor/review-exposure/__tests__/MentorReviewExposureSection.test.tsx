@@ -4,11 +4,13 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const get = vi.fn();
 const patch = vi.fn();
+const put = vi.fn();
 
 vi.mock('@/utils/axios', () => ({
   default: {
     get: (...args: unknown[]) => get(...args),
     patch: (...args: unknown[]) => patch(...args),
+    put: (...args: unknown[]) => put(...args),
   },
 }));
 
@@ -65,6 +67,7 @@ const getSwitches = () =>
 afterEach(() => {
   get.mockReset();
   patch.mockReset();
+  put.mockReset();
   vi.restoreAllMocks();
 });
 
@@ -154,5 +157,79 @@ describe('MentorReviewExposureSection', () => {
     expect(screen.getByRole('textbox', { name: '후기 내용' })).toHaveValue(
       '정말 좋았어요',
     );
+  });
+});
+
+describe('MentorReviewExposureSection 노출 순서 (LC-3502)', () => {
+  const exposed = (sourceId: number, review: string) => ({
+    ...exposedReview,
+    sourceId,
+    review,
+    originalReview: review,
+  });
+  const LIST = [
+    exposed(1, '후기 1'),
+    { ...hiddenReview, review: '숨긴 후기' },
+    exposed(2, '후기 2'),
+    exposed(3, '후기 3'),
+    exposed(4, '후기 4'),
+  ];
+
+  const rowTexts = () =>
+    screen
+      .getAllByRole('row')
+      .slice(1)
+      .map((row) => row.textContent ?? '');
+
+  it('노출 후기는 서버 순서대로 순위를 달고, 숨긴 후기는 순위 없이 맨 아래에 둔다', async () => {
+    mockList(LIST);
+    renderSection();
+    await screen.findByText('후기 4');
+
+    const rows = rowTexts();
+    expect(rows.map((row) => row.match(/후기 \d|숨긴 후기/)?.[0])).toEqual([
+      '후기 1',
+      '후기 2',
+      '후기 3',
+      '후기 4',
+      '숨긴 후기',
+    ]);
+    expect(rows[4]).toContain('순위 없음');
+    expect(screen.getAllByLabelText('노출 순위')).toHaveLength(4);
+    expect(screen.getByRole('button', { name: '순서 저장' })).toBeDisabled();
+  });
+
+  it('4위를 1위로 옮겨 저장하면 노출 후기만 그 순서로 PUT 한다', async () => {
+    put.mockResolvedValue({});
+    mockList(LIST);
+    renderSection();
+    await screen.findByText('후기 4');
+
+    const inputs = screen.getAllByLabelText('노출 순위');
+    fireEvent.change(inputs[3], { target: { value: '1' } });
+    fireEvent.keyDown(inputs[3], { key: 'Enter' });
+    fireEvent.click(screen.getByRole('button', { name: '순서 저장' }));
+
+    await waitFor(() => expect(put).toHaveBeenCalled());
+    expect(put).toHaveBeenCalledWith('/admin/mentor/7/reviews/order', {
+      items: [4, 1, 2, 3].map((sourceId) => ({ source: 'REVIEW', sourceId })),
+    });
+  });
+
+  it('위·아래 버튼으로 이웃과 자리를 바꾼다', async () => {
+    put.mockResolvedValue({});
+    mockList(LIST);
+    renderSection();
+    await screen.findByText('후기 4');
+
+    fireEvent.click(screen.getAllByLabelText('위로 이동')[2]);
+    fireEvent.click(screen.getByRole('button', { name: '순서 저장' }));
+
+    await waitFor(() => expect(put).toHaveBeenCalled());
+    expect(
+      put.mock.calls[0][1].items.map(
+        (item: { sourceId: number }) => item.sourceId,
+      ),
+    ).toEqual([1, 3, 2, 4]);
   });
 });

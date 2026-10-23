@@ -60,6 +60,17 @@ describe('adminMentorReviewListSchema', () => {
     );
   });
 
+  it('노출 순위(displayOrder)를 받고, 없거나 null 이어도 파싱한다 (LC-3502)', () => {
+    const [withOrder, withNull] = adminMentorReviewListSchema.parse({
+      reviewList: [
+        { ...review, displayOrder: 2 },
+        { ...review, displayOrder: null },
+      ],
+    }).reviewList;
+    expect(withOrder.displayOrder).toBe(2);
+    expect(withNull.displayOrder).toBeNull();
+  });
+
   it('score 가 null 인 후기를 받는다', () => {
     const parsed = adminMentorReviewListSchema.parse({
       reviewList: [{ ...review, score: null }],
