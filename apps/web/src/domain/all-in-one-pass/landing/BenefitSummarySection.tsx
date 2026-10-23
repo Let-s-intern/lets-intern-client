@@ -11,12 +11,15 @@ import {
   type BenefitCard,
   type LandingBenefit,
 } from './landingContent';
+import { useBenefitCounts } from './useBenefitCounts';
 
 interface Props {
   passTitle: string;
   periodDays: number | null;
   plans: AllInOnePassPlan[];
   additionalBenefits: LandingBenefit[];
+  /** 어드민이 집계한 전체 VOD 수 (카드 "VOD N종" 표기용) */
+  vodCount: number;
   onBenefitClick: () => void;
 }
 
@@ -39,9 +42,11 @@ export default function BenefitSummarySection({
   periodDays,
   plans,
   additionalBenefits,
+  vodCount,
   onBenefitClick,
 }: Props) {
-  const cards = getBenefitCards(plans, additionalBenefits);
+  const counts = useBenefitCounts(vodCount);
+  const cards = getBenefitCards(plans, additionalBenefits, counts);
 
   const leftCards = cards.filter((_, i) => i % 2 === 0);
   const rightCards = cards.filter((_, i) => i % 2 === 1);
