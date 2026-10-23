@@ -80,6 +80,8 @@ export const liveMentoringOpeningSchema = z.object({
   durations: z.array(liveMentoringDurationSchema),
   /** 여러 진행시간을 열었을 때의 최저가. */
   minimumPrice: z.number(),
+  /** 렛커 픽(LC-3500). 픽 멘토의 개설이 픽 순서대로 목록 맨 앞에 온다. 서버 배포 전에는 없다 */
+  isPick: z.boolean().optional(),
 });
 export type LiveMentoringOpening = z.infer<typeof liveMentoringOpeningSchema>;
 

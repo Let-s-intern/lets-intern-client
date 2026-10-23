@@ -57,6 +57,12 @@ const MentorCard = ({ opening }: MentorCardProps) => {
           </span>
         )}
 
+        {opening.isPick && (
+          <span className="rounded-xs bg-primary text-xxsmall10 md:text-xxsmall12 absolute right-2 top-2 px-2.5 py-1 font-semibold text-white">
+            렛커 픽
+          </span>
+        )}
+
         {!opening.mentorProfileImage && (
           <p
             className={`text-small18 relative line-clamp-3 px-4 pb-4 font-bold text-white ${

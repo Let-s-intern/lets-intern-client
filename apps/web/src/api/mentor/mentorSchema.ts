@@ -27,6 +27,8 @@ export const mentorListItemSchema = z.object({
       title: z.string(),
     }),
   ),
+  /** 렛커 픽(LC-3500). 픽 멘토가 픽 순서대로 목록 맨 앞에 온다. 서버 배포 전에는 없다 */
+  isPick: z.boolean().optional(),
 });
 
 export type MentorListItem = z.infer<typeof mentorListItemSchema>;
