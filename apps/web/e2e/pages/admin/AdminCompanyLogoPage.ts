@@ -49,6 +49,32 @@ export class AdminCompanyLogoPage extends BasePage {
     await this.settle();
   }
 
+  /** 라이브러리 로고의 이미지를 새로 올려 바꾼다. 연결된 멘토 로고도 함께 바뀐다 */
+  async replaceImage(name: string): Promise<void> {
+    await this.card(name)
+      .getByRole('button', { name: '수정', exact: true })
+      .click();
+    const dialog = this.page.getByRole('dialog');
+    await dialog.getByLabel('로고 이미지 업로드').setInputFiles({
+      name: 'logo-v2.png',
+      mimeType: 'image/png',
+      buffer: PNG_1PX,
+    });
+    const patched = this.page.waitForResponse(
+      (res) =>
+        /\/admin\/company-logo\/\d+$/.test(new URL(res.url()).pathname) &&
+        res.request().method() === 'PATCH',
+    );
+    // 업로드가 끝나야 저장이 다시 켜진다
+    await expect(
+      dialog.getByRole('button', { name: '저장', exact: true }),
+    ).toBeEnabled({ timeout: 15_000 });
+    await dialog.getByRole('button', { name: '저장', exact: true }).click();
+    expect((await patched).ok(), '로고 수정 응답이 성공이어야 한다').toBe(true);
+    await expect(dialog).toBeHidden();
+    await this.settle();
+  }
+
   async search(keyword: string): Promise<void> {
     await this.page.getByLabel('회사명 검색', { exact: true }).fill(keyword);
   }

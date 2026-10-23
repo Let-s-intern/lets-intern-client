@@ -69,7 +69,7 @@ export class AdminMentorDetailPage extends BasePage {
     return res.request().postDataJSON() as Record<string, unknown>;
   }
 
-  /** 대표 회사 로고를 라이브러리에서 고른다. 저장은 기본 정보 저장 버튼이 한다 */
+  /** 대표 회사 로고를 라이브러리 로고에 연결한다. 저장(기본 정보 저장 버튼) 때 corp-logo PATCH 로 나간다 */
   async pickCorpLogo(logoName: string): Promise<void> {
     await this.page
       .getByRole('button', { name: '라이브러리에서 선택', exact: true })
@@ -116,7 +116,7 @@ export class AdminMentorDetailPage extends BasePage {
     await this.settle();
   }
 
-  /** 경력 수정 다이얼로그로 직무·로고를 바꾸고 저장한다 */
+  /** 경력 수정 다이얼로그로 직무·로고 연결을 바꾸고 저장한다. 로고는 경력 PATCH 뒤 company-logo PATCH 로 나간다 */
   async editCareer(
     company: string,
     changes: { job?: string; logoName?: string },
@@ -140,8 +140,21 @@ export class AdminMentorDetailPage extends BasePage {
           new URL(res.url()).pathname,
         ) && res.request().method() === 'PATCH',
     );
+    const logoLinked = changes.logoName
+      ? this.page.waitForResponse(
+          (res) =>
+            res.url().includes('/company-logo') &&
+            res.url().includes('/admin/user-career/') &&
+            res.request().method() === 'PATCH',
+        )
+      : null;
     await dialog.getByRole('button', { name: '저장', exact: true }).click();
     expect((await patched).ok(), '경력 수정이 성공해야 한다').toBe(true);
+    if (logoLinked) {
+      expect((await logoLinked).ok(), '경력 로고 연결이 성공해야 한다').toBe(
+        true,
+      );
+    }
     await expect(dialog).toBeHidden();
     await this.settle();
   }

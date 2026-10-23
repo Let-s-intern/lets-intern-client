@@ -16,6 +16,7 @@ import {
 
 /**
  * 경력 수정·대표 지정 (LC-3497), 회사 로고 라이브러리 (LC-3498), 로고 지정 (LC-3499).
+ * 로고 지정은 라이브러리 로고에 연결하는 방식이라, 라이브러리 이미지를 바꾸면 연결된 멘토 로고도 바뀐다.
  */
 test.describe('LC-3492 경력·회사 로고', () => {
   const startRun = setupRun('LC-3492 career-logo');
@@ -71,13 +72,24 @@ test.describe('LC-3492 경력·회사 로고', () => {
     );
 
     await flow.run(
-      '4. 경력 수정(직무·경력 로고) + 대표 로고 라이브러리 선택 → 저장',
+      '4. 경력 수정(직무·경력 로고 연결) + 대표 로고 라이브러리 연결 → 저장',
       async () => {
         await admin.goto(mentorId);
         await admin.editCareer(company, { job: newJob, logoName });
         await admin.pickCorpLogo(logoName);
+        const corpLogoLinked = page.waitForResponse(
+          (res) =>
+            res.url().includes(`/admin/user/${mentorId}/corp-logo`) &&
+            res.request().method() === 'PATCH',
+        );
         const body = await admin.saveBasicInfo();
-        expect(body.corpImgUrl).toBe(logoUrl);
+        // 연결 방식이라 대표 로고 주소는 프로필 PATCH 에 싣지 않는다
+        expect(body).not.toHaveProperty('corpImgUrl');
+        const linked = await corpLogoLinked;
+        expect(linked.ok(), '대표 로고 연결이 성공해야 한다').toBe(true);
+        expect(linked.request().postDataJSON()).toEqual({
+          companyLogoId: expect.any(Number),
+        });
       },
       '경력수정-로고지정',
     );
@@ -102,6 +114,36 @@ test.describe('LC-3492 경력·회사 로고', () => {
         ).toBeVisible();
       },
       '웹-1on1로고',
+    );
+
+    await flow.run(
+      '7. 라이브러리에서 그 로고 이미지 수정 → 웹 프로필·1:1 상세 경력 로고가 새 주소로 바뀜',
+      async () => {
+        if (await mockFileUpload(page, 'qa-company-logo-v2')) {
+          flow.note(
+            '로고 이미지 수정도 POST /file 응답을 가짜 HTTPS 주소로 대체',
+          );
+        }
+        const logos = await new AdminCompanyLogoPage(page).goto();
+        await logos.search(logoName);
+        await logos.replaceImage(logoName);
+        const newLogoUrl = await logos
+          .card(logoName)
+          .locator('img')
+          .getAttribute('src');
+        expect(newLogoUrl).not.toBe(logoUrl);
+
+        const profile = await new MentorProfilePage(page).goto(mentorId);
+        await expect(profile.careerRow(company).locator('img')).toHaveAttribute(
+          'src',
+          newLogoUrl ?? '',
+        );
+        const detail = await new LiveMentoringDetailPage(page).goto(mentorId);
+        await expect(
+          detail.careerLine(company).locator(`img[src="${newLogoUrl}"]`),
+        ).toBeVisible();
+      },
+      '로고교체-웹반영',
     );
   });
 });
