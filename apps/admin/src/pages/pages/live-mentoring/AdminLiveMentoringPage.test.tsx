@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/utils/axios', () => ({ default: {} }));
 
@@ -11,10 +11,12 @@ vi.mock('@/domain/live-mentoring/AdminLiveMentoringTable', () => ({
     onSelectMentor,
     onSelectMentorReviews,
     onEditMentor,
+    onEditDetailPage,
   }: {
     onSelectMentor?: (id: number) => void;
     onSelectMentorReviews?: (id: number) => void;
     onEditMentor?: (id: number) => void;
+    onEditDetailPage?: (id: number) => void;
   }) => (
     <div>
       <button type="button" onClick={() => onSelectMentor?.(21)}>
@@ -25,6 +27,9 @@ vi.mock('@/domain/live-mentoring/AdminLiveMentoringTable', () => ({
       </button>
       <button type="button" onClick={() => onEditMentor?.(21)}>
         멘토수정목
+      </button>
+      <button type="button" onClick={() => onEditDetailPage?.(21)}>
+        상세페이지수정목
       </button>
     </div>
   ),
@@ -68,6 +73,26 @@ vi.mock('@/domain/live-mentoring/ui/ReviewMentorBar', () => ({
     </button>
   ),
 }));
+// 편집기 자체는 detail-page 테스트에서 본다. 여기서는 저장 안 한 변경을 알리는 연결만 흉내 낸다
+vi.mock(
+  '@/domain/live-mentoring/detail-page/AdminLiveMentoringDetailPageEditor',
+  () => ({
+    default: ({
+      mentorId,
+      onDirtyChange,
+    }: {
+      mentorId: number;
+      onDirtyChange?: (isDirty: boolean) => void;
+    }) => (
+      <div>
+        <span>상세편집 {mentorId}</span>
+        <button type="button" onClick={() => onDirtyChange?.(true)}>
+          상세고치기
+        </button>
+      </div>
+    ),
+  }),
+);
 vi.mock('@/domain/admin/user/mentor-detail/ui/MentorDetailEditor', () => ({
   default: ({ mentorId }: { mentorId: number }) => (
     <span>멘토편집 {mentorId}</span>
@@ -170,5 +195,66 @@ describe('AdminLiveMentoringPage', () => {
 
     fireEvent.click(screen.getByRole('button', { name: '닫기' }));
     expect(screen.queryByText('멘토편집 21')).not.toBeInTheDocument();
+  });
+
+  describe('상세페이지 탭', () => {
+    afterEach(() => vi.restoreAllMocks());
+
+    it('상품 표에서 상세페이지 수정을 누르면 그 멘토의 상세페이지 탭으로 간다', () => {
+      renderPage();
+      fireEvent.click(screen.getByRole('button', { name: '상세페이지수정목' }));
+      expect(screen.getByText('상세편집 21')).toBeInTheDocument();
+      expect(screen.getByText('멘토바 21')).toBeInTheDocument();
+      expect(
+        screen.getByText(/상세페이지를 멘토 대신 고칩니다/),
+      ).toBeInTheDocument();
+    });
+
+    it('멘토가 없으면 상품 관리에서 고르라고 안내한다', () => {
+      renderPage('/live-mentoring?tab=detailPage');
+      expect(
+        screen.getByText(
+          '상품 관리 탭에서 멘토의 상세페이지 수정 버튼을 눌러 주세요.',
+        ),
+      ).toBeInTheDocument();
+    });
+
+    it('저장하지 않은 변경이 없으면 묻지 않고 탭을 옮긴다', () => {
+      const confirm = vi.spyOn(window, 'confirm');
+      renderPage('/live-mentoring?tab=detailPage&mentorId=21');
+      fireEvent.click(screen.getByRole('button', { name: '참여자' }));
+      expect(confirm).not.toHaveBeenCalled();
+      expect(screen.getByText('참여자표목 21')).toBeInTheDocument();
+    });
+
+    it('저장하지 않은 변경이 있으면 탭을 옮기기 전에 묻고, 취소하면 남는다', () => {
+      const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
+      renderPage('/live-mentoring?tab=detailPage&mentorId=21');
+      fireEvent.click(screen.getByRole('button', { name: '상세고치기' }));
+
+      fireEvent.click(screen.getByRole('button', { name: '후기' }));
+      expect(confirm).toHaveBeenCalledWith(
+        '저장하지 않은 변경 사항이 있습니다. 이동할까요?',
+      );
+      expect(screen.getByText('상세편집 21')).toBeInTheDocument();
+
+      confirm.mockReturnValue(true);
+      fireEvent.click(screen.getByRole('button', { name: '후기' }));
+      expect(screen.getByText('후기섹션 21')).toBeInTheDocument();
+    });
+
+    it('저장하지 않은 변경이 있으면 멘토 변경도 묻는다', () => {
+      const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
+      renderPage('/live-mentoring?tab=detailPage&mentorId=21');
+      fireEvent.click(screen.getByRole('button', { name: '상세고치기' }));
+
+      fireEvent.click(screen.getByRole('button', { name: '멘토바 21' }));
+      expect(confirm).toHaveBeenCalled();
+      expect(screen.getByText('상세편집 21')).toBeInTheDocument();
+
+      confirm.mockReturnValue(true);
+      fireEvent.click(screen.getByRole('button', { name: '멘토바 21' }));
+      expect(screen.getByText('상품표목')).toBeInTheDocument();
+    });
   });
 });

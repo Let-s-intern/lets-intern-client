@@ -1,35 +1,12 @@
-import { Button } from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 
-import AdminLiveMentoringDetailPageEditor from '@/domain/live-mentoring/detail-page/AdminLiveMentoringDetailPageEditor';
-
+/**
+ * 예전 주소 `/live-mentoring/:mentorId/detail-page`.
+ * 상세페이지 수정은 1:1 화면의 「상세페이지」 탭으로 옮겼다. 북마크가 깨지지 않게 그 탭으로 보낸다.
+ */
 export default function AdminLiveMentoringDetailPageEditPage() {
-  const params = useParams<{ mentorId: string }>();
-  const navigate = useNavigate();
-  const mentorId = Number(params.mentorId);
-  const isValidMentorId = Number.isInteger(mentorId) && mentorId > 0;
-
-  return (
-    <section className="p-5">
-      <Button
-        variant="outlined"
-        size="small"
-        className="mb-4"
-        onClick={() => navigate('/live-mentoring')}
-      >
-        목록으로
-      </Button>
-
-      {isValidMentorId ? (
-        <AdminLiveMentoringDetailPageEditor
-          key={mentorId}
-          mentorId={mentorId}
-        />
-      ) : (
-        <p className="text-xsmall14 text-neutral-40 py-16">
-          잘못된 멘토 주소입니다.
-        </p>
-      )}
-    </section>
-  );
+  const { mentorId } = useParams<{ mentorId: string }>();
+  const params = new URLSearchParams({ tab: 'detailPage' });
+  if (mentorId) params.set('mentorId', mentorId);
+  return <Navigate to={`/live-mentoring?${params.toString()}`} replace />;
 }
