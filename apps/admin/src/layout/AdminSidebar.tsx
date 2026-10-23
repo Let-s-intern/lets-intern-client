@@ -131,6 +131,10 @@ export const navData = [
         url: '/mentors',
       },
       {
+        name: '회사 로고',
+        url: '/mentors/company-logos',
+      },
+      {
         name: '리드 관리',
         url: '/leads/managements',
       },

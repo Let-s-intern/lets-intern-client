@@ -11,6 +11,8 @@ export default function AdminMentorKeywordPage() {
       navigate('/mentors');
     } else if (newValue === 1) {
       navigate('/mentors/register');
+    } else if (newValue === 3) {
+      navigate('/mentors/company-logos');
     }
   };
 
@@ -22,6 +24,7 @@ export default function AdminMentorKeywordPage() {
         <Tab label="멘토 관리" />
         <Tab label="멘토 등록" />
         <Tab label="멘토 키워드" />
+        <Tab label="회사 로고" />
       </Tabs>
 
       <MentorHashTagManagement />
