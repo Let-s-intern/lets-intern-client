@@ -9,6 +9,18 @@ interface AuthState {
   isLoggedIn: boolean;
 }
 let authState: AuthState = { isInitialized: true, isLoggedIn: true };
+// 회의 서버 목록(GET /meeting-servers) — 입장 후보는 서버 DB 에서 온다.
+const mockMeetingServerBaseUrls = [
+  'https://jitsi-main.example.com/',
+  'https://jitsi-fallback.example.com/',
+];
+jest.mock('@/api/meetingServer', () => ({
+  useMeetingServerBaseUrls: () => ({
+    baseUrls: mockMeetingServerBaseUrls,
+    loadBaseUrls: async () => mockMeetingServerBaseUrls,
+  }),
+}));
+
 jest.mock('@letscareer/store', () => ({
   useAuthStore: (selector: (s: AuthState) => unknown) => selector(authState),
 }));
@@ -334,6 +346,25 @@ describe('LiveMentoringEntryPage', () => {
         'https://letscareer.notion.site/mentee',
       );
       expect(link).toHaveAttribute('rel', 'noreferrer');
+    });
+
+    /*
+      파일은 새 탭이 아니라 저장이다. 서버가 Content-Disposition: attachment 를 실은
+      서명 주소를 내리므로, 새 탭으로 열면 문서가 그려지지 않아 빈 탭만 남는다.
+    */
+    it('파일 첨부는 새 탭이 아니라 저장 링크로 내보낸다', async () => {
+      await openAsMentor({
+        attachmentType: 'FILE',
+        attachmentUrl:
+          'https://cdn.test/program/live-mentoring/ab12cd34ef_resume.pdf',
+      });
+
+      const link = screen.getByRole('link', { name: '첨부 파일 저장' });
+      expect(link).toHaveAttribute(
+        'href',
+        'https://cdn.test/program/live-mentoring/ab12cd34ef_resume.pdf',
+      );
+      expect(link).not.toHaveAttribute('target');
     });
 
     /*

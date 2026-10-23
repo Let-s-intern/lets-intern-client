@@ -26,7 +26,7 @@ const headerCellClass =
   'whitespace-nowrap px-4 py-3 text-left text-xs font-medium text-neutral-40';
 const bodyCellClass = 'px-4 py-3 text-sm text-neutral-10 align-top';
 
-const COLUMN_COUNT = 9;
+const COLUMN_COUNT = 10;
 
 /** 예약 일시. 60분 플랜은 연속한 두 슬롯을 한 구간으로 합쳐 내려온다. */
 const reservationLabel = (row: AdminLiveMentoringParticipant): string => {
@@ -182,6 +182,7 @@ const AdminLiveMentoringParticipantTable = ({
               <th className={headerCellClass}>결제 금액</th>
               <th className={headerCellClass}>쿠폰</th>
               <th className={headerCellClass}>결제 상태</th>
+              <th className={headerCellClass}>결제 시각</th>
               <th className={headerCellClass}>환불 상태</th>
               <th className={headerCellClass}>관리</th>
             </tr>
@@ -265,6 +266,9 @@ const AdminLiveMentoringParticipantTable = ({
                   </td>
                   <td className={`${bodyCellClass} whitespace-nowrap`}>
                     {APPLICATION_STATUS_LABELS[row.status]}
+                  </td>
+                  <td className={`${bodyCellClass} whitespace-nowrap`}>
+                    {formatDateTime(row.paidAt ?? null)}
                   </td>
                   <td className={`${bodyCellClass} whitespace-nowrap`}>
                     {refundLabel(row)}

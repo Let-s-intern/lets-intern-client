@@ -95,6 +95,16 @@ const ResultCaseField = ({ cases, onChange }: ResultCaseFieldProps) => {
               <span className="text-xsmall14 text-neutral-10 font-semibold">
                 사례 {index + 1}
               </span>
+              {/*
+                전·후 문구가 다 차야 서버로 나간다(LC-3343). 저장을 막는 대신 이 카드만
+                빠진다는 것을 여기에 적는다 — 하단 바에 적으면 어느 카드 이야기인지
+                모른 채 저장 버튼만 잠겨 보였다.
+              */}
+              {(!item.beforeCaption.trim() || !item.afterCaption.trim()) && (
+                <span className="text-system-error text-xs">
+                  전·후 문구를 채워야 저장돼요
+                </span>
+              )}
               <button
                 type="button"
                 onClick={() => removeAt(index)}

@@ -33,6 +33,8 @@ const draftRow: AdminLiveMentoring = {
   createDate: '2026-08-03T12:00:00',
   lastModifiedDate: '2026-08-03T12:00:00',
   currentOpening: null,
+  upcomingParticipantCount: 3,
+  mentorReviewCount: 12,
 };
 
 const approvedRow: AdminLiveMentoring = {
@@ -87,36 +89,50 @@ describe('AdminLiveMentoringTable — 조회', () => {
     renderTable([draftRow]);
 
     expect(listQuery).toHaveBeenCalledWith({
-      status: undefined,
+      opened: undefined,
       page: 1,
       size: 20,
     });
   });
 
-  it('필터를 바꾸면 해당 상태로 다시 조회한다', () => {
+  it('오픈중 필터는 열린 개설이 있는 상품으로 다시 조회한다', () => {
     renderTable([draftRow]);
 
     fireEvent.click(
-      within(filterBar()).getByRole('button', { name: '오픈 중' }),
+      within(filterBar()).getByRole('button', { name: '오픈중' }),
     );
 
     expect(listQuery).toHaveBeenLastCalledWith({
-      status: 'APPROVED',
+      opened: true,
       page: 1,
       size: 20,
     });
   });
 
-  it('전체 필터는 status 파라미터를 보내지 않는다', () => {
+  it('미오픈 필터는 열린 개설이 없는 상품으로 다시 조회한다', () => {
     renderTable([draftRow]);
 
     fireEvent.click(
-      within(filterBar()).getByRole('button', { name: '오픈 중' }),
+      within(filterBar()).getByRole('button', { name: '미오픈' }),
+    );
+
+    expect(listQuery).toHaveBeenLastCalledWith({
+      opened: false,
+      page: 1,
+      size: 20,
+    });
+  });
+
+  it('전체 필터는 opened 파라미터를 보내지 않는다', () => {
+    renderTable([draftRow]);
+
+    fireEvent.click(
+      within(filterBar()).getByRole('button', { name: '오픈중' }),
     );
     fireEvent.click(within(filterBar()).getByRole('button', { name: '전체' }));
 
     expect(listQuery).toHaveBeenLastCalledWith({
-      status: undefined,
+      opened: undefined,
       page: 1,
       size: 20,
     });
@@ -128,8 +144,45 @@ describe('AdminLiveMentoringTable — 조회', () => {
     expect(screen.getByText('렛츠멘토')).toBeInTheDocument();
     expect(screen.getByText('이력서 피드백')).toBeInTheDocument();
     expect(screen.getByText('이력서 · 포트폴리오')).toBeInTheDocument();
+  });
+
+  /*
+    LC-3336 — 배지는 상품 상태가 아니라 열린 개설이 있는지로 가른다.
+    승인 절차가 없어진 뒤로 새 상품은 처음부터 APPROVED 라 상품 상태로는 구분이 안 된다.
+  */
+  it('열린 개설이 있으면 오픈중, 없으면 미오픈으로 표시한다', () => {
+    const notOpenedRow: AdminLiveMentoring = {
+      ...approvedRow,
+      liveMentoringId: 12,
+      mentorNickname: '미개설멘토',
+      currentOpening: null,
+    };
+    renderTable([approvedRow, notOpenedRow, draftRow]);
+
+    const badgeOf = (nickname: string) =>
+      within(
+        screen.getByText(nickname).closest('tr') as HTMLElement,
+      ).getAllByRole('cell')[2].textContent;
+
+    expect(badgeOf('오픈멘토')).toBe('오픈중');
+    // 상품 상태가 APPROVED 여도 개설이 없으면 팔고 있지 않다.
+    expect(badgeOf('미개설멘토')).toBe('미오픈');
+    expect(badgeOf('렛츠멘토')).toBe('미오픈');
     expect(
-      within(screen.getByRole('table')).getByText('초안(옛 데이터)'),
+      within(screen.getByRole('table')).queryByText('오픈 중'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('LC-3336 에 추가된 유형도 한글 라벨로 렌더한다', () => {
+    renderTable([
+      {
+        ...draftRow,
+        categories: ['CAREER_COFFEE_CHAT', 'INTERVIEW', 'EXPERIENCE'],
+      },
+    ]);
+
+    expect(
+      screen.getByText('커리어 커피챗 · 면접 준비, 모의 면접 · 경험 정리'),
     ).toBeInTheDocument();
   });
 
@@ -265,7 +318,7 @@ describe('AdminLiveMentoringTable — 멘토별 참여자', () => {
 
     fireEvent.click(
       within(screen.getByRole('table')).getByRole('button', {
-        name: '참여자 보기',
+        name: '참여자 보기 (예정 3명)',
       }),
     );
     expect(onSelectMentor).toHaveBeenCalledWith(draftRow.mentorId);
@@ -274,7 +327,62 @@ describe('AdminLiveMentoringTable — 멘토별 참여자', () => {
   it('onSelectMentor 가 없으면 버튼을 내걸지 않는다', () => {
     renderTable([draftRow]);
     expect(
-      screen.queryByRole('button', { name: '참여자 보기' }),
+      screen.queryByRole('button', { name: /참여자 보기/ }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('onSelectMentorReviews 를 주면 행마다 후기 관리를 내걸고 멘토 id 를 넘긴다', () => {
+    const onSelectMentorReviews = vi.fn();
+    listQuery.mockReturnValue({
+      data: {
+        liveMentoringList: [draftRow],
+        pageInfo: {
+          pageNum: 0,
+          pageSize: 20,
+          totalElements: 1,
+          totalPages: 1,
+        },
+      },
+      isLoading: false,
+      isError: false,
+    });
+    render(
+      <AdminLiveMentoringTable onSelectMentorReviews={onSelectMentorReviews} />,
+    );
+
+    fireEvent.click(
+      within(screen.getByRole('table')).getByRole('button', {
+        name: '후기 관리 (12건)',
+      }),
+    );
+    expect(onSelectMentorReviews).toHaveBeenCalledWith(draftRow.mentorId);
+  });
+
+  it('onEditMentor 를 주면 멘토 이름 밑에 멘토 수정을 내걸고 멘토 id 를 넘긴다', () => {
+    const onEditMentor = vi.fn();
+    listQuery.mockReturnValue({
+      data: {
+        liveMentoringList: [draftRow],
+        pageInfo: {
+          pageNum: 0,
+          pageSize: 20,
+          totalElements: 1,
+          totalPages: 1,
+        },
+      },
+      isLoading: false,
+      isError: false,
+    });
+    render(<AdminLiveMentoringTable onEditMentor={onEditMentor} />);
+
+    fireEvent.click(screen.getByRole('button', { name: '멘토 수정' }));
+    expect(onEditMentor).toHaveBeenCalledWith(draftRow.mentorId);
+  });
+
+  it('onEditMentor 가 없으면 멘토 수정을 내걸지 않는다', () => {
+    renderTable([draftRow]);
+    expect(
+      screen.queryByRole('button', { name: '멘토 수정' }),
     ).not.toBeInTheDocument();
   });
 });

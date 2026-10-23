@@ -9,6 +9,7 @@ import LivePreviewButton from '@/domain/admin/LivePreviewButton';
 import LiveCurriculum from '@/domain/admin/program/live/LiveCurriculum';
 import LiveInformation from '@/domain/admin/program/live/LiveInformation';
 import LiveMentor from '@/domain/admin/program/live/LiveMentor';
+import LiveMentorSelect from '@/domain/admin/program/live/LiveMentorSelect';
 import LivePrice from '@/domain/admin/program/live/LivePrice';
 import LiveBasic from '@/domain/admin/program/live/LiveBasic';
 import ProgramBestReview from '@/domain/admin/program/ProgramBestReview';
@@ -223,6 +224,12 @@ const LiveEdit: React.FC = () => {
       {/* 멘토 정보 */}
       <section className="mb-6 max-w-[1120px]">
         <Heading2>멘토 정보</Heading2>
+        <div className="mt-3 max-w-md">
+          <LiveMentorSelect
+            value={input.mentorId ?? live.mentorId}
+            onChange={(mentorId) => setInput((prev) => ({ ...prev, mentorId }))}
+          />
+        </div>
         <div className="mt-3 flex gap-3">
           <div className="max-w-md">
             <ImageUpload

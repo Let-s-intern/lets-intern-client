@@ -27,11 +27,26 @@ export const programInfoType = z.object({
   title: z.string().nullable().optional(),
   thumbnail: z.string().nullable().optional(),
   price: z.number().nullable().optional(), // 챌린지 이용료
+  paidAmount: z.number().nullable().optional(), // 이 신청에 실제 결제된 금액 (LC-3438)
   paybackPrice: z.number().nullable().optional(), // 챌린지 보증금
   isCanceled: z.boolean().nullable().optional(),
   isRefunded: z.boolean().nullable().optional(),
   createDate: z.string().nullable().optional(),
   optionPrice: z.number().nullable().optional(), // 옵션 정가 총액
+});
+
+/**
+ * 한 번의 PG 승인 안에 묶인 신청별 결제 항목 (LC-3438).
+ * 챌린지와 VOD 이용권을 함께 결제하면 두 항목이 내려온다. 서버 배포 전에는 오지 않는다.
+ */
+const paymentItemType = z.object({
+  paymentId: z.number().nullable().optional(),
+  applicationId: z.number().nullable().optional(),
+  programType: paymentProgramTypeSchema.nullable().optional(),
+  title: z.string().nullable().optional(),
+  paidAmount: z.number().nullable().optional(),
+  isCanceled: z.boolean().nullable().optional(),
+  isRefunded: z.boolean().nullable().optional(),
 });
 
 // CardInfo schema
@@ -199,6 +214,9 @@ export type TossInfoType = z.infer<typeof tossInfoType>;
 export const paymentType = z.object({
   programInfo: programInfoType,
   tossInfo: tossInfoType.nullable().optional(),
+  paymentItems: z.array(paymentItemType).nullable().optional(),
+  orderTotalPaidAmount: z.number().nullable().optional(), // PG 승인 한 건의 총 결제액
+  orderBalanceAmount: z.number().nullable().optional(), // PG 승인 한 건의 남은 금액
 });
 
 export const paymentListType = z.object({
@@ -246,6 +264,22 @@ export const paymentDetailType = z.object({
   }),
   tossInfo: tossInfoType.nullable().optional(),
   accessMethod: z.string().nullable().optional(),
+  paymentItems: z.array(paymentItemType).nullable().optional(),
+  orderTotalPaidAmount: z.number().nullable().optional(),
+  orderBalanceAmount: z.number().nullable().optional(),
+  // 셀프 플랜 업그레이드로 원결제 뒤에 토스로 더 받은 차액 (LC-3247). 서버 배포 전에는 오지 않는다
+  planUpgradePaymentList: z
+    .array(
+      z.object({
+        fromPlan: z.string(),
+        toPlan: z.string(),
+        additionalAmount: z.number(),
+        paidAt: z.string().nullable().optional(),
+      }),
+    )
+    .nullable()
+    .optional()
+    .transform((list) => list ?? []),
 });
 
 export type PaymentDetailType = z.infer<typeof paymentDetailType>;

@@ -71,10 +71,12 @@ const MentorCard = ({ opening }: MentorCardProps) => {
           진행시간 / 가격 바.
           썸네일 아래가 아니라 **위에 겹쳐서** 둔다. 아래에 쌓으면 이 블록 높이가
           `aspect-[540/421] + 바 높이` 가 되어 프로그램 카드보다 카드가 길어진다.
+          모바일 2열 카드는 폭이 좁아 글자·여백을 줄이고 각 덩어리 안에서는 줄바꿈하지 않는다.
+          그래도 안 들어가는 폭(320px)이면 가격 덩어리째 다음 줄 오른쪽으로 내린다.
         */}
-        <div className="bg-neutral-0 text-xsmall14 absolute inset-x-0 bottom-0 flex items-center justify-between px-4 py-2.5 text-white">
+        <div className="bg-neutral-0 text-xxsmall12 md:text-xsmall14 absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-x-2 whitespace-nowrap px-2.5 py-2 text-white md:px-4 md:py-2.5">
           <span>{durationsLabel(opening.durations)}</span>
-          <span className="font-bold">
+          <span className="ml-auto font-bold">
             {cardPriceLabel(opening.durations, opening.minimumPrice)}
           </span>
         </div>

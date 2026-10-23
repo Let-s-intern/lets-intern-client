@@ -2,12 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import axios from '@/utils/axios';
 
-import type { ChallengeTypeOption } from './useCouponTargetState';
-
-interface TargetOptions {
-  challengeTypeList: ChallengeTypeOption[];
-  liveList: { id: number; title: string }[];
-}
+import type { TargetOptions } from './useCouponTargetState';
 
 export function useCouponTargetOptions() {
   return useQuery({

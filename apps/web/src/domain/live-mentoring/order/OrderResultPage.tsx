@@ -84,7 +84,27 @@ const OrderResultPage = () => {
     */
     confirmPayment
       .mutateAsync({ paymentKey: paymentKey ?? '', orderId, amount })
-      .then((data) => setConfirmed(data))
+      .then((data) => {
+        setConfirmed(data);
+        /*
+          결제 알림 슬랙봇은 GTM 이 이 이벤트를 받아 보낸다. 챌린지·리포트가 쓰는 이름을
+          그대로 쓴다 — 새 이름을 만들면 GTM 에 트리거를 붙이기 전까지 알림이 한 건도
+          가지 않는다. 상품군은 진입부에서 리터럴로 박는 기존 관례를 따른다
+          (`PricePlanBottomSheet` 의 `programType: 'challenge'`).
+
+          `setConfirmed` 와 같은 `then` 안에서 한 번만 보낸다. `useEffect` 로 빼면 승인 뒤
+          슬롯 목록 무효화로 이 화면이 재마운트될 때 같은 결제가 두 번 실려 나간다.
+        */
+        window.dataLayer?.push({
+          event: 'program_payment_success',
+          program_name: application.orderName,
+          program_type: 'live_mentoring',
+          // 0원 결제는 위젯을 건너뛰어 결제수단이 없다(`useOrderSubmit`).
+          payment_method: searchParams.get('paymentMethodKey') ?? undefined,
+          payment_amount: data.amount,
+          order_id: data.orderId,
+        });
+      })
       .catch((error) =>
         setErrorMessage(readServerError(error, DEFAULT_ERROR).message),
       );

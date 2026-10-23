@@ -883,35 +883,107 @@ describe('LiveMentoringSettingsPage — 저장', () => {
   });
 
   /*
-    「+ 추가」로 만든 빈 카드를 걸러내서 보내면 서버는 받지만, 이제 쓰려는 카드를
-    저장이 지워 버린다. 채우거나 지울 때까지 버튼을 잠근다.
+    「+ 추가」로 만든 빈 카드는 저장을 잠그지 않는다 (LC-3343). 잠그면 카드 하나가 다른
+    탭의 글까지 볼모로 잡으므로, 그 카드만 빼고 보낸다. 카드는 화면에 남고 왜 아직
+    나가지 않는지 스스로 적는다.
   */
-  it('빈 유형 카드가 있으면 저장을 잠그고 무엇을 채우면 되는지 적는다', () => {
+  it('빈 유형 카드가 있어도 저장할 수 있고 그 카드만 빼고 보낸다', async () => {
     renderPage();
     openTab('멘토링 유형');
     fireEvent.click(screen.getByRole('button', { name: '소개 카드 추가 +' }));
 
-    expect(saveMock).not.toHaveBeenCalled();
-    expect(저장버튼()).toBeDisabled();
-    expect(
-      screen.getByText('「멘토링 유형」의 2번 유형 이름을 채우면 저장돼요'),
-    ).toBeVisible();
+    expect(저장버튼()).toBeEnabled();
+    expect(screen.getByText('모두 채워야 저장돼요')).toBeVisible();
+
+    await 저장하기를_누른다();
+
+    const [payload] = saveMock.mock.calls[0];
+    expect(payload.mentoringTypes.items).toHaveLength(1);
   });
 
   /*
-    빈 결과 사례도 같다. `beforeCaption`·`afterCaption` 이 비면 서버가 거절하는데,
-    걸러내면 방금 만든 사례가 사라진다.
+    빈 결과 사례는 다르다 (LC-3343). 저장을 잠그면 카드 하나가 다른 탭의 글까지 볼모로
+    잡으므로, 그 사례만 빼고 보낸다. 카드는 화면에 남고 왜 안 나가는지 스스로 적는다.
   */
-  it('빈 결과 사례가 있으면 저장을 잠근다', () => {
+  it('빈 결과 사례가 있어도 저장할 수 있고 그 사례만 빼고 보낸다', async () => {
     renderPage();
     openTab('결과 사례');
     fireEvent.click(screen.getByRole('button', { name: '사례 추가 +' }));
 
-    expect(saveMock).not.toHaveBeenCalled();
-    expect(저장버튼()).toBeDisabled();
-    expect(
-      screen.getByText('「결과 사례」의 2번 멘토링 전 상황을 채우면 저장돼요'),
-    ).toBeVisible();
+    expect(저장버튼()).toBeEnabled();
+    expect(screen.getByText('전·후 문구를 채워야 저장돼요')).toBeVisible();
+
+    await 저장하기를_누른다();
+
+    const [payload] = saveMock.mock.calls[0];
+    expect(payload.results.cases).toEqual([
+      {
+        beforeImage: null,
+        afterImage: null,
+        beforeCaption: '추상적인 지원동기',
+        afterCaption: '경험 연결',
+      },
+    ]);
+  });
+
+  /*
+    LC-3311 — 선택 섹션을 끈 채로 빈 카드가 남으면 서버가 `@NotBlank` 로 400 을 준다.
+    끈 섹션은 입력이 잠겨 멘토가 그 카드를 지울 수도 없어, 저장도 오픈도 막힌다.
+    끈 섹션에서 서버가 거절할 값은 보낼 때 뺀다.
+  */
+  it('끈 취업 성공 전략의 빈 Point 는 빼고 보낸다', async () => {
+    renderPage();
+    openTab('취업 성공 전략');
+    fireEvent.click(screen.getByRole('button', { name: '차별점 추가 +' }));
+    fireEvent.click(screen.getAllByRole('checkbox')[0]);
+
+    await 저장하기를_누른다();
+
+    const [payload] = saveMock.mock.calls[0];
+    expect(payload.strategy.visible).toBe(false);
+    expect(payload.strategy.points).toEqual([
+      { image: null, title: '핵심 키워드', description: '설명' },
+    ]);
+  });
+
+  it('끈 결과 사례의 빈 사례는 빼고 보낸다', async () => {
+    renderPage();
+    openTab('결과 사례');
+    fireEvent.click(screen.getByRole('button', { name: '사례 추가 +' }));
+    fireEvent.click(screen.getAllByRole('checkbox')[0]);
+
+    await 저장하기를_누른다();
+
+    const [payload] = saveMock.mock.calls[0];
+    expect(payload.results.visible).toBe(false);
+    expect(payload.results.cases).toEqual([
+      {
+        beforeImage: null,
+        afterImage: null,
+        beforeCaption: '추상적인 지원동기',
+        afterCaption: '경험 연결',
+      },
+    ]);
+  });
+
+  /*
+    서버는 영상 주소 형식을 노출 여부와 무관하게 검사한다. 끈 섹션에 YouTube 로 바꿀 수
+    없는 주소가 남으면 게이트가 저장을 잠그는데, 입력이 잠겨 고칠 수 없다. 비워서 보낸다.
+  */
+  it('끈 소개 영상의 YouTube 가 아닌 주소는 비워서 보낸다', async () => {
+    renderPage();
+    openTab('소개 영상');
+    fireEvent.change(screen.getByLabelText('YouTube 영상 링크'), {
+      target: { value: 'https://vimeo.com/123' },
+    });
+    fireEvent.click(screen.getAllByRole('checkbox')[0]);
+
+    expect(저장버튼()).toBeEnabled();
+    await 저장하기를_누른다();
+
+    const [payload] = saveMock.mock.calls[0];
+    expect(payload.video.visible).toBe(false);
+    expect(payload.video.videoUrl).toBeNull();
   });
 
   /*

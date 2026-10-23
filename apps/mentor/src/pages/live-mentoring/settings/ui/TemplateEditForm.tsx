@@ -383,6 +383,12 @@ const TemplateEditForm = ({
                 makeEmpty={() => ({ image: null, title: '', description: '' })}
                 renderItem={(point, update, index) => (
                   <div className="flex flex-col gap-2">
+                    {/* 다 채워야 서버로 나간다(LC-3343). 저장을 막는 대신 여기에 적는다. */}
+                    {(!point.title.trim() || !point.description.trim()) && (
+                      <span className="text-system-error text-xs">
+                        차별 전략과 설명을 채워야 저장돼요
+                      </span>
+                    )}
                     {/*
                       미리보기 번호를 이미지와 글에 나눠 붙인다(LC-3282). 하나로 묶으면
                       세로로 긴 이미지 때문에 항목이 화면보다 커지고, 미리보기가 그

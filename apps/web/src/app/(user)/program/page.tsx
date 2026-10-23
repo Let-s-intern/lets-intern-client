@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 
-import { SHOW_LIVE_MENTORING_NAV } from '@/domain/live-mentoring/constants';
+import { SHOW_LIVE_MENTORING_HEADER_NAV } from '@/domain/live-mentoring/constants';
 import LiveMentoringListPage from '@/domain/live-mentoring/list/LiveMentoringListPage';
 import ProgramCatalogTabs, {
   CATALOG_QUERY_KEY,
@@ -46,7 +46,7 @@ const ProgramPage = async ({
     페이지를 확인하고 알림톡 링크로 들어오는 경로다. 여기서 막는 것은 목록 진입뿐이다.
   */
   const isMentoring =
-    SHOW_LIVE_MENTORING_NAV &&
+    SHOW_LIVE_MENTORING_HEADER_NAV &&
     (await searchParams)[CATALOG_QUERY_KEY] === MENTORING_CATALOG;
 
   return (

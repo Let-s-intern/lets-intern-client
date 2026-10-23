@@ -5,7 +5,6 @@ import {
   useAdminLiveMentoringListQuery,
   useCloseLiveMentoringOpeningMutation,
 } from '@/api/live-mentoring/liveMentoring';
-import type { LiveMentoringStatus } from '@/api/live-mentoring/liveMentoringSchema';
 import MuiPagination from '@/domain/program/pagination/MuiPagination';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import ConfirmActionDialog, {
@@ -16,10 +15,9 @@ import {
   CLOSE_REASON_LABELS,
   durationPricesLabel,
   formatDateTime,
+  OPENING_BADGE,
   publicDetailUrl,
-  STATUS_CLASSES,
-  STATUS_FILTERS,
-  STATUS_LABELS,
+  OPENING_FILTERS,
 } from './constants';
 
 const PAGE_SIZE = 20;
@@ -42,6 +40,10 @@ interface AdminLiveMentoringTableProps {
    * 참여자 탭으로 넘기는 것은 페이지가 한다(URL 로 유지해야 새로고침에도 남는다).
    */
   onSelectMentor?: (mentorId: number) => void;
+  /** 이 멘토의 멘토 페이지 후기를 관리하러 가기. 주면 행마다 버튼을 내건다. */
+  onSelectMentorReviews?: (mentorId: number) => void;
+  /** 멘토 정보 수정 모달 열기. 주면 멘토 이름 밑에 버튼을 내건다. 모달은 페이지가 띄운다. */
+  onEditMentor?: (mentorId: number) => void;
 }
 
 /**
@@ -52,16 +54,16 @@ interface AdminLiveMentoringTableProps {
  */
 const AdminLiveMentoringTable = ({
   onSelectMentor,
+  onSelectMentorReviews,
+  onEditMentor,
 }: AdminLiveMentoringTableProps = {}) => {
   const { snackbar } = useAdminSnackbar();
-  const [status, setStatus] = useState<LiveMentoringStatus | undefined>(
-    undefined,
-  );
+  const [opened, setOpened] = useState<boolean | undefined>(undefined);
   const [page, setPage] = useState(1);
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
 
   const { data, isLoading, isError } = useAdminLiveMentoringListQuery({
-    status,
+    opened,
     page,
     size: PAGE_SIZE,
   });
@@ -70,8 +72,8 @@ const AdminLiveMentoringTable = ({
     useCloseLiveMentoringOpeningMutation();
   const isMutating = isClosing;
 
-  const handleFilterChange = (next: LiveMentoringStatus | undefined) => {
-    setStatus(next);
+  const handleFilterChange = (next: boolean | undefined) => {
+    setOpened(next);
     setPage(1);
   };
 
@@ -95,8 +97,8 @@ const AdminLiveMentoringTable = ({
   return (
     <div className="flex flex-col gap-4">
       <div role="group" aria-label="상태 필터" className="flex flex-wrap gap-2">
-        {STATUS_FILTERS.map((filter) => {
-          const active = status === filter.value;
+        {OPENING_FILTERS.map((filter) => {
+          const active = opened === filter.value;
           return (
             <button
               key={filter.label}
@@ -160,6 +162,10 @@ const AdminLiveMentoringTable = ({
             ) : (
               rows.map((row) => {
                 const opening = row.currentOpening;
+                const badge =
+                  opening?.status === 'OPEN'
+                    ? OPENING_BADGE.open
+                    : OPENING_BADGE.notOpen;
                 return (
                   <tr
                     key={row.liveMentoringId}
@@ -174,9 +180,20 @@ const AdminLiveMentoringTable = ({
                             className="h-8 w-8 shrink-0 rounded-full object-cover"
                           />
                         )}
-                        <span className="whitespace-nowrap">
-                          {row.mentorNickname ?? `멘토 #${row.mentorId}`}
-                        </span>
+                        <div className="flex flex-col items-start gap-1">
+                          <span className="whitespace-nowrap">
+                            {row.mentorNickname ?? `멘토 #${row.mentorId}`}
+                          </span>
+                          {onEditMentor && (
+                            <button
+                              type="button"
+                              onClick={() => onEditMentor(row.mentorId)}
+                              className="text-primary whitespace-nowrap text-xs underline"
+                            >
+                              멘토 수정
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </td>
                     <td className={`${bodyCellClass} break-keep`}>
@@ -195,9 +212,9 @@ const AdminLiveMentoringTable = ({
                     </td>
                     <td className={bodyCellClass}>
                       <span
-                        className={`whitespace-nowrap rounded px-2 py-0.5 text-xs font-medium ${STATUS_CLASSES[row.status]}`}
+                        className={`whitespace-nowrap rounded px-2 py-0.5 text-xs font-medium ${badge.className}`}
                       >
-                        {STATUS_LABELS[row.status]}
+                        {badge.label}
                       </span>
                     </td>
                     <td className={`${bodyCellClass} whitespace-nowrap`}>
@@ -235,7 +252,16 @@ const AdminLiveMentoringTable = ({
                             size="small"
                             onClick={() => onSelectMentor(row.mentorId)}
                           >
-                            참여자 보기
+                            참여자 보기 (예정 {row.upcomingParticipantCount}명)
+                          </Button>
+                        )}
+                        {onSelectMentorReviews && (
+                          <Button
+                            variant="outlined"
+                            size="small"
+                            onClick={() => onSelectMentorReviews(row.mentorId)}
+                          >
+                            후기 관리 ({row.mentorReviewCount}건)
                           </Button>
                         )}
                         {opening?.status === 'OPEN' && (

@@ -14,6 +14,8 @@ interface FeedbackActionsProps {
   feedbackStatus: string | null;
   /** 제출 상태 — 미제출·지각 제출은 저장·완료를 막는다. */
   submissionState?: WrittenSubmissionState;
+  /** 자동 저장 요청 중 — 수동 저장과 순서가 뒤바뀌지 않게 버튼을 잠근다. */
+  isAutoSaving?: boolean;
   onSaveSuccess: () => void;
   onSubmitSuccess: () => void;
   onAlert: (opts: { title: string; variant: 'success' | 'error' }) => void;
@@ -29,6 +31,7 @@ const FeedbackActions = ({
   editorContent,
   feedbackStatus,
   submissionState = 'submitted',
+  isAutoSaving = false,
   onSaveSuccess,
   onSubmitSuccess,
   onAlert,
@@ -40,6 +43,7 @@ const FeedbackActions = ({
     feedbackStatus === 'COMPLETED' || feedbackStatus === 'CONFIRMED';
   const isDisabled =
     isPending ||
+    isAutoSaving ||
     !attendanceId ||
     isCompleted ||
     !canWriteWrittenFeedback(submissionState);

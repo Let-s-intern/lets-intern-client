@@ -14,6 +14,8 @@ export interface PatchMissionReq {
   challengeOptionId?: number;
   essentialContentsIdList?: number[];
   additionalContentsIdList?: number[];
+  // null 은 변경 없음, 빈 배열은 공통으로, 값이 있으면 그 버전들로 교체
+  challengeVersionIdList?: number[] | null;
 }
 export interface PostDocumentReq {
   attendanceId?: number;

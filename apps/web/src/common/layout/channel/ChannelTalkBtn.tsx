@@ -62,7 +62,8 @@ const ChannelTalkBtn = (props: ChannelTalkBtnProps) => {
           libraryDetailPathRegex.test(pathname) ||
           (pathname.startsWith('/report') && isUpTo1280) ||
           pathname.startsWith('/report/landing') ||
-          (pathname.startsWith('/payment-input') && isUpTo991)
+          (pathname.startsWith('/payment-input') && isUpTo991) ||
+          (pathname.startsWith('/plan-upgrade') && isUpTo991)
           ? 'bottom-32'
           : 'bottom-20',
         (isHidden || hiddenByPathname) && 'hidden',

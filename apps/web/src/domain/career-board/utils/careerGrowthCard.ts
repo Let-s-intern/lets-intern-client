@@ -24,6 +24,12 @@ export interface CareerGrowthCardConfig {
   contentFileUrl?: string;
   downloadType?: ApplicationDownloadType;
   purchasePlanText?: string;
+  /** 챌린지 버전 (LC-3247) */
+  version?: { title: string | null; changeable: boolean };
+  /** 셀프 플랜 업그레이드 주소 (LC-3247) */
+  planUpgradeHref?: string;
+  /** 버전 변경 모달 열기. 모달 상태는 섹션이 가지므로 섹션이 채운다 */
+  onVersionChangeClick?: () => void;
   /** 오픈채팅방 입장 버튼. 챌린지에서만 채워진다. */
   openChat?: {
     link: string;
@@ -78,6 +84,8 @@ export const toProgramCardConfig = (
     dateText: period,
     purchasePlanText:
       isChallenge && item.purchasePlan ? item.purchasePlan : undefined,
+    version: isChallenge ? item.version : undefined,
+    planUpgradeHref: isChallenge ? item.planUpgradeHref : undefined,
     // 커리어 성장은 참여중·참여예정만 노출하므로 종료 여부를 따로 볼 필요가 없다.
     openChat:
       isChallenge && item.chatLink
@@ -264,7 +272,8 @@ export const toCareerGrowthCardConfigs = (
     isMembershipApplied: item.isMembershipApplied,
   });
 
-  if (category === 'PROGRAM') {
+  // 멘토링 칩은 프로그램 칩에서 멘토링만 거른 목록이라 같은 카드를 쓴다.
+  if (category === 'PROGRAM' || category === 'MENTORING') {
     return items.map((p) => withBadge(toProgramCardConfig(p), p));
   }
   if (category === 'GUIDEBOOK') {

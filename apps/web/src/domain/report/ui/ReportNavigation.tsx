@@ -41,8 +41,8 @@ const ReportNavigation = ({
   const scrollDirection = useScrollDirection();
 
   const topPosition = showNavBar
-    ? 'top-[134px]  md:top-[175px]'
-    : 'top-[84px]  md:top-[117px]';
+    ? 'top-[134px]  md:top-[215px]'
+    : 'top-[84px]  md:top-[157px]';
 
   const scrollStyleClassName =
     scrollDirection === 'DOWN'

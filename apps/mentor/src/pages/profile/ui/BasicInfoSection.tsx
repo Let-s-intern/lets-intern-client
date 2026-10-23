@@ -3,6 +3,7 @@
 import { useState } from 'react';
 
 import { toSnsUrl } from '@/utils/sns';
+import { PROFILE_TEXT_MAX_LENGTH } from '../constants';
 import ProfileImageUploadModal from './ProfileImageUploadModal';
 
 export interface BasicInfoFormData {
@@ -119,6 +120,9 @@ export default function BasicInfoSection({
               <input
                 type="text"
                 value={formData[key]}
+                maxLength={
+                  key === 'nickname' ? PROFILE_TEXT_MAX_LENGTH : undefined
+                }
                 onChange={(e) => handleChange(key, e.target.value)}
                 className="focus:border-primary min-w-0 flex-1 rounded-md border border-gray-200 px-3 py-2 text-sm outline-none transition-colors"
               />

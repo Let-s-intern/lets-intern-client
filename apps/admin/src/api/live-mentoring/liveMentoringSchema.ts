@@ -11,6 +11,9 @@ export const liveMentoringCategorySchema = z.enum([
   'PERSONAL_STATEMENT',
   'RESUME',
   'PORTFOLIO',
+  'CAREER_COFFEE_CHAT',
+  'INTERVIEW',
+  'EXPERIENCE',
 ]);
 export type LiveMentoringCategory = z.infer<typeof liveMentoringCategorySchema>;
 
@@ -65,6 +68,10 @@ export const adminLiveMentoringSchema = z.object({
   lastModifiedDate: z.string(),
   /** 활성 개설이 없거나 이미 종료됐으면 null. */
   currentOpening: adminCurrentOpeningSchema.nullable(),
+  /** 멘토 단위. 결제 확정이고 예약 시작 전인 참여자 수. 같은 멘토의 상품끼리 값이 같다. */
+  upcomingParticipantCount: z.number(),
+  /** 멘토 단위. 멘토 페이지 후기 수(숨긴 후기 포함). 후기 탭의 "전체" 와 같다. */
+  mentorReviewCount: z.number(),
 });
 export type AdminLiveMentoring = z.infer<typeof adminLiveMentoringSchema>;
 
@@ -183,6 +190,11 @@ export const adminLiveMentoringParticipantSchema = z.object({
   refunded: z.boolean().nullable(),
   refundAmount: z.number().nullable(),
   createDate: z.string(),
+  /**
+   * 결제 시각 — 결제 엔티티의 생성 시각(LC-3336).
+   * 이 필드를 싣기 전 서버 응답에는 키가 없어 nullish 로 연다. 막으면 목록 전체가 파싱에 실패한다.
+   */
+  paidAt: z.string().nullish(),
 });
 export type AdminLiveMentoringParticipant = z.infer<
   typeof adminLiveMentoringParticipantSchema

@@ -30,6 +30,7 @@ import {
   unlockedSettingsTabs,
 } from './tabs';
 import { describeAutosaveBlock } from './autosaveGate';
+import { dropUnsavableHiddenValues } from './hiddenSectionPayload';
 import { describeSaveError } from './saveError';
 import DetailLoadFailedNotice from './ui/DetailLoadFailedNotice';
 import SettingsTabs from './ui/SettingsTabs';
@@ -345,10 +346,11 @@ const LiveMentoringSettingsPage = () => {
    */
   const saveTemplate = async (): Promise<AutosaveResult> => {
     if (!template) return { ok: false };
-    let payload = template;
+    // 끈 선택 섹션의 빈 카드·잘못된 영상 주소는 서버가 거절하므로 먼저 뺀다(LC-3311).
+    let payload = dropUnsavableHiddenValues(template);
 
-    if (template.video.videoUrl) {
-      const embedUrl = toYoutubeEmbedUrl(template.video.videoUrl);
+    if (payload.video.videoUrl) {
+      const embedUrl = toYoutubeEmbedUrl(payload.video.videoUrl);
       // 여기까지 오면 게이트(`describeAutosaveBlock`)가 이미 걸렀어야 한다.
       if (!embedUrl)
         return {
@@ -357,8 +359,8 @@ const LiveMentoringSettingsPage = () => {
             'YouTube 주소만 넣을 수 있어요. 영상 페이지의 공유 링크를 붙여넣으면 자동으로 변환됩니다.',
         };
       payload = {
-        ...template,
-        video: { ...template.video, videoUrl: embedUrl },
+        ...payload,
+        video: { ...payload.video, videoUrl: embedUrl },
       };
     }
 
@@ -374,30 +376,55 @@ const LiveMentoringSettingsPage = () => {
       .filter(Boolean);
 
     /*
-     * 유형 카드·결과 사례는 앞뒤 공백만 다듬는다.
+     * 반복 항목은 다 채워진 것만 보낸다 (LC-3343).
      *
-     * 예전에는 안 채운 카드를 걸러내서 보냈다(`@NotBlank` 라 그대로 보내면 400 이다).
-     * 실시간 저장에서는 그게 곧 "방금 「+ 추가」로 만든 카드를 저장이 지운다"가 되므로,
-     * 빈 카드가 있으면 아예 보내지 않는 쪽으로 바꿨다 — `describeAutosaveBlock` 이 막고
-     * 하단 바에 무엇을 채우면 되는지 적는다. 여기 오는 값은 이미 다 채워져 있다.
+     * 서버가 유형 카드·Point·결과 사례의 글칸에 `@NotBlank` 를 걸어 두어 반쯤 채운
+     * 항목은 그대로 보내면 400 이다. 그렇다고 저장 전체를 막으면 「+ 추가」를 누른
+     * 순간 다른 탭에서 쓴 글까지 볼모가 된다.
+     *
+     * 거르는 것은 **보낼 때뿐**이고 로컬 상태는 그대로 두므로, 방금 만든 항목은 화면에
+     * 남는다. 아직 저장되지 않는다는 사실은 그 항목이 직접 적는다.
      */
-    const cleanedTypeItems = payload.mentoringTypes.items.map((item) => ({
-      ...item,
-      typeName: item.typeName.trim(),
-      title: item.title.trim(),
-      description: item.description.trim(),
-    }));
+    const cleanedTypeItems = payload.mentoringTypes.items
+      .map((item) => ({
+        ...item,
+        typeName: item.typeName.trim(),
+        title: item.title.trim(),
+        description: item.description.trim(),
+      }))
+      .filter((item) => item.typeName && item.title && item.description);
 
-    const cleanedResultCases = payload.results.cases.map((item) => ({
-      ...item,
-      beforeCaption: item.beforeCaption.trim(),
-      afterCaption: item.afterCaption.trim(),
-    }));
+    const cleanedStrategyPoints = payload.strategy.points
+      .map((point) => ({
+        ...point,
+        title: point.title.trim(),
+        description: point.description.trim(),
+      }))
+      .filter((point) => point.title && point.description);
+
+    /*
+     * 결과 사례는 다르다 — 전·후 문구가 다 채워진 것만 보낸다 (LC-3343).
+     *
+     * 서버 `ResultCaseRequest` 가 두 문구에 `@NotBlank` 라 반쯤 채운 사례는 그대로 보내면
+     * 400 이다. 그렇다고 저장 전체를 막으면 「사례 추가 +」를 누른 순간 다른 탭에서 쓴
+     * 글까지 볼모가 된다.
+     *
+     * 거르는 건 **보낼 때뿐**이고 로컬 상태는 그대로 두므로, 방금 만든 카드는 화면에
+     * 남는다. 아직 저장되지 않는다는 사실은 카드가 직접 적는다(`ResultCaseField`).
+     */
+    const cleanedResultCases = payload.results.cases
+      .map((item) => ({
+        ...item,
+        beforeCaption: item.beforeCaption.trim(),
+        afterCaption: item.afterCaption.trim(),
+      }))
+      .filter((item) => item.beforeCaption && item.afterCaption);
 
     payload = {
       ...payload,
       hero: { bullets: cleanedBullets },
       mentoringTypes: { ...payload.mentoringTypes, items: cleanedTypeItems },
+      strategy: { ...payload.strategy, points: cleanedStrategyPoints },
       results: { ...payload.results, cases: cleanedResultCases },
     };
 

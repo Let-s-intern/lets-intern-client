@@ -134,7 +134,7 @@ const ChallengeInfoBottom = ({
               <BasicInfoRow
                 icon={<LaptopIcon />}
                 title="진행 방식"
-                content={`100% 온라인\n(챌린지 대시보드, 오픈채팅방)`}
+                content={`100% 온라인\n(챌린지 대시보드, 슬랙 채널)`}
               />
               <BasicInfoRow
                 icon={<ClockIcon />}
@@ -166,7 +166,7 @@ const ChallengeInfoBottom = ({
             <BasicInfoBottomRow
               icon={<LaptopIcon />}
               title="진행 방식"
-              content={`100% 온라인\n(챌린지 대시보드, 오픈채팅방)`}
+              content={`100% 온라인\n(챌린지 대시보드, 슬랙 채널)`}
             />
             <BasicInfoBottomRow
               icon={<ClockIcon />}

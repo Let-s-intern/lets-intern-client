@@ -10,6 +10,7 @@ import { memo } from 'react';
 import DeadlineBadge from './DeadlineBadge';
 import NewBadge from './NewBadge';
 import ProgramStatusTag from './ProgramStatusTag';
+import { getProgramCardKey, getProgramCardLink } from './programCardIdentity';
 
 interface ProgramCardProps {
   program: ProgramInfo;
@@ -25,7 +26,7 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
     programInfo.programType === PROGRAM_TYPE.VOD ||
     programInfo.programType === PROGRAM_TYPE.GUIDEBOOK;
 
-  const link = `/program/${programInfo.programType.toLowerCase()}/${programInfo.id}`;
+  const link = getProgramCardLink(programInfo);
 
   return (
     <div
@@ -93,8 +94,7 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
 };
 
 const isEqual = (prevProps: ProgramCardProps, nextProps: ProgramCardProps) =>
-  prevProps.program.programInfo.id === nextProps.program.programInfo.id &&
-  prevProps.program.programInfo.programType ===
-    nextProps.program.programInfo.programType;
+  getProgramCardKey(prevProps.program.programInfo) ===
+  getProgramCardKey(nextProps.program.programInfo);
 
 export default memo(ProgramCard, isEqual);

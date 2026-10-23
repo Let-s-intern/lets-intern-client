@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from 'react';
 
+import type { CouponDiscountType } from '@/api/coupon/coupon';
 import { applyLiveMentoringCoupon } from '@/api/live-mentoring/liveMentoring';
 import { readServerError } from '../../utils/serverError';
 
@@ -29,6 +30,9 @@ export function useLiveMentoringCoupon() {
   const [inputValue, setInputValue] = useState('');
   const [appliedCode, setAppliedCode] = useState<string | null>(null);
   const [discount, setDiscount] = useState<number | null>(null);
+  const [discountType, setDiscountType] = useState<CouponDiscountType | null>(
+    null,
+  );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isValidating, setIsValidating] = useState(false);
 
@@ -42,6 +46,7 @@ export function useLiveMentoringCoupon() {
       const applied = await applyLiveMentoringCoupon(trimmed);
       setAppliedCode(trimmed);
       setDiscount(applied.discount);
+      setDiscountType(applied.discountType ?? null);
     } catch (error) {
       const { code, message } = readServerError(
         error,
@@ -58,6 +63,7 @@ export function useLiveMentoringCoupon() {
   const clear = useCallback(() => {
     setAppliedCode(null);
     setDiscount(null);
+    setDiscountType(null);
     setErrorMessage(null);
     setInputValue('');
   }, []);
@@ -67,6 +73,7 @@ export function useLiveMentoringCoupon() {
     setInputValue,
     appliedCode,
     discount,
+    discountType,
     errorMessage,
     isValidating,
     register,

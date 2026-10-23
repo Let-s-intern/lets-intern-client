@@ -1,5 +1,7 @@
 'use client';
 
+import type { CouponDiscountType } from '@/api/coupon/coupon';
+import { getCouponDiscountAmount } from '@/utils/couponDiscount';
 import { formatPrice } from '../../constants';
 import { FULL_DISCOUNT } from '../types';
 
@@ -13,8 +15,10 @@ interface PriceSectionProps {
   productDiscount?: number;
   /** 등록한 쿠폰 코드. */
   appliedCouponCode: string | null;
-  /** 쿠폰 검증 응답의 할인값. `-1` 은 전액 할인이다. */
+  /** 쿠폰 검증 응답의 할인값. `-1` 은 전액 할인, 정률이면 퍼센트(%) 값이다. */
   couponDiscount?: number | null;
+  /** 쿠폰 할인 방식. RATE 면 `couponDiscount` 를 판매가 기준 %로 계산한다. */
+  couponDiscountType?: CouponDiscountType | null;
 }
 
 /** 쿠폰 할인 표시액. 전액 할인은 남은 금액 전부, 정액은 남은 금액까지만 빠진다. */
@@ -40,9 +44,19 @@ const PriceSection = ({
   productDiscount = 0,
   appliedCouponCode,
   couponDiscount,
+  couponDiscountType,
 }: PriceSectionProps) => {
   const afterProduct = price - productDiscount;
-  const couponAmount = resolveCouponDiscount(afterProduct, couponDiscount);
+  // 정률 쿠폰은 퍼센트라 원 단위로 환산한 뒤(서버와 동일) 남은 금액까지만 뺀다.
+  const couponWon =
+    couponDiscount == null || couponDiscount === FULL_DISCOUNT
+      ? couponDiscount
+      : getCouponDiscountAmount({
+          discount: couponDiscount,
+          discountType: couponDiscountType,
+          salePrice: afterProduct,
+        });
+  const couponAmount = resolveCouponDiscount(afterProduct, couponWon);
   const total = Math.max(afterProduct - couponAmount, 0);
 
   return (

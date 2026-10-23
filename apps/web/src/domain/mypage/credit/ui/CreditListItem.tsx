@@ -1,4 +1,4 @@
-import { PaymentType } from '@/api/payment/paymentSchema';
+import { PaymentType, ProgramInfoType } from '@/api/payment/paymentSchema';
 import { ReportType } from '@/api/report';
 import { twMerge } from '@/lib/twMerge';
 import Link from 'next/link';
@@ -17,11 +17,34 @@ export const getReportThumbnail = (reportType: ReportType | null) => {
   }
 };
 
+/*
+  1대1 라이브 멘토링은 `applicationId` 체계이고 취소 수수료 규칙이 다르다.
+  리포트가 이미 전용 경로로 갈라져 있는 것과 같은 방식으로 분리한다 —
+  기존 화면에 분기를 넣으면 프로그램·리포트 결제가 함께 흔들린다.
+*/
+export const getCreditDetailHref = (programInfo: ProgramInfoType) =>
+  programInfo.programType === 'REPORT'
+    ? `/mypage/credit/report/${programInfo.paymentId}?applicationId=${programInfo.applicationId}`
+    : programInfo.programType === 'LIVE_MENTORING'
+      ? `/mypage/credit/live-mentoring/${programInfo.applicationId}`
+      : `/mypage/credit/${programInfo.paymentId}`;
+
 export default function CreditListItem({
   payment: { programInfo, tossInfo },
 }: {
   payment: PaymentType;
 }) {
+  /*
+    VOD 이용권 행의 `tossInfo` 는 챌린지와 함께 결제한 PG 거래 전체다.
+    그 합계는 이 행의 금액이 아니므로 이 신청에 결제된 `paidAmount` 를 쓰고,
+    `price` 가 무엇인지 확인되지 않아 정가는 그리지 않는다.
+  */
+  const isVodPass = programInfo.programType === 'VOD_PASS';
+  const paidAmount =
+    isVodPass && typeof programInfo.paidAmount === 'number'
+      ? programInfo.paidAmount
+      : tossInfo?.totalAmount;
+
   // 정가
   const originPrice =
     (programInfo.price ?? 0) +
@@ -31,18 +54,7 @@ export default function CreditListItem({
   return (
     <Link
       className="flex w-full flex-col items-start justify-center gap-y-2"
-      /*
-        1대1 라이브 멘토링은 `applicationId` 체계이고 취소 수수료 규칙이 다르다.
-        리포트가 이미 전용 경로로 갈라져 있는 것과 같은 방식으로 분리한다 —
-        기존 화면에 분기를 넣으면 프로그램·리포트 결제가 함께 흔들린다.
-      */
-      href={
-        programInfo.programType === 'REPORT'
-          ? `/mypage/credit/report/${programInfo.paymentId}?applicationId=${programInfo.applicationId}`
-          : programInfo.programType === 'LIVE_MENTORING'
-            ? `/mypage/credit/live-mentoring/${programInfo.applicationId}`
-            : `/mypage/credit/${programInfo.paymentId}`
-      }
+      href={getCreditDetailHref(programInfo)}
       data-program-text={programInfo.title}
     >
       <CardStatus
@@ -79,16 +91,13 @@ export default function CreditListItem({
           </div>
           <div className="flex grow flex-col items-start justify-start">
             {/* 할인 없으면 정가 숨기기 */}
-            {originPrice !== tossInfo?.totalAmount && (
+            {!isVodPass && originPrice !== tossInfo?.totalAmount && (
               <div className="text-neutral-40 text-xs font-medium line-through">
                 {originPrice.toLocaleString()}원
               </div>
             )}
             <div className="text-neutral-0 text-sm font-semibold md:text-base">
-              {tossInfo && tossInfo.totalAmount
-                ? tossInfo.totalAmount.toLocaleString()
-                : 0}
-              원
+              {paidAmount ? paidAmount.toLocaleString() : 0}원
             </div>
           </div>
           <button className="text-primary flex items-center justify-start text-xs font-semibold md:text-sm">

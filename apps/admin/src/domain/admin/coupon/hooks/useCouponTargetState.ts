@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
+import type { ChallengePricePlan } from '@/schema';
+
 export type ConditionType =
   | 'APPLICATION_ALL'
   | 'CHALLENGE_ALL'
@@ -12,6 +14,8 @@ export interface TargetCondition {
   conditionType: ConditionType;
   challengeType: string | null;
   targetProgramId: number | null;
+  // CHALLENGE_PROGRAM일 때만 의미 있음. null이면 해당 챌린지 전체(플랜 무관)
+  challengePricePlanType: ChallengePricePlan | null;
 }
 
 export interface ChallengeTypeOption {
@@ -19,6 +23,12 @@ export interface ChallengeTypeOption {
   code: number;
   desc: string;
   challengeList: { id: number; title: string }[];
+}
+
+export interface ChallengePricePlanTypeOption {
+  challengePricePlanType: ChallengePricePlan;
+  code: number;
+  desc: string;
 }
 
 export interface ChipItem {
@@ -29,6 +39,7 @@ export interface ChipItem {
 export interface TargetOptions {
   challengeTypeList: ChallengeTypeOption[];
   liveList: { id: number; title: string }[];
+  challengePricePlanTypeList: ChallengePricePlanTypeOption[];
 }
 
 // ── pure helpers (모듈 수준 — 렌더마다 재생성 없음) ──────────────────────────
@@ -37,10 +48,12 @@ const mk = (
   type: ConditionType,
   challengeType?: string,
   targetProgramId?: number,
+  challengePricePlanType?: ChallengePricePlan,
 ): TargetCondition => ({
   conditionType: type,
   challengeType: challengeType ?? null,
   targetProgramId: targetProgramId ?? null,
+  challengePricePlanType: challengePricePlanType ?? null,
 });
 
 const has = (
@@ -48,12 +61,15 @@ const has = (
   type: ConditionType,
   key?: string,
   pid?: number,
+  // undefined면 플랜 조건 무시, null이면 '플랜 미지정(전체)' 조건과 일치
+  plan?: ChallengePricePlan | null,
 ) =>
   list.some(
     (c) =>
       c.conditionType === type &&
       (key == null || c.challengeType === key) &&
-      (pid == null || c.targetProgramId === pid),
+      (pid == null || c.targetProgramId === pid) &&
+      (plan === undefined || c.challengePricePlanType === plan),
   );
 
 const except = (list: TargetCondition[], ...types: ConditionType[]) =>
@@ -87,7 +103,7 @@ export function useCouponTargetState(
     }
   }, [conds]);
 
-  const { challengeTypeList, liveList } = options;
+  const { challengeTypeList, liveList, challengePricePlanTypeList } = options;
 
   function chipLabel(c: TargetCondition): string {
     if (c.conditionType === 'APPLICATION_ALL') return '전체 결제자';
@@ -95,17 +111,29 @@ export function useCouponTargetState(
     if (c.conditionType === 'LIVE_ALL') return 'LIVE 클래스 전체';
     if (c.conditionType === 'CHALLENGE_TYPE')
       return `${challengeTypeList.find((t) => t.challengeType === c.challengeType)?.desc} 전체`;
-    if (c.conditionType === 'CHALLENGE_PROGRAM')
-      return (
+    if (c.conditionType === 'CHALLENGE_PROGRAM') {
+      const title =
         challengeTypeList
           .flatMap((t) => t.challengeList)
-          .find((p) => p.id === c.targetProgramId)?.title ?? ''
-      );
+          .find((p) => p.id === c.targetProgramId)?.title ?? '';
+      if (c.challengePricePlanType) {
+        const planDesc =
+          challengePricePlanTypeList.find(
+            (pl) => pl.challengePricePlanType === c.challengePricePlanType,
+          )?.desc ?? c.challengePricePlanType;
+        return `${title} · ${planDesc}`;
+      }
+      return title;
+    }
     return liveList.find((p) => p.id === c.targetProgramId)?.title ?? '';
   }
 
-  const $ = (type: ConditionType, key?: string, pid?: number) =>
-    has(conds, type, key, pid);
+  const $ = (
+    type: ConditionType,
+    key?: string,
+    pid?: number,
+    plan?: ChallengePricePlan | null,
+  ) => has(conds, type, key, pid, plan);
 
   const allPayers = $('APPLICATION_ALL');
   const challengeAll = $('CHALLENGE_ALL');
@@ -192,18 +220,62 @@ export function useCouponTargetState(
           ]);
         }
       },
+      // 개별 챌린지의 상태: 상위(전체/타입)에 포함되면 all,
+      // '전체(플랜 null)' 조건이 있으면 all, 특정 플랜 조건만 있으면 partial
+      programMode: (type: string, pid: number): 'all' | 'partial' | 'none' => {
+        if (challengeAll || $('CHALLENGE_TYPE', type)) return 'all';
+        const pc = conds.filter(
+          (c) =>
+            c.conditionType === 'CHALLENGE_PROGRAM' &&
+            c.targetProgramId === pid,
+        );
+        if (pc.length === 0) return 'none';
+        return pc.some((c) => c.challengePricePlanType === null)
+          ? 'all'
+          : 'partial';
+      },
+      planChecked: (pid: number, plan: ChallengePricePlan) =>
+        $('CHALLENGE_PROGRAM', undefined, pid, plan),
+      // 챌린지 체크박스: 미선택/일부 → 전체(플랜 무관), 전체 → 해제
       toggleProgram: (type: string, pid: number) => {
         if (challengeAll || $('CHALLENGE_TYPE', type)) return;
+        const dropPid = (c: TargetCondition) =>
+          !(
+            c.conditionType === 'CHALLENGE_PROGRAM' && c.targetProgramId === pid
+          );
         setConds(
-          $('CHALLENGE_PROGRAM', undefined, pid)
+          $('CHALLENGE_PROGRAM', undefined, pid, null)
+            ? conds.filter(dropPid)
+            : [
+                ...conds.filter(dropPid),
+                mk('CHALLENGE_PROGRAM', undefined, pid),
+              ],
+        );
+      },
+      // 특정 플랜 체크박스: 켜면 '전체(null)' 조건을 걷어내고 플랜 조건 추가, 다시 누르면 제거
+      togglePlan: (type: string, pid: number, plan: ChallengePricePlan) => {
+        if (challengeAll || $('CHALLENGE_TYPE', type)) return;
+        setConds(
+          $('CHALLENGE_PROGRAM', undefined, pid, plan)
             ? conds.filter(
                 (c) =>
                   !(
                     c.conditionType === 'CHALLENGE_PROGRAM' &&
-                    c.targetProgramId === pid
+                    c.targetProgramId === pid &&
+                    c.challengePricePlanType === plan
                   ),
               )
-            : [...conds, mk('CHALLENGE_PROGRAM', undefined, pid)],
+            : [
+                ...conds.filter(
+                  (c) =>
+                    !(
+                      c.conditionType === 'CHALLENGE_PROGRAM' &&
+                      c.targetProgramId === pid &&
+                      c.challengePricePlanType === null
+                    ),
+                ),
+                mk('CHALLENGE_PROGRAM', undefined, pid, plan),
+              ],
         );
       },
     },

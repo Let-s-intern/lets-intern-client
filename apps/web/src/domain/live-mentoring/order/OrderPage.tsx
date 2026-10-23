@@ -165,6 +165,7 @@ const OrderPage = ({ mentorId }: OrderPageProps) => {
         price={draft.price}
         appliedCouponCode={coupon.appliedCode}
         couponDiscount={coupon.discount}
+        couponDiscountType={coupon.discountType}
       />
 
       <SubmitBlock

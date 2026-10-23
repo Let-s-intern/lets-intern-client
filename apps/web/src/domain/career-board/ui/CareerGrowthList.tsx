@@ -1,6 +1,7 @@
 'use client';
 
 import AlertModal from '@/common/alert/AlertModal';
+import HybridLink from '@/common/HybridLink';
 import { downloadContentAndTrack } from '@/domain/career-board/utils/contentDownload';
 import { useDownloadAction } from '@/hooks/useDownloadAction';
 import { twMerge } from '@/lib/twMerge';
@@ -121,7 +122,7 @@ const CareerGrowthItemCard = ({ config }: CareerGrowthItemCardProps) => {
                 </p>
               )}
             </div>
-            {(config.purchasePlanText || config.openChat) && (
+            {(config.purchasePlanText || config.version || config.openChat) && (
               <div className="flex flex-wrap items-center gap-2">
                 {config.purchasePlanText && (
                   <span className="text-xxsmall12 text-neutral-0 flex flex-row gap-1">
@@ -129,11 +130,47 @@ const CareerGrowthItemCard = ({ config }: CareerGrowthItemCardProps) => {
                     <p className="text-xxsmall12 text-primary">
                       {config.purchasePlanText}
                     </p>
+                    {config.planUpgradeHref && (
+                      <HybridLink
+                        href={config.planUpgradeHref}
+                        className="text-xxsmall12 text-primary font-medium hover:underline"
+                      >
+                        업그레이드
+                      </HybridLink>
+                    )}
                   </span>
                 )}
-                {config.purchasePlanText && config.openChat && (
-                  <div className="bg-neutral-80 h-3 w-px" />
+                {config.version && (
+                  <>
+                    {config.purchasePlanText && (
+                      <div className="bg-neutral-80 h-3 w-px" />
+                    )}
+                    <span className="text-xxsmall12 text-neutral-0 flex flex-row gap-1">
+                      버전
+                      {config.version.title ? (
+                        <span className="text-xxsmall12 text-primary">
+                          {config.version.title}
+                        </span>
+                      ) : (
+                        <span className="text-xxsmall12 text-neutral-40">
+                          미선택
+                        </span>
+                      )}
+                    </span>
+                    {config.version.changeable &&
+                      config.onVersionChangeClick && (
+                        <button
+                          type="button"
+                          className="text-xxsmall12 text-primary"
+                          onClick={config.onVersionChangeClick}
+                        >
+                          {config.version.title ? '변경' : '선택'}
+                        </button>
+                      )}
+                  </>
                 )}
+                {(config.purchasePlanText || config.version) &&
+                  config.openChat && <div className="bg-neutral-80 h-3 w-px" />}
                 {config.openChat && (
                   <OpenChatLink
                     link={config.openChat.link}
