@@ -4,17 +4,17 @@
 import OutlinedButton from '@/common/button/OutlinedButton';
 import SolidButton from '@/common/button/SolidButton';
 import dayjs from '@/lib/dayjs';
-import clsx from 'clsx';
-import { useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { generateOrderId } from '@/lib/order';
-import useMembershipOrderStore from '../../../store/useMembershipOrderStore';
+import clsx from 'clsx';
+import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
 import {
   useGetExtensionOptions,
   useGetMyMembershipApplication,
   type ExtensionOption,
 } from '../../../api/dashboard';
 import { useGetMembershipApplicationForm } from '../../../api/purchase';
+import useMembershipOrderStore from '../../../store/useMembershipOrderStore';
 import ExtensionSheet from './ExtensionSheet';
 import { getExtensionCopy } from './extensionStatus';
 
@@ -61,8 +61,8 @@ export default function ExtensionModal({ applicationId, onClose }: Props) {
       applicationId,
       membershipOptionId: selected.membershipOptionId,
       membershipPlanId: null,
-      passTitle: base.title ?? '올인원패스',
-      thumbnail: null,
+      passTitle: `${base.title ?? '올인원패스'} ${selected.title ?? '기간 연장'}`,
+      thumbnail: form.thumbnail ?? null,
       price: selected.price,
       discount: selected.discount ?? 0,
       couponCode: null,
@@ -74,8 +74,8 @@ export default function ExtensionModal({ applicationId, onClose }: Props) {
       phone: form.phoneNumber ?? '',
       orderId: generateOrderId(),
       isFree: price === 0,
-      beginning: null,
-      deadline: null,
+      beginning: base.endDate ?? null,
+      deadline: extendedEnd ? extendedEnd.toISOString() : null,
     });
     onClose();
     router.push(`/all-in-one-pass/${base.membershipId}/payment-input`);
