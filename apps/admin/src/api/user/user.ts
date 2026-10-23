@@ -157,6 +157,8 @@ export type PatchUserType = {
   memo?: string | null;
   nickname?: string | null;
   introduction?: string | null;
+  /** 프로필 상세페이지 본문(Lexical JSON). 보내지 않으면 서버가 기존 값을 유지한다 */
+  description?: string | null;
   profileImgUrl?: string | null;
   corpImgUrl?: string | null;
   sns?: string | null;
