@@ -9,7 +9,11 @@ import LineTableBodyRow, {
   ItemWithStatus,
 } from '@/domain/admin/challenge/ui/lineTable/LineTableBodyRow';
 import LineTableHead from '@/domain/admin/challenge/ui/lineTable/LineTableHead';
-import { formatMissionRoundLabel } from '@/domain/admin/challenge/version/utils/missionVersion';
+import MissionVersionTabs from '@/domain/admin/challenge/version/MissionVersionTabs';
+import {
+  formatMissionRoundLabel,
+  isMissionForVersion,
+} from '@/domain/admin/challenge/version/utils/missionVersion';
 import { Mission } from '@/schema';
 import { TABLE_CONTENT } from '@/utils/convert';
 import React, { useMemo, useState } from 'react';
@@ -34,6 +38,8 @@ const ChallengeOperationAttendances = () => {
   const { currentChallenge } = useAdminCurrentChallenge();
   const missions = useAdminMissionsOfCurrentChallenge();
   const [detailedMission, setDetailedMission] = useState<Mission | null>(null);
+  // null 은 전체. 버전 탭은 그 버전 참여자가 받는 미션만 보여준다
+  const [versionId, setVersionId] = useState<number | null>(null);
 
   const { data: detailedAttendances, refetch } = useGetChallengeAttendances({
     challengeId: currentChallenge?.id,
@@ -42,18 +48,25 @@ const ChallengeOperationAttendances = () => {
 
   const rows = useMemo(() => {
     return (
-      missions?.map((mission) => {
-        return {
-          ...mission,
-          roundLabel: formatMissionRoundLabel(mission),
-          currentAttendance: `${mission.attendanceCount ?? 0}(제출)/${mission.applicationCount ?? 0}(전체)`,
-        };
-      }) ?? []
+      missions
+        ?.filter((mission) => isMissionForVersion(mission, versionId))
+        .map((mission) => {
+          return {
+            ...mission,
+            roundLabel: formatMissionRoundLabel(mission),
+            currentAttendance: `${mission.attendanceCount ?? 0}(제출)/${mission.applicationCount ?? 0}(전체)`,
+          };
+        }) ?? []
     );
-  }, [missions]);
+  }, [missions, versionId]);
 
   return (
     <main>
+      <MissionVersionTabs
+        versions={currentChallenge?.versionList ?? []}
+        value={versionId}
+        onChange={setVersionId}
+      />
       <div className="min-w-[1400px]">
         <LineTableHead
           cellWidthList={cellWidthList}

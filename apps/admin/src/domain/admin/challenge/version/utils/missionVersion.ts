@@ -50,3 +50,17 @@ export const formatMissionRoundLabel = ({
   challengeVersionList.length === 0
     ? `${th}회차`
     : `${th}회차 (${formatMissionVersions(challengeVersionList)})`;
+
+/**
+ * 운영 화면 버전 탭 필터 (LC-3505). versionId 가 null 이면 전체,
+ * 아니면 그 버전 참여자가 받는 미션(공통 + 그 버전이 지정된 미션)만 남긴다
+ */
+export const isMissionForVersion = (
+  { challengeVersionList }: Pick<Mission, 'challengeVersionList'>,
+  versionId: number | null,
+) =>
+  versionId === null ||
+  challengeVersionList.length === 0 ||
+  challengeVersionList.some(
+    (version) => version.challengeVersionId === versionId,
+  );

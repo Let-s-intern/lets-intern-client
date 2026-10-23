@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   formatMissionRoundLabel,
   formatMissionVersions,
+  isMissionForVersion,
   isMissionVersionLocked,
 } from '../missionVersion';
 
@@ -90,5 +91,30 @@ describe('formatMissionRoundLabel', () => {
         ],
       }),
     ).toBe('3회차 (대학생 · 직장인)');
+  });
+});
+
+describe('isMissionForVersion', () => {
+  const common = { challengeVersionList: [] };
+  const studentOnly = {
+    challengeVersionList: [{ challengeVersionId: 1, title: '대학생' }],
+  };
+  const both = {
+    challengeVersionList: [
+      { challengeVersionId: 1, title: '대학생' },
+      { challengeVersionId: 2, title: '직장인' },
+    ],
+  };
+
+  it('전체(null)면 모든 미션을 남긴다', () => {
+    expect(
+      [common, studentOnly, both].every((m) => isMissionForVersion(m, null)),
+    ).toBe(true);
+  });
+
+  it('버전을 고르면 공통 미션과 그 버전이 지정된 미션만 남긴다', () => {
+    expect(isMissionForVersion(common, 2)).toBe(true);
+    expect(isMissionForVersion(studentOnly, 2)).toBe(false);
+    expect(isMissionForVersion(both, 2)).toBe(true);
   });
 });
