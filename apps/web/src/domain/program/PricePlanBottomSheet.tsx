@@ -210,6 +210,7 @@ function PricePlanBottomSheet({
   isOpen,
   onClose,
   showMembershipBenefit = false,
+  onFreeApply,
 }: {
   challenge: ChallengeIdPrimitive;
   challengeId: string;
@@ -219,6 +220,16 @@ function PricePlanBottomSheet({
   onClose: () => void;
   // 올인원패스 혜택(패스회원가/업셀) 노출 — 챌린지 상세에서만 true. 멤버십 랜딩 등은 false.
   showMembershipBenefit?: boolean;
+  // 패스 이용 탭 전용: 무료(차액 0)면 payment-input 대신 이 콜백으로 탭 내 즉시 신청.
+  // 안 넘기면(상세 페이지) 기존처럼 payment-input 으로 이동.
+  onFreeApply?: (payload: {
+    programId: number;
+    priceId?: number;
+    challengeVersionId: number | null;
+    contactEmail: string;
+    orderId: string;
+    title: string;
+  }) => void;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -423,6 +434,20 @@ function PricePlanBottomSheet({
         // 무료로 처리돼 결제창 없이 신청이 넘어가고 서버 결제 승인이 실패했다. 옵션까지 더한 금액으로 본다
         totalPrice === 0);
 
+    // 패스 이용 탭에서 무료(BASIC 차액 0, VOD 미선택)면 payment-input 을 건너뛰고
+    // 탭 내에서 즉시 신청한다. VOD 담으면 isFree=false 라 이 분기를 안 탄다.
+    if (onFreeApply && isFree) {
+      onFreeApply({
+        programId: Number(challengeId),
+        priceId: priceId ?? undefined,
+        challengeVersionId: pricePlan === LIGHT ? null : challengeVersionId,
+        contactEmail: userInfo.contactEmail,
+        orderId,
+        title: challenge.title ?? '',
+      });
+      return;
+    }
+
     setProgramApplicationForm({
       priceId,
       price: finalPriceInfo.regularPrice, // 정가
@@ -476,6 +501,7 @@ function PricePlanBottomSheet({
     challengeId,
     router,
     shouldPassB2BParam,
+    onFreeApply,
   ]);
 
   return (

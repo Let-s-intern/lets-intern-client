@@ -54,6 +54,10 @@ export const useUsageChallenge = (applicationId: number): UsageChallenge => {
       ),
       participation: a.programStatusType === 'POST' ? 'DONE' : 'IN_PROGRESS',
       applicationId: a.id,
+      // 시작한 챌린지만 대시보드 입장(마이페이지 신청내역과 동일 규칙)
+      canEnterDashboard: a.programStartDate
+        ? a.programStartDate.isBefore(dayjs())
+        : false,
       isMembershipApplied:
         a.membershipApplicationId != null
           ? a.membershipApplicationId === applicationId

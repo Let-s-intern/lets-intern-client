@@ -18,6 +18,8 @@ export interface PassProgramCardData {
   programStatusType?: ProgramStatus | null;
   participation: PassParticipation;
   applicationId?: number | null;
+  /** 챌린지 대시보드 입장 가능 여부(시작한 챌린지만). 시작 전이면 상세로 보낸다 */
+  canEnterDashboard?: boolean;
   /** 올인원패스 혜택으로 구매·참여한 프로그램이면 true */
   isMembershipApplied?: boolean;
   isDownloaded?: boolean;
