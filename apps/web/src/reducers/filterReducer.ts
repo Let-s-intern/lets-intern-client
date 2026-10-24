@@ -10,6 +10,7 @@ export const initialFilterType = {
   LIVE: false,
   VOD: false,
   GUIDEBOOK: false,
+  MEMBERSHIP: false,
 };
 export const initialFilterClassification = {
   CAREER_SEARCH: false,

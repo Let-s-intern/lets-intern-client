@@ -26,7 +26,7 @@ import { getKeyByValue } from '@/utils/convert';
 import {
   PROGRAM_FILTER_CLASSIFICATION,
   PROGRAM_FILTER_JOB,
-  PROGRAM_FILTER_TYPE,
+  PROGRAM_FILTER_TYPE_USER,
   PROGRAM_QUERY_KEY,
 } from '@/utils/programConst';
 
@@ -145,7 +145,7 @@ const Programs = () => {
         }
 
         case PROGRAM_QUERY_KEY.TYPE: {
-          const filterKey = getKeyByValue(PROGRAM_FILTER_TYPE, value);
+          const filterKey = getKeyByValue(PROGRAM_FILTER_TYPE_USER, value);
           const isChecked = filterType[filterKey as filterTypekey];
           if (isChecked) {
             typeDispatch({ type: 'uncheck', value: filterKey });

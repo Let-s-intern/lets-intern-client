@@ -112,6 +112,22 @@ export const useLegacyProgramQuery = (args: {
   return useProgramQuery(args);
 };
 
+/**
+ * BE 는 type 이 비면 올인원패스(MEMBERSHIP)를 제외한다. "전체"(type 미선택)에도 섞어
+ * 보여주려면 모든 타입을 명시해야 해서, 유형 필터가 없을 때 이 목록을 붙인다.
+ * BE ProgramType 에 값이 추가되면 여기도 같이 넣어야 "전체"에 노출된다.
+ */
+const ALL_LIST_PROGRAM_TYPES = [
+  'CHALLENGE',
+  'LIVE',
+  'VOD',
+  'REPORT',
+  'GUIDEBOOK',
+  'LIVE_MENTORING',
+  'VOD_PASS',
+  'MEMBERSHIP',
+];
+
 export const useUserProgramQuery = ({
   pageable,
   searchParams,
@@ -126,8 +142,13 @@ export const useUserProgramQuery = ({
         ...pageable,
       })?.map(([key, value]) => `${key}=${value}`);
 
+      const query = new URLSearchParams(searchParams.toString());
+      if (!query.has('type')) {
+        ALL_LIST_PROGRAM_TYPES.forEach((type) => query.append('type', type));
+      }
+
       const res = await axios.get(
-        `/program?${pageableQuery.join('&')}&${searchParams.toString()}`,
+        `/program?${pageableQuery.join('&')}&${query.toString()}`,
       );
 
       return programSchema.parse(res.data.data);
