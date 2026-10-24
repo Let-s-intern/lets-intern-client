@@ -1,4 +1,7 @@
-import { useGetParticipantsQuery } from '@/api/all-in-one-pass/useParticipants';
+import {
+  useGetParticipantsQuery,
+  useRevokeParticipantMutation,
+} from '@/api/all-in-one-pass/useParticipants';
 import EmptyContainer from '@/common/container/EmptyContainer';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import Header from '@/domain/admin/ui/header/Header';
@@ -29,11 +32,18 @@ export default function AllInOnePassUsers() {
     null,
   );
 
-  // TODO: 권한 회수 API 연동 (BE 개발 후)
+  const { mutate: revoke, isPending: isRevoking } =
+    useRevokeParticipantMutation(numericPassId);
+
+  // 돈 환불은 토스에서 수동 처리, 이 버튼은 권한 회수 + 환불 표시만 한다.
   const handleRevoke = (participant: PassParticipant) => {
+    if (isRevoking) return;
     if (!window.confirm(`<${participant.name}>님의 권한을 회수하시겠습니까?`))
       return;
-    snackbar('권한 회수 API 연동 예정입니다.');
+    revoke(participant.id, {
+      onSuccess: () => snackbar('권한을 회수했습니다.'),
+      onError: () => snackbar('권한 회수에 실패했습니다.'),
+    });
   };
 
   return (

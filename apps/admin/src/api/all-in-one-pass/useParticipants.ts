@@ -5,7 +5,7 @@ import {
 } from '@/domain/all-in-one-pass/types';
 import dayjs from '@/lib/dayjs';
 import axios from '@/utils/axios';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 
 /**
@@ -14,7 +14,7 @@ import { z } from 'zod';
  *       GET .../{applicationId}/program (이용 프로그램).
  * BE는 유저 1건(최초 신청 + 연장 리스트)로 주고, FE 테이블은 건별 flat 행을 이메일로 묶으므로
  * 아래 매퍼가 base + 연장들을 flat PassParticipant[] 로 편다.
- * 환불은 멤버십 전용 환불 API 미구현이라 토스에서 직접 처리(FE 버튼 보류).
+ * 권한 회수는 PATCH .../{applicationId}/refund (돈 환불은 토스 수동, 이 API는 권한 회수+환불표시만).
  */
 
 export const participantListQueryKey = 'allInOnePassParticipantList';
@@ -181,3 +181,19 @@ export const useGetUsedProgramsQuery = (
       );
     },
   });
+
+/** 권한 회수(수동 환불 처리) — PATCH .../{applicationId}/refund. 돈 환불은 토스 수동. */
+export const useRevokeParticipantMutation = (passId?: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (membershipApplicationId: number) =>
+      axios.patch(
+        `/admin/membership/${passId}/application/${membershipApplicationId}/refund`,
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [participantListQueryKey, passId],
+      });
+    },
+  });
+};
