@@ -12,6 +12,7 @@ import ReviewsSection from '@/domain/all-in-one-pass/landing/ReviewsSection';
 import HeroSection from '@/domain/all-in-one-pass/landing/HeroSection';
 import IntroSection from '@/domain/all-in-one-pass/landing/IntroSection';
 import LandingNav from '@/domain/all-in-one-pass/landing/LandingNav';
+import PriceSection from '@/domain/all-in-one-pass/landing/PriceSection';
 import { parseLandingDescription } from '@/domain/all-in-one-pass/landing/landingContent';
 import { useCtaState } from '@/domain/all-in-one-pass/landing/useCtaState';
 import MembershipPlanBottomSheet from '@/domain/all-in-one-pass/ui/MembershipPlanBottomSheet';
@@ -91,6 +92,15 @@ export default function AllInOnePassLandingPage() {
       />
       <ReviewsSection reviews={landing.reviews} />
       <LandingLexicalSection lexical={landing.lexical.reviewSection} />
+      <PriceSection
+        passTitle={pass.title}
+        plans={pass.plans}
+        periodDays={pass.periodDays}
+        additionalBenefits={landing.additionalBenefits}
+        ctaText={ctaText}
+        ctaDisabled={ctaDisabled}
+        onStart={handleBuyClick}
+      />
 
       <MembershipPlanBottomSheet
         membershipId={membershipId}
