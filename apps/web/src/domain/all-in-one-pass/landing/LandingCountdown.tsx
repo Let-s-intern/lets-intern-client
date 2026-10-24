@@ -1,9 +1,12 @@
 'use client';
 
+import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 
 interface Props {
   deadline: string | null;
+  /** light = 밝은 배경(기본, Hero 카드) / dark = 어두운 배경(최종 CTA) */
+  variant?: 'light' | 'dark';
 }
 
 interface TimeLeft {
@@ -24,7 +27,10 @@ const calc = (targetMs: number): TimeLeft => {
 };
 
 /** 마감일까지 남은 시간(일/시간/분/초). 매초 갱신. 마감일 없으면 렌더 안 함. */
-export default function LandingCountdown({ deadline }: Props) {
+export default function LandingCountdown({
+  deadline,
+  variant = 'light',
+}: Props) {
   const target = deadline ? new Date(deadline).getTime() : null;
   const [time, setTime] = useState<TimeLeft | null>(() =>
     target ? calc(target) : null,
@@ -47,17 +53,27 @@ export default function LandingCountdown({ deadline }: Props) {
     { value: time.seconds, label: '초' },
   ];
 
+  const isDark = variant === 'dark';
+  const boxClass = isDark ? 'bg-white/10' : 'bg-primary-5';
+  const numClass = isDark ? 'text-white' : 'text-neutral-0';
+  const labelClass = isDark ? 'text-white/60' : 'text-neutral-35';
+
   return (
-    <div className="flex gap-2">
+    <div className="flex w-full gap-2">
       {segments.map(({ value, label }) => (
         <div
           key={label}
-          className="bg-primary-5 flex flex-1 flex-col items-center gap-1.5 rounded-[14px] py-3.5"
+          className={clsx(
+            'flex flex-1 flex-col items-center gap-1.5 rounded-[14px] py-3.5',
+            boxClass,
+          )}
         >
-          <span className="text-xlarge28 text-neutral-0 font-bold tabular-nums">
+          <span
+            className={clsx('text-xlarge28 font-bold tabular-nums', numClass)}
+          >
             {pad(value)}
           </span>
-          <span className="text-xxsmall12 text-neutral-35">{label}</span>
+          <span className={clsx('text-xxsmall12', labelClass)}>{label}</span>
         </div>
       ))}
     </div>
