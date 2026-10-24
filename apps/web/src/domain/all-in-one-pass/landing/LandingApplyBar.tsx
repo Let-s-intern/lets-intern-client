@@ -58,7 +58,7 @@ export default function LandingApplyBar({
   onStart,
 }: Props) {
   return (
-    <div className="fixed inset-x-2 bottom-2 z-[60] mx-auto flex max-w-[1080px] items-stretch gap-3 rounded-lg bg-white/60 p-4 shadow-[0_8px_30px_rgba(0,0,0,0.14)] backdrop-blur-md md:inset-x-3 md:bottom-3 md:items-center md:justify-between md:gap-4 md:py-[14px] md:pl-6 md:pr-[14px]">
+    <div className="fixed inset-x-0 bottom-0 z-[60] mx-auto flex max-w-[1080px] items-stretch gap-3 rounded-none bg-white/60 p-4 shadow-[0_8px_30px_rgba(0,0,0,0.14)] backdrop-blur-md md:inset-x-3 md:bottom-3 md:items-center md:justify-between md:gap-4 md:rounded-lg md:py-[14px] md:pl-6 md:pr-[14px]">
       <div className="flex flex-1 shrink-0 flex-col items-start justify-between gap-1 md:flex-row md:items-center md:gap-3">
         <div className="flex flex-col gap-1">
           <span className="text-neutral-0 whitespace-normal text-[15px] font-bold md:text-[17px]">

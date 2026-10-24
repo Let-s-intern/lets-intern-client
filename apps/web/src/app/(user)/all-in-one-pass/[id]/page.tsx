@@ -64,7 +64,7 @@ export default function AllInOnePassLandingPage() {
   }
 
   return (
-    <main className="pb-28 md:pb-32">
+    <main>
       <HeroSection
         passTitle={pass.title}
         hero={landing.hero}
