@@ -48,8 +48,9 @@ export default function BenefitSummarySection({
   const counts = useBenefitCounts(vodCount);
   const cards = getBenefitCards(plans, additionalBenefits, counts);
 
-  const leftCards = cards.filter((_, i) => i % 2 === 0);
-  const rightCards = cards.filter((_, i) => i % 2 === 1);
+  // 6슬롯(좌 0·2·4 / 우 1·3·5) 고정 배치 — 카드가 적어도 각 자리를 지킨다.
+  const leftSlots = [0, 2, 4];
+  const rightSlots = [1, 3, 5];
 
   const Card = ({
     card,
@@ -91,6 +92,33 @@ export default function BenefitSummarySection({
       '--poke-x': dir === 'left' ? '7px' : '-7px',
     }) as CSSProperties;
 
+  // 한 컬럼(3슬롯) 렌더. 카드가 없는 슬롯은 같은 높이의 빈 자리로 예약한다.
+  const Column = ({
+    slots,
+    dir,
+  }: {
+    slots: number[];
+    dir: 'left' | 'right';
+  }) => (
+    <div
+      className={clsx('flex flex-col gap-12', dir === 'right' && 'items-end')}
+    >
+      {slots.map((cardIndex, pos) => {
+        const card = cards[cardIndex];
+        return card ? (
+          <Card
+            key={card.name}
+            card={card}
+            className="landing-poke md:h-[92px]"
+            style={pokeStyle(pos, dir)}
+          />
+        ) : (
+          <div key={`empty-${cardIndex}`} aria-hidden className="h-[92px]" />
+        );
+      })}
+    </div>
+  );
+
   return (
     <section id="benefit" className="scroll-mt-20 bg-[#F7F8FC]">
       <div className="mx-auto flex w-full max-w-[1040px] flex-col px-5 md:px-0">
@@ -103,26 +131,8 @@ export default function BenefitSummarySection({
 
           <div className="relative mt-14 hidden md:block">
             <div className="flex justify-between px-1">
-              <div className="flex flex-col gap-12">
-                {leftCards.map((card, i) => (
-                  <Card
-                    key={card.name}
-                    card={card}
-                    className="landing-poke"
-                    style={pokeStyle(i, 'left')}
-                  />
-                ))}
-              </div>
-              <div className="flex flex-col items-end gap-12">
-                {rightCards.map((card, i) => (
-                  <Card
-                    key={card.name}
-                    card={card}
-                    className="landing-poke"
-                    style={pokeStyle(i, 'right')}
-                  />
-                ))}
-              </div>
+              <Column slots={leftSlots} dir="left" />
+              <Column slots={rightSlots} dir="right" />
             </div>
 
             {periodDays != null && (
