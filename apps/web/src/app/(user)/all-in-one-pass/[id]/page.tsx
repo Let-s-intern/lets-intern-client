@@ -7,12 +7,15 @@ import { useGetAllInOnePassLanding } from '@/domain/all-in-one-pass/api/landing'
 import { useGetMembershipApplicationForm } from '@/domain/all-in-one-pass/api/purchase';
 import BenefitDetailSection from '@/domain/all-in-one-pass/landing/BenefitDetailSection';
 import BenefitSummarySection from '@/domain/all-in-one-pass/landing/BenefitSummarySection';
-import LandingLexicalSection from '@/domain/all-in-one-pass/landing/LandingLexicalSection';
-import ReviewsSection from '@/domain/all-in-one-pass/landing/ReviewsSection';
+import FaqSection from '@/domain/all-in-one-pass/landing/FaqSection';
+import FinalCtaSection from '@/domain/all-in-one-pass/landing/FinalCtaSection';
 import HeroSection from '@/domain/all-in-one-pass/landing/HeroSection';
 import IntroSection from '@/domain/all-in-one-pass/landing/IntroSection';
+import LandingApplyBar from '@/domain/all-in-one-pass/landing/LandingApplyBar';
+import LandingLexicalSection from '@/domain/all-in-one-pass/landing/LandingLexicalSection';
 import LandingNav from '@/domain/all-in-one-pass/landing/LandingNav';
 import PriceSection from '@/domain/all-in-one-pass/landing/PriceSection';
+import ReviewsSection from '@/domain/all-in-one-pass/landing/ReviewsSection';
 import { parseLandingDescription } from '@/domain/all-in-one-pass/landing/landingContent';
 import { useCtaState } from '@/domain/all-in-one-pass/landing/useCtaState';
 import MembershipPlanBottomSheet from '@/domain/all-in-one-pass/ui/MembershipPlanBottomSheet';
@@ -61,8 +64,9 @@ export default function AllInOnePassLandingPage() {
   }
 
   return (
-    <main>
+    <main className="pb-28 md:pb-32">
       <HeroSection
+        passTitle={pass.title}
         hero={landing.hero}
         periodDays={pass.periodDays}
         deadline={pass.deadline}
@@ -101,6 +105,25 @@ export default function AllInOnePassLandingPage() {
         ctaDisabled={ctaDisabled}
         onStart={handleBuyClick}
       />
+      <FaqSection faqs={pass.faqs} />
+      <FinalCtaSection
+        passTitle={pass.title}
+        finalCta={landing.finalCta}
+        deadline={pass.deadline}
+        ctaText={ctaText}
+        ctaDisabled={ctaDisabled}
+        onStart={handleBuyClick}
+      />
+
+      {!sheetOpen && (
+        <LandingApplyBar
+          passTitle={pass.title}
+          periodDays={pass.periodDays}
+          deadline={pass.deadline}
+          ctaDisabled={ctaDisabled}
+          onStart={handleBuyClick}
+        />
+      )}
 
       <MembershipPlanBottomSheet
         membershipId={membershipId}

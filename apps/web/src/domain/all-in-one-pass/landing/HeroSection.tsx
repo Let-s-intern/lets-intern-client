@@ -5,6 +5,7 @@ import LandingCountdown from './LandingCountdown';
 import type { LandingDescription } from './landingContent';
 
 interface Props {
+  passTitle: string;
   hero: LandingDescription['hero'];
   periodDays: number | null;
   deadline: string | null;
@@ -16,6 +17,7 @@ interface Props {
 
 /** 시안 1 — 히어로. 좌: 카피+CTA / 우: 선착순 모집 카드(카운트다운). */
 export default function HeroSection({
+  passTitle,
   hero,
   periodDays,
   deadline,
@@ -28,6 +30,16 @@ export default function HeroSection({
     ? `구매 시점부터 ${periodDays}일 이용 가능`
     : '구매 즉시 이용 가능';
 
+  // 어드민 미입력 시 패스명·기간으로 기본 카피를 채운다.
+  const title = hero.title?.trim()
+    ? hero.title
+    : periodDays
+      ? `${passTitle} ${periodDays}일 간의 혜택`
+      : `${passTitle}로 누리는 취준 혜택`;
+  const description = hero.description?.trim()
+    ? hero.description
+    : '자소서·포트폴리오부터 인적성·면접까지,\n취준에 필요한 모든 준비를 하나의 패스로 끝내세요.';
+
   return (
     <section className="bg-gradient-to-br from-white/30 to-[#3378E0]/30">
       <div className="mx-auto flex w-full max-w-[1000px] flex-col gap-8 px-5 py-14 md:flex-row md:items-center md:gap-12 md:px-0 md:py-20">
@@ -37,10 +49,10 @@ export default function HeroSection({
               {badge}
             </span>
             <h1 className="text-xlarge28 text-neutral-0 whitespace-pre-line font-extrabold leading-[38px] md:text-[44px] md:leading-[62px]">
-              {hero.title}
+              {title}
             </h1>
             <p className="text-xsmall14 md:text-small20 text-neutral-35 whitespace-pre-line">
-              {hero.description}
+              {description}
             </p>
           </div>
           <div className="flex flex-col items-center gap-3 md:flex-row md:gap-5">
