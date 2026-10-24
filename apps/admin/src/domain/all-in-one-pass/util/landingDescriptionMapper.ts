@@ -15,8 +15,8 @@ import {
 /**
  * 랜딩 페이지용 `landingDescription`(JSON) ↔ 폼 PassLandingConfig 변환.
  *
- * 랜딩은 description이 아니라 이 필드만 읽는다(비구매자 노출 페이지). 민감 정보(외부링크
- * url 등)는 담지 않는다. 확장형 — 필드가 늘면 여기에 추가한다.
+ * 랜딩은 description이 아니라 이 필드만 읽음(비구매자 노출 페이지). 민감 정보(외부링크
+ * url 등)는 담지 않음. 확장형 — 필드가 늘면 여기에 추가.
  */
 interface LandingDescriptionBlob {
   hero: PassLandingConfig['hero'];
@@ -54,8 +54,8 @@ export const createEmptyLandingConfig = (): PassLandingConfig => ({
  * landingDescription(JSON) → 폼 PassLandingConfig.
  *
  * 추가혜택은 저장 시 name 만 남고 출처(외부링크/수동) 구분이 사라지므로, 외부링크 목록의
- * name 과 매칭해 되살린다: name 이 외부링크와 같으면 그 링크 id 의 benefitExtras 로, 아니면
- * manualBenefits 로 복원한다. (링크명을 나중에 바꾸면 매칭이 끊겨 수동분으로 떨어질 수 있다)
+ * name 과 매칭해 되살림: name 이 외부링크와 같으면 그 링크 id 의 benefitExtras 로, 아니면
+ * manualBenefits 로 복원. (링크명을 나중에 바꾸면 매칭이 끊겨 수동분으로 떨어질 수 있음)
  */
 export const toLandingConfig = (
   landingDescription: string | null | undefined,

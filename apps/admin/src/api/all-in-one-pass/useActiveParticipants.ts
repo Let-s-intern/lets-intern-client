@@ -1,4 +1,4 @@
-// A-8 참여중 유저 목록·기간 내역 조회 (실 API).
+// 참여중 유저 목록·기간 내역 조회.
 // 목록=GET /admin/membership/application(서버 페이지네이션), 기간=/{id}/period.
 import {
   ActivePassParticipant,

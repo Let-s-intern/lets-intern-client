@@ -6,7 +6,6 @@ import RoundListSection from '@/domain/all-in-one-pass/section/RoundListSection'
 import { MenuItem, TextField } from '@mui/material';
 import { useState } from 'react';
 
-/** A-4 회고 관리 (패스별) */
 export default function AllInOnePassRetrospectives() {
   const { data: passes = [] } = useGetAllInOnePassListQuery();
   const [selectedId, setSelectedId] = useState<number | null>(null);

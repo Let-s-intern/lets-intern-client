@@ -29,7 +29,7 @@ interface Props {
   isLoading?: boolean;
 }
 
-/** A-7 자료집 추가/수정 모달 (유형: 등록된 것 선택 또는 직접입력) */
+/** 자료집 추가/수정 모달 (유형: 등록된 것 선택 또는 직접입력) */
 export default function MaterialFormModal({
   benefit,
   isEdit,

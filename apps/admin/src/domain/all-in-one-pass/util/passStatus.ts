@@ -2,11 +2,11 @@ import dayjs from '@/lib/dayjs';
 import { AllInOnePassListItem, PassRecruitmentStatus } from '../types';
 
 /**
- * 모집상태는 저장하지 않고 구매 가능 기간으로 파생한다.
+ * 모집상태는 저장하지 않고 구매 가능 기간으로 파생.
  * - now < 시작일        → 모집 전(BEFORE)
  * - 시작일 ≤ now ≤ 종료일 → 모집 중(PROCEEDING)
  * - now > 종료일        → 모집 마감(CLOSED)
- * 시작일이 없으면 이미 시작한 것으로, 종료일이 없으면 마감되지 않는 것으로 본다.
+ * 시작일이 없으면 이미 시작한 것으로, 종료일이 없으면 마감되지 않는 것으로 봄.
  */
 export const getPassRecruitmentStatus = (
   pass: Pick<AllInOnePassListItem, 'purchaseStartDate' | 'purchaseEndDate'>,

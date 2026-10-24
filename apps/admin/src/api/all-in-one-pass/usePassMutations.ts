@@ -16,8 +16,8 @@ import { useMutation } from '@tanstack/react-query';
  * 올인원패스(멤버십) 생성/수정 뮤테이션.
  *
  * 생성은 plan/option/faq 를 한 번에 POST. 수정(PATCH)은 basic + faq + planList
- * 를 함께 보내 플랜·권한을 full-sync 한다(생성/수정/권한 add·remove 자동 반영).
- * 플랜 "삭제"만 planList 로 처리되지 않아 전용 DELETE 엔드포인트를 쓴다.
+ * 를 함께 보내 플랜·권한을 full-sync(생성/수정/권한 add·remove 자동 반영).
+ * 플랜 "삭제"만 planList 로 처리되지 않아 전용 DELETE 엔드포인트 사용.
  * 자료집은 별도 글로벌 풀(useBenefits)로 관리.
  */
 
@@ -55,7 +55,6 @@ export const useUpdateAllInOnePassMutation = ({
     onError: errorCallback,
   });
 
-/** 플랜 삭제 (DELETE /membership/{id}/plan/{planId}) */
 export const useDeleteAllInOnePassPlanMutation = ({
   successCallback,
   errorCallback,
@@ -79,7 +78,7 @@ export const useDeleteAllInOnePassPlanMutation = ({
 
 /**
  * 연장 옵션 sync (수정 페이지). 신규=POST / 기존=PATCH / 빠진 것=DELETE.
- * ※ 상세 응답에 optionList 가 생기기 전엔 original 이 비어 매번 POST(중복 생성) 된다.
+ * ※ 상세 응답에 optionList 가 생기기 전엔 original 이 비어 매번 POST(중복 생성).
  */
 export const useSyncAllInOnePassOptionsMutation = ({
   successCallback,

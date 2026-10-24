@@ -45,7 +45,6 @@ type ModalTarget =
   | { mode: 'create' }
   | { mode: 'edit'; notice: AllInOnePassNotice };
 
-/** A-3 공지 / 가이드 관리 */
 export default function AllInOnePassNotices() {
   const queryClient = useQueryClient();
   const { snackbar } = useAdminSnackbar();

@@ -17,7 +17,7 @@ import { Link, useParams } from 'react-router-dom';
 
 /**
  * 올인원패스 참여자 조회 (참여자 목록 + 이용 프로그램 조회 + 권한 회수).
- * 환불은 멤버십 전용 환불 API 미구현이라 토스페이먼츠에서 직접 처리한다.
+ * 환불은 멤버십 전용 환불 API 미구현이라 토스페이먼츠에서 직접 처리.
  */
 export default function AllInOnePassUsers() {
   const { passId } = useParams();
@@ -35,7 +35,7 @@ export default function AllInOnePassUsers() {
   const { mutate: revoke, isPending: isRevoking } =
     useRevokeParticipantMutation(numericPassId);
 
-  // 돈 환불은 토스에서 수동 처리, 이 버튼은 권한 회수 + 환불 표시만 한다.
+  // 돈 환불은 토스에서 수동 처리, 이 버튼은 권한 회수 + 환불 표시만.
   const handleRevoke = (participant: PassParticipant) => {
     if (isRevoking) return;
     if (!window.confirm(`<${participant.name}>님의 권한을 회수하시겠습니까?`))

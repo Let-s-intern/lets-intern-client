@@ -27,7 +27,7 @@ import { IoArrowBack } from 'react-icons/io5';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 
 /**
- * A-5 회고 응답 조회. 질문 탭으로 답변을 전환해 보고, 코멘트는 제출자(회차)별 1개.
+ * 회고 응답 조회. 질문 탭으로 답변을 전환해 보고, 코멘트는 제출자(회차)별 1개.
  * 응답=GET /admin/membership-ordinal/by-round(membershipId·th), 코멘트=PATCH/DELETE feedback.
  */
 export default function AllInOnePassRetrospectiveResponses() {

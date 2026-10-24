@@ -26,7 +26,6 @@ import { useEffect, useState } from 'react';
 import { IoArrowBack } from 'react-icons/io5';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
-/** A-2 올인원패스 수정 */
 export default function AllInOnePassEdit() {
   const { passId } = useParams();
   const numericPassId = passId ? Number(passId) : undefined;
@@ -53,7 +52,7 @@ export default function AllInOnePassEdit() {
 
   /**
    * 저장: 폼에서 빠진 기존 플랜을 DELETE 한 뒤, 기본정보 + 플랜/권한을
-   * planList inline 으로 한 번에 PATCH(full-sync) 한다.
+   * planList inline 으로 한 번에 PATCH(full-sync).
    */
   const handleSave = async () => {
     if (!input || numericPassId == null) return;

@@ -31,7 +31,7 @@ type ModalTarget =
   | { mode: 'create' }
   | { mode: 'edit'; benefit: AllInOnePassBenefit };
 
-/** A-7 자료집 관리 (글로벌 풀 CRUD + 노출 영역 관리) */
+/** 자료집 관리 (글로벌 풀 CRUD + 노출 영역 관리) */
 export default function AllInOnePassMaterials() {
   const queryClient = useQueryClient();
   const { snackbar } = useAdminSnackbar();

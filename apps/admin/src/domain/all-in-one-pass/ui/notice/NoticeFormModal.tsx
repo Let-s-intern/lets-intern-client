@@ -20,7 +20,7 @@ interface Props {
   isLoading?: boolean;
 }
 
-/** A-3 공지·가이드 추가/수정 모달 */
+/** 공지·가이드 추가/수정 모달 */
 export default function NoticeFormModal({
   open,
   isEdit,

@@ -5,8 +5,8 @@ interface Props {
 }
 
 /**
- * A-4 공통 질문 (수정 불가·조회 전용). 운영팀 확정 문구이며 백엔드가 시드한다.
- * 전 회차가 공유하는 질문으로, 패스별로 BE에서 조회한다.
+ * 공통 질문 (수정 불가·조회 전용). 운영팀 확정 문구, 백엔드 시드.
+ * 전 회차가 공유하는 질문으로, 패스별로 BE에서 조회.
  */
 export default function CommonQuestionSection({ passId }: Props) {
   const { data: questions = [], isLoading } =

@@ -8,7 +8,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 
 /**
- * A-4/A-5 회고 훅. 공통·회차 질문(A-4), 응답 조회·코멘트(A-5) 모두 실 API.
+ * 회고 훅. 공통·회차 질문, 응답 조회·코멘트.
  * 공통 질문은 조회 전용(수정 불가).
  */
 
@@ -115,7 +115,7 @@ export const useUpdateOrdinalQuestionsMutation = ({
     onError: errorCallback,
   });
 
-// ── 응답 목록 (A-5): 특정 패스·회차 전체 참여자 ──────
+// ── 응답 목록: 특정 패스·회차 전체 참여자 ──────
 const ordinalAnswerSchema = z.object({
   membershipQuestionId: z.number(),
   common: z.boolean().nullish(),
@@ -171,7 +171,6 @@ export const useGetRetrospectiveResponsesQuery = (params?: {
     },
   });
 
-/** 회차 코멘트 등록·수정 (PATCH /{ordinalId}/feedback) */
 export const useUpdateOrdinalFeedbackMutation = ({
   successCallback,
   errorCallback,
@@ -194,7 +193,6 @@ export const useUpdateOrdinalFeedbackMutation = ({
     onError: errorCallback,
   });
 
-/** 회차 코멘트 삭제 (DELETE /{ordinalId}/feedback) */
 export const useDeleteOrdinalFeedbackMutation = ({
   successCallback,
   errorCallback,

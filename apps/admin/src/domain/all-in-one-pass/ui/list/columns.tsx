@@ -11,7 +11,7 @@ import VisibilityToggle from './VisibilityToggle';
 // 유저 랜딩(비구매자용)으로 이동하는 외부 링크 호스트.
 const WEB_URL = import.meta.env.VITE_WEB_URL ?? '/';
 
-/** A-1 개설 목록 컬럼 */
+/** 개설 목록 컬럼 */
 export const getListColumns = (): GridColDef<AllInOnePassListItem>[] => [
   {
     field: 'createdAt',

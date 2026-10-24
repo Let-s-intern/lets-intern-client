@@ -14,7 +14,7 @@ interface Props {
 }
 
 /**
- * 썸네일/이미지 업로드. 파일을 S3 로 업로드하고 반환된 URL 을 onChange 로 넘긴다.
+ * 썸네일/이미지 업로드. 파일을 S3 로 업로드하고 반환된 URL 을 onChange 로 넘김.
  */
 export default function ThumbnailUpload({
   value,

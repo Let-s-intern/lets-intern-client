@@ -59,7 +59,7 @@ const submitRangeLabel = (row: RetrospectiveRound) => {
   return `${start} ~ ${end}`;
 };
 
-/** A-4 회차별 질문·답변 가이드 수정 (회차는 BE 자동 생성) */
+/** 회차별 질문·답변 가이드 수정 (회차는 BE 자동 생성) */
 export default function RoundListSection({ passId }: Props) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();

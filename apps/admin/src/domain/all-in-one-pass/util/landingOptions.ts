@@ -61,7 +61,7 @@ const CORE_BENEFIT_PRESETS: Record<PassPermission, CoreBenefit> = {
   },
   LIVE_CLASS_ALL_IN_ONE: {
     name: 'LIVE 세미나',
-    description: '현직자가 전하는 실시간 세미나', // TODO: 문구 확정 필요
+    description: '현직자가 전하는 실시간 세미나',
     iconKey: 'liveSeminar',
   },
 };
@@ -132,7 +132,7 @@ export const isReviewEmpty = (r: PassLandingReview): boolean =>
   !r.source && !r.imageUrl && !r.summary && r.resultTags.length === 0;
 
 // 생성 폼 기본 후기 6종(출처·결과태그·요약·이미지 프리필). 아무것도 안 건드리고 저장해도
-// 이 6개가 랜딩에 노출된다. 수정·삭제·추가(최대 9) 가능. 이미지는 web·admin public 공통 경로.
+// 이 6개가 랜딩에 노출. 수정·삭제·추가(최대 9) 가능. 이미지는 web·admin public 공통 경로.
 const DEFAULT_REVIEW_SEEDS: Array<Omit<PassLandingReview, 'id'>> = [
   {
     source: '인스타그램 DM',

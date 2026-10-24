@@ -20,7 +20,7 @@ interface Props {
   onClose: () => void;
 }
 
-/** 1.7 FAQ 추가/수정 모달 (유형: 등록된 것 선택 또는 직접입력) */
+/** FAQ 추가/수정 모달 (유형: 등록된 것 선택 또는 직접입력) */
 export default function FaqModal({
   faq,
   isEdit,

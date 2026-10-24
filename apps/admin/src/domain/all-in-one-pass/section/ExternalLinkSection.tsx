@@ -13,7 +13,7 @@ interface Props {
   onChange: (links: PassExternalLink[]) => void;
 }
 
-/** 1.4 외부 링크: 링크명 + URL (대시보드/랜딩에서 새 탭 이동) */
+/** 외부 링크: 링크명 + URL (대시보드/랜딩에서 새 탭 이동) */
 export default function ExternalLinkSection({ links, onChange }: Props) {
   const update = (id: string, partial: Partial<PassExternalLink>) =>
     onChange(links.map((l) => (l.id === id ? { ...l, ...partial } : l)));

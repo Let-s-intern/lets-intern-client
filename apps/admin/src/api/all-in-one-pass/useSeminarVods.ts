@@ -3,9 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 /**
  * seminar-vod 공개 목록 조회 (노출 VOD 선택 모달용).
  *
- * 외부 호스트(seminar-vod.letscareer.co.kr)라 CORS 때문에 직접 못 부른다. same-origin
- * `/seminar-vods` 로 요청하고 프록시가 외부로 넘긴다 — dev=vite proxy, prod=vercel rewrite.
- * axios(baseURL=메인 BE) 가 아니라 fetch 로 same-origin 호출한다.
+ * 외부 호스트(seminar-vod.letscareer.co.kr)라 CORS 때문에 직접 못 부름. same-origin
+ * `/seminar-vods` 로 요청하고 프록시가 외부로 넘김 — dev=vite proxy, prod=vercel rewrite.
+ * axios(baseURL=메인 BE) 가 아니라 fetch 로 same-origin 호출.
  */
 export interface SeminarVod {
   id: number;

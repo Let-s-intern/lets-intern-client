@@ -33,7 +33,7 @@ interface Props {
   passDays?: number | null;
 }
 
-/** 1.3 캘린더 관리: 게릴라세션·마일스톤 일정 수기 입력 (챌린지는 자동 반영) */
+/** 캘린더 관리: 게릴라세션·마일스톤 일정 수기 입력 (챌린지는 자동 반영) */
 export default function CalendarSection({
   events,
   onChange,

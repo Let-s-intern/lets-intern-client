@@ -142,7 +142,7 @@ export default function LandingBenefitEditor({
   onManualBenefitsChange,
 }: Props) {
   const coreBenefits = getCoreBenefits(plans);
-  // 자동 포함 혜택이 차지한 뒤 남는 슬롯. 외부링크(상단부터) → 수동 순으로 채운다.
+  // 자동 포함 혜택이 차지한 뒤 남는 슬롯. 외부링크(상단부터) → 수동 순으로 채움.
   const additionalSlots = getAdditionalBenefitSlots(plans);
   const visibleLinks = externalLinks.slice(0, additionalSlots);
   const manualSlots = Math.max(additionalSlots - visibleLinks.length, 0);

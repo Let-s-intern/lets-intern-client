@@ -15,7 +15,6 @@ import { Button } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-/** A-2 올인원패스 생성 */
 export default function AllInOnePassCreate() {
   const navigate = useNavigate();
   const { snackbar } = useAdminSnackbar();

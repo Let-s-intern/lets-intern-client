@@ -18,9 +18,9 @@ interface Props {
 }
 
 /**
- * 1.7 FAQ: 질문/답변은 전 멤버십 공통 풀(/faq, type=MEMBERSHIP)에서 CRUD 하고,
+ * FAQ: 질문/답변은 전 멤버십 공통 풀(/faq, type=MEMBERSHIP)에서 CRUD 하고,
  * 각 항목의 체크박스로 "이 패스에 노출할" FAQ 를 고른다(챌린지 faqInfo 방식).
- * 선택된 faqId 는 폼(faqList)에 담겨 생성/수정 payload 로 전송된다.
+ * 선택된 faqId 는 폼(faqList)에 담겨 생성/수정 payload 로 전송.
  */
 export default function FaqSection({ selectedIds, onChange }: Props) {
   const { snackbar } = useAdminSnackbar();

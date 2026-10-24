@@ -19,7 +19,7 @@ interface Props {
   apps: PassParticipant[];
 }
 
-/** 참여자 건별(최초/연장) 내역 행들. 메인 테이블의 <tr> 로 직접 렌더해 컬럼을 공유한다. */
+/** 참여자 건별(최초/연장) 내역 행들. 메인 테이블의 <tr> 로 직접 렌더해 컬럼 공유. */
 export default function ParticipantDetailRows({ apps }: Props) {
   return (
     <>
@@ -72,17 +72,7 @@ export default function ParticipantDetailRows({ apps }: Props) {
             <td className={`${SUB_CELL}${edge}`}>
               {amount.toLocaleString()}원
             </td>
-            {/* 멤버십 전용 환불 API 미구현 → 토스에서 직접 처리. BE 환불 나오면 아래 주석 복구.
-            <td className={`${SUB_CELL}${edge}`}>
-              {refundable.canRefund ? (
-                <div className="flex justify-center gap-1">
-                  <button onClick={() => onRefundClick(refundTargetOf(p), 'full')}>환불</button>
-                  <button onClick={() => onRefundClick(refundTargetOf(p), 'partial')} disabled={!refundable.canPartialRefund}>부분환불</button>
-                </div>
-              ) : (
-                <span>{refundable.reason}</span>
-              )}
-            </td> */}
+            {/* BE 환불 나오면 full/partial 환불 버튼 복구 (git 이력 참고) */}
             <td className={`${SUB_CELL}${edge}`}>
               <span className="text-xxsmall12 text-neutral-45">
                 토스에서 환불 후 <strong>권한 회수</strong>

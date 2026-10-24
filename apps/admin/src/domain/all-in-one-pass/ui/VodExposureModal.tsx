@@ -53,7 +53,7 @@ export default function VodExposureModal({
     );
 
   const handleSave = () => {
-    // 3개를 다 고르면 그대로, 아니면(0·1·2) 기본 VOD(25·27·34)로 대체한다.
+    // 3개 다 고르면 그대로, 아니면(0·1·2) 기본 VOD(25·27·34)로 대체.
     const ids =
       selectedIds.length === REQUIRED_COUNT ? selectedIds : DEFAULT_VOD_IDS;
     const picked = ids.flatMap((id) => {

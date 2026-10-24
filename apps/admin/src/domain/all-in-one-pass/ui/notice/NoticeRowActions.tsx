@@ -9,7 +9,7 @@ interface Props {
   onDelete: (notice: AllInOnePassNotice) => void;
 }
 
-/** A-3 목록 행 관리: 수정 · 삭제 */
+/** 목록 행 관리: 수정 · 삭제 */
 export default function NoticeRowActions({ notice, onEdit, onDelete }: Props) {
   return (
     <div className="flex h-full items-center gap-2">

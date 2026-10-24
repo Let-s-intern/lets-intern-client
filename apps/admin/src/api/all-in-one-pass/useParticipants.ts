@@ -13,7 +13,7 @@ import { z } from 'zod';
  * 서버: GET /admin/membership/{id}/application (신청자 목록, 최초+연장 nested),
  *       GET .../{applicationId}/program (이용 프로그램).
  * BE는 유저 1건(최초 신청 + 연장 리스트)로 주고, FE 테이블은 건별 flat 행을 이메일로 묶으므로
- * 아래 매퍼가 base + 연장들을 flat PassParticipant[] 로 편다.
+ * 아래 매퍼가 base + 연장들을 flat PassParticipant[] 로 펼침.
  * 권한 회수는 PATCH .../{applicationId}/refund (돈 환불은 토스 수동, 이 API는 권한 회수+환불표시만).
  */
 

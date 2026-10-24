@@ -13,7 +13,7 @@ interface Props {
   onClose: () => void;
 }
 
-/** A-7 자료집 노출 영역 관리 (ExposureModal + 자료집 노출 PATCH) */
+/** 자료집 노출 영역 관리 (ExposureModal + 자료집 노출 PATCH) */
 export default function MaterialExposureModal({ benefit, onClose }: Props) {
   const queryClient = useQueryClient();
   const { snackbar } = useAdminSnackbar();

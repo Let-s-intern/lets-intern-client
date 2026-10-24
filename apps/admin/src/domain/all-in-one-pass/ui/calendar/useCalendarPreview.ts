@@ -27,7 +27,7 @@ interface Params {
 }
 
 /**
- * 캘린더 미리보기 로직: 2주(14일) 창을 계산한다. 이동 가능 범위,
+ * 캘린더 미리보기 로직: 2주(14일) 창을 계산. 이동 가능 범위,
  * 표시 항목(items), lane 패킹까지 계산하고 렌더는 Modal/WeekRow 가 담당.
  */
 export function useCalendarPreview({

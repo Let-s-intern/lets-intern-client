@@ -18,7 +18,7 @@ const rangeLabel = (p: ActivePassParticipant) =>
       )}`
     : '-';
 
-/** A-8 참여중 유저 목록 (전 패스 통합 · 현재 참여중) */
+/** 참여중 유저 목록 (전 패스 통합 · 현재 참여중) */
 export default function AllInOnePassParticipants() {
   const [historyTarget, setHistoryTarget] =
     useState<ActivePassParticipant | null>(null);
