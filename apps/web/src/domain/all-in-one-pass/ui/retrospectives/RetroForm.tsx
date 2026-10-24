@@ -92,7 +92,10 @@ const RetroForm = ({
         membershipReviewId: q.membershipReviewId,
       }));
     if (items.length === 0) return;
-    submit.mutate(items);
+    submit.mutate(items, {
+      onSuccess: () => alert(isEdit ? '수정되었습니다.' : '제출되었습니다.'),
+      onError: () => alert('제출에 실패했습니다. 다시 시도해주세요.'),
+    });
   };
 
   return (
