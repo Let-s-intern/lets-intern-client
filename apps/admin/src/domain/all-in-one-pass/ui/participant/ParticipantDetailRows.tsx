@@ -90,9 +90,8 @@ export default function ParticipantDetailRows({ apps }: Props) {
             </td>
             <td className={`${SUB_CELL} ${BOLD_R}${edge}`}>
               {refundLabel.isAdmin ? (
-                <span className="font-bold text-red-600">
-                  {refundLabel.text}
-                </span>
+                // 멤버십 환불 = 권한 회수(돈 환불 아님)라 공용 "어드민 N 환불" 대신 전용 문구.
+                <span className="font-bold text-red-600">권한 회수 완료</span>
               ) : refundLabel.isRefunded ? (
                 <span className="font-medium">{refundLabel.text}</span>
               ) : (
