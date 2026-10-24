@@ -1,4 +1,4 @@
-/** 올인원패스(멤버십) 어드민 타입. (회고·참여자는 BE 대기로 아직 mock) */
+/** 올인원패스(멤버십) 어드민 타입. */
 
 /** 모집상태 (구매 가능 기간으로 파생 · util/passStatus.ts) */
 export type PassRecruitmentStatus = 'BEFORE' | 'PROCEEDING' | 'CLOSED';
@@ -209,12 +209,15 @@ export interface PassParticipant {
  * 목록의 [자세히 보기]로 펼쳐 본다.
  */
 export interface PassParticipationPeriod {
-  applicationId: string; // 주문번호 (연장마다 새 application)
+  type: string; // PASS(패스 기간) | EXTENSION(연장)
+  title: string; // 라벨 — "패스 기간" / "N일 연장" (BE 제공)
+  orderId: string; // 주문번호
   paidAt: string; // 결제일
-  startDate: string; // 이용 시작일 — 최초로 고정(한 유저의 모든 건 동일)
-  endDate: string; // 이용 종료일 — 연장마다 누적 증가
-  extendedDays: number | null; // 연장 일수(연장 건만 · 최초=null). 커버 구간=[직전 종료+1, endDate]
-  price: number; // 결제 금액(원) — 연장은 연장분만
+  finalPrice: number; // 결제 금액(원)
+  days: number; // 구간 일수
+  startDate: string; // 구간 시작(BE가 연속 구간으로 제공)
+  endDate: string; // 구간 종료
+  isRefunded: boolean;
 }
 
 /**
@@ -225,11 +228,16 @@ export interface PassParticipationPeriod {
  * 요약(연장 반영)하고, 건별 내역은 periods(application 목록)로 펼친다.
  */
 export interface ActivePassParticipant {
-  id: string; // 행 식별자 = 최신(대표) 주문번호
+  id: number; // 행 식별자 = membershipApplicationId (기간 조회용)
+  orderId: string; // 주문번호(표시)
   name: string; // 이름
   email: string; // 이메일
   passTitle: string; // 참여 올인원패스
-  periods: PassParticipationPeriod[]; // [0]=최초, 이후 연장. 요약=첫 시작~마지막 종료
+  startDate: string; // 이용 시작(최초)
+  endDate: string; // 이용 종료(연장 누적)
+  totalDays: number; // 총 이용 일수
+  totalPayment: number; // 총 결제 금액(원)
+  extensionCount: number; // 연장 횟수
 }
 
 export interface RetrospectiveCommonQuestion {
