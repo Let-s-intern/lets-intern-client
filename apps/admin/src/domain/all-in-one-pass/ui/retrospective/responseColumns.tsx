@@ -50,7 +50,12 @@ export const getResponseColumns = ({
     field: 'submittedAt',
     headerName: '제출일',
     width: 170,
-    valueFormatter: (value) => dayjs(value).format('YYYY.MM.DD HH:mm'),
+    renderCell: ({ row }) =>
+      row.submitted ? (
+        dayjs(row.submittedAt).format('YYYY.MM.DD HH:mm')
+      ) : (
+        <span className="text-neutral-40">제출 안 함</span>
+      ),
   },
   {
     field: 'answer',
@@ -124,6 +129,7 @@ export const getResponseColumns = ({
             variant="outlined"
             color={has ? 'info' : 'primary'}
             size="small"
+            disabled={!row.submitted}
             onClick={() => onOpenComment(row)}
           >
             {has ? '조회' : '등록'}

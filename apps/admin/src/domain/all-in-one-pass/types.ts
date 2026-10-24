@@ -262,10 +262,12 @@ export interface RetrospectiveAnswer {
   answer: string;
 }
 
-/** A-5 회고 응답 한 건 */
+/** A-5 회고 응답 한 건 (id = ordinalId, 코멘트 PATCH/DELETE 대상) */
 export interface RetrospectiveResponse {
   id: number;
   submitterName: string;
   submittedAt: string;
+  submitted: boolean; // 제출 여부(답변 1개 이상이면 true)
   answers: RetrospectiveAnswer[];
+  adminFeedback: string | null; // 회차 코멘트
 }

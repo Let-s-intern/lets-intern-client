@@ -1,8 +1,12 @@
 import { useGetAllInOnePassListQuery } from '@/api/all-in-one-pass/usePassList';
 import {
+  retrospectiveResponsesQueryKey,
+  useDeleteOrdinalFeedbackMutation,
   useGetRetrospectiveResponsesQuery,
   useGetRetrospectiveRoundsQuery,
+  useUpdateOrdinalFeedbackMutation,
 } from '@/api/all-in-one-pass/useRetrospectives';
+import { useQueryClient } from '@tanstack/react-query';
 import EmptyContainer from '@/common/container/EmptyContainer';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import { RetrospectiveResponse } from '@/domain/all-in-one-pass/types';
@@ -23,8 +27,8 @@ import { IoArrowBack } from 'react-icons/io5';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 
 /**
- * A-5 회고 응답 조회. 질문 탭으로 답변을 전환해 보고, 코멘트는 제출자(유저)별 1개.
- * 현재 로컬 상태 = mock, 추후 실 API(PATCH/DELETE)로 교체.
+ * A-5 회고 응답 조회. 질문 탭으로 답변을 전환해 보고, 코멘트는 제출자(회차)별 1개.
+ * 응답=GET /admin/membership-ordinal/by-round(membershipId·th), 코멘트=PATCH/DELETE feedback.
  */
 export default function AllInOnePassRetrospectiveResponses() {
   const { retrospectiveId } = useParams();
@@ -37,13 +41,16 @@ export default function AllInOnePassRetrospectiveResponses() {
   const passName = passes.find((p) => p.id === passId)?.title;
 
   const { data: rounds = [] } = useGetRetrospectiveRoundsQuery(passId);
+  const round = rounds.find((r) => r.id === roundId);
   const {
     data: responses = [],
     isLoading,
     error,
-  } = useGetRetrospectiveResponsesQuery(roundId);
+  } = useGetRetrospectiveResponsesQuery({
+    membershipId: passId,
+    th: round?.round,
+  });
 
-  const round = rounds.find((r) => r.id === roundId);
   const tabs = useMemo(
     () => buildResponseTabs(responses, roundId),
     [responses, roundId],
@@ -55,28 +62,35 @@ export default function AllInOnePassRetrospectiveResponses() {
     .flatMap((r) => r.answers)
     .find((a) => a.questionId === activeId)?.questionLabel;
 
-  const [commentMap, setCommentMap] = useState<Record<number, string>>({});
   const [target, setTarget] = useState<RetrospectiveResponse | null>(null);
   const [draft, setDraft] = useState('');
   const [answerView, setAnswerView] = useState<AnswerView | null>(null);
 
+  const queryClient = useQueryClient();
+  const closeAndRefetch = () => {
+    queryClient.invalidateQueries({
+      queryKey: [retrospectiveResponsesQueryKey],
+    });
+    setTarget(null);
+  };
+  const { mutate: updateFeedback } = useUpdateOrdinalFeedbackMutation({
+    successCallback: closeAndRefetch,
+  });
+  const { mutate: deleteFeedback } = useDeleteOrdinalFeedbackMutation({
+    successCallback: closeAndRefetch,
+  });
+
   const openComment = (res: RetrospectiveResponse) => {
     setTarget(res);
-    setDraft(commentMap[res.id] ?? '');
+    setDraft(res.adminFeedback ?? '');
   };
   const saveComment = () => {
     if (!target) return;
-    setCommentMap((prev) => ({ ...prev, [target.id]: draft.trim() }));
-    setTarget(null);
+    updateFeedback({ ordinalId: target.id, adminFeedback: draft.trim() });
   };
   const deleteComment = () => {
     if (!target) return;
-    setCommentMap((prev) => {
-      const next = { ...prev };
-      delete next[target.id];
-      return next;
-    });
-    setTarget(null);
+    deleteFeedback(target.id);
   };
 
   const { paginationModel, handlePaginationModelChange } =
@@ -84,7 +98,7 @@ export default function AllInOnePassRetrospectiveResponses() {
 
   const columns = getResponseColumns({
     activeId,
-    hasComment: (id) => !!commentMap[id],
+    hasComment: (id) => !!responses.find((r) => r.id === id)?.adminFeedback,
     onOpenComment: openComment,
     onViewAnswer: setAnswerView,
   });
@@ -170,7 +184,7 @@ export default function AllInOnePassRetrospectiveResponses() {
         response={target}
         value={draft}
         onChange={setDraft}
-        hasComment={!!(target && commentMap[target.id])}
+        hasComment={!!target?.adminFeedback}
         passName={passName}
         onSave={saveComment}
         onDelete={deleteComment}
