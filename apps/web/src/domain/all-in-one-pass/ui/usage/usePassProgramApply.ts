@@ -8,6 +8,7 @@ import {
 } from '@/api/application';
 import { generateOrderId } from '@/lib/order';
 import { useQueryClient } from '@tanstack/react-query';
+import { useToast } from '@letscareer/ui';
 import { useState } from 'react';
 
 export type UsageApplyType = 'guidebook' | 'live';
@@ -20,6 +21,7 @@ interface ApplyTarget {
 /** 나의 혜택 이용 탭의 0원 신청 — payment-input 건너뛰고 amount 0으로 직접 신청(권한 재검증은 서버). */
 export const usePassProgramApply = (programType: UsageApplyType) => {
   const queryClient = useQueryClient();
+  const toast = useToast();
   const [target, setTarget] = useState<ApplyTarget | null>(null);
   const [completed, setCompleted] = useState(false);
   const [completedTitle, setCompletedTitle] = useState('');
@@ -75,9 +77,9 @@ export const usePassProgramApply = (programType: UsageApplyType) => {
       setTarget(null);
       setCompleted(true);
     } catch {
-      window.alert(
-        '신청 처리 중 오류가 발생했어요. 잠시 후 다시 시도해주세요.',
-      );
+      toast.error('신청 처리 중 오류가 발생했어요', {
+        description: '잠시 후 다시 시도해주세요.',
+      });
     } finally {
       setIsApplying(false);
     }

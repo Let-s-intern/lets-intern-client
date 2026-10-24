@@ -3,6 +3,7 @@
 
 import OutlinedButton from '@/common/button/OutlinedButton';
 import SolidButton from '@/common/button/SolidButton';
+import { useToast } from '@letscareer/ui';
 import { useEffect, useState } from 'react';
 import {
   useSubmitRetrospective,
@@ -48,6 +49,7 @@ const RetroForm = ({
   status,
 }: Props) => {
   const { questions } = round;
+  const toast = useToast();
   const isWritable = round.writable;
   const [answers, setAnswers] = useState<Record<number, string>>(() =>
     buildInitial(round),
@@ -93,8 +95,12 @@ const RetroForm = ({
       }));
     if (items.length === 0) return;
     submit.mutate(items, {
-      onSuccess: () => alert(isEdit ? '수정되었습니다.' : '제출되었습니다.'),
-      onError: () => alert('제출에 실패했습니다. 다시 시도해주세요.'),
+      onSuccess: () =>
+        toast.success(isEdit ? '수정되었습니다.' : '제출되었습니다.'),
+      onError: () =>
+        toast.error('제출에 실패했습니다', {
+          description: '다시 시도해주세요.',
+        }),
     });
   };
 

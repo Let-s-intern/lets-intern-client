@@ -6,6 +6,7 @@ import AlertModal from '@/common/alert/AlertModal';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import { getChallengeIdPrimitiveSchema } from '@/schema';
 import axios from '@/utils/axios';
+import { useToast } from '@letscareer/ui';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams, useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
@@ -17,6 +18,7 @@ import { useUsageChallenge } from './useUsageChallenge';
 
 const UsageChallengeTab = () => {
   const router = useRouter();
+  const toast = useToast();
   const params = useParams<{ applicationId: string }>();
   const applicationId = Number(params.applicationId);
   const queryClient = useQueryClient();
@@ -62,9 +64,11 @@ const UsageChallengeTab = () => {
     if (item.canEnterDashboard) {
       router.push(`/challenge/${item.applicationId}/${item.programId}`);
     } else {
-      window.alert(
-        '아직 시작 전인 챌린지예요. 시작일 이후 대시보드에 입장할 수 있어요.',
-      );
+      toast.toast({
+        variant: 'default',
+        title: '아직 시작 전인 챌린지예요',
+        description: '시작일 이후 대시보드에 입장할 수 있어요.',
+      });
     }
   };
 
@@ -78,7 +82,9 @@ const UsageChallengeTab = () => {
     title: string;
   }) => {
     if (payload.priceId == null) {
-      window.alert('플랜 정보를 불러오지 못했어요. 잠시 후 다시 시도해주세요.');
+      toast.error('플랜 정보를 불러오지 못했어요', {
+        description: '잠시 후 다시 시도해주세요.',
+      });
       return;
     }
     try {
@@ -108,9 +114,9 @@ const UsageChallengeTab = () => {
       setSheetProgramId(null);
       setCompletedTitle(payload.title);
     } catch {
-      window.alert(
-        '신청 처리 중 오류가 발생했어요. 잠시 후 다시 시도해주세요.',
-      );
+      toast.error('신청 처리 중 오류가 발생했어요', {
+        description: '잠시 후 다시 시도해주세요.',
+      });
     }
   };
 
