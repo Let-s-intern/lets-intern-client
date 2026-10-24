@@ -2,17 +2,19 @@
 'use client';
 
 import LoadingContainer from '@/common/loading/LoadingContainer';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import type { PassProgramCardData } from './PassProgramCard';
 import UsageApplyModals from './UsageApplyModals';
 import UsageSection from './UsageSection';
 import { usePassProgramApply } from './usePassProgramApply';
-import { useUsageProgramTab } from './useUsageProgramTab';
+import { useUsageLive } from './useUsageLive';
 
 const UsageLiveTab = ({ passTitle }: { passTitle?: string }) => {
   const router = useRouter();
+  const params = useParams<{ applicationId: string }>();
+  const applicationId = Number(params.applicationId);
   const { before, inProgress, done, isLoading, isError } =
-    useUsageProgramTab('LIVE');
+    useUsageLive(applicationId);
   const apply = usePassProgramApply('live');
 
   // 참여 가능 → 0원 신청 모달, 참여 예정/완료 → 상세 이동

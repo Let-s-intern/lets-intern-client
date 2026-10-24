@@ -204,6 +204,36 @@ export const useGetBenefitGuidebook = (applicationId: number) =>
     refetchOnWindowFocus: false,
   });
 
+// ─── GET /{id}/benefit/live — 라이브 탭 참여 가능 목록(패스 대상·모집예정 포함·마감 제외). 참여 중/완료는 user/applications ───
+// benefit/live 는 날짜 미제공(BE 요청 대기) + 이미 신청한 live 를 안 거르므로, 기간 표시 생략·FE dedup 로 처리한다.
+const benefitLiveSchema = z.object({
+  accessible: z.boolean().nullish(),
+  programList: z
+    .array(
+      z.object({
+        programId: z.number(),
+        title: z.string().nullish(),
+        shortDesc: z.string().nullish(),
+        thumbnail: z.string().nullish(),
+      }),
+    )
+    .default([]),
+});
+export type BenefitLive = z.infer<typeof benefitLiveSchema>;
+
+export const useGetBenefitLives = (applicationId: number) =>
+  useQuery({
+    queryKey: ['allInOnePass', 'benefitLive', applicationId],
+    queryFn: async (): Promise<BenefitLive> => {
+      const res = await axios.get(
+        `/membership-application/${applicationId}/benefit/live`,
+      );
+      return benefitLiveSchema.parse(res.data.data);
+    },
+    enabled: Number.isFinite(applicationId) && applicationId > 0,
+    refetchOnWindowFocus: false,
+  });
+
 export const useGetPassExternalLinks = (applicationId: number) => {
   const { data, isLoading, isError } = useGetPassCalendarData(applicationId);
   return useMemo(
