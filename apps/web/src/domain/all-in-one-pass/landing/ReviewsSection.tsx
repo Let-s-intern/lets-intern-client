@@ -113,7 +113,7 @@ function ReviewCard({
   );
 }
 
-/** 후기 카드 클릭 시 확대 — body 포털. 배경/✕/ESC 로 닫힌다. */
+/** 후기 카드 클릭 시 확대 — body 포털. 배경/✕/ESC 로 닫힘. */
 function ReviewLightbox({
   review,
   onClose,

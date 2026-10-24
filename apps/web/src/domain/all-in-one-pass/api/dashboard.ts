@@ -9,7 +9,7 @@ import type {
   PassParticipationStatus,
 } from '../types';
 
-// U-1 대시보드 훅 — 섹션별 실 API(가드·이용권·연장옵션·캘린더·benefit/challenge).
+// 대시보드 훅 — 섹션별 실 API(가드·이용권·연장옵션·캘린더·benefit/challenge).
 
 /** description(JSON) 파싱 → 캘린더(게릴라/마일스톤)·외부링크·멘토링쿠폰 */
 const parsePassDescription = (description: string) => {
@@ -205,7 +205,7 @@ export const useGetBenefitGuidebook = (applicationId: number) =>
   });
 
 // ─── GET /{id}/benefit/live — 라이브 탭 참여 가능 목록(패스 대상·모집예정 포함·마감 제외). 참여 중/완료는 user/applications ───
-// benefit/live 는 날짜 미제공(BE 요청 대기) + 이미 신청한 live 를 안 거르므로, 기간 표시 생략·FE dedup 로 처리한다.
+// benefit/live 는 날짜 미제공(BE 요청 대기) + 이미 신청한 live 를 안 거르므로, 기간 표시 생략·FE dedup 로 처리.
 const benefitLiveSchema = z.object({
   accessible: z.boolean().nullish(),
   programList: z

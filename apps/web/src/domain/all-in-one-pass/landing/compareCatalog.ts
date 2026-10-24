@@ -1,9 +1,9 @@
 // 가격 비교 모달의 개별 프로그램 '현재 할인가' — 하드코딩.
 //
-// BE 가 programList.finalPrice 를 내려주면 이 파일을 지우고 그 값으로 교체한다.
-// 챌린지는 CHALLENGE_ITEMS(title·thumbnail) + 여기 가격(타입별)으로 조립한다.
+// BE 가 programList.finalPrice 를 내려주면 이 파일을 지우고 그 값으로 교체.
+// 챌린지는 CHALLENGE_ITEMS(title·thumbnail) + 여기 가격(타입별)으로 조립.
 // 가이드북은 7종이 CHALLENGE 처럼 membership 에만 있는 게 아니라 8종이라(쥬디 노하우 추가),
-// compare 전용 목록을 여기 둔다. 썸네일은 어드민 API(guidebookThumbs[id]) → 정적 src 폴백.
+// compare 전용 목록을 여기 둠. 썸네일은 어드민 API(guidebookThumbs[id]) → 정적 src 폴백.
 
 import type { ChallengeType } from '@/schema';
 

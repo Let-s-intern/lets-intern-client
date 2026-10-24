@@ -1,6 +1,6 @@
 'use client';
 
-// U-1 데스크탑 캘린더 루트 — 2주 그리드 + 우측 선택일 목록
+// 데스크탑 캘린더 루트 — 2주 그리드 + 우측 선택일 목록
 import { useMemo } from 'react';
 import type { PassCalendarEvent } from '../../../types';
 import { CalendarProvider, type CalendarRenderModel } from './CalendarContext';

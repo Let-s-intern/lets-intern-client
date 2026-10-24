@@ -123,8 +123,8 @@ const RetrospectivesView = ({ applicationId }: Props) => {
   const selected =
     rounds.find((r) => r.id === selectedId) ?? openRound ?? rounds[0];
 
-  // 선택 회차를 고정한다. 제출하면 해당 회차가 OPEN→DONE 으로 바뀌어 openRound 폴백이
-  // 다른 회차(또는 1회차)로 튕기므로, 보던 회차 id 를 선택값에 박아 유지한다.
+  // 선택 회차 고정. 제출하면 해당 회차가 OPEN→DONE 으로 바뀌어 openRound 폴백이
+  // 다른 회차(또는 1회차)로 튕기므로, 보던 회차 id 를 선택값에 고정.
   useEffect(() => {
     if (selectedId == null && selected) setSelectedId(selected.id);
   }, [selectedId, selected]);

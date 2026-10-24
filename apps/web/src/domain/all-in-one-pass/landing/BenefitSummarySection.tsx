@@ -48,7 +48,6 @@ export default function BenefitSummarySection({
   const counts = useBenefitCounts(vodCount);
   const cards = getBenefitCards(plans, additionalBenefits, counts);
 
-  // 6슬롯(좌 0·2·4 / 우 1·3·5) 고정 배치 — 카드가 적어도 각 자리를 지킨다.
   const leftSlots = [0, 2, 4];
   const rightSlots = [1, 3, 5];
 
@@ -92,7 +91,7 @@ export default function BenefitSummarySection({
       '--poke-x': dir === 'left' ? '7px' : '-7px',
     }) as CSSProperties;
 
-  // 한 컬럼(3슬롯) 렌더. 카드가 없는 슬롯은 같은 높이의 빈 자리로 예약한다.
+  // 한 컬럼(3슬롯) 렌더. 카드가 없는 슬롯은 같은 높이의 빈 자리로 예약.
   const Column = ({
     slots,
     dir,

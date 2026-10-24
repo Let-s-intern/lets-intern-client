@@ -30,7 +30,7 @@ export default function HeroSection({
     ? `구매 시점부터 ${periodDays}일 이용 가능`
     : '구매 즉시 이용 가능';
 
-  // 어드민 미입력 시 패스명·기간으로 기본 카피를 채운다.
+  // 어드민 미입력 시 패스명·기간으로 기본 카피 채움.
   const title = hero.title?.trim()
     ? hero.title
     : periodDays

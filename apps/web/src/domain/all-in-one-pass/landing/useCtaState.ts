@@ -1,4 +1,4 @@
-// 신청여부·판매기간으로 CTA 문구/비활성 상태를 파생한다.
+// 신청여부·판매기간으로 CTA 문구/비활성 상태 파생.
 import type { MembershipApplicationForm } from '@/domain/all-in-one-pass/api/purchase';
 import dayjs from '@/lib/dayjs';
 
@@ -31,7 +31,7 @@ export function useCtaState(
         ? '판매가 종료되었습니다.'
         : '지금 바로 시작하기';
 
-  // 하단 바 버튼은 모바일에서 길어지면 안 돼 짧은 라벨로 분기한다.
+  // 하단 바 버튼은 모바일에서 길어지면 안 돼 짧은 라벨로 분기.
   const barCtaText = isApplied
     ? '신청 완료'
     : isClosed

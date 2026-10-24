@@ -1,4 +1,4 @@
-// U-5 공지사항/패스 가이드. 유형 칩(sticky) + 아코디언 목록.
+// 공지사항/패스 가이드. 유형 칩(sticky) + 아코디언 목록.
 'use client';
 
 import LoadingContainer from '@/common/loading/LoadingContainer';

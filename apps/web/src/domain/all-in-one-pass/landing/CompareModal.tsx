@@ -27,7 +27,7 @@ interface Props {
   /** 비교 노출 탭(최저가 플랜 권한 ∩ [챌린지,가이드북]) */
   tabs: CompareTab[];
   onClose: () => void;
-  /** "선택한 구성으로 비교하기" — 개별 합계를 가격 섹션에 찍고 모달을 닫는다 */
+  /** "선택한 구성으로 비교하기" — 개별 합계를 가격 섹션에 찍고 모달 닫음 */
   onCompare: (individualTotal: number) => void;
 }
 

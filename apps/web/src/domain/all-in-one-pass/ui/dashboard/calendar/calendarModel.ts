@@ -1,4 +1,4 @@
-// 캘린더 노출 계산(방법 D) — deriveCalendar: 막대 lane 패킹 + 당일 배치 + +N
+// 캘린더 노출 계산 — deriveCalendar: 막대 lane 패킹 + 당일 배치 + +N
 import type {
   NormalizedCalendarEvent,
   PassParticipationStatus,

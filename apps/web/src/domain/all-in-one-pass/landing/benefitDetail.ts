@@ -1,10 +1,5 @@
-// 혜택 상세(#benefit-detail) 탭 메타.
-//
-// 탭별 데이터 소스가 다르다(섹션 컴포넌트에서 조립):
-//  - 챌린지: membership 도메인 CHALLENGE_ITEMS(타입별 1장·slug/latest) 재사용. 목록 응답에
-//    challengeType 이 없어 fetch 로는 "타입별 하나"를 만들 수 없다(useChallengeThumbnails 주석 참고).
-//  - 가이드북·라이브클래스: GET /program?type= 목록 fetch.
-//  - VOD: 상세 링크가 없어 하드코딩 예정(데이터 미정). 멘토링 쿠폰: 쿠폰이라 목록이 아님.
+// 혜택 상세(#benefit-detail) 탭 메타. 탭별 데이터 소스가 다르다: 챌린지=membership CHALLENGE_ITEMS
+// 재사용(목록 응답에 challengeType 없어 fetch 불가), 가이드북·라이브=GET /program?type= fetch, VOD=상세 링크 하드코딩·멘토링=쿠폰.
 
 import type { PassProgramType } from '../types';
 

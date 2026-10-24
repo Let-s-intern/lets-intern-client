@@ -1,4 +1,4 @@
-// U-8 패스 ONLY 자료집 — GET /{id}/library (accessible·typeList·libraryList).
+// 패스 ONLY 자료집 — GET /{id}/library (accessible·typeList·libraryList).
 import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
 import { z } from 'zod';

@@ -1,4 +1,4 @@
-// 선택 회차 작성/조회 폼. 공통2+주차1 질문, 상태별 분기.
+// 선택 회차 작성/조회 폼. 공통·회차 질문, 상태별 분기.
 'use client';
 
 import OutlinedButton from '@/common/button/OutlinedButton';

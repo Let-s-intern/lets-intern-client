@@ -47,7 +47,7 @@ export default function BenefitDetailSection({
   const activeTab = visibleTabs.find((t) => t.key === active) ?? visibleTabs[0];
   const { cards, loading } = tabData[active];
 
-  // titlePrefix 에 {n} 이 있으면 그 자리에 개수+단위를 끼워넣고, 없으면 뒤에 붙인다.
+  // titlePrefix 에 {n} 이 있으면 그 자리에 개수+단위를 끼워넣고, 없으면 뒤에 붙임.
   const countUnit = `${countFor(active)}${activeTab.unit}`;
   const title = activeTab.titlePrefix.includes('{n}')
     ? activeTab.titlePrefix.replace('{n}', countUnit)

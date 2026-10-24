@@ -51,7 +51,6 @@ export default function RemainingPeriodCard({
           />
         </div>
         <span className="text-xxsmall10 md:text-xxsmall12 text-neutral-50">
-          {/* 모바일: 종료일만 "까지" / 데스크탑: 시작 ~ 종료 이용 */}
           <span className="md:hidden">{end.format('YYYY.MM.DD')}까지</span>
           <span className="hidden md:inline">
             {start.format('YYYY.MM.DD')} ~ {end.format('YYYY.MM.DD')} 이용

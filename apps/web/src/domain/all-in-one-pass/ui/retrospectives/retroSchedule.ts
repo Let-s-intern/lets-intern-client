@@ -1,4 +1,4 @@
-// 회고 상태/일정은 BE 값(visible/writable/submitted, visibleAt/submissionDeadline)을 그대로 쓴다.
+// 회고 상태/일정은 BE 값(visible/writable/submitted, visibleAt/submissionDeadline) 그대로.
 import dayjs from '@/lib/dayjs';
 import type { PassRetrospectiveRound } from '../../types';
 

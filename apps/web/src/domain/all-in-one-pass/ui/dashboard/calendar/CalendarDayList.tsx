@@ -39,7 +39,6 @@ interface Props {
   stickyTop?: number;
 }
 
-/** U-1 캘린더 우측 패널 — 선택일의 프로그램/일정 목록 */
 export default function CalendarDayList({ date, events, stickyTop }: Props) {
   const router = useRouter();
   const rootRef = useRef<HTMLDivElement>(null);

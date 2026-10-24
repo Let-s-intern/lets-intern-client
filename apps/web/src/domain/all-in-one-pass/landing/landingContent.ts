@@ -139,7 +139,7 @@ export interface BenefitCard {
 /** 혜택요약에 노출되는 총 카드 수 상한 (어드민과 동일) */
 const MAX_BENEFIT_CARDS = 6;
 
-/** 혜택요약·VOD탭 개수 표기에 쓰는 동적 개수 (챌린지=고정 10, 가이드북=목록 fetch, VOD=어드민 집계) */
+/** 혜택요약·VOD탭 개수 표기에 쓰는 동적 개수 (챌린지=타입 수 고정, 가이드북=목록 fetch, VOD=어드민 집계) */
 export interface BenefitCounts {
   challenge: number;
   guidebook: number;

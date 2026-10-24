@@ -1,4 +1,4 @@
-// 나의 패스 이용 공통 섹션(제목 + 카드 그리드 + 더보기). 챌린지·가이드북 탭 공유.
+// 나의 패스 이용 공통 섹션(제목 + 카드 그리드 + 더보기). 챌린지·가이드북·라이브 탭 공유.
 'use client';
 
 import MoreButton from '@/domain/mypage/ui/button/MoreButton';

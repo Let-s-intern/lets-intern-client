@@ -12,7 +12,6 @@ const PROGRAM_LABEL: Record<string, string> = {
 // v1: 멘토링 쿠폰은 고정 노출(플랜/API에 없음). 멘토링 정리 시 교체.
 const MENTORING_BADGE = '1:1 LIVE 멘토링 50% 할인 쿠폰';
 
-/** U-1 대시보드 "내 패스 이용권" 카드 — 플랜명 + 이용권 뱃지 */
 export default function PassUsageCard({
   applicationId,
 }: {

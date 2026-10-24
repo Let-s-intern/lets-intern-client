@@ -4,7 +4,7 @@ import type { CompareTab } from './CompareModal';
 
 const finalOf = (p: AllInOnePassPlan) => p.price - (p.discount ?? 0);
 
-/** 라이브·VOD 는 한 줄로 합치고, 존재하는 타입으로 라벨을 만든다. */
+/** 라이브·VOD 는 한 줄로 합치고, 존재하는 타입으로 라벨 생성. */
 const liveVodLabel = (hasLive: boolean, hasVod: boolean): string => {
   if (hasLive && hasVod) return '현직자 Live 세미나 & VOD';
   if (hasLive) return '현직자 Live 세미나';
@@ -27,7 +27,7 @@ export interface PassPricing {
   compareTabs: CompareTab[];
 }
 
-/** 플랜 배열에서 가격 섹션이 쓰는 파생값(패스가·콘텐츠 행·비교 탭)을 계산한다. */
+/** 플랜 배열에서 가격 섹션이 쓰는 파생값(패스가·콘텐츠 행·비교 탭) 계산. */
 export function usePassPricing(plans: AllInOnePassPlan[]): PassPricing {
   return useMemo(() => {
     const cheapest = plans.length

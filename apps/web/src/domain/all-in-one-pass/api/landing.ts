@@ -1,5 +1,5 @@
 // 랜딩(구매) 페이지 상품 상세. 공개 API GET /api/v1/membership/{membershipId}.
-// BE 응답(planList/privilegeList/faqList)을 FE 타입(plans/privileges/faqs)으로 매퍼에서 변환한다.
+// BE 응답(planList/privilegeList/faqList)→FE 타입(plans/privileges/faqs) 매퍼 변환.
 import { useQuery } from '@tanstack/react-query';
 import axios from '@/utils/axios';
 import { z } from 'zod';

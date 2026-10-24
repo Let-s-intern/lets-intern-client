@@ -1,4 +1,4 @@
-// U-8 패스 ONLY 자료집. 유형 칩(전체 + 데이터 유형) 필터 + 카드 목록.
+// 패스 ONLY 자료집. 유형 칩(전체 + 데이터 유형) 필터 + 카드 목록.
 'use client';
 
 import HybridLink from '@/common/HybridLink';

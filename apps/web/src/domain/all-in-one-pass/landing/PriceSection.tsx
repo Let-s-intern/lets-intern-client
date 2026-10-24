@@ -46,14 +46,12 @@ export default function PriceSection({
           subHeader={`자소서·포폴부터 인적성·면접까지.\n각각 준비하며 드는 비용, ${passTitle}로 줄여보세요.`}
         />
         <div className="flex flex-col overflow-hidden rounded-[22px] bg-white">
-          {/* 패스명 */}
           <div className="border-neutral-80 border-b p-5 md:px-[30px] md:py-6">
             <strong className="text-small20 text-neutral-0 font-bold">
               {passTitle}
             </strong>
           </div>
 
-          {/* 가격 + 비교 버튼 */}
           <div className="border-neutral-80 flex flex-col gap-4 border-b p-5 md:flex-row md:items-start md:justify-between md:gap-5 md:px-[30px] md:py-6">
             <div className="flex flex-col gap-4 md:gap-2.5">
               <p className="text-xsmall14 text-neutral-45">패스 구매 가격</p>
@@ -91,7 +89,6 @@ export default function PriceSection({
             </div>
           </div>
 
-          {/* 포함 콘텐츠 */}
           {contentRows.length > 0 && (
             <div className="border-neutral-80 flex flex-col gap-4 border-b p-5 md:px-[30px] md:py-6">
               <p className="text-xsmall14 text-neutral-45">
@@ -122,7 +119,6 @@ export default function PriceSection({
             </div>
           )}
 
-          {/* 멘토링 */}
           <div className="border-neutral-80 flex flex-col gap-4 border-b p-5 md:px-[30px] md:py-6">
             <p className="text-xsmall14 text-neutral-45">멘토링 할인 혜택</p>
             <div className="flex flex-col gap-1 md:flex-row md:items-start md:justify-between md:gap-4">
@@ -143,7 +139,6 @@ export default function PriceSection({
             </p>
           </div>
 
-          {/* 패스 전용 특별 혜택 */}
           {additionalBenefits.length > 0 && (
             <div className="border-neutral-80 flex flex-col gap-4 border-b p-5 md:px-[30px] md:py-6">
               <p className="text-xsmall14 text-neutral-45">
@@ -162,7 +157,6 @@ export default function PriceSection({
             </div>
           )}
 
-          {/* CTA */}
           <div className="p-5 md:px-[30px] md:py-6">
             <SolidButton
               size="xl"
