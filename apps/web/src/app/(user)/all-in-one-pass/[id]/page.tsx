@@ -57,7 +57,7 @@ export default function AllInOnePassLandingPage() {
   const scrollToBenefit = () =>
     document.getElementById('benefit')?.scrollIntoView({ behavior: 'smooth' });
 
-  const { ctaText, ctaDisabled } = useCtaState(applicationForm);
+  const { ctaText, barCtaText, ctaDisabled } = useCtaState(applicationForm);
 
   if (isLoading || !pass) {
     return <LoadingContainer />;
@@ -120,6 +120,7 @@ export default function AllInOnePassLandingPage() {
           passTitle={pass.title}
           periodDays={pass.periodDays}
           deadline={pass.deadline}
+          ctaText={barCtaText}
           ctaDisabled={ctaDisabled}
           onStart={handleBuyClick}
         />

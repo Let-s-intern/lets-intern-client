@@ -7,6 +7,7 @@ interface Props {
   passTitle: string;
   periodDays: number | null;
   deadline: string | null;
+  ctaText: string;
   ctaDisabled: boolean;
   onStart: () => void;
 }
@@ -54,6 +55,7 @@ export default function LandingApplyBar({
   passTitle,
   periodDays,
   deadline,
+  ctaText,
   ctaDisabled,
   onStart,
 }: Props) {
@@ -70,7 +72,7 @@ export default function LandingApplyBar({
             </span>
           )}
         </div>
-        {!ctaDisabled && <BarCountdown deadline={deadline} />}
+        <BarCountdown deadline={deadline} />
       </div>
 
       <div className="flex shrink-0 items-center justify-between gap-3 md:justify-end md:gap-[18px]">
@@ -83,7 +85,7 @@ export default function LandingApplyBar({
             ctaDisabled ? 'bg-[#F9B68F]' : 'bg-[#F36D32] hover:bg-[#E15D28]',
           )}
         >
-          지금 바로 시작
+          {ctaText}
         </button>
       </div>
     </div>

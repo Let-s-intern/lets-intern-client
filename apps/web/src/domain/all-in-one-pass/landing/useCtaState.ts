@@ -4,6 +4,7 @@ import dayjs from '@/lib/dayjs';
 
 interface CtaState {
   ctaText: string;
+  barCtaText: string;
   ctaDisabled: boolean;
 }
 
@@ -30,5 +31,12 @@ export function useCtaState(
         ? '판매가 종료되었습니다.'
         : '지금 바로 시작하기';
 
-  return { ctaText, ctaDisabled };
+  // 하단 바 버튼은 모바일에서 길어지면 안 돼 짧은 라벨로 분기한다.
+  const barCtaText = isApplied
+    ? '신청 완료'
+    : isClosed
+      ? '신청 마감'
+      : '지금 바로 시작';
+
+  return { ctaText, barCtaText, ctaDisabled };
 }

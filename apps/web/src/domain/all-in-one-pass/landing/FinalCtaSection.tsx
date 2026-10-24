@@ -47,7 +47,7 @@ export default function FinalCtaSection({
           {description}
         </p>
 
-        {!ctaDisabled && deadline && (
+        {deadline && (
           <div className="w-full max-w-[460px]">
             <LandingCountdown deadline={deadline} variant="dark" />
           </div>
