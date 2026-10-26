@@ -23,8 +23,8 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import ExternalNavList from './ExternalNavList';
 import GlobalNavItem from './GlobalNavItem';
 import GlobalNavTopBar from './GlobalNavTopBar';
-// [LC-3219-MEMBERSHIP] 멤버십 랜딩 진입 메뉴 라벨 — 시즌 종료 시 아래 SideNavItem 과 함께 제거한다
 import MembershipNavLabel from './MembershipNavLabel';
+import { useMembershipNavEntry } from './useMembershipNavEntry';
 import NavOverlay from './NavOverlay';
 import ServiceToggle from './ServiceToggle';
 import SideNavContainer from './SideNavContainer';
@@ -78,6 +78,7 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
   // const reportNavList = useActiveReportNav();
   const scrollDirection = useScrollDirection(pathname);
   const isMobile = useMediaQuery('(max-width:768px)');
+  const membershipNav = useMembershipNavEntry();
 
   const { isLoggedIn } = useAuthStore();
 
@@ -151,6 +152,7 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
           loginRedirect={encodeURIComponent(pathname)}
           toggleMenu={toggleMenu}
           isLoginPage={isLoginPage}
+          membershipNav={membershipNav}
         />
         {/* 2단 */}
         <nav
@@ -351,10 +353,10 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
 
       {/* 사이드 네비게이션 바 */}
       <SideNavContainer isOpen={isOpen} onClose={closeMenu}>
-        {/* [LC-3294] 마케팅 취준 올인원 패스 진입 메뉴(모바일 드로어) — 시즌 종료 시 이 블록을 제거한다.
-            구버전 하반기 멤버십(`/membership`)은 주소로만 남기고 메뉴에는 걸지 않는다. */}
-        <SideNavItem href="/membership-marketing" isNew>
-          <MembershipNavLabel />
+        {/* 올인원패스 진입 메뉴(모바일 드로어). 문구·링크는 membershipNav 가 정한다
+            — 판매 중인 패스가 있으면 그 패스 랜딩으로, 없으면 프로그램 목록(올인원패스 필터)으로. */}
+        <SideNavItem href={membershipNav.href} isNew>
+          <MembershipNavLabel title={membershipNav.title} />
         </SideNavItem>
         <SideNavItem href="/mypage/career/board">마이페이지</SideNavItem>
         <SideNavItem href="/community">
