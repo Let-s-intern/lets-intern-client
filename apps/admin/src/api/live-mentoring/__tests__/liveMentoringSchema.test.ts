@@ -58,6 +58,18 @@ describe('adminLiveMentoringSchema', () => {
     ).not.toThrow();
   });
 
+  it('썸네일 원본은 없거나(구 서버) null 이거나 주소다', () => {
+    expect(adminLiveMentoringSchema.parse(makeRow()).thumbnail).toBeUndefined();
+    expect(
+      adminLiveMentoringSchema.parse(makeRow({ thumbnail: null })).thumbnail,
+    ).toBeNull();
+    expect(
+      adminLiveMentoringSchema.parse(
+        makeRow({ thumbnail: 'https://cdn.test/t.png' }),
+      ).thumbnail,
+    ).toBe('https://cdn.test/t.png');
+  });
+
   it('멘토별 진행 예정 참여자 수와 후기 수를 받는다', () => {
     const parsed = adminLiveMentoringSchema.parse(makeRow());
     expect(parsed.upcomingParticipantCount).toBe(2);
