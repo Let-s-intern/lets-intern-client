@@ -100,22 +100,17 @@ export default function CalendarDayList({ date, events, stickyTop }: Props) {
               enrolled && ev.programId != null
                 ? `/challenge/${ev.challengeApplicationId}/${ev.programId}`
                 : undefined;
-            // 챌린지는 상세(programId) 있을 때, 마일스톤은 url 있을 때만 상세(>) 노출
-            const showChevron =
-              (ev.type === 'CHALLENGE' && detailHref != null) ||
-              (ev.type === 'MILESTONE' && !!ev.url);
-            // 게릴라세션 참여 버튼: 시작 10분 전 ~ 종료 시각 사이에만 활성화
+            const showChevron = ev.type === 'CHALLENGE' && detailHref != null;
+            const isJoinEvent =
+              ev.type === 'GUERRILLA' || ev.type === 'MILESTONE';
             const now = dayjs();
-            const guerrillaOpen =
-              ev.type === 'GUERRILLA' &&
+            const joinOpen =
+              isJoinEvent &&
               !now.isBefore(dayjs(ev.startDate).subtract(10, 'minute')) &&
               (!ev.endDate || !now.isAfter(dayjs(ev.endDate)));
 
             const onChevron = () => {
-              if (ev.type === 'CHALLENGE' && detailHref)
-                router.push(detailHref);
-              else if (ev.type === 'MILESTONE' && ev.url)
-                window.open(ev.url, '_blank', 'noopener,noreferrer');
+              if (detailHref) router.push(detailHref);
             };
 
             return (
@@ -202,13 +197,12 @@ export default function CalendarDayList({ date, events, stickyTop }: Props) {
                     {enrolled ? '대시보드 입장' : '참여하기'}
                   </SolidButton>
                 )}
-                {ev.type === 'GUERRILLA' && (
+                {isJoinEvent && ev.url && (
                   <SolidButton
                     size="sm"
-                    disabled={!guerrillaOpen}
+                    disabled={!joinOpen}
                     onClick={() =>
-                      ev.url &&
-                      window.open(ev.url, '_blank', 'noopener,noreferrer')
+                      window.open(ev.url!, '_blank', 'noopener,noreferrer')
                     }
                     className="text-xsmall14 w-full"
                   >
