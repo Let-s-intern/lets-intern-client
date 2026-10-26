@@ -73,6 +73,16 @@ export const useCloseLiveMentoringOpeningMutation = () =>
     axios.patch(`${ADMIN_PATH}/openings/${openingId}/close`),
   );
 
+/**
+ * PATCH /admin/live-mentoring/mentors/{mentorId}/thumbnail — 썸네일 수정.
+ * `thumbnail: null` 이면 지운다(공개 화면은 프로필 사진으로 돌아간다).
+ */
+export const useUpdateAdminLiveMentoringThumbnailMutation = () =>
+  useAdminLiveMentoringMutation(
+    ({ mentorId, thumbnail }: { mentorId: number; thumbnail: string | null }) =>
+      axios.patch(`${ADMIN_PATH}/mentors/${mentorId}/thumbnail`, { thumbnail }),
+  );
+
 export const ADMIN_LIVE_MENTORING_RESERVATION_QUERY_KEY = [
   'adminLiveMentoring',
   'reservations',

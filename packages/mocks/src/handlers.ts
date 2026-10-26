@@ -1180,6 +1180,7 @@ const adminLiveMentoringVo = () => {
     mentorNickname: LIVE_MENTORING_SETTINGS.nickname,
     mentorProfileImage: LIVE_MENTORING_SETTINGS.profileImage,
     title: liveMentoringState.title,
+    thumbnail: liveMentoringState.thumbnail,
     status: liveMentoringState.status,
     categories: liveMentoringState.categories,
     hasDetailPage: true,
@@ -1220,6 +1221,7 @@ const makeAdminFixtureRows = (): AdminFixtureRow[] => [
     mentorNickname: '박멘토',
     mentorProfileImage: null,
     title: '이력서 클리닉',
+    thumbnail: null,
     status: 'APPROVED',
     categories: ['RESUME'],
     hasDetailPage: true,
@@ -1245,6 +1247,7 @@ const makeAdminFixtureRows = (): AdminFixtureRow[] => [
     mentorNickname: '최멘토',
     mentorProfileImage: null,
     title: '포트폴리오 집중 피드백',
+    thumbnail: null,
     status: 'INACTIVE',
     categories: ['PORTFOLIO'],
     hasDetailPage: false,
@@ -1260,6 +1263,7 @@ const makeAdminFixtureRows = (): AdminFixtureRow[] => [
     mentorNickname: '한멘토',
     mentorProfileImage: null,
     title: '승인 절차 시절에 만들어진 상품',
+    thumbnail: null,
     status: 'DRAFT',
     categories: ['RESUME'],
     hasDetailPage: false,
@@ -2075,6 +2079,21 @@ export const handlers = [
    * `/admin/live-mentoring` 까지 삼켜버려서, 순서가 뒤바뀌면 관리자 요청이
    * 공개 목록 응답을 받는다.
    */
+  /**
+   * (관리자) PATCH /admin/live-mentoring/mentors/:mentorId/thumbnail — 썸네일 수정.
+   * 상태를 가진 상품은 로그인 멘토("나", mentorId 1) 하나뿐이라 그 상품만 바꾼다.
+   */
+  http.patch(
+    '*/admin/live-mentoring/mentors/:mentorId/thumbnail',
+    async ({ request }) => {
+      const body = (await request.json().catch(() => ({}))) as {
+        thumbnail?: string | null;
+      };
+      liveMentoringState.thumbnail = body.thumbnail ?? null;
+      return HttpResponse.json({ status: 200, data: null });
+    },
+  ),
+
   http.get('*/admin/live-mentoring', ({ request }) => {
     const url = new URL(request.url);
     const status = url.searchParams.get('status');
