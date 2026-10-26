@@ -1,5 +1,4 @@
 import { useEffect, useState, type MutableRefObject } from 'react';
-import { Link } from 'react-router-dom';
 import {
   getLowestPrice,
   LIVE_MENTORING_CATEGORIES,
@@ -274,41 +273,6 @@ const OpenSettingsSection = ({
                   profileImage={form.profileImage}
                   onChange={(thumbnail) => patch({ thumbnail })}
                 />
-              </section>
-
-              <section className={cardClass}>
-                <h2 className={sectionTitleClass}>프로필</h2>
-                <p className="mb-4 text-xs text-gray-500">
-                  닉네임·프로필 이미지·한줄 소개·경력은 프로필 페이지에서
-                  관리해요. 이 화면에서는 조회만 됩니다.
-                </p>
-                <div className="flex items-start gap-4">
-                  <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-gray-200 bg-gray-100">
-                    {form.profileImage ? (
-                      <img
-                        src={form.profileImage}
-                        alt="프로필 이미지"
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      <span className="text-[10px] text-gray-400">이미지</span>
-                    )}
-                  </div>
-                  <div className="flex min-w-0 flex-1 flex-col gap-1">
-                    <p className="text-sm font-semibold text-gray-900">
-                      {form.nickname || '닉네임 없음'}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {form.introduction || '한줄 소개가 없습니다.'}
-                    </p>
-                  </div>
-                </div>
-                <Link
-                  to="/profile"
-                  className="text-primary mt-3 inline-block text-xs font-medium underline"
-                >
-                  프로필 페이지에서 수정하기
-                </Link>
               </section>
 
               <section className={cardClass}>

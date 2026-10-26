@@ -160,15 +160,20 @@ afterEach(() => {
   openingsData = [];
 });
 
-describe('OpenSettingsSection — 프로필은 읽기 전용', () => {
-  it('닉네임·소개·경력을 표시만 하고, 프로필 페이지로 이동하는 링크를 보여준다', () => {
+/*
+  읽기 전용 프로필 섹션을 걷어냈다. 이 화면에서 고칠 수 없는 값이 설정처럼 놓여 있어
+  멘토가 헷갈렸다. 프로필은 프로필 페이지에서 보고 고친다.
+*/
+describe('OpenSettingsSection — 프로필 섹션 없음', () => {
+  it('읽기 전용 프로필 섹션과 프로필 페이지 링크를 그리지 않는다', () => {
     renderPage();
-    // 프로필 섹션과 우측 미리보기 양쪽에 표시되므로 복수 매치를 허용한다.
-    expect(screen.getAllByText('자소서장인').length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/네이버/).length).toBeGreaterThan(0);
+
     expect(
-      screen.getByRole('link', { name: '프로필 페이지에서 수정하기' }),
-    ).toHaveAttribute('href', '/profile');
+      screen.queryByRole('heading', { level: 2, name: '프로필' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('link', { name: '프로필 페이지에서 수정하기' }),
+    ).not.toBeInTheDocument();
   });
 });
 
@@ -504,19 +509,14 @@ describe('OpenSettingsSection — 미리보기', () => {
 });
 
 describe('OpenSettingsSection — 썸네일(선택)', () => {
-  it('썸네일 섹션이 프로필 섹션보다 위에 있다', () => {
+  it('썸네일 섹션이 설정 패널의 맨 위에 있다', () => {
     renderPage();
 
     const headings = screen
       .getAllByRole('heading', { level: 2 })
       .map((heading) => heading.textContent ?? '');
-    const thumbnailIndex = headings.findIndex((text) =>
-      text.startsWith('썸네일'),
-    );
-    const profileIndex = headings.indexOf('프로필');
 
-    expect(thumbnailIndex).toBeGreaterThanOrEqual(0);
-    expect(thumbnailIndex).toBeLessThan(profileIndex);
+    expect(headings[0]).toMatch(/^썸네일/);
   });
 
   it('썸네일만 지워도 변경사항이 생기고 저장 바디에 null 로 담긴다', async () => {
