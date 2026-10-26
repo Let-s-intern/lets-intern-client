@@ -27,7 +27,7 @@ describe('getVodPassRefundBlockedReason', () => {
       getVodPassRefundBlockedReason(
         makePass({ status: 'ACTIVE', refundable: false }),
       ),
-    ).toBe('VOD를 재생한 이용권은 환불할 수 없습니다');
+    ).toBe('이용 기간 중 VOD를 시청한 기록이 있어 환불이 어려워요');
   });
 
   it('종료된 이용권은 이용 기간이 끝나 환불할 수 없다고 알려준다', () => {

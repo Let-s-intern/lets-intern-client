@@ -16,7 +16,7 @@ export function getVodPassRefundBlockedReason(pass: VodPass): string | null {
 
   switch (pass.status) {
     case 'ACTIVE':
-      return 'VOD를 재생한 이용권은 환불할 수 없습니다';
+      return '이용 기간 중 VOD를 시청한 기록이 있어 환불이 어려워요';
     case 'EXPIRED':
       return '이용 기간이 종료된 이용권은 환불할 수 없습니다';
     default:
