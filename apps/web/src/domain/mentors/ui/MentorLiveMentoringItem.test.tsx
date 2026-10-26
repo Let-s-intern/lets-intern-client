@@ -83,4 +83,26 @@ describe('MentorLiveMentoringItem', () => {
     expect(screen.queryByRole('img')).not.toBeInTheDocument();
     expect(screen.getByText('자소서장인 멘토님의 멘토링')).toBeInTheDocument();
   });
+
+  it('썸네일이 있으면 프로필 사진 대신 썸네일을 보여준다', () => {
+    render(
+      <MentorLiveMentoringItem
+        opening={makeOpening({ thumbnail: 'https://example.com/t.png' })}
+      />,
+    );
+
+    expect(screen.getByAltText('자소서장인')).toHaveAttribute(
+      'src',
+      'https://example.com/t.png',
+    );
+  });
+
+  it('썸네일 필드가 없는 응답이면 프로필 사진을 보여준다', () => {
+    render(<MentorLiveMentoringItem opening={makeOpening()} />);
+
+    expect(screen.getByAltText('자소서장인')).toHaveAttribute(
+      'src',
+      'https://example.com/p.png',
+    );
+  });
 });

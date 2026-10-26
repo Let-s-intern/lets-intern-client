@@ -151,4 +151,21 @@ describe('liveMentoring API', () => {
       '/admin/live-mentoring/openings/100/close',
     );
   });
+
+  it('썸네일 수정 훅은 멘토 id 로 thumbnail 엔드포인트에 값을 보낸다', async () => {
+    const { result } = renderHook(
+      () => liveMentoringApi.useUpdateAdminLiveMentoringThumbnailMutation(),
+      { wrapper: createWrapper() },
+    );
+
+    act(() => {
+      result.current.mutate({ mentorId: 7, thumbnail: null });
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(patchMock).toHaveBeenCalledWith(
+      '/admin/live-mentoring/mentors/7/thumbnail',
+      { thumbnail: null },
+    );
+  });
 });

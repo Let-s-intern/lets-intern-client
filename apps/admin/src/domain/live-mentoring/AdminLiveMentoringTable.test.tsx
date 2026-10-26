@@ -11,6 +11,7 @@ import type { AdminLiveMentoring } from '@/api/live-mentoring/liveMentoringSchem
 
 const listQuery = vi.fn();
 const closeMock = vi.fn();
+const updateThumbnailMock = vi.fn();
 const snackbarMock = vi.fn();
 
 vi.mock('@/api/live-mentoring/liveMentoring', () => ({
@@ -19,7 +20,14 @@ vi.mock('@/api/live-mentoring/liveMentoring', () => ({
     mutate: closeMock,
     isPending: false,
   }),
+  useUpdateAdminLiveMentoringThumbnailMutation: () => ({
+    mutate: updateThumbnailMock,
+    isPending: false,
+  }),
 }));
+
+// 업로드는 모달 테스트(`ui/ThumbnailEditModal.test.tsx`)에서 따로 검증한다.
+vi.mock('@/api/file', () => ({ uploadFile: vi.fn() }));
 
 vi.mock('@/hooks/useAdminSnackbar', () => ({
   useAdminSnackbar: () => ({ snackbar: snackbarMock }),
@@ -87,6 +95,7 @@ const renderTable = (rows: AdminLiveMentoring[]) => {
 afterEach(() => {
   listQuery.mockReset();
   closeMock.mockReset();
+  updateThumbnailMock.mockReset();
   snackbarMock.mockReset();
 });
 
@@ -168,7 +177,7 @@ describe('AdminLiveMentoringTable — 조회', () => {
     const badgeOf = (nickname: string) =>
       within(
         screen.getByText(nickname).closest('tr') as HTMLElement,
-      ).getAllByRole('cell')[2].textContent;
+      ).getAllByRole('cell')[3].textContent;
 
     expect(badgeOf('오픈멘토')).toBe('오픈중');
     // 상품 상태가 APPROVED 여도 개설이 없으면 팔고 있지 않다.
@@ -203,6 +212,7 @@ describe('AdminLiveMentoringTable — 조회', () => {
     expect(headers).toEqual([
       '멘토',
       '상품명',
+      '썸네일',
       '상태',
       '타입',
       '상세',
@@ -238,11 +248,11 @@ describe('AdminLiveMentoringTable — 조회', () => {
 
     const emptyCell = screen.getByText('해당 조건의 상품이 없습니다.');
     expect(emptyCell).toBeInTheDocument();
-    // 컬럼 수를 줄이지 않았으므로 빈 상태도 8칸을 그대로 덮는다.
-    expect(emptyCell).toHaveAttribute('colspan', '8');
+    // 빈 상태도 썸네일 칸을 포함한 9칸을 그대로 덮는다.
+    expect(emptyCell).toHaveAttribute('colspan', '9');
     expect(
       within(screen.getByRole('table')).getAllByRole('columnheader'),
-    ).toHaveLength(8);
+    ).toHaveLength(9);
   });
 });
 
@@ -400,5 +410,33 @@ describe('AdminLiveMentoringTable — 멘토별 참여자', () => {
 
     fireEvent.click(screen.getByRole('button', { name: '상세페이지 수정' }));
     expect(onEditDetailPage).toHaveBeenCalledWith(draftRow.mentorId);
+  });
+});
+
+describe('AdminLiveMentoringTable — 썸네일', () => {
+  it('썸네일이 없으면 프로필 사진을 쓴다고 단어로 표시한다', () => {
+    renderTable([draftRow]);
+
+    expect(screen.getByText('없음(프로필 사진 사용)')).toBeInTheDocument();
+  });
+
+  it('썸네일이 있으면 이미지를 보여준다', () => {
+    renderTable([{ ...draftRow, thumbnail: 'https://cdn.test/t.png' }]);
+
+    expect(screen.getByAltText('렛츠멘토 썸네일')).toHaveAttribute(
+      'src',
+      'https://cdn.test/t.png',
+    );
+    expect(screen.queryByText('없음(프로필 사진 사용)')).toBeNull();
+  });
+
+  it('썸네일 수정을 누르면 그 멘토의 수정 모달이 열린다', () => {
+    renderTable([draftRow]);
+
+    fireEvent.click(screen.getByRole('button', { name: '썸네일 수정' }));
+
+    expect(
+      screen.getByRole('dialog', { name: '렛츠멘토 · 썸네일 수정' }),
+    ).toBeInTheDocument();
   });
 });

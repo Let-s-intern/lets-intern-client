@@ -5,11 +5,13 @@ import {
   useAdminLiveMentoringListQuery,
   useCloseLiveMentoringOpeningMutation,
 } from '@/api/live-mentoring/liveMentoring';
+import type { AdminLiveMentoring } from '@/api/live-mentoring/liveMentoringSchema';
 import MuiPagination from '@/domain/program/pagination/MuiPagination';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import ConfirmActionDialog, {
   type PendingAction,
 } from './ui/ConfirmActionDialog';
+import ThumbnailEditModal from './ui/ThumbnailEditModal';
 import {
   CATEGORY_LABELS,
   CLOSE_REASON_LABELS,
@@ -64,6 +66,8 @@ const AdminLiveMentoringTable = ({
   const [opened, setOpened] = useState<boolean | undefined>(undefined);
   const [page, setPage] = useState(1);
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
+  const [thumbnailTarget, setThumbnailTarget] =
+    useState<AdminLiveMentoring | null>(null);
 
   const { data, isLoading, isError } = useAdminLiveMentoringListQuery({
     opened,
@@ -121,11 +125,12 @@ const AdminLiveMentoringTable = ({
       </div>
 
       <div className="border-neutral-80 overflow-x-auto rounded-lg border">
-        <table className="w-full min-w-[1080px] border-collapse">
+        <table className="w-full min-w-[1180px] border-collapse">
           <thead className="border-neutral-80 bg-neutral-95 border-b">
             <tr>
               <th className={headerCellClass}>멘토</th>
               <th className={headerCellClass}>상품명</th>
+              <th className={headerCellClass}>썸네일</th>
               <th className={headerCellClass}>상태</th>
               <th className={headerCellClass}>타입</th>
               <th className={headerCellClass}>상세</th>
@@ -138,7 +143,7 @@ const AdminLiveMentoringTable = ({
             {isError ? (
               <tr>
                 <td
-                  colSpan={8}
+                  colSpan={9}
                   className="text-xsmall14 text-neutral-40 py-16 text-center"
                 >
                   목록을 불러오지 못했습니다.
@@ -147,7 +152,7 @@ const AdminLiveMentoringTable = ({
             ) : isLoading ? (
               <tr>
                 <td
-                  colSpan={8}
+                  colSpan={9}
                   className="text-xsmall14 text-neutral-40 py-16 text-center"
                 >
                   불러오는 중...
@@ -156,7 +161,7 @@ const AdminLiveMentoringTable = ({
             ) : rows.length === 0 ? (
               <tr>
                 <td
-                  colSpan={8}
+                  colSpan={9}
                   className="text-xsmall14 text-neutral-40 py-16 text-center"
                 >
                   해당 조건의 상품이 없습니다.
@@ -220,6 +225,28 @@ const AdminLiveMentoringTable = ({
                         >
                           공개 페이지 보기
                         </a>
+                      </div>
+                    </td>
+                    <td className={bodyCellClass}>
+                      <div className="flex flex-col items-start gap-1">
+                        {row.thumbnail ? (
+                          <img
+                            src={row.thumbnail}
+                            alt={`${row.mentorNickname ?? `멘토 #${row.mentorId}`} 썸네일`}
+                            className="aspect-[540/421] w-20 rounded object-cover"
+                          />
+                        ) : (
+                          <span className="text-neutral-40 whitespace-nowrap text-xs">
+                            없음(프로필 사진 사용)
+                          </span>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => setThumbnailTarget(row)}
+                          className="text-primary whitespace-nowrap text-xs underline"
+                        >
+                          썸네일 수정
+                        </button>
                       </div>
                     </td>
                     <td className={bodyCellClass}>
@@ -317,6 +344,18 @@ const AdminLiveMentoringTable = ({
         onCancel={() => setPendingAction(null)}
         onConfirm={runPendingAction}
       />
+
+      {thumbnailTarget && (
+        <ThumbnailEditModal
+          key={thumbnailTarget.liveMentoringId}
+          row={thumbnailTarget}
+          onClose={() => setThumbnailTarget(null)}
+          onSaved={() => {
+            snackbar('썸네일을 저장했습니다.');
+            setThumbnailTarget(null);
+          }}
+        />
+      )}
     </div>
   );
 };

@@ -32,6 +32,7 @@ import {
 } from './useLiveMentoringOpenAction';
 import LiveMentoringSlotModal from './ui/LiveMentoringSlotModal';
 import OpenSettingsPreview from './ui/OpenSettingsPreview';
+import ThumbnailField from './ui/ThumbnailField';
 
 const cardClass = 'rounded-xl border border-gray-200 bg-white p-5 md:p-6';
 const sectionTitleClass = 'mb-4 text-base font-semibold text-gray-900';
@@ -77,7 +78,7 @@ const OpenSettingsSection = ({
   const [slotModalOpen, setSlotModalOpen] = useState(false);
 
   /*
-   * 서버 응답을 얹되 **편집 중인 세 값은 지킨다.** 실시간 저장이 성공하면 설정 쿼리가
+   * 서버 응답을 얹되 **편집 중인 네 값은 지킨다.** 실시간 저장이 성공하면 설정 쿼리가
    * 무효화돼 곧바로 다시 내려오는데, 통째로 덮으면 저장이 나간 사이에 멘토가 친 글자가
    * 서버 응답으로 지워진다. 나머지(상품 id·상태·경력)는 이 화면이 고치지 않으므로
    * 서버가 맞다 — 저장이 만들어 준 `liveMentoringId` 도 그렇게 들어온다.
@@ -93,6 +94,7 @@ const OpenSettingsSection = ({
             title: prev.title,
             categories: prev.categories,
             durations: prev.durations,
+            thumbnail: prev.thumbnail,
           }
         : data;
     setForm(keepEdits);
@@ -126,6 +128,7 @@ const OpenSettingsSection = ({
         title: form.title ?? '',
         categories: form.categories,
         durations: form.durations,
+        thumbnail: form.thumbnail ?? null,
       });
       /*
         응답을 폼에 되쓰지 않는다 — 타이핑 도중에 나가는 저장이라 커서가 튄다.
@@ -259,6 +262,20 @@ const OpenSettingsSection = ({
                 막는다). 설정 패널 전체가 아니라 설정 필드만 감싸도록 두 덩이로 나눠 둔
                 이유는 사이의 "멘토링 일정" 섹션에 적어 두었다. */}
             <fieldset className="m-0 flex min-w-0 flex-col gap-6 border-0 p-0">
+              <section className={cardClass}>
+                <h2 className={sectionTitleClass}>
+                  썸네일{' '}
+                  <span className="text-xs font-normal text-gray-400">
+                    선택
+                  </span>
+                </h2>
+                <ThumbnailField
+                  value={form.thumbnail ?? null}
+                  profileImage={form.profileImage}
+                  onChange={(thumbnail) => patch({ thumbnail })}
+                />
+              </section>
+
               <section className={cardClass}>
                 <h2 className={sectionTitleClass}>프로필</h2>
                 <p className="mb-4 text-xs text-gray-500">

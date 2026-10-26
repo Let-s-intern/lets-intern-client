@@ -74,6 +74,11 @@ export const liveMentoringOpeningSchema = z.object({
   representativeCareer: representativeCareerSchema.nullable(),
   /** 1대1 멘토링 타이틀(상품명). */
   title: z.string().nullable(),
+  /**
+   * 카드 이미지. 멘토가 올린 썸네일이고, 없으면 서버가 프로필 사진으로 채운다.
+   * 구 서버 응답에는 없어 nullish 로 받는다 — 카드는 그때 `mentorProfileImage` 를 쓴다.
+   */
+  thumbnail: z.string().nullish(),
   /** 멘토가 오픈한 타입(다중). */
   categories: z.array(liveMentoringCategorySchema),
   /** 멘토가 오픈한 진행시간(다중). */
@@ -275,6 +280,11 @@ export const liveMentorDetailSchema = z.object({
   openingId: z.number().nullable(),
   /** 상품명 — 히어로 제목. */
   title: z.string(),
+  /**
+   * 주문서 상품 카드 이미지. 썸네일이 없으면 서버가 프로필 사진으로 채운다.
+   * 상세 화면 이미지는 이 값이 아니라 `profile.profileImage` 다.
+   */
+  thumbnail: z.string().nullish(),
   categories: z.array(liveMentoringCategorySchema),
   durations: z.array(liveMentoringDurationSchema),
   /** 진행시간별 판매가 — 히어로 플랜 옵션이 이 값을 그대로 쓴다. */

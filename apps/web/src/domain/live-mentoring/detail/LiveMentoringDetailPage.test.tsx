@@ -751,7 +751,7 @@ describe('LiveMentoringDetailPage', () => {
   it('시트에서 신청하기를 누르면 선택값을 넘기고 결제 페이지로 이동한다', async () => {
     // 기본 시드 슬롯은 9/1 과 9/30 이라 이어지지 않는다. 60분 플랜을 고르려면
     // 연속 2칸이 필요하므로 이 테스트만 붙어 있는 슬롯을 쓴다.
-    mockApis(detail(), [
+    mockApis(detail({ thumbnail: 'https://example.com/t.png' }), [
       {
         slotId: 1,
         startDate: '2030-09-01T10:00:00',
@@ -792,6 +792,8 @@ describe('LiveMentoringDetailPage', () => {
       price: 60000,
       mentoringCategory: 'PORTFOLIO',
       reservationChangeAgreed: true,
+      // 주문서 상품 카드는 프로필 사진이 아니라 썸네일을 쓴다.
+      thumbnail: 'https://example.com/t.png',
     });
     // 60분 플랜이라 연속 2칸이 함께 넘어간다
     expect(draft?.slots.map((slot) => slot.slotId)).toEqual([1, 2]);

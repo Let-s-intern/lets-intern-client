@@ -60,6 +60,11 @@ export const adminLiveMentoringSchema = z.object({
   mentorNickname: z.string().nullable(),
   mentorProfileImage: z.string().nullable(),
   title: z.string().nullable(),
+  /**
+   * 멘토가 올린 썸네일 원본. 없으면 null — 공개 화면은 그때 프로필 사진을 쓴다.
+   * 구 서버 응답에는 필드가 없어 nullish 로 받는다.
+   */
+  thumbnail: z.string().nullish(),
   status: liveMentoringStatusSchema,
   categories: z.array(liveMentoringCategorySchema),
   /** 상세 페이지 저장 여부. 정상 제출 상품은 서버가 기본 골격을 만들어 두므로 true 다. */
