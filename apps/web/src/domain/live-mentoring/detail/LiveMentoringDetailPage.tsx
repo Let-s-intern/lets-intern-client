@@ -574,7 +574,8 @@ const LiveMentoringDetailPage = ({
             mentorId: data.mentorId,
             openingId: data.openingId,
             productName: data.title,
-            thumbnail: data.profile.profileImage,
+            // 주문서 상품 카드는 결제 내역과 같은 썸네일을 쓴다. 구 서버(필드 없음)면 프로필 사진.
+            thumbnail: data.thumbnail ?? data.profile.profileImage,
             duration: draft.duration,
             durationPriceId: plan.durationPriceId ?? null,
             price: plan.price,

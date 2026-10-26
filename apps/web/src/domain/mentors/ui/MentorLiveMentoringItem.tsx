@@ -50,6 +50,8 @@ const MentorLiveMentoringItem = ({
   const nickname = opening.mentorNickname ?? '멘토';
   const title = opening.title ?? `${nickname}의 1:1 멘토링`;
   const badge = careerBadgeLabel(opening.representativeCareer);
+  // 서버가 썸네일이 없으면 프로필 사진으로 채운다. 구 서버(필드 없음)일 때만 여기서 대신한다.
+  const cardImage = opening.thumbnail ?? opening.mentorProfileImage;
   const url = `/live-mentoring/${opening.mentorId}`;
 
   return (
@@ -64,12 +66,12 @@ const MentorLiveMentoringItem = ({
     >
       <div
         className={`border-neutral-75 relative aspect-[1.3/1] w-full shrink-0 overflow-hidden rounded-sm border-[0.7px] ${
-          opening.mentorProfileImage ? 'bg-white' : 'bg-primary'
+          cardImage ? 'bg-white' : 'bg-primary'
         }`}
       >
-        {opening.mentorProfileImage ? (
+        {cardImage ? (
           <img
-            src={opening.mentorProfileImage}
+            src={cardImage}
             alt={nickname}
             className="absolute inset-0 h-full w-full object-cover"
           />
