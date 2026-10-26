@@ -32,6 +32,7 @@ import {
 } from './useLiveMentoringOpenAction';
 import LiveMentoringSlotModal from './ui/LiveMentoringSlotModal';
 import OpenSettingsPreview from './ui/OpenSettingsPreview';
+import ThumbnailField from './ui/ThumbnailField';
 
 const cardClass = 'rounded-xl border border-gray-200 bg-white p-5 md:p-6';
 const sectionTitleClass = 'mb-4 text-base font-semibold text-gray-900';
@@ -261,6 +262,20 @@ const OpenSettingsSection = ({
                 막는다). 설정 패널 전체가 아니라 설정 필드만 감싸도록 두 덩이로 나눠 둔
                 이유는 사이의 "멘토링 일정" 섹션에 적어 두었다. */}
             <fieldset className="m-0 flex min-w-0 flex-col gap-6 border-0 p-0">
+              <section className={cardClass}>
+                <h2 className={sectionTitleClass}>
+                  썸네일{' '}
+                  <span className="text-xs font-normal text-gray-400">
+                    선택
+                  </span>
+                </h2>
+                <ThumbnailField
+                  value={form.thumbnail ?? null}
+                  profileImage={form.profileImage}
+                  onChange={(thumbnail) => patch({ thumbnail })}
+                />
+              </section>
+
               <section className={cardClass}>
                 <h2 className={sectionTitleClass}>프로필</h2>
                 <p className="mb-4 text-xs text-gray-500">

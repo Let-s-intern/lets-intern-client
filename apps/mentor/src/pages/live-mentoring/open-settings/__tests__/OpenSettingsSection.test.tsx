@@ -57,6 +57,9 @@ vi.mock('@/api/live-mentoring/liveMentoring', () => ({
   }),
 }));
 
+// 썸네일 업로드는 `ui/__tests__/ThumbnailField.test.tsx` 에서 따로 검증한다.
+vi.mock('@/api/file', () => ({ uploadFile: vi.fn() }));
+
 // 대표 경력은 오픈 설정 저장과 별개로 UserCareer 전용 API 로 즉시 저장된다.
 vi.mock('@/api/career/career', () => ({
   useSetRepresentativeCareerMutation: () => ({
@@ -289,7 +292,7 @@ describe('OpenSettingsSection — 상태 충돌 안내 문구', () => {
  * 담아 두고 「보낼 게 있는지」와 「보내면 거절당할 이유」만 위로 올린다.
  */
 describe('OpenSettingsSection — 저장(제목·타입·진행시간)', () => {
-  it('title/categories/durations 세 필드를 담아 보낸다', async () => {
+  it('title/categories/durations/thumbnail 네 필드를 담아 보낸다', async () => {
     renderPage();
 
     fireEvent.change(screen.getByLabelText('1대1 멘토링 타이틀'), {
@@ -303,6 +306,7 @@ describe('OpenSettingsSection — 저장(제목·타입·진행시간)', () => {
       title: '이력서 클리닉',
       categories: baseSettings.categories,
       durations: baseSettings.durations,
+      thumbnail: null,
     });
   });
 
@@ -496,5 +500,42 @@ describe('OpenSettingsSection — 미리보기', () => {
     renderPage();
     expect(screen.queryByText('진행기간')).not.toBeInTheDocument();
     expect(screen.queryByText('미정 ~ 미정')).not.toBeInTheDocument();
+  });
+});
+
+describe('OpenSettingsSection — 썸네일(선택)', () => {
+  it('썸네일 섹션이 프로필 섹션보다 위에 있다', () => {
+    renderPage();
+
+    const headings = screen
+      .getAllByRole('heading', { level: 2 })
+      .map((heading) => heading.textContent ?? '');
+    const thumbnailIndex = headings.findIndex((text) =>
+      text.startsWith('썸네일'),
+    );
+    const profileIndex = headings.indexOf('프로필');
+
+    expect(thumbnailIndex).toBeGreaterThanOrEqual(0);
+    expect(thumbnailIndex).toBeLessThan(profileIndex);
+  });
+
+  it('썸네일만 지워도 변경사항이 생기고 저장 바디에 null 로 담긴다', async () => {
+    renderPage({ thumbnail: 'https://example.test/t.png' });
+
+    fireEvent.click(screen.getByRole('button', { name: '삭제' }));
+    await 저장_버튼을_누른다();
+
+    expect(saveStateSpy).toHaveBeenLastCalledWith({
+      isDirty: false,
+      blockedReason: null,
+    });
+    const payload = saveMock.mock.calls[0][0] as LiveMentoringSettingsUpdate;
+    expect(payload.thumbnail).toBeNull();
+  });
+
+  it('오픈 중에도 썸네일을 바꿀 수 있다', () => {
+    renderPage({ thumbnail: 'https://example.test/t.png' }, [openOpening]);
+
+    expect(screen.getByRole('button', { name: '삭제' })).toBeEnabled();
   });
 });
