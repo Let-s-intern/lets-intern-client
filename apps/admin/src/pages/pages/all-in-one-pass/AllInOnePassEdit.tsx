@@ -19,6 +19,7 @@ import { PassFormInput } from '@/domain/all-in-one-pass/types';
 import ImportExportBar from '@/domain/all-in-one-pass/ui/ImportExportBar';
 import { isServerPlanId } from '@/domain/all-in-one-pass/util/allInOnePassMapper';
 import { useVodDefaults } from '@/domain/all-in-one-pass/util/useVodDefaults';
+import { validatePassInput } from '@/domain/all-in-one-pass/util/validatePassInput';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { Button } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
@@ -56,6 +57,11 @@ export default function AllInOnePassEdit() {
    */
   const handleSave = async () => {
     if (!input || numericPassId == null) return;
+    const validationError = validatePassInput(input);
+    if (validationError) {
+      snackbar(validationError);
+      return;
+    }
     try {
       const currentServerIds = new Set(
         input.plans.filter((p) => isServerPlanId(p.id)).map((p) => p.id),

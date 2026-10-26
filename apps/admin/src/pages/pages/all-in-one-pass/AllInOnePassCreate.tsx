@@ -10,6 +10,7 @@ import PassFormViewTabs, {
 import { PassFormInput } from '@/domain/all-in-one-pass/types';
 import ImportExportBar from '@/domain/all-in-one-pass/ui/ImportExportBar';
 import { useVodDefaults } from '@/domain/all-in-one-pass/util/useVodDefaults';
+import { validatePassInput } from '@/domain/all-in-one-pass/util/validatePassInput';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { Button } from '@mui/material';
 import { useState } from 'react';
@@ -28,6 +29,11 @@ export default function AllInOnePassCreate() {
   const applyVodDefaults = useVodDefaults();
 
   const handleSave = async () => {
+    const error = validatePassInput(input);
+    if (error) {
+      snackbar(error);
+      return;
+    }
     try {
       await createMutation.mutateAsync(applyVodDefaults(input));
       snackbar('올인원패스가 개설되었습니다.');
