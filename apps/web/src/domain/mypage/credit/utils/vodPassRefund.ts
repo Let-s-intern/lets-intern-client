@@ -5,8 +5,9 @@ import dayjs from '@/lib/dayjs';
  * 환불할 수 없는 이용권에 그 이유를 알려주는 문구 (LC-3438).
  * 환불할 수 있거나 이미 취소된 이용권은 문구가 없다(취소는 별도 배너가 보여준다).
  *
- * 환불은 이용 시작 전(`UNACTIVATED`, `SCHEDULED`)에만 된다. 그 두 상태가 환불 불가인 것은
- * 결제 정보가 없거나 서버가 막은 경우라 이유를 특정하지 않는다.
+ * 이용 시작 전(`UNACTIVATED`, `SCHEDULED`)이면 환불된다. 이용 중(`ACTIVE`)이면 이 이용권 기간에
+ * VOD를 재생하지 않았을 때만 환불된다(LC-3507). 판정은 서버가 하고 `refundable` 로 내려준다.
+ * 시작 전 이용권이 환불 불가인 것은 결제 정보가 없거나 서버가 막은 경우라 이유를 특정하지 않는다.
  */
 export function getVodPassRefundBlockedReason(pass: VodPass): string | null {
   if (pass.refundable || pass.status === 'CANCELED') {
@@ -15,7 +16,7 @@ export function getVodPassRefundBlockedReason(pass: VodPass): string | null {
 
   switch (pass.status) {
     case 'ACTIVE':
-      return '이용이 시작된 이용권은 환불할 수 없습니다';
+      return 'VOD를 재생한 이용권은 환불할 수 없습니다';
     case 'EXPIRED':
       return '이용 기간이 종료된 이용권은 환불할 수 없습니다';
     default:

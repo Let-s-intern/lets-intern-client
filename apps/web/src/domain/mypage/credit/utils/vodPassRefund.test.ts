@@ -22,12 +22,12 @@ describe('getVodPassRefundBlockedReason', () => {
     expect(getVodPassRefundBlockedReason(makePass({}))).toBeNull();
   });
 
-  it('이용 중인 이용권은 이용이 시작되어 환불할 수 없다고 알려준다', () => {
+  it('이용 중인데 환불 불가면 VOD를 재생해 환불할 수 없다고 알려준다 (LC-3507)', () => {
     expect(
       getVodPassRefundBlockedReason(
         makePass({ status: 'ACTIVE', refundable: false }),
       ),
-    ).toBe('이용이 시작된 이용권은 환불할 수 없습니다');
+    ).toBe('VOD를 재생한 이용권은 환불할 수 없습니다');
   });
 
   it('종료된 이용권은 이용 기간이 끝나 환불할 수 없다고 알려준다', () => {

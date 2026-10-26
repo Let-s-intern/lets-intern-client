@@ -223,7 +223,7 @@ describe('CreditDetailPage VOD_PASS (LC-3438)', () => {
     renderPage();
 
     expect(
-      await screen.findByText('이용이 시작된 이용권은 환불할 수 없습니다'),
+      await screen.findByText('VOD를 재생한 이용권은 환불할 수 없습니다'),
     ).toBeInTheDocument();
     expect(
       screen.queryByRole('button', { name: '결제 취소하기' }),
