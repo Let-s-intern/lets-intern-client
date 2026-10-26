@@ -64,6 +64,10 @@ export interface OpenActionInput {
   categories: LiveMentoringCategory[];
   durations: LiveMentoringDuration[];
   /**
+   * 오픈 요청이 썸네일까지 덮어쓰므로 지금 값을 그대로 실어 보낸다. 빠뜨리면 지워진다.
+   */
+  thumbnail: string | null;
+  /**
    * 상품이 이미 있는지. 없으면 개설이 404 로 막힌다 — `POST /openings` 는 기존 상품을
    * 찾아 갱신·개설하는 API 라, 저장을 한 번 거쳐 상품을 만들어야 한다.
    */
@@ -197,6 +201,7 @@ export const useLiveMentoringOpenAction = ({
         title: input.title,
         categories: input.categories,
         durations: input.durations,
+        thumbnail: input.thumbnail,
       },
       {
         /*
