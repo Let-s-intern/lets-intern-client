@@ -1046,6 +1046,7 @@ const settingsCareers = () =>
 const liveMentoringState = {
   liveMentoringId: LIVE_MENTORING_SETTINGS.liveMentoringId,
   title: LIVE_MENTORING_SETTINGS.title,
+  thumbnail: LIVE_MENTORING_SETTINGS.thumbnail as string | null,
   status: LIVE_MENTORING_SETTINGS.status,
   categories: [...LIVE_MENTORING_SETTINGS.categories],
   durations: [...LIVE_MENTORING_SETTINGS.durations],
@@ -1114,6 +1115,7 @@ const settingsResponse = () => ({
   introduction: LIVE_MENTORING_SETTINGS.introduction,
   careers: settingsCareers(),
   title: liveMentoringState.title,
+  thumbnail: liveMentoringState.thumbnail,
   status: liveMentoringState.status,
   categories: liveMentoringState.categories,
   durations: liveMentoringState.durations,
@@ -2217,6 +2219,7 @@ export const handlers = [
       title?: string;
       categories?: LiveMentoringCategory[];
       durations?: number[];
+      thumbnail?: string | null;
     };
 
     if (!body.title?.trim() || !body.categories?.length) {
@@ -2236,6 +2239,7 @@ export const handlers = [
     liveMentoringState.title = body.title;
     liveMentoringState.categories = body.categories;
     liveMentoringState.durations = body.durations as LiveMentoringDuration[];
+    liveMentoringState.thumbnail = body.thumbnail ?? null;
     if (liveMentoringState.liveMentoringId === null) {
       liveMentoringState.liveMentoringId = 1;
       liveMentoringState.status = 'APPROVED';
@@ -2257,6 +2261,7 @@ export const handlers = [
       title?: string;
       categories?: LiveMentoringCategory[];
       durations?: number[];
+      thumbnail?: string | null;
     };
 
     if (liveMentoringState.liveMentoringId === null) {
@@ -2292,6 +2297,7 @@ export const handlers = [
     liveMentoringState.title = body.title;
     liveMentoringState.categories = body.categories;
     liveMentoringState.durations = durations;
+    liveMentoringState.thumbnail = body.thumbnail ?? null;
     liveMentoringState.openings.unshift({
       openingId: nextOpeningId++,
       status: 'OPEN',

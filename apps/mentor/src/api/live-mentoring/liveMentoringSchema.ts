@@ -309,6 +309,11 @@ export const liveMentoringSettingsSchema = z.object({
   /** 1대1 멘토링 타이틀(상품명). 상품이 없으면 null. */
   title: z.string().nullable(),
   /**
+   * 목록·카드용 썸네일(선택). 올리지 않았으면 null 이고, 그때 공개 화면은 프로필 사진을 쓴다.
+   * 구 서버 응답에는 필드가 없어 nullish 로 받는다.
+   */
+  thumbnail: z.string().nullish(),
+  /**
    * 상품 상태. 잠금 판정의 근거다.
    * 백엔드에 `isOpen` 같은 단일 불리언은 없다 — 개설 여부는 오픈 현황(개설 이력)에서 본다.
    */
@@ -330,6 +335,8 @@ export const liveMentoringSettingsUpdateSchema = z.object({
   title: z.string(),
   categories: z.array(liveMentoringCategorySchema),
   durations: z.array(liveMentoringDurationSchema),
+  /** null 이면 썸네일을 지운다. */
+  thumbnail: z.string().nullable(),
 });
 export type LiveMentoringSettingsUpdate = z.infer<
   typeof liveMentoringSettingsUpdateSchema
@@ -349,6 +356,7 @@ export const liveMentoringOpeningCreateSchema = z.object({
   title: z.string(),
   categories: z.array(liveMentoringCategorySchema),
   durations: z.array(liveMentoringDurationSchema),
+  thumbnail: z.string().nullable(),
 });
 export type LiveMentoringOpeningCreate = z.infer<
   typeof liveMentoringOpeningCreateSchema

@@ -59,17 +59,19 @@ describe('멘토 라이브 멘토링 스키마 — 모집 기간 제거', () => 
     expect(parsed).not.toHaveProperty('feedbackStartDate');
   });
 
-  it('개설 요청 바디는 title·categories·durations 세 개뿐이다', () => {
+  it('개설 요청 바디는 title·categories·durations·thumbnail 네 개뿐이다', () => {
     const parsed = liveMentoringOpeningCreateSchema.parse({
       title: '자소서 실전 첨삭 멘토링',
       categories: ['RESUME'],
       durations: [30],
+      thumbnail: null,
       feedbackStartDate: '2026-09-01',
       feedbackEndDate: '2026-09-30',
     });
     expect(Object.keys(parsed).sort()).toEqual([
       'categories',
       'durations',
+      'thumbnail',
       'title',
     ]);
   });

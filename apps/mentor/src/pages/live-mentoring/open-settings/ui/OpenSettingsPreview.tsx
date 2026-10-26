@@ -25,8 +25,17 @@ interface OpenSettingsPreviewProps {
  *  2. `grid-rows-subgrid` 대신 `flex` — subgrid 는 목록 그리드 안에서만 의미가 있다.
  */
 const OpenSettingsPreview = ({ settings }: OpenSettingsPreviewProps) => {
-  const { title, nickname, profileImage, categories, durations, careers } =
-    settings;
+  const {
+    title,
+    nickname,
+    profileImage,
+    thumbnail,
+    categories,
+    durations,
+    careers,
+  } = settings;
+  // 공개 카드와 같다 — 썸네일이 없으면 프로필 사진을 쓴다.
+  const cardImage = thumbnail ?? profileImage;
 
   // 공개 카드는 **대표 경력만** 노출하고, 미지정이면 배지 자체를 렌더하지 않는다.
   // 여기서 첫 경력으로 폴백하면 실제 노출과 달라져 미리보기가 거짓말을 하게 된다.
@@ -44,15 +53,15 @@ const OpenSettingsPreview = ({ settings }: OpenSettingsPreviewProps) => {
       <h2 className="mb-4 text-base font-semibold text-gray-900">미리보기</h2>
 
       <div className="flex w-full flex-col gap-3 overflow-hidden">
-        {/* 썸네일 — 프로필 이미지가 있으면 흰 배경 위 이미지, 없으면 브랜드 컬러 배경 + 제목 텍스트 */}
+        {/* 썸네일 — 썸네일(없으면 프로필 이미지)이 있으면 흰 배경 위 이미지, 없으면 브랜드 컬러 배경 + 제목 텍스트 */}
         <div
           className={`md:rounded-xs relative aspect-[540/421] overflow-hidden rounded-sm ${
-            profileImage ? 'bg-white' : 'bg-primary'
+            cardImage ? 'bg-white' : 'bg-primary'
           }`}
         >
-          {profileImage && (
+          {cardImage && (
             <img
-              src={profileImage}
+              src={cardImage}
               alt={displayNickname}
               className="absolute inset-0 h-full w-full object-cover"
             />
@@ -65,7 +74,7 @@ const OpenSettingsPreview = ({ settings }: OpenSettingsPreviewProps) => {
             </span>
           )}
 
-          {!profileImage && (
+          {!cardImage && (
             <p
               className={`text-small18 relative line-clamp-3 px-4 pb-4 font-bold text-white ${
                 badge ? 'pt-11' : 'pt-4'

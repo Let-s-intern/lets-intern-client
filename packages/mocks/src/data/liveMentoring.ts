@@ -289,6 +289,8 @@ export interface LiveMentoringSettings {
   careers: LiveMentoringSettingsCareer[];
   /** 1대1 멘토링 타이틀(상품명). 상품이 없으면 null. */
   title: string | null;
+  /** 목록·카드용 썸네일(선택). 없으면 공개 화면이 프로필 사진을 쓴다. */
+  thumbnail: string | null;
   /** 상품 상태. 잠금 판정의 근거다 — 백엔드에 `isOpen` 같은 단일 불리언은 없다. */
   status: LiveMentoringStatus | null;
   categories: LiveMentoringCategory[];
@@ -1047,6 +1049,7 @@ export const LIVE_MENTORING_SETTINGS: LiveMentoringSettings = {
   introduction: mySeed.introduction,
   careers: MY_SETTINGS_CAREERS,
   title: '자소서 실전 첨삭 멘토링',
+  thumbnail: null,
   status: 'APPROVED',
   categories: categoriesFor(mySeed),
   // 개설 전이라 진행시간은 아직 서버에 없다.

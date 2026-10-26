@@ -115,6 +115,7 @@ const LiveMentoringSettingsPage = () => {
           title: settings.title ?? '',
           categories: settings.categories,
           durations: settings.durations,
+          thumbnail: settings.thumbnail ?? null,
           hasProduct: settings.liveMentoringId !== null,
         }
       : null,

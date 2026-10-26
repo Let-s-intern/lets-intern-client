@@ -1235,7 +1235,7 @@ describe('LiveMentoringSettingsPage — 공개/비공개 실행', () => {
   const 확인모달 = () =>
     screen.getByRole('dialog', { name: '오픈 전 상세 페이지 확인' });
 
-  it('제목·타입·진행시간을 한 요청에 담아 개설한다', async () => {
+  it('제목·타입·진행시간·썸네일을 한 요청에 담아 개설한다', async () => {
     settingsExtra = 갖춰진_설정;
     renderPage();
 
@@ -1251,6 +1251,8 @@ describe('LiveMentoringSettingsPage — 공개/비공개 실행', () => {
       title: '자기소개서 첨삭',
       categories: ['PERSONAL_STATEMENT'],
       durations: [30, 60],
+      // 오픈 요청은 썸네일까지 덮어쓰므로 지금 값(없음)을 그대로 실어 보낸다.
+      thumbnail: null,
     });
   });
 

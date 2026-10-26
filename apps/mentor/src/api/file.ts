@@ -20,6 +20,8 @@ export const fileType = z.enum([
   'USER_PROFILE',
   // 어드민 회사 로고 라이브러리(LC-3498). 서버 `FileType.COMPANY_LOGO("company-logo")`
   'COMPANY_LOGO',
+  // 1:1 LIVE 멘토링 썸네일(LC-3508). 서버 `FileType.LIVE_MENTORING("program/live-mentoring/")`
+  'LIVE_MENTORING',
 ]);
 
 export type FileType = z.infer<typeof fileType>;
