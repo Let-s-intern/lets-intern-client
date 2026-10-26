@@ -223,7 +223,9 @@ describe('CreditDetailPage VOD_PASS (LC-3438)', () => {
     renderPage();
 
     expect(
-      await screen.findByText('이용 기간 중 VOD를 시청한 기록이 있어 환불이 어려워요'),
+      await screen.findByText(
+        '이용 기간 중 VOD를 시청한 기록이 있어 환불이 어려워요',
+      ),
     ).toBeInTheDocument();
     expect(
       screen.queryByRole('button', { name: '결제 취소하기' }),
