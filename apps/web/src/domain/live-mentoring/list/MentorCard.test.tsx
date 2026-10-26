@@ -169,4 +169,26 @@ describe('MentorCard', () => {
       '/live-mentoring/42',
     );
   });
+
+  describe('카드 이미지', () => {
+    it('썸네일이 있으면 썸네일을 보여준다', () => {
+      render(
+        <MentorCard
+          opening={makeOpening({ thumbnail: 'https://example.com/t.png' })}
+        />,
+      );
+      expect(screen.getByAltText('자소서장인')).toHaveAttribute(
+        'src',
+        'https://example.com/t.png',
+      );
+    });
+
+    it('썸네일 필드가 없는 응답이면 프로필 사진을 보여준다', () => {
+      render(<MentorCard opening={makeOpening()} />);
+      expect(screen.getByAltText('자소서장인')).toHaveAttribute(
+        'src',
+        'https://example.com/p.png',
+      );
+    });
+  });
 });

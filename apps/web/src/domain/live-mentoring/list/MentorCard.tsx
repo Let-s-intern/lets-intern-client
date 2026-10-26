@@ -30,21 +30,23 @@ interface MentorCardProps {
 const MentorCard = ({ opening }: MentorCardProps) => {
   const nickname = opening.mentorNickname ?? '멘토';
   const badge = careerBadgeLabel(opening.representativeCareer);
+  // 서버가 썸네일이 없으면 프로필 사진으로 채운다. 구 서버(필드 없음)일 때만 여기서 대신한다.
+  const cardImage = opening.thumbnail ?? opening.mentorProfileImage;
 
   return (
     <Link
       href={`/live-mentoring/${opening.mentorId}`}
       className="row-span-3 grid w-full grid-rows-subgrid gap-3 overflow-hidden"
     >
-      {/* 썸네일 — 프로필 이미지가 있으면 흰 배경 위 이미지, 없으면 브랜드 컬러 배경 + 제목 텍스트 */}
+      {/* 썸네일 — 썸네일(없으면 프로필 이미지)이 있으면 흰 배경 위 이미지, 없으면 브랜드 컬러 배경 + 제목 텍스트 */}
       <div
         className={`md:rounded-xs relative aspect-[540/421] overflow-hidden rounded-sm ${
-          opening.mentorProfileImage ? 'bg-white' : 'bg-primary'
+          cardImage ? 'bg-white' : 'bg-primary'
         }`}
       >
-        {opening.mentorProfileImage && (
+        {cardImage && (
           <img
-            src={opening.mentorProfileImage}
+            src={cardImage}
             alt={nickname}
             className="absolute inset-0 h-full w-full object-cover"
           />
@@ -57,7 +59,7 @@ const MentorCard = ({ opening }: MentorCardProps) => {
           </span>
         )}
 
-        {!opening.mentorProfileImage && (
+        {!cardImage && (
           <p
             className={`text-small18 relative line-clamp-3 px-4 pb-4 font-bold text-white ${
               badge ? 'pt-11' : 'pt-4'
