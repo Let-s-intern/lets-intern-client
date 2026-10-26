@@ -19,6 +19,7 @@ const convertDateFormat = (date: string) => dayjs(date).format('YYYY.MM.DD');
 
 const CreditDetailPage = () => {
   const router = useRouter();
+  const params = useParams<{ paymentId: string }>();
 
   return (
     <section className="flex w-full flex-col px-5 md:px-0">
@@ -39,7 +40,7 @@ const CreditDetailPage = () => {
             <p className="text-neutral-0">결제내역을 불러오는 중입니다.</p>
           }
         >
-          <CreditDetailContent />
+          <CreditDetailContent paymentId={params.paymentId} />
         </AsyncBoundary>
       </section>
     </section>
@@ -48,10 +49,9 @@ const CreditDetailPage = () => {
 
 export default CreditDetailPage;
 
-const CreditDetailContent = () => {
+/** 결제 상세 본문. 결제 상세 페이지와 마이페이지 VOD 이용권 결제 상세 모달이 함께 쓴다. */
+export const CreditDetailContent = ({ paymentId }: { paymentId: string }) => {
   const router = useRouter();
-  const params = useParams<{ paymentId: string }>();
-  const paymentId = params.paymentId;
 
   const {
     data: paymentDetail,
