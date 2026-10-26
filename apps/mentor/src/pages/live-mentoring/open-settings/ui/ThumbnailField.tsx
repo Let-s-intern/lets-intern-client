@@ -105,7 +105,9 @@ const ThumbnailField = ({
       <ul className="flex flex-col gap-0.5 text-xs text-gray-500">
         <li>썸네일을 올리지 않으면 프로필 사진이 표시돼요.</li>
         <li>권장 1080 x 842 px · JPG, PNG, WEBP · 최대 {MAX_IMAGE_MB}MB</li>
-        <li>중요한 내용은 가운데에 두세요. 화면에 따라 가장자리가 잘릴 수 있어요.</li>
+        <li>
+          중요한 내용은 가운데에 두세요. 화면에 따라 가장자리가 잘릴 수 있어요.
+        </li>
       </ul>
 
       {error && <p className="text-xs text-red-500">{error}</p>}

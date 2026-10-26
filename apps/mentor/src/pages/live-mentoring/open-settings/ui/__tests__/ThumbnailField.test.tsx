@@ -65,7 +65,11 @@ describe('ThumbnailField', () => {
     uploadFileMock.mockResolvedValue(THUMBNAIL);
     const onChange = vi.fn();
     const { container } = render(
-      <ThumbnailField value={null} profileImage={PROFILE} onChange={onChange} />,
+      <ThumbnailField
+        value={null}
+        profileImage={PROFILE}
+        onChange={onChange}
+      />,
     );
     const file = fileOfSize(1024);
 
@@ -83,7 +87,11 @@ describe('ThumbnailField', () => {
   it('10MB 를 넘는 파일은 올리지 않고 이유를 알려준다', () => {
     const onChange = vi.fn();
     const { container } = render(
-      <ThumbnailField value={null} profileImage={PROFILE} onChange={onChange} />,
+      <ThumbnailField
+        value={null}
+        profileImage={PROFILE}
+        onChange={onChange}
+      />,
     );
 
     fireEvent.change(container.querySelector('input[type="file"]')!, {
