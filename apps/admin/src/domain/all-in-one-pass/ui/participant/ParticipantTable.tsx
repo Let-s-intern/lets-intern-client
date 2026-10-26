@@ -119,6 +119,7 @@ function ParticipantGroupRows({
   onRevokeClick,
 }: GroupRowsProps) {
   const head = apps[0];
+  const revoked = head.isAdminRefunded;
   const total = apps.reduce((sum, p) => sum + appAmount(p), 0);
   // startDate 는 최초로 고정, createDate 오름차순이라 마지막이 최신 종료
   const firstStart = head.startDate;
@@ -165,13 +166,18 @@ function ParticipantGroupRows({
         <TD>
           <button
             type="button"
-            className="w-24 whitespace-nowrap rounded border border-red-500 py-1 text-xs text-red-600 hover:bg-red-50"
+            disabled={revoked}
+            className={`w-24 whitespace-nowrap rounded border py-1 text-xs ${
+              revoked
+                ? 'border-neutral-80 text-neutral-40 cursor-not-allowed'
+                : 'border-red-500 text-red-600 hover:bg-red-50'
+            }`}
             onClick={(e) => {
               e.stopPropagation();
               onRevokeClick(head);
             }}
           >
-            권한 회수
+            {revoked ? '회수 완료' : '권한 회수'}
           </button>
         </TD>
       </tr>

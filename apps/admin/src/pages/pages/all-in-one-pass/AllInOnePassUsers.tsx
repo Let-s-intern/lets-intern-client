@@ -11,6 +11,7 @@ import DownloadActions from '@/domain/all-in-one-pass/ui/participant/DownloadAct
 import ParticipantTable from '@/domain/all-in-one-pass/ui/participant/ParticipantTable';
 import UsedProgramsModal from '@/domain/all-in-one-pass/ui/participant/UsedProgramsModal';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import { isAxiosError } from 'axios';
 import { useMemo, useState } from 'react';
 import { IoArrowBack } from 'react-icons/io5';
 import { Link, useParams } from 'react-router-dom';
@@ -42,7 +43,12 @@ export default function AllInOnePassUsers() {
       return;
     revoke(participant.id, {
       onSuccess: () => snackbar('권한을 회수했습니다.'),
-      onError: () => snackbar('권한 회수에 실패했습니다.'),
+      onError: (error) =>
+        snackbar(
+          (isAxiosError<{ message?: string }>(error) &&
+            error.response?.data?.message) ||
+            '권한 회수에 실패했습니다.',
+        ),
     });
   };
 
