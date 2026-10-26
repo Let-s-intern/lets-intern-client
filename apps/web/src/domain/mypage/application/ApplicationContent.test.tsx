@@ -39,6 +39,11 @@ jest.mock('@/domain/live-mentoring/question/QuestionModal', () => ({
   default: () => null,
 }));
 
+jest.mock('@/domain/mypage/application/section/VodPassSection', () => ({
+  __esModule: true,
+  default: () => null,
+}));
+
 jest.mock('@letscareer/ui', () => ({
   __esModule: true,
   CategoryTabs: () => null,

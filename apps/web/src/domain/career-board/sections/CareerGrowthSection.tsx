@@ -28,6 +28,7 @@ import {
   ApplicationCategory,
   filterMentoringCategory,
 } from '@/domain/mypage/application/constants';
+import VodPassSection from '@/domain/mypage/application/section/VodPassSection';
 import VersionChangeModal from '@/domain/mypage/application/version/VersionChangeModal';
 import CategoryChips from '@/domain/mypage/ui/button/CategoryChips';
 import { useSuspenseQuery } from '@tanstack/react-query';
@@ -248,6 +249,7 @@ const CareerGrowthContent = () => {
               selected={category}
               onChange={setCategory}
             />
+            {category === 'VOD' && <VodPassSection />}
             {isLibraryTab ? (
               <AsyncBoundary
                 pendingFallback={

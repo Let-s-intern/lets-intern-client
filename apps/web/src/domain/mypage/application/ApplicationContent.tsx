@@ -21,6 +21,7 @@ import { SHOW_LIVE_MENTORING_NAV } from '@/domain/live-mentoring/constants';
 import QuestionModal from '@/domain/live-mentoring/question/QuestionModal';
 import ParticipateSection from '@/domain/mypage/application/section/ParticipateSection';
 import VodClassSection from '@/domain/mypage/application/section/VodClassSection';
+import VodPassSection from '@/domain/mypage/application/section/VodPassSection';
 import VersionChangeModal from '@/domain/mypage/application/version/VersionChangeModal';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -172,7 +173,10 @@ const ApplicationContent = () => {
           <GuidebookSection applicationList={guidebookApplicationList} />
         )}
         {category === 'VOD' && (
-          <VodClassSection applicationList={vodClassApplicationList} />
+          <div className="flex flex-col gap-8">
+            <VodPassSection />
+            <VodClassSection applicationList={vodClassApplicationList} />
+          </div>
         )}
         {category === 'LAUNCH_ALERT' && <LaunchAlertSection />}
       </div>
