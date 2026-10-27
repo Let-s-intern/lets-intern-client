@@ -61,6 +61,7 @@ const programSchema = z.object({
   programType: z.string().nullish(),
   programTitle: z.string().nullish(),
   usedDate: z.string().nullish(),
+  isRefunded: z.boolean().nullish(), // 환불(권한 회수) 여부(BE 추가 대기). true면 "환불" 뱃지
 });
 const programListResponseSchema = z.object({
   userName: z.string().nullish(),
@@ -177,6 +178,7 @@ export const useGetUsedProgramsQuery = (
           type: toUsedProgramType(p.programType),
           title: p.programTitle ?? '',
           usedAt: p.usedDate ?? null,
+          isRefunded: p.isRefunded ?? false,
         }),
       );
     },

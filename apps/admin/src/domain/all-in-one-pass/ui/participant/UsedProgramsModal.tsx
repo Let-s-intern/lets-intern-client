@@ -68,11 +68,21 @@ export default function UsedProgramsModal({
                     {program.title}
                   </span>
                 </div>
-                {program.usedAt && (
-                  <span className="text-xxsmall12 text-neutral-45 shrink-0">
-                    {dayjs(program.usedAt).format('YYYY.MM.DD')}
-                  </span>
-                )}
+                <div className="flex shrink-0 items-center gap-2">
+                  {program.isRefunded && (
+                    <Chip
+                      label="환불"
+                      size="small"
+                      color="error"
+                      variant="outlined"
+                    />
+                  )}
+                  {program.usedAt && (
+                    <span className="text-xxsmall12 text-neutral-45">
+                      {dayjs(program.usedAt).format('YYYY.MM.DD')}
+                    </span>
+                  )}
+                </div>
               </li>
             ))}
           </ul>
