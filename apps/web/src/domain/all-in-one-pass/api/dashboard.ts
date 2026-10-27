@@ -206,7 +206,7 @@ export const useGetBenefitGuidebook = (applicationId: number) =>
   });
 
 // ─── GET /{id}/benefit/live — 라이브 탭 참여 가능 목록(패스 대상·모집예정 포함·마감 제외). 참여 중/완료는 user/applications ───
-// benefit/live 는 날짜 미제공(BE 요청 대기) + 이미 신청한 live 를 안 거르므로, 기간 표시 생략·FE dedup 로 처리.
+// 날짜 4필드는 BE 추가 대기(챌린지 혜택과 동일) — 내려오면 진행기간·모집뱃지 자동 표기, 이미 신청한 live 는 FE dedup 로 처리.
 const benefitLiveSchema = z.object({
   accessible: z.boolean().nullish(),
   programList: z
@@ -216,6 +216,10 @@ const benefitLiveSchema = z.object({
         title: z.string().nullish(),
         shortDesc: z.string().nullish(),
         thumbnail: z.string().nullish(),
+        startDate: z.string().nullish(),
+        endDate: z.string().nullish(),
+        beginning: z.string().nullish(),
+        deadline: z.string().nullish(),
       }),
     )
     .default([]),

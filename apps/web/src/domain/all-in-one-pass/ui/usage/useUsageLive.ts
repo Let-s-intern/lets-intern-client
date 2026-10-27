@@ -32,14 +32,24 @@ export const useUsageLive = (applicationId: number): UsageLive => {
     );
     const enrolledIds = new Set(apps.map((a) => a.programId));
 
-    // 참여 가능 — 패스 혜택 라이브. benefit/live 는 이미 신청한 건을 안 거르므로 dedup,
-    // 날짜 미제공이라 기간·모집뱃지는 생략(BE 날짜 추가 시 복구).
+    // 참여 가능 — 패스 혜택 라이브. benefit/live 는 이미 신청한 건을 안 거르므로 dedup.
+    // beginning 미래면 모집 예정. (날짜 미제공이면 기간·뱃지는 자동 생략)
     const before: PassProgramCardData[] = (benefitQuery.data?.programList ?? [])
       .filter((p) => !enrolledIds.has(p.programId))
       .map((p) => ({
         programId: p.programId,
         title: p.title ?? '',
         thumbnail: p.thumbnail,
+        periodText: periodText(p.startDate, p.endDate),
+        beginning: p.beginning,
+        deadline: p.deadline,
+        // 날짜 없으면 상태 미지정 → 모집 뱃지 생략(BE 날짜 추가 전 그대로)
+        programStatusType:
+          p.beginning || p.deadline
+            ? p.beginning && dayjs(p.beginning).isAfter(dayjs())
+              ? 'PREV'
+              : 'PROCEEDING'
+            : undefined,
         participation: 'BEFORE',
       }));
 
