@@ -5,6 +5,7 @@ import { useCallback, useEffect, useReducer, useState } from 'react';
 
 import CouponBanner from '@/common/banner/CouponBanner';
 import FilterSideBar from '@/domain/program/filter/FilterSideBar';
+import AllInOnePassSection from '@/domain/program/section/AllInOnePassSection';
 import ProgramBanner from '@/domain/program/section/ProgramBanner';
 import ProgramGrid from '@/domain/program/section/ProgramGrid';
 import ProgramRecommendCTA from '@/domain/program/section/ProgramRecommendCTA';
@@ -229,6 +230,9 @@ const Programs = () => {
             />
           </button>
         </div>
+        {!searchParams
+          .getAll(PROGRAM_QUERY_KEY.TYPE)
+          .includes('MEMBERSHIP') && <AllInOnePassSection />}
         <ProgramGrid
           pageable={pageable}
           setPageable={setPageable}
