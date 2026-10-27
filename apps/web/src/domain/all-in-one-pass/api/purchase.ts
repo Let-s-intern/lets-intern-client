@@ -31,6 +31,7 @@ const applicationFormSchema = z.object({
   deadline: z.string().nullish(),
   periodDays: z.number().nullish(),
   statusType: z.string().nullish(),
+  hasActiveMembership: z.boolean().nullish(), // 이미 보유한 유효 멤버십 존재 여부(BE 추가 대기). true면 랜딩 CTA 비활성
   planList: z.array(planSchema).default([]),
 });
 
