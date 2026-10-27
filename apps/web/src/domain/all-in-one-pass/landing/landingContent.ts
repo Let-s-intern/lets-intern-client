@@ -167,8 +167,8 @@ const CORE_BENEFIT_PRESETS: Record<
     iconSrc: BENEFIT_ICON_SRC.guidebook,
   },
   LIVE: {
-    name: () => 'LIVE 세미나',
-    description: '현직자가 전하는 실시간 세미나',
+    name: () => 'LIVE 클래스',
+    description: '현직자가 전하는 실시간 LIVE 클래스',
     iconSrc: BENEFIT_ICON_SRC.liveSeminar,
   },
 };

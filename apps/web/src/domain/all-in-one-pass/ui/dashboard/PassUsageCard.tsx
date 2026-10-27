@@ -6,7 +6,7 @@ const PROGRAM_LABEL: Record<string, string> = {
   CHALLENGE: '챌린지',
   GUIDEBOOK: '가이드북',
   VOD: 'VOD',
-  LIVE: '라이브 클래스',
+  LIVE: 'LIVE 클래스',
 };
 
 // v1: 멘토링 쿠폰은 고정 노출(플랜/API에 없음). 멘토링 정리 시 교체.

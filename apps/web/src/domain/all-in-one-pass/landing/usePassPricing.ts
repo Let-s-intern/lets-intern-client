@@ -6,8 +6,8 @@ const finalOf = (p: AllInOnePassPlan) => p.price - (p.discount ?? 0);
 
 /** 라이브·VOD 는 한 줄로 합치고, 존재하는 타입으로 라벨 생성. */
 const liveVodLabel = (hasLive: boolean, hasVod: boolean): string => {
-  if (hasLive && hasVod) return '현직자 Live 세미나 & VOD';
-  if (hasLive) return '현직자 Live 세미나';
+  if (hasLive && hasVod) return '현직자 LIVE 클래스 & VOD';
+  if (hasLive) return '현직자 LIVE 클래스';
   return '현직자 VOD';
 };
 

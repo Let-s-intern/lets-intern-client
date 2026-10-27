@@ -1,6 +1,6 @@
 /** 올인원패스 유저 대시보드 타입. BE 도메인명은 membership이지만 FE는 올인원패스/Pass 네이밍(변환은 api 매퍼에서만). */
 
-/** 이용권 프로그램 종류 (ProgramType). LIVE = 유저 화면 "라이브 클래스" */
+/** 이용권 프로그램 종류 (ProgramType). LIVE = 유저 화면 "LIVE 클래스" */
 export type PassProgramType = 'CHALLENGE' | 'GUIDEBOOK' | 'VOD' | 'LIVE';
 
 /** 이용권 방식 (MembershipPrivilegeType) */

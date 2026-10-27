@@ -56,9 +56,9 @@ export const BENEFIT_TABS: BenefitDetailTab[] = [
     key: 'live',
     label: 'LIVE 클래스',
     unit: '개',
-    titlePrefix: '현직자 라이브 클래스',
+    titlePrefix: '현직자 LIVE 클래스',
     description:
-      '현직자가 실시간으로 전하는 라이브 클래스예요.\n패스 이용 기간 동안 열리는 세션에 자유롭게 참여해 보세요.',
+      '현직자가 실시간으로 전하는 LIVE 클래스예요.\n패스 이용 기간 동안 열리는 세션에 자유롭게 참여해 보세요.',
     programType: 'LIVE',
   },
   {

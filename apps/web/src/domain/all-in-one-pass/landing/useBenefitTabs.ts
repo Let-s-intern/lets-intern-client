@@ -86,7 +86,7 @@ export function useBenefitTabs(
       loading: guidebookQuery.isLoading,
     },
     live: {
-      cards: toCards(liveQuery.data, 'live', '라이브 클래스 자세히 보기'),
+      cards: toCards(liveQuery.data, 'live', 'LIVE 클래스 자세히 보기'),
       loading: liveQuery.isLoading,
     },
     vod: { cards: [], loading: false }, // 노출 VOD 는 landingDescription 에서 별도 렌더
