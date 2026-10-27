@@ -68,11 +68,6 @@ const PassProgramCard = ({ item, onClick }: Props) => {
 
       <div className="flex flex-1 flex-col justify-between gap-2.5">
         <div className="flex flex-col gap-1.5">
-          {item.isMembershipApplied && (
-            <span className="rounded-xxs text-xxsmall12 w-fit bg-[#edeffe] px-2 py-1 font-medium text-[#4A76FF]">
-              올인원패스 혜택
-            </span>
-          )}
           <h3 className="text-xsmall14 md:text-xsmall16 text-neutral-0 line-clamp-2 font-semibold">
             {item.title}
           </h3>
@@ -93,6 +88,11 @@ const PassProgramCard = ({ item, onClick }: Props) => {
           {pill && (
             <span className="text-xxsmall12 w-fit rounded-[3px] bg-[#F2ECFC] px-2 py-1 font-semibold text-[#8444FF]">
               {pill}
+            </span>
+          )}
+          {item.isMembershipApplied && (
+            <span className="rounded-xxs text-xxsmall12 w-fit bg-[#edeffe] px-2 py-1 font-medium text-[#4A76FF]">
+              패스 혜택
             </span>
           )}
         </div>

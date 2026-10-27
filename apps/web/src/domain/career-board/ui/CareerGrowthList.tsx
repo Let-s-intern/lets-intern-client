@@ -3,10 +3,10 @@
 import AlertModal from '@/common/alert/AlertModal';
 import HybridLink from '@/common/HybridLink';
 import { downloadContentAndTrack } from '@/domain/career-board/utils/contentDownload';
+import OpenChatLink from '@/domain/mypage/application/ui/OpenChatLink';
 import { useDownloadAction } from '@/hooks/useDownloadAction';
 import { twMerge } from '@/lib/twMerge';
 import { useRouter } from 'next/navigation';
-import OpenChatLink from '@/domain/mypage/application/ui/OpenChatLink';
 import type { CareerGrowthCardConfig } from '../utils/careerGrowthCard';
 
 interface CareerGrowthListProps {
@@ -96,7 +96,7 @@ const CareerGrowthItemCard = ({ config }: CareerGrowthItemCardProps) => {
               </span>
               {config.isMembershipApplied && (
                 <span className="rounded-xxs text-xxsmall12 bg-[#edeffe] px-2 py-1 font-medium text-[#4A76FF]">
-                  올인원패스 혜택
+                  패스 혜택
                 </span>
               )}
               <span className="text-xxsmall12 text-neutral-40 font-normal">

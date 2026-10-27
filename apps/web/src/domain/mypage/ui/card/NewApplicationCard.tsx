@@ -118,7 +118,7 @@ export const MypageApplicationCard = ({
 
               {config.isMembershipApplied && (
                 <span className="rounded-xxs text-xxsmall12 bg-[#edeffe] px-2 py-1 font-medium text-[#4A76FF]">
-                  올인원패스 혜택
+                  패스 혜택
                 </span>
               )}
 
