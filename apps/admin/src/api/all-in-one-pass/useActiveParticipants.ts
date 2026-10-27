@@ -18,6 +18,7 @@ const adminVoSchema = z.object({
   userName: z.string().nullish(),
   contactEmail: z.string().nullish(),
   planTitle: z.string().nullish(),
+  membershipTitle: z.string().nullish(), // 멤버십(상품)명. BE 추가 전까지 undefined → planTitle 폴백
   startDate: z.string().nullish(),
   endDate: z.string().nullish(),
   orderId: z.string().nullish(),
@@ -42,7 +43,10 @@ const toParticipant = (
   orderId: item.membershipApplication.orderId ?? '',
   name: item.membershipApplication.userName ?? '',
   email: item.membershipApplication.contactEmail ?? '',
-  passTitle: item.membershipApplication.planTitle ?? '',
+  passTitle:
+    item.membershipApplication.membershipTitle ??
+    item.membershipApplication.planTitle ??
+    '',
   startDate: item.membershipApplication.startDate ?? '',
   endDate: item.membershipApplication.endDate ?? '',
   totalDays: item.totalDays ?? 0,
