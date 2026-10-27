@@ -47,12 +47,18 @@ const TITLE = '커리어 성장';
 const HREF = '/mypage/application';
 
 /*
-  커리어 성장 위젯은 출시알림 탭을 지원하지 않는다(신청현황 전용 탭).
+  커리어 성장 위젯은 전체·출시알림 탭을 지원하지 않는다(신청현황 전용 탭).
   1대1 라이브 멘토링은 프로그램 칩에도 함께 보이고, 멘토링 칩은 그중 멘토링만 거른다(LC-3301).
 */
-type CareerGrowthCategory = Exclude<ApplicationCategory, 'LAUNCH_ALERT'>;
+type CareerGrowthCategory = Exclude<
+  ApplicationCategory,
+  'LAUNCH_ALERT' | 'ALL'
+>;
 
-const EXCLUDED_FROM_CAREER_GROWTH: ApplicationCategory[] = ['LAUNCH_ALERT'];
+const EXCLUDED_FROM_CAREER_GROWTH: ApplicationCategory[] = [
+  'LAUNCH_ALERT',
+  'ALL',
+];
 
 const CAREER_GROWTH_CATEGORY_OPTIONS = APPLICATION_CATEGORY_OPTIONS.filter(
   (option): option is { value: CareerGrowthCategory; label: string } =>

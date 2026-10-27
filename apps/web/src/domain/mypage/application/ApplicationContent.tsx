@@ -7,6 +7,7 @@ import {
   ApplicationCategory,
   filterMentoringCategory,
 } from '@/domain/mypage/application/constants';
+import AllSection from '@/domain/mypage/application/section/AllSection';
 import ApplySection from '@/domain/mypage/application/section/ApplySection';
 import CompleteSection from '@/domain/mypage/application/section/CompleteSection';
 import EmptySection from '@/domain/mypage/application/section/EmptySection';
@@ -29,7 +30,7 @@ const ApplicationContent = () => {
   const { data: applications } = useSuspenseQuery(
     mypageApplicationsQueryOptions,
   );
-  const [category, setCategory] = useState<ApplicationCategory>('PROGRAM');
+  const [category, setCategory] = useState<ApplicationCategory>('ALL');
   const [openMentoringId, setOpenMentoringId] = useState<number | null>(null);
   const [openVersionApplicationId, setOpenVersionApplicationId] = useState<
     number | null
@@ -38,7 +39,8 @@ const ApplicationContent = () => {
     1대1 라이브 멘토링은 전용 API 로 온다. 프로그램 탭의 세 구간에 함께 담고, 멘토링 탭을
     열지도 이 건수로 정한다 — React Query 가 같은 키를 합치므로 요청이 늘지는 않는다.
   */
-  const { data: mentoringData } = useMyLiveMentoringApplicationsQuery();
+  const { data: mentoringData, isError: isMentoringError } =
+    useMyLiveMentoringApplicationsQuery();
   const mentoringList = mentoringData?.applicationList ?? [];
   const now = new Date();
   const mentoringWaitingList = mentoringList.filter(
@@ -134,6 +136,24 @@ const ApplicationContent = () => {
         />
       </div>
       <div className="flex w-full flex-col gap-16">
+        {category === 'ALL' && (
+          <AllSection
+            programWaitingList={programWaitingList}
+            programInProgressList={programInProgressList}
+            programCompletedList={programCompletedList}
+            membershipInProgressList={membershipInProgressList}
+            membershipCompletedList={membershipCompletedList}
+            guidebookApplicationList={guidebookApplicationList}
+            vodClassApplicationList={vodClassApplicationList}
+            mentoringWaitingList={mentoringWaitingList}
+            mentoringInProgressList={mentoringInProgressList}
+            mentoringCompletedList={mentoringCompletedList}
+            mentoringError={isMentoringError}
+            onMentoringQuestionClick={setOpenMentoringId}
+            onVersionChangeClick={setOpenVersionApplicationId}
+          />
+        )}
+
         {category === 'PROGRAM' && (
           <>
             {isProgramEmpty ? (

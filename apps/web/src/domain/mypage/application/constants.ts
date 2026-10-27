@@ -1,4 +1,5 @@
 export type ApplicationCategory =
+  | 'ALL'
   | 'PROGRAM'
   | 'MEMBERSHIP'
   | 'MENTORING'
@@ -12,6 +13,7 @@ export const APPLICATION_CATEGORY_OPTIONS: {
   value: ApplicationCategory;
   label: string;
 }[] = [
+  { value: 'ALL', label: '전체' },
   { value: 'PROGRAM', label: '프로그램' },
   { value: 'MEMBERSHIP', label: '올인원패스' },
   /*

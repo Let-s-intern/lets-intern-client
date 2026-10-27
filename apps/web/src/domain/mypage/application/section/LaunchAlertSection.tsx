@@ -53,7 +53,17 @@ const toLaunchAlertCardConfig = (
   };
 };
 
-const LaunchAlertSection = () => {
+interface LaunchAlertSectionProps {
+  /** 전체 탭처럼 여러 섹션이 쌓일 때 섹션을 가리킬 제목. 단독 탭에선 생략한다. */
+  title?: string;
+  /** 비어 있으면 EmptySection 대신 아무것도 그리지 않는다(전체 탭에서 사용). */
+  hideWhenEmpty?: boolean;
+}
+
+const LaunchAlertSection = ({
+  title,
+  hideWhenEmpty = false,
+}: LaunchAlertSectionProps = {}) => {
   const { data, isLoading } = useGetMypageMagnetListQuery({
     typeList: ['LAUNCH_ALERT'],
   });
@@ -95,8 +105,11 @@ const LaunchAlertSection = () => {
   const hasMagnets = magnetList.length > 0;
   const list = showMore ? magnetList : magnetList.slice(0, 10);
 
+  if (!hasMagnets && hideWhenEmpty) return null;
+
   return (
     <section className="flex flex-col gap-6">
+      {title && <h1 className="text-lg font-semibold">{title}</h1>}
       {hasMagnets ? (
         <>
           <div className="grid grid-cols-2 gap-x-5 gap-y-10 md:flex md:flex-col md:gap-y-5">
