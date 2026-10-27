@@ -1,3 +1,5 @@
+import { useMypageApplicationsQuery } from '@/api/application';
+import dayjs from '@/lib/dayjs';
 import axios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
@@ -6,7 +8,6 @@ import type {
   PassCalendarEvent,
   PassDescriptionBlob,
   PassExternalLink,
-  PassParticipationStatus,
 } from '../types';
 
 // 대시보드 훅 — 섹션별 실 API(가드·이용권·연장옵션·캘린더·benefit/challenge).
@@ -251,12 +252,15 @@ export const useGetPassExternalLinks = (applicationId: number) => {
 export const useGetPassCalendar = (applicationId: number) => {
   const challengeQuery = useGetBenefitChallenges(applicationId);
   const calendarQuery = useGetPassCalendarData(applicationId);
+  // benefit/challenge엔 신청 id가 없어 대시보드 route(/challenge/{appId}/{programId})를
+  // 못 만든다. user/applications(캐시 공유)에서 programId로 매칭해 채운다.
+  const appsQuery = useMypageApplicationsQuery();
 
   return useMemo(() => {
-    const toEvent = (
-      c: BenefitChallenge,
-      status: PassParticipationStatus,
-    ): PassCalendarEvent => ({
+    // 참여 전 — 패스 혜택 benefit/challenge availableList(아직 신청 안 한 참여 가능 챌린지)
+    const beforeEvents: PassCalendarEvent[] = (
+      challengeQuery.data?.availableList ?? []
+    ).map((c) => ({
       id: c.challengeId,
       type: 'CHALLENGE',
       title: c.title ?? '',
@@ -264,25 +268,42 @@ export const useGetPassCalendar = (applicationId: number) => {
       startDate: c.startDate ?? '',
       endDate: c.endDate ?? null,
       programId: c.challengeId,
-      participationStatus: status, // BE 3분류를 그대로 사용(FE 파생 X)
-    });
+      challengeApplicationId: null,
+      participationStatus: 'BEFORE',
+    }));
 
-    const ch = challengeQuery.data;
-    const challengeEvents: PassCalendarEvent[] = ch
-      ? [
-          ...ch.availableList.map((c) => toEvent(c, 'BEFORE')),
-          ...ch.ongoingList.map((c) => toEvent(c, 'IN_PROGRESS')),
-          ...ch.completedList.map((c) => toEvent(c, 'DONE')),
-        ]
-      : [];
+    // 참여 중/완료 — 유저 전체 참여내역(user/applications). benefit/challenge의
+    // ongoing/completed는 '이 패스로 신청한 건'만 내려줌(BE membershipApplication.id 조건)
+    // 패스 외 참여가 누락되므로 혜택이용 탭과 동일하게 전체 참여를 쓴다.
+    const participatedEvents: PassCalendarEvent[] = (appsQuery.data ?? [])
+      .filter((a) => a.programType === 'CHALLENGE' && a.programId != null)
+      .map((a) => {
+        // 시작한 챌린지만 대시보드 입장(마이페이지와 동일 규칙)
+        const started = a.programStartDate?.isBefore(dayjs()) ?? false;
+        return {
+          id: a.programId as number,
+          type: 'CHALLENGE',
+          title: a.programTitle ?? '',
+          description: null,
+          startDate: a.programStartDate?.toISOString() ?? '',
+          endDate: a.programEndDate?.toISOString() ?? null,
+          programId: a.programId as number,
+          challengeApplicationId: started ? (a.id ?? null) : null,
+          participationStatus:
+            a.programStatusType === 'POST' ? 'DONE' : 'IN_PROGRESS',
+        };
+      });
 
     const descEvents = calendarQuery.data?.description
       ? parsePassDescription(calendarQuery.data.description).calendarEvents
       : [];
 
     return {
-      data: [...challengeEvents, ...descEvents],
-      isLoading: challengeQuery.isLoading || calendarQuery.isLoading,
+      data: [...beforeEvents, ...participatedEvents, ...descEvents],
+      isLoading:
+        challengeQuery.isLoading ||
+        calendarQuery.isLoading ||
+        appsQuery.isLoading,
       isError: challengeQuery.isError || calendarQuery.isError,
     };
   }, [
@@ -292,5 +313,7 @@ export const useGetPassCalendar = (applicationId: number) => {
     calendarQuery.data,
     calendarQuery.isLoading,
     calendarQuery.isError,
+    appsQuery.data,
+    appsQuery.isLoading,
   ]);
 };
