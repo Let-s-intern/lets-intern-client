@@ -168,14 +168,6 @@ export interface MentorApplicationRequest {
   userDocumentId?: number;
 }
 
-export const mentorApplicationResponseSchema = z.object({
-  applicationId: z.number(),
-});
-
-export type MentorApplicationResponse = z.infer<
-  typeof mentorApplicationResponseSchema
->;
-
 /** 검증을 통과한 폼 값을 요청 계약으로 바꾼다. 빈 선택 항목은 보내지 않는다. */
 export function toMentorApplicationRequest(
   values: MentorApplyFormValues,
