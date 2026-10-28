@@ -50,7 +50,7 @@ export const collectUtm = (
 };
 
 // 사생활 보호 모드 등에서는 sessionStorage 에 접근하는 것만으로 던질 수 있다
-const getSessionStorage = (): UtmStorage | null => {
+export const getSessionStorage = (): UtmStorage | null => {
   try {
     return typeof window === 'undefined' ? null : window.sessionStorage;
   } catch {

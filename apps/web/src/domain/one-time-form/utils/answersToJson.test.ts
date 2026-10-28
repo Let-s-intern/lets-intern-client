@@ -1,5 +1,5 @@
 import { paidFormFixture } from '../__fixtures__/oneTimeFormFixtures';
-import { answersToJson } from './answersToJson';
+import { answersFromJson, answersToJson } from './answersToJson';
 
 const { questions } = paidFormFixture;
 const IMAGE_KEY =
@@ -74,5 +74,27 @@ describe('answersToJson', () => {
 
   it('폼에 없는 질문의 답은 버린다', () => {
     expect(answersToJson(questions, { 999: '남은 답' })).toStrictEqual({});
+  });
+});
+
+describe('answersFromJson', () => {
+  it('숫자는 입력 문자열로 되돌리고 나머지는 그대로 둔다', () => {
+    const attachment = {
+      key: 'one-time-form/attachment/7/a.pdf',
+      name: 'a.pdf',
+    };
+    expect(
+      answersFromJson({
+        '101': '프론트엔드',
+        '103': ['월', '수'],
+        '106': 12,
+        '110': attachment,
+      }),
+    ).toEqual({
+      101: '프론트엔드',
+      103: ['월', '수'],
+      106: '12',
+      110: attachment,
+    });
   });
 });

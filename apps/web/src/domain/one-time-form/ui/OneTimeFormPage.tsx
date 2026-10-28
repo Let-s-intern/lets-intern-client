@@ -11,11 +11,15 @@ import type {
   OneTimeFormQuestion,
 } from '@/api/one-time-form/oneTimeFormSchema';
 import useAuthStore from '@/store/useAuthStore';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import useApplicationForm, {
   type ApplicationFormRequest,
 } from '../hooks/useApplicationForm';
 import useOptionSelection from '../hooks/useOptionSelection';
 import useSaveUtmOnEntry from '../hooks/useSaveUtmOnEntry';
+import { answersFromJson } from '../utils/answersToJson';
+import { readDraft, saveDraft } from '../utils/applicationDraft';
 import AccountBar from './AccountBar';
 import ApplicantInfoFields from './ApplicantInfoFields';
 import FormPopupShell from './FormPopupShell';
@@ -31,8 +35,8 @@ import NotFoundState from './states/NotFoundState';
 interface OneTimeFormPageProps {
   slug: string;
   /**
-   * 검증을 통과한 뒤 하단 버튼("다음"·"제출하기")을 누르면 부른다.
-   * 결제 단계 이동(유료)과 U3 제출(무료)은 push8 이 이 자리에 연결한다.
+   * 무료 폼에서 검증을 통과한 뒤 "제출하기"를 누르면 부른다. U3 제출은 push8 8.3 이 연결한다.
+   * 유료 폼의 "다음"은 입력값을 보관하고 결제 단계로 직접 넘어간다.
    */
   onValidSubmit?: (request: ApplicationFormRequest) => void;
 }
@@ -55,6 +59,9 @@ const LoadingState = () => (
  */
 const OneTimeFormPage = ({ slug, onValidSubmit }: OneTimeFormPageProps) => {
   useSaveUtmOnEntry(slug);
+  const router = useRouter();
+  // 결제 단계에서 "수정"·이전으로 돌아오면 보관한 입력값으로 다시 채운다
+  const [storedDraft] = useState(() => readDraft(slug));
   const formQuery = useOneTimeFormQuery(slug);
   const { data } = formQuery;
   const isAuthInitialized = useAuthStore((s) => s.isInitialized);
@@ -70,11 +77,22 @@ const OneTimeFormPage = ({ slug, onValidSubmit }: OneTimeFormPageProps) => {
   } = useOptionSelection({
     basePrice: data?.form.basePrice ?? 0,
     optionGroups: data?.optionGroups ?? NO_OPTION_GROUPS,
+    initialSelectedOptionIds: storedDraft?.selectedOptionIds,
   });
   const applicationForm = useApplicationForm({
     questions: data?.questions ?? NO_QUESTIONS,
     selectedOptionIds,
     missingRequiredGroupIds,
+    initialValues: storedDraft
+      ? {
+          applicant: {
+            name: storedDraft.name,
+            email: storedDraft.email,
+            phoneNum: storedDraft.phoneNum,
+          },
+          answers: answersFromJson(storedDraft.answers),
+        }
+      : undefined,
   });
 
   if (formQuery.isLoading) return <LoadingState />;
@@ -109,9 +127,20 @@ const OneTimeFormPage = ({ slug, onValidSubmit }: OneTimeFormPageProps) => {
   const { form } = data;
 
   const handleSubmitClick = () => {
-    if (applicationForm.attemptSubmit()) {
-      onValidSubmit?.(applicationForm.buildRequest());
+    if (!applicationForm.attemptSubmit()) return;
+    const request = applicationForm.buildRequest();
+    if (!form.isPaid) {
+      onValidSubmit?.(request);
+      return;
     }
+    // 계약 11.2-7: 토스 왕복 뒤에도 쓸 수 있게 보관한다. orderId 는 결제 단계에서 만든다
+    if (!saveDraft(slug, { ...request, orderId: null, amount: totalPrice })) {
+      window.alert(
+        '브라우저 저장소를 쓸 수 없어 결제를 진행할 수 없어요. 시크릿 모드를 끄고 다시 시도해 주세요.',
+      );
+      return;
+    }
+    router.push(`/form/${slug}/payment`);
   };
 
   return (

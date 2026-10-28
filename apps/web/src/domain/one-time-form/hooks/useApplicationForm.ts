@@ -30,6 +30,8 @@ interface UseApplicationFormParams {
   questions: OneTimeFormQuestion[];
   selectedOptionIds: number[];
   missingRequiredGroupIds: number[];
+  /** 결제 단계에서 돌아왔을 때 보관해 둔 입력값. 처음 렌더에서만 쓴다 */
+  initialValues?: { applicant: ApplicantInfo; answers: RawAnswers };
 }
 
 const focusField = (key: ApplicationFieldKey) => {
@@ -47,11 +49,15 @@ const useApplicationForm = ({
   questions,
   selectedOptionIds,
   missingRequiredGroupIds,
+  initialValues,
 }: UseApplicationFormParams) => {
   const { data: user } = useUserQuery();
-  const [applicant, setApplicant] =
-    useState<ApplicantInfo>(EMPTY_APPLICANT_INFO);
-  const [answers, setAnswers] = useState<RawAnswers>({});
+  const [applicant, setApplicant] = useState<ApplicantInfo>(
+    () => initialValues?.applicant ?? EMPTY_APPLICANT_INFO,
+  );
+  const [answers, setAnswers] = useState<RawAnswers>(
+    () => initialValues?.answers ?? {},
+  );
   const [touched, setTouched] = useState<ReadonlySet<ApplicationFieldKey>>(
     () => new Set(),
   );

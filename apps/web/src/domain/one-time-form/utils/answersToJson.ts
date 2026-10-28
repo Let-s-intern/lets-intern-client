@@ -48,3 +48,16 @@ export const answersToJson = (
   }
   return result;
 };
+
+/**
+ * answersToJson 의 반대. 결제 단계에서 "수정"으로 돌아왔을 때 보관한 답을 입력 칸에 다시 채운다.
+ * 숫자는 입력 문자열로 되돌리고, 나머지(텍스트·선택지 배열·첨부)는 그대로 쓴다.
+ */
+export const answersFromJson = (answers: OneTimeFormAnswers): RawAnswers => {
+  const result: RawAnswers = {};
+  for (const [questionId, value] of Object.entries(answers)) {
+    result[Number(questionId)] =
+      typeof value === 'number' ? String(value) : value;
+  }
+  return result;
+};

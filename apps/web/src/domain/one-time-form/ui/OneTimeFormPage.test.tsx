@@ -9,6 +9,7 @@ import {
   freeFormFixture,
   paidFormFixture,
 } from '../__fixtures__/oneTimeFormFixtures';
+import { readDraft, saveDraft } from '../utils/applicationDraft';
 import OneTimeFormPage from './OneTimeFormPage';
 
 jest.mock('@/api/one-time-form/oneTimeForm', () => ({
@@ -28,7 +29,10 @@ jest.mock('@/store/useAuthStore', () => ({
   default: jest.fn(),
 }));
 
+const push = jest.fn();
+
 jest.mock('next/navigation', () => ({
+  useRouter: () => ({ push }),
   usePathname: () => '/form/portfolio-1115',
   useSearchParams: () =>
     new URLSearchParams('utm_source=instagram&utm_medium=story'),
@@ -311,6 +315,70 @@ describe('OneTimeFormPage', () => {
       ).toBeInTheDocument();
       expect(email).toHaveFocus();
       expect(Element.prototype.scrollIntoView).toHaveBeenCalled();
+    });
+
+    describe('유료 폼 다음', () => {
+      const paidWithOneQuestion = {
+        ...paidFormFixture,
+        questions: paidFormFixture.questions.filter(
+          (q) => q.questionId === 101,
+        ),
+      };
+
+      beforeEach(() => {
+        window.sessionStorage.clear();
+        push.mockClear();
+      });
+
+      it('입력값과 합계를 slug 별로 보관하고 결제 단계로 간다', () => {
+        const onValidSubmit = jest.fn();
+        mockQuery({ data: paidWithOneQuestion, isLoading: false });
+        render(
+          <OneTimeFormPage
+            slug="portfolio-1115"
+            onValidSubmit={onValidSubmit}
+          />,
+        );
+
+        fireEvent.click(screen.getByRole('radio', { name: /온라인 라이브/ }));
+        fireEvent.click(screen.getByRole('checkbox', { name: /1:1 첨삭/ }));
+        fireEvent.click(screen.getByRole('radio', { name: '프론트엔드' }));
+        fireEvent.click(screen.getByRole('button', { name: '다음' }));
+
+        expect(readDraft('portfolio-1115')).toEqual({
+          name: '김렛커',
+          email: 'letscareer@example.com',
+          phoneNum: '010-1234-5678',
+          selectedOptionIds: [311, 321],
+          answers: { '101': '프론트엔드' },
+          orderId: null,
+          amount: 49000,
+        });
+        expect(push).toHaveBeenCalledWith('/form/portfolio-1115/payment');
+        expect(onValidSubmit).not.toHaveBeenCalled();
+      });
+
+      it('결제 단계에서 돌아오면 보관한 입력값으로 다시 채운다', () => {
+        saveDraft('portfolio-1115', {
+          name: '박서현',
+          email: 'seohyun@example.com',
+          phoneNum: '010-9876-5432',
+          selectedOptionIds: [312],
+          answers: { '101': '백엔드' },
+          orderId: 'letsXk29Pq8812',
+          amount: 39000,
+        });
+        mockQuery({ data: paidWithOneQuestion, isLoading: false });
+        render(<OneTimeFormPage slug="portfolio-1115" />);
+
+        expect(screen.getByLabelText(/이름/)).toHaveValue('박서현');
+        expect(screen.getByLabelText(/전화번호/)).toHaveValue('010-9876-5432');
+        expect(
+          screen.getByRole('radio', { name: /오프라인 현장 참여/ }),
+        ).toBeChecked();
+        expect(screen.getByRole('radio', { name: '백엔드' })).toBeChecked();
+        expect(screen.getByText('39,000원')).toBeInTheDocument();
+      });
     });
 
     it('질문 10종을 형식에 맞는 입력으로 그린다', () => {
