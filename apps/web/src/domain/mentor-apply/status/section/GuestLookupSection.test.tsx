@@ -40,7 +40,7 @@ describe('GuestLookupSection', () => {
   beforeEach(() => post.mockReset());
 
   it('연락처는 하이픈을 붙여 보여 주고 숫자만 보낸다', async () => {
-    post.mockResolvedValue({ data: { data: [] } });
+    post.mockResolvedValue({ data: { data: { applicationList: [] } } });
     renderSection();
 
     await lookup(' 홍길동 ', '01012345678');
@@ -54,7 +54,9 @@ describe('GuestLookupSection', () => {
 
   it('결과가 있으면 폼 아래에 카드를 그린다', async () => {
     post.mockResolvedValue({
-      data: { data: [item('2026-10-28T10:00:00', 'REVIEWING')] },
+      data: {
+        data: { applicationList: [item('2026-10-28T10:00:00', 'REVIEWING')] },
+      },
     });
     renderSection();
 
@@ -67,10 +69,12 @@ describe('GuestLookupSection', () => {
   it('여러 건이면 받은 순서(최신순) 그대로 나열한다', async () => {
     post.mockResolvedValue({
       data: {
-        data: [
-          item('2026-10-28T10:00:00', 'CHECKING'),
-          item('2026-09-01T10:00:00', 'REPLIED'),
-        ],
+        data: {
+          applicationList: [
+            item('2026-10-28T10:00:00', 'CHECKING'),
+            item('2026-09-01T10:00:00', 'REPLIED'),
+          ],
+        },
       },
     });
     renderSection();
@@ -85,7 +89,7 @@ describe('GuestLookupSection', () => {
   });
 
   it('결과가 없으면 안내 문구를 보인다', async () => {
-    post.mockResolvedValue({ data: { data: [] } });
+    post.mockResolvedValue({ data: { data: { applicationList: [] } } });
     renderSection();
 
     await lookup();
@@ -98,7 +102,10 @@ describe('GuestLookupSection', () => {
   });
 
   it('429 면 잠시 후 다시 시도하라고 알린다', async () => {
-    post.mockRejectedValue({ status: 429 });
+    post.mockRejectedValue({
+      status: 429,
+      code: 'MENTOR_APPLICATION_STATUS_TOO_MANY_REQUESTS',
+    });
     renderSection();
 
     await lookup();
