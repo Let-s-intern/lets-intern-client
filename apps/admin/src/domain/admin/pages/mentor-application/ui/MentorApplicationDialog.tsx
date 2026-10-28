@@ -8,11 +8,13 @@ import {
 } from '@/api/mentor-application/mentorApplicationSchema';
 import dayjs from '@/lib/dayjs';
 import { Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material';
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { IoCloseOutline } from 'react-icons/io5';
 import { formatPhoneNum } from '../utils/formatPhoneNum';
+import MentorApplicationMemo from './MentorApplicationMemo';
 
 const DATE_TIME_FORMAT = 'YYYY.MM.DD HH:mm';
+const UNSAVED_MEMO_MESSAGE = '저장하지 않은 운영 메모가 있습니다. 닫을까요?';
 
 interface Props {
   applicationId: number;
@@ -26,14 +28,25 @@ export default function MentorApplicationDialog({
   const { data: application, isLoading } =
     useAdminMentorApplicationDetailQuery(applicationId);
 
+  // null 이면 손대지 않은 상태. 저장된 메모를 그대로 보여준다
+  const [memoDraft, setMemoDraft] = useState<string | null>(null);
+  const savedMemo = application?.adminMemo ?? '';
+  const memo = memoDraft ?? savedMemo;
+  const isMemoDirty = memo !== savedMemo;
+
+  const handleClose = () => {
+    if (isMemoDirty && !window.confirm(UNSAVED_MEMO_MESSAGE)) return;
+    onClose();
+  };
+
   return (
-    <Dialog open onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open onClose={handleClose} maxWidth="sm" fullWidth>
       <DialogTitle className="border-neutral-80 border-b">
         {application ? `${application.name}님 신청서` : '신청서'}
       </DialogTitle>
       <IconButton
         aria-label="닫기"
-        onClick={onClose}
+        onClick={handleClose}
         sx={{ position: 'absolute', right: 10, top: 12 }}
       >
         <IoCloseOutline size={20} />
@@ -44,7 +57,18 @@ export default function MentorApplicationDialog({
             불러오는 중...
           </p>
         ) : application ? (
-          <ApplicationDetail application={application} />
+          <ApplicationDetail
+            application={application}
+            memo={
+              <MentorApplicationMemo
+                applicationId={applicationId}
+                value={memo}
+                isDirty={isMemoDirty}
+                onChange={setMemoDraft}
+                onSaved={() => setMemoDraft(null)}
+              />
+            }
+          />
         ) : (
           <p className="text-xsmall14 text-neutral-40 py-10 text-center">
             신청서를 불러오지 못했습니다.
@@ -57,8 +81,10 @@ export default function MentorApplicationDialog({
 
 function ApplicationDetail({
   application,
+  memo,
 }: {
   application: AdminMentorApplicationDetail;
+  memo: ReactNode;
 }) {
   return (
     <div className="flex flex-col gap-5 pt-4">
@@ -81,6 +107,8 @@ function ApplicationDetail({
             : ''}
         </p>
       </div>
+
+      {memo}
 
       <Section title="선호 연락 수단">
         {application.preferredContactMethods
