@@ -198,6 +198,9 @@ const MagnetCommonFormPage = lazy(
 const OneTimeFormListPage = lazy(
   () => import('./domain/one-time-form/pages/OneTimeFormListPage'),
 );
+const OneTimeFormEditPage = lazy(
+  () => import('./domain/one-time-form/pages/OneTimeFormEditPage'),
+);
 
 // 후기 관리
 const AdminChallengeReviewListPage = lazy(
@@ -652,6 +655,14 @@ export const router = createBrowserRouter([
       {
         path: '/one-time-form/list',
         element: withSuspense(<OneTimeFormListPage />),
+      },
+      {
+        path: '/one-time-form/new',
+        element: withSuspense(<OneTimeFormEditPage />),
+      },
+      {
+        path: '/one-time-form/:formId/edit',
+        element: withSuspense(<OneTimeFormEditPage />),
       },
 
       // 홈 배너/큐레이션
