@@ -55,6 +55,7 @@ interface CouponRequestValue {
   time: number;
   startDate: string;
   endDate: string;
+  isParticipatingOnly: boolean;
 }
 
 const CouponEditor = ({ editorMode }: CouponEditorProps) => {
@@ -77,6 +78,7 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
   const [isAllDiscount, setIsAllDiscount] = useState(false);
   const [isUnlimited, setIsUnlimited] = useState(false);
   const [isAllMembers, setIsAllMembers] = useState(false);
+  const [isParticipatingOnly, setIsParticipatingOnly] = useState(false);
   const [targetConditionList, setTargetConditionList] = useState<
     TargetCondition[]
   >([]);
@@ -90,6 +92,7 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
       const data = res.data.data.couponInfo;
       setIsAllDiscount(data.discount === -1);
       setIsUnlimited(data.time === -1);
+      setIsParticipatingOnly(data.isParticipatingOnly ?? false);
       setValue({
         couponType: data.couponType,
         programTypeList: data.couponProgramTypeList,
@@ -146,6 +149,16 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
     setValue({ ...value, [e.target.name]: e.target.value });
   };
 
+  // 등록형 쿠폰은 발급 대상 조건이 없는 쿠폰이므로 켜면 대상 선택을 초기화한다.
+  const handleAllMembersToggle = () => {
+    const next = !isAllMembers;
+    setIsAllMembers(next);
+    if (next) {
+      setTargetConditionList([]);
+      setIsParticipatingOnly(false);
+    }
+  };
+
   const handleProgramTypeChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     programType: string,
@@ -186,6 +199,7 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
       time: isUnlimited ? -1 : Number(value.time),
       startDate: value.startDate,
       endDate: value.endDate,
+      isParticipatingOnly,
     };
 
     if (editorMode === 'create') {
@@ -315,7 +329,7 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
             </div>
           </div>
           <div className="flex flex-col flex-wrap gap-4">
-            <div className="flex items-end justify-between">
+            <div className="flex flex-col gap-3">
               <label className="text-small20 font-bold">
                 발급 대상
                 <p className="text-xxsmall12 mt-1.5 font-normal text-gray-400">
@@ -323,16 +337,48 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
                   기준으로 설정합니다. (다중 선택 가능)
                 </p>
               </label>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={isAllMembers}
-                    onChange={() => setIsAllMembers((p) => !p)}
-                    size="small"
-                  />
-                }
-                label="회원 전체 발급 (등록형 쿠폰)"
-              />
+              <div className="bg-neutral-90 rounded-xs border-neutral-80 flex flex-col gap-2 border p-1.5">
+                <FormControlLabel
+                  sx={{ m: 0 }}
+                  control={
+                    <Checkbox
+                      checked={isAllMembers}
+                      onChange={handleAllMembersToggle}
+                      size="small"
+                    />
+                  }
+                  label={
+                    <p className="text-xsmall16 flex items-center gap-2">
+                      <span>등록형 쿠폰 발급</span>
+                      <span className="text-xxsmall12 text-gray-500">
+                        유저 제한 없이 직접 쿠폰 코드를 등록해 사용하는 방식의
+                        쿠폰 발급 형태입니다.
+                      </span>
+                    </p>
+                  }
+                />
+                <hr />
+                <FormControlLabel
+                  sx={{ m: 0 }}
+                  control={
+                    <Checkbox
+                      checked={isParticipatingOnly}
+                      onChange={() => setIsParticipatingOnly((p) => !p)}
+                      disabled={isAllMembers}
+                      size="small"
+                    />
+                  }
+                  label={
+                    <p className="text-xsmall16 flex items-center gap-2">
+                      <span>참여 중인 유저에게만 발급</span>
+                      <span className="text-xxsmall12 text-gray-500">
+                        발급 대상 중 현재 프로그램에 참여중인 유저에게만
+                        발급됩니다.
+                      </span>
+                    </p>
+                  }
+                />
+              </div>
             </div>
             <div
               className={isAllMembers ? 'pointer-events-none opacity-45' : ''}
