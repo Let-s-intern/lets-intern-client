@@ -194,6 +194,11 @@ const MagnetCommonFormPage = lazy(
   () => import('./pages/magnet/CommonFormPage'),
 );
 
+// 일회성 폼
+const OneTimeFormListPage = lazy(
+  () => import('./domain/one-time-form/pages/OneTimeFormListPage'),
+);
+
 // 후기 관리
 const AdminChallengeReviewListPage = lazy(
   () => import('./domain/admin/pages/review/AdminChallengeReviewListPage'),
@@ -641,6 +646,12 @@ export const router = createBrowserRouter([
       {
         path: '/magnet/form/common',
         element: withSuspense(<MagnetCommonFormPage />),
+      },
+
+      // 일회성 폼
+      {
+        path: '/one-time-form/list',
+        element: withSuspense(<OneTimeFormListPage />),
       },
 
       // 홈 배너/큐레이션
