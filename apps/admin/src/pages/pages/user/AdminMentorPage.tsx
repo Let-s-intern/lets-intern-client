@@ -7,8 +7,10 @@ import {
   usePatchUserAdminMutation,
   UseUserAdminQueryKey,
 } from '@/api/user/user';
+import MentorApplicationTable from '@/domain/admin/pages/mentor-application/ui/MentorApplicationTable';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
+import { twMerge } from '@/lib/twMerge';
 import {
   Button,
   Dialog,
@@ -20,11 +22,24 @@ import {
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { IoCloseOutline } from 'react-icons/io5';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 // VITE_WEB_URL 미설정 시 admin 자기 자신의 root 로 fallback (안전장치).
 const WEB_URL = import.meta.env.VITE_WEB_URL ?? '/';
 const PAGE_SIZE = 1000;
+
+type Tab = 'mentors' | 'applications';
+
+const tabs: { id: Tab; label: string }[] = [
+  { id: 'mentors', label: '활동 멘토' },
+  { id: 'applications', label: '신청 현황' },
+];
+
+// 지원자가 쓰는 웹 화면. 운영자가 바로 열어보거나 공유할 수 있게 신청 현황 탭에 보여준다
+const applyPageLinks = [
+  { label: '신청서', path: '/mentor-apply' },
+  { label: '신청 현황 조회', path: '/mentor-apply/status' },
+];
 
 type Mentor = AdminUserMentorList['mentorList'][number];
 type MentorHashTag = Mentor['hashTagList'][number];
@@ -234,11 +249,62 @@ function MentorManagementTable() {
 }
 
 export default function AdminMentorPage() {
+  // 탭은 URL(?tab=applications)에 둔다. 새로고침해도 보던 탭이 유지된다
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab: Tab =
+    searchParams.get('tab') === 'applications' ? 'applications' : 'mentors';
+
+  const setActiveTab = (tab: Tab) => {
+    const next = new URLSearchParams(searchParams);
+    if (tab === 'applications') next.set('tab', tab);
+    else next.delete('tab');
+    setSearchParams(next, { replace: true });
+  };
+
   return (
     <section className="p-5">
       <Heading className="mb-4">멘토 관리</Heading>
 
-      <MentorManagementTable />
+      <nav className="border-neutral-80 mb-4 flex gap-1 border-b">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            onClick={() => setActiveTab(tab.id)}
+            className={twMerge(
+              'text-xsmall14 -mb-px border-b-2 px-4 py-2',
+              activeTab === tab.id
+                ? 'border-neutral-0 text-neutral-0 font-semibold'
+                : 'text-neutral-40 border-transparent',
+            )}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </nav>
+
+      {activeTab === 'mentors' ? (
+        <MentorManagementTable />
+      ) : (
+        <>
+          <div className="text-xsmall14 text-neutral-40 mb-4 flex flex-wrap gap-x-6 gap-y-1">
+            {applyPageLinks.map(({ label, path }) => (
+              <span key={path}>
+                {label}{' '}
+                <a
+                  href={`${WEB_URL}${path}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 underline transition hover:text-blue-300"
+                >
+                  {`${WEB_URL}${path}`}
+                </a>
+              </span>
+            ))}
+          </div>
+          <MentorApplicationTable />
+        </>
+      )}
     </section>
   );
 }
