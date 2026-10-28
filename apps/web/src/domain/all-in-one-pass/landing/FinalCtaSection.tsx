@@ -59,7 +59,9 @@ export default function FinalCtaSection({
           disabled={ctaDisabled}
           className={clsx(
             'text-small18 mt-2 w-full rounded-sm font-bold md:w-[234px]',
-            ctaDisabled ? 'bg-[#F9B68F]' : 'bg-[#F36D32] hover:bg-[#E15D28]',
+            ctaDisabled
+              ? 'cursor-not-allowed bg-[#F9B68F]'
+              : 'bg-[#F36D32] hover:bg-[#E15D28]',
           )}
         >
           {ctaText}

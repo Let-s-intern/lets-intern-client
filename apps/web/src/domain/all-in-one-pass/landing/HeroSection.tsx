@@ -60,7 +60,7 @@ export default function HeroSection({
               type="button"
               onClick={onStart}
               disabled={ctaDisabled}
-              className="text-xsmall16 md:text-small20 w-full rounded-sm bg-[#F36D32] px-4 py-3 font-semibold text-neutral-100 hover:bg-[#E15D28] disabled:bg-[#F9B68F] disabled:hover:bg-[#F9B68F] md:w-[280px] md:px-6 md:py-5"
+              className="text-xsmall16 md:text-small20 w-full rounded-sm bg-[#F36D32] px-4 py-3 font-semibold text-neutral-100 hover:bg-[#E15D28] disabled:cursor-not-allowed disabled:bg-[#F9B68F] disabled:hover:bg-[#F9B68F] md:w-[280px] md:px-6 md:py-5"
             >
               {ctaText}
             </button>

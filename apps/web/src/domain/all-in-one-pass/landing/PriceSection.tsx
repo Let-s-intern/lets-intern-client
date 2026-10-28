@@ -165,7 +165,7 @@ export default function PriceSection({
               className={clsx(
                 'text-xsmall16 md:text-small18 w-full rounded-sm font-semibold',
                 ctaDisabled
-                  ? 'bg-[#F9B68F]'
+                  ? 'cursor-not-allowed bg-[#F9B68F]'
                   : 'bg-[#F36D32] hover:bg-[#E15D28]',
               )}
             >

@@ -82,7 +82,9 @@ export default function LandingApplyBar({
           disabled={ctaDisabled}
           className={clsx(
             'rounded-ms whitespace-nowrap px-[18px] py-[13px] text-[14px] font-bold text-neutral-100 md:px-7 md:py-[15px] md:text-[16px]',
-            ctaDisabled ? 'bg-[#F9B68F]' : 'bg-[#F36D32] hover:bg-[#E15D28]',
+            ctaDisabled
+              ? 'cursor-not-allowed bg-[#F9B68F]'
+              : 'bg-[#F36D32] hover:bg-[#E15D28]',
           )}
         >
           {ctaText}
