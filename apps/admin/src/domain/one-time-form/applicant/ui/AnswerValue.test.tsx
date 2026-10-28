@@ -9,7 +9,7 @@ import AnswerValue from './AnswerValue';
 
 const fileUrlQuery = vi.fn();
 const getFileUrl = vi.fn();
-const download = vi.fn();
+const openAttachment = vi.fn();
 
 vi.mock('@/api/one-time-form/oneTimeFormQueries', () => ({
   useOneTimeFormFileUrlQuery: (applicationId: number, questionId: number) =>
@@ -21,8 +21,8 @@ vi.mock('@/api/one-time-form/oneTimeForm', () => ({
     getFileUrl(applicationId, questionId),
 }));
 
-vi.mock('@/lib/download', () => ({
-  download: (url: string) => download(url),
+vi.mock('../utils/openAttachment', () => ({
+  openAttachment: (url: string) => openAttachment(url),
 }));
 
 const IMAGE_URL = 'data:image/svg+xml;charset=utf-8,mock';
@@ -48,7 +48,7 @@ beforeEach(() => {
   fileUrlQuery.mockReturnValue({ data: { url: IMAGE_URL }, isError: false });
   getFileUrl.mockReset();
   getFileUrl.mockResolvedValue({ url: FILE_URL });
-  download.mockReset();
+  openAttachment.mockReset();
 });
 
 describe('AnswerValue', () => {
@@ -129,7 +129,7 @@ describe('AnswerValue', () => {
     );
 
     expect(getFileUrl).toHaveBeenCalledWith(1043, 110);
-    expect(download).toHaveBeenCalledWith(FILE_URL);
+    expect(openAttachment).toHaveBeenCalledWith(FILE_URL);
   });
 
   it('파일 URL 을 받지 못하면 알리고 열지 않는다', async () => {
@@ -144,6 +144,6 @@ describe('AnswerValue', () => {
     expect(
       await screen.findByText('파일을 열지 못했습니다.'),
     ).toBeInTheDocument();
-    expect(download).not.toHaveBeenCalled();
+    expect(openAttachment).not.toHaveBeenCalled();
   });
 });

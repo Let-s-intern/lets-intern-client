@@ -3,7 +3,8 @@ import { useState } from 'react';
 
 import { getOneTimeFormFileUrl } from '@/api/one-time-form/oneTimeForm';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import { download } from '@/lib/download';
+
+import { openAttachment } from '../utils/openAttachment';
 
 interface FileAnswerProps {
   applicationId: number;
@@ -20,7 +21,7 @@ const FileAnswer = ({ applicationId, questionId, name }: FileAnswerProps) => {
     setIsOpening(true);
     try {
       const { url } = await getOneTimeFormFileUrl(applicationId, questionId);
-      download(url);
+      openAttachment(url);
     } catch {
       snackbar('파일을 열지 못했습니다.');
     } finally {
