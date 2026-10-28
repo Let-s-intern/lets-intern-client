@@ -13,11 +13,11 @@ import type {
 import useAuthStore from '@/store/useAuthStore';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import useApplicationForm, {
-  type ApplicationFormRequest,
-} from '../hooks/useApplicationForm';
+import useApplicationForm from '../hooks/useApplicationForm';
+import useFreeFormSubmit from '../hooks/useFreeFormSubmit';
 import useOptionSelection from '../hooks/useOptionSelection';
 import useSaveUtmOnEntry from '../hooks/useSaveUtmOnEntry';
+import { ConsentCheckbox } from '../payment/ui/PaymentConsents';
 import { answersFromJson } from '../utils/answersToJson';
 import { readDraft, saveDraft } from '../utils/applicationDraft';
 import AccountBar from './AccountBar';
@@ -34,11 +34,6 @@ import NotFoundState from './states/NotFoundState';
 
 interface OneTimeFormPageProps {
   slug: string;
-  /**
-   * 무료 폼에서 검증을 통과한 뒤 "제출하기"를 누르면 부른다. U3 제출은 push8 8.3 이 연결한다.
-   * 유료 폼의 "다음"은 입력값을 보관하고 결제 단계로 직접 넘어간다.
-   */
-  onValidSubmit?: (request: ApplicationFormRequest) => void;
 }
 
 const PAID_STEP = { current: 1, total: 2 };
@@ -57,11 +52,14 @@ const LoadingState = () => (
  * 일회성 폼 신청 팝업 1단계(정보 입력). 유료는 "신청서 작성 1/2", 무료는 단계 없이 분류 문구(categoryText)가 제목.
  * 입력 화면 전에 계약 11.2 순서로 예외 화면을 고른다: 없는 폼 → 기간 밖 → 비로그인 → 이미 신청함.
  */
-const OneTimeFormPage = ({ slug, onValidSubmit }: OneTimeFormPageProps) => {
+const OneTimeFormPage = ({ slug }: OneTimeFormPageProps) => {
   useSaveUtmOnEntry(slug);
   const router = useRouter();
   // 결제 단계에서 "수정"·이전으로 돌아오면 보관한 입력값으로 다시 채운다
   const [storedDraft] = useState(() => readDraft(slug));
+  // 무료 폼은 결제 단계가 없어 개인정보 동의를 제출 버튼 위에서 받는다(시안 3절)
+  const [isPrivacyAgreed, setIsPrivacyAgreed] = useState(false);
+  const freeSubmit = useFreeFormSubmit(slug);
   const formQuery = useOneTimeFormQuery(slug);
   const { data } = formQuery;
   const isAuthInitialized = useAuthStore((s) => s.isInitialized);
@@ -130,7 +128,7 @@ const OneTimeFormPage = ({ slug, onValidSubmit }: OneTimeFormPageProps) => {
     if (!applicationForm.attemptSubmit()) return;
     const request = applicationForm.buildRequest();
     if (!form.isPaid) {
-      onValidSubmit?.(request);
+      freeSubmit.submit(request);
       return;
     }
     // 계약 11.2-7: 토스 왕복 뒤에도 쓸 수 있게 보관한다. orderId 는 결제 단계에서 만든다
@@ -156,11 +154,33 @@ const OneTimeFormPage = ({ slug, onValidSubmit }: OneTimeFormPageProps) => {
                 {totalPrice.toLocaleString('ko-KR')}원
               </b>
             </div>
-          ) : null}
+          ) : (
+            <>
+              {freeSubmit.errorMessage ? (
+                <p
+                  role="alert"
+                  className="text-xsmall14 text-requirement mb-2.5 text-center"
+                >
+                  {freeSubmit.errorMessage}
+                </p>
+              ) : null}
+              <ConsentCheckbox
+                checked={isPrivacyAgreed}
+                onChange={setIsPrivacyAgreed}
+                size="sm"
+                className="text-xxsmall12 text-neutral-35 mb-3"
+              >
+                [필수] 개인정보 수집 및 이용 동의
+              </ConsentCheckbox>
+            </>
+          )}
           {/* 필수 칸이 비면 막는다. 형식 오류는 누른 뒤 첫 오류 칸으로 안내한다 */}
           <button
             type="button"
-            disabled={!applicationForm.isRequiredFilled}
+            disabled={
+              !applicationForm.isRequiredFilled ||
+              (!form.isPaid && (!isPrivacyAgreed || freeSubmit.isPending))
+            }
             onClick={handleSubmitClick}
             className="bg-primary text-xsmall16 text-static-100 hover:bg-primary-hover disabled:bg-neutral-85 disabled:text-neutral-45 h-[52px] w-full rounded-sm font-semibold transition-colors"
           >

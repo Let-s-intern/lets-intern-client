@@ -29,7 +29,7 @@ interface ConsentCheckboxProps {
   children: ReactNode;
 }
 
-const ConsentCheckbox = ({
+export const ConsentCheckbox = ({
   checked,
   onChange,
   size,

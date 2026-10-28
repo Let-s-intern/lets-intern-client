@@ -1,23 +1,28 @@
 import {
+  useCreateOneTimeFormApplicationMutation,
   useMyOneTimeFormApplicationQuery,
   useOneTimeFormQuery,
 } from '@/api/one-time-form/oneTimeForm';
 import { useUserQuery } from '@/api/user/user';
 import useAuthStore from '@/store/useAuthStore';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { ApiError } from '@letscareer/api/errors';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import {
   freeFormFixture,
   paidFormFixture,
 } from '../__fixtures__/oneTimeFormFixtures';
 import { readDraft, saveDraft } from '../utils/applicationDraft';
+import { saveUtmOnce, utmStorageKey } from '../utils/utmStorage';
 import OneTimeFormPage from './OneTimeFormPage';
 
 jest.mock('@/api/one-time-form/oneTimeForm', () => ({
   ONE_TIME_FORM_NOT_FOUND: 'ONE_TIME_FORM_NOT_FOUND',
+  ONE_TIME_FORM_ALREADY_APPLIED: 'ONE_TIME_FORM_ALREADY_APPLIED',
   // 실제 구현은 ApiError 의 code 를 읽는다. axios 를 끌어오지 않도록 code 만 본다
   getOneTimeFormErrorCode: (error: { code?: string } | null) => error?.code,
   useOneTimeFormQuery: jest.fn(),
   useMyOneTimeFormApplicationQuery: jest.fn(),
+  useCreateOneTimeFormApplicationMutation: jest.fn(),
 }));
 
 jest.mock('@/api/user/user', () => ({
@@ -30,9 +35,11 @@ jest.mock('@/store/useAuthStore', () => ({
 }));
 
 const push = jest.fn();
+const replace = jest.fn();
+const mutate = jest.fn();
 
 jest.mock('next/navigation', () => ({
-  useRouter: () => ({ push }),
+  useRouter: () => ({ push, replace }),
   usePathname: () => '/form/portfolio-1115',
   useSearchParams: () =>
     new URLSearchParams('utm_source=instagram&utm_medium=story'),
@@ -87,6 +94,10 @@ beforeEach(() => {
   jest.clearAllMocks();
   mockAuth({ isLoggedIn: true, isInitialized: true });
   mockMyApplication({ data: null });
+  (useCreateOneTimeFormApplicationMutation as jest.Mock).mockReturnValue({
+    mutate,
+    isPending: false,
+  });
 });
 
 describe('OneTimeFormPage', () => {
@@ -185,7 +196,10 @@ describe('OneTimeFormPage', () => {
       render(<OneTimeFormPage slug="seminar-1130" />);
 
       expect(screen.queryByRole('radio')).not.toBeInTheDocument();
-      expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
+      // 체크박스는 개인정보 동의 하나뿐이다
+      expect(screen.getByRole('checkbox')).toHaveAccessibleName(
+        /개인정보 수집 및 이용 동의/,
+      );
       expect(screen.queryByText('선택한 금액')).not.toBeInTheDocument();
     });
   });
@@ -217,12 +231,18 @@ describe('OneTimeFormPage', () => {
       expect(screen.getByLabelText(/전화번호/)).toHaveValue('010-1234-5678');
     });
 
-    it('필수 질문을 채우기 전에는 제출하기가 막혀 있고, 채우면 요청 값을 넘긴다', () => {
-      const onValidSubmit = jest.fn();
+    it('필수 질문과 개인정보 동의를 채우기 전에는 제출하기가 막혀 있고, 채우면 U3 를 무료 형태로 부른다', () => {
+      window.sessionStorage.clear();
+      saveUtmOnce('seminar-1130', {
+        utmSource: 'instagram',
+        utmMedium: 'story',
+        utmCampaign: null,
+        utmContent: null,
+        utmTerm: null,
+        referrer: null,
+      });
       mockQuery({ data: freeFormFixture, isLoading: false });
-      render(
-        <OneTimeFormPage slug="seminar-1130" onValidSubmit={onValidSubmit} />,
-      );
+      render(<OneTimeFormPage slug="seminar-1130" />);
 
       const submit = screen.getByRole('button', { name: '제출하기' });
       expect(submit).toBeDisabled();
@@ -230,15 +250,113 @@ describe('OneTimeFormPage', () => {
       fireEvent.change(screen.getByLabelText(/세미나에서 듣고 싶은 내용/), {
         target: { value: ' 포트폴리오 첨삭 사례가 궁금해요. ' },
       });
+      expect(submit).toBeDisabled();
+
+      fireEvent.click(
+        screen.getByRole('checkbox', { name: /개인정보 수집 및 이용 동의/ }),
+      );
       expect(submit).toBeEnabled();
 
       fireEvent.click(submit);
-      expect(onValidSubmit).toHaveBeenCalledWith({
-        name: '김렛커',
-        email: 'letscareer@example.com',
-        phoneNum: '010-1234-5678',
-        selectedOptionIds: [],
-        answers: { '201': '포트폴리오 첨삭 사례가 궁금해요.' },
+      expect(mutate).toHaveBeenCalledWith(
+        {
+          name: '김렛커',
+          email: 'letscareer@example.com',
+          phoneNum: '010-1234-5678',
+          selectedOptionIds: [],
+          answers: { '201': '포트폴리오 첨삭 사례가 궁금해요.' },
+          utmSource: 'instagram',
+          utmMedium: 'story',
+          utmCampaign: null,
+          utmContent: null,
+          utmTerm: null,
+          referrer: null,
+          payment: null,
+        },
+        expect.anything(),
+      );
+    });
+
+    describe('무료 폼 제출 결과', () => {
+      const submitFreeForm = () => {
+        mockQuery({ data: freeFormFixture, isLoading: false });
+        render(<OneTimeFormPage slug="seminar-1130" />);
+        fireEvent.change(screen.getByLabelText(/세미나에서 듣고 싶은 내용/), {
+          target: { value: '포트폴리오 첨삭 사례가 궁금해요.' },
+        });
+        fireEvent.click(
+          screen.getByRole('checkbox', { name: /개인정보 수집 및 이용 동의/ }),
+        );
+        fireEvent.click(screen.getByRole('button', { name: '제출하기' }));
+        return mutate.mock.calls[0][1] as {
+          onSuccess: () => void;
+          onError: (error: unknown) => void;
+        };
+      };
+
+      beforeEach(() => window.sessionStorage.clear());
+
+      it('성공하면 보관한 UTM 을 지우고 완료 화면으로 replace 한다', () => {
+        saveUtmOnce('seminar-1130', {
+          utmSource: 'instagram',
+          utmMedium: null,
+          utmCampaign: null,
+          utmContent: null,
+          utmTerm: null,
+          referrer: null,
+        });
+        const { onSuccess } = submitFreeForm();
+        act(() => onSuccess());
+
+        expect(
+          window.sessionStorage.getItem(utmStorageKey('seminar-1130')),
+        ).toBeNull();
+        expect(replace).toHaveBeenCalledWith('/form/seminar-1130/complete');
+      });
+
+      it('이미 신청했다는 응답이면 완료 화면으로 보낸다', () => {
+        const { onError } = submitFreeForm();
+        act(() => onError({ code: 'ONE_TIME_FORM_ALREADY_APPLIED' }));
+
+        expect(replace).toHaveBeenCalledWith('/form/seminar-1130/complete');
+      });
+
+      it('그 밖의 실패는 문구를 보여 주고 머문다', () => {
+        const { onError } = submitFreeForm();
+        act(() =>
+          onError(
+            new ApiError({
+              status: 400,
+              code: 'ONE_TIME_FORM_NOT_IN_PERIOD',
+              message: 'Request failed with status code 400',
+              endpoint: '/one-time-form/seminar-1130/applications',
+              method: 'POST',
+              serverMessage: '신청 기간이 아닙니다.',
+            }),
+          ),
+        );
+
+        expect(screen.getByRole('alert')).toHaveTextContent(
+          '신청 기간이 아닙니다.',
+        );
+        expect(replace).not.toHaveBeenCalled();
+      });
+
+      it('요청 중에는 제출하기를 막아 두 번 보내지 않는다', () => {
+        (useCreateOneTimeFormApplicationMutation as jest.Mock).mockReturnValue({
+          mutate,
+          isPending: true,
+        });
+        mockQuery({ data: freeFormFixture, isLoading: false });
+        render(<OneTimeFormPage slug="seminar-1130" />);
+        fireEvent.change(screen.getByLabelText(/세미나에서 듣고 싶은 내용/), {
+          target: { value: '포트폴리오 첨삭 사례가 궁금해요.' },
+        });
+        fireEvent.click(
+          screen.getByRole('checkbox', { name: /개인정보 수집 및 이용 동의/ }),
+        );
+
+        expect(screen.getByRole('button', { name: '제출하기' })).toBeDisabled();
       });
     });
 
@@ -280,7 +398,6 @@ describe('OneTimeFormPage', () => {
     });
 
     it('형식 오류가 있으면 누를 때 첫 오류 칸으로 포커스하고 넘기지 않는다', () => {
-      const onValidSubmit = jest.fn();
       mockQuery({
         data: {
           ...paidFormFixture,
@@ -290,9 +407,7 @@ describe('OneTimeFormPage', () => {
         },
         isLoading: false,
       });
-      render(
-        <OneTimeFormPage slug="portfolio-1115" onValidSubmit={onValidSubmit} />,
-      );
+      render(<OneTimeFormPage slug="portfolio-1115" />);
 
       fireEvent.click(screen.getByRole('radio', { name: /온라인 라이브/ }));
       fireEvent.click(screen.getByRole('radio', { name: '프론트엔드' }));
@@ -304,7 +419,7 @@ describe('OneTimeFormPage', () => {
 
       fireEvent.click(screen.getByRole('button', { name: '다음' }));
 
-      expect(onValidSubmit).not.toHaveBeenCalled();
+      expect(push).not.toHaveBeenCalled();
       expect(
         screen.getByText('이메일 형식을 확인해 주세요.'),
       ).toBeInTheDocument();
@@ -331,14 +446,8 @@ describe('OneTimeFormPage', () => {
       });
 
       it('입력값과 합계를 slug 별로 보관하고 결제 단계로 간다', () => {
-        const onValidSubmit = jest.fn();
         mockQuery({ data: paidWithOneQuestion, isLoading: false });
-        render(
-          <OneTimeFormPage
-            slug="portfolio-1115"
-            onValidSubmit={onValidSubmit}
-          />,
-        );
+        render(<OneTimeFormPage slug="portfolio-1115" />);
 
         fireEvent.click(screen.getByRole('radio', { name: /온라인 라이브/ }));
         fireEvent.click(screen.getByRole('checkbox', { name: /1:1 첨삭/ }));
@@ -355,7 +464,7 @@ describe('OneTimeFormPage', () => {
           amount: 49000,
         });
         expect(push).toHaveBeenCalledWith('/form/portfolio-1115/payment');
-        expect(onValidSubmit).not.toHaveBeenCalled();
+        expect(mutate).not.toHaveBeenCalled();
       });
 
       it('결제 단계에서 돌아오면 보관한 입력값으로 다시 채운다', () => {
