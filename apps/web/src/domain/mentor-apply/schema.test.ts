@@ -1,6 +1,8 @@
 import {
   JOB_FIELD_OPTIONS,
   MAX_FILE_SIZE,
+  MAX_SHORT_TEXT_LENGTH,
+  MAX_SNS_LINK_LENGTH,
   mentorApplyDefaultValues,
   mentorApplyFormSchema,
   MentorApplyFormValues,
@@ -123,6 +125,31 @@ describe('mentorApplyFormSchema', () => {
       errorOf({ snsLinks: ['javascript:alert(1)', '', ''] }, 'snsLinks'),
     ).toBe('올바른 주소를 입력해 주세요.');
     expect(errorOf({ snsLinks: ['', '', '', ''] }, 'snsLinks')).toBeDefined();
+  });
+
+  it('성함·소속·직무는 255자, SNS 주소는 2048자까지 받는다', () => {
+    const tooLong = '가'.repeat(MAX_SHORT_TEXT_LENGTH + 1);
+    expect(errorOf({ name: '가'.repeat(MAX_SHORT_TEXT_LENGTH) }, 'name')).toBe(
+      undefined,
+    );
+    expect(errorOf({ name: tooLong }, 'name')).toBe(
+      '255자 이내로 입력해 주세요.',
+    );
+    expect(errorOf({ company: tooLong }, 'company')).toBe(
+      '255자 이내로 입력해 주세요.',
+    );
+    expect(errorOf({ jobTitle: tooLong }, 'jobTitle')).toBe(
+      '255자 이내로 입력해 주세요.',
+    );
+
+    const url = (length: number) =>
+      'https://a.com/' + 'a'.repeat(length - 'https://a.com/'.length);
+    expect(
+      errorOf({ snsLinks: [url(MAX_SNS_LINK_LENGTH), '', ''] }, 'snsLinks'),
+    ).toBe(undefined);
+    expect(
+      errorOf({ snsLinks: [url(MAX_SNS_LINK_LENGTH + 1), '', ''] }, 'snsLinks'),
+    ).toBe('2048자 이내로 입력해 주세요.');
   });
 
   it('개인정보 동의가 없으면 거른다', () => {
