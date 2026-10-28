@@ -1,6 +1,7 @@
 'use client';
 
 import { useCreateMentorApplicationMutation } from '@/api/mentor-application/mentorApplication';
+import { useEffect } from 'react';
 import { FormProvider } from 'react-hook-form';
 
 import { useMentorApplyForm } from './hooks/useMentorApplyForm';
@@ -15,10 +16,15 @@ import { toMentorApplicationFormData } from './utils/toMentorApplicationFormData
 
 interface MentorApplyFormProps {
   onSubmitted: (applicationId: number) => void;
+  /** 사용자가 고친 값이 있는지. 자동으로 채운 값은 치지 않는다 */
+  onDirtyChange?: (dirty: boolean) => void;
 }
 
 /** 신청서 본문. 페이지·모달 어느 껍데기에 놓이는지 모르고 제출 결과만 알린다 */
-export default function MentorApplyForm({ onSubmitted }: MentorApplyFormProps) {
+export default function MentorApplyForm({
+  onSubmitted,
+  onDirtyChange,
+}: MentorApplyFormProps) {
   const mutation = useCreateMentorApplicationMutation();
   const { form, onSubmit } = useMentorApplyForm((values) => {
     mutation.mutate(toMentorApplicationFormData(values), {
@@ -41,6 +47,11 @@ export default function MentorApplyForm({ onSubmitted }: MentorApplyFormProps) {
   });
   const isAttachmentError = !!attachmentErrorMessage(mutation.error);
   usePrefillFromUser(form);
+
+  const { isDirty } = form.formState;
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
 
   return (
     <FormProvider {...form}>

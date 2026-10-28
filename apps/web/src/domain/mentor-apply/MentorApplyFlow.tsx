@@ -9,12 +9,16 @@ interface MentorApplyFlowProps {
   /** 신청서 위에만 보이는 제목. 완료 화면에는 자기 제목이 있다 */
   heading?: ReactNode;
   onHome?: () => void;
+  onDirtyChange?: (dirty: boolean) => void;
+  onSubmitted?: () => void;
 }
 
 /** 제출 전에는 신청서, 제출 후에는 같은 자리에서 완료 화면을 보여 준다 */
 export default function MentorApplyFlow({
   heading,
   onHome,
+  onDirtyChange,
+  onSubmitted,
 }: MentorApplyFlowProps) {
   const [submitted, setSubmitted] = useState(false);
   const topRef = useRef<HTMLDivElement>(null);
@@ -31,7 +35,13 @@ export default function MentorApplyFlow({
       ) : (
         <>
           {heading}
-          <MentorApplyForm onSubmitted={() => setSubmitted(true)} />
+          <MentorApplyForm
+            onDirtyChange={onDirtyChange}
+            onSubmitted={() => {
+              setSubmitted(true);
+              onSubmitted?.();
+            }}
+          />
         </>
       )}
     </div>
