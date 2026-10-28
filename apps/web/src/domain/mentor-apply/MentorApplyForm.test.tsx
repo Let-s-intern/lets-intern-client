@@ -1,11 +1,12 @@
 jest.mock('@/utils/axios', () => ({
   __esModule: true,
-  default: { post: jest.fn() },
+  default: { post: jest.fn(), get: jest.fn() },
 }));
 
 // 자동 채우기가 `@/api/user/user` 를 물고 오므로 그 모듈의 v2 네트워크 계층(`import.meta`)을 막는다
 jest.mock('@/utils/axiosV2', () => ({ __esModule: true, default: {} }));
 
+import useAuthStore from '@/store/useAuthStore';
 import axios from '@/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
@@ -14,6 +15,7 @@ import userEvent from '@testing-library/user-event';
 import MentorApplyForm from './MentorApplyForm';
 
 const post = axios.post as jest.Mock;
+const get = axios.get as jest.Mock;
 
 const renderForm = (onSubmitted = jest.fn()) => {
   const client = new QueryClient({
@@ -153,5 +155,125 @@ describe('MentorApplyForm', () => {
     expect(window.dataLayer).toEqual([
       { event: 'mentor_apply_submit', application_id: 9 },
     ]);
+  });
+});
+
+describe('서류 정리 첨부', () => {
+  const documents = [
+    {
+      userDocumentId: 11,
+      userDocumentType: 'RESUME',
+      fileName: '이력서.pdf',
+      fileUrl: 'https://cdn.example.com/11.pdf',
+    },
+    {
+      userDocumentId: 12,
+      userDocumentType: 'PERSONAL_STATEMENT',
+      fileName: '자소서.docx',
+      fileUrl: 'https://cdn.example.com/12.docx',
+    },
+    {
+      userDocumentId: 13,
+      userDocumentType: 'PORTFOLIO',
+      fileName: null,
+      fileUrl: 'https://cdn.example.com/portfolio.pdf?v=2',
+    },
+  ];
+
+  beforeEach(() => {
+    useAuthStore.setState({ isLoggedIn: true });
+    get.mockImplementation(async (url: string) => ({
+      data: {
+        data:
+          url === '/user-document'
+            ? { userDocumentList: documents }
+            : url === '/user'
+              ? null
+              : {
+                  userCareers: [],
+                  pageInfo: {
+                    pageNum: 0,
+                    pageSize: 1,
+                    totalElements: 0,
+                    totalPages: 0,
+                  },
+                },
+      },
+    }));
+  });
+
+  afterEach(() => {
+    useAuthStore.setState({ isLoggedIn: false });
+    get.mockReset();
+  });
+
+  const chooseDocumentSource = () =>
+    userEvent.click(screen.getByRole('radio', { name: '서류 정리에서 선택' }));
+
+  it('비로그인이면 첨부 방식을 고르지 않고 업로드만 보인다', () => {
+    useAuthStore.setState({ isLoggedIn: false });
+    renderForm();
+
+    expect(
+      screen.queryByRole('radio', { name: '서류 정리에서 선택' }),
+    ).not.toBeInTheDocument();
+    expect(get).not.toHaveBeenCalled();
+  });
+
+  it('PDF 문서만 목록에 보인다', async () => {
+    renderForm();
+    await chooseDocumentSource();
+
+    expect(
+      await screen.findByRole('radio', { name: '이력서.pdf' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('radio', { name: 'portfolio.pdf' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('radio', { name: '자소서.docx' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('문서를 고르면 userDocumentId 로 보내고 file 은 보내지 않는다', async () => {
+    post.mockResolvedValue({ data: { data: { applicationId: 21 } } });
+    const onSubmitted = renderForm();
+    await fillRequired();
+    const pdf = new File(['%PDF'], 'new.pdf', { type: 'application/pdf' });
+    await userEvent.upload(screen.getByLabelText(/이력서 \/ 포트폴리오/), pdf);
+
+    await chooseDocumentSource();
+    await userEvent.click(
+      await screen.findByRole('radio', { name: '이력서.pdf' }),
+    );
+    await submit();
+
+    await waitFor(() => expect(onSubmitted).toHaveBeenCalledWith(21));
+    const body = post.mock.calls[0][1] as FormData;
+    const request = JSON.parse(await readText(body.get('request') as Blob));
+    expect(request.userDocumentId).toBe(11);
+    expect(body.has('file')).toBe(false);
+  });
+
+  it('다시 업로드로 바꾸면 고른 문서를 비우고 file 로 보낸다', async () => {
+    post.mockResolvedValue({ data: { data: { applicationId: 22 } } });
+    const onSubmitted = renderForm();
+    await fillRequired();
+
+    await chooseDocumentSource();
+    await userEvent.click(
+      await screen.findByRole('radio', { name: '이력서.pdf' }),
+    );
+    await userEvent.click(
+      screen.getByRole('radio', { name: '새 파일 올리기' }),
+    );
+    const pdf = new File(['%PDF'], 'new.pdf', { type: 'application/pdf' });
+    await userEvent.upload(screen.getByLabelText(/이력서 \/ 포트폴리오/), pdf);
+    await submit();
+    await waitFor(() => expect(onSubmitted).toHaveBeenCalledWith(22));
+    const body = post.mock.calls[0][1] as FormData;
+    const request = JSON.parse(await readText(body.get('request') as Blob));
+    expect(request).not.toHaveProperty('userDocumentId');
+    expect(body.get('file')).toBe(pdf);
   });
 });

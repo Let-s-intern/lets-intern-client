@@ -1,3 +1,8 @@
+// 첨부 섹션이 서류 정리 조회로 `@/api/user/user` 를 물고 오므로 네트워크 계층(`import.meta`)을 막는다
+jest.mock('@/utils/axios', () => ({ __esModule: true, default: {} }));
+jest.mock('@/utils/axiosV2', () => ({ __esModule: true, default: {} }));
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider } from 'react-hook-form';
@@ -10,6 +15,9 @@ import MentoringFieldSection from '../section/MentoringFieldSection';
 import PrivacyAgreementSection from '../section/PrivacyAgreementSection';
 import { useMentorApplyForm } from './useMentorApplyForm';
 
+/* 첨부 섹션이 서류 정리 쿼리를 쓴다. 비로그인이라 실제로 부르지는 않는다 */
+const queryClient = new QueryClient();
+
 function Harness({
   onValid,
 }: {
@@ -17,16 +25,18 @@ function Harness({
 }) {
   const { form, onSubmit } = useMentorApplyForm(onValid);
   return (
-    <FormProvider {...form}>
-      <form noValidate onSubmit={onSubmit}>
-        <BasicInfoSection />
-        <MentoringFieldSection />
-        <AdditionalInfoSection />
-        <AttachmentSection />
-        <PrivacyAgreementSection />
-        <button type="submit">제출</button>
-      </form>
-    </FormProvider>
+    <QueryClientProvider client={queryClient}>
+      <FormProvider {...form}>
+        <form noValidate onSubmit={onSubmit}>
+          <BasicInfoSection />
+          <MentoringFieldSection />
+          <AdditionalInfoSection />
+          <AttachmentSection />
+          <PrivacyAgreementSection />
+          <button type="submit">제출</button>
+        </form>
+      </FormProvider>
+    </QueryClientProvider>
   );
 }
 

@@ -5,6 +5,7 @@ import { toPhoneDigits } from './utils/formatPhone';
 /*
   멘토 신청 요청 계약의 원본. 서버 enum 이름이 바뀌면 여기 상수만 고친다.
   POST /api/v1/mentor-application (multipart: `request` JSON + 선택 `file` PDF)
+  첨부는 새 파일(`file`) 또는 서류 정리 문서(`userDocumentId`) 중 하나만 보낸다.
 */
 
 export const CONTACT_METHOD_OPTIONS = [
@@ -97,6 +98,11 @@ export const mentorApplyFormSchema = z.object({
       (file) => !file || file.size <= MAX_FILE_SIZE,
       '10MB 이하 파일만 첨부해 주세요.',
     ),
+  /**
+   * 서류 정리에서 고른 PDF. 고르면 `attachment` 는 비운다.
+   * 목록이 내려가면 react-hook-form 이 제출 때 값을 지워 undefined 가 되므로 nullish 로 받는다
+   */
+  userDocumentId: z.number().nullish(),
   snsLinks: z
     .array(
       z
@@ -128,6 +134,7 @@ export const mentorApplyDefaultValues: MentorApplyFormValues = {
   introduction: '',
   motivation: '',
   attachment: null,
+  userDocumentId: null,
   snsLinks: Array(SNS_LINK_COUNT).fill(''),
   privacyAgreed: false,
 };
@@ -186,5 +193,6 @@ export function toMentorApplicationRequest(
     motivation: values.motivation.trim() || undefined,
     snsLinks: values.snsLinks.map((v) => v.trim()).filter(Boolean),
     privacyAgreed: values.privacyAgreed,
+    userDocumentId: values.userDocumentId ?? undefined,
   };
 }
