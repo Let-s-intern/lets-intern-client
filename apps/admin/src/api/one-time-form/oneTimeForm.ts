@@ -1,6 +1,7 @@
 import axios from '@/utils/axios';
 
 import {
+  adminOneTimeFormApplicationsSchema,
   adminOneTimeFormDetailSchema,
   adminOneTimeFormListSchema,
   adminOneTimeFormOptionGroupsSchema,
@@ -11,7 +12,7 @@ import {
   type SaveOneTimeFormRequest,
 } from './oneTimeFormSchema';
 
-/** 일회성 폼 어드민 API(계약 9절 A1~A7). 응답 봉투는 `res.data.data` 다. */
+/** 일회성 폼 어드민 API(계약 9절 A1~A8). 응답 봉투는 `res.data.data` 다. */
 
 const BASE = '/admin/one-time-form';
 
@@ -62,4 +63,10 @@ export const saveOneTimeFormOptionGroups = async (
 ) => {
   const res = await axios.put(`${BASE}/${formId}/option-groups`, body);
   return adminOneTimeFormOptionGroupsSchema.parse(res.data.data);
+};
+
+/** A8 취소 포함 전체 신청, 신청일시 내림차순. 삭제된 질문·그룹도 함께 온다 */
+export const getOneTimeFormApplications = async (formId: number) => {
+  const res = await axios.get(`${BASE}/${formId}/applications`);
+  return adminOneTimeFormApplicationsSchema.parse(res.data.data);
 };

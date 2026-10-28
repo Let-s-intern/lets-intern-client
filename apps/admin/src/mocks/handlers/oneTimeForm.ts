@@ -23,7 +23,7 @@ import {
 } from '../seed/oneTimeForm';
 
 /**
- * 일회성 폼 어드민 MSW 핸들러(계약 9절 A1~A7, 13.2).
+ * 일회성 폼 어드민 MSW 핸들러(계약 9절 A1~A8, 13.2).
  *
  * axios 응답 본문이 `{ data: <payload> }` 엔벨로프(`res.data.data`)이므로 모두 `{ data }` 로 감싼다.
  * 실패 본문은 서버 `ErrorResponse` 와 같은 `{ status, code, message }` 다(계약 3.5, 10절).
@@ -130,6 +130,37 @@ const liveOptionGroupsOf = (formId: number): AdminOneTimeFormOptionGroup[] =>
         .map(({ isDeleted: _deleted, ...option }) => option),
     }));
 
+/** 삭제된 것까지 sortOrder, 같으면 ID 오름차순(계약 A8 열 순서) */
+const applicationQuestionsOf = (formId: number) =>
+  questions
+    .filter((q) => q.formId === formId)
+    .sort((a, b) => bySortOrder(a, b) || a.questionId - b.questionId)
+    .map(({ questionId, type, title, sortOrder, isDeleted }) => ({
+      questionId,
+      type,
+      title,
+      sortOrder,
+      isDeleted,
+    }));
+
+const applicationOptionGroupsOf = (formId: number) =>
+  optionGroups
+    .filter((g) => g.formId === formId)
+    .sort((a, b) => bySortOrder(a, b) || a.optionGroupId - b.optionGroupId)
+    .map(({ optionGroupId, title, sortOrder, isDeleted }) => ({
+      optionGroupId,
+      title,
+      sortOrder,
+      isDeleted,
+    }));
+
+/** 취소 포함 전체, 신청일시 내림차순 */
+const applicationsOf = (formId: number) =>
+  seedOneTimeFormApplications
+    .filter((a) => a.formId === formId)
+    .sort((a, b) => b.createDate.localeCompare(a.createDate))
+    .map(({ formId: _formId, ...application }) => application);
+
 /** 스냅샷에 들어간(결제된 적 있는) 옵션은 빠져도 지우지 않고 숨긴다(계약 A7) */
 const isOptionPaid = (optionId: number) =>
   seedOneTimeFormApplications.some((a) =>
@@ -204,6 +235,27 @@ export const oneTimeFormHandlers = [
         form: toAdminForm(form),
         questions: liveQuestionsOf(formId),
         optionGroups: liveOptionGroupsOf(formId),
+      },
+    });
+  }),
+
+  // A8
+  http.get(`${BASE}/:formId/applications`, ({ params }) => {
+    const formId = Number(params.formId);
+    const form = findForm(formId);
+    if (!form) return error('ONE_TIME_FORM_NOT_FOUND');
+
+    return HttpResponse.json({
+      data: {
+        form: {
+          formId,
+          title: form.title,
+          slug: form.slug,
+          isPaid: form.isPaid,
+        },
+        questions: applicationQuestionsOf(formId),
+        optionGroups: applicationOptionGroupsOf(formId),
+        applications: applicationsOf(formId),
       },
     });
   }),

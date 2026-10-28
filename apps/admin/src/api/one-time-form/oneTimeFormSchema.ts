@@ -3,8 +3,8 @@ import { z } from 'zod';
 /**
  * 일회성 폼 어드민 API 스키마.
  *
- * 계약 `.claude/tasks/memos/일회성-폼-결제-API계약.md` 9절(A1~A7)과 1:1 이다.
- * 이름은 계약 13.1 표를 따른다. 신청자(A8~A10) 스키마는 다음 push 에서 붙는다.
+ * 계약 `.claude/tasks/memos/일회성-폼-결제-API계약.md` 9절(A1~A8)과 1:1 이다.
+ * 이름은 계약 13.1 표를 따른다.
  * 요청 스키마의 길이·형식 제한은 계약 5.6 의 서버 `@Valid` 조건과 같다.
  */
 
@@ -236,4 +236,122 @@ export const adminOneTimeFormOptionGroupsSchema = z.object({
 });
 export type AdminOneTimeFormOptionGroups = z.infer<
   typeof adminOneTimeFormOptionGroupsSchema
+>;
+
+/* ---------- 신청 공통(계약 6절) ---------- */
+
+/** 계약 6.1. 문자열(단답·장문·라디오·드롭다운·날짜·URL), 문자열 배열(체크박스), 숫자, 첨부 `{ key, name }` */
+export const oneTimeFormAnswerValueSchema = z.union([
+  z.string(),
+  z.array(z.string()),
+  z.number(),
+  z.object({ key: z.string(), name: z.string() }),
+]);
+export type OneTimeFormAnswerValue = z.infer<
+  typeof oneTimeFormAnswerValueSchema
+>;
+
+/** 질문 ID(문자열)를 키로 하는 답 객체 */
+export const oneTimeFormAnswersSchema = z.record(
+  z.string(),
+  oneTimeFormAnswerValueSchema,
+);
+export type OneTimeFormAnswers = z.infer<typeof oneTimeFormAnswersSchema>;
+
+/** 계약 6.2. 신청 시점 옵션 스냅샷 항목 */
+export const oneTimeFormSelectedOptionSchema = z.object({
+  optionGroupId: z.number(),
+  groupTitle: z.string(),
+  optionId: z.number(),
+  optionName: z.string(),
+  additionalPrice: z.number(),
+});
+export type OneTimeFormSelectedOption = z.infer<
+  typeof oneTimeFormSelectedOptionSchema
+>;
+
+/* ---------- A8 신청자 목록 ---------- */
+
+export const adminOneTimeFormApplicationFormSchema = z.object({
+  formId: z.number(),
+  title: z.string(),
+  slug: z.string(),
+  isPaid: z.boolean(),
+});
+
+/** CSV 열 머리용. 삭제된 질문도 오고, `sortOrder` 는 삭제 직전 값이다 */
+export const adminOneTimeFormApplicationQuestionSchema = z.object({
+  questionId: z.number(),
+  type: oneTimeFormQuestionTypeSchema,
+  title: z.string(),
+  sortOrder: z.number(),
+  isDeleted: z.boolean(),
+});
+export type AdminOneTimeFormApplicationQuestion = z.infer<
+  typeof adminOneTimeFormApplicationQuestionSchema
+>;
+
+export const adminOneTimeFormApplicationOptionGroupSchema = z.object({
+  optionGroupId: z.number(),
+  title: z.string(),
+  sortOrder: z.number(),
+  isDeleted: z.boolean(),
+});
+
+export const adminOneTimeFormApplicationPaymentSchema = z.object({
+  paymentId: z.number(),
+  orderId: z.string(),
+  paidAmount: z.number(),
+  refundAmount: z.number(),
+});
+
+/** 조회 시점의 계정 프로필. 프로필 필드는 비어 있으면 null */
+export const adminOneTimeFormApplicationUserSchema = z.object({
+  userId: z.number(),
+  email: z.string().nullable(),
+  university: z.string().nullable(),
+  major: z.string().nullable(),
+  grade: z.string().nullable(),
+  wishField: z.string().nullable(),
+  wishJob: z.string().nullable(),
+  wishIndustry: z.string().nullable(),
+  inflowPath: z.string().nullable(),
+  marketingAgree: z.boolean(),
+});
+
+/** A8 `applications[]` 항목. A9 `application` 도 같은 형태다 */
+export const adminOneTimeFormApplicationSchema = z.object({
+  applicationId: z.number(),
+  createDate: z.string(),
+  isCanceled: z.boolean(),
+  canceledAt: z.string().nullable(),
+  name: z.string(),
+  email: z.string(),
+  phoneNum: z.string(),
+  selectedOptions: z.array(oneTimeFormSelectedOptionSchema),
+  /** 무료 폼이면 null */
+  payment: adminOneTimeFormApplicationPaymentSchema.nullable(),
+  /** 탈퇴 등으로 계정이 없으면 null */
+  user: adminOneTimeFormApplicationUserSchema.nullable(),
+  utmSource: z.string().nullable(),
+  utmMedium: z.string().nullable(),
+  utmCampaign: z.string().nullable(),
+  utmContent: z.string().nullable(),
+  utmTerm: z.string().nullable(),
+  referrer: z.string().nullable(),
+  answers: oneTimeFormAnswersSchema,
+});
+export type AdminOneTimeFormApplication = z.infer<
+  typeof adminOneTimeFormApplicationSchema
+>;
+
+/** 취소 포함 전체, 신청일시 내림차순 */
+export const adminOneTimeFormApplicationsSchema = z.object({
+  form: adminOneTimeFormApplicationFormSchema,
+  questions: z.array(adminOneTimeFormApplicationQuestionSchema),
+  optionGroups: z.array(adminOneTimeFormApplicationOptionGroupSchema),
+  applications: z.array(adminOneTimeFormApplicationSchema),
+});
+export type AdminOneTimeFormApplications = z.infer<
+  typeof adminOneTimeFormApplicationsSchema
 >;

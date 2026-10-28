@@ -201,6 +201,10 @@ const OneTimeFormListPage = lazy(
 const OneTimeFormEditPage = lazy(
   () => import('./domain/one-time-form/pages/OneTimeFormEditPage'),
 );
+const OneTimeFormApplicantsPage = lazy(
+  () =>
+    import('./domain/one-time-form/applicant/pages/OneTimeFormApplicantsPage'),
+);
 
 // 후기 관리
 const AdminChallengeReviewListPage = lazy(
@@ -663,6 +667,10 @@ export const router = createBrowserRouter([
       {
         path: '/one-time-form/:formId/edit',
         element: withSuspense(<OneTimeFormEditPage />),
+      },
+      {
+        path: '/one-time-form/:formId/applications',
+        element: withSuspense(<OneTimeFormApplicantsPage />),
       },
 
       // 홈 배너/큐레이션

@@ -74,6 +74,20 @@ const columns: GridColDef<AdminOneTimeFormListItem>[] = [
     type: 'number',
     width: 100,
   },
+  {
+    field: 'applicants',
+    headerName: '신청자',
+    width: 110,
+    sortable: false,
+    renderCell: ({ row }) => (
+      <Link
+        to={`/one-time-form/${row.formId}/applications`}
+        className="text-primary hover:underline"
+      >
+        신청자 보기
+      </Link>
+    ),
+  },
 ];
 
 const OneTimeFormListPage = () => {

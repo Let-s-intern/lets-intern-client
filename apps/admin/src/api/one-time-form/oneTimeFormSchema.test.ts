@@ -1,11 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  adminOneTimeFormApplicationsSchema,
   adminOneTimeFormDetailSchema,
   adminOneTimeFormListSchema,
   adminOneTimeFormOptionGroupsSchema,
   adminOneTimeFormQuestionsSchema,
   createOneTimeFormResponseSchema,
+  oneTimeFormAnswersSchema,
+  oneTimeFormAnswerValueSchema,
   oneTimeFormQuestionTypeSchema,
   saveOneTimeFormOptionGroupsRequestSchema,
   saveOneTimeFormQuestionsRequestSchema,
@@ -339,6 +342,181 @@ describe('계약 5.6 형식 제한', () => {
   it('없는 질문 형식이면 실패한다', () => {
     expect(oneTimeFormQuestionTypeSchema.safeParse('EMAIL').success).toBe(
       false,
+    );
+  });
+});
+
+/** 계약 A8 예시 그대로 */
+const applicationsExample = {
+  form: {
+    formId: 7,
+    title: '현직자와 함께하는 포트폴리오 집중 클래스',
+    slug: 'portfolio-1115',
+    isPaid: true,
+  },
+  questions: [
+    {
+      questionId: 100,
+      type: 'SHORT_TEXT',
+      title: '이전 질문',
+      sortOrder: 0,
+      isDeleted: true,
+    },
+    {
+      questionId: 101,
+      type: 'RADIO',
+      title: '희망 직무',
+      sortOrder: 0,
+      isDeleted: false,
+    },
+    {
+      questionId: 103,
+      type: 'CHECKBOX',
+      title: '참여 가능한 요일',
+      sortOrder: 2,
+      isDeleted: false,
+    },
+    {
+      questionId: 110,
+      type: 'FILE',
+      title: '이력서',
+      sortOrder: 9,
+      isDeleted: false,
+    },
+  ],
+  optionGroups: [
+    {
+      optionGroupId: 31,
+      title: '참여 방식을 골라 주세요',
+      sortOrder: 0,
+      isDeleted: false,
+    },
+    {
+      optionGroupId: 32,
+      title: '함께 신청하면 좋아요',
+      sortOrder: 1,
+      isDeleted: false,
+    },
+  ],
+  applications: [
+    {
+      applicationId: 1042,
+      createDate: '2026-11-02T13:24:00',
+      isCanceled: false,
+      canceledAt: null,
+      name: '김렛커',
+      email: 'letscareer@example.com',
+      phoneNum: '010-1234-5678',
+      selectedOptions: [
+        {
+          optionGroupId: 31,
+          groupTitle: '참여 방식을 골라 주세요',
+          optionId: 311,
+          optionName: '온라인 라이브',
+          additionalPrice: 0,
+        },
+        {
+          optionGroupId: 32,
+          groupTitle: '함께 신청하면 좋아요',
+          optionId: 321,
+          optionName: '포트폴리오 1:1 첨삭',
+          additionalPrice: 20000,
+        },
+      ],
+      payment: {
+        paymentId: 88001,
+        orderId: 'letsXk29Pq8812',
+        paidAmount: 49000,
+        refundAmount: 0,
+      },
+      user: {
+        userId: 58231,
+        email: 'letscareer@example.com',
+        university: '렛츠대학교',
+        major: '경영학과',
+        grade: '4학년',
+        wishField: '개발',
+        wishJob: '프론트엔드',
+        wishIndustry: 'IT',
+        inflowPath: '인스타그램',
+        marketingAgree: true,
+      },
+      utmSource: 'instagram',
+      utmMedium: 'paid',
+      utmCampaign: 'portfolio_1115',
+      utmContent: 'story_a',
+      utmTerm: null,
+      referrer: 'https://event-xxx.vercel.app/',
+      answers: {
+        '100': '삭제 전 답',
+        '101': '프론트엔드',
+        '103': ['월', '수'],
+        '110': {
+          key: 'one-time-form/attachment/7/0b5c2f4e-9a61-4d1e-8f0a-3c2b7d9e1a44.pdf',
+          name: '김렛커_이력서_최종.pdf',
+        },
+      },
+    },
+  ],
+};
+
+describe('A8 신청자 목록', () => {
+  const [application] = applicationsExample.applications;
+
+  it('계약 예시가 통과한다', () => {
+    expect(
+      adminOneTimeFormApplicationsSchema.parse(applicationsExample),
+    ).toEqual(applicationsExample);
+  });
+
+  it('무료 폼의 payment, 탈퇴한 계정의 user 는 null 로 온다', () => {
+    const free = { ...application, payment: null, user: null };
+    expect(
+      adminOneTimeFormApplicationsSchema.parse({
+        ...applicationsExample,
+        applications: [free],
+      }).applications[0],
+    ).toEqual(free);
+  });
+
+  it.each(['isCanceled', 'selectedOptions', 'payment', 'answers'] as const)(
+    '신청 항목의 %s 가 빠지면 실패한다',
+    (key) => {
+      const { [key]: _omitted, ...rest } = application;
+      expect(() =>
+        adminOneTimeFormApplicationsSchema.parse({
+          ...applicationsExample,
+          applications: [rest],
+        }),
+      ).toThrow();
+    },
+  );
+
+  it('questions 가 빠지면 실패한다', () => {
+    const { questions: _omitted, ...rest } = applicationsExample;
+    expect(() => adminOneTimeFormApplicationsSchema.parse(rest)).toThrow();
+  });
+
+  it.each([
+    ['문자열', '프론트엔드'],
+    ['문자열 배열', ['월', '수']],
+    ['숫자', 18],
+    ['첨부', { key: 'one-time-form/attachment/7/a.png', name: '프로필.png' }],
+  ])('답은 %s 를 받는다', (_, value) => {
+    expect(oneTimeFormAnswerValueSchema.parse(value)).toEqual(value);
+  });
+
+  it.each([
+    ['불리언', true],
+    ['이름 없는 첨부', { key: 'one-time-form/attachment/7/a.png' }],
+    ['숫자 배열', [1, 2]],
+  ])('답은 %s 를 거절한다', (_, value) => {
+    expect(() => oneTimeFormAnswerValueSchema.parse(value)).toThrow();
+  });
+
+  it('답 객체는 질문 ID 를 키로 형식을 섞어 받는다', () => {
+    expect(oneTimeFormAnswersSchema.parse(application.answers)).toEqual(
+      application.answers,
     );
   });
 });

@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 import { useOneTimeFormDetailQuery } from '@/api/one-time-form/oneTimeFormQueries';
 import LoadingContainer from '@/common/loading/LoadingContainer';
@@ -19,6 +19,12 @@ const EditOneTimeForm = ({ formId }: { formId: number }) => {
   return (
     <div className="flex flex-col gap-8">
       <OneTimeFormLinkPanel form={data.form} />
+      <Link
+        to={`/one-time-form/${formId}/applications`}
+        className="text-primary self-start hover:underline"
+      >
+        신청자 보기
+      </Link>
       <OneTimeFormEditor detail={data} />
     </div>
   );

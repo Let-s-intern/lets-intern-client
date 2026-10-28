@@ -4,6 +4,7 @@ import {
   createOneTimeForm,
   deleteOneTimeForm,
   getOneTimeForm,
+  getOneTimeFormApplications,
   getOneTimeForms,
   saveOneTimeFormOptionGroups,
   saveOneTimeFormQuestions,
@@ -20,6 +21,8 @@ export const oneTimeFormQueryKeys = {
   list: () => [...oneTimeFormQueryKeys.all, 'list'] as const,
   detail: (formId: number) =>
     [...oneTimeFormQueryKeys.all, 'detail', formId] as const,
+  applications: (formId: number) =>
+    [...oneTimeFormQueryKeys.all, 'applications', formId] as const,
 };
 
 export const useOneTimeFormListQuery = () =>
@@ -32,6 +35,12 @@ export const useOneTimeFormDetailQuery = (formId: number) =>
   useQuery({
     queryKey: oneTimeFormQueryKeys.detail(formId),
     queryFn: () => getOneTimeForm(formId),
+  });
+
+export const useOneTimeFormApplicationsQuery = (formId: number) =>
+  useQuery({
+    queryKey: oneTimeFormQueryKeys.applications(formId),
+    queryFn: () => getOneTimeFormApplications(formId),
   });
 
 export const useCreateOneTimeFormMutation = () => {

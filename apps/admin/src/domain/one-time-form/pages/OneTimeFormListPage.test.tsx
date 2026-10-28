@@ -132,6 +132,14 @@ describe('OneTimeFormListPage', () => {
     );
   });
 
+  it('신청자 보기는 그 폼의 신청자 목록으로 연결된다', () => {
+    renderPage();
+
+    expect(
+      within(rowOf('진행 중 폼')).getByRole('link', { name: '신청자 보기' }),
+    ).toHaveAttribute('href', '/one-time-form/3/applications');
+  });
+
   it('폼 만들기 버튼은 생성 화면으로 보낸다', async () => {
     const user = userEvent.setup();
     renderPage();

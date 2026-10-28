@@ -2,6 +2,7 @@ import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 import {
+  adminOneTimeFormApplicationsSchema,
   adminOneTimeFormDetailSchema,
   adminOneTimeFormListSchema,
   adminOneTimeFormOptionGroupsSchema,
@@ -506,5 +507,93 @@ describe('A7 PUT /admin/one-time-form/:formId/option-groups', () => {
       404,
       'ONE_TIME_FORM_NOT_FOUND',
     );
+  });
+});
+
+describe('A8 GET /admin/one-time-form/:formId/applications', () => {
+  const fetchApplications = async (formId: number) => {
+    const res = await send('GET', `/${formId}/applications`);
+    const body = (await res.json()) as { data: unknown };
+    return adminOneTimeFormApplicationsSchema.parse(body.data);
+  };
+
+  it('폼 7 은 취소 포함 2건을 신청일시 내림차순으로 준다', async () => {
+    const { form, applications } = await fetchApplications(7);
+
+    expect(form).toEqual({
+      formId: 7,
+      title: '현직자와 함께하는 포트폴리오 집중 클래스',
+      slug: 'portfolio-1115',
+      isPaid: true,
+    });
+    expect(applications.map((a) => a.applicationId)).toEqual([1043, 1042]);
+    expect(applications[0]).toMatchObject({
+      isCanceled: true,
+      canceledAt: '2026-11-03T14:02:00',
+      payment: { paidAmount: 39000, refundAmount: 39000 },
+    });
+  });
+
+  it('질문은 삭제된 100 을 포함해 sortOrder, questionId 순으로 준다', async () => {
+    const { questions } = await fetchApplications(7);
+
+    expect(questions.map((q) => q.questionId)).toEqual([
+      100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110,
+    ]);
+    expect(questions[0]).toEqual({
+      questionId: 100,
+      type: 'SHORT_TEXT',
+      title: '이전 질문',
+      sortOrder: 0,
+      isDeleted: true,
+    });
+  });
+
+  it('A6 에서 지운 질문과 A7 에서 지운 그룹도 isDeleted 로 남는다', async () => {
+    const { questions: live } = await fetchDetail(7);
+    await send('PUT', '/7/questions', {
+      questions: live
+        .filter((q) => q.questionId !== 108)
+        .map(({ sortOrder: _sortOrder, ...q }) => q),
+    });
+    await send('PUT', '/7/option-groups', { optionGroups: [] });
+
+    const { questions, optionGroups } = await fetchApplications(7);
+    expect(questions.find((q) => q.questionId === 108)).toMatchObject({
+      sortOrder: 7,
+      isDeleted: true,
+    });
+    expect(optionGroups.map((g) => [g.optionGroupId, g.isDeleted])).toEqual([
+      [31, true],
+      [32, true],
+    ]);
+  });
+
+  it('무료 폼 8 의 신청은 payment 가 null 이다', async () => {
+    const { form, applications } = await fetchApplications(8);
+
+    expect(form.isPaid).toBe(false);
+    expect(applications).toHaveLength(1);
+    expect(applications[0]).toMatchObject({
+      applicationId: 1044,
+      payment: null,
+      selectedOptions: [],
+    });
+  });
+
+  it('0원 결제 폼 9 의 신청은 0원 결제 기록을 준다', async () => {
+    const { applications } = await fetchApplications(9);
+
+    expect(applications[0]).toMatchObject({
+      applicationId: 1050,
+      payment: { orderId: 'letsZERO0001', paidAmount: 0, refundAmount: 0 },
+      answers: {},
+    });
+  });
+
+  it('없는 폼은 404 ONE_TIME_FORM_NOT_FOUND', async () => {
+    const res = await send('GET', '/999/applications');
+
+    await expectError(res, 404, 'ONE_TIME_FORM_NOT_FOUND');
   });
 });
