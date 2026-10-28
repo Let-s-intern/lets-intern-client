@@ -12,7 +12,7 @@ import {
 export const SHORT_TEXT_MAX_LENGTH = 200;
 export const LONG_TEXT_MAX_LENGTH = 1000;
 const URL_MAX_LENGTH = 2048;
-const ATTACHMENT_NAME_MAX_LENGTH = 255;
+export const ATTACHMENT_NAME_MAX_LENGTH = 255;
 
 export const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp'];
 export const FILE_EXTENSIONS = ['pdf', 'docx', 'pptx', 'hwp', 'zip'];
@@ -47,7 +47,7 @@ const isRealDate = (text: string): boolean => {
   );
 };
 
-const extensionOf = (path: string): string => {
+export const extensionOf = (path: string): string => {
   const dot = path.lastIndexOf('.');
   return dot === -1 ? '' : path.slice(dot + 1).toLowerCase();
 };

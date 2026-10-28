@@ -264,8 +264,8 @@ describe('OneTimeFormPage', () => {
       expect(
         screen.getByRole('group', { name: '참여 가능한 요일' }),
       ).toBeInTheDocument();
-      expect(screen.getByText('이미지를 첨부해 주세요')).toBeInTheDocument();
-      expect(screen.getByText('파일을 첨부해 주세요')).toBeInTheDocument();
+      expect(screen.getByLabelText('프로필 사진').tagName).toBe('BUTTON');
+      expect(screen.getByLabelText(/이력서/).tagName).toBe('BUTTON');
     });
   });
 });

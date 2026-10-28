@@ -9,6 +9,7 @@ import QuestionFieldFrame from './QuestionFieldFrame';
 import QuestionInput, { isSingleControl } from './QuestionInput';
 
 interface QuestionListProps {
+  slug: string;
   questions: OneTimeFormQuestion[];
   answers: RawAnswers;
   errors: Partial<Record<ApplicationFieldKey, string>>;
@@ -18,6 +19,7 @@ interface QuestionListProps {
 
 /** 시안 "추가 질문" 묶음. 질문은 받은 순서(sortOrder)대로 그린다 */
 const QuestionList = ({
+  slug,
   questions,
   answers,
   errors,
@@ -45,6 +47,7 @@ const QuestionList = ({
           >
             <QuestionInput
               id={id}
+              slug={slug}
               question={question}
               value={answers[question.questionId]}
               hasError={Boolean(error)}

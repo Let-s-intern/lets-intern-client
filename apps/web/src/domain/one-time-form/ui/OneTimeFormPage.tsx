@@ -106,6 +106,7 @@ const OneTimeFormPage = ({ slug, onValidSubmit }: OneTimeFormPageProps) => {
         onBlur={applicationForm.markTouched}
       />
       <QuestionList
+        slug={slug}
         questions={data.questions}
         answers={applicationForm.answers}
         errors={applicationForm.visibleErrors}

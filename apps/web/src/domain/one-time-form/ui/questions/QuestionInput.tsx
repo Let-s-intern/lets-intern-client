@@ -17,6 +17,8 @@ import UrlInput from './UrlInput';
 
 interface QuestionInputProps {
   id: string;
+  /** 첨부 업로드 URL 발급(U4)에 쓴다 */
+  slug: string;
   question: OneTimeFormQuestion;
   value: RawAnswer | undefined;
   hasError: boolean;
@@ -25,7 +27,12 @@ interface QuestionInputProps {
 }
 
 /** 질문 형식(계약 5.3)에 맞는 입력 하나를 고른다 */
-const QuestionInput = ({ question, value, ...rest }: QuestionInputProps) => {
+const QuestionInput = ({
+  slug,
+  question,
+  value,
+  ...rest
+}: QuestionInputProps) => {
   const choices = question.choices ?? [];
 
   switch (question.type) {
@@ -53,6 +60,8 @@ const QuestionInput = ({ question, value, ...rest }: QuestionInputProps) => {
     case 'FILE':
       return (
         <AttachmentQuestionField
+          slug={slug}
+          questionId={question.questionId}
           kind={question.type}
           value={asAttachment(value)}
           {...rest}
