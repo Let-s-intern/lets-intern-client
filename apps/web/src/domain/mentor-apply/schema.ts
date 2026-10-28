@@ -41,6 +41,9 @@ export type MentoringType = (typeof MENTORING_TYPE_OPTIONS)[number]['value'];
 
 export const MAX_YEARS_OF_EXPERIENCE = 60;
 export const MAX_TEXT_LENGTH = 1000;
+/** 서버 컬럼 길이. 성함·소속·직무 */
+export const MAX_SHORT_TEXT_LENGTH = 255;
+export const MAX_SNS_LINK_LENGTH = 2048;
 export const MAX_FILE_SIZE = 10 * 1024 * 1024;
 export const SNS_LINK_COUNT = 3;
 
@@ -61,14 +64,20 @@ const isHttpUrl = (value: string) => {
 
 const required = (message: string) => z.string().trim().min(1, message);
 
+const requiredShortText = (message: string) =>
+  required(message).max(
+    MAX_SHORT_TEXT_LENGTH,
+    `${MAX_SHORT_TEXT_LENGTH}자 이내로 입력해 주세요.`,
+  );
+
 const optionalText = z
   .string()
   .max(MAX_TEXT_LENGTH, `${MAX_TEXT_LENGTH}자 이내로 입력해 주세요.`);
 
 export const mentorApplyFormSchema = z.object({
-  name: required('성함을 입력해 주세요.'),
-  company: required('소속을 입력해 주세요.'),
-  jobTitle: required('직무를 입력해 주세요.'),
+  name: requiredShortText('성함을 입력해 주세요.'),
+  company: requiredShortText('소속을 입력해 주세요.'),
+  jobTitle: requiredShortText('직무를 입력해 주세요.'),
   yearsOfExperience: required('연차를 입력해 주세요.').refine(
     (v) => /^\d+$/.test(v) && Number(v) <= MAX_YEARS_OF_EXPERIENCE,
     `연차는 0~${MAX_YEARS_OF_EXPERIENCE} 사이 숫자로 입력해 주세요.`,
@@ -108,6 +117,10 @@ export const mentorApplyFormSchema = z.object({
       z
         .string()
         .trim()
+        .max(
+          MAX_SNS_LINK_LENGTH,
+          `${MAX_SNS_LINK_LENGTH}자 이내로 입력해 주세요.`,
+        )
         .refine(
           (v) => v === '' || isHttpUrl(v),
           '올바른 주소를 입력해 주세요.',
