@@ -141,7 +141,9 @@ describe('MentorApplyForm', () => {
       screen.getByRole('button', { name: '신청서 제출하기' }),
     ).toBeEnabled();
     expect(onSubmitted).not.toHaveBeenCalled();
-    expect(window.dataLayer).toEqual([]);
+    expect(window.dataLayer).not.toContainEqual(
+      expect.objectContaining({ event: 'mentor_apply_submit' }),
+    );
   });
 
   it('서버가 첨부를 거절하면 첨부 필드에 에러를 띄운다', async () => {
@@ -166,8 +168,19 @@ describe('MentorApplyForm', () => {
 
     await waitFor(() => expect(onSubmitted).toHaveBeenCalled());
     expect(window.dataLayer).toEqual([
+      { event: 'mentor_apply_start' },
       { event: 'mentor_apply_submit', application_id: 9 },
     ]);
+  });
+
+  it('신청 시작 이벤트는 마운트가 아니라 첫 입력에 한 번만 남긴다', async () => {
+    renderForm();
+    expect(window.dataLayer).toEqual([]);
+
+    await userEvent.type(requiredField('성함'), '홍길동');
+    await userEvent.click(screen.getByLabelText('데이터·AI'));
+
+    expect(window.dataLayer).toEqual([{ event: 'mentor_apply_start' }]);
   });
 });
 

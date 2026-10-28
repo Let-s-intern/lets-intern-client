@@ -1,7 +1,7 @@
 'use client';
 
 import { useCreateMentorApplicationMutation } from '@/api/mentor-application/mentorApplication';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { FormProvider } from 'react-hook-form';
 
 import { useMentorApplyForm } from './hooks/useMentorApplyForm';
@@ -48,6 +48,14 @@ export default function MentorApplyForm({
   const isAttachmentError = !!attachmentErrorMessage(mutation.error);
   usePrefillFromUser(form);
 
+  // 신청 시작은 사용자가 처음 입력한 순간 한 번만 남긴다. 자동 채우기는 DOM 이벤트가 없어 치지 않는다
+  const startedRef = useRef(false);
+  const handleFirstInput = () => {
+    if (startedRef.current) return;
+    startedRef.current = true;
+    window.dataLayer?.push({ event: 'mentor_apply_start' });
+  };
+
   const { isDirty } = form.formState;
   useEffect(() => {
     onDirtyChange?.(isDirty);
@@ -55,7 +63,12 @@ export default function MentorApplyForm({
 
   return (
     <FormProvider {...form}>
-      <form noValidate onSubmit={onSubmit} className="flex flex-col gap-12">
+      <form
+        noValidate
+        onSubmit={onSubmit}
+        onChange={handleFirstInput}
+        className="flex flex-col gap-12"
+      >
         <BasicInfoSection />
         <MentoringFieldSection />
         <AdditionalInfoSection />

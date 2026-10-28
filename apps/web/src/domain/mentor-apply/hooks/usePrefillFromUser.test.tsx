@@ -92,6 +92,7 @@ const requiredField = (label: string) =>
 beforeEach(() => {
   get.mockReset();
   useAuthStore.setState({ isLoggedIn: true });
+  window.dataLayer = [];
 });
 
 afterAll(() => {
@@ -129,6 +130,8 @@ describe('usePrefillFromUser', () => {
     expect(get).toHaveBeenCalledWith(
       '/user-career/my?page=0&size=1&sort=desc&sortType=START_DATE',
     );
+    // 자동 채우기는 사용자 입력이 아니므로 신청 시작 이벤트를 남기지 않는다
+    expect(window.dataLayer).toEqual([]);
   });
 
   it('contactEmail 이 없으면 로그인 이메일을 쓴다', async () => {
