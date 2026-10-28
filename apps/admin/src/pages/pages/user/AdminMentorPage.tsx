@@ -35,6 +35,12 @@ const tabs: { id: Tab; label: string }[] = [
   { id: 'applications', label: '신청 현황' },
 ];
 
+// 지원자가 쓰는 웹 화면. 운영자가 바로 열어보거나 공유할 수 있게 신청 현황 탭에 보여준다
+const applyPageLinks = [
+  { label: '신청서', path: '/mentor-apply' },
+  { label: '신청 현황 조회', path: '/mentor-apply/status' },
+];
+
 type Mentor = AdminUserMentorList['mentorList'][number];
 type MentorHashTag = Mentor['hashTagList'][number];
 
@@ -280,7 +286,24 @@ export default function AdminMentorPage() {
       {activeTab === 'mentors' ? (
         <MentorManagementTable />
       ) : (
-        <MentorApplicationTable />
+        <>
+          <div className="text-xsmall14 text-neutral-40 mb-4 flex flex-wrap gap-x-6 gap-y-1">
+            {applyPageLinks.map(({ label, path }) => (
+              <span key={path}>
+                {label}{' '}
+                <a
+                  href={`${WEB_URL}${path}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 underline transition hover:text-blue-300"
+                >
+                  {`${WEB_URL}${path}`}
+                </a>
+              </span>
+            ))}
+          </div>
+          <MentorApplicationTable />
+        </>
       )}
     </section>
   );
