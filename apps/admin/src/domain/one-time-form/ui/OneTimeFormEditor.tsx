@@ -3,6 +3,7 @@ import { Button } from '@mui/material';
 import type { AdminOneTimeFormDetail } from '@/api/one-time-form/oneTimeFormSchema';
 
 import { useOneTimeFormSettings } from '../hooks/useOneTimeFormSettings';
+import QuestionSection from '../question/ui/QuestionSection';
 import BasicInfoSection from './BasicInfoSection';
 import ProductCardPreview from './ProductCardPreview';
 
@@ -41,6 +42,13 @@ const OneTimeFormEditor = ({ detail }: OneTimeFormEditorProps) => {
             </Button>
           </div>
         </div>
+        {detail && (
+          <QuestionSection
+            formId={detail.form.formId}
+            applicationCount={detail.form.applicationCount}
+            questions={detail.questions}
+          />
+        )}
       </div>
 
       <aside className="sticky top-6 flex w-[22.5rem] flex-none flex-col gap-3">

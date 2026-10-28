@@ -25,6 +25,10 @@ vi.mock('@/api/one-time-form/oneTimeFormQueries', () => ({
     mutateAsync: updateMutateAsync,
     isPending: false,
   }),
+  useSaveOneTimeFormQuestionsMutation: () => ({
+    mutateAsync: vi.fn(),
+    isPending: false,
+  }),
 }));
 
 vi.mock('@/api/file', () => ({
