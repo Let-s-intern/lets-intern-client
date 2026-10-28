@@ -234,6 +234,15 @@ export const navData = [
     ],
   },
   {
+    title: '일회성 폼',
+    itemList: [
+      {
+        name: '폼 관리/등록',
+        url: '/one-time-form/list',
+      },
+    ],
+  },
+  {
     title: '리드 관리',
     itemList: [
       {
