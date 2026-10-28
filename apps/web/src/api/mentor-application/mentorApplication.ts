@@ -70,13 +70,12 @@ export const useMentorApplicationStatusMutation = () =>
 
 export const MyMentorApplicationsQueryKey = 'myMentorApplications';
 
-/** 회원 본인 신청 현황. GET /api/v1/mentor-application/my (로그인 필요) */
-export const useMyMentorApplicationsQuery = (enabled: boolean) =>
+/** 회원 본인 신청 현황. GET /api/v1/mentor-application/my (로그인 필요, 로그인했을 때만 부른다) */
+export const useMyMentorApplicationsQuery = () =>
   useQuery({
     queryKey: [MyMentorApplicationsQueryKey],
     queryFn: async () => {
       const res = await axios.get('/mentor-application/my');
       return parseMentorApplicationStatusList(res.data.data);
     },
-    enabled,
   });
