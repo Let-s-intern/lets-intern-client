@@ -16,7 +16,7 @@ const validValues: MentorApplyFormValues = {
   phoneNum: '010-1234-5678',
   email: 'mentor@example.com',
   preferredContactMethods: ['EMAIL'],
-  jobFields: ['DEVELOPMENT'],
+  jobFields: ['DEVELOPMENT_IT'],
   mentoringTypes: ['MOCK_INTERVIEW'],
   privacyAgreed: true,
 };
@@ -166,7 +166,7 @@ describe('toMentorApplicationRequest', () => {
       phoneNum: '01012345678',
       email: 'mentor@example.com',
       preferredContactMethods: ['EMAIL'],
-      jobFields: ['DEVELOPMENT'],
+      jobFields: ['DEVELOPMENT_IT'],
       mentoringTypes: ['MOCK_INTERVIEW'],
       introduction: undefined,
       motivation: '함께하고 싶어요',

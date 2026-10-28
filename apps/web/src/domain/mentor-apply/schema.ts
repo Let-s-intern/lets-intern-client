@@ -5,6 +5,7 @@ import { toPhoneDigits } from './utils/formatPhone';
 /*
   멘토 신청 요청 계약의 원본. 서버 enum 이름이 바뀌면 여기 상수만 고친다.
   POST /api/v1/mentor-application (multipart: `request` JSON + 선택 `file` PDF)
+  첨부는 새 파일(`file`) 또는 서류 정리 문서(`userDocumentId`) 중 하나만 보낸다.
 */
 
 export const CONTACT_METHOD_OPTIONS = [
@@ -13,17 +14,17 @@ export const CONTACT_METHOD_OPTIONS = [
 ] as const;
 
 export const JOB_FIELD_OPTIONS = [
-  { value: 'STRATEGY', label: '경영기획·전략' },
-  { value: 'MARKETING', label: '마케팅·브랜딩' },
+  { value: 'MANAGEMENT_STRATEGY', label: '경영기획·전략' },
+  { value: 'MARKETING_BRANDING', label: '마케팅·브랜딩' },
   { value: 'SALES', label: '영업·영업관리' },
   { value: 'HR', label: '인사·HR' },
-  { value: 'FINANCE', label: '재무·회계' },
-  { value: 'DEVELOPMENT', label: '개발·IT' },
+  { value: 'FINANCE_ACCOUNTING', label: '재무·회계' },
+  { value: 'DEVELOPMENT_IT', label: '개발·IT' },
   { value: 'DATA_AI', label: '데이터·AI' },
-  { value: 'SERVICE_PLANNING', label: '서비스기획·PM' },
+  { value: 'SERVICE_PLANNING_PM', label: '서비스기획·PM' },
   { value: 'DESIGN', label: '디자인' },
   { value: 'PRODUCTION_QUALITY', label: '생산·품질' },
-  { value: 'RND', label: '연구개발(R&D)' },
+  { value: 'RESEARCH_DEVELOPMENT', label: '연구개발(R&D)' },
   { value: 'ETC', label: '기타' },
 ] as const;
 
@@ -97,6 +98,11 @@ export const mentorApplyFormSchema = z.object({
       (file) => !file || file.size <= MAX_FILE_SIZE,
       '10MB 이하 파일만 첨부해 주세요.',
     ),
+  /**
+   * 서류 정리에서 고른 PDF. 고르면 `attachment` 는 비운다.
+   * 목록이 내려가면 react-hook-form 이 제출 때 값을 지워 undefined 가 되므로 nullish 로 받는다
+   */
+  userDocumentId: z.number().nullish(),
   snsLinks: z
     .array(
       z
@@ -128,6 +134,7 @@ export const mentorApplyDefaultValues: MentorApplyFormValues = {
   introduction: '',
   motivation: '',
   attachment: null,
+  userDocumentId: null,
   snsLinks: Array(SNS_LINK_COUNT).fill(''),
   privacyAgreed: false,
 };
@@ -186,5 +193,6 @@ export function toMentorApplicationRequest(
     motivation: values.motivation.trim() || undefined,
     snsLinks: values.snsLinks.map((v) => v.trim()).filter(Boolean),
     privacyAgreed: values.privacyAgreed,
+    userDocumentId: values.userDocumentId ?? undefined,
   };
 }
