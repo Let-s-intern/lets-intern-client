@@ -10,6 +10,7 @@ import AttachmentSection from './section/AttachmentSection';
 import BasicInfoSection from './section/BasicInfoSection';
 import MentoringFieldSection from './section/MentoringFieldSection';
 import PrivacyAgreementSection from './section/PrivacyAgreementSection';
+import { attachmentErrorMessage } from './utils/attachmentErrorMessage';
 import { toMentorApplicationFormData } from './utils/toMentorApplicationFormData';
 
 interface MentorApplyFormProps {
@@ -28,8 +29,17 @@ export default function MentorApplyForm({ onSubmitted }: MentorApplyFormProps) {
         });
         onSubmitted(applicationId);
       },
+      onError: (error) => {
+        const message = attachmentErrorMessage(error);
+        if (!message) return;
+        form.setError('attachment', { message });
+        document
+          .querySelector('[data-field="attachment"]')
+          ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      },
     });
   });
+  const isAttachmentError = !!attachmentErrorMessage(mutation.error);
   usePrefillFromUser(form);
 
   return (
@@ -45,7 +55,7 @@ export default function MentorApplyForm({ onSubmitted }: MentorApplyFormProps) {
           <p className="text-xsmall14 text-neutral-40">
             제출 후에는 수정할 수 없습니다. 내용을 다시 한번 확인해주세요.
           </p>
-          {mutation.isError ? (
+          {mutation.isError && !isAttachmentError ? (
             <p role="alert" className="text-xsmall14 text-requirement">
               제출에 실패했어요. 잠시 후 다시 시도해 주세요.
             </p>

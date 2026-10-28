@@ -144,6 +144,19 @@ describe('MentorApplyForm', () => {
     expect(window.dataLayer).toEqual([]);
   });
 
+  it('서버가 첨부를 거절하면 첨부 필드에 에러를 띄운다', async () => {
+    post.mockRejectedValue({ code: 'MENTOR_APPLICATION_ATTACHMENT_TOO_LARGE' });
+    renderForm();
+    await fillRequired();
+
+    await submit();
+
+    expect(
+      await screen.findByText('10MB 이하 파일만 첨부해 주세요.'),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
   it('성공하면 dataLayer 에 제출 이벤트를 남긴다', async () => {
     post.mockResolvedValue({ data: { data: { applicationId: 9 } } });
     const onSubmitted = renderForm();
