@@ -110,6 +110,25 @@ describe('MentorApplyForm', () => {
     expect((post.mock.calls[0][1] as FormData).has('file')).toBe(false);
   });
 
+  it('고른 파일을 삭제하면 파일명이 사라지고 file 파트를 보내지 않는다', async () => {
+    post.mockResolvedValue({ data: { data: { applicationId: 9 } } });
+    const onSubmitted = renderForm();
+    await fillRequired();
+    const pdf = new File(['%PDF'], 'resume.pdf', { type: 'application/pdf' });
+    await userEvent.upload(screen.getByLabelText(/이력서 \/ 포트폴리오/), pdf);
+    expect(screen.getByText('resume.pdf')).toBeInTheDocument();
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'resume.pdf 첨부 삭제' }),
+    );
+    expect(screen.queryByText('resume.pdf')).not.toBeInTheDocument();
+
+    await submit();
+
+    await waitFor(() => expect(onSubmitted).toHaveBeenCalledWith(9));
+    expect((post.mock.calls[0][1] as FormData).has('file')).toBe(false);
+  });
+
   it('제출 중에는 버튼을 막는다', async () => {
     post.mockReturnValue(new Promise(() => {}));
     renderForm();

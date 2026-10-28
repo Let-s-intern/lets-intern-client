@@ -67,7 +67,7 @@ export default function MentorApplyForm({
         noValidate
         onSubmit={onSubmit}
         onChange={handleFirstInput}
-        className="flex flex-col gap-12"
+        className="flex flex-col gap-12 break-keep"
       >
         <BasicInfoSection />
         <MentoringFieldSection />

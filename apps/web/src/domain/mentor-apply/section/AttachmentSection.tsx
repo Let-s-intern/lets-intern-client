@@ -121,22 +121,58 @@ export default function AttachmentSection() {
           <Controller
             control={control}
             name="attachment"
-            render={({ field }) => (
-              <input
-                id="attachment"
-                type="file"
-                accept="application/pdf"
-                name={field.name}
-                ref={field.ref}
-                onBlur={field.onBlur}
-                onChange={(e) => field.onChange(e.target.files?.[0] ?? null)}
-                aria-invalid={errors.attachment ? true : false}
-                aria-describedby={
-                  errors.attachment ? fieldErrorId('attachment') : undefined
-                }
-                className="text-xsmall14 text-neutral-30 file:rounded-xxs file:bg-neutral-90 file:text-xsmall14 file:text-neutral-20 hover:file:bg-neutral-85 block w-full file:mr-4 file:border-0 file:px-4 file:py-2 file:font-semibold"
-              />
-            )}
+            render={({ field }) => {
+              const file = field.value as File | null;
+              return (
+                <div className="flex flex-col gap-2">
+                  {/* 기본 파일 입력은 숨기고, 아래 label 을 버튼처럼 보인다 */}
+                  <input
+                    id="attachment"
+                    type="file"
+                    accept="application/pdf"
+                    name={field.name}
+                    ref={field.ref}
+                    onBlur={field.onBlur}
+                    // 같은 파일을 지웠다가 다시 골라도 change 가 일어나게 비운다
+                    onClick={(e) => {
+                      e.currentTarget.value = '';
+                    }}
+                    onChange={(e) =>
+                      field.onChange(e.target.files?.[0] ?? null)
+                    }
+                    aria-invalid={errors.attachment ? true : false}
+                    aria-describedby={
+                      errors.attachment ? fieldErrorId('attachment') : undefined
+                    }
+                    className="peer sr-only"
+                  />
+                  <label
+                    htmlFor="attachment"
+                    className="text-xsmall14 border-neutral-80 text-neutral-10 hover:bg-neutral-95 peer-focus-visible:border-primary peer-focus-visible:ring-primary-10 cursor-pointer self-start rounded-sm border px-4 py-2 font-semibold transition-colors peer-focus-visible:ring-2"
+                  >
+                    {file ? '다른 파일 선택' : '파일 선택'}
+                  </label>
+                  {file ? (
+                    <div className="border-neutral-80 flex items-center justify-between gap-3 rounded-sm border px-4 py-3">
+                      <span className="text-xsmall14 text-neutral-10 break-all">
+                        {file.name}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          field.onChange(null);
+                          clearErrors('attachment');
+                        }}
+                        aria-label={`${file.name} 첨부 삭제`}
+                        className="text-xsmall14 text-neutral-40 hover:text-neutral-10 shrink-0 font-semibold transition-colors"
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  ) : null}
+                </div>
+              );
+            }}
           />
         )}
       </FormField>

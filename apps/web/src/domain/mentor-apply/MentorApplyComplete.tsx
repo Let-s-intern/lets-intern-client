@@ -14,7 +14,7 @@ export default function MentorApplyComplete({
   onHome,
 }: MentorApplyCompleteProps) {
   return (
-    <div className="flex flex-col items-center py-16 text-center">
+    <div className="flex flex-col items-center break-keep py-16 text-center">
       <div className="bg-primary-10 text-primary flex h-14 w-14 items-center justify-center rounded-full">
         <svg
           aria-hidden

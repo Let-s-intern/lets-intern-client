@@ -73,7 +73,7 @@ export default function MentorApplicationTable() {
   };
 
   return (
-    <div className="border-neutral-80 rounded-lg border">
+    <div className="border-neutral-80 overflow-x-auto rounded-lg border">
       {isLoading ? (
         <div className="text-xsmall14 text-neutral-40 py-16 text-center">
           불러오는 중...
@@ -83,7 +83,7 @@ export default function MentorApplicationTable() {
           접수된 신청서가 없습니다.
         </div>
       ) : (
-        <table className="w-full border-collapse">
+        <table className="w-full border-collapse whitespace-nowrap">
           <thead>
             <tr className="border-neutral-60 bg-neutral-95 border-b-2">
               {HEADERS.map((header) => (
@@ -106,10 +106,10 @@ export default function MentorApplicationTable() {
                   {dayjs(application.submittedAt).format('YYYY.MM.DD HH:mm')}
                 </td>
                 <td className="text-xsmall14 px-4 py-4">{application.name}</td>
-                <td className="text-xsmall14 px-4 py-4">
+                <td className="text-xsmall14 whitespace-normal break-keep px-4 py-4">
                   {application.company}
                 </td>
-                <td className="text-xsmall14 px-4 py-4">
+                <td className="text-xsmall14 whitespace-normal break-keep px-4 py-4">
                   {application.jobTitle}
                 </td>
                 <td className="text-xsmall14 px-4 py-4">

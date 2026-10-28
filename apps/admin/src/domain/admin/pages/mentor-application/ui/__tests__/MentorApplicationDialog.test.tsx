@@ -10,6 +10,7 @@ vi.mock('@/utils/axios', () => ({
 
 import MentorApplicationDialog from '../MentorApplicationDialog';
 
+/* 서버 GetAdminMentorApplicationResponseDto 와 같은 키. 목록 전용 hasAttachment 는 없다 */
 const detail = {
   id: 7,
   submittedAt: '2026-10-28T14:02:00',
@@ -20,7 +21,6 @@ const detail = {
   email: 'haneul.kim@example.com',
   preferredContactMethods: ['EMAIL'],
   status: 'REVIEWING',
-  hasAttachment: true,
   yearsOfExperience: 7,
   jobFields: ['SERVICE_PLANNING_PM', 'DATA_AI'],
   mentoringTypes: ['DOCUMENT_REVIEW', 'JOB_QNA'],
@@ -72,6 +72,8 @@ describe('MentorApplicationDialog', () => {
     expect(screen.getByText('데이터·AI')).toBeInTheDocument();
     expect(screen.getByText('서류 첨삭')).toBeInTheDocument();
     expect(screen.getByText('직무 Q&A')).toBeInTheDocument();
+    expect(screen.getByText('이력 소개')).toBeInTheDocument();
+    expect(screen.getByText('전하고 싶은 말씀')).toBeInTheDocument();
     expect(screen.getByText('B2C 서비스 PM 7년')).toBeInTheDocument();
     expect(screen.getByText('경험을 나누고 싶습니다')).toBeInTheDocument();
     expect(screen.getByText('비회원 신청')).toBeInTheDocument();
@@ -87,7 +89,6 @@ describe('MentorApplicationDialog', () => {
   it('첨부가 없으면 링크 대신 첨부 없음을 보여준다', async () => {
     renderDialog({
       ...detail,
-      hasAttachment: false,
       attachmentUrl: null,
       attachmentName: null,
       snsLinks: [],

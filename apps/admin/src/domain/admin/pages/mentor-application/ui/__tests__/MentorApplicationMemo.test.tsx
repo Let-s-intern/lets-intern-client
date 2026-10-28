@@ -18,21 +18,28 @@ vi.mock('@/hooks/useAdminSnackbar', () => ({
 
 import MentorApplicationDialog from '../MentorApplicationDialog';
 
+/* 서버 GetAdminMentorApplicationResponseDto 와 같은 키. 목록 전용 hasAttachment 는 없다 */
 const detail = {
   id: 7,
+  userId: null,
   submittedAt: '2026-10-28T14:02:00',
   name: '김하늘',
   company: '예시테크',
   jobTitle: '프로덕트 매니저',
+  yearsOfExperience: 7,
   phoneNum: '01012345678',
   email: 'haneul.kim@example.com',
   preferredContactMethods: ['PHONE'],
-  status: 'CHECKING',
-  hasAttachment: false,
-  yearsOfExperience: 7,
   jobFields: ['ETC'],
   mentoringTypes: ['JOB_QNA'],
+  introduction: null,
+  motivation: null,
   snsLinks: [],
+  attachmentUrl: null,
+  attachmentName: null,
+  privacyAgreedAt: '2026-10-28T14:02:00',
+  status: 'CHECKING',
+  expectedReplyDate: '2026-11-04',
   adminMemo: '첫 통화 완료',
 };
 

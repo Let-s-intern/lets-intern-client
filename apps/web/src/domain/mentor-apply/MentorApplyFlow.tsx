@@ -23,13 +23,14 @@ export default function MentorApplyFlow({
   const [submitted, setSubmitted] = useState(false);
   const topRef = useRef<HTMLDivElement>(null);
 
-  // 긴 신청서 아래쪽에서 제출하므로, 바뀐 화면의 머리로 올린다
+  // 긴 신청서 아래쪽에서 제출하므로, 바뀐 화면의 머리로 올린다.
+  // 페이지에서는 고정 헤더(모바일 85px, 데스크톱 156px)에 가리지 않게 scroll-mt 를 둔다
   useEffect(() => {
     if (submitted) topRef.current?.scrollIntoView?.({ block: 'start' });
   }, [submitted]);
 
   return (
-    <div ref={topRef}>
+    <div ref={topRef} className="scroll-mt-[85px] md:scroll-mt-[156px]">
       {submitted ? (
         <MentorApplyComplete onHome={onHome} />
       ) : (

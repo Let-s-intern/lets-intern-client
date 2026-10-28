@@ -11,7 +11,7 @@ export default function MentorApplyStatusPage() {
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
 
   return (
-    <div className="mx-auto w-full max-w-md px-4 py-12 md:py-16">
+    <div className="mx-auto w-full max-w-md break-keep px-4 py-12 md:py-16">
       <h1 className="text-xlarge30 text-neutral-0 font-bold">신청 현황 조회</h1>
       {/* 로그인 상태를 복원하기 전에는 비회원 폼이 잠깐 보이지 않도록 비워 둔다 */}
       {!isInitialized ? null : isLoggedIn ? (
