@@ -73,7 +73,8 @@ const mentoringTypeSchema = z.enum(
 
 export const MENTOR_APPLICATION_MEMO_MAX_LENGTH = 5000;
 
-const listItemSchema = z.object({
+/* 목록·상세 응답에 공통으로 있는 항목. 서버 DTO 가 다르므로 각자 이 위에 자기 항목만 더한다 */
+const baseFields = {
   id: z.number(),
   submittedAt: z.string(),
   name: z.string(),
@@ -83,6 +84,11 @@ const listItemSchema = z.object({
   email: z.string(),
   preferredContactMethods: z.array(contactMethodSchema),
   status: mentorApplicationStatusSchema,
+};
+
+/* 서버 GetAdminMentorApplicationsResponseDto.AdminMentorApplicationResponse */
+const listItemSchema = z.object({
+  ...baseFields,
   hasAttachment: z.boolean(),
 });
 export type AdminMentorApplicationListItem = z.infer<typeof listItemSchema>;
@@ -99,7 +105,9 @@ export const adminMentorApplicationListSchema = z.preprocess((data) => {
   return data;
 }, z.array(listItemSchema));
 
-export const adminMentorApplicationDetailSchema = listItemSchema.extend({
+/* 서버 GetAdminMentorApplicationResponseDto. 목록 전용 hasAttachment 는 없다 */
+export const adminMentorApplicationDetailSchema = z.object({
+  ...baseFields,
   yearsOfExperience: z.number(),
   jobFields: z.array(jobFieldSchema),
   mentoringTypes: z.array(mentoringTypeSchema),

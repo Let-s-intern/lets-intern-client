@@ -40,9 +40,18 @@ describe('adminMentorApplicationListSchema', () => {
 });
 
 describe('adminMentorApplicationDetailSchema', () => {
+  /* 서버 GetAdminMentorApplicationResponseDto 와 같은 키·순서. 목록 전용 hasAttachment 는 없다 */
   const detail = {
-    ...item,
+    id: 1,
+    userId: 10,
+    submittedAt: '2026-10-28T14:02:00',
+    name: '김하늘',
+    company: '예시테크',
+    jobTitle: '프로덕트 매니저',
     yearsOfExperience: 7,
+    phoneNum: '01012345678',
+    email: 'haneul.kim@example.com',
+    preferredContactMethods: ['PHONE', 'EMAIL'],
     jobFields: ['SERVICE_PLANNING_PM', 'DATA_AI'],
     mentoringTypes: ['DOCUMENT_REVIEW'],
     introduction: '자기소개',
@@ -51,10 +60,17 @@ describe('adminMentorApplicationDetailSchema', () => {
     attachmentUrl: 'https://cdn.example.com/a.pdf',
     attachmentName: 'a.pdf',
     privacyAgreedAt: '2026-10-28T14:02:00',
-    userId: 10,
+    status: 'CHECKING',
     expectedReplyDate: '2026-11-04',
     adminMemo: '메모',
   };
+
+  it('서버 상세 응답(hasAttachment 없음)을 파싱한다', () => {
+    expect(detail).not.toHaveProperty('hasAttachment');
+    expect(adminMentorApplicationDetailSchema.safeParse(detail).success).toBe(
+      true,
+    );
+  });
 
   it('전체 항목을 파싱한다', () => {
     expect(adminMentorApplicationDetailSchema.parse(detail)).toEqual(detail);
