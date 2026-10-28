@@ -2,6 +2,8 @@ import { ReactNode } from 'react';
 import FormPopupShell from '../FormPopupShell';
 
 interface StateScreenProps {
+  /** 상단 바 제목. 신청 확인 페이지는 "신청 확인" */
+  title?: string;
   /** 제목 위 둥근 아이콘. 없으면 그리지 않는다(로그인 필요는 상품 카드를 대신 둔다) */
   icon?: ReactNode;
   /** 아이콘 배경. ok 는 완료류, mute 는 안내류 */
@@ -19,6 +21,7 @@ const ICON_TONE = {
 
 /** 입력 화면 대신 보이는 예외 화면 틀(시안 4절). 모두 "신청하기" 상단 바에 문구와 버튼만 다르다 */
 const StateScreen = ({
+  title = '신청하기',
   icon,
   tone = 'mute',
   top,
@@ -26,7 +29,7 @@ const StateScreen = ({
   description,
   footer,
 }: StateScreenProps) => (
-  <FormPopupShell title="신청하기" footer={footer}>
+  <FormPopupShell title={title} footer={footer}>
     <div className="flex h-full flex-col items-center justify-center px-1 py-8 text-center">
       {top}
       {icon ? (
