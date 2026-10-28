@@ -28,7 +28,7 @@ export const getOneTimeFormErrorCode = (error: unknown): string | undefined =>
 
 // U1 폼 조회 (공개)
 export const fetchOneTimeForm = async (slug: string): Promise<OneTimeForm> => {
-  const res = await axios.get(`/one-time-form/${slug}`);
+  const res = await axios.get(`/one-time-form/${encodeURIComponent(slug)}`);
   return oneTimeFormSchema.parse(res.data.data);
 };
 
@@ -45,7 +45,7 @@ export const useOneTimeFormQuery = (slug: string) => {
 export const fetchMyOneTimeFormApplication = async (
   slug: string,
 ): Promise<MyOneTimeFormApplication> => {
-  const res = await axios.get(`/one-time-form/${slug}/my`);
+  const res = await axios.get(`/one-time-form/${encodeURIComponent(slug)}/my`);
   return myOneTimeFormApplicationSchema.parse(res.data.data);
 };
 
@@ -69,7 +69,10 @@ export const postOneTimeFormApplication = async (
   slug: string,
   body: CreateOneTimeFormApplicationRequest,
 ): Promise<CreateOneTimeFormApplicationResponse> => {
-  const res = await axios.post(`/one-time-form/${slug}/applications`, body);
+  const res = await axios.post(
+    `/one-time-form/${encodeURIComponent(slug)}/applications`,
+    body,
+  );
   return createOneTimeFormApplicationResponseSchema.parse(res.data.data);
 };
 
@@ -96,9 +99,12 @@ export const fetchOneTimeFormUploadUrl = async ({
   questionId: number;
   filename: string;
 }): Promise<OneTimeFormUploadUrl> => {
-  const res = await axios.get(`/one-time-form/${slug}/upload-url`, {
-    params: { questionId, filename },
-  });
+  const res = await axios.get(
+    `/one-time-form/${encodeURIComponent(slug)}/upload-url`,
+    {
+      params: { questionId, filename },
+    },
+  );
   return oneTimeFormUploadUrlSchema.parse(res.data.data);
 };
 
