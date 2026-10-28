@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, within } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -13,7 +14,9 @@ import OneTimeFormApplicationDetailPage from './OneTimeFormApplicationDetailPage
 const applicationQuery = vi.fn();
 const fileUrlQuery = vi.fn();
 
-vi.mock('@/api/one-time-form/oneTimeFormQueries', () => ({
+vi.mock('@/api/one-time-form/oneTimeFormQueries', async (importOriginal) => ({
+  // 환불 버튼이 쿼리 키를 쓴다
+  ...(await importOriginal<object>()),
   useOneTimeFormApplicationQuery: (applicationId: number) =>
     applicationQuery(applicationId),
   useOneTimeFormFileUrlQuery: (applicationId: number, questionId: number) =>
@@ -51,18 +54,20 @@ const loaded = (applicationId: number) => {
 
 const renderPage = (applicationId: number) =>
   render(
-    <AdminSnackbarProvider>
-      <MemoryRouter
-        initialEntries={[`/one-time-form/7/applications/${applicationId}`]}
-      >
-        <Routes>
-          <Route
-            path="/one-time-form/:formId/applications/:applicationId"
-            element={<OneTimeFormApplicationDetailPage />}
-          />
-        </Routes>
-      </MemoryRouter>
-    </AdminSnackbarProvider>,
+    <QueryClientProvider client={new QueryClient()}>
+      <AdminSnackbarProvider>
+        <MemoryRouter
+          initialEntries={[`/one-time-form/7/applications/${applicationId}`]}
+        >
+          <Routes>
+            <Route
+              path="/one-time-form/:formId/applications/:applicationId"
+              element={<OneTimeFormApplicationDetailPage />}
+            />
+          </Routes>
+        </MemoryRouter>
+      </AdminSnackbarProvider>
+    </QueryClientProvider>,
   );
 
 const section = (title: string) =>

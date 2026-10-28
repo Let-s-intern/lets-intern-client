@@ -18,6 +18,7 @@ import {
   seedOneTimeFormQuestions,
   seedOneTimeForms,
   type SeedOneTimeForm,
+  type SeedOneTimeFormApplication,
   type SeedOneTimeFormOptionGroup,
   type SeedOneTimeFormQuestion,
 } from '../seed/oneTimeForm';
@@ -36,6 +37,7 @@ const BASE = '*/api/v1/admin/one-time-form';
 let forms: SeedOneTimeForm[] = [];
 let questions: SeedOneTimeFormQuestion[] = [];
 let optionGroups: SeedOneTimeFormOptionGroup[] = [];
+let applications: SeedOneTimeFormApplication[] = [];
 let nextFormId = 0;
 let nextQuestionId = 0;
 let nextOptionGroupId = 0;
@@ -46,6 +48,7 @@ export const resetOneTimeFormMock = () => {
   forms = structuredClone(seedOneTimeForms);
   questions = structuredClone(seedOneTimeFormQuestions);
   optionGroups = structuredClone(seedOneTimeFormOptionGroups);
+  applications = structuredClone(seedOneTimeFormApplications);
   nextFormId = Math.max(...forms.map((f) => f.formId)) + 1;
   nextQuestionId = Math.max(...questions.map((q) => q.questionId)) + 1;
   nextOptionGroupId = Math.max(...optionGroups.map((g) => g.optionGroupId)) + 1;
@@ -73,6 +76,10 @@ const ERROR_STATUS_AND_MESSAGE = {
   ONE_TIME_FORM_ITEM_NOT_IN_FORM: [400, '이 폼의 질문 또는 옵션이 아닙니다.'],
   APPLICATION_NOT_FOUND: [404, '존재하지 않는 신청 내역입니다.'],
   ONE_TIME_FORM_FILE_NOT_FOUND: [404, '첨부 파일이 없습니다.'],
+  APPLICATION_ALREADY_CANCELED: [409, '이미 취소된 신청입니다.'],
+  PAYMENT_NOT_FOUND: [404, '결제 내역이 없습니다.'],
+  MANAGER_NAME_REQUIRED: [400, '담당자 이름을 입력해주세요.'],
+  REASON_REQUIRED: [400, '환불 사유를 입력해주세요.'],
 } as const;
 
 type ErrorCode = keyof typeof ERROR_STATUS_AND_MESSAGE;
@@ -97,7 +104,7 @@ const badRequest = (issues: { path: (string | number)[]; message: string }[]) =>
 const findForm = (formId: number) => forms.find((f) => f.formId === formId);
 
 const applicationCountOf = (formId: number) =>
-  seedOneTimeFormApplications.filter((a) => a.formId === formId).length;
+  applications.filter((a) => a.formId === formId).length;
 
 /** 공개 중이거나 신청이 1건 이상이면 잠긴다. 저장 전 상태로 판단한다 */
 const isSlugLocked = (form: SeedOneTimeForm) =>
@@ -164,7 +171,7 @@ const applicationFormOf = (form: SeedOneTimeForm) => ({
 });
 
 const findApplication = (applicationId: number) =>
-  seedOneTimeFormApplications.find((a) => a.applicationId === applicationId);
+  applications.find((a) => a.applicationId === applicationId);
 
 const isAttachmentAnswer = (
   value: unknown,
@@ -184,14 +191,14 @@ const mockPresignedUrl = (key: string) =>
 
 /** 취소 포함 전체, 신청일시 내림차순 */
 const applicationsOf = (formId: number) =>
-  seedOneTimeFormApplications
+  applications
     .filter((a) => a.formId === formId)
     .sort((a, b) => b.createDate.localeCompare(a.createDate))
     .map(({ formId: _formId, ...application }) => application);
 
 /** 스냅샷에 들어간(결제된 적 있는) 옵션은 빠져도 지우지 않고 숨긴다(계약 A7) */
 const isOptionPaid = (optionId: number) =>
-  seedOneTimeFormApplications.some((a) =>
+  applications.some((a) =>
     a.selectedOptions.some((s) => s.optionId === optionId),
   );
 
@@ -324,6 +331,43 @@ export const oneTimeFormHandlers = [
           ? MOCK_IMAGE_URL
           : mockPresignedUrl(answer.key);
       return HttpResponse.json({ data: { url } });
+    },
+  ),
+
+  // A11 전액 환불. 일회성 폼 신청만 받고, 나머지는 다음 핸들러(adminRefundHandlers)로 넘긴다(계약 13.2)
+  http.post(
+    '*/api/v1/admin/application/:applicationId/refund',
+    async ({ params, request }) => {
+      // 본문을 읽기 전에 거른다. 넘길 요청의 본문을 소비하지 않는다
+      const found = findApplication(Number(params.applicationId));
+      if (!found) return undefined;
+
+      const body = (await request.json().catch(() => null)) as {
+        managerName?: string;
+        reason?: string;
+      } | null;
+      if (!body?.managerName?.trim()) return error('MANAGER_NAME_REQUIRED');
+      if (!body.reason?.trim()) return error('REASON_REQUIRED');
+      if (found.payment === null) return error('PAYMENT_NOT_FOUND');
+      if (found.isCanceled) return error('APPLICATION_ALREADY_CANCELED');
+
+      // 계약 A8: 취소면 refundAmount 가 환불액이다. 전액 환불이라 결제액과 같다
+      found.isCanceled = true;
+      found.canceledAt = new Date().toISOString().slice(0, 19);
+      found.payment.refundAmount = found.payment.paidAmount;
+
+      return HttpResponse.json({
+        data: {
+          refundedAmount: found.payment.paidAmount,
+          canceledAt: found.canceledAt,
+          // 0원 결제는 토스를 부르지 않아 결제 키가 없다
+          paymentKey:
+            found.payment.paidAmount === 0
+              ? null
+              : `tgen_mock_${found.payment.orderId}`,
+          pendingManualRefundAmount: 0,
+        },
+      });
     },
   ),
 

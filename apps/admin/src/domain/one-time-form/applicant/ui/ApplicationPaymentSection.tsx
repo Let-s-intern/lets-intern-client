@@ -6,15 +6,18 @@ import {
   getPaymentAmountText,
   groupSelectedOptions,
 } from '../utils/applicationDisplay';
+import ApplicationRefundButton from './ApplicationRefundButton';
 import DetailSection from './DetailSection';
 import InfoList, { type InfoItem } from './InfoList';
 
 interface ApplicationPaymentSectionProps {
+  formId: number;
   application: AdminOneTimeFormApplication;
 }
 
 /** 신청 시점 옵션 스냅샷(그룹별)과 결제·환불 금액 */
 const ApplicationPaymentSection = ({
+  formId,
   application,
 }: ApplicationPaymentSectionProps) => {
   const { payment } = application;
@@ -49,7 +52,24 @@ const ApplicationPaymentSection = ({
             label: '환불 금액',
             value: payment === null ? null : formatWon(payment.refundAmount),
           },
-          { label: '결제 상태', value: getApplicationStatusLabel(application) },
+          {
+            label: '결제 상태',
+            value:
+              payment === null ? (
+                getApplicationStatusLabel(application)
+              ) : (
+                <div className="flex flex-wrap items-center gap-3">
+                  <span>{getApplicationStatusLabel(application)}</span>
+                  <ApplicationRefundButton
+                    formId={formId}
+                    applicationId={application.applicationId}
+                    applicantName={application.name}
+                    paidAmount={payment.paidAmount}
+                    isCanceled={application.isCanceled}
+                  />
+                </div>
+              ),
+          },
         ]}
       />
     </DetailSection>

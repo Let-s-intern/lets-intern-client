@@ -43,7 +43,10 @@ const OneTimeFormApplicationDetailPage = () => {
         ) : (
           <>
             <ApplicationInfoSection application={data.application} />
-            <ApplicationPaymentSection application={data.application} />
+            <ApplicationPaymentSection
+              formId={data.form.formId}
+              application={data.application}
+            />
             <ApplicationAccountSection user={data.application.user} />
             <ApplicationInflowSection application={data.application} />
             <ApplicationAnswersSection

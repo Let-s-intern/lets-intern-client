@@ -13,6 +13,7 @@ import {
   type SaveOneTimeFormRequest,
 } from '@/api/one-time-form/oneTimeFormSchema';
 
+import { adminRefundHandlers } from './adminRefund';
 import { oneTimeFormHandlers, resetOneTimeFormMock } from './oneTimeForm';
 
 /**
@@ -21,7 +22,8 @@ import { oneTimeFormHandlers, resetOneTimeFormMock } from './oneTimeForm';
  */
 
 const BASE = 'http://localhost/api/v1/admin/one-time-form';
-const server = setupServer(...oneTimeFormHandlers);
+// A11 은 같은 경로의 기존 환불 핸들러로 넘기는지까지 본다. index.ts 와 같은 순서다
+const server = setupServer(...oneTimeFormHandlers, ...adminRefundHandlers);
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 afterEach(() => {
@@ -692,4 +694,116 @@ describe('A10 GET /admin/one-time-form/application/:applicationId/files/:questio
       );
     },
   );
+});
+
+describe('A11 POST /admin/application/:applicationId/refund', () => {
+  const refund = (applicationId: number, body: unknown) =>
+    fetch(`http://localhost/api/v1/admin/application/${applicationId}/refund`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+  const fullRefund = {
+    managerName: '임호정',
+    reason: '신청자 요청',
+    sendNotification: false,
+  };
+
+  const fetchApplication = async (applicationId: number) => {
+    const res = await send('GET', `/application/${applicationId}`);
+    const body = (await res.json()) as { data: unknown };
+    return adminOneTimeFormApplicationDetailSchema.parse(body.data).application;
+  };
+
+  it('1042 를 전액 환불하면 결제액을 돌려주고 다음 A8·A9 조회에 취소로 반영된다', async () => {
+    const res = await refund(1042, fullRefund);
+    const body = (await res.json()) as { data: Record<string, unknown> };
+
+    expect(res.status).toBe(200);
+    expect(body.data).toMatchObject({
+      refundedAmount: 49000,
+      paymentKey: 'tgen_mock_letsXk29Pq8812',
+      pendingManualRefundAmount: 0,
+    });
+    expect(body.data.canceledAt).toMatch(
+      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/,
+    );
+
+    const application = await fetchApplication(1042);
+    expect(application).toMatchObject({
+      isCanceled: true,
+      canceledAt: body.data.canceledAt,
+      payment: { paidAmount: 49000, refundAmount: 49000 },
+    });
+
+    const listRes = await send('GET', '/7/applications');
+    const list = adminOneTimeFormApplicationsSchema.parse(
+      ((await listRes.json()) as { data: unknown }).data,
+    );
+    expect(
+      list.applications.find((a) => a.applicationId === 1042),
+    ).toMatchObject({ isCanceled: true });
+  });
+
+  it('0원 결제 1050 도 같은 요청으로 환불되고 환불액은 0 이다', async () => {
+    const res = await refund(1050, fullRefund);
+    const body = (await res.json()) as { data: Record<string, unknown> };
+
+    expect(res.status).toBe(200);
+    expect(body.data).toMatchObject({ refundedAmount: 0, paymentKey: null });
+    expect(await fetchApplication(1050)).toMatchObject({
+      isCanceled: true,
+      payment: { paidAmount: 0, refundAmount: 0 },
+    });
+  });
+
+  it('환불은 resetOneTimeFormMock 으로 되돌아간다', async () => {
+    await refund(1042, fullRefund);
+    resetOneTimeFormMock();
+
+    expect(await fetchApplication(1042)).toMatchObject({ isCanceled: false });
+  });
+
+  it('이미 취소한 1043 은 409 APPLICATION_ALREADY_CANCELED', async () => {
+    await expectError(
+      await refund(1043, fullRefund),
+      409,
+      'APPLICATION_ALREADY_CANCELED',
+    );
+  });
+
+  it('두 번 환불하면 두 번째는 409 APPLICATION_ALREADY_CANCELED', async () => {
+    await refund(1042, fullRefund);
+    await expectError(
+      await refund(1042, fullRefund),
+      409,
+      'APPLICATION_ALREADY_CANCELED',
+    );
+  });
+
+  it('무료 폼 신청 1044 는 404 PAYMENT_NOT_FOUND', async () => {
+    await expectError(await refund(1044, fullRefund), 404, 'PAYMENT_NOT_FOUND');
+  });
+
+  it.each([
+    [
+      '담당자 이름',
+      { ...fullRefund, managerName: ' ' },
+      'MANAGER_NAME_REQUIRED',
+    ],
+    ['환불 사유', { ...fullRefund, reason: '' }, 'REASON_REQUIRED'],
+  ])('%s 이 비면 400 %s', async (_, body, code) => {
+    await expectError(await refund(1042, body), 400, code);
+    expect(await fetchApplication(1042)).toMatchObject({ isCanceled: false });
+  });
+
+  it('일회성 폼 신청이 아닌 ID 는 기존 adminRefundHandlers 가 받는다', async () => {
+    // 5003 은 기존 목에서 이미 어드민 환불된 참여자다. 그 핸들러는 code 없이 message 만 준다
+    const res = await refund(5003, fullRefund);
+    const body = (await res.json()) as { code?: string; message: string };
+
+    expect(res.status).toBe(409);
+    expect(body).toEqual({ message: '이미 취소된 신청 내역입니다.' });
+  });
 });
