@@ -53,3 +53,24 @@ describe('ConditionalLayout — /sso/login (LC-3208)', () => {
     expect(screen.getByTestId('navbar')).toBeInTheDocument();
   });
 });
+
+describe('ConditionalLayout — /form/* 일회성 폼 팝업', () => {
+  it.each(['/form/x', '/form/x/my'])(
+    '%s 는 NavBar·Footer·채널톡·바텀바 없이 children만 렌더한다',
+    (pathname) => {
+      mockPathname = pathname;
+
+      render(
+        <ConditionalLayout>
+          <div data-testid="form-content">폼</div>
+        </ConditionalLayout>,
+      );
+
+      expect(screen.getByTestId('form-content')).toBeInTheDocument();
+      expect(screen.queryByTestId('navbar')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('footer')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('channel-talk')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('bottom-nav')).not.toBeInTheDocument();
+    },
+  );
+});
