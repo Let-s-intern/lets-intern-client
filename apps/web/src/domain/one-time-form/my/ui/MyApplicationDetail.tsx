@@ -14,8 +14,7 @@ import {
   deriveMyApplicationStatus,
 } from '../utils/myApplication';
 import {
-  AnswerInfoCard,
-  ApplicantInfoCard,
+  ApplicationContentCard,
   PaymentInfoCard,
 } from './ApplicationInfoCards';
 
@@ -94,7 +93,7 @@ const MyApplicationDetail = ({
         ) : null}
         <div className="min-w-0">
           <span
-            className={`text-xxsmall12 rounded-xs inline-block px-1.5 py-0.5 font-semibold ${
+            className={`text-xxsmall12 rounded-xxs inline-block px-2 py-0.5 font-semibold ${
               isCanceled
                 ? 'bg-neutral-90 text-neutral-40'
                 : 'bg-primary-10 text-primary'
@@ -116,16 +115,15 @@ const MyApplicationDetail = ({
       ) : null}
 
       {isDetailOpen ? (
-        <>
-          <ApplicantInfoCard application={application} />
+        <div className="mt-4 space-y-3">
           <PaymentInfoCard application={application} />
-          <AnswerInfoCard application={application} />
-        </>
+          <ApplicationContentCard application={application} />
+        </div>
       ) : (
         <button
           type="button"
           onClick={() => setIsDetailOpen(true)}
-          className="text-xsmall14 text-neutral-35 mx-auto mt-4 block underline underline-offset-2"
+          className="text-xsmall14 text-neutral-40 mx-auto mt-4 block underline underline-offset-2"
         >
           신청 내용 보기
         </button>
@@ -139,7 +137,7 @@ const MyApplicationDetail = ({
 };
 
 const StatusNotice = ({ text }: { text: string }) => (
-  <p className="bg-neutral-95 text-xxsmall12 text-neutral-35 mt-3 break-keep rounded-md p-3.5 leading-relaxed">
+  <p className="bg-neutral-95 text-xxsmall12 text-neutral-35 mt-3 break-keep rounded-sm px-3.5 py-3 leading-relaxed">
     {text}
   </p>
 );

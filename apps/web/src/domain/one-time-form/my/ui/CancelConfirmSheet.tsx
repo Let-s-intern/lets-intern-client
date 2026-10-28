@@ -15,7 +15,7 @@ interface CancelConfirmSheetProps {
 }
 
 const dangerButtonClass =
-  'bg-system-error text-xsmall16 text-static-100 grid h-[52px] w-full place-items-center rounded-sm font-semibold transition-opacity disabled:opacity-50';
+  'bg-requirement text-xsmall16 text-static-100 grid h-[52px] w-full place-items-center rounded-sm font-semibold transition-opacity disabled:opacity-50';
 
 /**
  * 취소 확인 바텀시트(시안 5절 "취소 확인"). 취소는 전액 환불이라(계약 7절) 결제 금액이 곧 환불 금액이다.
@@ -45,7 +45,7 @@ const CancelConfirmSheet = ({
 
       {payment ? (
         <>
-          <dl className="border-neutral-85 mt-5 rounded-md border p-4">
+          <dl className="border-neutral-80 mt-5 rounded-md border p-4">
             <div className="text-xsmall14 flex justify-between">
               <dt className="text-neutral-40">결제 금액</dt>
               <dd className="text-neutral-0">
@@ -62,7 +62,7 @@ const CancelConfirmSheet = ({
             </div>
           </dl>
           {payment.paidAmount > 0 ? (
-            <p className="text-xxsmall12 text-neutral-40 mt-2 break-keep">
+            <p className="text-xxsmall12 text-neutral-40 mt-2 break-keep leading-relaxed">
               결제한 수단으로 돌려드려요. 카드사에 따라 며칠 걸릴 수 있어요.
             </p>
           ) : null}
@@ -72,7 +72,7 @@ const CancelConfirmSheet = ({
       {errorMessage ? (
         <p
           role="alert"
-          className="text-xsmall14 text-system-error mt-3 break-keep"
+          className="text-xsmall14 text-requirement mt-3 break-keep"
         >
           {errorMessage}
         </p>

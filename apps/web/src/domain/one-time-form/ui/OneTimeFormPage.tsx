@@ -165,7 +165,7 @@ const OneTimeFormPage = ({ slug }: OneTimeFormPageProps) => {
               {freeSubmit.errorMessage ? (
                 <p
                   role="alert"
-                  className="text-xsmall14 text-requirement mb-2.5 text-center"
+                  className="text-xxsmall12 text-requirement mb-2.5 break-keep text-center"
                 >
                   {freeSubmit.errorMessage}
                 </p>

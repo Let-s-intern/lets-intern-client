@@ -226,10 +226,10 @@ describe('MyApplicationPage', () => {
     expect(
       screen.queryByRole('button', { name: '신청 취소' }),
     ).not.toBeInTheDocument();
-    expect(screen.queryByText('신청자 정보')).not.toBeInTheDocument();
+    expect(screen.queryByText('신청 내용')).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: '신청 내용 보기' }));
-    expect(screen.getByText('신청자 정보')).toBeInTheDocument();
+    expect(screen.getByText('신청 내용')).toBeInTheDocument();
     expect(screen.getByText('김렛커_이력서_최종.pdf')).toBeInTheDocument();
   });
 
@@ -282,7 +282,7 @@ describe('MyApplicationPage', () => {
     renderPage();
 
     expect(screen.queryByText('결제 정보')).not.toBeInTheDocument();
-    expect(screen.getByText('신청자 정보')).toBeInTheDocument();
+    expect(screen.getByText('신청 내용')).toBeInTheDocument();
   });
 
   it('비로그인이면 로그인 안내, 로그인 후 /my 로 돌아온다', () => {
