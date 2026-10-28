@@ -3,9 +3,12 @@ import { Button } from '@mui/material';
 import type { AdminOneTimeFormDetail } from '@/api/one-time-form/oneTimeFormSchema';
 
 import { useOneTimeFormSettings } from '../hooks/useOneTimeFormSettings';
+import { useOptionGroupEditor } from '../option/hooks/useOptionGroupEditor';
+import OptionGroupSection from '../option/ui/OptionGroupSection';
 import QuestionSection from '../question/ui/QuestionSection';
+import ApplyPreviewAside from './ApplyPreviewAside';
 import BasicInfoSection from './BasicInfoSection';
-import ProductCardPreview from './ProductCardPreview';
+import PaymentSettingsSection from './PaymentSettingsSection';
 
 interface OneTimeFormEditorProps {
   /** 없으면 새 폼 만들기. 질문·옵션 섹션은 폼이 만들어진 뒤에만 붙는다 */
@@ -15,10 +18,16 @@ interface OneTimeFormEditorProps {
 /**
  * 왼쪽은 섹션을 쌓고, 오른쪽은 신청 화면 미리보기를 붙여 둔다(시안 7절).
  * 섹션마다 자기 엔드포인트로 저장한다. 기본 정보·결제 설정은 A2·A4 를 함께 쓴다.
+ * 미리보기가 저장 전 값을 보여 주도록 설정과 옵션 상태를 여기서 들고 있는다.
  */
 const OneTimeFormEditor = ({ detail }: OneTimeFormEditorProps) => {
   const settings = useOneTimeFormSettings(detail?.form);
+  const optionEditor = useOptionGroupEditor(
+    detail?.form.formId,
+    detail?.optionGroups ?? [],
+  );
   const { values } = settings;
+  const applicationCount = detail?.form.applicationCount ?? 0;
 
   return (
     <div className="flex items-start gap-8">
@@ -32,6 +41,11 @@ const OneTimeFormEditor = ({ detail }: OneTimeFormEditorProps) => {
             isUploadingThumbnail={settings.isUploadingThumbnail}
             onUploadThumbnail={settings.uploadThumbnail}
           />
+          <PaymentSettingsSection
+            values={values}
+            errors={settings.errors}
+            setField={settings.setField}
+          />
           <div className="flex justify-end">
             <Button
               variant="contained"
@@ -43,27 +57,25 @@ const OneTimeFormEditor = ({ detail }: OneTimeFormEditorProps) => {
           </div>
         </div>
         {detail && (
-          <QuestionSection
-            formId={detail.form.formId}
-            applicationCount={detail.form.applicationCount}
-            questions={detail.questions}
-          />
+          <>
+            <OptionGroupSection
+              editor={optionEditor}
+              applicationCount={applicationCount}
+            />
+            <QuestionSection
+              formId={detail.form.formId}
+              applicationCount={applicationCount}
+              questions={detail.questions}
+            />
+          </>
         )}
       </div>
 
-      <aside className="sticky top-6 flex w-[22.5rem] flex-none flex-col gap-3">
-        <p className="text-xxsmall12 text-neutral-40 font-medium">
-          신청 화면 미리보기
-        </p>
-        <ProductCardPreview
-          thumbnailUrl={values.thumbnailUrl}
-          categoryText={values.categoryText}
-          title={values.title}
-          scheduleText={values.scheduleText}
-          isPaid={values.isPaid}
-          basePrice={values.basePrice}
-        />
-      </aside>
+      <ApplyPreviewAside
+        values={values}
+        optionGroups={optionEditor.groups}
+        applicationCount={applicationCount}
+      />
     </div>
   );
 };

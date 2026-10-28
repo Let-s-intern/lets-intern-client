@@ -7,7 +7,7 @@ import {
   QUESTION_TYPE_LABELS,
   QUESTION_TYPES,
 } from '../constants/questionTypes';
-import { useDragReorder } from '../hooks/useDragReorder';
+import { useDragReorder } from '../../hooks/useDragReorder';
 import { useQuestionEditor } from '../hooks/useQuestionEditor';
 import type { QuestionDraft } from '../types/questionDraft';
 import DeleteQuestionDialog from './DeleteQuestionDialog';

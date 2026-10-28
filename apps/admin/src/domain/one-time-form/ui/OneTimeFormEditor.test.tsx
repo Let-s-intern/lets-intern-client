@@ -1,6 +1,12 @@
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { AxiosError, AxiosHeaders } from 'axios';
 import { MemoryRouter } from 'react-router-dom';
@@ -10,9 +16,11 @@ import type { AdminOneTimeFormDetail } from '@/api/one-time-form/oneTimeFormSche
 import { AdminSnackbarProvider } from '@/hooks/useAdminSnackbar';
 
 import OneTimeFormEditor from './OneTimeFormEditor';
+import { ZERO_PRICE_NOTICE } from './PaymentSettingsSection';
 
 const createMutateAsync = vi.fn();
 const updateMutateAsync = vi.fn();
+const saveOptionGroupsMutateAsync = vi.fn();
 const uploadFile = vi.fn();
 const navigate = vi.fn();
 
@@ -27,6 +35,10 @@ vi.mock('@/api/one-time-form/oneTimeFormQueries', () => ({
   }),
   useSaveOneTimeFormQuestionsMutation: () => ({
     mutateAsync: vi.fn(),
+    isPending: false,
+  }),
+  useSaveOneTimeFormOptionGroupsMutation: () => ({
+    mutateAsync: saveOptionGroupsMutateAsync,
     isPending: false,
   }),
 }));
@@ -135,7 +147,8 @@ describe('OneTimeFormEditor 기본 정보', () => {
         /공개 중이거나 신청이 있는 폼은 주소를 바꿀 수 없습니다/,
       ),
     ).toBeInTheDocument();
-    expect(screen.getByText(/29,000원부터/)).toBeInTheDocument();
+    // 추가 금액 있는 옵션이 없으니 "부터" 가 붙지 않는다
+    expect(screen.getByText('11.15(토) 14:00 · 29,000원')).toBeInTheDocument();
   });
 
   it('썸네일을 지우고 저장하면 thumbnailUrl 을 null 로 보낸다', async () => {
@@ -176,5 +189,124 @@ describe('OneTimeFormEditor 기본 정보', () => {
         0,
       ),
     );
+  });
+});
+
+const optionGroup: AdminOneTimeFormDetail['optionGroups'][number] = {
+  optionGroupId: 31,
+  title: '참여 방식을 골라 주세요',
+  description: null,
+  selectType: 'SINGLE',
+  isRequired: true,
+  sortOrder: 0,
+  options: [
+    {
+      optionId: 311,
+      name: '온라인 라이브',
+      description: null,
+      additionalPrice: 0,
+      badge: null,
+      isVisible: true,
+      sortOrder: 0,
+    },
+    {
+      optionId: 312,
+      name: '오프라인 현장 참여',
+      description: null,
+      additionalPrice: 10000,
+      badge: '추천',
+      isVisible: true,
+      sortOrder: 1,
+    },
+  ],
+};
+
+const detailWithOptions: AdminOneTimeFormDetail = {
+  ...detail,
+  optionGroups: [optionGroup],
+};
+
+describe('OneTimeFormEditor 결제 설정', () => {
+  it('유료 0원은 안내만 띄우고 저장은 그대로 보낸다', async () => {
+    updateMutateAsync.mockResolvedValue(undefined);
+    renderEditor({ detail });
+
+    const price = screen.getByRole('textbox', { name: '기본 금액' });
+    await userEvent.clear(price);
+    expect(screen.getByText(ZERO_PRICE_NOTICE)).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: '저장' }));
+    expect(updateMutateAsync).toHaveBeenCalledWith({
+      formId: 7,
+      body: expect.objectContaining({ isPaid: true, basePrice: 0 }),
+    });
+  });
+});
+
+describe('OneTimeFormEditor 옵션', () => {
+  it('옵션 이름을 고치면 미리보기가 바로 바뀌고 저장하면 A7 로 보낸다', async () => {
+    saveOptionGroupsMutateAsync.mockResolvedValue({
+      optionGroups: [optionGroup],
+    });
+    renderEditor({ detail: detailWithOptions });
+
+    expect(
+      screen.getByText('11.15(토) 14:00 · 29,000원부터'),
+    ).toBeInTheDocument();
+    const name = screen.getByRole('textbox', { name: '옵션 1 이름' });
+    await userEvent.clear(name);
+    await userEvent.type(name, '줌 라이브');
+    const preview = screen.getByText('신청 화면 미리보기').parentElement;
+    expect(preview).toHaveTextContent('줌 라이브');
+
+    await userEvent.click(screen.getByRole('button', { name: '옵션 저장' }));
+    expect(saveOptionGroupsMutateAsync).toHaveBeenCalledWith({
+      formId: 7,
+      body: {
+        optionGroups: [
+          expect.objectContaining({
+            optionGroupId: 31,
+            options: [
+              expect.objectContaining({ optionId: 311, name: '줌 라이브' }),
+              expect.objectContaining({
+                optionId: 312,
+                additionalPrice: 10000,
+              }),
+            ],
+          }),
+        ],
+      },
+    });
+    expect(await screen.findByText('옵션을 저장했습니다.')).toBeInTheDocument();
+  });
+
+  it('신청이 있는 폼에서 저장된 옵션을 지우면 먼저 묻는다', async () => {
+    renderEditor({ detail: detailWithOptions });
+    expect(
+      screen.getByText(/결제된 옵션은 삭제 대신 노출만 끈다/),
+    ).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: '옵션 2 삭제' }));
+    expect(screen.getByText('옵션을 삭제할까요?')).toBeInTheDocument();
+    // 묻는 동안은 아직 지우지 않는다
+    expect(screen.getByDisplayValue('오프라인 현장 참여')).toBeInTheDocument();
+
+    await userEvent.click(
+      within(screen.getByRole('dialog')).getByRole('button', { name: '삭제' }),
+    );
+    await waitFor(() =>
+      expect(
+        screen.queryByDisplayValue('오프라인 현장 참여'),
+      ).not.toBeInTheDocument(),
+    );
+  });
+
+  it('필수 칸이 비면 저장하지 않는다', async () => {
+    renderEditor({ detail: detailWithOptions });
+    await userEvent.clear(screen.getByRole('textbox', { name: '옵션 1 이름' }));
+    await userEvent.click(screen.getByRole('button', { name: '옵션 저장' }));
+
+    expect(screen.getByText('옵션 이름을 입력해 주세요.')).toBeInTheDocument();
+    expect(saveOptionGroupsMutateAsync).not.toHaveBeenCalled();
   });
 });

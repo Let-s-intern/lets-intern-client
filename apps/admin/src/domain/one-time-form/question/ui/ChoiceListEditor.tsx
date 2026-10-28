@@ -1,7 +1,7 @@
 import { FormHelperText, TextField } from '@mui/material';
 
 import { QUESTION_LIMITS } from '../constants/questionTypes';
-import { useDragReorder } from '../hooks/useDragReorder';
+import { useDragReorder } from '../../hooks/useDragReorder';
 
 interface ChoiceListEditorProps {
   choices: string[];

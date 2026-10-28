@@ -9,7 +9,10 @@ type ProductCardPreviewProps = Pick<
   | 'scheduleText'
   | 'isPaid'
   | 'basePrice'
->;
+> & {
+  /** 노출 옵션 중 추가 금액이 있으면 금액 뒤에 "부터" 를 붙인다 */
+  hasAdditionalPrice: boolean;
+};
 
 /** 신청 화면 상단 상품 카드(시안 7절). 무료 폼은 금액을 보이지 않는다 */
 const ProductCardPreview = ({
@@ -19,10 +22,13 @@ const ProductCardPreview = ({
   scheduleText,
   isPaid,
   basePrice,
+  hasAdditionalPrice,
 }: ProductCardPreviewProps) => {
   const meta = [
     scheduleText.trim(),
-    isPaid ? `${basePrice.toLocaleString()}원부터` : '',
+    isPaid
+      ? `${basePrice.toLocaleString()}원${hasAdditionalPrice ? '부터' : ''}`
+      : '',
   ]
     .filter(Boolean)
     .join(' · ');
