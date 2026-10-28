@@ -1,4 +1,5 @@
-import ChoiceCard from './ChoiceCard';
+import { twMerge } from '@/lib/twMerge';
+import ChoiceCard, { isChipLayout } from './ChoiceCard';
 
 interface RadioInputProps {
   /** 첫 선택지에 붙는 id. 첫 오류 칸 포커스에 쓴다 */
@@ -17,22 +18,30 @@ const RadioInput = ({
   hasError,
   onChange,
   onBlur,
-}: RadioInputProps) => (
-  <div role="radiogroup" className="grid gap-2">
-    {choices.map((choice, index) => (
-      <ChoiceCard
-        key={choice}
-        id={index === 0 ? id : undefined}
-        type="radio"
-        name={id}
-        label={choice}
-        checked={value === choice}
-        hasError={hasError}
-        onChange={() => onChange(choice)}
-        onBlur={onBlur}
-      />
-    ))}
-  </div>
-);
+}: RadioInputProps) => {
+  const chip = isChipLayout(choices);
+
+  return (
+    <div
+      role="radiogroup"
+      className={twMerge('grid gap-2', chip && 'grid-cols-4')}
+    >
+      {choices.map((choice, index) => (
+        <ChoiceCard
+          key={choice}
+          id={index === 0 ? id : undefined}
+          type="radio"
+          name={id}
+          label={choice}
+          checked={value === choice}
+          hasError={hasError}
+          chip={chip}
+          onChange={() => onChange(choice)}
+          onBlur={onBlur}
+        />
+      ))}
+    </div>
+  );
+};
 
 export default RadioInput;

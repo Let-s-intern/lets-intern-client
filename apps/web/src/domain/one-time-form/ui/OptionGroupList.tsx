@@ -63,7 +63,7 @@ const OptionCard = ({ group, option, checked, onSelect }: OptionCardProps) => {
   return (
     <label
       className={twMerge(
-        'border-neutral-80 hover:border-neutral-70 focus-within:ring-primary-10 flex min-h-12 cursor-pointer items-start gap-2.5 rounded-sm border px-3.5 py-3 transition-colors focus-within:ring-2',
+        'border-neutral-80 hover:border-neutral-70 focus-within:ring-primary-10 flex min-h-12 cursor-pointer items-start gap-2.5 rounded-sm border px-3.5 py-3 transition-colors focus-within:ring-[3px]',
         checked && 'border-primary bg-primary-5 hover:border-primary',
       )}
     >
@@ -77,18 +77,16 @@ const OptionCard = ({ group, option, checked, onSelect }: OptionCardProps) => {
       <span
         aria-hidden
         className={twMerge(
-          'border-neutral-70 bg-static-100 mt-px grid h-5 w-5 flex-none place-items-center border-2',
+          'border-neutral-70 bg-static-100 mt-px grid h-5 w-5 flex-none place-items-center border-[1.5px]',
           isSingle ? 'rounded-full' : 'rounded-xxs',
-          checked && 'border-primary',
-          checked && !isSingle && 'bg-primary',
+          checked &&
+            (isSingle
+              ? 'border-primary border-[6px]'
+              : 'border-primary bg-primary'),
         )}
       >
-        {checked ? (
-          isSingle ? (
-            <span className="bg-primary h-2.5 w-2.5 rounded-full" />
-          ) : (
-            <Check size={14} strokeWidth={3} className="text-static-100" />
-          )
+        {checked && !isSingle ? (
+          <Check size={12} strokeWidth={3.2} className="text-static-100" />
         ) : null}
       </span>
       <span className="flex flex-1 flex-col gap-0.5">

@@ -39,7 +39,7 @@ const StateScreen = ({
       ) : null}
       <h2 className="text-small20 mt-5 font-bold">{heading}</h2>
       {description ? (
-        <p className="text-xsmall14 text-neutral-35 mt-2 break-keep">
+        <p className="text-xsmall14 text-neutral-35 mt-2 break-keep leading-relaxed">
           {description}
         </p>
       ) : null}
@@ -48,10 +48,10 @@ const StateScreen = ({
 );
 
 export const primaryButtonClass =
-  'bg-primary text-xsmall16 text-static-100 grid h-14 w-full place-items-center rounded-sm font-semibold';
+  'bg-primary text-xsmall16 text-static-100 hover:bg-primary-hover grid h-[52px] w-full place-items-center rounded-sm font-semibold transition-colors';
 
 export const lineButtonClass =
-  'border-neutral-80 bg-static-100 text-xsmall16 text-neutral-20 hover:bg-neutral-95 grid h-14 w-full place-items-center rounded-sm border font-semibold';
+  'border-neutral-80 bg-static-100 text-xsmall16 text-neutral-20 hover:bg-neutral-95 grid h-[52px] w-full place-items-center rounded-sm border font-semibold transition-colors';
 
 export const closePopup = () => window.close();
 

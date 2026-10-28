@@ -41,7 +41,10 @@ const QuestionList = ({
             key={question.questionId}
             title={question.title}
             isRequired={question.isRequired}
-            description={question.description}
+            // 숫자 질문의 설명은 입력 옆 단위로 그린다(NumberInput)
+            description={
+              question.type === 'NUMBER' ? null : question.description
+            }
             error={error}
             inputId={isSingleControl(question.type) ? id : undefined}
           >

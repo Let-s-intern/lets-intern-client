@@ -133,7 +133,7 @@ const OneTimeFormPage = ({ slug, onValidSubmit }: OneTimeFormPageProps) => {
             type="button"
             disabled={!applicationForm.isRequiredFilled}
             onClick={handleSubmitClick}
-            className="bg-primary text-xsmall16 text-static-100 disabled:bg-neutral-85 disabled:text-neutral-45 h-14 w-full rounded-sm font-semibold"
+            className="bg-primary text-xsmall16 text-static-100 hover:bg-primary-hover disabled:bg-neutral-85 disabled:text-neutral-45 h-[52px] w-full rounded-sm font-semibold transition-colors"
           >
             {form.isPaid ? '다음' : '제출하기'}
           </button>

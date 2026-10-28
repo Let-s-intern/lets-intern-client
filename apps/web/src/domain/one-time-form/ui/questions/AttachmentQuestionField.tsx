@@ -109,7 +109,7 @@ const FileChip = ({
         type="button"
         aria-label="파일 삭제"
         onClick={onRemove}
-        className="text-neutral-35 hover:bg-neutral-95 grid h-8 w-8 flex-none place-items-center rounded-sm"
+        className="text-neutral-35 hover:bg-neutral-95 grid h-10 w-10 flex-none place-items-center rounded-sm"
       >
         <X size={18} strokeWidth={1.8} />
       </button>

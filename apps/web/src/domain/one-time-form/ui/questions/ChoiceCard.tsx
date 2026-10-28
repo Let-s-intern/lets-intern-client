@@ -8,6 +8,8 @@ interface ChoiceCardProps {
   label: string;
   checked: boolean;
   hasError: boolean;
+  /** 짧은 선택지를 가로 칩으로 그린다. 표시(동그라미·네모)를 숨기고 글자를 가운데 둔다 */
+  chip?: boolean;
   onChange: () => void;
   onBlur: () => void;
 }
@@ -20,6 +22,7 @@ const ChoiceCard = ({
   label,
   checked,
   hasError,
+  chip = false,
   onChange,
   onBlur,
 }: ChoiceCardProps) => {
@@ -29,6 +32,7 @@ const ChoiceCard = ({
     <label
       className={twMerge(
         'border-neutral-80 text-xsmall14 hover:border-neutral-70 focus-within:ring-primary-10 flex min-h-12 cursor-pointer items-center gap-2.5 rounded-sm border px-3.5 py-3 transition-colors focus-within:ring-[3px]',
+        chip && 'justify-center p-2.5',
         hasError && !checked && 'border-requirement',
         checked &&
           'border-primary bg-primary-5 hover:border-primary font-semibold',
@@ -54,6 +58,7 @@ const ChoiceCard = ({
             (isRadio
               ? 'border-primary border-[6px]'
               : 'border-primary bg-primary'),
+          chip && 'hidden',
         )}
       >
         {checked && !isRadio ? (
@@ -64,5 +69,9 @@ const ChoiceCard = ({
     </label>
   );
 };
+
+/** 시안 8절: 선택지가 5개 이상이고 모두 4글자 이하면 칩으로 그린다 */
+export const isChipLayout = (choices: string[]) =>
+  choices.length >= 5 && choices.every((choice) => choice.length <= 4);
 
 export default ChoiceCard;

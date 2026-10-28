@@ -17,7 +17,7 @@ const LoginRequiredState = ({ form }: LoginRequiredStateProps) => {
   return (
     <StateScreen
       top={
-        <div className="mb-3 w-full text-left">
+        <div className="w-full text-left">
           <ProductCard form={form} />
         </div>
       }

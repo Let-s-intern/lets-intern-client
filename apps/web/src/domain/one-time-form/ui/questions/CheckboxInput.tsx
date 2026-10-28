@@ -1,4 +1,5 @@
-import ChoiceCard from './ChoiceCard';
+import { twMerge } from '@/lib/twMerge';
+import ChoiceCard, { isChipLayout } from './ChoiceCard';
 
 interface CheckboxInputProps {
   /** 첫 선택지에 붙는 id. 첫 오류 칸 포커스에 쓴다 */
@@ -25,9 +26,10 @@ const CheckboxInput = ({
       : [...value, choice];
     onChange(choices.filter((item) => next.includes(item)));
   };
+  const chip = isChipLayout(choices);
 
   return (
-    <div className="grid gap-2">
+    <div className={twMerge('grid gap-2', chip && 'grid-cols-4')}>
       {choices.map((choice, index) => (
         <ChoiceCard
           key={choice}
@@ -37,6 +39,7 @@ const CheckboxInput = ({
           label={choice}
           checked={value.includes(choice)}
           hasError={hasError}
+          chip={chip}
           onChange={() => toggle(choice)}
           onBlur={onBlur}
         />

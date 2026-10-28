@@ -53,7 +53,13 @@ const QuestionInput = ({
     case 'DATE':
       return <DateInput value={asText(value)} {...rest} />;
     case 'NUMBER':
-      return <NumberInput value={asText(value)} {...rest} />;
+      return (
+        <NumberInput
+          value={asText(value)}
+          unit={question.description}
+          {...rest}
+        />
+      );
     case 'URL':
       return <UrlInput value={asText(value)} {...rest} />;
     case 'IMAGE':
