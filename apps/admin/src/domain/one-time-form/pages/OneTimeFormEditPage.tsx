@@ -5,6 +5,7 @@ import LoadingContainer from '@/common/loading/LoadingContainer';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
 
+import OneTimeFormLinkPanel from '../link/ui/OneTimeFormLinkPanel';
 import OneTimeFormEditor from '../ui/OneTimeFormEditor';
 
 /** `/one-time-form/:formId/edit` 의 수정 화면. 상세를 받은 뒤 편집기를 그린다 */
@@ -15,7 +16,12 @@ const EditOneTimeForm = ({ formId }: { formId: number }) => {
     return <div className="py-4 text-center">폼을 불러오지 못했습니다.</div>;
   }
   if (!data) return <LoadingContainer className="mt-[20%]" />;
-  return <OneTimeFormEditor detail={data} />;
+  return (
+    <div className="flex flex-col gap-8">
+      <OneTimeFormLinkPanel form={data.form} />
+      <OneTimeFormEditor detail={data} />
+    </div>
+  );
 };
 
 /** `/one-time-form/new` 와 `/one-time-form/:formId/edit` */
