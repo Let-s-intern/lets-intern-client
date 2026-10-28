@@ -2,12 +2,14 @@ import { setupServer } from 'msw/node';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 import {
+  adminOneTimeFormApplicationDetailSchema,
   adminOneTimeFormApplicationsSchema,
   adminOneTimeFormDetailSchema,
   adminOneTimeFormListSchema,
   adminOneTimeFormOptionGroupsSchema,
   adminOneTimeFormQuestionsSchema,
   createOneTimeFormResponseSchema,
+  oneTimeFormFileUrlSchema,
   type SaveOneTimeFormRequest,
 } from '@/api/one-time-form/oneTimeFormSchema';
 
@@ -596,4 +598,98 @@ describe('A8 GET /admin/one-time-form/:formId/applications', () => {
 
     await expectError(res, 404, 'ONE_TIME_FORM_NOT_FOUND');
   });
+});
+
+describe('A9 GET /admin/one-time-form/application/:applicationId', () => {
+  const fetchApplication = async (applicationId: number) => {
+    const res = await send('GET', `/application/${applicationId}`);
+    const body = (await res.json()) as { data: unknown };
+    return adminOneTimeFormApplicationDetailSchema.parse(body.data);
+  };
+
+  it('신청 1042 를 폼, 삭제 질문을 포함한 질문, 옵션 그룹과 함께 준다', async () => {
+    const { form, questions, optionGroups, application } =
+      await fetchApplication(1042);
+
+    expect(form).toEqual({
+      formId: 7,
+      title: '현직자와 함께하는 포트폴리오 집중 클래스',
+      slug: 'portfolio-1115',
+      isPaid: true,
+    });
+    expect(questions.map((q) => [q.questionId, q.isDeleted])).toContainEqual([
+      100,
+      true,
+    ]);
+    expect(questions).toHaveLength(11);
+    expect(optionGroups.map((g) => g.optionGroupId)).toEqual([31, 32]);
+    expect(application).toMatchObject({
+      applicationId: 1042,
+      name: '김렛커',
+      answers: { '100': '삭제 전 답', '103': ['월', '수'] },
+    });
+    expect(application).not.toHaveProperty('formId');
+  });
+
+  it('무료 폼 신청 1044 는 payment 가 null 이고 폼 8 의 질문만 준다', async () => {
+    const { questions, application } = await fetchApplication(1044);
+
+    expect(application.payment).toBeNull();
+    expect(questions.map((q) => q.questionId)).toEqual([201]);
+  });
+
+  it('없는 신청은 404 APPLICATION_NOT_FOUND', async () => {
+    await expectError(
+      await send('GET', '/application/9999'),
+      404,
+      'APPLICATION_NOT_FOUND',
+    );
+  });
+});
+
+describe('A10 GET /admin/one-time-form/application/:applicationId/files/:questionId', () => {
+  const fetchFileUrl = async (applicationId: number, questionId: number) => {
+    const res = await send(
+      'GET',
+      `/application/${applicationId}/files/${questionId}`,
+    );
+    const body = (await res.json()) as { data: unknown };
+    return oneTimeFormFileUrlSchema.parse(body.data).url;
+  };
+
+  it('파일 답은 저장된 키로 만든 서명 URL 을 준다', async () => {
+    const url = await fetchFileUrl(1042, 110);
+
+    expect(url).toContain(
+      'one-time-form/attachment/7/0b5c2f4e-9a61-4d1e-8f0a-3c2b7d9e1a44.pdf',
+    );
+    expect(url).toContain('X-Amz-Signature=');
+  });
+
+  it('이미지 답은 브라우저가 그릴 수 있는 URL 을 준다', async () => {
+    expect(await fetchFileUrl(1043, 109)).toMatch(/^data:image\/svg\+xml/);
+  });
+
+  it('없는 신청은 404 APPLICATION_NOT_FOUND', async () => {
+    await expectError(
+      await send('GET', '/application/9999/files/110'),
+      404,
+      'APPLICATION_NOT_FOUND',
+    );
+  });
+
+  it.each([
+    ['답하지 않은 첨부 질문', 1042, 109],
+    ['첨부가 아닌 질문', 1042, 101],
+    ['다른 폼의 질문', 1044, 110],
+  ])(
+    '%s 는 404 ONE_TIME_FORM_FILE_NOT_FOUND',
+    async (_, applicationId, qId) => {
+      await expectError(
+        await send('GET', `/application/${applicationId}/files/${qId}`),
+        404,
+        'ONE_TIME_FORM_FILE_NOT_FOUND',
+      );
+    },
+  );
 });

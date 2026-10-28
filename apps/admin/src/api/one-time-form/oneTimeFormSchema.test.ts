@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  adminOneTimeFormApplicationDetailSchema,
   adminOneTimeFormApplicationsSchema,
   adminOneTimeFormDetailSchema,
   adminOneTimeFormListSchema,
@@ -9,6 +10,7 @@ import {
   createOneTimeFormResponseSchema,
   oneTimeFormAnswersSchema,
   oneTimeFormAnswerValueSchema,
+  oneTimeFormFileUrlSchema,
   oneTimeFormQuestionTypeSchema,
   saveOneTimeFormOptionGroupsRequestSchema,
   saveOneTimeFormQuestionsRequestSchema,
@@ -518,5 +520,44 @@ describe('A8 신청자 목록', () => {
     expect(oneTimeFormAnswersSchema.parse(application.answers)).toEqual(
       application.answers,
     );
+  });
+});
+
+describe('A9 신청 상세', () => {
+  const { form, questions, optionGroups, applications } = applicationsExample;
+  const detailExample = {
+    form,
+    questions,
+    optionGroups,
+    application: applications[0],
+  };
+
+  it('A8 항목과 같은 형태의 application 을 받는다', () => {
+    expect(
+      adminOneTimeFormApplicationDetailSchema.parse(detailExample),
+    ).toEqual(detailExample);
+  });
+
+  it.each(['form', 'questions', 'optionGroups', 'application'] as const)(
+    '%s 가 빠지면 실패한다',
+    (key) => {
+      const { [key]: _omitted, ...rest } = detailExample;
+      expect(() =>
+        adminOneTimeFormApplicationDetailSchema.parse(rest),
+      ).toThrow();
+    },
+  );
+});
+
+describe('A10 첨부 열람', () => {
+  it('서명 URL 을 받는다', () => {
+    const example = {
+      url: 'https://letsintern-bucket.s3.ap-northeast-2.amazonaws.com/one-time-form/attachment/7/0b5c2f4e-9a61-4d1e-8f0a-3c2b7d9e1a44.pdf?X-Amz-Signature=abc',
+    };
+    expect(oneTimeFormFileUrlSchema.parse(example)).toEqual(example);
+  });
+
+  it('url 이 빠지면 실패한다', () => {
+    expect(() => oneTimeFormFileUrlSchema.parse({})).toThrow();
   });
 });

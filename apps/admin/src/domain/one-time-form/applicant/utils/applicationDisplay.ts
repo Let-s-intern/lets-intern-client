@@ -2,7 +2,8 @@ import type { AdminOneTimeFormApplication } from '@/api/one-time-form/oneTimeFor
 
 export type ApplicationStatus = 'PAID' | 'FREE' | 'CANCELED';
 
-const formatWon = (amount: number) => `${amount.toLocaleString('ko-KR')}원`;
+export const formatWon = (amount: number) =>
+  `${amount.toLocaleString('ko-KR')}원`;
 
 /**
  * 결제 상태(계약 A8). 결제가 없으면 취소 여부보다 먼저 무료다.
@@ -39,3 +40,29 @@ export const getSelectedOptionsText = (
   selectedOptions.length === 0
     ? '없음'
     : selectedOptions.map((option) => option.optionName).join(', ');
+
+export interface SelectedOptionGroup {
+  optionGroupId: number;
+  groupTitle: string;
+  options: AdminOneTimeFormApplication['selectedOptions'];
+}
+
+/** 스냅샷을 그룹별로 묶는다. 순서는 스냅샷 순서(그룹 순서, 그룹 안 옵션 순서) 그대로다 */
+export const groupSelectedOptions = (
+  selectedOptions: AdminOneTimeFormApplication['selectedOptions'],
+): SelectedOptionGroup[] => {
+  const groups = new Map<number, SelectedOptionGroup>();
+  for (const option of selectedOptions) {
+    const group = groups.get(option.optionGroupId);
+    if (group) {
+      group.options.push(option);
+    } else {
+      groups.set(option.optionGroupId, {
+        optionGroupId: option.optionGroupId,
+        groupTitle: option.groupTitle,
+        options: [option],
+      });
+    }
+  }
+  return [...groups.values()];
+};

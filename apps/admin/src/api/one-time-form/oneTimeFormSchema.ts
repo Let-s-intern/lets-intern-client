@@ -355,3 +355,24 @@ export const adminOneTimeFormApplicationsSchema = z.object({
 export type AdminOneTimeFormApplications = z.infer<
   typeof adminOneTimeFormApplicationsSchema
 >;
+
+/* ---------- A9 신청 상세 ---------- */
+
+/** `questions`, `optionGroups` 는 A8 과 같이 삭제된 것까지 온다. `application` 은 A8 항목과 같은 형태 */
+export const adminOneTimeFormApplicationDetailSchema = z.object({
+  form: adminOneTimeFormApplicationFormSchema,
+  questions: z.array(adminOneTimeFormApplicationQuestionSchema),
+  optionGroups: z.array(adminOneTimeFormApplicationOptionGroupSchema),
+  application: adminOneTimeFormApplicationSchema,
+});
+export type AdminOneTimeFormApplicationDetail = z.infer<
+  typeof adminOneTimeFormApplicationDetailSchema
+>;
+
+/* ---------- A10 첨부 열람 ---------- */
+
+/** 10분 만료 서명 URL. 이미지 미리보기도 이 URL 을 쓴다 */
+export const oneTimeFormFileUrlSchema = z.object({
+  url: z.string(),
+});
+export type OneTimeFormFileUrl = z.infer<typeof oneTimeFormFileUrlSchema>;

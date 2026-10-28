@@ -5,6 +5,7 @@ import {
   getApplicationStatusLabel,
   getPaymentAmountText,
   getSelectedOptionsText,
+  groupSelectedOptions,
 } from './applicationDisplay';
 
 const payment = (paidAmount: number, refundAmount = 0) => ({
@@ -76,5 +77,38 @@ describe('getSelectedOptionsText', () => {
 
   it('고른 옵션이 없으면 없음', () => {
     expect(getSelectedOptionsText([])).toBe('없음');
+  });
+});
+
+describe('groupSelectedOptions', () => {
+  const option = (
+    optionGroupId: number,
+    optionId: number,
+    optionName: string,
+  ) => ({
+    optionGroupId,
+    groupTitle: `그룹 ${optionGroupId}`,
+    optionId,
+    optionName,
+    additionalPrice: 0,
+  });
+
+  it('같은 그룹의 옵션을 스냅샷 순서대로 묶는다', () => {
+    const groups = groupSelectedOptions([
+      option(31, 311, '온라인 라이브'),
+      option(32, 321, '첨삭'),
+      option(32, 322, '녹화본'),
+    ]);
+
+    expect(
+      groups.map((g) => [g.groupTitle, g.options.map((o) => o.optionName)]),
+    ).toEqual([
+      ['그룹 31', ['온라인 라이브']],
+      ['그룹 32', ['첨삭', '녹화본']],
+    ]);
+  });
+
+  it('고른 옵션이 없으면 빈 배열이다', () => {
+    expect(groupSelectedOptions([])).toEqual([]);
   });
 });

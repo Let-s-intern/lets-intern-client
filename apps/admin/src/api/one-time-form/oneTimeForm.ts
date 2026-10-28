@@ -1,18 +1,20 @@
 import axios from '@/utils/axios';
 
 import {
+  adminOneTimeFormApplicationDetailSchema,
   adminOneTimeFormApplicationsSchema,
   adminOneTimeFormDetailSchema,
   adminOneTimeFormListSchema,
   adminOneTimeFormOptionGroupsSchema,
   adminOneTimeFormQuestionsSchema,
   createOneTimeFormResponseSchema,
+  oneTimeFormFileUrlSchema,
   type SaveOneTimeFormOptionGroupsRequest,
   type SaveOneTimeFormQuestionsRequest,
   type SaveOneTimeFormRequest,
 } from './oneTimeFormSchema';
 
-/** 일회성 폼 어드민 API(계약 9절 A1~A8). 응답 봉투는 `res.data.data` 다. */
+/** 일회성 폼 어드민 API(계약 9절 A1~A10). 응답 봉투는 `res.data.data` 다. */
 
 const BASE = '/admin/one-time-form';
 
@@ -69,4 +71,21 @@ export const saveOneTimeFormOptionGroups = async (
 export const getOneTimeFormApplications = async (formId: number) => {
   const res = await axios.get(`${BASE}/${formId}/applications`);
   return adminOneTimeFormApplicationsSchema.parse(res.data.data);
+};
+
+/** A9 신청 하나. 404 `APPLICATION_NOT_FOUND` */
+export const getOneTimeFormApplication = async (applicationId: number) => {
+  const res = await axios.get(`${BASE}/application/${applicationId}`);
+  return adminOneTimeFormApplicationDetailSchema.parse(res.data.data);
+};
+
+/** A10 이미지·파일 답의 10분 만료 서명 URL. 404 `APPLICATION_NOT_FOUND`, `ONE_TIME_FORM_FILE_NOT_FOUND` */
+export const getOneTimeFormFileUrl = async (
+  applicationId: number,
+  questionId: number,
+) => {
+  const res = await axios.get(
+    `${BASE}/application/${applicationId}/files/${questionId}`,
+  );
+  return oneTimeFormFileUrlSchema.parse(res.data.data);
 };

@@ -23,7 +23,7 @@ import {
 } from '../seed/oneTimeForm';
 
 /**
- * 일회성 폼 어드민 MSW 핸들러(계약 9절 A1~A8, 13.2).
+ * 일회성 폼 어드민 MSW 핸들러(계약 9절 A1~A10, 13.2).
  *
  * axios 응답 본문이 `{ data: <payload> }` 엔벨로프(`res.data.data`)이므로 모두 `{ data }` 로 감싼다.
  * 실패 본문은 서버 `ErrorResponse` 와 같은 `{ status, code, message }` 다(계약 3.5, 10절).
@@ -71,6 +71,8 @@ const ERROR_STATUS_AND_MESSAGE = {
     '저장된 질문의 형식은 바꿀 수 없습니다.',
   ],
   ONE_TIME_FORM_ITEM_NOT_IN_FORM: [400, '이 폼의 질문 또는 옵션이 아닙니다.'],
+  APPLICATION_NOT_FOUND: [404, '존재하지 않는 신청 내역입니다.'],
+  ONE_TIME_FORM_FILE_NOT_FOUND: [404, '첨부 파일이 없습니다.'],
 } as const;
 
 type ErrorCode = keyof typeof ERROR_STATUS_AND_MESSAGE;
@@ -153,6 +155,32 @@ const applicationOptionGroupsOf = (formId: number) =>
       sortOrder,
       isDeleted,
     }));
+
+const applicationFormOf = (form: SeedOneTimeForm) => ({
+  formId: form.formId,
+  title: form.title,
+  slug: form.slug,
+  isPaid: form.isPaid,
+});
+
+const findApplication = (applicationId: number) =>
+  seedOneTimeFormApplications.find((a) => a.applicationId === applicationId);
+
+const isAttachmentAnswer = (
+  value: unknown,
+): value is { key: string; name: string } =>
+  typeof value === 'object' &&
+  value !== null &&
+  !Array.isArray(value) &&
+  'key' in value;
+
+/** 브라우저가 그릴 수 있는 이미지. 실제 서버는 S3 서명 URL 을 준다 */
+const MOCK_IMAGE_URL = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="240" height="160"><rect width="240" height="160" fill="#E4E4E7"/><text x="120" y="86" font-size="16" text-anchor="middle" fill="#5C5F66">MOCK IMAGE</text></svg>',
+)}`;
+
+const mockPresignedUrl = (key: string) =>
+  `https://letsintern-bucket.s3.ap-northeast-2.amazonaws.com/${key}?X-Amz-Expires=600&X-Amz-Signature=mock`;
 
 /** 취소 포함 전체, 신청일시 내림차순 */
 const applicationsOf = (formId: number) =>
@@ -247,18 +275,57 @@ export const oneTimeFormHandlers = [
 
     return HttpResponse.json({
       data: {
-        form: {
-          formId,
-          title: form.title,
-          slug: form.slug,
-          isPaid: form.isPaid,
-        },
+        form: applicationFormOf(form),
         questions: applicationQuestionsOf(formId),
         optionGroups: applicationOptionGroupsOf(formId),
         applications: applicationsOf(formId),
       },
     });
   }),
+
+  // A9 폼의 질문·그룹은 A8 처럼 삭제된 것까지 준다
+  http.get(`${BASE}/application/:applicationId`, ({ params }) => {
+    const found = findApplication(Number(params.applicationId));
+    if (!found) return error('APPLICATION_NOT_FOUND');
+    const { formId, ...application } = found;
+
+    return HttpResponse.json({
+      data: {
+        form: applicationFormOf(findForm(formId)),
+        questions: applicationQuestionsOf(formId),
+        optionGroups: applicationOptionGroupsOf(formId),
+        application,
+      },
+    });
+  }),
+
+  // A10 이미지 답은 미리보기가 그려지도록 데이터 URL 을 준다
+  http.get(
+    `${BASE}/application/:applicationId/files/:questionId`,
+    ({ params }) => {
+      const found = findApplication(Number(params.applicationId));
+      if (!found) return error('APPLICATION_NOT_FOUND');
+
+      const questionId = Number(params.questionId);
+      const question = questions.find(
+        (q) => q.questionId === questionId && q.formId === found.formId,
+      );
+      const answer = found.answers[String(questionId)];
+      if (
+        !question ||
+        (question.type !== 'IMAGE' && question.type !== 'FILE') ||
+        !isAttachmentAnswer(answer)
+      ) {
+        return error('ONE_TIME_FORM_FILE_NOT_FOUND');
+      }
+
+      const url =
+        question.type === 'IMAGE'
+          ? MOCK_IMAGE_URL
+          : mockPresignedUrl(answer.key);
+      return HttpResponse.json({ data: { url } });
+    },
+  ),
 
   // A4
   http.put(`${BASE}/:formId`, async ({ params, request }) => {

@@ -4,7 +4,9 @@ import {
   createOneTimeForm,
   deleteOneTimeForm,
   getOneTimeForm,
+  getOneTimeFormApplication,
   getOneTimeFormApplications,
+  getOneTimeFormFileUrl,
   getOneTimeForms,
   saveOneTimeFormOptionGroups,
   saveOneTimeFormQuestions,
@@ -23,7 +25,19 @@ export const oneTimeFormQueryKeys = {
     [...oneTimeFormQueryKeys.all, 'detail', formId] as const,
   applications: (formId: number) =>
     [...oneTimeFormQueryKeys.all, 'applications', formId] as const,
+  application: (applicationId: number) =>
+    [...oneTimeFormQueryKeys.all, 'application', applicationId] as const,
+  fileUrl: (applicationId: number, questionId: number) =>
+    [
+      ...oneTimeFormQueryKeys.all,
+      'fileUrl',
+      applicationId,
+      questionId,
+    ] as const,
 };
+
+/** 서명 URL 은 10분 뒤 만료된다. 만료 전에 새로 받도록 그보다 짧게 둔다 */
+const FILE_URL_STALE_TIME = 9 * 60 * 1000;
 
 export const useOneTimeFormListQuery = () =>
   useQuery({
@@ -41,6 +55,23 @@ export const useOneTimeFormApplicationsQuery = (formId: number) =>
   useQuery({
     queryKey: oneTimeFormQueryKeys.applications(formId),
     queryFn: () => getOneTimeFormApplications(formId),
+  });
+
+export const useOneTimeFormApplicationQuery = (applicationId: number) =>
+  useQuery({
+    queryKey: oneTimeFormQueryKeys.application(applicationId),
+    queryFn: () => getOneTimeFormApplication(applicationId),
+  });
+
+/** 이미지 미리보기용. 파일 열기는 누를 때마다 `getOneTimeFormFileUrl` 로 새로 받는다 */
+export const useOneTimeFormFileUrlQuery = (
+  applicationId: number,
+  questionId: number,
+) =>
+  useQuery({
+    queryKey: oneTimeFormQueryKeys.fileUrl(applicationId, questionId),
+    queryFn: () => getOneTimeFormFileUrl(applicationId, questionId),
+    staleTime: FILE_URL_STALE_TIME,
   });
 
 export const useCreateOneTimeFormMutation = () => {
