@@ -194,6 +194,22 @@ const MagnetCommonFormPage = lazy(
   () => import('./pages/magnet/CommonFormPage'),
 );
 
+// 일회성 폼
+const OneTimeFormListPage = lazy(
+  () => import('./domain/one-time-form/pages/OneTimeFormListPage'),
+);
+const OneTimeFormEditPage = lazy(
+  () => import('./domain/one-time-form/pages/OneTimeFormEditPage'),
+);
+const OneTimeFormApplicantsPage = lazy(
+  () =>
+    import('./domain/one-time-form/applicant/pages/OneTimeFormApplicantsPage'),
+);
+const OneTimeFormApplicationDetailPage = lazy(
+  () =>
+    import('./domain/one-time-form/applicant/pages/OneTimeFormApplicationDetailPage'),
+);
+
 // 후기 관리
 const AdminChallengeReviewListPage = lazy(
   () => import('./domain/admin/pages/review/AdminChallengeReviewListPage'),
@@ -641,6 +657,28 @@ export const router = createBrowserRouter([
       {
         path: '/magnet/form/common',
         element: withSuspense(<MagnetCommonFormPage />),
+      },
+
+      // 일회성 폼
+      {
+        path: '/one-time-form/list',
+        element: withSuspense(<OneTimeFormListPage />),
+      },
+      {
+        path: '/one-time-form/new',
+        element: withSuspense(<OneTimeFormEditPage />),
+      },
+      {
+        path: '/one-time-form/:formId/edit',
+        element: withSuspense(<OneTimeFormEditPage />),
+      },
+      {
+        path: '/one-time-form/:formId/applications',
+        element: withSuspense(<OneTimeFormApplicantsPage />),
+      },
+      {
+        path: '/one-time-form/:formId/applications/:applicationId',
+        element: withSuspense(<OneTimeFormApplicationDetailPage />),
       },
 
       // 홈 배너/큐레이션

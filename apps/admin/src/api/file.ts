@@ -23,6 +23,8 @@ export const fileType = z.enum([
   'COMPANY_LOGO',
   // 1:1 LIVE 멘토링 썸네일(LC-3508). 서버 `FileType.LIVE_MENTORING("program/live-mentoring/")`
   'LIVE_MENTORING',
+  // 일회성 폼 썸네일. 서버 `FileType.ONE_TIME_FORM_THUMBNAIL("one-time-form/thumbnail/")`
+  'ONE_TIME_FORM_THUMBNAIL',
 ]);
 
 export type FileType = z.infer<typeof fileType>;

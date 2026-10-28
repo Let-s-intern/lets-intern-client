@@ -11,10 +11,14 @@ import { z } from 'zod';
  * 공용 enum 을 넓히지 않고 **결제 응답에서만** 받는다. 넓히면 홈 모집중 목록과
  * 후기 배지처럼 이 값을 다룰 규칙이 없는 화면까지 타입이 번지고, 그쪽은 서버가
  * 애초에 라이브 멘토링을 주지 않는다.
+ *
+ * 일회성 폼 결제의 `ONE_TIME_FORM` 도 같은 이유로 여기서만 받는다. 없으면 폼 결제가
+ * 있는 사용자의 결제 내역 전체가 파싱에서 실패한다. 상세 `programType` 도 같다.
  */
 const paymentProgramTypeSchema = z.union([
   ProgramTypeEnum,
   z.literal('LIVE_MENTORING'),
+  z.literal('ONE_TIME_FORM'),
 ]);
 export type PaymentProgramType = z.infer<typeof paymentProgramTypeSchema>;
 
@@ -230,7 +234,11 @@ export const paymentDetailType = z.object({
     title: z.string().nullable().optional(),
     thumbnail: z.string().nullable().optional(),
     programType: z
-      .union([ProgramTypeEnum.exclude(['REPORT']), z.literal('LIVE_MENTORING')])
+      .union([
+        ProgramTypeEnum.exclude(['REPORT']),
+        z.literal('LIVE_MENTORING'),
+        z.literal('ONE_TIME_FORM'),
+      ])
       .nullable()
       .optional(),
     progressType: z.string().nullable().optional(),
