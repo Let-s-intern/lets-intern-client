@@ -37,6 +37,8 @@ export const precheckAttachmentFile = (
 };
 
 const UPLOAD_FAILED_MESSAGE = '업로드하지 못했어요. 다시 시도해 주세요.';
+/** U4 가 401·403 일 때. 비로그인 U4 에 실제 서버는 403 을 준다 */
+export const LOGIN_REQUIRED_UPLOAD_MESSAGE = '로그인 후 다시 시도해 주세요.';
 
 /** U4 에러 코드(계약 8절 U4, 10절)를 화면 문구로. 코드가 없으면(네트워크·PUT 실패) 다시 시도 안내 */
 export const uploadErrorMessage = (
@@ -52,7 +54,7 @@ export const uploadErrorMessage = (
     case 'ONE_TIME_FORM_NOT_FOUND':
       return '이 질문에는 파일을 올릴 수 없어요.';
     case 'UNAUTHORIZED':
-      return '로그인 후 다시 시도해 주세요.';
+      return LOGIN_REQUIRED_UPLOAD_MESSAGE;
     default:
       return UPLOAD_FAILED_MESSAGE;
   }

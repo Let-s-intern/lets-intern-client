@@ -20,6 +20,7 @@ import useSaveUtmOnEntry from '../hooks/useSaveUtmOnEntry';
 import { ConsentCheckbox } from '../payment/ui/PaymentConsents';
 import { answersFromJson } from '../utils/answersToJson';
 import { readDraft, saveDraft } from '../utils/applicationDraft';
+import { isLoginRequiredError } from '../utils/loginRequired';
 import AccountBar from './AccountBar';
 import ApplicantInfoFields from './ApplicantInfoFields';
 import FormPopupShell from './FormPopupShell';
@@ -114,7 +115,12 @@ const OneTimeFormPage = ({ slug }: OneTimeFormPageProps) => {
 
   if (myApplicationQuery.isLoading) return <LoadingState />;
   if (myApplicationQuery.isError) {
-    return <LoadErrorState onRetry={() => myApplicationQuery.refetch()} />;
+    // 로그인 상태가 남아 있어도 서버가 세션을 거절하면(401·403) 비로그인과 같다
+    return isLoginRequiredError(myApplicationQuery.error) ? (
+      <LoginRequiredState form={data.form} />
+    ) : (
+      <LoadErrorState onRetry={() => myApplicationQuery.refetch()} />
+    );
   }
 
   const application = myApplicationQuery.data;

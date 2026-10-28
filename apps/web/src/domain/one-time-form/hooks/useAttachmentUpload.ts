@@ -7,10 +7,12 @@ import { useEffect, useRef, useState } from 'react';
 import { putAttachmentFile } from '../api/putAttachmentFile';
 import {
   isRetryableUploadError,
+  LOGIN_REQUIRED_UPLOAD_MESSAGE,
   precheckAttachmentFile,
   uploadErrorMessage,
   type AttachmentKind,
 } from '../utils/attachmentUpload';
+import { isLoginRequiredError } from '../utils/loginRequired';
 
 export type AttachmentUploadState =
   | { status: 'idle' }
@@ -86,7 +88,9 @@ export const useAttachmentUpload = ({
       const code = getOneTimeFormErrorCode(error);
       setState({
         status: 'error',
-        message: uploadErrorMessage(kind, code),
+        message: isLoginRequiredError(error)
+          ? LOGIN_REQUIRED_UPLOAD_MESSAGE
+          : uploadErrorMessage(kind, code),
         retryFile: isRetryableUploadError(code) ? file : null,
       });
     }

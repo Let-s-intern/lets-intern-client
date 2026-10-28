@@ -148,6 +148,32 @@ describe('useAttachmentUpload', () => {
     expect(mockPut).not.toHaveBeenCalled();
   });
 
+  it.each([401, 403])(
+    'U4 가 %i 이면 로그인 안내를 띄우고 PUT 하지 않는다',
+    async (status) => {
+      mockFetchUrl.mockRejectedValueOnce(
+        new ApiError({
+          code: 'API_ERROR',
+          message: `Request failed with status code ${status}`,
+          status,
+          endpoint: '/one-time-form/portfolio-1115/upload-url',
+          method: 'GET',
+        }),
+      );
+      const { result } = setup();
+      const file = makeFile('a.pdf');
+
+      await act(() => result.current.upload(file));
+
+      expect(result.current.state).toEqual({
+        status: 'error',
+        message: '로그인 후 다시 시도해 주세요.',
+        retryFile: file,
+      });
+      expect(mockPut).not.toHaveBeenCalled();
+    },
+  );
+
   it('용량을 넘으면 U4 를 부르지 않고 막는다', async () => {
     const { result } = setup('IMAGE');
 

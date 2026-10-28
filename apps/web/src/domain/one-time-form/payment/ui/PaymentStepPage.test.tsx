@@ -362,6 +362,32 @@ describe('PaymentStepPage 0원', () => {
     expect(replace).not.toHaveBeenCalled();
     expect(readDraft('zero-test')).not.toBeNull();
   });
+
+  it('403 이면 보관값을 두고 결제 단계로 돌아오는 로그인으로 간다', async () => {
+    mutate.mockImplementation((_body, { onError }) =>
+      onError(
+        new ApiError({
+          code: 'API_ERROR',
+          message: 'Request failed with status code 403',
+          status: 403,
+          endpoint: '/one-time-form/zero-test/applications',
+          method: 'POST',
+        }),
+      ),
+    );
+    render(<PaymentStepPage slug="zero-test" tossFailureMessage={null} />);
+
+    agreeAll();
+    fireEvent.click(
+      await screen.findByRole('button', { name: '0원 신청하기' }),
+    );
+
+    expect(push).toHaveBeenCalledWith(
+      `/login?redirect=${encodeURIComponent('/form/zero-test/payment')}`,
+    );
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(readDraft('zero-test')).not.toBeNull();
+  });
 });
 
 describe('PaymentStepPage 보관값 없음', () => {

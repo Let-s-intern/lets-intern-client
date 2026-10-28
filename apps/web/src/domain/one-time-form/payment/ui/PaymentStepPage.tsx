@@ -19,6 +19,10 @@ import {
   clearApplicationSession,
   saveDraft,
 } from '../../utils/applicationDraft';
+import {
+  buildLoginPath,
+  isLoginRequiredError,
+} from '../../utils/loginRequired';
 import { readUtm } from '../../utils/utmStorage';
 import useStoredDraft from '../hooks/useStoredDraft';
 import { getApplicationErrorMessage } from '../utils/applicationErrorMessage';
@@ -122,6 +126,11 @@ const PaymentStepPage = ({
       onError: (error) => {
         if (getOneTimeFormErrorCode(error) === ONE_TIME_FORM_ALREADY_APPLIED) {
           goToComplete();
+          return;
+        }
+        // 보관값은 그대로 두어 로그인 뒤 이 결제 단계에서 이어 신청한다
+        if (isLoginRequiredError(error)) {
+          router.push(buildLoginPath(`/form/${slug}/payment`));
           return;
         }
         setErrorMessage(getApplicationErrorMessage(error));

@@ -62,6 +62,7 @@ const mockMyApplication = (result: {
   data?: unknown;
   isLoading?: boolean;
   isError?: boolean;
+  error?: unknown;
 }) =>
   (useMyOneTimeFormApplicationQuery as jest.Mock).mockReturnValue({
     isLoading: false,
@@ -339,6 +340,27 @@ describe('OneTimeFormPage', () => {
         expect(screen.getByRole('alert')).toHaveTextContent(
           '신청 기간이 아닙니다.',
         );
+        expect(replace).not.toHaveBeenCalled();
+      });
+
+      it('비로그인 403 이면 같은 폼으로 돌아오는 로그인으로 보낸다(입력값은 남지 않는다)', () => {
+        const { onError } = submitFreeForm();
+        act(() =>
+          onError(
+            new ApiError({
+              status: 403,
+              code: 'API_ERROR',
+              message: 'Request failed with status code 403',
+              endpoint: '/one-time-form/seminar-1130/applications',
+              method: 'POST',
+            }),
+          ),
+        );
+
+        expect(push).toHaveBeenCalledWith(
+          `/login?redirect=${encodeURIComponent('/form/seminar-1130')}`,
+        );
+        expect(screen.queryByRole('alert')).not.toBeInTheDocument();
         expect(replace).not.toHaveBeenCalled();
       });
 
@@ -707,6 +729,36 @@ describe('OneTimeFormPage 예외 화면', () => {
     fireEvent.click(screen.getByRole('button', { name: '다시 시도' }));
     expect(refetch).toHaveBeenCalled();
   });
+
+  it.each([401, 403])(
+    'U2 가 %i 이면 같은 경로로 돌아오는 로그인 화면을 그린다',
+    (status) => {
+      mockQuery({ data: paidFormFixture, isLoading: false });
+      mockMyApplication({
+        isError: true,
+        error: new ApiError({
+          status,
+          code: 'API_ERROR',
+          message: `Request failed with status code ${status}`,
+          endpoint: '/one-time-form/portfolio-1115/my',
+          method: 'GET',
+        }),
+      });
+      render(<OneTimeFormPage slug="portfolio-1115" />);
+
+      expect(
+        screen.getByRole('link', { name: '로그인하고 계속하기' }),
+      ).toHaveAttribute(
+        'href',
+        `/login?redirect=${encodeURIComponent(
+          '/form/portfolio-1115?utm_source=instagram&utm_medium=story',
+        )}`,
+      );
+      expect(
+        screen.queryByRole('button', { name: '다시 시도' }),
+      ).not.toBeInTheDocument();
+    },
+  );
 
   it('진입하면 URL 의 UTM 을 slug 별로 보관한다', () => {
     window.sessionStorage.clear();

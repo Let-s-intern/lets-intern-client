@@ -3,6 +3,10 @@ import type {
   MyOneTimeFormApplication,
 } from '@/api/one-time-form/oneTimeFormSchema';
 import type { OneTimeFormDraft } from '../../utils/applicationDraft';
+import {
+  buildLoginPath,
+  isLoginRequiredError,
+} from '../../utils/loginRequired';
 import type { OneTimeFormUtm } from '../../utils/utmStorage';
 import { buildCreateApplicationRequest } from './buildCreateApplicationRequest';
 
@@ -54,8 +58,23 @@ const paymentNoticePath = (slug: string, code: string, message: string) =>
   `/form/${slug}/payment?${new URLSearchParams({ code, message })}`;
 
 /**
+ * 로그인 뒤 같은 결제 결과 처리로 돌아온다. 서버는 로그인 검사에서 막혀 결제를 승인하지 않았으니
+ * 보관값과 토스 쿼리로 U3 를 다시 부르면 다시 결제하지 않고 이어진다.
+ * 토스 승인 가능 시간이 지났으면 U3 실패로 결제 단계에 돌아가 다시 결제한다.
+ */
+const loginAndReturnPath = (slug: string, query: PaymentResultQuery) =>
+  buildLoginPath(
+    `/form/${slug}/payment/result?${new URLSearchParams({
+      paymentKey: query.paymentKey,
+      orderId: query.orderId,
+      amount: String(query.amount),
+    })}`,
+  );
+
+/**
  * 토스 성공 리다이렉트 처리 결과로 이동할 경로를 정한다(계약 11.2-10, 11.4).
  * 결제 승인은 U3 안에서 서버가 하므로, U3 가 실패하면 결제는 일어나지 않고 보관값을 둔 채 결제 단계로 돌아간다.
+ * 로그인이 필요하다는 실패(401·403)면 보관값을 둔 채 로그인으로 보내고 이 처리로 돌아오게 한다.
  */
 export const resolvePaymentResult = async (
   slug: string,
@@ -74,8 +93,10 @@ export const resolvePaymentResult = async (
     try {
       const application = await deps.fetchMyApplication();
       return application && !application.isCanceled ? completePath : formPath;
-    } catch {
-      return formPath;
+    } catch (error) {
+      return isLoginRequiredError(error)
+        ? loginAndReturnPath(slug, query)
+        : formPath;
     }
   }
 
@@ -88,6 +109,7 @@ export const resolvePaymentResult = async (
       buildCreateApplicationRequest(draft, deps.readUtm(), query),
     );
   } catch (error) {
+    if (isLoginRequiredError(error)) return loginAndReturnPath(slug, query);
     const code = deps.getErrorCode(error);
     if (code !== deps.alreadyAppliedCode) {
       return paymentNoticePath(

@@ -3,6 +3,7 @@ import {
   useOneTimeFormQuery,
 } from '@/api/one-time-form/oneTimeForm';
 import useAuthStore from '@/store/useAuthStore';
+import { ApiError } from '@letscareer/api/errors';
 import { fireEvent, render, screen } from '@testing-library/react';
 import {
   freeFormFixture,
@@ -210,5 +211,28 @@ describe('CompletePage', () => {
       'portfolio-1115',
       { enabled: false },
     );
+  });
+
+  it('U2 가 403 이면 다시 시도 대신 신청 페이지로 보낸다', () => {
+    mockForm(paidFormFixture);
+    (useMyOneTimeFormApplicationQuery as jest.Mock).mockReturnValue({
+      data: undefined,
+      isSuccess: false,
+      isError: true,
+      error: new ApiError({
+        status: 403,
+        code: 'API_ERROR',
+        message: 'Request failed with status code 403',
+        endpoint: '/one-time-form/portfolio-1115/my',
+        method: 'GET',
+      }),
+      refetch,
+    });
+    render(<CompletePage slug="portfolio-1115" />);
+
+    expect(replace).toHaveBeenCalledWith('/form/portfolio-1115');
+    expect(
+      screen.queryByRole('button', { name: '다시 시도' }),
+    ).not.toBeInTheDocument();
   });
 });

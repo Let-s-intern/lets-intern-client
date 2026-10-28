@@ -3,6 +3,7 @@ import {
   useOneTimeFormQuery,
 } from '@/api/one-time-form/oneTimeForm';
 import useAuthStore from '@/store/useAuthStore';
+import { ApiError } from '@letscareer/api/errors';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { paidFormFixture } from '../../__fixtures__/oneTimeFormFixtures';
 import MyApplicationPage from './MyApplicationPage';
@@ -252,6 +253,27 @@ describe('MyApplicationPage', () => {
   it('비로그인이면 로그인 안내, 로그인 후 /my 로 돌아온다', () => {
     mockAuth({ isLoggedIn: false, isInitialized: true });
     mockMyApplication(undefined);
+    renderPage();
+
+    expect(
+      screen.getByRole('link', { name: '로그인하고 확인하기' }),
+    ).toHaveAttribute(
+      'href',
+      `/login?redirect=${encodeURIComponent('/form/portfolio-1115/my')}`,
+    );
+  });
+
+  it('로그인 상태여도 U2 가 403 이면 로그인 안내, 로그인 후 /my 로 돌아온다', () => {
+    mockMyApplication(
+      undefined,
+      new ApiError({
+        status: 403,
+        code: 'API_ERROR',
+        message: 'Request failed with status code 403',
+        endpoint: '/one-time-form/portfolio-1115/my',
+        method: 'GET',
+      }),
+    );
     renderPage();
 
     expect(

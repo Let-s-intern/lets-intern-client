@@ -18,6 +18,7 @@ import {
   lineButtonClass,
   primaryButtonClass,
 } from '../../ui/states/StateScreen';
+import { isLoginRequiredError } from '../../utils/loginRequired';
 import { formatMonthDayWithWeekday } from '../utils/cancelDeadlineText';
 import { closeWindowOrGoHome } from '../utils/closeWindowOrGoHome';
 
@@ -35,7 +36,7 @@ const LoadingState = () => (
 
 /**
  * 신청 완료 화면(계약 11.1, 시안 2절 완료). U1 의 안내 문구와 U2 의 내 신청으로 그린다.
- * 비로그인이거나 유효한 신청이 없으면 신청 페이지로 replace 한다.
+ * 비로그인(U2 401·403 포함)이거나 유효한 신청이 없으면 신청 페이지로 replace 한다. 로그인 안내는 신청 페이지가 한다.
  */
 const CompletePage = ({ slug }: CompletePageProps) => {
   const router = useRouter();
@@ -49,7 +50,10 @@ const CompletePage = ({ slug }: CompletePageProps) => {
 
   const hasNoApplication =
     myApplicationQuery.isSuccess && (!application || application.isCanceled);
-  const shouldLeave = (isAuthInitialized && !isLoggedIn) || hasNoApplication;
+  const shouldLeave =
+    (isAuthInitialized && !isLoggedIn) ||
+    isLoginRequiredError(myApplicationQuery.error) ||
+    hasNoApplication;
 
   useEffect(() => {
     if (shouldLeave) router.replace(`/form/${slug}`);
@@ -64,7 +68,7 @@ const CompletePage = ({ slug }: CompletePageProps) => {
       <LoadErrorState onRetry={() => formQuery.refetch()} />
     );
   }
-  if (myApplicationQuery.isError) {
+  if (myApplicationQuery.isError && !shouldLeave) {
     return <LoadErrorState onRetry={() => myApplicationQuery.refetch()} />;
   }
   if (shouldLeave || !application) return <LoadingState />;

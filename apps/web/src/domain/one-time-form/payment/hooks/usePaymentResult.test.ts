@@ -72,6 +72,20 @@ const MY_APPLICATION = {
 const apiError = (code: string, serverMessage: string) =>
   Object.assign(Object.create(ApiError.prototype), { code, serverMessage });
 
+const statusError = (status: number) =>
+  new ApiError({
+    status,
+    code: 'API_ERROR',
+    message: `Request failed with status code ${status}`,
+    endpoint: `/one-time-form/${SLUG}/applications`,
+    method: 'POST',
+  });
+
+// 로그인 뒤 같은 토스 쿼리로 결제 결과 처리에 돌아온다
+const LOGIN_AND_RETURN_PATH = `/login?redirect=${encodeURIComponent(
+  `/form/${SLUG}/payment/result?paymentKey=${QUERY.paymentKey}&orderId=${QUERY.orderId}&amount=${QUERY.amount}`,
+)}`;
+
 const renderResult = (query: PaymentResultQuery | null = QUERY) =>
   renderHook(() => usePaymentResult(SLUG, query));
 
@@ -140,6 +154,32 @@ describe('usePaymentResult', () => {
       '결제 금액이 폼 설정과 다릅니다.',
     );
     expect(readDraft(SLUG)).toEqual(DRAFT);
+  });
+
+  it.each([401, 403])(
+    'U3 가 %i 이면 보관값을 두고 결제 결과로 돌아오는 로그인으로 간다',
+    async (status) => {
+      saveDraft(SLUG, DRAFT);
+      mutateAsync.mockRejectedValue(statusError(status));
+
+      renderResult();
+
+      await waitFor(() =>
+        expect(replace).toHaveBeenCalledWith(LOGIN_AND_RETURN_PATH),
+      );
+      expect(readDraft(SLUG)).toEqual(DRAFT);
+    },
+  );
+
+  it('보관값이 없을 때 U2 가 403 이면 결제 결과로 돌아오는 로그인으로 간다', async () => {
+    fetchMy.mockRejectedValue(statusError(403));
+
+    renderResult();
+
+    await waitFor(() =>
+      expect(replace).toHaveBeenCalledWith(LOGIN_AND_RETURN_PATH),
+    );
+    expect(mutateAsync).not.toHaveBeenCalled();
   });
 
   it('보관한 주문번호와 쿼리 주문번호가 다르면 U3 없이 결제 단계로 돌려보낸다', async () => {

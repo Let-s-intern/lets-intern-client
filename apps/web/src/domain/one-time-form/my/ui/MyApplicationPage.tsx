@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import { closeWindowOrGoHome } from '../../complete/utils/closeWindowOrGoHome';
 import LoadErrorState from '../../ui/states/LoadErrorState';
 import NotFoundState from '../../ui/states/NotFoundState';
+import { isLoginRequiredError } from '../../utils/loginRequired';
 import MyApplicationDetail from './MyApplicationDetail';
 import {
   MyLoadingState,
@@ -54,6 +55,9 @@ const MyApplicationPage = ({ slug }: MyApplicationPageProps) => {
 
   if (myApplicationQuery.isLoading) return <MyLoadingState />;
   if (myApplicationQuery.isError) {
+    if (isLoginRequiredError(myApplicationQuery.error)) {
+      return <MyLoginRequiredState slug={slug} />;
+    }
     return getOneTimeFormErrorCode(myApplicationQuery.error) ===
       ONE_TIME_FORM_NOT_FOUND ? (
       <NotFoundState />
