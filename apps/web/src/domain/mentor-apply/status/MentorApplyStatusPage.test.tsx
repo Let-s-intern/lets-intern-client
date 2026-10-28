@@ -52,13 +52,15 @@ describe('MentorApplyStatusPage', () => {
     authState = { isInitialized: true, isLoggedIn: true };
     get.mockResolvedValue({
       data: {
-        data: [
-          {
-            submittedAt: '2026-10-28T10:00:00',
-            status: 'CHECKING',
-            expectedReplyDate: '2026-11-04',
-          },
-        ],
+        data: {
+          applicationList: [
+            {
+              submittedAt: '2026-10-28T10:00:05',
+              status: 'CHECKING',
+              expectedReplyDate: '2026-11-04',
+            },
+          ],
+        },
       },
     });
     renderPage();
@@ -72,7 +74,7 @@ describe('MentorApplyStatusPage', () => {
 
   it('회원 신청이 없으면 안내와 신청하기 버튼을 보인다', async () => {
     authState = { isInitialized: true, isLoggedIn: true };
-    get.mockResolvedValue({ data: { data: [] } });
+    get.mockResolvedValue({ data: { data: { applicationList: [] } } });
     renderPage();
 
     expect(

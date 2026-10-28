@@ -23,24 +23,17 @@ export const useCreateMentorApplicationMutation = () =>
   });
 
 const mentorApplicationStatusSchema = z.object({
-  /** LocalDateTime ISO 문자열 */
+  /** 시간대 없는 LocalDateTime(서울 시각). 예: `2026-10-28T10:00:05` */
   submittedAt: z.string(),
   status: z.enum(['CHECKING', 'REVIEWING', 'REPLIED']),
-  /** LocalDate ISO 문자열 */
+  /** LocalDate. 예: `2026-11-04` */
   expectedReplyDate: z.string().nullish(),
 });
 
-/**
- * 조회 응답 목록(최신순). 서버 계약이 확정되기 전이라 `data` 가 배열이어도, 배열 하나를 감싼 객체여도
- * 받는다. 감싼 키 이름이 정해지면 이 한 곳만 좁힌다
- */
-const mentorApplicationStatusListSchema = z.preprocess(
-  (data) =>
-    Array.isArray(data)
-      ? data
-      : Object.values((data ?? {}) as object).find(Array.isArray),
-  z.array(mentorApplicationStatusSchema),
-);
+/** 조회 응답 `data`. `/status` 와 `/my` 가 같은 형태다. 목록은 최신순이다 */
+const mentorApplicationStatusListSchema = z.object({
+  applicationList: z.array(mentorApplicationStatusSchema),
+});
 
 export type MentorApplicationStatus = z.infer<
   typeof mentorApplicationStatusSchema
@@ -48,7 +41,7 @@ export type MentorApplicationStatus = z.infer<
 export type MentorApplicationStatusCode = MentorApplicationStatus['status'];
 
 export const parseMentorApplicationStatusList = (data: unknown) =>
-  mentorApplicationStatusListSchema.parse(data);
+  mentorApplicationStatusListSchema.parse(data).applicationList;
 
 export interface MentorApplicationStatusRequest {
   name: string;
@@ -58,7 +51,7 @@ export interface MentorApplicationStatusRequest {
 
 /**
  * 비회원 신청 현황 조회. POST /api/v1/mentor-application/status
- * 개인정보가 URL 에 남지 않도록 POST 다. 요청이 잦으면 서버가 429 를 준다
+ * 개인정보가 URL 에 남지 않도록 POST 다. 요청이 잦으면 429 `MENTOR_APPLICATION_STATUS_TOO_MANY_REQUESTS`
  */
 export const useMentorApplicationStatusMutation = () =>
   useMutation({
