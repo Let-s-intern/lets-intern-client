@@ -3,15 +3,23 @@
 import {
   getOneTimeFormErrorCode,
   ONE_TIME_FORM_NOT_FOUND,
+  useCancelOneTimeFormApplicationMutation,
   useMyOneTimeFormApplicationQuery,
   useOneTimeFormQuery,
 } from '@/api/one-time-form/oneTimeForm';
 import useAuthStore from '@/store/useAuthStore';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { closeWindowOrGoHome } from '../../complete/utils/closeWindowOrGoHome';
 import LoadErrorState from '../../ui/states/LoadErrorState';
 import NotFoundState from '../../ui/states/NotFoundState';
-import { isLoginRequiredError } from '../../utils/loginRequired';
+import {
+  buildLoginPath,
+  isLoginRequiredError,
+} from '../../utils/loginRequired';
+import { resolveCancelError } from '../utils/cancelError';
+import CancelCompleteScreen from './CancelCompleteScreen';
+import CancelConfirmSheet from './CancelConfirmSheet';
 import MyApplicationDetail from './MyApplicationDetail';
 import {
   MyLoadingState,
@@ -37,8 +45,33 @@ const MyApplicationPage = ({ slug }: MyApplicationPageProps) => {
     enabled: isLoggedIn,
   });
 
-  // 8.5 가 여기서 취소 확인 바텀시트를 연다
-  const handleCancelRequest = () => {};
+  const cancelMutation = useCancelOneTimeFormApplicationMutation(slug);
+  const [isCancelSheetOpen, setIsCancelSheetOpen] = useState(false);
+  const [isCancelDone, setIsCancelDone] = useState(false);
+  const cancelError = cancelMutation.error
+    ? resolveCancelError(cancelMutation.error)
+    : null;
+
+  const handleCancelRequest = () => {
+    cancelMutation.reset();
+    setIsCancelSheetOpen(true);
+  };
+  // 성공하면 훅이 U2 를 다시 불러 둔 뒤 완료 화면으로 바꾼다
+  const handleCancelConfirm = (applicationId: number) =>
+    cancelMutation.mutate(applicationId, {
+      onSuccess: () => {
+        setIsCancelSheetOpen(false);
+        setIsCancelDone(true);
+      },
+      onError: (error) => {
+        const action = resolveCancelError(error);
+        if (action.type === 'LOGIN') {
+          router.push(buildLoginPath(`/form/${slug}/my`));
+        } else if (action.type === 'REFETCH') {
+          myApplicationQuery.refetch();
+        }
+      },
+    });
   const handleClose = () => closeWindowOrGoHome(window, () => router.push('/'));
 
   const isFormNotFound =
@@ -75,13 +108,35 @@ const MyApplicationPage = ({ slug }: MyApplicationPageProps) => {
     );
   }
 
+  if (isCancelDone) {
+    return (
+      <CancelCompleteScreen application={application} onClose={handleClose} />
+    );
+  }
+
   return (
-    <MyApplicationDetail
-      form={formQuery.data?.form}
-      application={application}
-      onCancelRequest={handleCancelRequest}
-      onClose={handleClose}
-    />
+    <>
+      <MyApplicationDetail
+        form={formQuery.data?.form}
+        application={application}
+        onCancelRequest={handleCancelRequest}
+        onClose={handleClose}
+      />
+      {isCancelSheetOpen ? (
+        <CancelConfirmSheet
+          payment={application.payment}
+          isPending={cancelMutation.isPending}
+          errorMessage={
+            cancelError && cancelError.type !== 'LOGIN'
+              ? cancelError.message
+              : undefined
+          }
+          isConfirmBlocked={cancelError?.type === 'REFETCH'}
+          onKeep={() => setIsCancelSheetOpen(false)}
+          onConfirm={() => handleCancelConfirm(application.applicationId)}
+        />
+      ) : null}
+    </>
   );
 };
 

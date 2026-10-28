@@ -3,8 +3,16 @@ import {
   useOneTimeFormQuery,
 } from '@/api/one-time-form/oneTimeForm';
 import useAuthStore from '@/store/useAuthStore';
+import axios from '@/utils/axios';
 import { ApiError } from '@letscareer/api/errors';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react';
 import { paidFormFixture } from '../../__fixtures__/oneTimeFormFixtures';
 import MyApplicationPage from './MyApplicationPage';
 
@@ -13,6 +21,20 @@ jest.mock('@/api/one-time-form/oneTimeForm', () => ({
   getOneTimeFormErrorCode: (error: { code?: string } | null) => error?.code,
   useOneTimeFormQuery: jest.fn(),
   useMyOneTimeFormApplicationQuery: jest.fn(),
+  // 취소는 실제 훅으로 돌려 U5 요청과 U2 무효화까지 본다. 네트워크는 아래 axios 목이 막는다
+  useCancelOneTimeFormApplicationMutation: jest.requireActual(
+    '@/api/one-time-form/oneTimeForm',
+  ).useCancelOneTimeFormApplicationMutation,
+}));
+
+// `@/utils/axios`, `@letscareer/api` 는 import.meta 때문에 jest 가 파싱하지 못한다
+jest.mock('@/utils/axios', () => ({
+  __esModule: true,
+  default: { get: jest.fn(), post: jest.fn(), delete: jest.fn() },
+}));
+jest.mock('@letscareer/api', () => ({
+  __esModule: true,
+  ApiError: class ApiError extends Error {},
 }));
 
 jest.mock('@/store/useAuthStore', () => ({
@@ -20,9 +42,12 @@ jest.mock('@/store/useAuthStore', () => ({
   default: jest.fn(),
 }));
 
+const mockPush = jest.fn();
 jest.mock('next/navigation', () => ({
-  useRouter: () => ({ push: jest.fn(), replace: jest.fn() }),
+  useRouter: () => ({ push: mockPush, replace: jest.fn() }),
 }));
+
+const mockedDelete = axios.delete as jest.Mock;
 
 const refetch = jest.fn();
 
@@ -136,10 +161,20 @@ const APPLICATION_1043 = {
   ],
 };
 
-const renderPage = () => render(<MyApplicationPage slug="portfolio-1115" />);
+let queryClient: QueryClient;
+
+const renderPage = () =>
+  render(
+    <QueryClientProvider client={queryClient}>
+      <MyApplicationPage slug="portfolio-1115" />
+    </QueryClientProvider>,
+  );
 
 beforeEach(() => {
   jest.clearAllMocks();
+  queryClient = new QueryClient({
+    defaultOptions: { mutations: { retry: false } },
+  });
   mockAuth({ isLoggedIn: true, isInitialized: true });
   mockForm(paidFormFixture);
 });
@@ -314,5 +349,183 @@ describe('MyApplicationPage', () => {
     expect(
       screen.getByText('신청 페이지를 찾을 수 없어요'),
     ).toBeInTheDocument();
+  });
+});
+
+describe('MyApplicationPage 신청 취소(계약 U5, 시안 5절)', () => {
+  const cancelError = (status: number, code: string, message = '') =>
+    new ApiError({
+      status,
+      code,
+      message,
+      endpoint: '/application/1042',
+      method: 'DELETE',
+    });
+
+  const openSheet = () => {
+    fireEvent.click(screen.getByRole('button', { name: '신청 취소' }));
+    return screen.getByRole('dialog');
+  };
+
+  it('성공: 신청 ID 로 U5 를 부르고 U2 를 무효화한 뒤 취소 완료 화면을 보인다', async () => {
+    mockMyApplication(APPLICATION_1042);
+    mockedDelete.mockResolvedValue({ data: { data: null } });
+    const invalidate = jest.spyOn(queryClient, 'invalidateQueries');
+    renderPage();
+
+    const sheet = openSheet();
+    expect(within(sheet).getByText('신청을 취소할까요?')).toBeInTheDocument();
+    expect(within(sheet).getAllByText('49,000원')).toHaveLength(2);
+    expect(within(sheet).getByText('환불 금액')).toBeInTheDocument();
+    fireEvent.click(within(sheet).getByRole('button', { name: '취소하기' }));
+
+    expect(await screen.findByText('신청을 취소했어요')).toBeInTheDocument();
+    expect(mockedDelete).toHaveBeenCalledWith('/application/1042', {
+      params: { type: 'ONE_TIME_FORM' },
+    });
+    expect(invalidate).toHaveBeenCalledWith({
+      queryKey: ['MyOneTimeFormApplicationQueryKey', 'portfolio-1115'],
+    });
+    expect(
+      screen.getByText(/49,000원을 결제한 수단으로 돌려드려요/),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('취소 완료 화면은 다시 불러온 U2 의 취소 일시를 보인다', async () => {
+    mockMyApplication(APPLICATION_1042);
+    mockedDelete.mockImplementation(async () => {
+      // 훅의 무효화로 U2 가 취소 상태로 다시 온 것처럼 바꾼다
+      mockMyApplication({ ...APPLICATION_1043, applicationId: 1042 });
+      return { data: { data: null } };
+    });
+    renderPage();
+
+    fireEvent.click(
+      within(openSheet()).getByRole('button', { name: '취소하기' }),
+    );
+
+    expect(
+      await screen.findByText(/2026\.11\.03 14:02 취소/),
+    ).toBeInTheDocument();
+  });
+
+  it('마감 지남(400 APPLICATION_CANNOT_CANCELED): 안내를 보이고 U2 를 다시 부른다', async () => {
+    mockMyApplication(APPLICATION_1042);
+    mockedDelete.mockRejectedValue(
+      cancelError(
+        400,
+        'APPLICATION_CANNOT_CANCELED',
+        '환불이 불가능한 기간입니다.',
+      ),
+    );
+    renderPage();
+
+    const sheet = openSheet();
+    fireEvent.click(within(sheet).getByRole('button', { name: '취소하기' }));
+
+    expect(await within(sheet).findByRole('alert')).toHaveTextContent(
+      '취소 기간이 지나 직접 취소할 수 없어요.',
+    );
+    expect(refetch).toHaveBeenCalled();
+    expect(
+      within(sheet).getByRole('button', { name: '취소하기' }),
+    ).toBeDisabled();
+    expect(screen.queryByText('신청을 취소했어요')).not.toBeInTheDocument();
+  });
+
+  it('이미 취소(409): U2 를 다시 불러 취소 상태를 보인다', async () => {
+    mockMyApplication(APPLICATION_1042);
+    mockedDelete.mockRejectedValue(
+      cancelError(409, 'APPLICATION_ALREADY_CANCELED'),
+    );
+    renderPage();
+
+    fireEvent.click(
+      within(openSheet()).getByRole('button', { name: '취소하기' }),
+    );
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      '이미 취소한 신청이에요.',
+    );
+    expect(refetch).toHaveBeenCalled();
+  });
+
+  it('401: 로그인 후 /my 로 돌아오게 로그인 페이지로 보낸다', async () => {
+    mockMyApplication(APPLICATION_1042);
+    mockedDelete.mockRejectedValue(cancelError(401, 'UNAUTHORIZED'));
+    renderPage();
+
+    fireEvent.click(
+      within(openSheet()).getByRole('button', { name: '취소하기' }),
+    );
+
+    await waitFor(() =>
+      expect(mockPush).toHaveBeenCalledWith(
+        `/login?redirect=${encodeURIComponent('/form/portfolio-1115/my')}`,
+      ),
+    );
+  });
+
+  it('그 밖의 실패는 일반 안내를 보이고 다시 시도할 수 있다', async () => {
+    mockMyApplication(APPLICATION_1042);
+    mockedDelete.mockRejectedValue(cancelError(404, 'APPLICATION_NOT_FOUND'));
+    renderPage();
+
+    const sheet = openSheet();
+    fireEvent.click(within(sheet).getByRole('button', { name: '취소하기' }));
+
+    expect(await within(sheet).findByRole('alert')).toHaveTextContent(
+      '취소하지 못했어요. 잠시 후 다시 시도해 주세요.',
+    );
+    expect(refetch).not.toHaveBeenCalled();
+    expect(
+      within(sheet).getByRole('button', { name: '취소하기' }),
+    ).toBeEnabled();
+  });
+
+  it('0원 신청(시드 1050): 0원 환불, 환불 수단 안내 없이 취소된다', async () => {
+    mockMyApplication({
+      ...APPLICATION_1042,
+      applicationId: 1050,
+      selectedOptions: [],
+      payment: { paidAmount: 0, refundAmount: 0, paymentMethod: null },
+    });
+    mockedDelete.mockResolvedValue({ data: { data: null } });
+    renderPage();
+
+    const sheet = openSheet();
+    expect(within(sheet).getAllByText('0원')).toHaveLength(2);
+    expect(within(sheet).queryByText(/결제한 수단/)).not.toBeInTheDocument();
+    expect(within(sheet).queryByText(/카드사/)).not.toBeInTheDocument();
+    fireEvent.click(within(sheet).getByRole('button', { name: '취소하기' }));
+
+    expect(await screen.findByText('신청을 취소했어요')).toBeInTheDocument();
+    expect(mockedDelete).toHaveBeenCalledWith('/application/1050', {
+      params: { type: 'ONE_TIME_FORM' },
+    });
+    expect(screen.queryByText(/돌려드려요/)).not.toBeInTheDocument();
+  });
+
+  it('무료 폼(payment null): 환불 금액 줄이 없다', () => {
+    mockMyApplication({ ...APPLICATION_1042, payment: null });
+    renderPage();
+
+    const sheet = openSheet();
+    expect(within(sheet).queryByText('환불 금액')).not.toBeInTheDocument();
+    expect(within(sheet).queryByText('결제 금액')).not.toBeInTheDocument();
+  });
+
+  it('유지하기: 시트를 닫고 U5 를 부르지 않는다', () => {
+    mockMyApplication(APPLICATION_1042);
+    renderPage();
+
+    fireEvent.click(
+      within(openSheet()).getByRole('button', { name: '유지하기' }),
+    );
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(mockedDelete).not.toHaveBeenCalled();
+    expect(screen.getByText('신청 완료')).toBeInTheDocument();
   });
 });
