@@ -182,10 +182,6 @@ export default function LandingBenefitEditor({
 
   return (
     <div className="flex flex-col gap-2">
-      <p className="text-xxsmall12 text-neutral-40">
-        플랜 권한에 따라 자동 포함돼요 (수정 불가)
-      </p>
-
       {/* 자동 포함 혜택 (플랜 권한 union 기반 · 읽기전용) */}
       {coreBenefits.map((benefit) => (
         <BenefitRow

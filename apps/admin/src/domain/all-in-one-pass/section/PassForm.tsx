@@ -37,12 +37,6 @@ interface Props {
   onDeletePlan?: (plan: PassPlan) => void;
 }
 
-/**
- * 올인원패스 폼 본문. 헤더 토글(view)로 "올인원패스 정보"(기본정보·플랜·캘린더·
- * 외부링크·FAQ)와 "랜딩페이지 구성"(히어로·렉시컬·추가혜택·후기·CTA)을 전환.
- * 상세 콘텐츠(렉시컬)는 마운트 시점 초기값을 쓰므로, 프리필이 필요한 수정 페이지는
- * 데이터 로드 완료 후 렌더.
- */
 export default function PassForm({
   input,
   patch,
@@ -65,34 +59,35 @@ export default function PassForm({
 
   return (
     <div className="mb-10 flex flex-col gap-10">
-      {/* 왼쪽: 기본정보(멘토링·연장 포함) / 오른쪽: 플랜(세로로 긴 편) */}
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-        <BasicInfoSection input={input} patch={patch} />
-        <PlanSection
-          plans={input.plans}
-          onChange={(plans) => patch({ plans })}
-          mentoringCouponAutoIssue={input.mentoringCouponAutoIssue}
-          onMentoringChange={(mentoringCouponAutoIssue) =>
-            patch({ mentoringCouponAutoIssue })
-          }
-          onSavePlan={onSavePlan}
-          onDeletePlan={onDeletePlan}
-        />
+      {/* 왼쪽: 기본정보·외부링크 세로 스택 / 오른쪽: 플랜(세로로 긴 편) */}
+      <div className="flex flex-col items-start gap-8 lg:flex-row">
+        <div className="flex w-full flex-1 flex-col gap-10">
+          <BasicInfoSection input={input} patch={patch} />
+          <ExternalLinkSection
+            links={input.externalLinks}
+            onChange={(externalLinks) => patch({ externalLinks })}
+          />
+        </div>
+        <div className="w-full flex-1">
+          <PlanSection
+            plans={input.plans}
+            onChange={(plans) => patch({ plans })}
+            mentoringCouponAutoIssue={input.mentoringCouponAutoIssue}
+            onMentoringChange={(mentoringCouponAutoIssue) =>
+              patch({ mentoringCouponAutoIssue })
+            }
+            onSavePlan={onSavePlan}
+            onDeletePlan={onDeletePlan}
+          />
+        </div>
       </div>
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-        <CalendarSection
-          events={input.calendarEvents}
-          onChange={(calendarEvents) => patch({ calendarEvents })}
-          purchaseStartDate={input.purchaseStartDate}
-          purchaseEndDate={input.purchaseEndDate}
-          passDays={input.passDays}
-        />
-        <ExternalLinkSection
-          links={input.externalLinks}
-          onChange={(externalLinks) => patch({ externalLinks })}
-        />
-      </div>
-      {/* FAQ: 공통 풀 관리(/faq) + 이 패스에 노출할 항목 체크 선택 */}
+      <CalendarSection
+        events={input.calendarEvents}
+        onChange={(calendarEvents) => patch({ calendarEvents })}
+        purchaseStartDate={input.purchaseStartDate}
+        purchaseEndDate={input.purchaseEndDate}
+        passDays={input.passDays}
+      />
       <FaqSection
         selectedIds={input.faqList}
         onChange={(faqList) => patch({ faqList })}

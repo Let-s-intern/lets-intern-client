@@ -11,17 +11,16 @@ import {
   getAdditionalBenefitSlots,
   isReviewEmpty,
 } from '@/domain/all-in-one-pass/util/landingOptions';
+import dayjs from '@/lib/dayjs';
 
 /**
  * 랜딩 페이지용 `landingDescription`(JSON) ↔ 폼 PassLandingConfig 변환.
- *
- * 랜딩은 description이 아니라 이 필드만 읽음(비구매자 노출 페이지). 민감 정보(외부링크
- * url 등)는 담지 않음. 확장형 — 필드가 늘면 여기에 추가.
+ * 비구매자 노출 페이지: 민감 정보(외부링크 url 등)는 담지 않음
  */
 interface LandingDescriptionBlob {
+  displayDeadline: string | null;
   hero: PassLandingConfig['hero'];
   lexical: PassLandingConfig['lexical'];
-  // 추가혜택: 편집 중 쪼개둔 외부링크 유래분 + 수동분을 합친 결과(url 제거)
   additionalBenefits: Array<{
     name: string;
     description: string;
@@ -29,11 +28,12 @@ interface LandingDescriptionBlob {
   }>;
   vods: PassLandingVod[];
   vodCount: number; // 전체 VOD 수(목록 길이)
-  reviews: Array<Omit<PassLandingReview, 'id'>>; // 폼 로컬 id 는 저장 안 함
+  reviews: Array<Omit<PassLandingReview, 'id'>>;
   finalCta: PassLandingConfig['finalCta'];
 }
 
 export const createEmptyLandingConfig = (): PassLandingConfig => ({
+  displayDeadline: null,
   hero: { title: '', description: '', recruitFootnote: '' },
   lexical: {
     introSection: '',
@@ -45,18 +45,10 @@ export const createEmptyLandingConfig = (): PassLandingConfig => ({
   manualBenefits: [],
   vods: [],
   vodCount: 0,
-  // 생성 폼 기본 후기 6장(수정·삭제·추가 가능, 최대 9). 안 건드려도 저장돼 랜딩에 노출.
   reviews: createDefaultReviews(),
   finalCta: { title: '', description: '' },
 });
 
-/**
- * landingDescription(JSON) → 폼 PassLandingConfig.
- *
- * 추가혜택은 저장 시 name 만 남고 출처(외부링크/수동) 구분이 사라지므로, 외부링크 목록의
- * name 과 매칭해 되살림: name 이 외부링크와 같으면 그 링크 id 의 benefitExtras 로, 아니면
- * manualBenefits 로 복원. (링크명을 나중에 바꾸면 매칭이 끊겨 수동분으로 떨어질 수 있음)
- */
 export const toLandingConfig = (
   landingDescription: string | null | undefined,
   externalLinks: PassExternalLink[],
@@ -92,6 +84,7 @@ export const toLandingConfig = (
   });
 
   return {
+    displayDeadline: parsed.displayDeadline ?? null,
     hero: {
       title: parsed.hero?.title ?? '',
       description: parsed.hero?.description ?? '',
@@ -147,6 +140,10 @@ export const serializeLandingDescription = (input: PassFormInput): string => {
     getAdditionalBenefitSlots(input.plans),
   );
   return JSON.stringify({
+    // 운영자가 선택한 시각 그대로 저장(초 단위는 00으로 정규화)
+    displayDeadline: landing.displayDeadline
+      ? dayjs(landing.displayDeadline).second(0).format('YYYY-MM-DDTHH:mm:ss')
+      : null,
     hero: landing.hero,
     lexical: landing.lexical,
     additionalBenefits,

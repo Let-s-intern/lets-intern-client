@@ -4,7 +4,6 @@ import {
   AllInOnePassPrivilegeType,
   AllInOnePassProgramType,
 } from '@/api/all-in-one-pass/allInOnePassSchema';
-import dayjs from '@/lib/dayjs';
 import {
   AllInOnePassListItem,
   PassCalendarEvent,
@@ -18,6 +17,7 @@ import {
   serializeLandingDescription,
   toLandingConfig,
 } from '@/domain/all-in-one-pass/util/landingDescriptionMapper';
+import dayjs from '@/lib/dayjs';
 
 /** 백엔드 membership DTO ↔ FE 폼 타입(PassFormInput) 변환 레이어. */
 
@@ -205,11 +205,8 @@ export const planToInMembershipDto = (plan: PassPlan) => ({
   })),
 });
 
-// 판매 시작일은 당일 00:00:00, 종료일은 당일 23:59:59 로 정규화해 전송(시간 선택 UI 없음).
-const toDayStart = (v: string | null) =>
-  v ? dayjs(v).startOf('day').format('YYYY-MM-DDTHH:mm:ss') : v;
-const toDayEnd = (v: string | null) =>
-  v ? dayjs(v).endOf('day').format('YYYY-MM-DDTHH:mm:ss') : v;
+const toDateTime = (v: string | null) =>
+  v ? dayjs(v).second(0).format('YYYY-MM-DDTHH:mm:ss') : v;
 
 /** 생성 요청 body */
 export const toCreateDto = (input: PassFormInput) => ({
@@ -217,8 +214,8 @@ export const toCreateDto = (input: PassFormInput) => ({
   introduction: input.shortDescription || null,
   description: serializeDescription(input),
   landingDescription: serializeLandingDescription(input),
-  beginning: toDayStart(input.purchaseStartDate),
-  deadline: toDayEnd(input.purchaseEndDate),
+  beginning: toDateTime(input.purchaseStartDate),
+  deadline: toDateTime(input.purchaseEndDate),
   periodDays: input.passDays,
   thumbnail: input.thumbnailUrl,
   isVisible: false, // 개설 시 기본 비노출
@@ -233,8 +230,8 @@ export const toUpdateDto = (input: PassFormInput) => ({
   introduction: input.shortDescription || null,
   description: serializeDescription(input),
   landingDescription: serializeLandingDescription(input),
-  beginning: toDayStart(input.purchaseStartDate),
-  deadline: toDayEnd(input.purchaseEndDate),
+  beginning: toDateTime(input.purchaseStartDate),
+  deadline: toDateTime(input.purchaseEndDate),
   periodDays: input.passDays,
   thumbnail: input.thumbnailUrl,
   planList: input.plans.map(planToInMembershipDto),

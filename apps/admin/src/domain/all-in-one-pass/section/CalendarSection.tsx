@@ -72,9 +72,15 @@ export default function CalendarSection({
         </button>
       </div>
 
-      <div className="flex flex-col gap-2">
+      <div
+        className={
+          events.length > 6
+            ? 'flex h-[308px] flex-col gap-2 overflow-y-auto pr-1'
+            : 'flex flex-col gap-2'
+        }
+      >
         {events.map((event) => (
-          <div key={event.id} className="flex items-center gap-2">
+          <div key={event.id} className="flex shrink-0 items-center gap-2">
             <DateTimePicker
               label="시작일시"
               value={event.startDate ? dayjs(event.startDate) : null}

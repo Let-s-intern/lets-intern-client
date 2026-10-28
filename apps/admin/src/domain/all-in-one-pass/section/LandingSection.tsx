@@ -4,7 +4,9 @@ import {
   PassPlan,
 } from '@/domain/all-in-one-pass/types';
 import VodExposureModal from '@/domain/all-in-one-pass/ui/VodExposureModal';
+import dayjs from '@/lib/dayjs';
 import { Button, TextField } from '@mui/material';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { lazy, Suspense, useState } from 'react';
 import LandingBenefitEditor from './LandingBenefitEditor';
 import LandingReviewEditor from './LandingReviewEditor';
@@ -97,7 +99,7 @@ export default function LandingSection({
             <div className="flex flex-col gap-3">
               <TextField
                 label="헤드라인 (최대 30자)"
-                placeholder="히어로 헤드라인"
+                placeholder="예) {패스명} {기간}일 간의 혜택"
                 value={value.hero.title}
                 onChange={(e) => patchHero({ title: e.target.value })}
                 size="small"
@@ -109,7 +111,7 @@ export default function LandingSection({
               />
               <TextField
                 label="설명 (최대 60자)"
-                placeholder="히어로 설명"
+                placeholder="예) 자소서·포트폴리오부터 인적성·면접까지, 취준에 필요한 모든 준비를 하나의 패스로 끝내세요."
                 value={value.hero.description}
                 onChange={(e) => patchHero({ description: e.target.value })}
                 size="small"
@@ -131,6 +133,23 @@ export default function LandingSection({
                   htmlInput: { maxLength: 50 },
                 }}
               />
+              <div className="flex flex-col gap-1">
+                <DateTimePicker
+                  label="노출용 모집 종료일시"
+                  value={
+                    value.displayDeadline ? dayjs(value.displayDeadline) : null
+                  }
+                  onChange={(v) =>
+                    patch({ displayDeadline: v ? v.toISOString() : null })
+                  }
+                  format="YYYY.MM.DD HH:mm"
+                  slotProps={{ textField: { size: 'small', fullWidth: true } }}
+                />
+                <p className="text-xxsmall12 text-neutral-40">
+                  랜딩 페이지 노출용 신청 마감일 설정 필드입니다. 비우면 실제
+                  신청 마감일을 따릅니다.
+                </p>
+              </div>
             </div>
           </Block>
 
@@ -139,6 +158,7 @@ export default function LandingSection({
             <div className="flex flex-col gap-3">
               <TextField
                 label="헤드라인"
+                placeholder="예) {패스명}, 지금 바로 시작하세요"
                 value={value.finalCta.title}
                 onChange={(e) => patchFinalCta({ title: e.target.value })}
                 size="small"
@@ -146,6 +166,7 @@ export default function LandingSection({
               />
               <TextField
                 label="설명"
+                placeholder="예) 선착순 마감 전에 합류하고, 취준에 필요한 모든 준비를 한 번에 끝내세요."
                 value={value.finalCta.description}
                 onChange={(e) => patchFinalCta({ description: e.target.value })}
                 size="small"

@@ -80,6 +80,7 @@ export interface PassLandingReview {
 
 /** 랜딩페이지 구성 입력값. 추가혜택은 외부링크 유래분(`benefitExtras`, 링크 id→설명·아이콘, 이름은 externalLinks에서 실시간)과 직접추가분(`manualBenefits`)으로 쪼개 보관하고, 저장 시 합쳐 additionalBenefits(name+설명+아이콘, url 제거)로 직렬화. */
 export interface PassLandingConfig {
+  displayDeadline: string | null;
   hero: {
     title: string;
     description: string;

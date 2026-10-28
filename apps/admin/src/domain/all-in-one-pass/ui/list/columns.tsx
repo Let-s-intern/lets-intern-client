@@ -73,7 +73,7 @@ export const getListColumns = (): GridColDef<AllInOnePassListItem>[] => [
     valueGetter: (_, row) =>
       row.purchaseEndDate ? dayjs(row.purchaseEndDate).toDate() : null,
     valueFormatter: (value) =>
-      value ? dayjs(value).format('M/D(dd) HH:mm까지') : '-',
+      value ? dayjs(value).format('YYYY/M/D(dd) HH:mm까지') : '-',
   },
   {
     field: 'passDays',
