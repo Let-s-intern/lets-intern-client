@@ -1,7 +1,7 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { seedOneTimeFormApplications } from '@/mocks/seed/oneTimeForm';
 
@@ -9,6 +9,12 @@ import OneTimeFormApplicantsPage from './OneTimeFormApplicantsPage';
 
 const applicationsQuery = vi.fn();
 const navigate = vi.fn();
+const saveCsvFile = vi.fn();
+
+vi.mock('../utils/saveCsvFile', () => ({
+  saveCsvFile: (fileName: string, content: string) =>
+    saveCsvFile(fileName, content),
+}));
 
 vi.mock('@/api/one-time-form/oneTimeFormQueries', () => ({
   useOneTimeFormApplicationsQuery: (formId: number) =>
@@ -55,6 +61,7 @@ const rowOf = (name: string) =>
 
 beforeEach(() => {
   navigate.mockReset();
+  saveCsvFile.mockReset();
   applicationsQuery.mockReset();
   applicationsQuery.mockReturnValue(loaded());
 });
@@ -162,5 +169,45 @@ describe('OneTimeFormApplicantsPage', () => {
     expect(
       screen.getByText('신청자 목록을 불러오지 못했습니다.'),
     ).toBeInTheDocument();
+  });
+
+  describe('CSV 다운로드', () => {
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('불러온 A8 응답으로 CSV 를 만들어 slug_신청자_날짜.csv 로 저장한다', async () => {
+      vi.useFakeTimers({ toFake: ['Date'] });
+      vi.setSystemTime(new Date('2026-11-05T10:00:00+09:00'));
+      const user = userEvent.setup();
+      renderPage();
+
+      await user.click(screen.getByRole('button', { name: 'CSV 다운로드' }));
+
+      expect(saveCsvFile).toHaveBeenCalledTimes(1);
+      const [fileName, content] = saveCsvFile.mock.calls[0];
+      expect(fileName).toBe('portfolio-1115_신청자_20261105.csv');
+      expect(content.startsWith('\uFEFF신청 ID,신청일시,상태')).toBe(true);
+      expect(content).toContain('1043,2026-11-03 09:10,취소,박서현');
+    });
+
+    it('불러오는 중이거나 신청이 없으면 누를 수 없다', () => {
+      applicationsQuery.mockReturnValue({
+        data: undefined,
+        isLoading: true,
+        isError: false,
+      });
+      const { unmount } = renderPage();
+      expect(
+        screen.getByRole('button', { name: 'CSV 다운로드' }),
+      ).toBeDisabled();
+      unmount();
+
+      applicationsQuery.mockReturnValue(loaded([]));
+      renderPage();
+      expect(
+        screen.getByRole('button', { name: 'CSV 다운로드' }),
+      ).toBeDisabled();
+    });
   });
 });
