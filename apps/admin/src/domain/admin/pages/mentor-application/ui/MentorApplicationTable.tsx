@@ -17,6 +17,7 @@ import { Button, MenuItem, Select } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { formatPhoneNum } from '../utils/formatPhoneNum';
+import MentorApplicationDialog from './MentorApplicationDialog';
 
 const HEADERS = [
   '신청일',
@@ -26,6 +27,7 @@ const HEADERS = [
   '전화번호',
   '이메일',
   '선호 연락 수단',
+  '신청서',
   '신청 현황',
   '삭제',
 ];
@@ -38,6 +40,7 @@ export default function MentorApplicationTable() {
   const patchStatus = usePatchAdminMentorApplicationStatus();
   const deleteApplication = useDeleteAdminMentorApplication();
   const [statusLoadingId, setStatusLoadingId] = useState<number | null>(null);
+  const [viewingId, setViewingId] = useState<number | null>(null);
 
   const handleStatusChange = async (
     id: number,
@@ -118,6 +121,15 @@ export default function MentorApplicationTable() {
                     .map((method) => CONTACT_METHOD_LABEL[method])
                     .join(', ')}
                 </td>
+                <td className="text-xsmall14 px-4 py-4">
+                  <button
+                    type="button"
+                    className="text-blue-500 underline transition hover:text-blue-300"
+                    onClick={() => setViewingId(application.id)}
+                  >
+                    조회
+                  </button>
+                </td>
                 <td className="px-4 py-4">
                   <Select
                     size="small"
@@ -154,6 +166,13 @@ export default function MentorApplicationTable() {
             ))}
           </tbody>
         </table>
+      )}
+
+      {viewingId !== null && (
+        <MentorApplicationDialog
+          applicationId={viewingId}
+          onClose={() => setViewingId(null)}
+        />
       )}
     </div>
   );
