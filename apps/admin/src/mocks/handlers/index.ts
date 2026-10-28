@@ -4,6 +4,7 @@ import { accessLogHandlers } from './accessLog';
 import { adminFeedbackHandlers } from './adminFeedback';
 import { adminLiveMentoringHandlers } from './adminLiveMentoring';
 import { adminParticipantHandlers, adminRefundHandlers } from './adminRefund';
+import { oneTimeFormHandlers } from './oneTimeForm';
 import { ssoHandlers } from './sso';
 
 /**
@@ -17,6 +18,8 @@ import { ssoHandlers } from './sso';
 export const handlers: RequestHandler[] = [
   ...adminFeedbackHandlers,
   ...adminLiveMentoringHandlers,
+  // 신청자 환불(A11)이 adminRefundHandlers 와 같은 경로라 앞에 둔다(계약 13.2)
+  ...oneTimeFormHandlers,
   ...adminRefundHandlers,
   ...adminParticipantHandlers,
   ...accessLogHandlers,
