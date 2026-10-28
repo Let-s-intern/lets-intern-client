@@ -4,6 +4,7 @@ import { useCreateMentorApplicationMutation } from '@/api/mentor-application/men
 import { FormProvider } from 'react-hook-form';
 
 import { useMentorApplyForm } from './hooks/useMentorApplyForm';
+import { usePrefillFromUser } from './hooks/usePrefillFromUser';
 import AdditionalInfoSection from './section/AdditionalInfoSection';
 import AttachmentSection from './section/AttachmentSection';
 import BasicInfoSection from './section/BasicInfoSection';
@@ -29,6 +30,7 @@ export default function MentorApplyForm({ onSubmitted }: MentorApplyFormProps) {
       },
     });
   });
+  usePrefillFromUser(form);
 
   return (
     <FormProvider {...form}>

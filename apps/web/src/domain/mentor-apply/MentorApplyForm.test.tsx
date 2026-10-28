@@ -3,6 +3,9 @@ jest.mock('@/utils/axios', () => ({
   default: { post: jest.fn() },
 }));
 
+// 자동 채우기가 `@/api/user/user` 를 물고 오므로 그 모듈의 v2 네트워크 계층(`import.meta`)을 막는다
+jest.mock('@/utils/axiosV2', () => ({ __esModule: true, default: {} }));
+
 import axios from '@/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
