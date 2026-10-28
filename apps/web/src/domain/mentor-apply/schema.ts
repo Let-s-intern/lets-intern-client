@@ -14,17 +14,17 @@ export const CONTACT_METHOD_OPTIONS = [
 ] as const;
 
 export const JOB_FIELD_OPTIONS = [
-  { value: 'STRATEGY', label: '경영기획·전략' },
-  { value: 'MARKETING', label: '마케팅·브랜딩' },
+  { value: 'MANAGEMENT_STRATEGY', label: '경영기획·전략' },
+  { value: 'MARKETING_BRANDING', label: '마케팅·브랜딩' },
   { value: 'SALES', label: '영업·영업관리' },
   { value: 'HR', label: '인사·HR' },
-  { value: 'FINANCE', label: '재무·회계' },
-  { value: 'DEVELOPMENT', label: '개발·IT' },
+  { value: 'FINANCE_ACCOUNTING', label: '재무·회계' },
+  { value: 'DEVELOPMENT_IT', label: '개발·IT' },
   { value: 'DATA_AI', label: '데이터·AI' },
-  { value: 'SERVICE_PLANNING', label: '서비스기획·PM' },
+  { value: 'SERVICE_PLANNING_PM', label: '서비스기획·PM' },
   { value: 'DESIGN', label: '디자인' },
   { value: 'PRODUCTION_QUALITY', label: '생산·품질' },
-  { value: 'RND', label: '연구개발(R&D)' },
+  { value: 'RESEARCH_DEVELOPMENT', label: '연구개발(R&D)' },
   { value: 'ETC', label: '기타' },
 ] as const;
 

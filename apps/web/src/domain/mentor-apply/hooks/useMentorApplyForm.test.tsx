@@ -159,7 +159,7 @@ describe('useMentorApplyForm', () => {
       yearsOfExperience: '5',
       phoneNum: '010-1234-5678',
       preferredContactMethods: ['EMAIL'],
-      jobFields: ['DEVELOPMENT'],
+      jobFields: ['DEVELOPMENT_IT'],
       mentoringTypes: ['MOCK_INTERVIEW'],
       snsLinks: ['https://linkedin.com/in/a', '', ''],
       privacyAgreed: true,
