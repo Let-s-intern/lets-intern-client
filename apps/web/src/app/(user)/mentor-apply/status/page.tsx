@@ -10,6 +10,8 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/mentor-apply/status',
   },
+  // 이름·전화번호로 조회하는 개인 화면이라 검색에 노출하지 않는다
+  robots: { index: false, follow: false },
   openGraph: {
     type: 'website',
     title,
