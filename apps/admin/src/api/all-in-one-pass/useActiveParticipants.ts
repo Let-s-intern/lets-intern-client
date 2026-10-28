@@ -18,7 +18,7 @@ const adminVoSchema = z.object({
   userName: z.string().nullish(),
   contactEmail: z.string().nullish(),
   planTitle: z.string().nullish(),
-  membershipTitle: z.string().nullish(), // 멤버십(상품)명. BE 추가 전까지 undefined → planTitle 폴백
+  membershipTitle: z.string().nullish(),
   startDate: z.string().nullish(),
   endDate: z.string().nullish(),
   orderId: z.string().nullish(),

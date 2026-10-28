@@ -57,11 +57,17 @@ export default function AllInOnePassLandingPage() {
   const scrollToBenefit = () =>
     document.getElementById('benefit')?.scrollIntoView({ behavior: 'smooth' });
 
-  const { ctaText, barCtaText, ctaDisabled } = useCtaState(applicationForm);
+  const { ctaText, barCtaText, ctaDisabled } = useCtaState(
+    applicationForm,
+    landing.displayDeadline,
+  );
 
   if (isLoading || !pass) {
     return <LoadingContainer />;
   }
+
+  // 노출용 종료일이 있으면 카운트다운·마감도 그 값 기준(없으면 실제 판매 deadline).
+  const effectiveDeadline = landing.displayDeadline ?? pass.deadline;
 
   return (
     <main>
@@ -69,7 +75,7 @@ export default function AllInOnePassLandingPage() {
         passTitle={pass.title}
         hero={landing.hero}
         periodDays={pass.periodDays}
-        deadline={pass.deadline}
+        deadline={effectiveDeadline}
         ctaText={ctaText}
         ctaDisabled={ctaDisabled}
         onStart={handleBuyClick}
@@ -109,7 +115,7 @@ export default function AllInOnePassLandingPage() {
       <FinalCtaSection
         passTitle={pass.title}
         finalCta={landing.finalCta}
-        deadline={pass.deadline}
+        deadline={effectiveDeadline}
         ctaText={ctaText}
         ctaDisabled={ctaDisabled}
         onStart={handleBuyClick}
@@ -119,7 +125,7 @@ export default function AllInOnePassLandingPage() {
         <LandingApplyBar
           passTitle={pass.title}
           periodDays={pass.periodDays}
-          deadline={pass.deadline}
+          deadline={effectiveDeadline}
           ctaText={barCtaText}
           ctaDisabled={ctaDisabled}
           onStart={handleBuyClick}

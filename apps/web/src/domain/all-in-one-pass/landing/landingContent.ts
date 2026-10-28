@@ -22,6 +22,8 @@ export interface LandingVod {
 }
 
 export interface LandingDescription {
+  /** 노출용 모집 종료일(ISO). 카운트다운·CTA 마감 기준. null이면 실제 deadline 사용. */
+  displayDeadline: string | null;
   hero: { title: string; description: string; recruitFootnote: string };
   lexical: {
     introSection: string;
@@ -37,6 +39,7 @@ export interface LandingDescription {
 }
 
 export const emptyLandingDescription = (): LandingDescription => ({
+  displayDeadline: null,
   hero: { title: '', description: '', recruitFootnote: '' },
   lexical: {
     introSection: '',
@@ -64,6 +67,7 @@ export const parseLandingDescription = (
     return empty;
   }
   return {
+    displayDeadline: parsed.displayDeadline ?? null,
     hero: {
       title: parsed.hero?.title ?? '',
       description: parsed.hero?.description ?? '',
