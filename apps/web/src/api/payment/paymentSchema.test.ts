@@ -128,6 +128,25 @@ describe('paymentListType — VOD_PASS 호환', () => {
     expect(result.payments[0].programInfo.programType).toBe('LIVE_MENTORING');
   });
 
+  it('ONE_TIME_FORM 행을 파싱한다', () => {
+    const result = paymentListType.parse({
+      payments: [
+        {
+          programInfo: {
+            ...challengeRow.programInfo,
+            programType: 'ONE_TIME_FORM',
+          },
+          paymentItems: [{ ...paymentItems[0], programType: 'ONE_TIME_FORM' }],
+        },
+      ],
+    });
+
+    expect(result.payments[0].programInfo.programType).toBe('ONE_TIME_FORM');
+    expect(result.payments[0].paymentItems?.[0].programType).toBe(
+      'ONE_TIME_FORM',
+    );
+  });
+
   it('모르는 programType 은 여전히 거절한다', () => {
     const result = paymentListType.safeParse({
       payments: [
@@ -184,6 +203,15 @@ describe('paymentDetailType — VOD_PASS 호환', () => {
     expect(result.programInfo.programType).toBe('CHALLENGE');
     expect(result.paymentItems).toBeUndefined();
     expect(result.planUpgradePaymentList).toEqual([]);
+  });
+
+  it('ONE_TIME_FORM 상세를 파싱한다', () => {
+    const result = paymentDetailType.parse({
+      ...detailBase,
+      programInfo: { ...detailBase.programInfo, programType: 'ONE_TIME_FORM' },
+    });
+
+    expect(result.programInfo.programType).toBe('ONE_TIME_FORM');
   });
 
   it('REPORT 는 여전히 상세에서 거절한다', () => {
