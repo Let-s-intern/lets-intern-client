@@ -72,6 +72,8 @@ describe('MentorApplicationDialog', () => {
     expect(screen.getByText('데이터·AI')).toBeInTheDocument();
     expect(screen.getByText('서류 첨삭')).toBeInTheDocument();
     expect(screen.getByText('직무 Q&A')).toBeInTheDocument();
+    expect(screen.getByText('이력 소개')).toBeInTheDocument();
+    expect(screen.getByText('전하고 싶은 말씀')).toBeInTheDocument();
     expect(screen.getByText('B2C 서비스 PM 7년')).toBeInTheDocument();
     expect(screen.getByText('경험을 나누고 싶습니다')).toBeInTheDocument();
     expect(screen.getByText('비회원 신청')).toBeInTheDocument();

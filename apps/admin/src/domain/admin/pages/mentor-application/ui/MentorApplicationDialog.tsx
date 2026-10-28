@@ -128,11 +128,11 @@ function ApplicationDetail({
         />
       </Section>
 
-      <Section title="자기소개">
+      <Section title="이력 소개">
         <p className="whitespace-pre-wrap">{application.introduction || '-'}</p>
       </Section>
 
-      <Section title="지원 동기">
+      <Section title="전하고 싶은 말씀">
         <p className="whitespace-pre-wrap">{application.motivation || '-'}</p>
       </Section>
 
