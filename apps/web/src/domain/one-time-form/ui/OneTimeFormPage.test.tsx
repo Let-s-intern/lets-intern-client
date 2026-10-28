@@ -1,5 +1,9 @@
-import { useOneTimeFormQuery } from '@/api/one-time-form/oneTimeForm';
+import {
+  useMyOneTimeFormApplicationQuery,
+  useOneTimeFormQuery,
+} from '@/api/one-time-form/oneTimeForm';
 import { useUserQuery } from '@/api/user/user';
+import useAuthStore from '@/store/useAuthStore';
 import { fireEvent, render, screen } from '@testing-library/react';
 import {
   freeFormFixture,
@@ -8,15 +12,78 @@ import {
 import OneTimeFormPage from './OneTimeFormPage';
 
 jest.mock('@/api/one-time-form/oneTimeForm', () => ({
+  ONE_TIME_FORM_NOT_FOUND: 'ONE_TIME_FORM_NOT_FOUND',
+  // 실제 구현은 ApiError 의 code 를 읽는다. axios 를 끌어오지 않도록 code 만 본다
+  getOneTimeFormErrorCode: (error: { code?: string } | null) => error?.code,
   useOneTimeFormQuery: jest.fn(),
+  useMyOneTimeFormApplicationQuery: jest.fn(),
 }));
 
 jest.mock('@/api/user/user', () => ({
   useUserQuery: jest.fn(() => ({ data: undefined })),
 }));
 
-const mockQuery = (result: { data?: unknown; isLoading: boolean }) =>
-  (useOneTimeFormQuery as jest.Mock).mockReturnValue(result);
+jest.mock('@/store/useAuthStore', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
+
+jest.mock('next/navigation', () => ({
+  usePathname: () => '/form/portfolio-1115',
+  useSearchParams: () =>
+    new URLSearchParams('utm_source=instagram&utm_medium=story'),
+}));
+
+const refetch = jest.fn();
+
+const mockQuery = (result: {
+  data?: unknown;
+  isLoading: boolean;
+  error?: unknown;
+}) =>
+  (useOneTimeFormQuery as jest.Mock).mockReturnValue({
+    error: null,
+    refetch,
+    ...result,
+  });
+
+const mockMyApplication = (result: {
+  data?: unknown;
+  isLoading?: boolean;
+  isError?: boolean;
+}) =>
+  (useMyOneTimeFormApplicationQuery as jest.Mock).mockReturnValue({
+    isLoading: false,
+    isError: false,
+    refetch,
+    ...result,
+  });
+
+const mockAuth = (state: { isLoggedIn: boolean; isInitialized: boolean }) =>
+  (useAuthStore as unknown as jest.Mock).mockImplementation(
+    (selector: (s: typeof state) => unknown) => selector(state),
+  );
+
+const MY_APPLICATION = {
+  applicationId: 501,
+  createDate: '2026-11-02T10:12:00',
+  isCanceled: false,
+  canceledAt: null,
+  isCancelable: true,
+  cancelDeadline: '2026-11-10T23:59:59',
+  name: '김렛커',
+  email: 'letscareer@example.com',
+  phoneNum: '010-1234-5678',
+  selectedOptions: [],
+  payment: { paidAmount: 49000, refundAmount: 0, paymentMethod: '카드' },
+  answerItems: [],
+};
+
+beforeEach(() => {
+  jest.clearAllMocks();
+  mockAuth({ isLoggedIn: true, isInitialized: true });
+  mockMyApplication({ data: null });
+});
 
 describe('OneTimeFormPage', () => {
   it('유료 폼은 "신청서 작성 1/2"와 상품 카드, 다음 버튼을 그린다', () => {
@@ -266,6 +333,222 @@ describe('OneTimeFormPage', () => {
       ).toBeInTheDocument();
       expect(screen.getByLabelText('프로필 사진').tagName).toBe('BUTTON');
       expect(screen.getByLabelText(/이력서/).tagName).toBe('BUTTON');
+    });
+  });
+});
+
+describe('OneTimeFormPage 예외 화면', () => {
+  const apiError = (code: string, status: number) => ({ code, status });
+
+  it('U1 404 면 "신청 페이지를 찾을 수 없어요"와 홈 링크를 그린다', () => {
+    mockQuery({
+      data: undefined,
+      isLoading: false,
+      error: apiError('ONE_TIME_FORM_NOT_FOUND', 404),
+    });
+    render(<OneTimeFormPage slug="private-form" />);
+
+    expect(
+      screen.getByRole('heading', { name: '신청 페이지를 찾을 수 없어요' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: '렛츠커리어 홈으로' }),
+    ).toHaveAttribute('href', '/');
+  });
+
+  it('그 밖의 U1 오류는 다시 시도 버튼으로 다시 부른다', () => {
+    mockQuery({
+      data: undefined,
+      isLoading: false,
+      error: apiError('INTERNAL_SERVER_ERROR', 500),
+    });
+    render(<OneTimeFormPage slug="portfolio-1115" />);
+
+    expect(
+      screen.getByRole('heading', { name: '신청 페이지를 불러오지 못했어요' }),
+    ).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: '다시 시도' }));
+    expect(refetch).toHaveBeenCalled();
+  });
+
+  it('시작 전이면 시작일과 신청 기간을 보여 주고 U2 를 부르지 않는다', () => {
+    mockQuery({
+      data: {
+        ...paidFormFixture,
+        form: { ...paidFormFixture.form, applyStatus: 'BEFORE' },
+      },
+      isLoading: false,
+    });
+    render(<OneTimeFormPage slug="portfolio-1115" />);
+
+    expect(
+      screen.getByRole('heading', { name: '11월 1일부터 신청할 수 있어요' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('신청 기간 2026.11.01 ~ 11.10'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('닫기', { selector: 'footer button' }),
+    ).toBeInTheDocument();
+    expect(useMyOneTimeFormApplicationQuery).toHaveBeenCalledWith(
+      'portfolio-1115',
+      { enabled: false },
+    );
+  });
+
+  it('마감이면 "신청이 마감됐어요"를 그린다', () => {
+    mockQuery({
+      data: {
+        ...paidFormFixture,
+        form: { ...paidFormFixture.form, applyStatus: 'CLOSED' },
+      },
+      isLoading: false,
+    });
+    render(<OneTimeFormPage slug="portfolio-1115" />);
+
+    expect(
+      screen.getByRole('heading', { name: '신청이 마감됐어요' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('신청 기간 2026.11.01 ~ 11.10'),
+    ).toBeInTheDocument();
+  });
+
+  it('비로그인이면 같은 경로와 쿼리로 돌아오는 로그인 링크를 그린다', () => {
+    mockAuth({ isLoggedIn: false, isInitialized: true });
+    mockQuery({ data: paidFormFixture, isLoading: false });
+    render(<OneTimeFormPage slug="portfolio-1115" />);
+
+    expect(
+      screen.getByRole('heading', { name: /렛츠커리어 로그인 후/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('현직자와 함께하는 포트폴리오 집중 클래스'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: '로그인하고 계속하기' }),
+    ).toHaveAttribute(
+      'href',
+      `/login?redirect=${encodeURIComponent(
+        '/form/portfolio-1115?utm_source=instagram&utm_medium=story',
+      )}`,
+    );
+    expect(useMyOneTimeFormApplicationQuery).toHaveBeenCalledWith(
+      'portfolio-1115',
+      { enabled: false },
+    );
+  });
+
+  it('로그인 상태를 읽기 전에는 로그인 화면 대신 로딩을 보여 준다', () => {
+    mockAuth({ isLoggedIn: false, isInitialized: false });
+    mockQuery({ data: paidFormFixture, isLoading: false });
+    render(<OneTimeFormPage slug="portfolio-1115" />);
+
+    expect(screen.getByText('불러오는 중이에요')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('link', { name: '로그인하고 계속하기' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('취소하지 않은 신청이 있으면 "이미 신청했어요"와 신청 확인 링크를 그린다', () => {
+    mockQuery({ data: paidFormFixture, isLoading: false });
+    mockMyApplication({ data: MY_APPLICATION });
+    render(<OneTimeFormPage slug="portfolio-1115" />);
+
+    expect(useMyOneTimeFormApplicationQuery).toHaveBeenCalledWith(
+      'portfolio-1115',
+      { enabled: true },
+    );
+    expect(
+      screen.getByRole('heading', { name: '이미 신청했어요' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/2026\.11\.02 신청 · 49,000원 결제/),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: '신청 확인하기' })).toHaveAttribute(
+      'href',
+      '/form/portfolio-1115/my',
+    );
+    expect(
+      screen.queryByRole('button', { name: '다음' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('무료 폼 신청이면 결제 금액 없이 신청일만 쓴다', () => {
+    mockQuery({ data: freeFormFixture, isLoading: false });
+    mockMyApplication({ data: { ...MY_APPLICATION, payment: null } });
+    render(<OneTimeFormPage slug="seminar-1130" />);
+
+    expect(screen.getByText(/2026\.11\.02 신청/)).toBeInTheDocument();
+    expect(screen.queryByText(/원 결제/)).not.toBeInTheDocument();
+  });
+
+  it('신청이 없으면 입력 화면과 계정 표시를 그린다', () => {
+    (useUserQuery as jest.Mock).mockReturnValue({
+      data: {
+        name: '김렛커',
+        email: 'login@example.com',
+        contactEmail: null,
+        phoneNum: '01012345678',
+      },
+    });
+    mockQuery({ data: paidFormFixture, isLoading: false });
+    mockMyApplication({ data: null });
+    render(<OneTimeFormPage slug="portfolio-1115" />);
+
+    expect(screen.getByRole('button', { name: '다음' })).toBeInTheDocument();
+    expect(screen.getByText('김렛커님 계정으로 신청')).toBeInTheDocument();
+    expect(screen.getByText('login@example.com')).toBeInTheDocument();
+    expect(screen.getByText('로그인됨')).toBeInTheDocument();
+  });
+
+  it('취소한 신청만 있으면 입력 화면을 그린다', () => {
+    mockQuery({ data: paidFormFixture, isLoading: false });
+    mockMyApplication({
+      data: {
+        ...MY_APPLICATION,
+        isCanceled: true,
+        canceledAt: '2026-11-03T09:00:00',
+      },
+    });
+    render(<OneTimeFormPage slug="portfolio-1115" />);
+
+    expect(screen.getByRole('button', { name: '다음' })).toBeInTheDocument();
+    expect(
+      screen.queryByRole('heading', { name: '이미 신청했어요' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('U2 를 불러오는 동안 로딩을, 실패하면 다시 시도를 보여 준다', () => {
+    mockQuery({ data: paidFormFixture, isLoading: false });
+    mockMyApplication({ isLoading: true });
+    const { rerender } = render(<OneTimeFormPage slug="portfolio-1115" />);
+    expect(screen.getByText('불러오는 중이에요')).toBeInTheDocument();
+
+    mockMyApplication({ isError: true });
+    rerender(<OneTimeFormPage slug="portfolio-1115" />);
+    fireEvent.click(screen.getByRole('button', { name: '다시 시도' }));
+    expect(refetch).toHaveBeenCalled();
+  });
+
+  it('진입하면 URL 의 UTM 을 slug 별로 보관한다', () => {
+    window.sessionStorage.clear();
+    window.history.replaceState(
+      null,
+      '',
+      '/form/portfolio-1115?utm_source=instagram&utm_campaign=1115',
+    );
+    mockQuery({ data: paidFormFixture, isLoading: false });
+    render(<OneTimeFormPage slug="portfolio-1115" />);
+
+    expect(
+      JSON.parse(
+        window.sessionStorage.getItem('one-time-form:portfolio-1115:utm')!,
+      ),
+    ).toMatchObject({
+      utmSource: 'instagram',
+      utmMedium: null,
+      utmCampaign: '1115',
     });
   });
 });
