@@ -101,6 +101,12 @@ const TAB_ENTRIES: SearchEntry[] = [
     keywords: ['상세 페이지 수정', '자유 입력란'],
   },
   {
+    label: '신청 현황',
+    path: '/mentors?tab=applications',
+    parents: ['멘토 관리', '멘토 목록'],
+    keywords: ['멘토 신청', '멘토 신청 현황', '신청서', '멘토 합류', '지원자'],
+  },
+  {
     label: '로고 목록',
     path: '/mentors/company-logos?tab=list',
     parents: ['멘토 관리', '회사 로고'],
