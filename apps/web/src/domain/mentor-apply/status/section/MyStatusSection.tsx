@@ -3,10 +3,11 @@
 import { useMyMentorApplicationsQuery } from '@/api/mentor-application/mentorApplication';
 import Link from 'next/link';
 
+import { primaryButtonClassName } from '../../ui/styles';
 import StatusResultCard from '../ui/StatusResultCard';
 
 // 제목(신청 현황 조회)과 같은 왼쪽 정렬로 둔다
-const messageClassName = 'text-xsmall14 text-neutral-30';
+const messageClassName = 'text-sm text-zinc-600';
 
 /** 회원 본인 신청 목록. 폼 없이 결과 카드만 최신순으로 보인다 */
 export default function MyStatusSection() {
@@ -23,7 +24,7 @@ export default function MyStatusSection() {
           <p className={messageClassName}>아직 신청한 내역이 없습니다.</p>
           <Link
             href="/mentor-apply"
-            className="bg-primary text-static-100 hover:bg-primary-hover text-xsmall16 rounded-sm px-6 py-3 font-semibold transition-colors"
+            className={`${primaryButtonClassName} px-6 py-3`}
           >
             신청하기
           </Link>

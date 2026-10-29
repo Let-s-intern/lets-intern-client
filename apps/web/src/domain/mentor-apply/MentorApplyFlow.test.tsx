@@ -82,7 +82,7 @@ describe('MentorApplyFlow', () => {
     ).toHaveAttribute('href', '/mentor-apply/status');
     expect(screen.getByRole('link', { name: '홈으로' })).toHaveAttribute(
       'href',
-      '/',
+      '/mentor-join',
     );
   });
 

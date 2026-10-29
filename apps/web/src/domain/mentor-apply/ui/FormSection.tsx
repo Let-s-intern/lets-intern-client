@@ -14,10 +14,10 @@ export default function FormSection({
 }: FormSectionProps) {
   return (
     <fieldset className="flex flex-col gap-5">
-      <legend className="border-neutral-80 text-small18 text-neutral-0 mb-5 w-full border-b pb-3 font-bold">
+      <legend className="mb-5 w-full border-b border-zinc-200 pb-3 text-lg font-bold text-zinc-900">
         {title}
         {description ? (
-          <span className="text-xsmall16 text-neutral-30 mt-1.5 block font-normal">
+          <span className="mt-1.5 block text-[15px] font-normal text-zinc-600">
             {description}
           </span>
         ) : null}

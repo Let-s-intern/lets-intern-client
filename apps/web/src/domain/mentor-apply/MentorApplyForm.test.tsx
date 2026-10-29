@@ -129,7 +129,7 @@ describe('MentorApplyForm', () => {
     expect((post.mock.calls[0][1] as FormData).has('file')).toBe(false);
   });
 
-  it('제출 중에는 버튼을 막는다', async () => {
+  it('제출 중에는 버튼을 막고 제출 중이라고 보인다', async () => {
     post.mockReturnValue(new Promise(() => {}));
     renderForm();
     await fillRequired();
@@ -137,9 +137,7 @@ describe('MentorApplyForm', () => {
     await submit();
 
     await waitFor(() =>
-      expect(
-        screen.getByRole('button', { name: '신청서 제출하기' }),
-      ).toBeDisabled(),
+      expect(screen.getByRole('button', { name: '제출 중…' })).toBeDisabled(),
     );
   });
 

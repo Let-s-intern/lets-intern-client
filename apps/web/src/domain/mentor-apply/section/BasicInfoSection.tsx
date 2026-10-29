@@ -16,7 +16,7 @@ export default function BasicInfoSection() {
 
   return (
     <FormSection title="기본 정보">
-      <div className="grid gap-5 md:grid-cols-2">
+      <div className="grid gap-5 sm:grid-cols-2">
         <FormField
           name="name"
           label="성함"
@@ -84,7 +84,7 @@ export default function BasicInfoSection() {
               errorId={fieldErrorId('yearsOfExperience')}
               {...register('yearsOfExperience')}
             />
-            <span className="text-xsmall14 text-neutral-40 pointer-events-none absolute inset-y-0 right-3.5 flex items-center">
+            <span className="pointer-events-none absolute inset-y-0 right-3.5 flex items-center text-sm text-zinc-500">
               년
             </span>
           </div>
@@ -139,7 +139,7 @@ export default function BasicInfoSection() {
           required
           hint="복수 선택 가능"
           error={errors.preferredContactMethods?.message}
-          className="md:col-span-2"
+          className="sm:col-span-2"
         >
           <Controller
             control={control}

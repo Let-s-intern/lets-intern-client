@@ -13,11 +13,11 @@ const application = (
   ...overrides,
 });
 
-/** 단계 번호 동그라미가 강조(bg-primary)됐는지 */
+/** 단계 번호 동그라미가 강조(bg-[#4d55f5])됐는지 */
 const reachedSteps = () =>
   screen
     .getAllByRole('listitem')
-    .map((li) => li.querySelector('span')!.className.includes('bg-primary'));
+    .map((li) => li.querySelector('span')!.className.includes('bg-[#4d55f5]'));
 
 describe('StatusStepper', () => {
   it.each([

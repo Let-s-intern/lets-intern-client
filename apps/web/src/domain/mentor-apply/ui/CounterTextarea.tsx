@@ -28,7 +28,7 @@ const CounterTextarea = forwardRef<HTMLTextAreaElement, CounterTextareaProps>(
         htmlFor={name}
         error={error}
         aside={
-          <span className="text-xxsmall12 text-neutral-45">
+          <span className="text-xs text-zinc-400">
             {value.length}/{maxLength}
           </span>
         }

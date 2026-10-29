@@ -34,15 +34,13 @@ export default function FormField({
   const labelContent = (
     <>
       {label}
-      {required ? <span className="text-requirement ml-0.5">*</span> : null}
+      {required ? <span className="ml-0.5 text-red-500">*</span> : null}
       {hint ? (
-        <span className="text-xsmall14 text-neutral-40 ml-2 font-normal">
-          {hint}
-        </span>
+        <span className="ml-2 text-sm font-normal text-zinc-500">{hint}</span>
       ) : null}
     </>
   );
-  const labelClassName = 'text-xsmall16 text-neutral-0 font-semibold';
+  const labelClassName = 'text-[15px] font-semibold text-zinc-900';
 
   return (
     <div
@@ -65,7 +63,7 @@ export default function FormField({
       </div>
       {children}
       {error ? (
-        <p id={fieldErrorId(name)} className="text-xxsmall12 text-requirement">
+        <p id={fieldErrorId(name)} className="text-sm text-red-500">
           {error}
         </p>
       ) : null}

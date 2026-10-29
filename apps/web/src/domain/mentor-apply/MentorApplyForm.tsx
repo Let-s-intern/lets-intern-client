@@ -11,6 +11,7 @@ import AttachmentSection from './section/AttachmentSection';
 import BasicInfoSection from './section/BasicInfoSection';
 import MentoringFieldSection from './section/MentoringFieldSection';
 import PrivacyAgreementSection from './section/PrivacyAgreementSection';
+import { primaryButtonClassName } from './ui/styles';
 import { attachmentErrorMessage } from './utils/attachmentErrorMessage';
 import { toMentorApplicationFormData } from './utils/toMentorApplicationFormData';
 
@@ -76,20 +77,23 @@ export default function MentorApplyForm({
         <PrivacyAgreementSection />
 
         <div className="flex flex-col gap-3">
-          <p className="text-xsmall14 text-neutral-40">
-            제출 후에는 수정할 수 없습니다. 내용을 다시 한번 확인해주세요.
-          </p>
           {mutation.isError && !isAttachmentError ? (
-            <p role="alert" className="text-xsmall14 text-requirement">
+            <p
+              role="alert"
+              className="rounded-[8px] bg-red-50 px-4 py-3 text-sm text-red-600"
+            >
               제출에 실패했어요. 잠시 후 다시 시도해 주세요.
             </p>
           ) : null}
+          <p className="text-sm text-zinc-500">
+            제출 후에는 수정할 수 없습니다. 내용을 다시 한번 확인해주세요.
+          </p>
           <button
             type="submit"
             disabled={mutation.isPending}
-            className="bg-primary text-xsmall16 text-static-100 hover:bg-primary-hover w-full rounded-sm py-3.5 font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60"
+            className={`${primaryButtonClassName} w-full py-3.5`}
           >
-            신청서 제출하기
+            {mutation.isPending ? '제출 중…' : '신청서 제출하기'}
           </button>
         </div>
       </form>
