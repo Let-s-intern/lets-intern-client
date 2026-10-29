@@ -1,11 +1,11 @@
 import { twMerge } from '@/lib/twMerge';
 import { forwardRef, type InputHTMLAttributes } from 'react';
 
-export const textInputClassName =
-  'w-full rounded-sm border border-neutral-80 bg-static-100 px-3.5 py-2.5 text-xsmall16 text-neutral-0 outline-none transition-colors placeholder:text-neutral-50 focus:border-primary focus:ring-2 focus:ring-primary-10';
+import { inputClassName, inputInvalidClassName } from './styles';
 
-export const textInputInvalidClassName =
-  'border-requirement focus:border-requirement';
+export const textInputClassName = inputClassName;
+
+export const textInputInvalidClassName = inputInvalidClassName;
 
 interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
   invalid?: boolean;

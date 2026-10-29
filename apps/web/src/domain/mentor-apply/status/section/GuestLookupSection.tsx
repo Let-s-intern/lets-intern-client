@@ -5,13 +5,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 
 import FormField, { fieldErrorId } from '../../ui/FormField';
+import { primaryButtonClassName } from '../../ui/styles';
 import TextInput from '../../ui/TextInput';
 import { formatPhone, toPhoneDigits } from '../../utils/formatPhone';
 import { guestLookupSchema, type GuestLookupValues } from '../schema';
 import StatusResultCard from '../ui/StatusResultCard';
 import { isRateLimited } from '../utils/isRateLimited';
 
-const messageClassName = 'text-xsmall14 text-neutral-30 text-center';
+const messageClassName =
+  'rounded-[8px] bg-zinc-50 px-4 py-4 text-center text-sm text-zinc-600';
 
 /** 비회원 조회. 성함·연락처 폼과 그 아래 결과 영역 */
 export default function GuestLookupSection() {
@@ -76,9 +78,9 @@ export default function GuestLookupSection() {
         <button
           type="submit"
           disabled={mutation.isPending}
-          className="bg-primary text-static-100 hover:bg-primary-hover text-xsmall16 w-full rounded-sm py-3.5 font-semibold transition-colors disabled:opacity-60"
+          className={`${primaryButtonClassName} w-full py-3.5`}
         >
-          조회하기
+          {mutation.isPending ? '조회 중…' : '조회하기'}
         </button>
       </form>
 

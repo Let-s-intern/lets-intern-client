@@ -29,18 +29,18 @@ export default function StatusStepper({ status }: StatusStepperProps) {
             <div className="flex flex-col items-center gap-2">
               <span
                 className={twMerge(
-                  'text-xsmall14 flex size-8 items-center justify-center rounded-full font-bold',
+                  'flex size-8 items-center justify-center rounded-full text-sm font-bold',
                   reached
-                    ? 'bg-primary text-static-100'
-                    : 'bg-neutral-95 text-neutral-50',
+                    ? 'bg-[#4d55f5] text-white'
+                    : 'bg-zinc-100 text-zinc-400',
                 )}
               >
                 {index + 1}
               </span>
               <span
                 className={twMerge(
-                  'text-xxsmall12 whitespace-nowrap',
-                  reached ? 'text-neutral-0 font-semibold' : 'text-neutral-50',
+                  'whitespace-nowrap text-xs',
+                  reached ? 'font-semibold text-zinc-900' : 'text-zinc-400',
                 )}
               >
                 {STATUS_LABEL[step]}
@@ -51,7 +51,7 @@ export default function StatusStepper({ status }: StatusStepperProps) {
                 aria-hidden
                 className={twMerge(
                   'mx-2 mb-6 h-0.5 flex-1',
-                  index < currentIndex ? 'bg-primary' : 'bg-neutral-90',
+                  index < currentIndex ? 'bg-[#4d55f5]' : 'bg-zinc-200',
                 )}
               />
             )}

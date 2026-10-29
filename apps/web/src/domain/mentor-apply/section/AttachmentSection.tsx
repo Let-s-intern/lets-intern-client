@@ -5,6 +5,7 @@ import { usePdfDocuments } from '../hooks/usePdfDocuments';
 import { SNS_LINK_COUNT, type MentorApplyFormValues } from '../schema';
 import FormField, { fieldErrorId } from '../ui/FormField';
 import FormSection from '../ui/FormSection';
+import { chipClassName } from '../ui/styles';
 import TextInput from '../ui/TextInput';
 import { documentLabel } from '../utils/isPdfDocument';
 
@@ -66,9 +67,7 @@ export default function AttachmentSection() {
                   onChange={() => changeSource(option.value)}
                   className="peer sr-only"
                 />
-                <span className="text-xsmall14 border-neutral-80 text-neutral-20 hover:border-neutral-60 peer-checked:border-primary peer-checked:bg-primary-10 peer-checked:text-primary peer-focus-visible:ring-primary-10 inline-block rounded-full border px-4 py-2 transition-colors peer-checked:font-semibold peer-focus-visible:ring-2">
-                  {option.label}
-                </span>
+                <span className={chipClassName}>{option.label}</span>
               </label>
             ))}
           </div>
@@ -80,22 +79,22 @@ export default function AttachmentSection() {
             name="userDocumentId"
             render={({ field }) =>
               !documents ? (
-                <p className="text-xsmall14 text-neutral-40">
+                <p className="text-sm text-zinc-500">
                   서류 정리 목록을 불러오는 중이에요.
                 </p>
               ) : documents.length === 0 ? (
-                <p className="text-xsmall14 text-neutral-40">
+                <p className="text-sm text-zinc-500">
                   서류 정리에 저장된 PDF 문서가 없어요.
                 </p>
               ) : (
                 <ul
                   role="radiogroup"
                   aria-label="서류 정리 PDF"
-                  className="border-neutral-80 divide-neutral-80 flex flex-col divide-y rounded-sm border"
+                  className="flex flex-col divide-y divide-zinc-200 rounded-[8px] border border-zinc-300"
                 >
                   {documents.map((document) => (
                     <li key={document.userDocumentId}>
-                      <label className="text-xsmall14 text-neutral-10 flex cursor-pointer items-center gap-2.5 px-4 py-3">
+                      <label className="flex cursor-pointer items-center gap-2.5 px-4 py-3 text-sm text-zinc-700">
                         <input
                           type="radio"
                           name={field.name}
@@ -105,7 +104,7 @@ export default function AttachmentSection() {
                             field.onChange(document.userDocumentId)
                           }
                           onBlur={field.onBlur}
-                          className="accent-primary h-4 w-4 shrink-0"
+                          className="size-4 shrink-0 accent-[#4d55f5]"
                         />
                         <span className="break-all">
                           {documentLabel(document)}
@@ -125,7 +124,7 @@ export default function AttachmentSection() {
               const file = field.value as File | null;
               return (
                 <div className="flex flex-col gap-2">
-                  {/* 기본 파일 입력은 숨기고, 아래 label 을 버튼처럼 보인다 */}
+                  {/* 기본 파일 입력은 숨기고, 아래 label 을 버튼처럼 보인다. 포커스 링은 형제 div 가 받는다 */}
                   <input
                     id="attachment"
                     type="file"
@@ -146,17 +145,18 @@ export default function AttachmentSection() {
                     }
                     className="peer sr-only"
                   />
-                  <label
-                    htmlFor="attachment"
-                    className="text-xsmall14 border-neutral-80 text-neutral-10 hover:bg-neutral-95 peer-focus-visible:border-primary peer-focus-visible:ring-primary-10 cursor-pointer self-start rounded-sm border px-4 py-2 font-semibold transition-colors peer-focus-visible:ring-2"
-                  >
-                    {file ? '다른 파일 선택' : '파일 선택'}
-                  </label>
-                  {file ? (
-                    <div className="border-neutral-80 flex items-center justify-between gap-3 rounded-sm border px-4 py-3">
-                      <span className="text-xsmall14 text-neutral-10 break-all">
-                        {file.name}
-                      </span>
+                  {/* 시안의 기본 파일 입력처럼 [파일 선택] 버튼 옆에 파일 이름을 둔다 */}
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-2 peer-focus-visible:[&>label]:ring-2 peer-focus-visible:[&>label]:ring-[#dfe1fe]">
+                    <label
+                      htmlFor="attachment"
+                      className="cursor-pointer rounded-[6px] bg-zinc-100 px-4 py-2 text-sm font-semibold text-zinc-700 transition-colors hover:bg-zinc-200"
+                    >
+                      파일 선택
+                    </label>
+                    <span className="min-w-0 break-all text-sm text-zinc-600">
+                      {file ? file.name : '선택된 파일 없음'}
+                    </span>
+                    {file ? (
                       <button
                         type="button"
                         onClick={() => {
@@ -164,12 +164,12 @@ export default function AttachmentSection() {
                           clearErrors('attachment');
                         }}
                         aria-label={`${file.name} 첨부 삭제`}
-                        className="text-xsmall14 text-neutral-40 hover:text-neutral-10 shrink-0 font-semibold transition-colors"
+                        className="shrink-0 text-sm font-semibold text-zinc-500 transition-colors hover:text-zinc-700"
                       >
                         삭제
                       </button>
-                    </div>
-                  ) : null}
+                    ) : null}
+                  </div>
                 </div>
               );
             }}

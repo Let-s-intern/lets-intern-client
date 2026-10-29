@@ -18,16 +18,16 @@ export default function StatusResultCard({
   const showReplyDate = status !== 'REPLIED' && !!expectedReplyDate;
 
   return (
-    <div className="border-neutral-80 rounded-md border p-6">
-      <p className="text-xsmall14 text-neutral-40">
+    <div className="rounded-[12px] border border-zinc-200 p-6">
+      <p className="text-sm text-zinc-500">
         신청일 {formatSubmittedDate(submittedAt)}
       </p>
       <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
-        <p className="text-small20 text-primary font-bold">
+        <p className="text-xl font-bold text-[#4d55f5]">
           {STATUS_LABEL[status]}
         </p>
         {showReplyDate ? (
-          <span className="bg-primary-10 text-xxsmall12 text-primary-dark inline-flex items-center gap-1.5 rounded-full px-3 py-1">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#eef0ff] px-3 py-1 text-xs text-[#3a41d6]">
             예상 회신일
             <span className="font-semibold">
               {formatReplyDate(expectedReplyDate)}

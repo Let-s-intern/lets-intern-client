@@ -71,19 +71,16 @@ function MentorApplyModalContent({ onClose }: { onClose: () => void }) {
       aria-labelledby="mentor-apply-modal-title"
       className="fixed inset-0 z-50 flex justify-center bg-black/50 md:items-center"
     >
-      <div className="flex h-full w-full flex-col bg-white md:h-auto md:max-h-[90vh] md:max-w-2xl md:rounded-lg">
-        <div className="border-neutral-80 flex shrink-0 items-center justify-between border-b px-5 py-4">
-          <h2
-            id="mentor-apply-modal-title"
-            className="text-small18 text-neutral-0 font-semibold"
-          >
+      <div className="flex h-full w-full flex-col bg-white text-zinc-900 md:h-auto md:max-h-[90vh] md:max-w-2xl md:rounded-[12px]">
+        <div className="flex shrink-0 items-center justify-between border-b border-zinc-200 px-5 py-4">
+          <h2 id="mentor-apply-modal-title" className="text-lg font-bold">
             멘토 신청서
           </h2>
           <button
             type="button"
             aria-label="닫기"
             onClick={requestClose}
-            className="text-neutral-30 hover:bg-neutral-95 rounded-xxs -mr-2 p-2 transition-colors"
+            className="-mr-2 rounded-[6px] p-2 text-zinc-500 transition-colors hover:bg-zinc-100"
           >
             <svg
               aria-hidden

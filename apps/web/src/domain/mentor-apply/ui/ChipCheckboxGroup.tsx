@@ -1,3 +1,5 @@
+import { chipClassName } from './styles';
+
 interface ChipOption<T extends string> {
   value: T;
   label: string;
@@ -45,9 +47,7 @@ export default function ChipCheckboxGroup<T extends string>({
             aria-invalid={invalid ? true : false}
             className="peer sr-only"
           />
-          <span className="text-xsmall14 border-neutral-80 text-neutral-20 hover:border-neutral-60 peer-checked:border-primary peer-checked:bg-primary-10 peer-checked:text-primary peer-focus-visible:ring-primary-10 inline-block rounded-full border px-4 py-2 transition-colors peer-checked:font-semibold peer-focus-visible:ring-2">
-            {option.label}
-          </span>
+          <span className={chipClassName}>{option.label}</span>
         </label>
       ))}
     </div>
