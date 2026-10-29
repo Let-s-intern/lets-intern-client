@@ -54,8 +54,11 @@ const MembershipPlanBottomSheet = ({
     const discount = selected.discount ?? 0;
     const totalPrice = Math.max(price - discount, 0);
     setOrder({
+      orderType: 'PURCHASE',
       membershipId,
       membershipPlanId: selected.membershipPlanId,
+      applicationId: null,
+      membershipOptionId: null,
       passTitle: form.title ?? '올인원패스',
       thumbnail: form.thumbnail ?? null,
       price,

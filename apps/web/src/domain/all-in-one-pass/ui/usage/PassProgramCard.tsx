@@ -18,6 +18,13 @@ export interface PassProgramCardData {
   programStatusType?: ProgramStatus | null;
   participation: PassParticipation;
   applicationId?: number | null;
+  /** 챌린지 대시보드 입장 가능 여부(시작한 챌린지만). 시작 전이면 상세로 보낸다 */
+  canEnterDashboard?: boolean;
+  /** 올인원패스 혜택으로 구매·참여한 프로그램이면 true */
+  isMembershipApplied?: boolean;
+  isDownloaded?: boolean;
+  contentUrl?: string | null;
+  contentFileUrl?: string | null;
 }
 
 const recruitmentPill = (item: PassProgramCardData): string | null => {
@@ -60,9 +67,11 @@ const PassProgramCard = ({ item, onClick }: Props) => {
       />
 
       <div className="flex flex-1 flex-col justify-between gap-2.5">
-        <h3 className="text-xsmall14 md:text-xsmall16 text-neutral-0 line-clamp-2 font-semibold">
-          {item.title}
-        </h3>
+        <div className="flex flex-col gap-1.5">
+          <h3 className="text-xsmall14 md:text-xsmall16 text-neutral-0 line-clamp-2 font-semibold">
+            {item.title}
+          </h3>
+        </div>
 
         <div className="flex flex-col gap-2">
           {item.periodText && (
@@ -79,6 +88,11 @@ const PassProgramCard = ({ item, onClick }: Props) => {
           {pill && (
             <span className="text-xxsmall12 w-fit rounded-[3px] bg-[#F2ECFC] px-2 py-1 font-semibold text-[#8444FF]">
               {pill}
+            </span>
+          )}
+          {item.isMembershipApplied && (
+            <span className="rounded-xxs text-xxsmall12 w-fit bg-[#edeffe] px-2 py-1 font-medium text-[#4A76FF]">
+              패스 혜택
             </span>
           )}
         </div>

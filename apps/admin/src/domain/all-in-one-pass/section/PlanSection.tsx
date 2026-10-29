@@ -10,7 +10,6 @@ import { Check, Pencil } from 'lucide-react';
 import { useState } from 'react';
 import { FaPlus, FaTrashCan } from 'react-icons/fa6';
 
-// 숫자 입력 오른쪽 정렬
 const numberInputSx = { '& input': { textAlign: 'right' as const } };
 
 const PERMISSION_OPTIONS: { value: PassPermission; label: string }[] = [
@@ -35,7 +34,7 @@ interface Props {
   mentoringCouponAutoIssue: boolean;
   onMentoringChange: (checked: boolean) => void;
   /**
-   * 수정 페이지 전용: per-plan 저장/삭제. 넘기면 "편집 모드"로 동작한다
+   * 수정 페이지 전용: per-plan 저장/삭제. 넘기면 "편집 모드"로 동작
    * (수정 버튼을 눌러야 편집 가능, 저장 버튼으로 그 플랜만 반영).
    * 넘기지 않으면(생성 페이지) 항상 편집 가능하고 삭제는 로컬에서만 제거.
    */
@@ -107,10 +106,12 @@ export default function PlanSection({
         <div className="bg-primary-10 border-primary-15 rounded-sm border px-4 py-1">
           <FormControlLabel
             className="m-0"
+            sx={{ cursor: 'not-allowed' }}
             control={
               <Checkbox
                 checked={mentoringCouponAutoIssue}
                 onChange={(e) => onMentoringChange(e.target.checked)}
+                disabled
               />
             }
             label="1:1 LIVE 멘토링 50% 쿠폰 자동발급 (월단위)"

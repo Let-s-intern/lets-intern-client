@@ -16,9 +16,9 @@ import {
 } from './calendarUtils';
 
 /**
- * U-1 캘린더(데스크탑) 상태·파생 데이터.
+ * 캘린더(데스크탑) 상태·파생 데이터.
  * 창은 오늘이 속한 월요일주 기준 2주, 이동은 1주씩.
- * 노출 규칙(방법 D)은 {@link deriveCalendar} 참고.
+ * 노출 규칙은 {@link deriveCalendar} 참고.
  */
 export function useCalendar(
   events: PassCalendarEvent[],

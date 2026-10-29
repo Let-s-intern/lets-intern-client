@@ -15,6 +15,7 @@ import { z } from 'zod';
 const paymentProgramTypeSchema = z.union([
   ProgramTypeEnum,
   z.literal('LIVE_MENTORING'),
+  z.literal('MEMBERSHIP'),
 ]);
 export type PaymentProgramType = z.infer<typeof paymentProgramTypeSchema>;
 
@@ -230,7 +231,11 @@ export const paymentDetailType = z.object({
     title: z.string().nullable().optional(),
     thumbnail: z.string().nullable().optional(),
     programType: z
-      .union([ProgramTypeEnum.exclude(['REPORT']), z.literal('LIVE_MENTORING')])
+      .union([
+        ProgramTypeEnum.exclude(['REPORT']),
+        z.literal('LIVE_MENTORING'),
+        z.literal('MEMBERSHIP'),
+      ])
       .nullable()
       .optional(),
     progressType: z.string().nullable().optional(),
@@ -253,6 +258,7 @@ export const paymentDetailType = z.object({
     paybackPrice: z.number().nullable().optional(),
     couponDiscount: z.number().nullable().optional(),
     isRefunded: z.boolean().nullable().optional(),
+    isMembershipApplied: z.boolean().nullable().optional(), // 올인원패스 혜택 적용 여부
     lastModifiedDate: z.string().nullable().optional(),
     createDate: z.string().nullable().optional(),
   }),

@@ -2,21 +2,20 @@ import {
   PassExternalLink,
   PassLandingBenefitExtra,
   PassLandingManualBenefit,
+  PassPlan,
 } from '@/domain/all-in-one-pass/types';
 import {
   BENEFIT_ICON_OPTIONS,
   DEFAULT_BENEFIT_ICON_KEY,
+  getAdditionalBenefitSlots,
+  getCoreBenefits,
+  getFirstAvailableIconKey,
 } from '@/domain/all-in-one-pass/util/landingOptions';
-import {
-  Button,
-  IconButton,
-  MenuItem,
-  TextField,
-  Tooltip,
-} from '@mui/material';
+import { Button, IconButton, MenuItem, TextField } from '@mui/material';
 import { FaPlus, FaTrashCan } from 'react-icons/fa6';
 
 interface Props {
+  plans: PassPlan[];
   externalLinks: PassExternalLink[];
   benefitExtras: Record<string, PassLandingBenefitExtra>;
   manualBenefits: PassLandingManualBenefit[];
@@ -26,47 +25,139 @@ interface Props {
   onManualBenefitsChange: (benefits: PassLandingManualBenefit[]) => void;
 }
 
-const createEmptyManualBenefit = (): PassLandingManualBenefit => ({
+const createEmptyManualBenefit = (
+  iconKey: string,
+): PassLandingManualBenefit => ({
   id: crypto.randomUUID(),
   name: '',
   description: '',
-  iconKey: DEFAULT_BENEFIT_ICON_KEY,
+  iconKey,
 });
 
 const IconSelect = ({
   value,
   onChange,
+  disabled,
+  usedIconKeys,
 }: {
   value: string;
   onChange: (iconKey: string) => void;
+  disabled?: boolean;
+  usedIconKeys?: Set<string>;
+}) => {
+  // 이미 다른 카드가 쓰는 아이콘은 숨기되, 이 행의 현재 선택값은 유지
+  const options = BENEFIT_ICON_OPTIONS.filter(
+    (opt) => opt.key === value || !usedIconKeys?.has(opt.key),
+  );
+  return (
+    <TextField
+      select
+      label="아이콘"
+      value={value || DEFAULT_BENEFIT_ICON_KEY}
+      onChange={(e) => onChange(e.target.value)}
+      size="small"
+      className="w-18 shrink-0"
+      disabled={disabled}
+    >
+      {options.map((opt) => (
+        <MenuItem key={opt.key} value={opt.key}>
+          <img src={opt.src} alt="" className="h-5 w-5" />
+        </MenuItem>
+      ))}
+    </TextField>
+  );
+};
+
+/** 혜택 한 행: 아이콘 + 혜택명 + 설명 + 우측 버튼. onChange 없는 필드는 읽기전용. */
+const BenefitRow = ({
+  iconKey,
+  onIconChange,
+  name,
+  nameLabel,
+  onNameChange,
+  nameMaxLength,
+  description,
+  descriptionLabel = '혜택 설명 (최대 20자)',
+  onDescriptionChange,
+  descriptionMaxLength,
+  action,
+  usedIconKeys,
+}: {
+  iconKey: string;
+  onIconChange?: (iconKey: string) => void;
+  usedIconKeys?: Set<string>;
+  name: string;
+  nameLabel: string;
+  onNameChange?: (name: string) => void;
+  nameMaxLength?: number;
+  description: string;
+  descriptionLabel?: string;
+  onDescriptionChange?: (description: string) => void;
+  descriptionMaxLength?: number;
+  action?: React.ReactNode;
 }) => (
-  <TextField
-    select
-    label="아이콘"
-    value={value || DEFAULT_BENEFIT_ICON_KEY}
-    onChange={(e) => onChange(e.target.value)}
-    size="small"
-    className="w-32 shrink-0"
-  >
-    {BENEFIT_ICON_OPTIONS.map((opt) => (
-      <MenuItem key={opt.key} value={opt.key}>
-        {opt.label}
-      </MenuItem>
-    ))}
-  </TextField>
+  <div className="flex items-center gap-2">
+    <IconSelect
+      value={iconKey}
+      onChange={onIconChange ?? (() => {})}
+      disabled={!onIconChange}
+      usedIconKeys={usedIconKeys}
+    />
+    <TextField
+      label={nameLabel}
+      value={name}
+      onChange={onNameChange && ((e) => onNameChange(e.target.value))}
+      size="small"
+      className="w-56 shrink-0"
+      disabled={!onNameChange}
+      slotProps={
+        nameMaxLength ? { htmlInput: { maxLength: nameMaxLength } } : undefined
+      }
+    />
+    <TextField
+      label={descriptionLabel}
+      value={description}
+      onChange={
+        onDescriptionChange && ((e) => onDescriptionChange(e.target.value))
+      }
+      size="small"
+      fullWidth
+      disabled={!onDescriptionChange}
+      slotProps={
+        descriptionMaxLength
+          ? { htmlInput: { maxLength: descriptionMaxLength } }
+          : undefined
+      }
+    />
+    {action}
+  </div>
 );
 
-/**
- * 추가혜택 에디터. 외부링크는 자동으로 행이 생기고(이름은 링크에서 실시간, 저장 안 해도
- * 반영), 설명·아이콘만 입력한다. 외부링크와 무관한 혜택은 "혜택 직접 추가"로 넣는다.
- */
 export default function LandingBenefitEditor({
+  plans,
   externalLinks,
   benefitExtras,
   manualBenefits,
   onBenefitExtrasChange,
   onManualBenefitsChange,
 }: Props) {
+  const coreBenefits = getCoreBenefits(plans);
+  // 자동 포함 혜택이 차지한 뒤 남는 슬롯. 외부링크(상단부터) → 수동 순으로 채움.
+  const additionalSlots = getAdditionalBenefitSlots(plans);
+  const visibleLinks = externalLinks.slice(0, additionalSlots);
+  const manualSlots = Math.max(additionalSlots - visibleLinks.length, 0);
+  const visibleManual = manualBenefits.slice(0, manualSlots);
+  const isFull = visibleLinks.length + visibleManual.length >= additionalSlots;
+
+  // 현재 화면에 노출되는 카드가 쓰는 아이콘(자동+외부링크+수동) — 드롭다운에서 제외
+  const usedIconKeys = new Set<string>([
+    ...coreBenefits.map((b) => b.iconKey),
+    ...visibleLinks.map(
+      (link) => benefitExtras[link.id]?.iconKey ?? DEFAULT_BENEFIT_ICON_KEY,
+    ),
+    ...visibleManual.map((b) => b.iconKey),
+  ]);
+
   const updateExtra = (
     linkId: string,
     partial: Partial<PassLandingBenefitExtra>,
@@ -90,84 +181,56 @@ export default function LandingBenefitEditor({
     );
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex flex-col gap-0.5">
-        <h3 className="text-small18 text-neutral-0 font-semibold">추가 혜택</h3>
-        <p className="text-xxsmall12 text-neutral-40">
-          외부링크를 입력하면 자동으로 행이 생겨요. 설명·아이콘만 채우면 됩니다.
-        </p>
-      </div>
+    <div className="flex flex-col gap-2">
+      {/* 자동 포함 혜택 (플랜 권한 union 기반 · 읽기전용) */}
+      {coreBenefits.map((benefit) => (
+        <BenefitRow
+          key={benefit.name}
+          iconKey={benefit.iconKey}
+          name={benefit.name}
+          nameLabel="혜택명"
+          description={benefit.description}
+        />
+      ))}
 
       {/* 외부링크 유래 혜택 (이름은 외부링크에서 실시간) */}
-      <div className="flex flex-col gap-2">
-        {externalLinks.length === 0 ? (
-          <p className="text-xsmall14 py-2 text-neutral-50">
-            외부링크가 없습니다. 위 &apos;외부 링크&apos; 섹션에서 추가하면
-            여기에 자동으로 나타납니다.
-          </p>
-        ) : (
-          externalLinks.map((link) => (
-            <div key={link.id} className="flex items-center gap-2">
-              <TextField
-                label="혜택명 (외부링크)"
-                value={link.name || '(이름 없음)'}
-                size="small"
-                className="w-56 shrink-0"
-                disabled
-              />
-              <TextField
-                label="혜택 설명"
-                value={benefitExtras[link.id]?.description ?? ''}
-                onChange={(e) =>
-                  updateExtra(link.id, { description: e.target.value })
-                }
-                size="small"
-                fullWidth
-              />
-              <IconSelect
-                value={
-                  benefitExtras[link.id]?.iconKey ?? DEFAULT_BENEFIT_ICON_KEY
-                }
-                onChange={(iconKey) => updateExtra(link.id, { iconKey })}
-              />
-              <Tooltip title="외부 링크 섹션에서 삭제하세요">
-                <span>
-                  <IconButton aria-label="외부링크 혜택" disabled>
-                    <FaTrashCan size={16} />
-                  </IconButton>
-                </span>
-              </Tooltip>
-            </div>
-          ))
-        )}
-      </div>
+      {externalLinks.length > 0 &&
+        visibleLinks.map((link) => (
+          <BenefitRow
+            key={link.id}
+            iconKey={
+              benefitExtras[link.id]?.iconKey ?? DEFAULT_BENEFIT_ICON_KEY
+            }
+            onIconChange={(iconKey) => updateExtra(link.id, { iconKey })}
+            name={link.name || '(이름 없음)'}
+            nameLabel="혜택명 (외부링크)"
+            description={benefitExtras[link.id]?.description ?? ''}
+            onDescriptionChange={(description) =>
+              updateExtra(link.id, { description })
+            }
+            descriptionMaxLength={20}
+            usedIconKeys={usedIconKeys}
+          />
+        ))}
 
       {/* 직접 추가 혜택 */}
-      <div className="flex flex-col gap-2">
-        {manualBenefits.map((benefit) => (
-          <div key={benefit.id} className="flex items-center gap-2">
-            <TextField
-              label="혜택명"
-              value={benefit.name}
-              onChange={(e) =>
-                updateManual(benefit.id, { name: e.target.value })
-              }
-              size="small"
-              className="w-56 shrink-0"
-            />
-            <TextField
-              label="혜택 설명"
-              value={benefit.description}
-              onChange={(e) =>
-                updateManual(benefit.id, { description: e.target.value })
-              }
-              size="small"
-              fullWidth
-            />
-            <IconSelect
-              value={benefit.iconKey}
-              onChange={(iconKey) => updateManual(benefit.id, { iconKey })}
-            />
+      {visibleManual.map((benefit) => (
+        <BenefitRow
+          key={benefit.id}
+          iconKey={benefit.iconKey}
+          onIconChange={(iconKey) => updateManual(benefit.id, { iconKey })}
+          name={benefit.name}
+          nameLabel="혜택명(최대 13자)"
+          onNameChange={(name) => updateManual(benefit.id, { name })}
+          nameMaxLength={13}
+          description={benefit.description}
+          descriptionLabel="혜택 설명 (최대 20자)"
+          onDescriptionChange={(description) =>
+            updateManual(benefit.id, { description })
+          }
+          descriptionMaxLength={20}
+          usedIconKeys={usedIconKeys}
+          action={
             <IconButton
               aria-label="혜택 삭제"
               color="error"
@@ -179,23 +242,25 @@ export default function LandingBenefitEditor({
             >
               <FaTrashCan size={16} />
             </IconButton>
-          </div>
-        ))}
-      </div>
+          }
+        />
+      ))}
 
-      <Button
-        variant="outlined"
-        startIcon={<FaPlus size={12} />}
-        onClick={() =>
-          onManualBenefitsChange([
-            ...manualBenefits,
-            createEmptyManualBenefit(),
-          ])
-        }
-        sx={{ borderStyle: 'dashed' }}
-      >
-        혜택 직접 추가
-      </Button>
+      {!isFull && (
+        <Button
+          variant="outlined"
+          startIcon={<FaPlus size={12} />}
+          onClick={() =>
+            onManualBenefitsChange([
+              ...manualBenefits,
+              createEmptyManualBenefit(getFirstAvailableIconKey(usedIconKeys)),
+            ])
+          }
+          sx={{ borderStyle: 'dashed' }}
+        >
+          혜택 추가
+        </Button>
+      )}
     </div>
   );
 }

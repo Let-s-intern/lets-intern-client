@@ -1,3 +1,4 @@
+import { useGetParticipationPeriodsQuery } from '@/api/all-in-one-pass/useActiveParticipants';
 import dayjs from '@/lib/dayjs';
 import {
   Chip,
@@ -12,35 +13,21 @@ import {
   TableRow,
 } from '@mui/material';
 import { IoClose } from 'react-icons/io5';
-import { periodKindLabel } from '../../util/periodKindLabel';
-import { ActivePassParticipant, PassParticipationPeriod } from '../../types';
+import { ActivePassParticipant } from '../../types';
 
 interface Props {
   participant: ActivePassParticipant | null;
   onClose: () => void;
 }
 
-// 연장 커버 구간: [직전 종료+1, 이번 종료] (startDate가 최초 고정이라 역산)
-const coverage = (periods: PassParticipationPeriod[], index: number) => {
-  const period = periods[index];
-  if (index === 0)
-    return {
-      days: dayjs(period.endDate).diff(dayjs(period.startDate), 'day'),
-      start: dayjs(period.startDate),
-      end: dayjs(period.endDate),
-    };
-  return {
-    days: period.extendedDays ?? 0,
-    start: dayjs(periods[index - 1].endDate).add(1, 'day'),
-    end: dayjs(period.endDate),
-  };
-};
-
 export default function ParticipationHistoryModal({
   participant,
   onClose,
 }: Props) {
   const open = participant !== null;
+  const { data: periods = [], isLoading } = useGetParticipationPeriodsQuery(
+    participant?.id,
+  );
 
   return (
     <Dialog
@@ -58,7 +45,7 @@ export default function ParticipationHistoryModal({
         </IconButton>
       </DialogTitle>
       <DialogContent dividers className="p-0">
-        {participant && participant.periods.length > 0 ? (
+        {periods.length > 0 ? (
           <Table stickyHeader sx={{ '& td, & th': { py: 2 } }}>
             <TableHead>
               <TableRow>
@@ -70,48 +57,45 @@ export default function ParticipationHistoryModal({
               </TableRow>
             </TableHead>
             <TableBody>
-              {participant.periods.map((period, index) => {
-                const cov = coverage(participant.periods, index);
-                return (
-                  <TableRow key={period.applicationId} hover>
-                    <TableCell>
-                      <Chip
-                        label={periodKindLabel(
-                          index,
-                          period.extendedDays,
-                          '패스 기간',
-                        )}
-                        size="small"
-                        color={index === 0 ? 'default' : 'primary'}
-                        variant="outlined"
-                      />
-                    </TableCell>
-                    <TableCell className="text-neutral-20">
-                      {period.applicationId}
-                    </TableCell>
-                    <TableCell className="text-neutral-20">
-                      {dayjs(period.paidAt).format('YYYY.MM.DD')}
-                    </TableCell>
-                    <TableCell className="text-neutral-0">
-                      {period.price.toLocaleString()}원
-                    </TableCell>
-                    <TableCell className="text-neutral-0">
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-11 shrink-0">{cov.days}일</span>
-                        <span>
-                          ({cov.start.format('YYYY.MM.DD')} ~{' '}
-                          {cov.end.format('YYYY.MM.DD')})
-                        </span>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
+              {periods.map((period) => (
+                <TableRow key={period.orderId} hover>
+                  <TableCell>
+                    <Chip
+                      label={period.title}
+                      size="small"
+                      color={
+                        period.type === 'EXTENSION' ? 'primary' : 'default'
+                      }
+                      variant="outlined"
+                    />
+                  </TableCell>
+                  <TableCell className="text-neutral-20">
+                    {period.orderId}
+                  </TableCell>
+                  <TableCell className="text-neutral-20">
+                    {period.paidAt
+                      ? dayjs(period.paidAt).format('YYYY.MM.DD')
+                      : '-'}
+                  </TableCell>
+                  <TableCell className="text-neutral-0">
+                    {period.finalPrice.toLocaleString()}원
+                  </TableCell>
+                  <TableCell className="text-neutral-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-11 shrink-0">{period.days}일</span>
+                      <span>
+                        ({dayjs(period.startDate).format('YYYY.MM.DD')} ~{' '}
+                        {dayjs(period.endDate).format('YYYY.MM.DD')})
+                      </span>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         ) : (
           <p className="text-xsmall14 text-neutral-45 py-6 text-center">
-            참여 기간 내역이 없습니다.
+            {isLoading ? '불러오는 중...' : '참여 기간 내역이 없습니다.'}
           </p>
         )}
       </DialogContent>

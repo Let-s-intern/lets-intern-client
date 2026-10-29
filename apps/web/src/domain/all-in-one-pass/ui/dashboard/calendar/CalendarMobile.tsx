@@ -1,6 +1,6 @@
 'use client';
 
-// U-1 모바일 캘린더 루트 — 주간/월간 토글 + sticky + 날짜 피커
+// 모바일 캘린더 루트 — 주간/월간 토글 + sticky + 날짜 피커
 import { FULL_NAVBAR_HEIGHT_OFFSET } from '@/common/layout/header/NavBar';
 import { twMerge } from '@/lib/twMerge';
 import clsx from 'clsx';

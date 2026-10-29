@@ -1,3 +1,9 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": [
+    {
+      "source": "/seminar-vods",
+      "destination": "https://seminar-vod.letscareer.co.kr/api/public/vods"
+    },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }

@@ -1,29 +1,30 @@
-import type {
-  AllInOnePassPlan,
-  PassMentoringCoupon,
-  PassProgramType,
-} from '../../types';
+'use client';
 
-const PROGRAM_LABEL: Record<PassProgramType, string> = {
+import { useGetMyPassPlan } from '../../api/dashboard';
+
+const PROGRAM_LABEL: Record<string, string> = {
   CHALLENGE: '챌린지',
   GUIDEBOOK: '가이드북',
   VOD: 'VOD',
-  LIVE: '라이브 클래스',
+  LIVE: 'LIVE 클래스',
 };
 
-interface Props {
-  plan: AllInOnePassPlan;
-  /** 멘토링 쿠폰 (privilege 아님). 월 자동발급 50% 할인권 — 쿠폰명 그대로 표기 */
-  mentoringCoupons: PassMentoringCoupon[];
-}
+// v1: 멘토링 쿠폰은 고정 노출(플랜/API에 없음). 멘토링 정리 시 교체.
+const MENTORING_BADGE = '1:1 LIVE 멘토링 50% 할인 쿠폰';
 
-/** U-1 대시보드 "내 패스 이용권" 카드 — 플랜명 + 이용권 뱃지 */
-export default function PassUsageCard({ plan, mentoringCoupons }: Props) {
+export default function PassUsageCard({
+  applicationId,
+}: {
+  applicationId: number;
+}) {
+  const { data } = useGetMyPassPlan(applicationId);
+  if (!data) return null;
+
   const badges = [
-    // 이용권: 수량 미표기, "{유형} 이용권"으로 통일
-    ...plan.privileges.map((p) => `${PROGRAM_LABEL[p.programType]} 이용권`),
-    // 멘토링: 월 자동발급 할인권 (쿠폰명 그대로)
-    ...mentoringCoupons.map((c) => c.name),
+    ...data.privilegeList.map(
+      (p) => `${PROGRAM_LABEL[p.programType] ?? p.programType} 이용권`,
+    ),
+    MENTORING_BADGE,
   ];
 
   return (
@@ -33,7 +34,7 @@ export default function PassUsageCard({ plan, mentoringCoupons }: Props) {
           내 패스 이용권
         </span>
         <span className="text-medium22 md:text-medium24 text-neutral-0 font-bold">
-          {plan.title}
+          {data.title}
         </span>
       </div>
       <div className="flex flex-wrap gap-2">

@@ -5,7 +5,7 @@ import {
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import dayjs from '@/lib/dayjs';
 import { Button, IconButton, MenuItem, TextField } from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { useState } from 'react';
 import { FaPlus, FaTrashCan } from 'react-icons/fa6';
 import CalendarPreviewModal from '../ui/calendar/CalendarPreviewModal';
@@ -17,7 +17,8 @@ const TYPE_OPTIONS: { value: CalendarEventType; label: string }[] = [
 
 export const createEmptyCalendarEvent = (): PassCalendarEvent => ({
   id: crypto.randomUUID(),
-  date: null,
+  startDate: null,
+  endDate: null,
   type: 'GUERRILLA',
   title: '',
   url: null,
@@ -32,7 +33,7 @@ interface Props {
   passDays?: number | null;
 }
 
-/** 1.3 캘린더 관리: 게릴라세션·마일스톤 일정 수기 입력 (챌린지는 자동 반영) */
+/** 캘린더 관리: 게릴라세션·마일스톤 일정 수기 입력 (챌린지는 자동 반영) */
 export default function CalendarSection({
   events,
   onChange,
@@ -71,17 +72,36 @@ export default function CalendarSection({
         </button>
       </div>
 
-      <div className="flex flex-col gap-2">
+      <div
+        className={
+          events.length > 6
+            ? 'flex h-[308px] flex-col gap-2 overflow-y-auto pr-1'
+            : 'flex flex-col gap-2'
+        }
+      >
         {events.map((event) => (
-          <div key={event.id} className="flex items-center gap-2">
-            <DatePicker
-              label="날짜"
-              value={event.date ? dayjs(event.date) : null}
+          <div key={event.id} className="flex shrink-0 items-center gap-2">
+            <DateTimePicker
+              label="시작일시"
+              value={event.startDate ? dayjs(event.startDate) : null}
               onChange={(v) =>
-                update(event.id, { date: v ? v.toISOString() : null })
+                update(event.id, { startDate: v ? v.toISOString() : null })
               }
+              format="YYYY.MM.DD HH:mm"
               slotProps={{ textField: { size: 'small' } }}
-              className="w-36 shrink-0"
+              className="w-48 shrink-0"
+            />
+            <span className="text-neutral-40 shrink-0">~</span>
+            <DateTimePicker
+              label="종료일시"
+              value={event.endDate ? dayjs(event.endDate) : null}
+              onChange={(v) =>
+                update(event.id, { endDate: v ? v.toISOString() : null })
+              }
+              minDateTime={event.startDate ? dayjs(event.startDate) : undefined}
+              format="YYYY.MM.DD HH:mm"
+              slotProps={{ textField: { size: 'small' } }}
+              className="w-48 shrink-0"
             />
             <TextField
               select

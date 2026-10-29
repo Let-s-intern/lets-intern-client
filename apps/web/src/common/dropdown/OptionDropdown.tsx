@@ -27,7 +27,7 @@ function OptionDropdown({
       )}
     >
       <div
-        className="text-xsmall14 text-static-0 flex cursor-pointer items-center justify-between bg-neutral-100 p-3 font-semibold"
+        className="text-xsmall14 text-static-0 flex shrink-0 cursor-pointer items-center justify-between bg-neutral-100 p-3 font-semibold"
         onClick={() => setIsOpen(!isOpen)}
       >
         <label id={labelId}>{label}</label>

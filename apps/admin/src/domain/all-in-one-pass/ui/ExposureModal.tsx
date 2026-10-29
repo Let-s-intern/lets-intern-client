@@ -33,7 +33,7 @@ const formatPeriod = (start: string | null, end: string | null) => {
 
 /**
  * 노출 영역 관리(공지·자료집 공용): 체크한 올인원패스에만 노출.
- * 저장 로직(뮤테이션·스낵바)은 래퍼가 onSave 로 주입한다.
+ * 저장 로직(뮤테이션·스낵바)은 래퍼가 onSave 로 주입.
  */
 export default function ExposureModal({
   open,

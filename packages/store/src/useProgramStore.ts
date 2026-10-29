@@ -22,6 +22,7 @@ interface ProgramApplicationFormStore extends HydrationStore {
     programOrderId: string | null;
     isFree: boolean | null;
     deposit: number;
+    membershipDiscount: number; // 올인원패스 권한 0원 할인액
     // 신청 입력에서 고른 챌린지 버전. 버전을 묻지 않는 신청은 null (LC-3247)
     challengeVersionId: number | null;
     // 챌린지와 함께 결제하는 VOD 이용권(LC-3438). 0 이면 미선택이다.
@@ -68,6 +69,7 @@ const useProgramStore = create(
         programOrderId: null,
         isFree: null,
         deposit: 0,
+        membershipDiscount: 0,
         challengeVersionId: null,
         vodPassProductId: 0,
         vodPassPrice: 0,
@@ -104,6 +106,7 @@ const useProgramStore = create(
             programOrderId: null,
             isFree: null,
             deposit: 0,
+            membershipDiscount: 0,
             challengeVersionId: null,
             vodPassProductId: 0,
             vodPassPrice: 0,

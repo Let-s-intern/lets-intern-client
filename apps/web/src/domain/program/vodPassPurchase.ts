@@ -114,7 +114,7 @@ export function calculateVodPassDurationDays(
 }
 
 /**
- * 결제 합계. 쿠폰 적용 뒤(0 바닥) 이용권 가격을 더한다.
+ * 결제 합계. 쿠폰·올인원패스 할인을 뺀 뒤(0 바닥) 이용권 가격을 더한다.
  * 이용권을 고르지 않았으면 이전 계산식(`정가 <= 할인+쿠폰 ? 0 : 정가 - 할인 - 쿠폰`)과 결과가 같다.
  */
 export function calculateChallengeTotalWithVodPass({
@@ -122,14 +122,19 @@ export function calculateChallengeTotalWithVodPass({
   discount,
   couponPrice,
   vodPassPrice,
+  membershipDiscount,
 }: {
   regularPrice?: Amount;
   discount?: Amount;
   couponPrice?: Amount;
   vodPassPrice?: Amount;
+  membershipDiscount?: Amount;
 }): number {
   const afterCoupon = Math.max(
-    (regularPrice ?? 0) - (discount ?? 0) - (couponPrice ?? 0),
+    (regularPrice ?? 0) -
+      (discount ?? 0) -
+      (couponPrice ?? 0) -
+      (membershipDiscount ?? 0),
     0,
   );
   return afterCoupon + (vodPassPrice ?? 0);

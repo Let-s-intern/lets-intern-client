@@ -116,6 +116,12 @@ export const MypageApplicationCard = ({
                 </span>
               )}
 
+              {config.isMembershipApplied && (
+                <span className="rounded-xxs text-xxsmall12 bg-[#edeffe] px-2 py-1 font-medium text-[#4A76FF]">
+                  패스 혜택
+                </span>
+              )}
+
               {config.categoryLabel && (
                 <span className="text-xxsmall12 text-neutral-40 font-normal">
                   {config.categoryLabel}
@@ -291,6 +297,10 @@ export const getDetailHref = (config: MypageApplicationCardConfig): string => {
   const { programTypeKey, programId } = config;
 
   if (!programId) return '#';
+
+  if (programTypeKey === 'MEMBERSHIP') {
+    return `/all-in-one-pass/${programId}/${config.id}`;
+  }
 
   if (programTypeKey === 'CHALLENGE') {
     return `/program/challenge/${programId}`;

@@ -103,7 +103,7 @@ const LexicalContent = ({ node }: { node: SerializedLexicalNode }) => {
       }
       const children = _node.children || [];
       return (
-        <div className={`mb-4 ${textAlign}`}>
+        <div className={` ${textAlign}`}>
           {children.length === 0 ? (
             <br />
           ) : (

@@ -7,7 +7,7 @@ import { getKeyByValue } from '../../../utils/convert';
 import {
   PROGRAM_FILTER_CLASSIFICATION,
   PROGRAM_FILTER_JOB,
-  PROGRAM_FILTER_TYPE,
+  PROGRAM_FILTER_TYPE_USER,
   PROGRAM_QUERY_KEY,
 } from '../../../utils/programConst';
 import FilterCheckbox from './FilterCheckbox';
@@ -106,9 +106,9 @@ const getFilterSectionsConfig = (
   {
     title: '프로그램 유형',
     defaultOpen: false,
-    items: Object.values(PROGRAM_FILTER_TYPE),
+    items: Object.values(PROGRAM_FILTER_TYPE_USER),
     getIsChecked: (value: string) =>
-      filterType[getKeyByValue(PROGRAM_FILTER_TYPE, value) as string],
+      filterType[getKeyByValue(PROGRAM_FILTER_TYPE_USER, value) as string],
     onItemClick: (value: string) => handleClick(PROGRAM_QUERY_KEY.TYPE, value),
   },
 ];

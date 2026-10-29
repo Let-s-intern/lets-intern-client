@@ -120,7 +120,12 @@ export const useUserProgramQuery = ({
   searchParams: URLSearchParams;
 }) => {
   return useQuery({
-    queryKey: [useUserProgramQuery, pageable.page, searchParams.toString()],
+    queryKey: [
+      useUserProgramQuery,
+      pageable.page,
+      pageable.size,
+      searchParams.toString(),
+    ],
     queryFn: async () => {
       const pageableQuery = Object.entries({
         ...pageable,

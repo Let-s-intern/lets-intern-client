@@ -13,7 +13,7 @@ interface Props {
   onClose: () => void;
 }
 
-/** A-3 공지/가이드 노출 영역 관리 (ExposureModal + 공지 노출 PATCH) */
+/** 공지/가이드 노출 영역 관리 (ExposureModal + 공지 노출 PATCH) */
 export default function NoticeExposureModal({ notice, onClose }: Props) {
   const queryClient = useQueryClient();
   const { snackbar } = useAdminSnackbar();

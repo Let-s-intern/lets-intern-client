@@ -9,36 +9,31 @@ import { usePaginationModelWithSearchParams } from '@/hooks/usePaginationModelWi
 import dayjs from '@/lib/dayjs';
 import { Button } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
-const periodSummary = (p: ActivePassParticipant) => {
-  const first = p.periods[0];
-  const last = p.periods[p.periods.length - 1];
-  if (!first || !last) return null;
-  return {
-    days: dayjs(last.endDate).diff(dayjs(first.startDate), 'day'),
-    range: `${dayjs(first.startDate).format('YYYY.MM.DD')} ~ ${dayjs(
-      last.endDate,
-    ).format('YYYY.MM.DD')}`,
-  };
-};
+const rangeLabel = (p: ActivePassParticipant) =>
+  p.startDate && p.endDate
+    ? `${dayjs(p.startDate).format('YYYY.MM.DD')} ~ ${dayjs(p.endDate).format(
+        'YYYY.MM.DD',
+      )}`
+    : '-';
 
-const totalPrice = (p: ActivePassParticipant) =>
-  p.periods.reduce((sum, period) => sum + period.price, 0);
-
-/** A-8 참여중 유저 목록 (전 패스 통합 · 현재 참여중) */
+/** 참여중 유저 목록 (전 패스 통합 · 현재 참여중) */
 export default function AllInOnePassParticipants() {
   const [historyTarget, setHistoryTarget] =
     useState<ActivePassParticipant | null>(null);
 
-  const { data, isLoading, error } = useGetActivePassParticipantsQuery();
-  const list = useMemo(() => data ?? [], [data]);
-
   const { paginationModel, handlePaginationModelChange } =
     usePaginationModelWithSearchParams({ defaultPage: 0, defaultPageSize: 20 });
 
+  const { data, isLoading, error } = useGetActivePassParticipantsQuery({
+    page: paginationModel.page,
+    size: paginationModel.pageSize,
+  });
+  const list = data?.list ?? [];
+
   const columns: GridColDef<ActivePassParticipant>[] = [
-    { field: 'id', headerName: '주문번호', width: 150 },
+    { field: 'orderId', headerName: '주문번호', width: 150 },
     { field: 'name', headerName: '이름', width: 100 },
     {
       field: 'email',
@@ -54,28 +49,27 @@ export default function AllInOnePassParticipants() {
       valueGetter: (_, row) => row.passTitle || '-',
     },
     {
-      field: 'totalPrice',
+      field: 'totalPayment',
       headerName: '결제 금액',
       width: 130,
       sortable: false,
-      valueGetter: (_, row) => `${totalPrice(row).toLocaleString()}원`,
+      valueGetter: (_, row) => `${row.totalPayment.toLocaleString()}원`,
     },
     {
-      field: 'history',
+      field: 'extensionCount',
       headerName: '연장 정보',
       width: 110,
       sortable: false,
       filterable: false,
-      renderCell: ({ row }) => {
-        const extendCount = Math.max(row.periods.length - 1, 0);
-        return (
-          <span
-            className={extendCount === 0 ? 'text-neutral-40' : 'text-neutral-0'}
-          >
-            {extendCount === 0 ? '-' : `연장 ${extendCount}회`}
-          </span>
-        );
-      },
+      renderCell: ({ row }) => (
+        <span
+          className={
+            row.extensionCount === 0 ? 'text-neutral-40' : 'text-neutral-0'
+          }
+        >
+          {row.extensionCount === 0 ? '-' : `연장 ${row.extensionCount}회`}
+        </span>
+      ),
     },
     {
       field: 'period',
@@ -83,30 +77,25 @@ export default function AllInOnePassParticipants() {
       width: 360,
       sortable: false,
       filterable: false,
-      renderCell: ({ row }) => {
-        const summary = periodSummary(row);
-        if (!summary) return '-';
-        const hasExtension = row.periods.length > 1;
-        return (
-          <div className="flex h-full w-full items-center gap-1.5 pr-1">
-            <span className="text-neutral-0 w-11 shrink-0">
-              {summary.days}일
-            </span>
-            <span className="text-neutral-0">({summary.range})</span>
-            {hasExtension && (
-              <Button
-                variant="outlined"
-                color="primary"
-                size="small"
-                className="!ml-auto"
-                onClick={() => setHistoryTarget(row)}
-              >
-                자세히보기
-              </Button>
-            )}
-          </div>
-        );
-      },
+      renderCell: ({ row }) => (
+        <div className="flex h-full w-full items-center gap-1.5 pr-1">
+          <span className="text-neutral-0 w-11 shrink-0">
+            {row.totalDays}일
+          </span>
+          <span className="text-neutral-0">({rangeLabel(row)})</span>
+          {row.extensionCount > 0 && (
+            <Button
+              variant="outlined"
+              color="primary"
+              size="small"
+              className="!ml-auto"
+              onClick={() => setHistoryTarget(row)}
+            >
+              자세히보기
+            </Button>
+          )}
+        </div>
+      ),
     },
   ];
 
@@ -128,6 +117,8 @@ export default function AllInOnePassParticipants() {
           rows={list}
           columns={columns}
           pagination
+          paginationMode="server"
+          rowCount={data?.totalElements ?? 0}
           pageSizeOptions={[10, 20, 50, 100]}
           paginationModel={paginationModel}
           onPaginationModelChange={handlePaginationModelChange}

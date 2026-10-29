@@ -25,6 +25,8 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
   const isAlwaysAvailable =
     programInfo.programType === PROGRAM_TYPE.VOD ||
     programInfo.programType === PROGRAM_TYPE.GUIDEBOOK;
+  // 올인원패스는 목록 응답에 진행기간(startDate)이 없어 행을 숨긴다
+  const isMembership = programInfo.programType === 'MEMBERSHIP';
 
   const link = getProgramCardLink(programInfo);
 
@@ -63,16 +65,18 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
                 {dayjs(programInfo.deadline).format('YY.MM.DD')}
               </span>
             </div>
-            <div className="flex items-center gap-1 tracking-[-0.4px] md:gap-1.5">
-              <span className="text-xxsmall12 text-neutral-0 font-normal">
-                진행기간
-              </span>
-              <span className="text-0.75-medium text-primary-dark">
-                {programInfo.programType === PROGRAM_TYPE.CHALLENGE
-                  ? `${dayjs(programInfo.startDate).format('YY.MM.DD')} ~ ${dayjs(programInfo.endDate).format('YY.MM.DD')}`
-                  : dayjs(programInfo.startDate).format('YY.MM.DD')}
-              </span>
-            </div>
+            {!isMembership && (
+              <div className="flex items-center gap-1 tracking-[-0.4px] md:gap-1.5">
+                <span className="text-xxsmall12 text-neutral-0 font-normal">
+                  진행기간
+                </span>
+                <span className="text-0.75-medium text-primary-dark">
+                  {programInfo.programType === PROGRAM_TYPE.CHALLENGE
+                    ? `${dayjs(programInfo.startDate).format('YY.MM.DD')} ~ ${dayjs(programInfo.endDate).format('YY.MM.DD')}`
+                    : dayjs(programInfo.startDate).format('YY.MM.DD')}
+                </span>
+              </div>
+            )}
           </div>
         )}
 

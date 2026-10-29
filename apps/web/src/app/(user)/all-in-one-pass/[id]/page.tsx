@@ -1,15 +1,27 @@
 'use client';
 
-// 올인원패스 랜딩(임시 스캐폴드, 시안 수신 후 교체). [id]=membershipId. 구매 → 플랜 바텀시트.
+// 올인원패스 랜딩. [id]=membershipId. 구매 → 플랜 바텀시트. 섹션은 landing/ 에서 조립.
 
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import { useGetAllInOnePassLanding } from '@/domain/all-in-one-pass/api/landing';
 import { useGetMembershipApplicationForm } from '@/domain/all-in-one-pass/api/purchase';
+import BenefitDetailSection from '@/domain/all-in-one-pass/landing/BenefitDetailSection';
+import BenefitSummarySection from '@/domain/all-in-one-pass/landing/BenefitSummarySection';
+import FaqSection from '@/domain/all-in-one-pass/landing/FaqSection';
+import FinalCtaSection from '@/domain/all-in-one-pass/landing/FinalCtaSection';
+import HeroSection from '@/domain/all-in-one-pass/landing/HeroSection';
+import IntroSection from '@/domain/all-in-one-pass/landing/IntroSection';
+import LandingApplyBar from '@/domain/all-in-one-pass/landing/LandingApplyBar';
+import LandingLexicalSection from '@/domain/all-in-one-pass/landing/LandingLexicalSection';
+import LandingNav from '@/domain/all-in-one-pass/landing/LandingNav';
+import PriceSection from '@/domain/all-in-one-pass/landing/PriceSection';
+import ReviewsSection from '@/domain/all-in-one-pass/landing/ReviewsSection';
+import { parseLandingDescription } from '@/domain/all-in-one-pass/landing/landingContent';
+import { useCtaState } from '@/domain/all-in-one-pass/landing/useCtaState';
 import MembershipPlanBottomSheet from '@/domain/all-in-one-pass/ui/MembershipPlanBottomSheet';
-import dayjs from '@/lib/dayjs';
 import useAuthStore from '@/store/useAuthStore';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 export default function AllInOnePassLandingPage() {
   const params = useParams<{ id: string }>();
@@ -26,6 +38,11 @@ export default function AllInOnePassLandingPage() {
     if (isLoggedIn) refetch();
   }, [isLoggedIn, refetch]);
 
+  const landing = useMemo(
+    () => parseLandingDescription(pass?.landingDescription),
+    [pass?.landingDescription],
+  );
+
   const handleBuyClick = () => {
     if (!isLoggedIn) {
       const path = window.location.pathname;
@@ -37,82 +54,83 @@ export default function AllInOnePassLandingPage() {
     setSheetOpen(true);
   };
 
-  const isApplied = applicationForm?.applied ?? false;
-  const now = dayjs();
-  const beginning = applicationForm?.beginning
-    ? dayjs(applicationForm.beginning)
-    : null;
-  const deadline = applicationForm?.deadline
-    ? dayjs(applicationForm.deadline)
-    : null;
-  const isBeforeSale = !!beginning && now.isBefore(beginning);
-  const isClosed = !!deadline && now.isAfter(deadline);
-  const ctaDisabled = isApplied || isBeforeSale || isClosed;
-  const ctaText = isApplied
-    ? '이미 이용 중'
-    : isBeforeSale
-      ? '판매 예정'
-      : isClosed
-        ? '판매 종료'
-        : '구매하기';
+  const scrollToBenefit = () =>
+    document.getElementById('benefit')?.scrollIntoView({ behavior: 'smooth' });
+
+  const { ctaText, barCtaText, ctaDisabled } = useCtaState(
+    applicationForm,
+    landing.displayDeadline,
+  );
 
   if (isLoading || !pass) {
     return <LoadingContainer />;
   }
 
+  // 노출용 종료일이 있으면 카운트다운·마감도 그 값 기준(없으면 실제 판매 deadline).
+  const effectiveDeadline = landing.displayDeadline ?? pass.deadline;
+
   return (
-    <main className="mx-auto flex w-full max-w-[1120px] flex-col gap-8 px-5 py-12">
-      <header className="flex flex-col gap-2">
-        <h1 className="text-small20 md:text-medium24 text-neutral-0 font-bold">
-          {pass.title}
-        </h1>
-        {pass.introduction && (
-          <p className="text-xsmall14 md:text-small18 text-neutral-40">
-            {pass.introduction}
-          </p>
-        )}
-      </header>
+    <main>
+      <HeroSection
+        passTitle={pass.title}
+        hero={landing.hero}
+        periodDays={pass.periodDays}
+        deadline={effectiveDeadline}
+        ctaText={ctaText}
+        ctaDisabled={ctaDisabled}
+        onStart={handleBuyClick}
+        onScrollToBenefit={scrollToBenefit}
+      />
+      <LandingNav isReady={!isLoading} />
 
-      <section className="flex flex-col gap-4">
-        {pass.plans.map((plan) => {
-          const finalPrice = plan.price - (plan.discount ?? 0);
-          const hasDiscount = plan.discount != null && plan.discount > 0;
-          return (
-            <div
-              key={plan.id}
-              className="border-neutral-80 flex flex-col gap-2 rounded-sm border p-5"
-            >
-              <p className="text-small18 text-neutral-0 font-semibold">
-                {plan.title}
-              </p>
-              {plan.description && (
-                <p className="text-xsmall14 text-neutral-40">
-                  {plan.description}
-                </p>
-              )}
-              <div className="flex items-baseline gap-2">
-                {hasDiscount && (
-                  <span className="text-xsmall14 text-neutral-50 line-through">
-                    {plan.price.toLocaleString()}원
-                  </span>
-                )}
-                <span className="text-small18 text-primary font-bold">
-                  {finalPrice.toLocaleString()}원
-                </span>
-              </div>
-            </div>
-          );
-        })}
-      </section>
+      <IntroSection introLexical={landing.lexical.introSection} />
+      <BenefitSummarySection
+        passTitle={pass.title}
+        periodDays={pass.periodDays}
+        plans={pass.plans}
+        additionalBenefits={landing.additionalBenefits}
+        vodCount={landing.vodCount}
+        onBenefitClick={scrollToBenefit}
+      />
+      <BenefitDetailSection
+        passTitle={pass.title}
+        plans={pass.plans}
+        vods={landing.vods}
+        vodCount={landing.vodCount}
+        playbookLexical={landing.lexical.playbookSection}
+        benefitLexical={landing.lexical.benefitSection}
+      />
+      <ReviewsSection reviews={landing.reviews} />
+      <LandingLexicalSection lexical={landing.lexical.reviewSection} />
+      <PriceSection
+        passTitle={pass.title}
+        plans={pass.plans}
+        periodDays={pass.periodDays}
+        additionalBenefits={landing.additionalBenefits}
+        ctaText={ctaText}
+        ctaDisabled={ctaDisabled}
+        onStart={handleBuyClick}
+      />
+      <FaqSection faqs={pass.faqs} />
+      <FinalCtaSection
+        passTitle={pass.title}
+        finalCta={landing.finalCta}
+        deadline={effectiveDeadline}
+        ctaText={ctaText}
+        ctaDisabled={ctaDisabled}
+        onStart={handleBuyClick}
+      />
 
-      <button
-        type="button"
-        onClick={handleBuyClick}
-        disabled={ctaDisabled}
-        className="bg-primary text-small16 disabled:bg-neutral-70 w-full rounded-md px-6 py-3 text-center font-medium text-neutral-100"
-      >
-        {ctaText}
-      </button>
+      {!sheetOpen && (
+        <LandingApplyBar
+          passTitle={pass.title}
+          periodDays={pass.periodDays}
+          deadline={effectiveDeadline}
+          ctaText={barCtaText}
+          ctaDisabled={ctaDisabled}
+          onStart={handleBuyClick}
+        />
+      )}
 
       <MembershipPlanBottomSheet
         membershipId={membershipId}

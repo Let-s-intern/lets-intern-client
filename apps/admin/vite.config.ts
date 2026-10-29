@@ -64,6 +64,14 @@ export default defineConfig(({ mode }) => {
             });
           },
         },
+        // seminar-vod 공개 목록 — 교차출처라 프록시 경유(CORS 우회). 프로덕션은 vercel.json rewrite.
+        '/seminar-vods': {
+          target: 'https://seminar-vod.letscareer.co.kr',
+          changeOrigin: true,
+          secure: true,
+          rewrite: (path) =>
+            path.replace(/^\/seminar-vods/, '/api/public/vods'),
+        },
       },
     },
   };

@@ -1,9 +1,13 @@
 import {
   PassExternalLink,
   PassLandingConfig,
+  PassPlan,
 } from '@/domain/all-in-one-pass/types';
-import { TextField } from '@mui/material';
-import { lazy, Suspense } from 'react';
+import VodExposureModal from '@/domain/all-in-one-pass/ui/VodExposureModal';
+import dayjs from '@/lib/dayjs';
+import { Button, TextField } from '@mui/material';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { lazy, Suspense, useState } from 'react';
 import LandingBenefitEditor from './LandingBenefitEditor';
 import LandingReviewEditor from './LandingReviewEditor';
 
@@ -11,6 +15,7 @@ const EditorApp = lazy(() => import('@/common/lexical/EditorApp'));
 
 interface Props {
   value: PassLandingConfig;
+  plans: PassPlan[];
   externalLinks: PassExternalLink[];
   onChange: (value: PassLandingConfig) => void;
 }
@@ -25,7 +30,7 @@ const Block = ({
   description?: string;
   children: React.ReactNode;
 }) => (
-  <section className="flex flex-col gap-4">
+  <section className="flex flex-1 flex-col gap-4">
     <div className="flex flex-col gap-0.5">
       <h2 className="text-small20 text-neutral-0 font-semibold">{title}</h2>
       {description && (
@@ -61,14 +66,15 @@ const LexicalField = ({
 );
 
 /**
- * 1.5 랜딩페이지 구성 (토글). 저장은 landingDescription(JSON).
+ * 랜딩페이지 구성 (토글). 저장은 landingDescription(JSON).
  *
- * 하드코딩/데이터 자동 노출분(소제목·신뢰지표·혜택 개수·탭 등)은 여기서 받지 않는다.
- * 여기엔 운영자가 직접 바꾸는 값만 둔다: 히어로 텍스트 · 렉시컬 4개 · 추가혜택 · 후기 ·
- * 최종 CTA. 추가혜택 이름은 외부링크에서 실시간으로 온다(저장 시 url 은 제거).
+ * 하드코딩/데이터 자동 노출분(소제목·신뢰지표·혜택 개수·탭 등)은 여기서 받지 않음.
+ * 여기엔 운영자가 직접 바꾸는 값만 둠: 히어로 텍스트 · 렉시컬 4개 · 추가혜택 · 후기 ·
+ * 최종 CTA. 추가혜택 이름은 외부링크에서 실시간으로 가져옴(저장 시 url 은 제거).
  */
 export default function LandingSection({
   value,
+  plans,
   externalLinks,
   onChange,
 }: Props) {
@@ -81,44 +87,161 @@ export default function LandingSection({
   const patchFinalCta = (partial: Partial<PassLandingConfig['finalCta']>) =>
     patch({ finalCta: { ...value.finalCta, ...partial } });
 
+  const [vodModalOpen, setVodModalOpen] = useState(false);
+
   return (
     <div className="flex flex-col gap-10">
-      {/* 히어로 */}
-      <Block title="히어로">
-        <div className="flex flex-col gap-4">
-          <TextField
-            label="제목"
-            placeholder="히어로 제목 (최대 30자)"
-            value={value.hero.title}
-            onChange={(e) => patchHero({ title: e.target.value })}
-            size="small"
-            fullWidth
-            slotProps={{ htmlInput: { maxLength: 30 } }}
-            helperText={`${value.hero.title.length}/30`}
-          />
-          <TextField
-            label="설명"
-            placeholder="히어로 설명 (최대 60자)"
-            value={value.hero.description}
-            onChange={(e) => patchHero({ description: e.target.value })}
-            size="small"
-            fullWidth
-            slotProps={{ htmlInput: { maxLength: 60 } }}
-            helperText={`${value.hero.description.length}/60`}
-          />
-          <TextField
-            label="모집 카드 하단 문구"
-            placeholder="예) 마감 후 다음 기회는 2027 상반기 예정이에요 (최대 50자)"
-            value={value.hero.recruitFootnote}
-            onChange={(e) => patchHero({ recruitFootnote: e.target.value })}
-            size="small"
-            fullWidth
-            slotProps={{ htmlInput: { maxLength: 50 } }}
-            helperText={`${value.hero.recruitFootnote.length}/50`}
-          />
-        </div>
-      </Block>
+      {/* 왼쪽: 히어로·추가혜택·최하단 CTA 세로 스택 / 오른쪽: 후기 */}
+      <div className="flex items-start gap-4">
+        <div className="flex flex-1 flex-col gap-10">
+          {/* 히어로 */}
+          <Block title="히어로">
+            <div className="flex flex-col gap-3">
+              <TextField
+                label="헤드라인 (최대 30자)"
+                placeholder="예) {패스명} {기간}일 간의 혜택"
+                value={value.hero.title}
+                onChange={(e) => patchHero({ title: e.target.value })}
+                size="small"
+                fullWidth
+                multiline
+                slotProps={{
+                  htmlInput: { maxLength: 30 },
+                }}
+              />
+              <TextField
+                label="설명 (최대 60자)"
+                placeholder="예) 자소서·포트폴리오부터 인적성·면접까지, 취준에 필요한 모든 준비를 하나의 패스로 끝내세요."
+                value={value.hero.description}
+                onChange={(e) => patchHero({ description: e.target.value })}
+                size="small"
+                fullWidth
+                multiline
+                slotProps={{
+                  htmlInput: { maxLength: 60 },
+                }}
+              />
+              <TextField
+                label="모집 카드 하단 문구 (최대 50자)"
+                placeholder="예) 마감 후 다음 기회는 2027 상반기 예정이에요 "
+                value={value.hero.recruitFootnote}
+                onChange={(e) => patchHero({ recruitFootnote: e.target.value })}
+                size="small"
+                fullWidth
+                multiline
+                slotProps={{
+                  htmlInput: { maxLength: 50 },
+                }}
+              />
+              <div className="flex flex-col gap-1">
+                <DateTimePicker
+                  label="노출용 모집 종료일시"
+                  value={
+                    value.displayDeadline ? dayjs(value.displayDeadline) : null
+                  }
+                  onChange={(v) =>
+                    patch({ displayDeadline: v ? v.toISOString() : null })
+                  }
+                  format="YYYY.MM.DD HH:mm"
+                  slotProps={{ textField: { size: 'small', fullWidth: true } }}
+                />
+                <p className="text-xxsmall12 text-neutral-40">
+                  랜딩 페이지 노출용 신청 마감일 설정 필드입니다. 비우면 실제
+                  신청 마감일을 따릅니다.
+                </p>
+              </div>
+            </div>
+          </Block>
 
+          {/* 최종 CTA */}
+          <Block title="최하단 CTA">
+            <div className="flex flex-col gap-3">
+              <TextField
+                label="헤드라인"
+                placeholder="예) {패스명}, 지금 바로 시작하세요"
+                value={value.finalCta.title}
+                onChange={(e) => patchFinalCta({ title: e.target.value })}
+                size="small"
+                fullWidth
+              />
+              <TextField
+                label="설명"
+                placeholder="예) 선착순 마감 전에 합류하고, 취준에 필요한 모든 준비를 한 번에 끝내세요."
+                value={value.finalCta.description}
+                onChange={(e) => patchFinalCta({ description: e.target.value })}
+                size="small"
+                fullWidth
+              />
+            </div>
+          </Block>
+
+          {/* 혜택 섹션 카드*/}
+          <Block
+            title="혜택 요약"
+            description="'플랜정보'·'외부 링크'를 추가하면 자동으로 생성됩니다. 최대 6개까지 추가 가능합니다."
+          >
+            <LandingBenefitEditor
+              plans={plans}
+              externalLinks={externalLinks}
+              benefitExtras={value.benefitExtras}
+              manualBenefits={value.manualBenefits}
+              onBenefitExtrasChange={(benefitExtras) =>
+                patch({ benefitExtras })
+              }
+              onManualBenefitsChange={(manualBenefits) =>
+                patch({ manualBenefits })
+              }
+            />
+          </Block>
+
+          {/* 노출 VOD */}
+          <Block
+            title="노출 VOD"
+            description="VOD 탭에 노출할 3개를 선택해주세요. (선택하지 않으면 자동 선택되어 노출됩니다.)"
+          >
+            <div className="flex flex-col gap-3">
+              {value.vods.length > 0 && (
+                <ul className="flex flex-col gap-2">
+                  {value.vods.map((vod, i) => (
+                    <li
+                      key={`${vod.title}-${i}`}
+                      className="flex items-center gap-2"
+                    >
+                      <img
+                        src={vod.thumbnail}
+                        alt=""
+                        className="h-10 w-16 shrink-0 rounded object-cover"
+                      />
+                      <span className="text-xsmall14 text-neutral-0 line-clamp-1">
+                        {vod.title}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <Button
+                variant="outlined"
+                size="small"
+                onClick={() => setVodModalOpen(true)}
+                className="self-start"
+              >
+                {value.vods.length > 0 ? 'VOD 변경' : 'VOD 선택'}
+              </Button>
+            </div>
+          </Block>
+        </div>
+
+        {/* 후기 */}
+        <Block
+          title="후기"
+          description="6개 후기가 기본세팅 되어있으며(수정 가능) 최대 9개까지 입력 가능합니다."
+        >
+          <LandingReviewEditor
+            reviews={value.reviews}
+            onChange={(reviews) => patch({ reviews })}
+          />
+        </Block>
+      </div>
       {/* 상세 콘텐츠 렉시컬 4개 */}
       <Block
         title="상세 콘텐츠"
@@ -126,7 +249,7 @@ export default function LandingSection({
       >
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <LexicalField
-            label="1. 인트로(최상단)"
+            label="1. 인트로(소개 상단)"
             initialContent={value.lexical.introSection}
             onChange={(introSection) => patchLexical({ introSection })}
           />
@@ -148,40 +271,12 @@ export default function LandingSection({
         </div>
       </Block>
 
-      {/* 추가 혜택 */}
-      <LandingBenefitEditor
-        externalLinks={externalLinks}
-        benefitExtras={value.benefitExtras}
-        manualBenefits={value.manualBenefits}
-        onBenefitExtrasChange={(benefitExtras) => patch({ benefitExtras })}
-        onManualBenefitsChange={(manualBenefits) => patch({ manualBenefits })}
+      <VodExposureModal
+        open={vodModalOpen}
+        initialVods={value.vods}
+        onSave={(vods, vodCount) => patch({ vods, vodCount })}
+        onClose={() => setVodModalOpen(false)}
       />
-
-      {/* 후기 */}
-      <LandingReviewEditor
-        reviews={value.reviews}
-        onChange={(reviews) => patch({ reviews })}
-      />
-
-      {/* 최종 CTA */}
-      <Block title="최종 CTA">
-        <div className="flex flex-col gap-4">
-          <TextField
-            label="제목"
-            value={value.finalCta.title}
-            onChange={(e) => patchFinalCta({ title: e.target.value })}
-            size="small"
-            fullWidth
-          />
-          <TextField
-            label="설명"
-            value={value.finalCta.description}
-            onChange={(e) => patchFinalCta({ description: e.target.value })}
-            size="small"
-            fullWidth
-          />
-        </div>
-      </Block>
     </div>
   );
 }

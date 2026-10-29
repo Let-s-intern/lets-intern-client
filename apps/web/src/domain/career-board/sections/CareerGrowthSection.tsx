@@ -48,12 +48,18 @@ const TITLE = '커리어 성장';
 const HREF = '/mypage/application';
 
 /*
-  커리어 성장 위젯은 출시알림 탭을 지원하지 않는다(신청현황 전용 탭).
+  커리어 성장 위젯은 전체·출시알림 탭을 지원하지 않는다(신청현황 전용 탭).
   1대1 라이브 멘토링은 프로그램 칩에도 함께 보이고, 멘토링 칩은 그중 멘토링만 거른다(LC-3301).
 */
-type CareerGrowthCategory = Exclude<ApplicationCategory, 'LAUNCH_ALERT'>;
+type CareerGrowthCategory = Exclude<
+  ApplicationCategory,
+  'LAUNCH_ALERT' | 'ALL'
+>;
 
-const EXCLUDED_FROM_CAREER_GROWTH: ApplicationCategory[] = ['LAUNCH_ALERT'];
+const EXCLUDED_FROM_CAREER_GROWTH: ApplicationCategory[] = [
+  'LAUNCH_ALERT',
+  'ALL',
+];
 
 const CAREER_GROWTH_CATEGORY_OPTIONS = APPLICATION_CATEGORY_OPTIONS.filter(
   (option): option is { value: CareerGrowthCategory; label: string } =>
@@ -89,6 +95,11 @@ const EMPTY_CONFIG_BY_CATEGORY: Record<
     description: '보유 중인 VOD 클래스가 없어요.',
     href: '/program?type=VOD',
     buttonText: 'VOD 클래스 둘러보기',
+  },
+  MEMBERSHIP: {
+    description: '이용 중인 올인원패스가 없어요.',
+    href: '/membership-marketing',
+    buttonText: '올인원패스 둘러보기',
   },
 };
 
@@ -163,6 +174,9 @@ const CareerGrowthContent = () => {
     if (category === 'VOD') {
       return items.filter((program) => program.programTypeKey === 'VOD');
     }
+    if (category === 'MEMBERSHIP') {
+      return items.filter((program) => program.programTypeKey === 'MEMBERSHIP');
+    }
     if (category === 'MENTORING') {
       return items.filter(
         (program) => program.programTypeKey === 'LIVE_MENTORING',
@@ -174,7 +188,8 @@ const CareerGrowthContent = () => {
     return items.filter(
       (program) =>
         program.programTypeKey !== 'GUIDEBOOK' &&
-        program.programTypeKey !== 'VOD',
+        program.programTypeKey !== 'VOD' &&
+        program.programTypeKey !== 'MEMBERSHIP',
     );
   }, [category, items]);
 

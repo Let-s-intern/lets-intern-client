@@ -5,6 +5,7 @@ import { useCallback, useEffect, useReducer, useState } from 'react';
 
 import CouponBanner from '@/common/banner/CouponBanner';
 import FilterSideBar from '@/domain/program/filter/FilterSideBar';
+import AllInOnePassSection from '@/domain/program/section/AllInOnePassSection';
 import ProgramBanner from '@/domain/program/section/ProgramBanner';
 import ProgramGrid from '@/domain/program/section/ProgramGrid';
 import ProgramRecommendCTA from '@/domain/program/section/ProgramRecommendCTA';
@@ -26,7 +27,7 @@ import { getKeyByValue } from '@/utils/convert';
 import {
   PROGRAM_FILTER_CLASSIFICATION,
   PROGRAM_FILTER_JOB,
-  PROGRAM_FILTER_TYPE,
+  PROGRAM_FILTER_TYPE_USER,
   PROGRAM_QUERY_KEY,
 } from '@/utils/programConst';
 
@@ -145,7 +146,7 @@ const Programs = () => {
         }
 
         case PROGRAM_QUERY_KEY.TYPE: {
-          const filterKey = getKeyByValue(PROGRAM_FILTER_TYPE, value);
+          const filterKey = getKeyByValue(PROGRAM_FILTER_TYPE_USER, value);
           const isChecked = filterType[filterKey as filterTypekey];
           if (isChecked) {
             typeDispatch({ type: 'uncheck', value: filterKey });
@@ -229,6 +230,9 @@ const Programs = () => {
             />
           </button>
         </div>
+        {!searchParams
+          .getAll(PROGRAM_QUERY_KEY.TYPE)
+          .includes('MEMBERSHIP') && <AllInOnePassSection />}
         <ProgramGrid
           pageable={pageable}
           setPageable={setPageable}

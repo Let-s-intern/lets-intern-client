@@ -20,7 +20,7 @@ const MAGNET_TYPE_LABEL: Record<string, string> = {
   EVENT: '이벤트',
 };
 
-const toLibraryCardConfig = (
+export const toLibraryCardConfig = (
   magnet: MypageMagnetListItem,
 ): MypageApplicationCardConfig => {
   const dateText = magnet.applicationCreateDate

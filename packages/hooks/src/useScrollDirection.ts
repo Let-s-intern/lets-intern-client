@@ -11,6 +11,10 @@ const scrollEventPage = [
   '/mentor-apply',
 ];
 
+const isScrollHidePage = (pathname: string) =>
+  scrollEventPage.some((page) => pathname.startsWith(page)) ||
+  /^\/all-in-one-pass\/[^/]+$/.test(pathname);
+
 export default function useScrollDirection(pathname?: string) {
   const lastScrollY = useRef(0);
 
@@ -18,10 +22,7 @@ export default function useScrollDirection(pathname?: string) {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (
-        pathname &&
-        !scrollEventPage.some((page) => pathname.startsWith(page))
-      ) {
+      if (pathname && !isScrollHidePage(pathname)) {
         return;
       }
 

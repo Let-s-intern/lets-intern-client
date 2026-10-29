@@ -12,6 +12,8 @@ type ChannelTalkBtnProps = React.ComponentProps<'button'>;
 const programDetailPathRegex = /^\/program\/(live|challenge|vod)\/\d+/; // 프로그램 상세페이지
 const libraryDetailPathRegex = /^\/library\/\d+/; // 라이브러리 상세페이지
 const challengeDashboardPathRegex = /^\/challenge\/\d+\/\d+/; // 챌린지 대시보드 (전용 문의 버튼을 쓴다)
+const allInOnePassPaymentInputPathRegex =
+  /^\/all-in-one-pass\/\d+\/payment-input/; // 올인원패스 결제정보 입력
 const ChannelTalkBtn = (props: ChannelTalkBtnProps) => {
   const pathname = usePathname() ?? '';
   const isUpTo991 = useMediaQuery('(max-width: 991px)');
@@ -63,6 +65,7 @@ const ChannelTalkBtn = (props: ChannelTalkBtnProps) => {
           (pathname.startsWith('/report') && isUpTo1280) ||
           pathname.startsWith('/report/landing') ||
           (pathname.startsWith('/payment-input') && isUpTo991) ||
+          (allInOnePassPaymentInputPathRegex.test(pathname) && isUpTo991) ||
           (pathname.startsWith('/plan-upgrade') && isUpTo991)
           ? 'bottom-32'
           : 'bottom-20',

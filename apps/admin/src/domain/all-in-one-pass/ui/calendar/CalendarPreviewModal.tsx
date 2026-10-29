@@ -26,7 +26,7 @@ interface Props {
   passDays?: number | null;
 }
 
-/** 1.3 캘린더 미리보기: 실제 노출될 2주 달력 (챌린지 막대 + 게릴라세션/마일스톤) */
+/** 캘린더 미리보기: 실제 노출될 2주 달력 (챌린지 막대 + 게릴라세션/마일스톤) */
 export default function CalendarPreviewModal({
   open,
   onClose,

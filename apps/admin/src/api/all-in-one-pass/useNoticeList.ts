@@ -7,8 +7,8 @@ import {
 } from './allInOnePassSchema';
 
 /**
- * A-3 공지·가이드 CRUD 훅. 서버: /api/v1/admin/membership_notice.
- * 삭제는 soft-hide(isVisible=false)라, 목록은 노출 항목만 보여준다.
+ * 공지·가이드 CRUD 훅. 서버: /api/v1/admin/membership_notice.
+ * 삭제는 soft-hide(isVisible=false)라, 목록은 노출 항목만 노출.
  */
 
 type MutationCallbacks = {
@@ -16,7 +16,6 @@ type MutationCallbacks = {
   errorCallback?: (error: Error) => void;
 };
 
-/** 공지·가이드 입력값(유형·제목·내용) */
 export type NoticeFormValues = Pick<
   AllInOnePassNotice,
   'type' | 'title' | 'contents'

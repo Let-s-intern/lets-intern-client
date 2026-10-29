@@ -2191,7 +2191,7 @@ export const classificationSchema = z.object({
 
 const programInfoSchema = z.object({
   id: z.number(),
-  programType: ProgramTypeEnum,
+  programType: z.union([ProgramTypeEnum, z.literal('MEMBERSHIP')]),
   programStatusType: ProgramStatusEnum,
   title: z.string().nullable().optional(),
   thumbnail: z.string().nullable().optional(),
@@ -2209,7 +2209,10 @@ export const programSchema = z.object({
   programList: z.array(
     z.object({
       programInfo: programInfoSchema,
-      classificationList: z.array(classificationSchema),
+      classificationList: z
+        .array(classificationSchema)
+        .nullable()
+        .transform((v) => v ?? []),
     }),
   ),
   pageInfo,

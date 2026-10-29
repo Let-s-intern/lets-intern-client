@@ -13,7 +13,7 @@ import {
 /**
  * 올인원패스(멤버십) 목록/노출/삭제 훅.
  *
- * 서버: /api/v1/admin/membership. 페이지는 이 파일만 import 한다.
+ * 서버: /api/v1/admin/membership. 페이지는 이 파일만 import.
  */
 
 type MutationCallbacks = {
@@ -36,7 +36,6 @@ export const useGetAllInOnePassListQuery = () =>
     },
   });
 
-/** 노출 여부 토글 (PATCH membership) */
 export const usePatchAllInOnePassVisibleMutation = ({
   successCallback,
   errorCallback,
@@ -70,8 +69,8 @@ export const useDeleteAllInOnePassMutation = ({
   });
 
 /**
- * 복제: 복제 전용 API가 없어, 원본 상세를 조회해 생성(POST)을 다시 호출한다.
- * (가이드북 복제와 동일 방식) 제목에 "(복제)"를 붙이고 비노출로 생성된다.
+ * 복제: 복제 전용 API가 없어, 원본 상세를 조회해 생성(POST)을 다시 호출.
+ * (가이드북 복제와 동일 방식) 제목에 "(복제)"를 붙이고 비노출로 생성.
  */
 export const useDuplicateAllInOnePassMutation = ({
   successCallback,

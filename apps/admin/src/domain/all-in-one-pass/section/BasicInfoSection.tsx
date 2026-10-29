@@ -2,7 +2,7 @@ import { PassFormInput } from '@/domain/all-in-one-pass/types';
 import ThumbnailUpload from '@/domain/all-in-one-pass/ui/ThumbnailUpload';
 import dayjs from '@/lib/dayjs';
 import { Button, InputAdornment, TextField } from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { FaPlus } from 'react-icons/fa6';
 import ExtensionSection, {
   createEmptyExtensionOption,
@@ -40,8 +40,8 @@ export default function BasicInfoSection({ input, patch }: Props) {
 
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
-              <DatePicker
-                label="구매 시작일"
+              <DateTimePicker
+                label="신청 시작일시"
                 value={
                   input.purchaseStartDate
                     ? dayjs(input.purchaseStartDate)
@@ -50,17 +50,19 @@ export default function BasicInfoSection({ input, patch }: Props) {
                 onChange={(v) =>
                   patch({ purchaseStartDate: v ? v.toISOString() : null })
                 }
+                format="YYYY.MM.DD HH:mm"
                 slotProps={{ textField: { size: 'small', fullWidth: true } }}
               />
               <span className="text-neutral-40">~</span>
-              <DatePicker
-                label="구매 종료일"
+              <DateTimePicker
+                label="신청 마감일시"
                 value={
                   input.purchaseEndDate ? dayjs(input.purchaseEndDate) : null
                 }
                 onChange={(v) =>
                   patch({ purchaseEndDate: v ? v.toISOString() : null })
                 }
+                format="YYYY.MM.DD HH:mm"
                 slotProps={{ textField: { size: 'small', fullWidth: true } }}
               />
             </div>

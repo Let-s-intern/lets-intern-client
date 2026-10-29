@@ -1,4 +1,4 @@
-// U-5 공지사항/패스 가이드. 유형 칩(sticky) + 아코디언 목록.
+// 공지사항/패스 가이드. 유형 칩(sticky) + 아코디언 목록.
 'use client';
 
 import LoadingContainer from '@/common/loading/LoadingContainer';
@@ -34,7 +34,7 @@ const NoticesView = ({ applicationId }: { applicationId: number }) => {
           목록을 불러오지 못했어요. 잠시 후 다시 시도해주세요.
         </p>
       ) : notices.length === 0 ? (
-        <div className="bg-neutral-95 flex h-52 w-full items-center justify-center rounded-sm">
+        <div className="bg-neutral-95 mt-5 flex w-full items-center justify-center rounded-sm py-52 md:mt-0">
           <p className="text-xsmall14 text-neutral-40">등록된 글이 없어요.</p>
         </div>
       ) : (

@@ -11,19 +11,26 @@ import { usePathname, useRouter } from 'next/navigation';
 import GlobalNavItem from './GlobalNavItem';
 import LoginLink from './LoginLink';
 import LogoLink from './LogoLink';
-// [LC-3219-MEMBERSHIP] 멤버십 랜딩 진입 메뉴 라벨 — 시즌 종료 시 아래 GlobalNavItem 과 함께 제거한다
 import MembershipNavLabel from './MembershipNavLabel';
 import ServiceToggle from './ServiceToggle';
 import SignUpLink from './SignUpLink';
 import { SubNavItemProps } from './SubNavItem';
 
+import type { MembershipNavEntry } from './useMembershipNavEntry';
+
 interface Props {
   loginRedirect: string;
   toggleMenu: () => void;
   isLoginPage?: boolean;
+  membershipNav: MembershipNavEntry;
 }
 
-function GlobalNavTopBar({ loginRedirect, toggleMenu, isLoginPage }: Props) {
+function GlobalNavTopBar({
+  loginRedirect,
+  toggleMenu,
+  isLoginPage,
+  membershipNav,
+}: Props) {
   const router = useRouter();
   const pathname = usePathname(); // for nextjs pathname change detect
 
@@ -85,17 +92,17 @@ function GlobalNavTopBar({ loginRedirect, toggleMenu, isLoginPage }: Props) {
         >
           홈
         </GlobalNavItem>
-        {/* [LC-3294] 마케팅 취준 올인원 패스 진입 메뉴(데스크톱 상단바) — 시즌 종료 시 이 블록을 제거한다.
-            구버전 하반기 멤버십(`/membership`)은 주소로만 남기고 메뉴에는 걸지 않는다. */}
+        {/* 올인원패스 진입 메뉴(데스크톱 상단바). 문구·링크는 membershipNav 가 정한다
+            — 판매 중인 패스가 있으면 그 패스 랜딩으로, 없으면 프로그램 목록(올인원패스 필터)으로. */}
         <GlobalNavItem
           className={twMerge(
             'mr-6 hidden h-9 items-center border-b-[1.5px] border-transparent md:flex',
-            pathname.startsWith('/membership-marketing') && 'border-neutral-0',
+            pathname.startsWith(membershipNav.activePath) && 'border-neutral-0',
           )}
-          href="/membership-marketing"
+          href={membershipNav.href}
           isNew
         >
-          <MembershipNavLabel />
+          <MembershipNavLabel title={membershipNav.title} />
         </GlobalNavItem>
         {/* 메뉴 정리: 멤버십 출시 메뉴 추가로 상단바가 혼잡해 잠시 숨김 (모바일 드로어에는 유지) */}
         {/* <GlobalNavItem

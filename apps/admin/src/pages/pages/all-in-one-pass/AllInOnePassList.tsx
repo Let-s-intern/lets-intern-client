@@ -11,7 +11,6 @@ import { useMemo } from 'react';
 import { FaPlus } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 
-/** A-1 올인원패스 개설(목록) */
 export default function AllInOnePassList() {
   const navigate = useNavigate();
 

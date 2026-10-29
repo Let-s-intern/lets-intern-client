@@ -7,6 +7,7 @@ import {
   ApplicationCategory,
   filterMentoringCategory,
 } from '@/domain/mypage/application/constants';
+import AllSection from '@/domain/mypage/application/section/AllSection';
 import ApplySection from '@/domain/mypage/application/section/ApplySection';
 import CompleteSection from '@/domain/mypage/application/section/CompleteSection';
 import EmptySection from '@/domain/mypage/application/section/EmptySection';
@@ -30,7 +31,7 @@ const ApplicationContent = () => {
   const { data: applications } = useSuspenseQuery(
     mypageApplicationsQueryOptions,
   );
-  const [category, setCategory] = useState<ApplicationCategory>('PROGRAM');
+  const [category, setCategory] = useState<ApplicationCategory>('ALL');
   const [openMentoringId, setOpenMentoringId] = useState<number | null>(null);
   const [openVersionApplicationId, setOpenVersionApplicationId] = useState<
     number | null
@@ -39,7 +40,8 @@ const ApplicationContent = () => {
     1대1 라이브 멘토링은 전용 API 로 온다. 프로그램 탭의 세 구간에 함께 담고, 멘토링 탭을
     열지도 이 건수로 정한다 — React Query 가 같은 키를 합치므로 요청이 늘지는 않는다.
   */
-  const { data: mentoringData } = useMyLiveMentoringApplicationsQuery();
+  const { data: mentoringData, isError: isMentoringError } =
+    useMyLiveMentoringApplicationsQuery();
   const mentoringList = mentoringData?.applicationList ?? [];
   const now = new Date();
   const mentoringWaitingList = mentoringList.filter(
@@ -76,7 +78,17 @@ const ApplicationContent = () => {
         application.programType !== 'GUIDEBOOK' &&
         application.programType !== 'VOD' &&
         application.programType !== 'LIVE_MENTORING' &&
-        application.programType !== 'VOD_PASS',
+        application.programType !== 'VOD_PASS' &&
+        application.programType !== 'MEMBERSHIP',
+    ) ?? [];
+
+  // 올인원패스(멤버십) 신청 — 참여중/완료만, 프로그램 섹션과 멘토링 사이에 별도 노출
+  const membershipList =
+    applications?.filter(
+      (application) =>
+        application.programType === 'MEMBERSHIP' &&
+        (application.programStatusType === 'PROCEEDING' ||
+          application.programStatusType === 'POST'),
     ) ?? [];
   const programWaitingList = programApplications.filter(
     (application) => application.programStatusType === 'PREV',
@@ -108,6 +120,13 @@ const ApplicationContent = () => {
       (application) => application.applicationId === openMentoringId,
     ) ?? null;
 
+  const membershipInProgressList = membershipList.filter(
+    (application) => application.programStatusType === 'PROCEEDING',
+  );
+  const membershipCompletedList = membershipList.filter(
+    (application) => application.programStatusType === 'POST',
+  );
+
   return (
     <main className="flex w-full flex-col gap-8 md:gap-10">
       <div className="-mx-5 -mt-[18px] md:mx-0 md:mt-0">
@@ -118,6 +137,24 @@ const ApplicationContent = () => {
         />
       </div>
       <div className="flex w-full flex-col gap-16">
+        {category === 'ALL' && (
+          <AllSection
+            programWaitingList={programWaitingList}
+            programInProgressList={programInProgressList}
+            programCompletedList={programCompletedList}
+            membershipInProgressList={membershipInProgressList}
+            membershipCompletedList={membershipCompletedList}
+            guidebookApplicationList={guidebookApplicationList}
+            vodClassApplicationList={vodClassApplicationList}
+            mentoringWaitingList={mentoringWaitingList}
+            mentoringInProgressList={mentoringInProgressList}
+            mentoringCompletedList={mentoringCompletedList}
+            mentoringError={isMentoringError}
+            onMentoringQuestionClick={setOpenMentoringId}
+            onVersionChangeClick={setOpenVersionApplicationId}
+          />
+        )}
+
         {category === 'PROGRAM' && (
           <>
             {isProgramEmpty ? (
@@ -162,6 +199,19 @@ const ApplicationContent = () => {
                 />
               </>
             )}
+          </>
+        )}
+
+        {category === 'MEMBERSHIP' && (
+          <>
+            <ParticipateSection
+              applicationList={membershipInProgressList}
+              emptyText="참여 중인 올인원패스가 없어요."
+            />
+            <CompleteSection
+              applicationList={membershipCompletedList}
+              emptyText="참여 완료한 올인원패스가 없어요."
+            />
           </>
         )}
 

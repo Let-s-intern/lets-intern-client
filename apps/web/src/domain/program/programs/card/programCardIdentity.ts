@@ -28,5 +28,9 @@ export const getProgramCardLink = ({
       challengeVersionId,
     });
   }
+  // 올인원패스는 /program/membership 라우트가 없어 전용 랜딩으로 보낸다
+  if (programType === 'MEMBERSHIP') {
+    return `/all-in-one-pass/${id}`;
+  }
   return `/program/${programType.toLowerCase()}/${id}`;
 };

@@ -26,6 +26,7 @@ export interface CareerGrowthItem {
   isDownloaded: boolean;
   chatLink: string;
   chatPassword: string;
+  isMembershipApplied: boolean;
   /** 챌린지 버전 (LC-3247). 버전을 쓰지 않는 신청이면 비운다 */
   version?: { title: string | null; changeable: boolean };
   /** 셀프 플랜 업그레이드 주소 (LC-3247). 서버가 가능하다고 할 때만 채운다 */
@@ -95,6 +96,7 @@ const applicationToCareerGrowthItem = (
     isDownloaded: application.isDownloaded ?? false,
     chatLink: application.chatLink ?? '',
     chatPassword: application.chatPassword ?? '',
+    isMembershipApplied: application.isMembershipApplied ?? false,
     version,
     planUpgradeHref,
   };

@@ -31,6 +31,7 @@ const applicationFormSchema = z.object({
   deadline: z.string().nullish(),
   periodDays: z.number().nullish(),
   statusType: z.string().nullish(),
+  hasActiveMembership: z.boolean().nullish(), // 이미 보유한 유효 멤버십 존재 여부. true면 랜딩 CTA 비활성
   planList: z.array(planSchema).default([]),
 });
 
@@ -58,9 +59,23 @@ export interface CreateMembershipApplicationBody {
   paymentKey?: string | null;
   orderId: string;
   amount: string;
+  contactEmail?: string | null;
 }
 
 export const postMembershipApplication = (
   membershipId: number,
   body: CreateMembershipApplicationBody,
 ) => axios.post(`/membership-application/${membershipId}`, body);
+
+export interface CreateMembershipExtensionBody {
+  membershipOptionId: number;
+  couponCode?: string | null;
+  paymentKey?: string | null;
+  orderId: string;
+  amount: string;
+}
+
+export const postMembershipExtension = (
+  applicationId: number,
+  body: CreateMembershipExtensionBody,
+) => axios.post(`/membership-application/${applicationId}/extension`, body);

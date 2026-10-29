@@ -1,4 +1,4 @@
-// 캘린더 노출 계산(방법 D) — deriveCalendar: 막대 lane 패킹 + 당일 배치 + +N
+// 캘린더 노출 계산 — deriveCalendar: 막대 lane 패킹 + 당일 배치 + +N
 import type {
   NormalizedCalendarEvent,
   PassParticipationStatus,
@@ -28,7 +28,7 @@ export function deriveCalendar(
   events: NormalizedCalendarEvent[],
   filters: Record<PassParticipationStatus, boolean>,
   days: Day[],
-  { maxRows, visibleItems }: { maxRows: number; visibleItems: number },
+  { visibleItems }: { maxRows: number; visibleItems: number },
 ): CalendarModel {
   const filtered = events.filter((e) => (e.status ? filters[e.status] : true));
 
@@ -64,11 +64,13 @@ export function deriveCalendar(
       dayBars.map((b) => barLaneOf.get(b.id)),
     );
     const dayPoints = pointsOfDay.get(key) ?? [];
-    const total = dayBars.length + dayPoints.length;
 
-    const cap = total <= maxRows ? maxRows : visibleItems;
+    // visibleItems개까지 표시, 초과분(막대·점 모두)은 마지막 행 +N 배지
+    const cap = visibleItems;
     const placed: PointPlacement[] = [];
-    let overflow = 0;
+    let overflow = dayBars.filter(
+      (b) => (barLaneOf.get(b.id) ?? 0) >= cap,
+    ).length;
     let cursor = 0;
     const nextFreeLane = () => {
       while (occupied.has(cursor)) cursor += 1;
@@ -77,7 +79,7 @@ export function deriveCalendar(
 
     for (const p of dayPoints) {
       const lane = nextFreeLane();
-      if (dayBars.length + placed.length < cap && lane < cap) {
+      if (lane < cap) {
         occupied.add(lane);
         placed.push({ event: p, lane });
       } else {
