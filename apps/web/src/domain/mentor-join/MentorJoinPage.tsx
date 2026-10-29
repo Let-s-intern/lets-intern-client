@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { ChallengeShowcase } from './ui/ChallengeShowcase';
 import { ProgramScroller } from './ui/ProgramScroller';
 import { Faq } from './ui/Faq';
+import MentorJoinClickTracker from './ui/MentorJoinClickTracker';
 import {
   featuredSeminarPreview,
   getChallengeHighlights,
@@ -430,6 +431,7 @@ function Lines({ lines }: { lines: ReactNode[] }) {
 export default function MentorJoinPage() {
   return (
     <>
+      <MentorJoinClickTracker />
       <section className="px-4 pt-4 sm:px-8 sm:pt-8 min-[1024px]:px-[52px]">
         <div className="relative isolate flex min-h-[480px] flex-col items-center justify-center overflow-hidden rounded-[16px] bg-[#f9f9f8] px-5 py-16 sm:h-[600px] sm:px-10">
           {/* 하단 중앙에서 번지는 보라색 글로우 */}
@@ -464,12 +466,16 @@ export default function MentorJoinPage() {
             <div className="flex items-center gap-3">
               <Link
                 href={MENTOR_APPLY_PATH}
+                data-track-target="apply"
+                data-track-location="hero"
                 className="w-[136px] rounded-[6px] bg-[#5f66f6] px-5 py-3 text-center text-lg font-medium leading-[1.5] text-white hover:bg-[#4d55f5] sm:w-[150px] sm:text-xl"
               >
                 멘토 신청하기
               </Link>
               <a
                 href={KAKAO_CHAT_URL}
+                data-track-target="inquiry"
+                data-track-location="hero"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-[136px] rounded-[6px] bg-[#27272d] px-5 py-3 text-center text-lg font-medium leading-[1.5] text-white hover:bg-zinc-700 sm:w-[150px] sm:text-xl"
@@ -899,6 +905,8 @@ export default function MentorJoinPage() {
                     {'link' in m && m.link && (
                       <a
                         href={m.link.href}
+                        data-track-target="mission_link"
+                        data-track-location="mission"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1 rounded-full bg-[#4d55f5] px-3 py-1 text-sm font-semibold leading-normal text-white hover:bg-[#6f76f7]"
@@ -1034,6 +1042,8 @@ export default function MentorJoinPage() {
         </h2>
         <Link
           href={MENTOR_APPLY_PATH}
+          data-track-target="apply"
+          data-track-location="bottom_cta"
           className="flex h-12 items-center justify-center gap-2 rounded-[8px] bg-[linear-gradient(272deg,#9762f5_1.88%,#544cff_98.12%)] px-7 py-4 text-xl font-semibold leading-none text-white hover:brightness-110 sm:h-16 sm:px-10 sm:py-6 sm:text-2xl"
         >
           3분만에 멘토 신청하기
@@ -1050,6 +1060,8 @@ export default function MentorJoinPage() {
           <div className="flex flex-1 items-center gap-3 md:flex-none">
             <a
               href={KAKAO_CHAT_URL}
+              data-track-target="inquiry"
+              data-track-location="floating_bar"
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 rounded-[6px] bg-white px-5 py-3 text-center text-base font-medium leading-normal text-[#4d55f5] hover:bg-[#eef0ff] md:flex-none"
@@ -1058,6 +1070,8 @@ export default function MentorJoinPage() {
             </a>
             <Link
               href={MENTOR_APPLY_PATH}
+              data-track-target="apply"
+              data-track-location="floating_bar"
               className="flex-[2] whitespace-nowrap rounded-[6px] bg-[#4d55f5] px-5 py-3 text-center text-base font-medium leading-normal text-white hover:bg-[#3a41d6] md:flex-none"
             >
               3분만에 멘토 신청하기
