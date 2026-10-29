@@ -4,6 +4,9 @@ import BottomNavBarWithPathname from '@/common/layout/BottomNavBarWithPathname';
 import ChannelTalkBtn from '@/common/layout/channel/ChannelTalkBtn';
 import Footer from '@/common/layout/footer/Footer';
 import NavBar from '@/common/layout/header/NavBar';
+import MentorJoinLayout, {
+  isMentorJoinPath,
+} from '@/domain/mentor-join/layout/MentorJoinLayout';
 import { usePathname } from 'next/navigation';
 import React from 'react';
 
@@ -28,6 +31,12 @@ const ConditionalLayout = ({ children }: ConditionalLayoutProps) => {
 
   if (isSsoLoginPage) {
     return <div>{children}</div>;
+  }
+
+  // 멘토 모집 랜딩·신청서·현황 조회(LC-3529)는 시안의 헤더·푸터를 쓴다. 회원에게만 렛츠커리어 헤더를 보인다.
+  // 랜딩이 자체 하단 고정 바를 두므로 채널톡·바텀바는 띄우지 않는다.
+  if (isMentorJoinPath(pathname)) {
+    return <MentorJoinLayout>{children}</MentorJoinLayout>;
   }
 
   if (isMembershipPage) {
