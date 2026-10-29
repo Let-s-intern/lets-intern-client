@@ -70,12 +70,16 @@ function MentorJoinHeader() {
           <div className="flex shrink-0 items-center gap-1 whitespace-nowrap text-sm">
             <Link
               href={MENTOR_APPLY_STATUS_PATH}
+              data-track-target="status"
+              data-track-location="header"
               className="rounded-[6px] px-2.5 py-2 text-zinc-600 hover:bg-zinc-100 sm:px-3"
             >
               신청 현황 조회
             </Link>
             <Link
               href={MENTOR_APPLY_PATH}
+              data-track-target="apply"
+              data-track-location="header"
               className="rounded-[6px] bg-[#4d55f5] px-2.5 py-2 font-semibold text-white hover:bg-[#3a41d6] sm:px-3"
             >
               신청하기

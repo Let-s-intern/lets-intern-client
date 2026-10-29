@@ -24,6 +24,8 @@ export function ProgramScroller({
     <li className="flex w-[160px] shrink-0 snap-start">
       <a
         href={more.href}
+        data-track-target="program_more"
+        data-track-location="program_list"
         target="_blank"
         rel="noopener noreferrer"
         draggable={false}
@@ -48,6 +50,8 @@ export function ProgramScroller({
           >
             <a
               href={c.href}
+              data-track-target="program"
+              data-track-location="program_list"
               target="_blank"
               rel="noopener noreferrer"
               draggable={false}

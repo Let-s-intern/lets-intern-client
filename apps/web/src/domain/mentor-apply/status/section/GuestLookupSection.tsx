@@ -2,9 +2,10 @@
 
 import { useMentorApplicationStatusMutation } from '@/api/mentor-application/mentorApplication';
 import { zodResolver } from '@hookform/resolvers/zod';
+import type { ReactNode } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
-import FormField, { fieldErrorId } from '../../ui/FormField';
+import { fieldErrorId } from '../../ui/FormField';
 import { primaryButtonClassName } from '../../ui/styles';
 import TextInput from '../../ui/TextInput';
 import { formatPhone, toPhoneDigits } from '../../utils/formatPhone';
@@ -35,12 +36,7 @@ export default function GuestLookupSection() {
   return (
     <div className="flex flex-col gap-8">
       <form noValidate onSubmit={onSubmit} className="flex flex-col gap-4">
-        <FormField
-          name="name"
-          label="성함"
-          htmlFor="name"
-          error={errors.name?.message}
-        >
+        <LookupField name="name" label="성함" error={errors.name?.message}>
           <TextInput
             id="name"
             autoComplete="name"
@@ -48,12 +44,11 @@ export default function GuestLookupSection() {
             errorId={fieldErrorId('name')}
             {...register('name')}
           />
-        </FormField>
+        </LookupField>
 
-        <FormField
+        <LookupField
           name="phoneNum"
           label="연락처"
-          htmlFor="phoneNum"
           error={errors.phoneNum?.message}
         >
           <Controller
@@ -73,7 +68,7 @@ export default function GuestLookupSection() {
               />
             )}
           />
-        </FormField>
+        </LookupField>
 
         <button
           type="submit"
@@ -105,6 +100,39 @@ export default function GuestLookupSection() {
           </ul>
         ) : null}
       </div>
+    </div>
+  );
+}
+
+/**
+ * 조회 폼의 칸. 시안은 신청서와 달리 라벨을 24px 한 줄에 두고 입력칸을 바로 붙인다.
+ * 신청서용 FormField 는 라벨 줄 아래 8px 를 띄워 이 화면에서는 칸마다 6.5px 씩 길어진다
+ */
+function LookupField({
+  name,
+  label,
+  error,
+  children,
+}: {
+  name: string;
+  label: string;
+  error?: string;
+  children: ReactNode;
+}) {
+  return (
+    <div data-field={name}>
+      <label
+        htmlFor={name}
+        className="block text-[15px] font-semibold leading-6 text-zinc-900"
+      >
+        {label}
+      </label>
+      {children}
+      {error ? (
+        <p id={fieldErrorId(name)} className="mt-2 text-sm text-red-500">
+          {error}
+        </p>
+      ) : null}
     </div>
   );
 }

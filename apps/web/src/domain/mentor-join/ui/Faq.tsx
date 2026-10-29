@@ -164,6 +164,8 @@ export function Faq() {
         </p>
         <a
           href={KAKAO_CHAT_URL}
+          data-track-target="inquiry"
+          data-track-location="faq"
           target="_blank"
           rel="noopener noreferrer"
           className="flex h-12 items-center justify-center rounded-[8px] border border-[#cfcfcf] bg-white px-6 text-base font-medium leading-[1.45] text-[#3e4148] hover:bg-zinc-50 sm:h-14 sm:text-lg"

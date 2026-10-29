@@ -37,6 +37,7 @@ const tabs: { id: Tab; label: string }[] = [
 
 // 지원자가 쓰는 웹 화면. 운영자가 바로 열어보거나 공유할 수 있게 신청 현황 탭에 보여준다
 const applyPageLinks = [
+  { label: '신청 페이지', path: '/mentor-join' },
   { label: '신청서', path: '/mentor-apply' },
   { label: '신청 현황 조회', path: '/mentor-apply/status' },
 ];
