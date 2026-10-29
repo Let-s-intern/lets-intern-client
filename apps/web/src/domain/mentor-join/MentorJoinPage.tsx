@@ -977,7 +977,7 @@ export default function MentorJoinPage() {
                   // 멘토 카드 15장을 한 장으로 합친 이미지 (원본 4368×260, 2배 해상도)
                   <Image
                     key={copy}
-                    src={`/mentors-row-${r + 1}.jpg`}
+                    src={`/mentor-join/mentors-row-${r + 1}.jpg`}
                     alt={
                       copy === 0
                         ? row.map((m) => `${m.name} 멘토(${m.role})`).join(', ')

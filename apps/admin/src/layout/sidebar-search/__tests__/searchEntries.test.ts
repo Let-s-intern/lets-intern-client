@@ -62,6 +62,18 @@ describe('buildSearchEntries', () => {
     });
   });
 
+  it.each(['신청현황', '멘토 신청', '멘토 합류', '지원자'])(
+    '「%s」 로 멘토 목록 › 신청 현황 탭을 찾는다',
+    (query) => {
+      const [first] = matchEntries(buildSearchEntries(navData), query);
+      expect(first).toMatchObject({
+        label: '신청 현황',
+        path: '/mentors?tab=applications',
+        parents: ['멘토 관리', '멘토 목록'],
+      });
+    },
+  );
+
   it('「프로그램 개설」 상단 등록 버튼 넷을 「프로그램 관리 › 프로그램 개설 › …」 로 찾는다', () => {
     const entries = buildSearchEntries(navData);
     expect(matchEntries(entries, '등록').map((entry) => entry.path)).toEqual(
