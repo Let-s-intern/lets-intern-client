@@ -41,6 +41,7 @@ import {
   GridColDef,
   GridFilterInputValueProps,
   GridFilterOperator,
+  useGridApiRef,
 } from '@mui/x-data-grid';
 import { useQueryClient } from '@tanstack/react-query';
 import { Pencil } from 'lucide-react';
@@ -48,10 +49,14 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import ChallengeDuplicateModal from '@/domain/admin/program/challenge/ChallengeDuplicateModal';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FaCopy, FaList, FaPlus, FaTrashCan } from 'react-icons/fa6';
+import { usePersistedGridState } from './hooks/usePersistedGridState';
 
 // 메인 web 으로 이동하는 외부 링크의 호스트.
 // VITE_WEB_URL 미설정 시 admin 자기 자신의 root 로 fallback (안전장치).
 const WEB_URL = import.meta.env.VITE_WEB_URL ?? '/';
+
+/** 표의 정렬·필터·열 너비를 저장하는 localStorage 키 */
+const GRID_STATE_STORAGE_KEY = 'admin:programs:grid-state';
 
 /** 제목·ID 검색어를 서버에 묻기 전에 입력이 멈추길 기다리는 시간 */
 const KEYWORD_DEBOUNCE_MS = 300;
@@ -83,6 +88,12 @@ const Programs = () => {
 
   const { paginationModel, handlePaginationModelChange } =
     usePaginationModelWithSearchParams({ defaultPage: 0, defaultPageSize: 20 });
+
+  const apiRef = useGridApiRef();
+  const { initialState, saveLater } = usePersistedGridState(
+    GRID_STATE_STORAGE_KEY,
+    apiRef,
+  );
 
   // 검색어가 바뀌면 첫 페이지로. page 를 URL 에 함께 쓰면 페이지 훅이 그 값으로 맞춘다
   useEffect(() => {
@@ -451,6 +462,13 @@ const Programs = () => {
         ) : (
           <>
             <DataGrid
+              apiRef={apiRef}
+              initialState={initialState}
+              onSortModelChange={saveLater}
+              onFilterModelChange={saveLater}
+              onColumnWidthChange={saveLater}
+              onColumnOrderChange={saveLater}
+              onColumnVisibilityModelChange={saveLater}
               autoHeight
               rows={programList.map((p) => ({
                 id: p.programInfo.programType + p.programInfo.id,
