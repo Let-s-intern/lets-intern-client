@@ -263,6 +263,7 @@ const CouponTargetSection = ({ value, onChange }: Props) => {
               <ProgramCheckboxList
                 items={options?.membershipList ?? []}
                 checkedIds={membership.checkedPrograms}
+                disabled={membership.mode === 'all'}
                 onToggle={membership.toggleProgram}
               />
             </div>
