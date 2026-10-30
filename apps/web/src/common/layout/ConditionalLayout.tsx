@@ -4,6 +4,7 @@ import BottomNavBarWithPathname from '@/common/layout/BottomNavBarWithPathname';
 import ChannelTalkBtn from '@/common/layout/channel/ChannelTalkBtn';
 import Footer from '@/common/layout/footer/Footer';
 import NavBar from '@/common/layout/header/NavBar';
+import { BIGFIRM_PATH } from '@/domain/bigfirm/data/links';
 import MentorJoinLayout, {
   isMentorJoinPath,
 } from '@/domain/mentor-join/layout/MentorJoinLayout';
@@ -39,6 +40,18 @@ const ConditionalLayout = ({ children }: ConditionalLayoutProps) => {
   // 랜딩이 자체 하단 고정 바를 두므로 채널톡·바텀바는 띄우지 않는다.
   if (isMentorJoinPath(pathname)) {
     return <MentorJoinLayout>{children}</MentorJoinLayout>;
+  }
+
+  // 대기업 현직 멘토 기획전(LC-3534)은 렛츠커리어 헤더·푸터를 그대로 쓴다. 랜딩이 자체 하단 고정 바(문의하기 포함)를
+  // 두므로 채널톡·바텀바는 띄우지 않고, 푸터 아래에 그 바만큼 여백을 둔다.
+  if (pathname === BIGFIRM_PATH) {
+    return (
+      <div>
+        <NavBar />
+        <div className="min-h-[31rem] w-full">{children}</div>
+        <Footer className="pb-32 md:pb-36" />
+      </div>
+    );
   }
 
   if (isMembershipPage) {
