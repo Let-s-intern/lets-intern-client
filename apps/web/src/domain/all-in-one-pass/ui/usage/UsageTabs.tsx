@@ -20,16 +20,26 @@ const TABS: { value: UsageTabKey; label: string }[] = [
 ];
 
 interface Props {
+  membershipId: number;
   privileges: { programType: string }[];
   passTitle?: string;
+  /** VOD 옵션 추가결제 판매 여부. VOD 탭은 플랜 권한이 아니라 이 값으로 노출한다 */
+  vodOptionOnSale: boolean;
 }
 
-const UsageTabs = ({ privileges, passTitle }: Props) => {
+const UsageTabs = ({
+  membershipId,
+  privileges,
+  passTitle,
+  vodOptionOnSale,
+}: Props) => {
   const ownedTypes = new Set<string>(privileges.map((p) => p.programType));
-  // 멘토링은 쿠폰 기반이라 권한과 무관하게 노출, 나머지는 플랜 권한 보유 시만
-  const visibleTabs = TABS.filter(
-    (t) => t.value === 'MENTORING' || ownedTypes.has(t.value),
-  );
+  // 멘토링은 쿠폰 기반이라 권한과 무관하게 노출, VOD 는 판매가 켜진 패스만, 나머지는 플랜 권한 보유 시만
+  const visibleTabs = TABS.filter((t) => {
+    if (t.value === 'MENTORING') return true;
+    if (t.value === 'VOD') return vodOptionOnSale;
+    return ownedTypes.has(t.value);
+  });
 
   const [active, setActive] = useState<UsageTabKey>(
     visibleTabs[0]?.value ?? 'CHALLENGE',
@@ -59,7 +69,7 @@ const UsageTabs = ({ privileges, passTitle }: Props) => {
       <div>
         {active === 'CHALLENGE' && <UsageChallengeTab />}
         {active === 'GUIDEBOOK' && <UsageGuidebookTab passTitle={passTitle} />}
-        {active === 'VOD' && <UsageVodTab />}
+        {active === 'VOD' && <UsageVodTab membershipId={membershipId} />}
         {active === 'MENTORING' && <UsageMentoringTab />}
         {active === 'LIVE' && <UsageLiveTab passTitle={passTitle} />}
       </div>
