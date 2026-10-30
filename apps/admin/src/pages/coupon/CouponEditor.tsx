@@ -241,7 +241,7 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
       snackbar('존재하지 않는 쿠폰입니다.');
     } else if (errorCode === 'COUPON_ISSUE_TARGET_NOT_FOUND') {
       snackbar(
-        '발급대상으로 선택한 챌린지에서 판매하지 않는 플랜이 포함되어 있습니다.',
+        '발급대상으로 선택한 프로그램에서 판매하지 않는 플랜이 포함되어 있습니다.',
       );
     } else if (errorCode === 'COUPON_ISSUE_TARGET_INVALID') {
       snackbar('쿠폰 대상 조건이 올바르지 않습니다.');
