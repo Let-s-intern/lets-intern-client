@@ -47,18 +47,6 @@ const UsageLiveTab = ({ passTitle }: { passTitle?: string }) => {
       />
       <UsageSection
         title="참여 예정"
-        note={
-          <>
-            참여 안내를 포함한 모든 공지는{' '}
-            <b className="font-semibold">오픈채팅방</b>을 통해 전달됩니다.{' '}
-            <br className="block md:hidden" />
-            LIVE 클래스{' '}
-            <b className="font-semibold">
-              신청 시 전달받은 카카오톡 알림 메세지
-            </b>
-            를 확인해주세요!
-          </>
-        }
         items={inProgress}
         emptyText="참여 예정된 LIVE 클래스가 없습니다."
         onCardClick={handleCardClick}
