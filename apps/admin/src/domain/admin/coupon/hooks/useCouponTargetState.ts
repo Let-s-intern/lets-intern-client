@@ -8,7 +8,8 @@ export type ConditionType =
   | 'CHALLENGE_TYPE'
   | 'CHALLENGE_PROGRAM'
   | 'LIVE_ALL'
-  | 'LIVE_PROGRAM';
+  | 'LIVE_PROGRAM'
+  | 'MEMBERSHIP_PROGRAM';
 
 export interface TargetCondition {
   conditionType: ConditionType;
@@ -39,6 +40,7 @@ export interface ChipItem {
 export interface TargetOptions {
   challengeTypeList: ChallengeTypeOption[];
   liveList: { id: number; title: string }[];
+  membershipList: { id: number; title: string }[];
   challengePricePlanTypeList: ChallengePricePlanTypeOption[];
 }
 
@@ -103,7 +105,12 @@ export function useCouponTargetState(
     }
   }, [conds]);
 
-  const { challengeTypeList, liveList, challengePricePlanTypeList } = options;
+  const {
+    challengeTypeList,
+    liveList,
+    membershipList,
+    challengePricePlanTypeList,
+  } = options;
 
   function chipLabel(c: TargetCondition): string {
     if (c.conditionType === 'APPLICATION_ALL') return '전체 결제자';
@@ -125,6 +132,10 @@ export function useCouponTargetState(
       }
       return title;
     }
+    if (c.conditionType === 'MEMBERSHIP_PROGRAM')
+      return (
+        membershipList.find((p) => p.id === c.targetProgramId)?.title ?? ''
+      );
     return liveList.find((p) => p.id === c.targetProgramId)?.title ?? '';
   }
 
@@ -310,6 +321,51 @@ export function useCouponTargetState(
                   ),
               )
             : [...conds, mk('LIVE_PROGRAM', undefined, pid)],
+        );
+      },
+    },
+
+    // 멤버십은 MEMBERSHIP_ALL이 없어, "전체"를 현재 패스 id 전부를 개별 조건으로 담는 방식으로 처리(스냅샷)
+    membership: {
+      mode: (membershipList.length > 0 &&
+      membershipList.every((p) => $('MEMBERSHIP_PROGRAM', undefined, p.id))
+        ? 'all'
+        : conds.some((c) => c.conditionType === 'MEMBERSHIP_PROGRAM')
+          ? 'partial'
+          : 'none') as 'all' | 'partial' | 'none',
+      count: conds.filter((c) => c.conditionType === 'MEMBERSHIP_PROGRAM')
+        .length,
+      checkedPrograms: new Set(
+        membershipList
+          .filter((p) => $('MEMBERSHIP_PROGRAM', undefined, p.id))
+          .map((p) => p.id),
+      ),
+      toggleAll: () => {
+        const allChecked =
+          membershipList.length > 0 &&
+          membershipList.every((p) => $('MEMBERSHIP_PROGRAM', undefined, p.id));
+        setConds(
+          allChecked
+            ? except(conds, 'MEMBERSHIP_PROGRAM')
+            : [
+                ...except(conds, 'MEMBERSHIP_PROGRAM'),
+                ...membershipList.map((p) =>
+                  mk('MEMBERSHIP_PROGRAM', undefined, p.id),
+                ),
+              ],
+        );
+      },
+      toggleProgram: (pid: number) => {
+        setConds(
+          $('MEMBERSHIP_PROGRAM', undefined, pid)
+            ? conds.filter(
+                (c) =>
+                  !(
+                    c.conditionType === 'MEMBERSHIP_PROGRAM' &&
+                    c.targetProgramId === pid
+                  ),
+              )
+            : [...conds, mk('MEMBERSHIP_PROGRAM', undefined, pid)],
         );
       },
     },

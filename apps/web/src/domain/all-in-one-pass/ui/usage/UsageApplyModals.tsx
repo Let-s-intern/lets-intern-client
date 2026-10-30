@@ -80,20 +80,13 @@ const UsageApplyModals = ({ programType, passTitle, apply }: Props) => {
       )}
       {completed && (
         <AlertModal
-          title={`[${completedTitle}] 신청이 완료되었습니다.`}
+          title={`${copy.label} 신청완료`}
           confirmText="닫기"
           showCancel={false}
           onConfirm={closeComplete}
         >
           <p className="text-neutral-30">
-            신청 내역은 마이페이지{' '}
-            <Link
-              href="/mypage/application"
-              className="text-primary underline underline-offset-2"
-            >
-              신청현황
-            </Link>
-            에서 확인 가능합니다.
+            [{completedTitle}] 신청이 완료되었습니다.
           </p>
         </AlertModal>
       )}

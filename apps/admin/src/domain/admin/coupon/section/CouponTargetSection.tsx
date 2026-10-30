@@ -88,12 +88,14 @@ const CouponTargetSection = ({ value, onChange }: Props) => {
     toggleAllPayers,
     challenge,
     live,
+    membership,
     chips,
     removeChip,
     resetAll,
   } = useCouponTargetState(value, onChange, {
     challengeTypeList: options?.challengeTypeList ?? [],
     liveList: options?.liveList ?? [],
+    membershipList: options?.membershipList ?? [],
     challengePricePlanTypeList: options?.challengePricePlanTypeList ?? [],
   });
 
@@ -242,6 +244,26 @@ const CouponTargetSection = ({ value, onChange }: Props) => {
                 checkedIds={live.checkedPrograms}
                 disabled={live.mode === 'all'}
                 onToggle={live.toggleProgram}
+              />
+            </div>
+          </ExpandableRow>
+        </div>
+
+        {/* 올인원패스 */}
+        <div
+          className={`rounded-xxs overflow-hidden border transition-colors ${membership.mode !== 'none' ? 'border-blue-200' : 'border-gray-200'}`}
+        >
+          <ExpandableRow
+            mode={membership.mode}
+            label="올인원패스"
+            count={membership.count}
+            onToggleCheck={membership.toggleAll}
+          >
+            <div className="border-t border-gray-100 bg-white px-4 py-3">
+              <ProgramCheckboxList
+                items={options?.membershipList ?? []}
+                checkedIds={membership.checkedPrograms}
+                onToggle={membership.toggleProgram}
               />
             </div>
           </ExpandableRow>

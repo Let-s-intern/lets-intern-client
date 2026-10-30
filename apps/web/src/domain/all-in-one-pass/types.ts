@@ -51,7 +51,7 @@ export interface AllInOnePassLanding {
 /** 대시보드 캘린더 항목 유형 (어드민 수기 입력 = GUERRILLA/MILESTONE, 챌린지는 자동 반영) */
 export type PassCalendarEventType = 'CHALLENGE' | 'GUERRILLA' | 'MILESTONE';
 
-/** 프로그램 참여 상태 (참여 전 / 참여 중 / 참여 완료) */
+/** 프로그램 참여 상태 (참여 가능 / 참여 중 / 참여 완료) */
 export type PassParticipationStatus = 'BEFORE' | 'IN_PROGRESS' | 'DONE';
 
 /** 대시보드 월 캘린더 항목. CHALLENGE는 진행 기간 막대(레인), GUERRILLA/MILESTONE은 단일일 칩. 우측 패널은 선택일 항목을 카드로 나열. */

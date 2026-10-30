@@ -22,8 +22,11 @@ const UsageMentoringTab = () => {
             쿠폰함
           </Link>
           에 <b className="font-semibold">1:1 LIVE 멘토링 50% 할인 쿠폰</b>이
-          지급됩니다. <br className="block md:hidden" />
-          멘토링 신청 시 적용해주세요.
+          지급됩니다. 멘토링 신청 시 적용해주세요.
+          <span className="text-neutral-40 md:text-xxsmall12 text-xxsmall10 mt-1 block tracking-tight md:tracking-normal">
+            패스 기간 만료 시 미사용 쿠폰도 함께 소멸됩니다. 기간 내에
+            사용해주세요.
+          </span>
         </p>
       </div>
 
