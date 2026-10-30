@@ -20,6 +20,7 @@ import {
   getMembershipOrderTotals,
   type VodPassOrderSelection,
 } from '@/domain/all-in-one-pass/utils/vodPassOrder';
+import { isVodPassPurchasable } from '@/domain/program/vodPassPurchase';
 import { generateOrderId } from '@/lib/order';
 import { RadioGroup } from '@mui/material';
 import clsx from 'clsx';
@@ -56,8 +57,13 @@ const MembershipPlanBottomSheet = ({
     () => plans.find((p) => p.membershipPlanId === selectedId) ?? null,
     [plans, selectedId],
   );
-  // 판매가 꺼진 패스는 상품이 null 이다. 재조회로 상품이 바뀌면 이전 선택은 버린다
-  const vodPassProduct = form?.vodPassProduct ?? null;
+  // 판매가 꺼진 패스는 상품이 null 이다. 더 살 수 없는 사용자(구매 가능 0개월)는 카드를 숨긴다.
+  // 재조회로 상품이 바뀌면 이전 선택은 버린다
+  const offeredVodPassProduct = form?.vodPassProduct ?? null;
+  const vodPassProduct =
+    offeredVodPassProduct && isVodPassPurchasable(offeredVodPassProduct)
+      ? offeredVodPassProduct
+      : null;
   const vodPass =
     vodPassProduct && vodPassSelection.vodPassProductId === vodPassProduct.id
       ? vodPassSelection

@@ -2,7 +2,7 @@ import type { MembershipVodPassProduct } from '@/domain/all-in-one-pass/api/purc
 import type { VodPassOrderSelection } from '@/domain/all-in-one-pass/utils/vodPassOrder';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { useState } from 'react';
-import VodPassOption, { VOD_PASS_UNAVAILABLE_MESSAGE } from './VodPassOption';
+import VodPassOption from './VodPassOption';
 
 const PRODUCT: MembershipVodPassProduct = {
   id: 7,
@@ -102,16 +102,5 @@ describe('VodPassOption', () => {
       expect.objectContaining({ vodPassMonths: 1, vodPassPrice: 20000 }),
     );
     expect(screen.queryByText('이용 기간')).toBeNull();
-  });
-
-  it('availableMonths 가 0 이면 고를 수 없고 사유를 보여준다', () => {
-    const onChange = renderOption({ ...PRODUCT, availableMonths: 0 });
-
-    const checkbox = screen.getByRole('checkbox');
-    expect(checkbox).toHaveProperty('disabled', true);
-    expect(screen.getByText(VOD_PASS_UNAVAILABLE_MESSAGE)).toBeTruthy();
-
-    fireEvent.click(checkbox);
-    expect(onChange).not.toHaveBeenCalled();
   });
 });

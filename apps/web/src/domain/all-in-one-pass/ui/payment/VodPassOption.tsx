@@ -11,7 +11,6 @@ import {
 } from '@/domain/all-in-one-pass/utils/vodPassOrder';
 import {
   getVodPassMaxMonths,
-  isVodPassPurchasable,
   supportsVodPassMonths,
   VOD_PASS_MIN_MONTHS,
 } from '@/domain/program/vodPassPurchase';
@@ -42,11 +41,9 @@ const LABEL_SX = {
 const STEPPER_BUTTON_CLASS =
   'border-neutral-80 text-neutral-10 disabled:text-neutral-60 flex h-8 w-8 items-center justify-center rounded-xs border bg-white text-base font-bold disabled:cursor-not-allowed';
 
-export const VOD_PASS_UNAVAILABLE_MESSAGE =
-  '보유한 VOD 이용권 기간이 최대 이용 기간에 도달해 더 구매할 수 없어요';
-
 interface Props {
-  /** 신청폼의 VOD 이용권 상품. 판매가 꺼졌으면 null·undefined 이고 아무것도 그리지 않는다 */
+  /** 신청폼의 VOD 이용권 상품. 판매가 꺼졌으면 null·undefined 이고 아무것도 그리지 않는다.
+   *  구매 가능 개월 수가 0 인 상품은 부모가 넘기지 않는다 (챌린지와 같이 카드를 숨긴다) */
   product: MembershipVodPassProduct | null | undefined;
   /** 스토어에 담긴 선택 개월 수. 미선택이면 null */
   selectedMonths: number | null;
@@ -62,8 +59,7 @@ export default function VodPassOption({
     return null;
   }
 
-  const purchasable = isVodPassPurchasable(product);
-  const checked = purchasable && selectedMonths != null;
+  const checked = selectedMonths != null;
   const months = getSelectableVodPassMonths(
     product,
     selectedMonths ?? VOD_PASS_MIN_MONTHS,
@@ -76,8 +72,6 @@ export default function VodPassOption({
   const additionalMonthPrice = product.additionalMonthPrice ?? 0;
 
   const handleCheck = (nextChecked: boolean) => {
-    // disabled 체크박스도 이벤트가 들어오는 환경이 있어 한 번 더 막는다
-    if (!purchasable) return;
     onChange(
       nextChecked
         ? toVodPassOrderSelection(product, months)
@@ -96,14 +90,12 @@ export default function VodPassOption({
           checked
             ? 'border-primary bg-primary-5'
             : 'border-neutral-80 hover:bg-neutral-100',
-          !purchasable && 'opacity-60 hover:bg-transparent',
         )}
       >
         <FormControlLabel
           className="py-3 pl-2 pr-3"
           sx={LABEL_SX}
           checked={checked}
-          disabled={!purchasable}
           onChange={(_, next) => handleCheck(next)}
           control={<Checkbox size="small" sx={CHECKBOX_SX} />}
           label={
@@ -121,9 +113,8 @@ export default function VodPassOption({
                   </span>
                 </span>
                 <span className="text-xxsmall12 text-neutral-30 mt-1 block font-normal leading-5">
-                  {purchasable
-                    ? '결제 즉시 이용이 시작됩니다. 이용 중인 이용권이 있으면 종료 후 이어서 시작됩니다'
-                    : VOD_PASS_UNAVAILABLE_MESSAGE}
+                  결제 즉시 이용이 시작됩니다. 이용 중인 이용권이 있으면 종료 후
+                  이어서 시작됩니다
                 </span>
               </span>
               <span
