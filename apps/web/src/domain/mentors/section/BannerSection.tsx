@@ -1,26 +1,44 @@
-const BannerSection = () => {
-  return (
-    <section className="w-full bg-[#152B65] px-5 py-10 xl:px-[170px]">
-      <div className="mx-auto flex w-full max-w-[1120px] flex-col items-start justify-between gap-6 md:flex-row md:items-center">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-medium24 font-bold text-neutral-100">
-            렛츠커리어 멘토
-          </h1>
-          <p className="text-xsmall16 text-neutral-90">
-            현직자 멘토의 생생한 경험을 통해
-            <br />
-            취업 고민의 답과 실무 노하우를 찾아보세요.
-          </p>
-        </div>
+import { getImageProps } from 'next/image';
+import Link from 'next/link';
 
-        <button
-          type="button"
-          className="text-primary hover:text-primary-hover flex shrink-0 items-center gap-2.5 self-end whitespace-nowrap rounded-full bg-neutral-100 px-5 py-2 font-normal md:self-auto"
-        >
-          <img src="/logo/logo-gradient.svg" alt="" className="h-6 w-6" />
-          현직자 멘토와 1:1 LIVE 멘토링하기
-        </button>
-      </div>
+const ALT =
+  "서류 탈락, 이유를 모르겠다면? 대기업 현직자에게 '탈락한 서류' 점검 받아보세요! 직무별 현직자 1:1 분석으로 다음 지원 전 개선 포인트 확인하기";
+
+const BannerSection = () => {
+  // 화면 폭에 맞는 이미지 하나만 받도록 <picture> 로 분기한다
+  const {
+    props: { srcSet: desktopSrcSet },
+  } = getImageProps({
+    src: '/images/mentors-list-banner.webp',
+    alt: ALT,
+    width: 4480,
+    height: 720,
+    sizes: '(max-width: 1160px) 100vw, 1120px',
+    priority: true,
+  });
+  const { props: mobileProps } = getImageProps({
+    src: '/images/mentors-list-banner-mobile.webp',
+    alt: ALT,
+    width: 640,
+    height: 200,
+    sizes: '100vw',
+    priority: true,
+  });
+
+  // 배경은 이미지 가장자리 색이다. 좌우를 채워 화면 폭 전체 띠처럼 보이게 한다
+  return (
+    <section className="w-full bg-[#205FFF]">
+      <h1 className="sr-only">렛츠커리어 멘토</h1>
+      <Link href="/bigfirm" className="mx-auto block max-w-[1120px]">
+        <picture>
+          <source media="(min-width: 768px)" srcSet={desktopSrcSet} />
+          <img
+            {...mobileProps}
+            alt={ALT}
+            className="aspect-[16/5] h-auto w-full md:aspect-[56/9]"
+          />
+        </picture>
+      </Link>
     </section>
   );
 };
