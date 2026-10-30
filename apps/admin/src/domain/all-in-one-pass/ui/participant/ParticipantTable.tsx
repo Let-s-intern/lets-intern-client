@@ -119,7 +119,10 @@ function ParticipantGroupRows({
   onRevokeClick,
 }: GroupRowsProps) {
   const head = apps[0];
-  const revoked = head.isAdminRefunded;
+  const revokeTarget = [...apps]
+    .reverse()
+    .find((p) => p.extendedDays == null && !p.isAdminRefunded);
+  const canRevoke = revokeTarget != null;
   const total = apps.reduce((sum, p) => sum + appAmount(p), 0);
   // startDate 는 최초로 고정, createDate 오름차순이라 마지막이 최신 종료
   const firstStart = head.startDate;
@@ -164,20 +167,21 @@ function ParticipantGroupRows({
           </button>
         </TD>
         <TD>
+          {/* 미회수 최초건이 있으면 활성, 전부 회수됐으면 비활 */}
           <button
             type="button"
-            disabled={revoked}
+            disabled={!canRevoke}
             className={`w-24 whitespace-nowrap rounded border py-1 text-xs ${
-              revoked
-                ? 'border-neutral-80 text-neutral-40 cursor-not-allowed'
-                : 'border-red-500 text-red-600 hover:bg-red-50'
+              canRevoke
+                ? 'border-red-500 text-red-600 hover:bg-red-50'
+                : 'border-neutral-80 text-neutral-40 cursor-not-allowed'
             }`}
             onClick={(e) => {
               e.stopPropagation();
-              onRevokeClick(head);
+              if (revokeTarget) onRevokeClick(revokeTarget);
             }}
           >
-            {revoked ? '회수 완료' : '권한 회수'}
+            {canRevoke ? '권한 회수' : '회수 완료'}
           </button>
         </TD>
       </tr>
