@@ -49,18 +49,12 @@ export interface PassExtensionOption {
 
 /** 랜딩페이지 구성. 서버 `landingDescription`(JSON) 컬럼으로 직렬화(비구매자 노출 페이지라 외부링크 url 등 민감정보 제외) · (de)serialize는 allInOnePassMapper 참고. */
 
-/** 추가혜택 중 외부링크에 붙이는 부가정보(설명·아이콘). name 은 외부링크에서 실시간으로 가져옴. */
-export interface PassLandingBenefitExtra {
-  description: string;
-  iconKey: string;
-}
-
-/** 추가혜택 중 외부링크와 무관하게 직접 추가하는 혜택 */
-export interface PassLandingManualBenefit {
+/** 혜택요약 카드 1개 (아이콘·이름·설명). 저장 시 최대 6개. id 는 폼 편집용(직렬화 X). */
+export interface PassBenefitCard {
   id: string;
+  iconKey: string;
   name: string;
   description: string;
-  iconKey: string;
 }
 
 export interface PassLandingVod {
@@ -78,7 +72,7 @@ export interface PassLandingReview {
   summary: string;
 }
 
-/** 랜딩페이지 구성 입력값. 추가혜택은 외부링크 유래분(`benefitExtras`, 링크 id→설명·아이콘, 이름은 externalLinks에서 실시간)과 직접추가분(`manualBenefits`)으로 쪼개 보관하고, 저장 시 합쳐 additionalBenefits(name+설명+아이콘, url 제거)로 직렬화. */
+/** 랜딩페이지 구성 입력값. 혜택요약은 `benefitsSummary` 카드 목록(아이콘·이름·설명, 최대 6, VOD 제외)으로 통째 보관·직렬화. 가격섹션 '특별 혜택' 칩은 저장 시 외부링크명으로 파생. */
 export interface PassLandingConfig {
   displayDeadline: string | null;
   hero: {
@@ -92,8 +86,8 @@ export interface PassLandingConfig {
     benefitSection: string;
     reviewSection: string;
   };
-  benefitExtras: Record<string, PassLandingBenefitExtra>;
-  manualBenefits: PassLandingManualBenefit[];
+  /** 혜택요약 카드(최대 6, VOD 제외 — VOD는 옵션 토글로 웹에서 동적 노출). */
+  benefitsSummary: PassBenefitCard[];
   vods: PassLandingVod[];
   vodCount: number;
   reviews: PassLandingReview[];

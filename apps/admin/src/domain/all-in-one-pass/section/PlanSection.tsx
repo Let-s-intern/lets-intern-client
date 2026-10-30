@@ -12,10 +12,11 @@ import { FaPlus, FaTrashCan } from 'react-icons/fa6';
 
 const numberInputSx = { '& input': { textAlign: 'right' as const } };
 
+// VOD 는 플랜 포함 권한이 아니라 'VOD 옵션 추가결제' 토글(VodPassSaleToggle)로 판매 (LC-3533).
 const PERMISSION_OPTIONS: { value: PassPermission; label: string }[] = [
   { value: 'CHALLENGE_ALL_IN_ONE', label: '챌린지 올인원' },
   { value: 'GUIDEBOOK_ALL_IN_ONE', label: '가이드북 올인원' },
-  { value: 'VOD_ALL_IN_ONE', label: 'VOD 올인원' },
+  // { value: 'VOD_ALL_IN_ONE', label: 'VOD 올인원' }, // 비활 — VOD 는 옵션 판매로 대체
   { value: 'LIVE_CLASS_ALL_IN_ONE', label: 'LIVE 클래스 올인원' },
 ];
 

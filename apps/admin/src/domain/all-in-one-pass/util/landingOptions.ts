@@ -1,6 +1,8 @@
 /** 랜딩페이지 구성 선택지 상수 (아이콘·후기 드롭다운) + 빈 후기·자동 혜택 헬퍼. */
 
 import {
+  PassBenefitCard,
+  PassExternalLink,
   PassLandingReview,
   PassPermission,
   PassPlan,
@@ -43,17 +45,19 @@ export interface CoreBenefit {
   iconKey: string; // BENEFIT_ICON_OPTIONS 의 key
 }
 
-const CORE_BENEFIT_PRESETS: Record<PassPermission, CoreBenefit> = {
+// VOD 는 플랜 포함 권한이 아니라 'VOD 옵션 추가결제'로 바뀌어(LC-3533) 플랜 체크박스가
+// 비활성 → VOD 코어 프리셋도 비활(주석). Partial 로 둬서 VOD 키가 없어도 된다.
+const CORE_BENEFIT_PRESETS: Partial<Record<PassPermission, CoreBenefit>> = {
   CHALLENGE_ALL_IN_ONE: {
     name: '챌린지 10종',
     description: '자소서·포폴부터 면접·인적성까지',
     iconKey: 'challenge',
   },
-  VOD_ALL_IN_ONE: {
-    name: 'VOD 20종',
-    description: '현직자가 알려주는 직무·취업 노하우',
-    iconKey: 'vod',
-  },
+  // VOD_ALL_IN_ONE: {
+  //   name: 'VOD 20종',
+  //   description: '현직자가 알려주는 직무·취업 노하우',
+  //   iconKey: 'vod',
+  // },
   GUIDEBOOK_ALL_IN_ONE: {
     name: '가이드북 7종',
     description: '막막할 때 꺼내 보는 취준 가이드',
@@ -68,7 +72,7 @@ const CORE_BENEFIT_PRESETS: Record<PassPermission, CoreBenefit> = {
 
 const CORE_BENEFIT_ORDER: PassPermission[] = [
   'CHALLENGE_ALL_IN_ONE',
-  'VOD_ALL_IN_ONE',
+  // 'VOD_ALL_IN_ONE', // 비활 — VOD 는 옵션 판매로 대체(LC-3533)
   'GUIDEBOOK_ALL_IN_ONE',
   'LIVE_CLASS_ALL_IN_ONE',
 ];
@@ -80,22 +84,47 @@ const MENTORING_CORE_BENEFIT: CoreBenefit = {
   iconKey: 'mentoring',
 };
 
-/** 플랜 권한 union → 자동 포함 혜택 목록 (+ 멘토링 항상) */
-export const getCoreBenefits = (plans: PassPlan[]): CoreBenefit[] => {
-  const union = new Set<PassPermission>();
-  plans.forEach((p) => p.permissions.forEach((perm) => union.add(perm)));
-  const fromPlans = CORE_BENEFIT_ORDER.filter((perm) => union.has(perm)).map(
-    (perm) => CORE_BENEFIT_PRESETS[perm],
-  );
-  return [...fromPlans, MENTORING_CORE_BENEFIT];
-};
-
-/** 혜택요약에 노출되는 총 카드 수 상한 (자동 포함 + 외부링크 + 수동 합산) */
+/** 혜택요약에 노출되는 총 카드 수 상한 */
 export const MAX_BENEFIT_CARDS = 6;
 
-/** 자동 포함 혜택을 뺀 나머지(외부링크+수동)가 쓸 수 있는 슬롯 수 */
-export const getAdditionalBenefitSlots = (plans: PassPlan[]): number =>
-  Math.max(MAX_BENEFIT_CARDS - getCoreBenefits(plans).length, 0);
+const makeBenefitCard = (
+  iconKey: string,
+  name: string,
+  description: string,
+): PassBenefitCard => ({ id: crypto.randomUUID(), iconKey, name, description });
+
+/**
+ * 플랜 권한 + 외부링크 기준 기본 혜택요약 카드 생성 (빈 폼 시드 · "다시 채우기"용).
+ * 순서: 코어(권한 보유분, VOD 제외) → 멘토링(항상) → 외부링크(남는 아이콘 자동배정), 최대 6개.
+ * VOD 는 옵션 토글(LC-3533)로 웹에서 동적 삽입하므로 여기 포함하지 않는다.
+ */
+export const buildDefaultBenefitsSummary = (
+  plans: PassPlan[],
+  externalLinks: PassExternalLink[],
+): PassBenefitCard[] => {
+  const union = new Set<PassPermission>();
+  plans.forEach((p) => p.permissions.forEach((perm) => union.add(perm)));
+  const core = CORE_BENEFIT_ORDER.filter((perm) => union.has(perm))
+    .map((perm) => CORE_BENEFIT_PRESETS[perm])
+    .filter((b): b is CoreBenefit => Boolean(b))
+    .map((b) => makeBenefitCard(b.iconKey, b.name, b.description));
+  const base = [
+    ...core,
+    makeBenefitCard(
+      MENTORING_CORE_BENEFIT.iconKey,
+      MENTORING_CORE_BENEFIT.name,
+      MENTORING_CORE_BENEFIT.description,
+    ),
+  ];
+  // 외부링크는 코어/멘토링이 안 쓴 아이콘을 하나씩 배정
+  const used = new Set(base.map((c) => c.iconKey));
+  const external = externalLinks.map((link) => {
+    const iconKey = getFirstAvailableIconKey(used);
+    used.add(iconKey);
+    return makeBenefitCard(iconKey, link.name, '');
+  });
+  return [...base, ...external].slice(0, MAX_BENEFIT_CARDS);
+};
 
 /** 후기 출처 */
 export const REVIEW_SOURCE_OPTIONS = [

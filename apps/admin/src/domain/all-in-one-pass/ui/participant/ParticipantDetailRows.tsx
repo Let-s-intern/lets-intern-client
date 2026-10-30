@@ -1,7 +1,9 @@
 import { resolveRefundLabel } from '@/domain/admin/program/program-user/utils/refundState';
 import { PassParticipant } from '@/domain/all-in-one-pass/types';
-import { periodKindLabel } from '@/domain/all-in-one-pass/util/periodKindLabel';
 import dayjs from '@/lib/dayjs';
+
+const periodKindLabel = (extendedDays: number | null, baseLabel: string) =>
+  extendedDays == null ? baseLabel : `${extendedDays}일 연장`;
 
 const SUB_HEAD =
   'border border-[#cbd5e0] bg-primary-10 px-3 py-2 text-center text-xs font-semibold text-neutral-600';
@@ -52,12 +54,12 @@ export default function ParticipantDetailRows({ apps }: Props) {
             <td className={`${SUB_CELL} ${BOLD_L}${edge}`}>
               <span
                 className={`text-xxsmall12 inline-block whitespace-nowrap rounded-full border px-2 py-0.5 font-medium ${
-                  index === 0
+                  p.extendedDays == null
                     ? 'border-neutral-70 text-neutral-40'
                     : 'border-primary text-primary'
                 }`}
               >
-                {periodKindLabel(index, p.extendedDays, '기본')}
+                {periodKindLabel(p.extendedDays, '기본')}
               </span>
             </td>
             <td className={`${SUB_CELL} text-neutral-600${edge}`}>

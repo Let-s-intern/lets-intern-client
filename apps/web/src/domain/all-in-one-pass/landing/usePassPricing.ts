@@ -1,5 +1,7 @@
+import { CHALLENGE_ITEMS } from '@/domain/membership/data/challengeModalItems';
 import { useMemo } from 'react';
 import type { AllInOnePassPlan, PassProgramType } from '../types';
+import { GUIDEBOOK_COMPARE_ITEMS } from './compareCatalog';
 import type { CompareTab } from './CompareModal';
 
 const finalOf = (p: AllInOnePassPlan) => p.price - (p.discount ?? 0);
@@ -48,14 +50,14 @@ export function usePassPricing(plans: AllInOnePassPlan[]): PassPricing {
     const categories = [
       {
         types: ['CHALLENGE'] as PassProgramType[],
-        full: '취준 필수 챌린지 - 베이직 플랜 10종',
-        short: '챌린지 10종',
+        full: `취준 필수 챌린지 - 베이직 플랜 ${CHALLENGE_ITEMS.length}종`,
+        short: `챌린지 ${CHALLENGE_ITEMS.length}종`,
         note: '베이직 · 각 1회씩, 챌린지 상위 플랜은 차액 결제로 이용 가능',
       },
       {
         types: ['GUIDEBOOK'] as PassProgramType[],
-        full: '취준 핵심 가이드북 8종',
-        short: '가이드북 8종',
+        full: `취준 핵심 가이드북 ${GUIDEBOOK_COMPARE_ITEMS.length}종`,
+        short: `가이드북 ${GUIDEBOOK_COMPARE_ITEMS.length}종`,
         note: '패스기간 열람 가능',
       },
       {

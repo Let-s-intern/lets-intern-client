@@ -1,6 +1,5 @@
-// landingDescription(JSON) 파싱 + 혜택요약 카드 파생(어드민 serialize 스키마와 1:1).
+// landingDescription(JSON) 파싱 + 혜택요약 카드 렌더(어드민 serialize 스키마와 1:1).
 import type { SerializedLexicalNode } from 'lexical';
-import type { AllInOnePassPlan, PassProgramType } from '../types';
 
 export interface LandingBenefit {
   name: string;
@@ -31,7 +30,10 @@ export interface LandingDescription {
     benefitSection: string;
     reviewSection: string;
   };
-  additionalBenefits: LandingBenefit[];
+  /** 혜택요약 카드(최대 6, VOD 제외). 어드민이 통째로 저장 — 웹은 그대로 렌더. */
+  benefitsSummary: LandingBenefit[];
+  /** 가격섹션 '패스 전용 특별 혜택' 칩 (외부링크명) */
+  specialBenefitTitles: string[];
   vods: LandingVod[];
   vodCount: number;
   reviews: LandingReview[];
@@ -47,7 +49,8 @@ export const emptyLandingDescription = (): LandingDescription => ({
     benefitSection: '',
     reviewSection: '',
   },
-  additionalBenefits: [],
+  benefitsSummary: [],
+  specialBenefitTitles: [],
   vods: [],
   vodCount: 0,
   reviews: [],
@@ -79,11 +82,12 @@ export const parseLandingDescription = (
       benefitSection: parsed.lexical?.benefitSection ?? '',
       reviewSection: parsed.lexical?.reviewSection ?? '',
     },
-    additionalBenefits: (parsed.additionalBenefits ?? []).map((b) => ({
+    benefitsSummary: (parsed.benefitsSummary ?? []).map((b) => ({
       name: b.name ?? '',
       description: b.description ?? '',
       iconKey: b.iconKey ?? DEFAULT_BENEFIT_ICON_KEY,
     })),
+    specialBenefitTitles: parsed.specialBenefitTitles ?? [],
     vods: (parsed.vods ?? []).map((v) => ({
       title: v.title ?? '',
       thumbnail: v.thumbnail ?? '',
@@ -150,84 +154,17 @@ export interface BenefitCounts {
   vod: number;
 }
 
-// 플랜 권한(programType)별 자동 포함 혜택 프리셋 — 이름의 개수는 counts 로 주입. LIVE 는 개수 없음.
-const CORE_BENEFIT_PRESETS: Record<
-  PassProgramType,
-  { name: (c: BenefitCounts) => string; description: string; iconSrc: string }
-> = {
-  CHALLENGE: {
-    name: (c) => `챌린지 ${c.challenge}종`,
-    description: '자소서·포폴부터 면접·인적성까지',
-    iconSrc: BENEFIT_ICON_SRC.challenge,
-  },
-  VOD: {
-    name: (c) => `VOD ${c.vod}종`,
-    description: '현직자가 알려주는 직무·취업 노하우',
-    iconSrc: BENEFIT_ICON_SRC.vod,
-  },
-  GUIDEBOOK: {
-    name: (c) => `가이드북 ${c.guidebook}종`,
-    description: '막막할 때 꺼내 보는 취준 가이드',
-    iconSrc: BENEFIT_ICON_SRC.guidebook,
-  },
-  LIVE: {
-    name: () => 'LIVE 클래스',
-    description: '현직자가 전하는 실시간 LIVE 클래스',
-    iconSrc: BENEFIT_ICON_SRC.liveSeminar,
-  },
-};
-
-const CORE_BENEFIT_ORDER: PassProgramType[] = [
-  'CHALLENGE',
-  'VOD',
-  'GUIDEBOOK',
-  'LIVE',
-];
-
-const MENTORING_BENEFIT: BenefitCard = {
-  name: '1:1 멘토링 할인 쿠폰',
-  description: '현직자 1:1 상담을 할인된 가격에',
-  iconSrc: BENEFIT_ICON_SRC.mentoring,
-};
-
-/** VOD 옵션 판매가 켜진 패스의 VOD 카드 설명. 패스 포함이 아니라 옵션임을 알린다 (LC-3533) */
-const VOD_OPTION_DESCRIPTION = 'VOD 옵션을 추가하면 시청할 수 있어요';
-
-/**
- * 플랜 권한 union → 자동 포함 혜택 (+ 멘토링 항상). counts 로 개수 주입.
- * VOD 옵션 판매가 켜져 있으면 플랜 권한이 없어도 VOD 를 옵션 설명으로 넣는다.
- */
-export const getCoreBenefits = (
-  plans: AllInOnePassPlan[],
-  counts: BenefitCounts,
-  vodOptionOnSale: boolean,
-): BenefitCard[] => {
-  const union = new Set<PassProgramType>();
-  plans.forEach((p) => p.privileges.forEach((pv) => union.add(pv.programType)));
-  if (vodOptionOnSale) union.add('VOD');
-  const fromPlans = CORE_BENEFIT_ORDER.filter((t) => union.has(t)).map((t) => ({
-    name: CORE_BENEFIT_PRESETS[t].name(counts),
-    description:
-      t === 'VOD' && vodOptionOnSale
-        ? VOD_OPTION_DESCRIPTION
-        : CORE_BENEFIT_PRESETS[t].description,
-    iconSrc: CORE_BENEFIT_PRESETS[t].iconSrc,
-  }));
-  return [...fromPlans, MENTORING_BENEFIT];
-};
-
-/** 혜택요약 카드 = 코어(플랜 union) + 추가혜택, 최대 6개 */
-export const getBenefitCards = (
-  plans: AllInOnePassPlan[],
-  additionalBenefits: LandingBenefit[],
-  counts: BenefitCounts,
-  vodOptionOnSale: boolean,
-): BenefitCard[] => {
-  const core = getCoreBenefits(plans, counts, vodOptionOnSale);
-  const additional = additionalBenefits.map((b) => ({
+/** 저장된 benefitsSummary → 노출 카드. 어드민이 통째 저장한 값을 그대로 렌더. */
+export const toBenefitCards = (summary: LandingBenefit[]): BenefitCard[] =>
+  summary.slice(0, MAX_BENEFIT_CARDS).map((b) => ({
     name: b.name,
     description: b.description,
     iconSrc: getBenefitIconSrc(b.iconKey),
   }));
-  return [...core, ...additional].slice(0, MAX_BENEFIT_CARDS);
-};
+
+/** VOD 옵션 판매 중일 때 혜택요약에 끼워넣는 VOD 카드 (옵션 설명 + 개수, LC-3533). */
+export const buildVodOptionCard = (counts: BenefitCounts): BenefitCard => ({
+  name: `VOD ${counts.vod}종`,
+  description: 'VOD 옵션을 추가하면 시청할 수 있어요',
+  iconSrc: BENEFIT_ICON_SRC.vod,
+});
