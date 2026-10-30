@@ -17,6 +17,7 @@ import PassFormViewTabs, {
 } from '@/domain/all-in-one-pass/section/PassFormViewTabs';
 import { PassFormInput } from '@/domain/all-in-one-pass/types';
 import ImportExportBar from '@/domain/all-in-one-pass/ui/ImportExportBar';
+import VodPassSaleToggle from '@/domain/all-in-one-pass/ui/VodPassSaleToggle';
 import { isServerPlanId } from '@/domain/all-in-one-pass/util/allInOnePassMapper';
 import { useVodDefaults } from '@/domain/all-in-one-pass/util/useVodDefaults';
 import { validatePassInput } from '@/domain/all-in-one-pass/util/validatePassInput';
@@ -116,7 +117,14 @@ export default function AllInOnePassEdit() {
             <Heading>올인원패스 수정</Heading>
             {input && <PassFormViewTabs value={view} onChange={setView} />}
           </div>
-          {input && <ImportExportBar mode="export" input={input} />}
+          {input && (
+            <div className="flex items-center gap-4">
+              {numericPassId != null && (
+                <VodPassSaleToggle passId={numericPassId} />
+              )}
+              <ImportExportBar mode="export" input={input} />
+            </div>
+          )}
         </Header>
       </div>
 
