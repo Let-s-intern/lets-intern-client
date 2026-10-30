@@ -21,6 +21,8 @@ interface Props {
   playbookLexical: string;
   /** 혜택 상세 하단 렉시컬(특별혜택) */
   benefitLexical: string;
+  /** VOD 옵션 추가결제 판매 여부. 꺼져 있으면 VOD 탭에서 옵션 안내를 숨긴다 */
+  vodOptionOnSale: boolean;
 }
 
 /** 모바일에서 접었을 때 보여줄 카드 수 (초과분은 더보기) */
@@ -34,6 +36,7 @@ export default function BenefitDetailSection({
   vodCount,
   playbookLexical,
   benefitLexical,
+  vodOptionOnSale,
 }: Props) {
   const playbookRoot = parseLexicalRoot(playbookLexical);
   const benefitRoot = parseLexicalRoot(benefitLexical);
@@ -142,10 +145,11 @@ export default function BenefitDetailSection({
                     <VodCard key={`${vod.title}-${i}`} vod={vod} />
                   ))}
                 </div>
-                <p className="text-xsmall14 md:text-small18 text-neutral-40 mt-8 font-light">
-                  *패스에 포함된 VOD의 구성 중 일부에요. 패스 기간동안 자유롭게
-                  시청할 수 있어요.
-                </p>
+                {vodOptionOnSale && (
+                  <p className="text-xsmall14 md:text-small18 text-neutral-40 mt-8 font-light">
+                    *VOD 옵션을 추가하면 이용권 기간 동안 시청할 수 있어요
+                  </p>
+                )}
               </>
             )
           ) : loading ? (

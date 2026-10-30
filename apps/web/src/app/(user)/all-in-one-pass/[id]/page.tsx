@@ -99,6 +99,7 @@ export default function AllInOnePassLandingPage() {
         vodCount={landing.vodCount}
         playbookLexical={landing.lexical.playbookSection}
         benefitLexical={landing.lexical.benefitSection}
+        vodOptionOnSale={applicationForm?.vodPassProduct != null}
       />
       <ReviewsSection reviews={landing.reviews} />
       <LandingLexicalSection lexical={landing.lexical.reviewSection} />
