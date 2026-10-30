@@ -38,6 +38,7 @@ const openMembershipPrivilegeSchema = z.object({
   exists: z.boolean(),
   membershipId: z.number().nullish(),
   privilegeList: z.array(openPrivilegeItemSchema).default([]),
+  openCount: z.number().nullish(),
 });
 export type OpenMembershipPrivilege = z.infer<
   typeof openMembershipPrivilegeSchema

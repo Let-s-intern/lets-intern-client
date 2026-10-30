@@ -49,11 +49,11 @@ export function PlanPriceRight({
 export function MembershipBenefitNotice({
   show,
   hasPrivilege,
-  openMembershipId,
+  passHref,
 }: {
   show: boolean;
   hasPrivilege: boolean;
-  openMembershipId: number | null;
+  passHref: string | null;
 }) {
   if (!show) return null;
 
@@ -92,9 +92,9 @@ export function MembershipBenefitNotice({
           베이직 플랜 0원, 플랜 업그레이드 시 차액만 결제
         </span>
       </p>
-      {openMembershipId && (
+      {passHref && (
         <Link
-          href={`/all-in-one-pass/${openMembershipId}`}
+          href={passHref}
           className="text-primary text-xxsmall12 md:text-xsmall14 flex shrink-0 items-center gap-0.5 font-semibold"
         >
           <span className="flex items-center gap-1 md:hidden">
@@ -106,7 +106,7 @@ export function MembershipBenefitNotice({
             />
           </span>
           <span className="hidden md:flex md:items-center md:gap-3">
-            올인원 패스 알아보기{' '}
+            올인원패스 알아보기{' '}
             <ChevronRight
               size={20}
               strokeWidth={2.5}
