@@ -1,5 +1,6 @@
 'use client';
 
+import { useVodPassListQuery } from '@/api/vodPass';
 import { useGetMyPassPlan } from '../../api/dashboard';
 
 const PROGRAM_LABEL: Record<string, string> = {
@@ -11,6 +12,7 @@ const PROGRAM_LABEL: Record<string, string> = {
 
 // v1: 멘토링 쿠폰은 고정 노출(플랜/API에 없음). 멘토링 정리 시 교체.
 const MENTORING_BADGE = '1:1 LIVE 멘토링 50% 할인 쿠폰';
+const VOD_PASS_BADGE = `${PROGRAM_LABEL.VOD} 이용권`;
 
 export default function PassUsageCard({
   applicationId,
@@ -18,12 +20,22 @@ export default function PassUsageCard({
   applicationId: number;
 }) {
   const { data } = useGetMyPassPlan(applicationId);
+  // 챌린지에서 산 이용권도 같은 VOD 이용권이다. 조회 실패면 배지만 빠진다
+  const { data: vodPassList } = useVodPassListQuery();
   if (!data) return null;
 
+  const privilegeBadges = data.privilegeList.map(
+    (p) => `${PROGRAM_LABEL[p.programType] ?? p.programType} 이용권`,
+  );
+  const hasActiveVodPass =
+    vodPassList?.passes.some((pass) => pass.status === 'ACTIVE') ?? false;
+  // 플랜 권한으로 이미 "VOD 이용권" 배지가 있으면 한 번만 보여준다
+  const showVodPassBadge =
+    hasActiveVodPass && !privilegeBadges.includes(VOD_PASS_BADGE);
+
   const badges = [
-    ...data.privilegeList.map(
-      (p) => `${PROGRAM_LABEL[p.programType] ?? p.programType} 이용권`,
-    ),
+    ...privilegeBadges,
+    ...(showVodPassBadge ? [VOD_PASS_BADGE] : []),
     MENTORING_BADGE,
   ];
 
