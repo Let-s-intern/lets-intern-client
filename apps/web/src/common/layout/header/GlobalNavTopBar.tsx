@@ -125,6 +125,15 @@ function GlobalNavTopBar({
         </GlobalNavItem>
         <GlobalNavItem
           className={twMerge(
+            'mr-6 hidden h-9 items-center border-b-[1.5px] border-transparent md:flex',
+            pathname.startsWith('/mentor-join') && 'border-neutral-0',
+          )}
+          href="/mentor-join"
+        >
+          멘토 신청
+        </GlobalNavItem>
+        <GlobalNavItem
+          className={twMerge(
             'hidden items-center justify-center gap-1 border-b-[1.5px] border-transparent md:flex',
             pathname.startsWith('/community') && 'border-neutral-0',
           )}

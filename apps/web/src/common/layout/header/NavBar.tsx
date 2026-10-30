@@ -274,6 +274,7 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
                   href="/mentors"
                   active={activeLink === 'MENTORS'}
                   subNavList={[
+                    { children: '대기업 멘토관', href: '/bigfirm' },
                     {
                       children: '1:1 LIVE 멘토링',
                       href: '/program?catalog=mentoring',
@@ -365,6 +366,7 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
             +현직자 멘토 참여중
           </span>
         </SideNavItem>
+        <SideNavItem href="/mentor-join">멘토 신청</SideNavItem>
         <SideNavItem className="b2b_landing_click" href="/b2b">
           기업/학교 취업 교육 문의
         </SideNavItem>
