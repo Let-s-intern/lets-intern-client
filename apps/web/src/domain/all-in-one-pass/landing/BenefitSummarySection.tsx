@@ -3,11 +3,11 @@
 import clsx from 'clsx';
 import { ChevronRight } from 'lucide-react';
 import type { CSSProperties } from 'react';
-import type { AllInOnePassPlan } from '../types';
 import CountUpNumber from './CountUpNumber';
 import LandingSectionHeader from './LandingSectionHeader';
 import {
-  getBenefitCards,
+  buildVodOptionCard,
+  toBenefitCards,
   type BenefitCard,
   type LandingBenefit,
 } from './landingContent';
@@ -16,11 +16,11 @@ import { useBenefitCounts } from './useBenefitCounts';
 interface Props {
   passTitle: string;
   periodDays: number | null;
-  plans: AllInOnePassPlan[];
-  additionalBenefits: LandingBenefit[];
-  /** 어드민이 집계한 전체 VOD 수 (카드 "VOD N종" 표기용) */
+  /** 어드민이 통째로 저장한 혜택요약 카드(최대 6, VOD 제외). */
+  benefitsSummary: LandingBenefit[];
+  /** 어드민이 집계한 전체 VOD 수 (VOD 옵션 카드 "VOD N종" 표기용) */
   vodCount: number;
-  /** VOD 옵션 추가결제 판매 여부. 켜져 있으면 VOD 카드를 옵션 설명으로 보여준다 */
+  /** VOD 옵션 추가결제 판매 여부. 켜져 있으면 VOD 카드를 2번째에 삽입 */
   vodOptionOnSale: boolean;
   onBenefitClick: () => void;
 }
@@ -38,23 +38,24 @@ const METRICS = [
   { label: '커뮤니티 참여자 수', value: '2,500+', unit: '명' },
 ];
 
-/** 혜택 섹션(#benefit) — 혜택 요약 카드(플랜 union 코어 + 추가혜택). */
+/** 혜택 섹션(#benefit) — 어드민이 저장한 혜택요약 카드 + VOD 옵션 판매 시 VOD 카드 삽입. */
 export default function BenefitSummarySection({
   passTitle,
   periodDays,
-  plans,
-  additionalBenefits,
+  benefitsSummary,
   vodCount,
   vodOptionOnSale,
   onBenefitClick,
 }: Props) {
   const counts = useBenefitCounts(vodCount);
-  const cards = getBenefitCards(
-    plans,
-    additionalBenefits,
-    counts,
-    vodOptionOnSale,
-  );
+  // 저장된 benefitsSummary 그대로 + VOD 옵션 판매 중이면 2번째(위치 A)에 VOD 카드 삽입.
+  const base = toBenefitCards(benefitsSummary);
+  const cards = vodOptionOnSale
+    ? [...base.slice(0, 1), buildVodOptionCard(counts), ...base.slice(1)].slice(
+        0,
+        6,
+      )
+    : base;
 
   const leftSlots = [0, 2, 4];
   const rightSlots = [1, 3, 5];

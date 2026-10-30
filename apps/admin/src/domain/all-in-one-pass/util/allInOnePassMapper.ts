@@ -118,6 +118,25 @@ export const toListItem = (
 // ── 상세 → 폼 ─────────────────────────────────────────
 export const toFormInput = (detail: AllInOnePassDetail): PassFormInput => {
   const blob = parseDescription(detail.description);
+  const plans: PassPlan[] = detail.planList.map((plan) => {
+    const privilegeIds: Partial<Record<PassPermission, number>> = {};
+    plan.privilegeList.forEach((pv) => {
+      const perm = privilegeToPermission(pv.programType, pv.privilegeType);
+      if (perm && pv.membershipPlanPrivilegeId != null)
+        privilegeIds[perm] = pv.membershipPlanPrivilegeId;
+    });
+    return {
+      id: String(plan.membershipPlanId ?? crypto.randomUUID()),
+      name: plan.title,
+      description: plan.description ?? '',
+      permissions: plan.privilegeList
+        .map((pv) => privilegeToPermission(pv.programType, pv.privilegeType))
+        .filter((p): p is PassPermission => p !== null),
+      regularPrice: plan.price ?? null,
+      discountPrice: plan.discount ?? null,
+      privilegeIds,
+    };
+  });
   return {
     title: detail.title,
     shortDescription: detail.introduction ?? '',
@@ -125,25 +144,7 @@ export const toFormInput = (detail: AllInOnePassDetail): PassFormInput => {
     purchaseEndDate: detail.deadline ?? null,
     passDays: detail.periodDays ?? null,
     thumbnailUrl: detail.thumbnail ?? null,
-    plans: detail.planList.map((plan) => {
-      const privilegeIds: Partial<Record<PassPermission, number>> = {};
-      plan.privilegeList.forEach((pv) => {
-        const perm = privilegeToPermission(pv.programType, pv.privilegeType);
-        if (perm && pv.membershipPlanPrivilegeId != null)
-          privilegeIds[perm] = pv.membershipPlanPrivilegeId;
-      });
-      return {
-        id: String(plan.membershipPlanId ?? crypto.randomUUID()),
-        name: plan.title,
-        description: plan.description ?? '',
-        permissions: plan.privilegeList
-          .map((pv) => privilegeToPermission(pv.programType, pv.privilegeType))
-          .filter((p): p is PassPermission => p !== null),
-        regularPrice: plan.price ?? null,
-        discountPrice: plan.discount ?? null,
-        privilegeIds,
-      };
-    }),
+    plans,
     calendarEvents: blob.calendarEvents,
     externalLinks: blob.externalLinks,
     extensionOptions: detail.optionList.map((opt) => ({
@@ -152,7 +153,7 @@ export const toFormInput = (detail: AllInOnePassDetail): PassFormInput => {
       price: opt.price ?? null,
     })),
     mentoringCouponAutoIssue: true, // v1배포: 항상 포함(고정)
-    landing: toLandingConfig(detail.landingDescription, blob.externalLinks),
+    landing: toLandingConfig(detail.landingDescription),
     // 이 패스에 연결된(노출) FAQ id — 체크박스 prefill
     faqList: detail.faqList.map((f) => f.id),
   };

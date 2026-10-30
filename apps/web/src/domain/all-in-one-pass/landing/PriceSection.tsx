@@ -5,7 +5,6 @@ import clsx from 'clsx';
 import { useState } from 'react';
 import type { AllInOnePassPlan } from '../types';
 import CompareModal from './CompareModal';
-import type { LandingBenefit } from './landingContent';
 import LandingSectionHeader from './LandingSectionHeader';
 import { usePassPricing } from './usePassPricing';
 
@@ -13,7 +12,8 @@ interface Props {
   passTitle: string;
   plans: AllInOnePassPlan[];
   periodDays: number | null;
-  additionalBenefits: LandingBenefit[];
+  /** '패스 전용 특별 혜택' 칩 (외부링크명) */
+  specialBenefitTitles: string[];
   ctaText: string;
   ctaDisabled: boolean;
   onStart: () => void;
@@ -26,7 +26,7 @@ export default function PriceSection({
   passTitle,
   plans,
   periodDays,
-  additionalBenefits,
+  specialBenefitTitles,
   ctaText,
   ctaDisabled,
   onStart,
@@ -139,18 +139,18 @@ export default function PriceSection({
             </p>
           </div>
 
-          {additionalBenefits.length > 0 && (
+          {specialBenefitTitles.length > 0 && (
             <div className="border-neutral-80 flex flex-col gap-4 border-b p-5 md:px-[30px] md:py-6">
               <p className="text-xsmall14 text-neutral-45">
                 패스 전용 특별 혜택
               </p>
               <div className="flex flex-wrap gap-2">
-                {additionalBenefits.map((b) => (
+                {specialBenefitTitles.map((title) => (
                   <span
-                    key={b.name}
+                    key={title}
                     className="text-xsmall14 text-neutral-20 rounded-full bg-[#F3F4F6] px-4 py-2 font-medium"
                   >
-                    {b.name}
+                    {title}
                   </span>
                 ))}
               </div>

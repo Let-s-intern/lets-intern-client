@@ -178,19 +178,13 @@ export default function LandingSection({
           {/* 혜택 섹션 카드*/}
           <Block
             title="혜택 요약"
-            description="'플랜정보'·'외부 링크'를 추가하면 자동으로 생성됩니다. 최대 6개까지 추가 가능합니다."
+            description="플랜 권한·외부 링크 기준으로 기본값이 채워지며, 아이콘·문구를 자유롭게 수정·추가·삭제할 수 있습니다(최대 6개). 플랜을 바꾼 뒤 기본값을 다시 받으려면 '다시 채우기'를 누르세요. (VOD는 옵션 판매 설정에 따라 자동 노출됩니다.)"
           >
             <LandingBenefitEditor
               plans={plans}
               externalLinks={externalLinks}
-              benefitExtras={value.benefitExtras}
-              manualBenefits={value.manualBenefits}
-              onBenefitExtrasChange={(benefitExtras) =>
-                patch({ benefitExtras })
-              }
-              onManualBenefitsChange={(manualBenefits) =>
-                patch({ manualBenefits })
-              }
+              benefits={value.benefitsSummary}
+              onChange={(benefitsSummary) => patch({ benefitsSummary })}
             />
           </Block>
 

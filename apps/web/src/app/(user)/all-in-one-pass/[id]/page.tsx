@@ -89,8 +89,7 @@ export default function AllInOnePassLandingPage() {
       <BenefitSummarySection
         passTitle={pass.title}
         periodDays={pass.periodDays}
-        plans={pass.plans}
-        additionalBenefits={landing.additionalBenefits}
+        benefitsSummary={landing.benefitsSummary}
         vodCount={landing.vodCount}
         vodOptionOnSale={vodOptionOnSale}
         onBenefitClick={scrollToBenefit}
@@ -110,7 +109,7 @@ export default function AllInOnePassLandingPage() {
         passTitle={pass.title}
         plans={pass.plans}
         periodDays={pass.periodDays}
-        additionalBenefits={landing.additionalBenefits}
+        specialBenefitTitles={landing.specialBenefitTitles}
         ctaText={ctaText}
         ctaDisabled={ctaDisabled}
         onStart={handleBuyClick}
