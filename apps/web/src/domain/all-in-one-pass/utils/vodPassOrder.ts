@@ -1,4 +1,5 @@
 // 올인원패스 주문에 함께 담는 VOD 이용권(LC-3533). 계산은 챌린지와 같은 vodPassPurchase.ts 함수를 쓴다.
+import type { PostApplicationResult } from '@/api/application';
 import type {
   CreateMembershipApplicationBody,
   MembershipVodPassProduct,
@@ -15,6 +16,7 @@ import {
   toVodPassRequestFields,
   VOD_PASS_MIN_MONTHS,
 } from '@/domain/program/vodPassPurchase';
+import dayjs from '@/lib/dayjs';
 
 /** 스토어에 담는 VOD 이용권 선택 */
 export type VodPassOrderSelection = Pick<
@@ -104,4 +106,16 @@ export function buildMembershipApplicationBody(
     contactEmail: data.contactEmail,
     ...toVodPassRequestFields(data),
   };
+}
+
+const formatDate = (date: string) => dayjs(date).format('YYYY.MM.DD');
+
+/** 서버가 배정한 VOD 이용권 이용 기간. 응답에 기간이 없으면 null */
+export function getVodPassResultPeriod(
+  vodPass: PostApplicationResult['vodPass'],
+): string | null {
+  if (!vodPass?.startsAt || !vodPass.endsAt) {
+    return null;
+  }
+  return `${formatDate(vodPass.startsAt)} ~ ${formatDate(vodPass.endsAt)}`;
 }

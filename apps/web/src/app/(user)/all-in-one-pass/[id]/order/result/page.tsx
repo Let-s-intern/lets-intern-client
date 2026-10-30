@@ -11,9 +11,13 @@ import {
 } from '@/domain/all-in-one-pass/api/purchase';
 import dayjs from '@/lib/dayjs';
 import useMembershipOrderStore from '@/domain/all-in-one-pass/store/useMembershipOrderStore';
-import { buildMembershipApplicationBody } from '@/domain/all-in-one-pass/utils/vodPassOrder';
+import {
+  buildMembershipApplicationBody,
+  getVodPassResultPeriod,
+} from '@/domain/all-in-one-pass/utils/vodPassOrder';
 import DescriptionBox from '@/domain/program/paymentSuccess/DescriptionBox';
 import PaymentInfoRow from '@/domain/program/paymentSuccess/PaymentInfoRow';
+import { isVodPassSelected } from '@/domain/program/vodPassPurchase';
 import Link from 'next/link';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -98,6 +102,12 @@ const MembershipOrderResult = () => {
   const paidAmount = Number(
     searchParams.get('amount') ?? String(data.totalPrice ?? 0),
   );
+  // VOD 이용권을 함께 결제했으면 서버가 배정한 개월 수·기간을 보여준다 (LC-3533)
+  const vodPassResult = isSuccess ? result?.vodPass : null;
+  const hasVodPass = isVodPassSelected(data) || vodPassResult != null;
+  const vodPassMonths = vodPassResult?.purchasedMonths ?? data.vodPassMonths;
+  const vodPassLabel = `VOD 이용권${vodPassMonths ? ` ${vodPassMonths}개월` : ''}`;
+  const vodPassPeriod = getVodPassResultPeriod(vodPassResult);
 
   if (state === 'pending') {
     return (
@@ -125,6 +135,13 @@ const MembershipOrderResult = () => {
                   {data.passTitle ?? '올인원패스'}
                 </p>
               </div>
+              {hasVodPass && (
+                <div className="border-neutral-80 w-full rounded-md border p-4">
+                  <p className="text-small16 text-neutral-0 font-semibold">
+                    {vodPassLabel}
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="flex w-full flex-col justify-center gap-6">
@@ -142,6 +159,12 @@ const MembershipOrderResult = () => {
                   title={`할인 (${discountPercent}%)`}
                   content={`-${discount.toLocaleString()}원`}
                 />
+                {isVodPassSelected(data) && (
+                  <PaymentInfoRow
+                    title={vodPassLabel}
+                    content={`+${(data.vodPassPrice ?? 0).toLocaleString()}원`}
+                  />
+                )}
               </div>
               <hr className="border-neutral-85" />
               {isSuccess && result?.tossInfo && (
@@ -169,6 +192,24 @@ const MembershipOrderResult = () => {
                       </Link>
                     </div>
                   </div>
+                </div>
+              )}
+              {isSuccess && hasVodPass && (
+                <div className="flex w-full flex-col items-center justify-center">
+                  <PaymentInfoRow
+                    title="VOD 이용 기간"
+                    content={
+                      vodPassPeriod ??
+                      '마이페이지 결제 내역에서 확인할 수 있어요'
+                    }
+                    subInfo={
+                      vodPassResult?.status === 'SCHEDULED' ? (
+                        <p className="text-xsmall14 text-neutral-40">
+                          이용 중인 이용권이 끝나면 이어서 시작돼요
+                        </p>
+                      ) : undefined
+                    }
+                  />
                 </div>
               )}
               {isSuccess ? (
