@@ -11,7 +11,9 @@ import {
   getPlanFinalAmount,
   useGetMembershipApplicationForm,
 } from '@/domain/all-in-one-pass/api/purchase';
-import useMembershipOrderStore from '@/domain/all-in-one-pass/store/useMembershipOrderStore';
+import useMembershipOrderStore, {
+  EMPTY_VOD_PASS_SELECTION,
+} from '@/domain/all-in-one-pass/store/useMembershipOrderStore';
 import { generateOrderId } from '@/lib/order';
 import { RadioGroup } from '@mui/material';
 import clsx from 'clsx';
@@ -74,6 +76,7 @@ const MembershipPlanBottomSheet = ({
       isFree: totalPrice === 0,
       beginning: form.beginning ?? null,
       deadline: form.deadline ?? null,
+      ...EMPTY_VOD_PASS_SELECTION,
     });
     router.push(`/all-in-one-pass/${membershipId}/payment-input`);
   };
