@@ -10,6 +10,11 @@ jest.mock('next/navigation', () => ({
     new URLSearchParams('orderId=order-1&paymentKey=pk&amount=120000'),
 }));
 
+const invalidateQueries = jest.fn();
+jest.mock('@tanstack/react-query', () => ({
+  useQueryClient: () => ({ invalidateQueries }),
+}));
+
 jest.mock('@/common/boundary/AsyncBoundary', () => ({
   AsyncBoundary: ({ children }: { children: ReactNode }) => <>{children}</>,
 }));
@@ -118,5 +123,48 @@ describe('올인원패스 결제 결과 화면의 VOD 이용권', () => {
     expect(postMembershipApplication.mock.calls[0][1]).not.toHaveProperty(
       'vodPassProductId',
     );
+  });
+});
+
+describe('올인원패스 결제 결과 화면의 거절 안내', () => {
+  beforeEach(() => {
+    postMembershipApplication.mockReset();
+    invalidateQueries.mockReset();
+  });
+
+  it('VOD 판매가 꺼져 거절되면 안내하고 신청폼을 다시 받게 한 뒤 랜딩으로 보낸다', async () => {
+    mockData = BASE_ORDER;
+    postMembershipApplication.mockRejectedValue({
+      status: 409,
+      code: 'VOD_PASS_SALE_NOT_ENABLED',
+    });
+
+    render(<MembershipOrderResultPage />);
+
+    expect(
+      await screen.findByText(
+        'VOD 이용권 판매가 종료되었어요. VOD 이용권 없이 다시 신청해 주세요',
+      ),
+    ).toBeTruthy();
+    expect(invalidateQueries).toHaveBeenCalledWith({
+      queryKey: ['membershipApplicationForm', 3],
+    });
+    expect(
+      screen.getByRole('link', { name: '다시 결제하기' }).getAttribute('href'),
+    ).toBe('/all-in-one-pass/3');
+  });
+
+  it('구분할 수 없는 실패는 기존 실패 화면 그대로다', async () => {
+    mockData = BASE_ORDER;
+    postMembershipApplication.mockRejectedValue(new Error('network'));
+
+    render(<MembershipOrderResultPage />);
+
+    expect(
+      (await screen.findByRole('link', { name: '다시 결제하기' })).getAttribute(
+        'href',
+      ),
+    ).toBe('/all-in-one-pass/3/payment-input');
+    expect(invalidateQueries).not.toHaveBeenCalled();
   });
 });
