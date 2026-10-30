@@ -25,8 +25,9 @@ const BannerSection = () => {
     priority: true,
   });
 
+  // 배경은 이미지 가장자리 색이다. 좌우를 채워 화면 폭 전체 띠처럼 보이게 한다
   return (
-    <section className="w-full px-5 pt-6 md:pt-10 xl:px-0">
+    <section className="w-full bg-[#205FFF]">
       <h1 className="sr-only">렛츠커리어 멘토</h1>
       <Link href="/bigfirm" className="mx-auto block max-w-[1120px]">
         <picture>
