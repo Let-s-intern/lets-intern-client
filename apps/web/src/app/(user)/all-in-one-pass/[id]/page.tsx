@@ -66,6 +66,8 @@ export default function AllInOnePassLandingPage() {
     return <LoadingContainer />;
   }
 
+  const vodOptionOnSale = applicationForm?.vodPassProduct != null;
+
   // 노출용 종료일이 있으면 카운트다운·마감도 그 값 기준(없으면 실제 판매 deadline).
   const effectiveDeadline = landing.displayDeadline ?? pass.deadline;
 
@@ -90,6 +92,7 @@ export default function AllInOnePassLandingPage() {
         plans={pass.plans}
         additionalBenefits={landing.additionalBenefits}
         vodCount={landing.vodCount}
+        vodOptionOnSale={vodOptionOnSale}
         onBenefitClick={scrollToBenefit}
       />
       <BenefitDetailSection
@@ -99,7 +102,7 @@ export default function AllInOnePassLandingPage() {
         vodCount={landing.vodCount}
         playbookLexical={landing.lexical.playbookSection}
         benefitLexical={landing.lexical.benefitSection}
-        vodOptionOnSale={applicationForm?.vodPassProduct != null}
+        vodOptionOnSale={vodOptionOnSale}
       />
       <ReviewsSection reviews={landing.reviews} />
       <LandingLexicalSection lexical={landing.lexical.reviewSection} />

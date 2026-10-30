@@ -25,6 +25,14 @@ interface Props {
   vodOptionOnSale: boolean;
 }
 
+// 머리말. VOD 탭이 없으면 VOD 를 빼고, 옵션 판매 중이면 패스 포함이 아니라 옵션으로 말한다 (LC-3533)
+const SUB_HEADER_WITH_VOD =
+  '챌린지부터 가이드북, VOD, 멘토링까지.\n패스에 포함된 혜택을 한눈에 확인해 보세요.';
+const SUB_HEADER_WITHOUT_VOD =
+  '챌린지부터 가이드북, 멘토링까지.\n패스에 포함된 혜택을 한눈에 확인해 보세요.';
+const SUB_HEADER_VOD_OPTION =
+  '챌린지부터 가이드북, 멘토링까지.\n패스에 포함된 혜택과 VOD 옵션을 한눈에 확인해 보세요.';
+
 /** 모바일에서 접었을 때 보여줄 카드 수 (초과분은 더보기) */
 const MOBILE_COLLAPSED_COUNT = 3;
 
@@ -40,7 +48,16 @@ export default function BenefitDetailSection({
 }: Props) {
   const playbookRoot = parseLexicalRoot(playbookLexical);
   const benefitRoot = parseLexicalRoot(benefitLexical);
-  const { visibleTabs, tabData, countFor } = useBenefitTabs(plans, vodCount);
+  const { visibleTabs, tabData, countFor } = useBenefitTabs(
+    plans,
+    vodCount,
+    vodOptionOnSale,
+  );
+  const subHeader = vodOptionOnSale
+    ? SUB_HEADER_VOD_OPTION
+    : visibleTabs.some((t) => t.key === 'vod')
+      ? SUB_HEADER_WITH_VOD
+      : SUB_HEADER_WITHOUT_VOD;
 
   const [active, setActive] = useState<BenefitTabKey>(
     () => visibleTabs[0]?.key ?? 'challenge',
@@ -73,9 +90,7 @@ export default function BenefitDetailSection({
         <LandingSectionHeader
           header={`${passTitle}에 포함된 콘텐츠, 혜택`}
           mainHeader="취업 준비에 필요한 다양한 혜택"
-          subHeader={
-            '챌린지부터 가이드북, VOD, 멘토링까지.\n패스에 포함된 혜택을 한눈에 확인해 보세요.'
-          }
+          subHeader={subHeader}
         />
 
         {/* 탭 — 모바일 2열 그리드, 데스크탑 가로 나열 */}
