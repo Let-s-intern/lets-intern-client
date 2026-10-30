@@ -1,18 +1,43 @@
-import Image from 'next/image';
+import { getImageProps } from 'next/image';
+import Link from 'next/link';
+
+const ALT =
+  "서류 탈락, 이유를 모르겠다면? 대기업 현직자에게 '탈락한 서류' 점검 받아보세요! 직무별 현직자 1:1 분석으로 다음 지원 전 개선 포인트 확인하기";
 
 const BannerSection = () => {
+  // 화면 폭에 맞는 이미지 하나만 받도록 <picture> 로 분기한다
+  const {
+    props: { srcSet: desktopSrcSet },
+  } = getImageProps({
+    src: '/images/mentors-list-banner.webp',
+    alt: ALT,
+    width: 4480,
+    height: 720,
+    sizes: '(max-width: 1160px) 100vw, 1120px',
+    priority: true,
+  });
+  const { props: mobileProps } = getImageProps({
+    src: '/images/mentors-list-banner-mobile.webp',
+    alt: ALT,
+    width: 640,
+    height: 200,
+    sizes: '100vw',
+    priority: true,
+  });
+
   return (
     <section className="w-full px-5 pt-6 md:pt-10 xl:px-0">
       <h1 className="sr-only">렛츠커리어 멘토</h1>
-      <Image
-        src="/images/mentors-list-banner.webp"
-        alt="서류 탈락, 도대체 원인이 무엇인지 모르겠다면? 대기업 현직자에게 '탈락한 서류' 점검 받아보세요! 직무별 현직자 1:1 분석으로 다음 지원 전 개선 포인트 확인하기"
-        width={4480}
-        height={720}
-        className="mx-auto h-auto w-full max-w-[1120px]"
-        sizes="(max-width: 1160px) 100vw, 1120px"
-        priority
-      />
+      <Link href="/bigfirm" className="mx-auto block max-w-[1120px]">
+        <picture>
+          <source media="(min-width: 768px)" srcSet={desktopSrcSet} />
+          <img
+            {...mobileProps}
+            alt={ALT}
+            className="aspect-[16/5] h-auto w-full md:aspect-[56/9]"
+          />
+        </picture>
+      </Link>
     </section>
   );
 };
