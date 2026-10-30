@@ -190,16 +190,27 @@ const MENTORING_BENEFIT: BenefitCard = {
   iconSrc: BENEFIT_ICON_SRC.mentoring,
 };
 
-/** 플랜 권한 union → 자동 포함 혜택 (+ 멘토링 항상). counts 로 개수 주입. */
+/** VOD 옵션 판매가 켜진 패스의 VOD 카드 설명. 패스 포함이 아니라 옵션임을 알린다 (LC-3533) */
+const VOD_OPTION_DESCRIPTION = 'VOD 옵션을 추가하면 시청할 수 있어요';
+
+/**
+ * 플랜 권한 union → 자동 포함 혜택 (+ 멘토링 항상). counts 로 개수 주입.
+ * VOD 옵션 판매가 켜져 있으면 플랜 권한이 없어도 VOD 를 옵션 설명으로 넣는다.
+ */
 export const getCoreBenefits = (
   plans: AllInOnePassPlan[],
   counts: BenefitCounts,
+  vodOptionOnSale: boolean,
 ): BenefitCard[] => {
   const union = new Set<PassProgramType>();
   plans.forEach((p) => p.privileges.forEach((pv) => union.add(pv.programType)));
+  if (vodOptionOnSale) union.add('VOD');
   const fromPlans = CORE_BENEFIT_ORDER.filter((t) => union.has(t)).map((t) => ({
     name: CORE_BENEFIT_PRESETS[t].name(counts),
-    description: CORE_BENEFIT_PRESETS[t].description,
+    description:
+      t === 'VOD' && vodOptionOnSale
+        ? VOD_OPTION_DESCRIPTION
+        : CORE_BENEFIT_PRESETS[t].description,
     iconSrc: CORE_BENEFIT_PRESETS[t].iconSrc,
   }));
   return [...fromPlans, MENTORING_BENEFIT];
@@ -210,8 +221,9 @@ export const getBenefitCards = (
   plans: AllInOnePassPlan[],
   additionalBenefits: LandingBenefit[],
   counts: BenefitCounts,
+  vodOptionOnSale: boolean,
 ): BenefitCard[] => {
-  const core = getCoreBenefits(plans, counts);
+  const core = getCoreBenefits(plans, counts, vodOptionOnSale);
   const additional = additionalBenefits.map((b) => ({
     name: b.name,
     description: b.description,

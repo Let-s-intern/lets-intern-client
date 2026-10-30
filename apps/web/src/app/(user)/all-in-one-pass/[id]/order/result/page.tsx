@@ -11,8 +11,18 @@ import {
 } from '@/domain/all-in-one-pass/api/purchase';
 import dayjs from '@/lib/dayjs';
 import useMembershipOrderStore from '@/domain/all-in-one-pass/store/useMembershipOrderStore';
+import {
+  getMembershipOrderError,
+  type MembershipOrderError,
+} from '@/domain/all-in-one-pass/utils/orderError';
+import {
+  buildMembershipApplicationBody,
+  getVodPassResultPeriod,
+} from '@/domain/all-in-one-pass/utils/vodPassOrder';
 import DescriptionBox from '@/domain/program/paymentSuccess/DescriptionBox';
 import PaymentInfoRow from '@/domain/program/paymentSuccess/PaymentInfoRow';
+import { isVodPassSelected } from '@/domain/program/vodPassPurchase';
+import { useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -27,6 +37,10 @@ const MembershipOrderResult = () => {
   const requested = useRef(false);
   const [state, setState] = useState<ResultState>('pending');
   const [result, setResult] = useState<PostApplicationResult | null>(null);
+  const [orderError, setOrderError] = useState<MembershipOrderError | null>(
+    null,
+  );
+  const queryClient = useQueryClient();
 
   const { data, _hasHydrated } = useMembershipOrderStore();
 
@@ -61,14 +75,13 @@ const MembershipOrderResult = () => {
             })
           : null
         : data.membershipPlanId && orderId
-          ? postMembershipApplication(membershipId, {
-              membershipPlanId: data.membershipPlanId,
-              orderId,
-              amount,
-              paymentKey,
-              couponCode: data.couponCode,
-              contactEmail: data.contactEmail,
-            })
+          ? postMembershipApplication(
+              membershipId,
+              buildMembershipApplicationBody(data, {
+                orderId,
+                paymentKey: searchParams.get('paymentKey'),
+              }),
+            )
           : null;
 
     if (!request) {
@@ -86,9 +99,17 @@ const MembershipOrderResult = () => {
       })
       .catch((e) => {
         console.error(e);
+        const error = getMembershipOrderError(e);
+        setOrderError(error);
+        if (error?.needsReselect) {
+          // 플랜 선택 시트에서 다시 고를 때 최신 VOD 이용권·금액이 보이도록 신청폼을 새로 받게 한다
+          queryClient.invalidateQueries({
+            queryKey: ['membershipApplicationForm', membershipId],
+          });
+        }
         setState('fail');
       });
-  }, [_hasHydrated, membershipId, router, searchParams, data]);
+  }, [_hasHydrated, membershipId, router, searchParams, data, queryClient]);
 
   const isSuccess = state === 'success';
   const price = data.price ?? 0;
@@ -98,6 +119,12 @@ const MembershipOrderResult = () => {
   const paidAmount = Number(
     searchParams.get('amount') ?? String(data.totalPrice ?? 0),
   );
+  // VOD 이용권을 함께 결제했으면 서버가 배정한 개월 수·기간을 보여준다 (LC-3533)
+  const vodPassResult = isSuccess ? result?.vodPass : null;
+  const hasVodPass = isVodPassSelected(data) || vodPassResult != null;
+  const vodPassMonths = vodPassResult?.purchasedMonths ?? data.vodPassMonths;
+  const vodPassLabel = `VOD 이용권${vodPassMonths ? ` ${vodPassMonths}개월` : ''}`;
+  const vodPassPeriod = getVodPassResultPeriod(vodPassResult);
 
   if (state === 'pending') {
     return (
@@ -115,6 +142,11 @@ const MembershipOrderResult = () => {
         </div>
         <div className="flex w-full flex-col items-center justify-center">
           <DescriptionBox type={isSuccess ? 'SUCCESS' : 'FAIL'} />
+          {orderError && (
+            <p className="text-xsmall14 text-neutral-20 mt-3 text-center">
+              {orderError.message}
+            </p>
+          )}
           <div className="flex w-full flex-col items-center justify-start gap-y-10 py-8">
             <div className="flex w-full flex-col items-start justify-center gap-6">
               <div className="text-xsmall16 text-neutral-0 font-semibold">
@@ -125,6 +157,13 @@ const MembershipOrderResult = () => {
                   {data.passTitle ?? '올인원패스'}
                 </p>
               </div>
+              {hasVodPass && (
+                <div className="border-neutral-80 w-full rounded-md border p-4">
+                  <p className="text-small16 text-neutral-0 font-semibold">
+                    {vodPassLabel}
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="flex w-full flex-col justify-center gap-6">
@@ -142,6 +181,12 @@ const MembershipOrderResult = () => {
                   title={`할인 (${discountPercent}%)`}
                   content={`-${discount.toLocaleString()}원`}
                 />
+                {isVodPassSelected(data) && (
+                  <PaymentInfoRow
+                    title={vodPassLabel}
+                    content={`+${(data.vodPassPrice ?? 0).toLocaleString()}원`}
+                  />
+                )}
               </div>
               <hr className="border-neutral-85" />
               {isSuccess && result?.tossInfo && (
@@ -171,6 +216,24 @@ const MembershipOrderResult = () => {
                   </div>
                 </div>
               )}
+              {isSuccess && hasVodPass && (
+                <div className="flex w-full flex-col items-center justify-center">
+                  <PaymentInfoRow
+                    title="VOD 이용 기간"
+                    content={
+                      vodPassPeriod ??
+                      '마이페이지 결제 내역에서 확인할 수 있어요'
+                    }
+                    subInfo={
+                      vodPassResult?.status === 'SCHEDULED' ? (
+                        <p className="text-xsmall14 text-neutral-40">
+                          이용 중인 이용권이 끝나면 이어서 시작돼요
+                        </p>
+                      ) : undefined
+                    }
+                  />
+                </div>
+              )}
               {isSuccess ? (
                 <Link
                   href="/mypage/application"
@@ -180,7 +243,11 @@ const MembershipOrderResult = () => {
                 </Link>
               ) : (
                 <Link
-                  href={`/all-in-one-pass/${membershipId}/payment-input`}
+                  href={
+                    orderError?.needsReselect
+                      ? `/all-in-one-pass/${membershipId}`
+                      : `/all-in-one-pass/${membershipId}/payment-input`
+                  }
                   className="border-primary bg-primary flex w-full justify-center rounded-md border-2 px-6 py-3 text-lg font-medium text-neutral-100"
                 >
                   다시 결제하기

@@ -6,7 +6,13 @@ import { useMyCoupons } from '@/api/coupon/coupon';
 import { Duration } from '@/common/Duration';
 import BackHeader from '@/common/header/BackHeader';
 import LoadingContainer from '@/common/loading/LoadingContainer';
-import useMembershipOrderStore from '@/domain/all-in-one-pass/store/useMembershipOrderStore';
+import useMembershipOrderStore, {
+  type MembershipOrderData,
+} from '@/domain/all-in-one-pass/store/useMembershipOrderStore';
+import {
+  getMembershipOrderTotal,
+  getMembershipOrderTotals,
+} from '@/domain/all-in-one-pass/utils/vodPassOrder';
 import OrderProgramInfo from '@/domain/program/OrderProgramInfo';
 import CouponSection from '@/domain/program/program-detail/apply/section/CouponSection';
 import PaymentSubmitSection from '@/domain/program/program-detail/apply/section/PaymentSubmitSection';
@@ -54,6 +60,16 @@ export default function MembershipPaymentInputPage() {
   const baseDiscount = data.discount ?? 0;
   const originalTotal = Math.max(basePrice - baseDiscount, 0);
 
+  // VOD 이용권은 플랜 선택 시트에서 고른 값을 합계·결제 정보에만 보여준다 (LC-3533)
+  const vodPassPrice = data.vodPassPrice ?? 0;
+
+  // 쿠폰이 바뀌면 VOD 선택을 포함한 결제 금액과 무료 여부를 같은 함수로 다시 담는다
+  const updateOrder = (changes: Partial<MembershipOrderData>) =>
+    setOrder({
+      ...changes,
+      ...getMembershipOrderTotals({ ...data, ...changes }),
+    });
+
   // CouponSection 은 {id, price} 만 주므로 내 쿠폰 목록에서 code 를 역매핑해 store 에 저장
   const handleCoupon = (
     next: ((prev: ICouponForm) => ICouponForm) | ICouponForm,
@@ -61,17 +77,11 @@ export default function MembershipPaymentInputPage() {
     const resolved = typeof next === 'function' ? next(coupon) : next;
     const code =
       myCoupons.find((c) => c.couponId === resolved.id)?.code ?? null;
-    const total = Math.max(originalTotal - resolved.price, 0);
     setCouponState(resolved);
-    setOrder({
-      couponCode: code,
-      couponPrice: resolved.price,
-      totalPrice: total,
-      isFree: total === 0,
-    });
+    updateOrder({ couponCode: code, couponPrice: resolved.price });
   };
 
-  const totalPrice = data.totalPrice ?? 0;
+  const totalPrice = getMembershipOrderTotal(data);
   const buttonText = data.isFree ? '0원 결제하기' : '결제하기';
   const isFormValid =
     userInfo.initialized && isValidEmail(data.contactEmail ?? '');
@@ -147,21 +157,25 @@ export default function MembershipPaymentInputPage() {
 
       <hr className="bg-neutral-95 my-10 block h-2 border-none" />
 
-      {originalTotal > 0 && (
+      {(originalTotal > 0 || vodPassPrice > 0) && (
         <div className="mx-5 mb-10 flex flex-col gap-y-6">
           <div className="text-neutral-0 font-semibold">결제 정보</div>
-          <CouponSection
-            setCoupon={handleCoupon}
-            programType="MEMBERSHIP"
-            maxAmount={originalTotal}
-            salePrice={originalTotal}
-            allowFullDiscount={false}
-          />
+          {originalTotal > 0 && (
+            <CouponSection
+              setCoupon={handleCoupon}
+              programType="MEMBERSHIP"
+              maxAmount={originalTotal}
+              salePrice={originalTotal}
+              allowFullDiscount={false}
+            />
+          )}
           <div className="flex flex-col gap-y-5">
             <PriceSection
               payInfo={{ price: basePrice, discount: baseDiscount }}
               coupon={coupon}
               showCouponDiscount={true}
+              vodPassPrice={vodPassPrice}
+              vodPassMonths={data.vodPassMonths ?? 0}
             />
             <hr className="bg-neutral-85" />
             <div className="text-neutral-0 flex h-10 items-center justify-between px-3 font-semibold">

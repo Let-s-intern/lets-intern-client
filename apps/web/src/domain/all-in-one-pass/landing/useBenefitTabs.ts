@@ -43,15 +43,18 @@ export interface BenefitTabs {
 
 /**
  * 혜택 상세 탭 데이터 — 플랜 권한 union 노출 탭 + 탭별 카드·개수.
+ * VOD 탭은 플랜 권한이 없어도 VOD 옵션 판매가 켜져 있으면 보인다 (LC-3533).
  * 챌린지=타입별 1장(slug/latest), 가이드북·라이브=/program 목록 fetch,
  * VOD=어드민 집계값(vodCount), 멘토링=배너라 카드 없음.
  */
 export function useBenefitTabs(
   plans: AllInOnePassPlan[],
   vodCount: number,
+  vodOptionOnSale: boolean,
 ): BenefitTabs {
   const union = new Set<PassProgramType>();
   plans.forEach((p) => p.privileges.forEach((pv) => union.add(pv.programType)));
+  if (vodOptionOnSale) union.add('VOD');
   const visibleTabs = BENEFIT_TABS.filter(
     (t) => !t.programType || union.has(t.programType),
   );

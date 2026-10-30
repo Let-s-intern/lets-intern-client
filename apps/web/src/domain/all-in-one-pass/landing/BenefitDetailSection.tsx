@@ -21,7 +21,17 @@ interface Props {
   playbookLexical: string;
   /** 혜택 상세 하단 렉시컬(특별혜택) */
   benefitLexical: string;
+  /** VOD 옵션 추가결제 판매 여부. 꺼져 있으면 VOD 탭에서 옵션 안내를 숨긴다 */
+  vodOptionOnSale: boolean;
 }
+
+// 머리말. VOD 탭이 없으면 VOD 를 빼고, 옵션 판매 중이면 패스 포함이 아니라 옵션으로 말한다 (LC-3533)
+const SUB_HEADER_WITH_VOD =
+  '챌린지부터 가이드북, VOD, 멘토링까지.\n패스에 포함된 혜택을 한눈에 확인해 보세요.';
+const SUB_HEADER_WITHOUT_VOD =
+  '챌린지부터 가이드북, 멘토링까지.\n패스에 포함된 혜택을 한눈에 확인해 보세요.';
+const SUB_HEADER_VOD_OPTION =
+  '챌린지부터 가이드북, 멘토링까지.\n패스에 포함된 혜택과 VOD 옵션을 한눈에 확인해 보세요.';
 
 /** 모바일에서 접었을 때 보여줄 카드 수 (초과분은 더보기) */
 const MOBILE_COLLAPSED_COUNT = 3;
@@ -34,10 +44,20 @@ export default function BenefitDetailSection({
   vodCount,
   playbookLexical,
   benefitLexical,
+  vodOptionOnSale,
 }: Props) {
   const playbookRoot = parseLexicalRoot(playbookLexical);
   const benefitRoot = parseLexicalRoot(benefitLexical);
-  const { visibleTabs, tabData, countFor } = useBenefitTabs(plans, vodCount);
+  const { visibleTabs, tabData, countFor } = useBenefitTabs(
+    plans,
+    vodCount,
+    vodOptionOnSale,
+  );
+  const subHeader = vodOptionOnSale
+    ? SUB_HEADER_VOD_OPTION
+    : visibleTabs.some((t) => t.key === 'vod')
+      ? SUB_HEADER_WITH_VOD
+      : SUB_HEADER_WITHOUT_VOD;
 
   const [active, setActive] = useState<BenefitTabKey>(
     () => visibleTabs[0]?.key ?? 'challenge',
@@ -70,9 +90,7 @@ export default function BenefitDetailSection({
         <LandingSectionHeader
           header={`${passTitle}에 포함된 콘텐츠, 혜택`}
           mainHeader="취업 준비에 필요한 다양한 혜택"
-          subHeader={
-            '챌린지부터 가이드북, VOD, 멘토링까지.\n패스에 포함된 혜택을 한눈에 확인해 보세요.'
-          }
+          subHeader={subHeader}
         />
 
         {/* 탭 — 모바일 2열 그리드, 데스크탑 가로 나열 */}
@@ -142,10 +160,11 @@ export default function BenefitDetailSection({
                     <VodCard key={`${vod.title}-${i}`} vod={vod} />
                   ))}
                 </div>
-                <p className="text-xsmall14 md:text-small18 text-neutral-40 mt-8 font-light">
-                  *패스에 포함된 VOD의 구성 중 일부에요. 패스 기간동안 자유롭게
-                  시청할 수 있어요.
-                </p>
+                {vodOptionOnSale && (
+                  <p className="text-xsmall14 md:text-small18 text-neutral-40 mt-8 font-light">
+                    *VOD 옵션을 추가하면 이용권 기간 동안 시청할 수 있어요
+                  </p>
+                )}
               </>
             )
           ) : loading ? (

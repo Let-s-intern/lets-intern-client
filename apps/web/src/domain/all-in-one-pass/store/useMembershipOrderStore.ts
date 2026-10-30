@@ -25,6 +25,11 @@ export interface MembershipOrderData {
   isFree: boolean | null;
   beginning: string | null;
   deadline: string | null;
+  // 함께 결제하는 VOD 이용권 (LC-3533). 가격·일수는 선택한 개월 수 기준 총액·총일수다
+  vodPassProductId: number | null;
+  vodPassPrice: number | null;
+  vodPassDurationDays: number | null;
+  vodPassMonths: number | null;
 }
 
 interface MembershipOrderStore {
@@ -35,6 +40,14 @@ interface MembershipOrderStore {
   initOrder: () => void;
   checkInvalidate: () => boolean;
 }
+
+/** VOD 이용권 미선택. 새 주문을 담을 때 함께 넣어 이전 선택이 남지 않게 한다 */
+export const EMPTY_VOD_PASS_SELECTION = {
+  vodPassProductId: null,
+  vodPassPrice: null,
+  vodPassDurationDays: null,
+  vodPassMonths: null,
+} satisfies Partial<MembershipOrderData>;
 
 const EMPTY: MembershipOrderData = {
   orderType: 'PURCHASE',
@@ -57,6 +70,7 @@ const EMPTY: MembershipOrderData = {
   isFree: null,
   beginning: null,
   deadline: null,
+  ...EMPTY_VOD_PASS_SELECTION,
 };
 
 const COMMON_REQUIRED: (keyof MembershipOrderData)[] = [
@@ -91,6 +105,15 @@ const useMembershipOrderStore = create(
     }),
     {
       name: 'membershipOrderForm',
+      // VOD 필드가 생기기 전에 persist 된 data 는 그 필드가 없다. 빈 값 위에 덮어 미선택으로 복원한다
+      merge: (persisted, current) => {
+        const saved = persisted as Partial<MembershipOrderStore> | undefined;
+        return {
+          ...current,
+          ...saved,
+          data: { ...EMPTY, ...saved?.data },
+        };
+      },
       onRehydrateStorage: () => (state) => state?.setHasHydrated(true),
     },
   ),

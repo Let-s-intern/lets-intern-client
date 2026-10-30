@@ -14,7 +14,9 @@ import {
   type ExtensionOption,
 } from '../../../api/dashboard';
 import { useGetMembershipApplicationForm } from '../../../api/purchase';
-import useMembershipOrderStore from '../../../store/useMembershipOrderStore';
+import useMembershipOrderStore, {
+  EMPTY_VOD_PASS_SELECTION,
+} from '../../../store/useMembershipOrderStore';
 import ExtensionSheet from './ExtensionSheet';
 import { getExtensionCopy } from './extensionStatus';
 
@@ -76,6 +78,7 @@ export default function ExtensionModal({ applicationId, onClose }: Props) {
       isFree: price === 0,
       beginning: base.endDate ?? null,
       deadline: extendedEnd ? extendedEnd.toISOString() : null,
+      ...EMPTY_VOD_PASS_SELECTION,
     });
     onClose();
     router.push(`/all-in-one-pass/${base.membershipId}/payment-input`);

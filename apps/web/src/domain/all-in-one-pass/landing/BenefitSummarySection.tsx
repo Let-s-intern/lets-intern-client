@@ -20,6 +20,8 @@ interface Props {
   additionalBenefits: LandingBenefit[];
   /** 어드민이 집계한 전체 VOD 수 (카드 "VOD N종" 표기용) */
   vodCount: number;
+  /** VOD 옵션 추가결제 판매 여부. 켜져 있으면 VOD 카드를 옵션 설명으로 보여준다 */
+  vodOptionOnSale: boolean;
   onBenefitClick: () => void;
 }
 
@@ -43,10 +45,16 @@ export default function BenefitSummarySection({
   plans,
   additionalBenefits,
   vodCount,
+  vodOptionOnSale,
   onBenefitClick,
 }: Props) {
   const counts = useBenefitCounts(vodCount);
-  const cards = getBenefitCards(plans, additionalBenefits, counts);
+  const cards = getBenefitCards(
+    plans,
+    additionalBenefits,
+    counts,
+    vodOptionOnSale,
+  );
 
   const leftSlots = [0, 2, 4];
   const rightSlots = [1, 3, 5];

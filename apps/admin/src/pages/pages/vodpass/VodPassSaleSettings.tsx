@@ -1,6 +1,7 @@
 import { Switch } from '@mui/material';
 import { useMemo, useState } from 'react';
 
+import { useGetAllInOnePassListQuery } from '@/api/all-in-one-pass/usePassList';
 import { useGetProgramAdminQuery } from '@/api/program';
 import {
   toVodPassSaleKey,
@@ -12,6 +13,10 @@ import {
 import Table from '@/domain/admin/ui/table/regacy/Table';
 import TD from '@/domain/admin/ui/table/regacy/TD';
 import TH from '@/domain/admin/ui/table/regacy/TH';
+import {
+  getPassRecruitmentStatus,
+  passRecruitmentStatusToText,
+} from '@/domain/all-in-one-pass/util/passStatus';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { programStatusToText } from '@/utils/convert';
 
@@ -21,17 +26,25 @@ const TYPE_LABEL: Record<VodPassSaleProgramType, string> = {
   VOD: 'VOD',
   REPORT: '리포트',
   GUIDEBOOK: '자료집',
+  MEMBERSHIP: '올인원패스',
 };
 
 const isSaleProgramType = (type: string): type is VodPassSaleProgramType =>
   (VOD_PASS_SALE_PROGRAM_TYPES as readonly string[]).includes(type);
+
+type SaleRow = {
+  type: VodPassSaleProgramType;
+  id: number;
+  title: string | null | undefined;
+  statusText: string;
+};
 
 /**
  * VOD 이용권 판매 설정 (LC-3438).
  *
  * 프로그램마다 결제 시트에 VOD 이용권을 노출할지 켜고 끈다. 기본값은 꺼짐이고,
  * 켠 프로그램만 서버가 이용권 상품을 내려주고 구매 요청을 받는다.
- * 지금 결제가 연동된 유형은 챌린지뿐이다. 다른 유형은 설정만 저장된다.
+ * 지금 결제가 연동된 유형은 챌린지와 올인원패스다. 다른 유형은 설정만 저장된다.
  */
 const VodPassSaleSettings = () => {
   const { snackbar } = useAdminSnackbar();
@@ -40,29 +53,49 @@ const VodPassSaleSettings = () => {
   );
 
   const programsQuery = useGetProgramAdminQuery({ page: 1, size: 1000 });
+  const passesQuery = useGetAllInOnePassListQuery();
   const saleQuery = useVodPassSaleQuery();
   const updateSale = useUpdateVodPassSaleMutation({
     onError: (message) => snackbar(message),
   });
 
-  const rows = useMemo(
-    () =>
-      (programsQuery.data?.programList ?? [])
-        .map((item) => item.programInfo)
-        .filter((info) => isSaleProgramType(info.programType))
-        // 모집 마감은 새로 판매를 켤 일이 없어 목록에서 뺀다. 이미 켜 둔 설정은 그대로 남는다
-        .filter((info) => info.programStatusType !== 'POST')
-        .filter(
-          (info) => typeFilter === 'ALL' || info.programType === typeFilter,
-        ),
-    [programsQuery.data, typeFilter],
-  );
+  // 모집 마감은 새로 판매를 켤 일이 없어 목록에서 뺀다. 이미 켜 둔 설정은 그대로 남는다
+  const rows = useMemo(() => {
+    const programRows: SaleRow[] = (programsQuery.data?.programList ?? [])
+      .map((item) => item.programInfo)
+      .filter((info) => isSaleProgramType(info.programType))
+      // 올인원패스는 이 목록이 아니라 올인원패스 목록에서 가져온다
+      .filter((info) => info.programType !== 'MEMBERSHIP')
+      .filter((info) => info.programStatusType !== 'POST')
+      .map((info) => ({
+        type: info.programType as VodPassSaleProgramType,
+        id: info.id,
+        title: info.title,
+        statusText: programStatusToText[info.programStatusType],
+      }));
+    const passRows: SaleRow[] = (passesQuery.data ?? [])
+      .map((pass) => ({ pass, status: getPassRecruitmentStatus(pass) }))
+      .filter(({ status }) => status !== 'CLOSED')
+      .map(({ pass, status }) => ({
+        type: 'MEMBERSHIP',
+        id: pass.id,
+        title: pass.title,
+        statusText: passRecruitmentStatusToText[status],
+      }));
+    return [...programRows, ...passRows].filter(
+      (row) => typeFilter === 'ALL' || row.type === typeFilter,
+    );
+  }, [programsQuery.data, passesQuery.data, typeFilter]);
 
   const renderBody = () => {
-    if (programsQuery.isLoading || saleQuery.isLoading) {
+    if (
+      programsQuery.isLoading ||
+      passesQuery.isLoading ||
+      saleQuery.isLoading
+    ) {
       return <p className="text-sm">불러오는 중입니다.</p>;
     }
-    if (programsQuery.error || saleQuery.error) {
+    if (programsQuery.error || passesQuery.error || saleQuery.error) {
       return (
         <p role="alert" className="text-sm text-red-500">
           설정을 불러오지 못했습니다.
@@ -111,25 +144,24 @@ const VodPassSaleSettings = () => {
             </tr>
           </thead>
           <tbody>
-            {rows.map((info) => {
-              const type = info.programType as VodPassSaleProgramType;
-              const key = toVodPassSaleKey(type, info.id);
+            {rows.map((row) => {
+              const key = toVodPassSaleKey(row.type, row.id);
               return (
                 <tr key={key}>
-                  <TD>{TYPE_LABEL[type]}</TD>
-                  <TD textAlign="left">{info.title ?? '-'}</TD>
-                  <TD>{programStatusToText[info.programStatusType]}</TD>
+                  <TD>{TYPE_LABEL[row.type]}</TD>
+                  <TD textAlign="left">{row.title ?? '-'}</TD>
+                  <TD>{row.statusText}</TD>
                   <TD>
                     <Switch
                       checked={enabledKeys.has(key)}
                       disabled={pendingKey === key}
                       inputProps={{
-                        'aria-label': `${info.title ?? ''} VOD 이용권 판매`,
+                        'aria-label': `${row.title ?? ''} VOD 이용권 판매`,
                       }}
                       onChange={(_, checked) =>
                         updateSale.mutate({
-                          programType: type,
-                          programId: info.id,
+                          programType: row.type,
+                          programId: row.id,
                           enabled: checked,
                         })
                       }
@@ -152,8 +184,8 @@ const VodPassSaleSettings = () => {
       <h1 className="text-1.5-bold mb-2">VOD 이용권 판매 설정</h1>
       <p className="mb-6 text-sm text-neutral-500">
         켠 프로그램에서만 VOD 이용권을 판매합니다. 기본값은 꺼짐입니다. 모집 전,
-        모집 중인 프로그램만 보입니다. 지금은 챌린지에서만 결제가 연동되어 있고,
-        다른 유형은 설정만 저장됩니다.
+        모집 중인 프로그램만 보입니다. 지금은 챌린지·올인원패스에서만 결제가
+        연동되어 있고, 다른 유형은 설정만 저장됩니다.
       </p>
       {renderBody()}
     </div>

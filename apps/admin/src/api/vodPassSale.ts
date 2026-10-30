@@ -10,6 +10,7 @@ export const VOD_PASS_SALE_PROGRAM_TYPES = [
   'VOD',
   'REPORT',
   'GUIDEBOOK',
+  'MEMBERSHIP',
 ] as const;
 
 export type VodPassSaleProgramType =
