@@ -11,6 +11,7 @@ import {
 } from '@/domain/all-in-one-pass/api/purchase';
 import dayjs from '@/lib/dayjs';
 import useMembershipOrderStore from '@/domain/all-in-one-pass/store/useMembershipOrderStore';
+import { buildMembershipApplicationBody } from '@/domain/all-in-one-pass/utils/vodPassOrder';
 import DescriptionBox from '@/domain/program/paymentSuccess/DescriptionBox';
 import PaymentInfoRow from '@/domain/program/paymentSuccess/PaymentInfoRow';
 import Link from 'next/link';
@@ -61,14 +62,13 @@ const MembershipOrderResult = () => {
             })
           : null
         : data.membershipPlanId && orderId
-          ? postMembershipApplication(membershipId, {
-              membershipPlanId: data.membershipPlanId,
-              orderId,
-              amount,
-              paymentKey,
-              couponCode: data.couponCode,
-              contactEmail: data.contactEmail,
-            })
+          ? postMembershipApplication(
+              membershipId,
+              buildMembershipApplicationBody(data, {
+                orderId,
+                paymentKey: searchParams.get('paymentKey'),
+              }),
+            )
           : null;
 
     if (!request) {

@@ -6,6 +6,8 @@ import { useUserQuery } from '@/api/user/user';
 import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import useMembershipOrderStore from '@/domain/all-in-one-pass/store/useMembershipOrderStore';
+import { getMembershipOrderTotal } from '@/domain/all-in-one-pass/utils/vodPassOrder';
+import { getOrderName } from '@/domain/program/vodPassPurchase';
 import {
   loadTossPayments,
   WidgetPaymentMethodWidget,
@@ -40,7 +42,8 @@ const MembershipPayment = () => {
   );
   const tossInitialized = useRef(false);
 
-  const totalPrice = data.totalPrice ?? 0;
+  // 결제 입력 화면 합계·서버 amount 와 같은 함수에서 나온다 (LC-3533)
+  const totalPrice = getMembershipOrderTotal(data);
 
   useEffect(() => {
     if (!user || tossInitialized.current) return;
@@ -76,7 +79,8 @@ const MembershipPayment = () => {
     try {
       await widgets.requestPayment({
         orderId: data.orderId ?? '',
-        orderName: data.passTitle ?? '올인원패스',
+        // VOD 이용권을 담았으면 ` + VOD 이용권` 이 붙는다 (토스 주문명 100자 이내)
+        orderName: getOrderName(data.passTitle ?? '올인원패스', data),
         successUrl: `${window.location.origin}${resultBase}?${searchParams.toString()}`,
         failUrl: `${window.location.origin}${resultBase}?${searchParams.toString()}`,
         customerEmail: data.email ?? '',
