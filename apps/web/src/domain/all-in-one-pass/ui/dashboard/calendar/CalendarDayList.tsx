@@ -23,7 +23,7 @@ const TYPE_LABEL: Record<PassCalendarEventType, string> = {
 };
 
 const STATUS_LABEL: Record<PassParticipationStatus, string> = {
-  BEFORE: '참여 전',
+  BEFORE: '참여 가능',
   IN_PROGRESS: '참여 중',
   DONE: '참여 완료',
 };
