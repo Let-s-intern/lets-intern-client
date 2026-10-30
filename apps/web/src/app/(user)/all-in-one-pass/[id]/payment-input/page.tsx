@@ -6,11 +6,9 @@ import { useMyCoupons } from '@/api/coupon/coupon';
 import { Duration } from '@/common/Duration';
 import BackHeader from '@/common/header/BackHeader';
 import LoadingContainer from '@/common/loading/LoadingContainer';
-import { useGetMembershipApplicationForm } from '@/domain/all-in-one-pass/api/purchase';
 import useMembershipOrderStore, {
   type MembershipOrderData,
 } from '@/domain/all-in-one-pass/store/useMembershipOrderStore';
-import VodPassOption from '@/domain/all-in-one-pass/ui/payment/VodPassOption';
 import {
   getMembershipOrderTotal,
   getMembershipOrderTotals,
@@ -62,15 +60,10 @@ export default function MembershipPaymentInputPage() {
   const baseDiscount = data.discount ?? 0;
   const originalTotal = Math.max(basePrice - baseDiscount, 0);
 
-  // VOD 이용권은 신규 구매에만 붙는다. 판매가 꺼진 패스는 상품이 null 이다 (LC-3533)
-  const { data: form } = useGetMembershipApplicationForm(
-    data.orderType === 'PURCHASE' ? membershipId : 0,
-  );
-  const vodPassProduct =
-    data.orderType === 'PURCHASE' ? form?.vodPassProduct : null;
+  // VOD 이용권은 플랜 선택 시트에서 고른 값을 합계·결제 정보에만 보여준다 (LC-3533)
   const vodPassPrice = data.vodPassPrice ?? 0;
 
-  // 쿠폰·VOD 선택이 바뀌면 결제 금액과 무료 여부를 같은 함수로 다시 담는다
+  // 쿠폰이 바뀌면 VOD 선택을 포함한 결제 금액과 무료 여부를 같은 함수로 다시 담는다
   const updateOrder = (changes: Partial<MembershipOrderData>) =>
     setOrder({
       ...changes,
@@ -163,16 +156,6 @@ export default function MembershipPaymentInputPage() {
       </div>
 
       <hr className="bg-neutral-95 my-10 block h-2 border-none" />
-
-      {vodPassProduct && (
-        <div className="mx-5 mb-10">
-          <VodPassOption
-            product={vodPassProduct}
-            selectedMonths={data.vodPassProductId ? data.vodPassMonths : null}
-            onChange={updateOrder}
-          />
-        </div>
-      )}
 
       {(originalTotal > 0 || vodPassPrice > 0) && (
         <div className="mx-5 mb-10 flex flex-col gap-y-6">
