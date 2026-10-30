@@ -43,17 +43,19 @@ export interface CoreBenefit {
   iconKey: string; // BENEFIT_ICON_OPTIONS 의 key
 }
 
-const CORE_BENEFIT_PRESETS: Record<PassPermission, CoreBenefit> = {
+// VOD 는 플랜 포함 권한이 아니라 'VOD 옵션 추가결제'로 바뀌어(LC-3533) 플랜 체크박스가
+// 비활성 → VOD 코어 프리셋도 비활(주석). Partial 로 둬서 VOD 키가 없어도 된다.
+const CORE_BENEFIT_PRESETS: Partial<Record<PassPermission, CoreBenefit>> = {
   CHALLENGE_ALL_IN_ONE: {
     name: '챌린지 10종',
     description: '자소서·포폴부터 면접·인적성까지',
     iconKey: 'challenge',
   },
-  VOD_ALL_IN_ONE: {
-    name: 'VOD 20종',
-    description: '현직자가 알려주는 직무·취업 노하우',
-    iconKey: 'vod',
-  },
+  // VOD_ALL_IN_ONE: {
+  //   name: 'VOD 20종',
+  //   description: '현직자가 알려주는 직무·취업 노하우',
+  //   iconKey: 'vod',
+  // },
   GUIDEBOOK_ALL_IN_ONE: {
     name: '가이드북 7종',
     description: '막막할 때 꺼내 보는 취준 가이드',
@@ -68,7 +70,7 @@ const CORE_BENEFIT_PRESETS: Record<PassPermission, CoreBenefit> = {
 
 const CORE_BENEFIT_ORDER: PassPermission[] = [
   'CHALLENGE_ALL_IN_ONE',
-  'VOD_ALL_IN_ONE',
+  // 'VOD_ALL_IN_ONE', // 비활 — VOD 는 옵션 판매로 대체(LC-3533)
   'GUIDEBOOK_ALL_IN_ONE',
   'LIVE_CLASS_ALL_IN_ONE',
 ];
@@ -84,9 +86,9 @@ const MENTORING_CORE_BENEFIT: CoreBenefit = {
 export const getCoreBenefits = (plans: PassPlan[]): CoreBenefit[] => {
   const union = new Set<PassPermission>();
   plans.forEach((p) => p.permissions.forEach((perm) => union.add(perm)));
-  const fromPlans = CORE_BENEFIT_ORDER.filter((perm) => union.has(perm)).map(
-    (perm) => CORE_BENEFIT_PRESETS[perm],
-  );
+  const fromPlans = CORE_BENEFIT_ORDER.filter((perm) => union.has(perm))
+    .map((perm) => CORE_BENEFIT_PRESETS[perm])
+    .filter((b): b is CoreBenefit => Boolean(b));
   return [...fromPlans, MENTORING_CORE_BENEFIT];
 };
 
