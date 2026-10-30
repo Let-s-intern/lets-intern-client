@@ -33,7 +33,6 @@ export default function AllInOnePassUsagePage() {
       ) : (
         plan && (
           <UsageTabs
-            membershipId={membershipId}
             privileges={plan.privilegeList}
             passTitle={base?.title ?? undefined}
             vodOptionOnSale={applicationForm?.vodPassProduct != null}

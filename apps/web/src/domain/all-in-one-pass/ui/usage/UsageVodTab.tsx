@@ -1,21 +1,16 @@
 // 나의 패스 이용 > VOD 탭. 유효한(ACTIVE) VOD 이용권이 있으면 seminar-vod 공개 목록을 카드 그리드로 노출,
-// 클릭 시 외부 상세로 이동. 없으면 잠금 + 추가구매 안내. 챌린지에서 산 이용권도 같은 이용권으로 인정한다.
+// 클릭 시 외부 상세로 이동. 없으면 잠금 안내만 보여준다. 챌린지에서 산 이용권도 같은 이용권으로 인정한다.
 'use client';
 
 import { useVodPassListQuery } from '@/api/vodPass';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import MoreButton from '@/domain/mypage/ui/button/MoreButton';
 import { useMediaQuery } from '@mui/material';
-import Link from 'next/link';
 import { useState } from 'react';
 import LockedTab from '../LockedTab';
 import { useUsageVods } from './useUsageVods';
 
-interface Props {
-  membershipId: number;
-}
-
-const UsageVodTab = ({ membershipId }: Props) => {
+const UsageVodTab = () => {
   // 이용권과 VOD 목록은 서로 기다리지 않고 함께 조회한다
   const vodPassQuery = useVodPassListQuery();
   const { data: vods = [], isLoading, isError } = useUsageVods();
@@ -36,17 +31,8 @@ const UsageVodTab = ({ membershipId }: Props) => {
   const hasActiveVodPass =
     vodPassQuery.data?.passes.some((pass) => pass.status === 'ACTIVE') ?? false;
   if (!hasActiveVodPass) {
-    // 단독 VOD 이용권 구매 화면이 없어 같은 패스 랜딩(VOD 옵션 결제)으로 보낸다
-    return (
-      <LockedTab message="VOD 이용권이 있어야 시청할 수 있어요">
-        <Link
-          href={`/all-in-one-pass/${membershipId}`}
-          className="text-primary text-xsmall14 md:text-xsmall16 font-semibold underline underline-offset-2"
-        >
-          VOD 이용권 구매하러 가기
-        </Link>
-      </LockedTab>
-    );
+    // 패스 보유자는 랜딩에서 다시 결제할 수 없어 구매 링크 없이 안내만 한다
+    return <LockedTab message="VOD 이용권이 있어야 시청할 수 있어요" />;
   }
   if (isError) {
     return (

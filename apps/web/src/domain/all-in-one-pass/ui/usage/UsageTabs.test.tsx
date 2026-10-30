@@ -32,11 +32,7 @@ const renderTabs = (
   vodOptionOnSale: boolean,
 ) =>
   render(
-    <UsageTabs
-      membershipId={3}
-      privileges={privileges}
-      vodOptionOnSale={vodOptionOnSale}
-    />,
+    <UsageTabs privileges={privileges} vodOptionOnSale={vodOptionOnSale} />,
   );
 
 describe('UsageTabs VOD 탭 노출', () => {

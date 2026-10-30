@@ -20,19 +20,13 @@ const TABS: { value: UsageTabKey; label: string }[] = [
 ];
 
 interface Props {
-  membershipId: number;
   privileges: { programType: string }[];
   passTitle?: string;
   /** VOD 옵션 추가결제 판매 여부. VOD 탭은 플랜 권한이 아니라 이 값으로 노출한다 */
   vodOptionOnSale: boolean;
 }
 
-const UsageTabs = ({
-  membershipId,
-  privileges,
-  passTitle,
-  vodOptionOnSale,
-}: Props) => {
+const UsageTabs = ({ privileges, passTitle, vodOptionOnSale }: Props) => {
   const ownedTypes = new Set<string>(privileges.map((p) => p.programType));
   // 멘토링은 쿠폰 기반이라 권한과 무관하게 노출, VOD 는 판매가 켜진 패스만, 나머지는 플랜 권한 보유 시만
   const visibleTabs = TABS.filter((t) => {
@@ -69,7 +63,7 @@ const UsageTabs = ({
       <div>
         {active === 'CHALLENGE' && <UsageChallengeTab />}
         {active === 'GUIDEBOOK' && <UsageGuidebookTab passTitle={passTitle} />}
-        {active === 'VOD' && <UsageVodTab membershipId={membershipId} />}
+        {active === 'VOD' && <UsageVodTab />}
         {active === 'MENTORING' && <UsageMentoringTab />}
         {active === 'LIVE' && <UsageLiveTab passTitle={passTitle} />}
       </div>
