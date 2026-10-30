@@ -323,7 +323,7 @@ function PricePlanBottomSheet({
   ]);
 
   // 올인원패스 혜택 — showMembershipBenefit=true인 챌린지 상세에서만 활성
-  const { hasPrivilege, showPassPrice, openMembershipId, passPrices } =
+  const { hasPrivilege, showPassPrice, passHref, passPrices } =
     useChallengePassBenefit({
       challengeId,
       enabled: showMembershipBenefit,
@@ -598,7 +598,7 @@ function PricePlanBottomSheet({
         <MembershipBenefitNotice
           show={showPassPrice}
           hasPrivilege={hasPrivilege}
-          openMembershipId={openMembershipId}
+          passHref={passHref}
         />
         {/* VOD 이용권 (플랜과 독립) */}
         {vodPassProduct && (

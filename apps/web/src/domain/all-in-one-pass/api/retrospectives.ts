@@ -73,19 +73,20 @@ export const useSubmitRetrospective = (applicationId: number) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (items: RetroSubmitItem[]) => {
-      await Promise.all(
-        items.map((it) =>
-          it.membershipReviewId != null
-            ? axios.patch(`/membership-review/${it.membershipReviewId}`, {
-                review: it.review,
-              })
-            : axios.post('/membership-review', {
-                membershipQuestionId: it.membershipQuestionId,
-                membershipOrdinalId: it.membershipOrdinalId,
-                review: it.review,
-              }),
-        ),
-      );
+      // 같은 회차 제출은 BE가 비관락으로 직렬화 → 병렬 전송 시 락 경합으로 500. 순차로 보냄.
+      for (const it of items) {
+        if (it.membershipReviewId != null) {
+          await axios.patch(`/membership-review/${it.membershipReviewId}`, {
+            review: it.review,
+          });
+        } else {
+          await axios.post('/membership-review', {
+            membershipQuestionId: it.membershipQuestionId,
+            membershipOrdinalId: it.membershipOrdinalId,
+            review: it.review,
+          });
+        }
+      }
     },
     onSuccess: () =>
       queryClient.invalidateQueries({

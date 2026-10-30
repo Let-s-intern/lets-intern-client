@@ -147,18 +147,19 @@ const RetroForm = ({
         ))}
       </div>
 
-      {readOnly ? (
-        round.adminFeedback && (
-          <div className="bg-primary-5 flex flex-col gap-2 rounded-md p-4">
-            <span className="text-xsmall14 text-primary font-semibold">
-              운영자 코멘트
-            </span>
-            <p className="text-xsmall14 md:text-xsmall16 text-neutral-0 whitespace-pre-wrap">
-              {round.adminFeedback}
-            </p>
-          </div>
-        )
-      ) : (
+      {(readOnly || isWrapUp) && round.adminFeedback && (
+        <div className="bg-primary-5 flex flex-col gap-2 rounded-md p-4">
+          <span className="text-xsmall14 text-primary font-semibold">
+            운영자 코멘트
+          </span>
+          <p className="text-xsmall14 md:text-xsmall16 text-neutral-0 whitespace-pre-wrap">
+            {round.adminFeedback}
+          </p>
+        </div>
+      )}
+
+      {/* 버튼: 작성 가능할 때. 마무리 회고는 코멘트가 달리면 숨김(작성 종료) */}
+      {!readOnly && !(isWrapUp && round.adminFeedback) && (
         <div className="flex gap-3">
           <OutlinedButton
             type="button"

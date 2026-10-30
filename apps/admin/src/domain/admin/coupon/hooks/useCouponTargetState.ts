@@ -9,6 +9,7 @@ export type ConditionType =
   | 'CHALLENGE_PROGRAM'
   | 'LIVE_ALL'
   | 'LIVE_PROGRAM'
+  | 'MEMBERSHIP_ALL'
   | 'MEMBERSHIP_PROGRAM';
 
 export interface TargetCondition {
@@ -116,6 +117,7 @@ export function useCouponTargetState(
     if (c.conditionType === 'APPLICATION_ALL') return '전체 결제자';
     if (c.conditionType === 'CHALLENGE_ALL') return '챌린지 전체';
     if (c.conditionType === 'LIVE_ALL') return 'LIVE 클래스 전체';
+    if (c.conditionType === 'MEMBERSHIP_ALL') return '올인원패스 전체';
     if (c.conditionType === 'CHALLENGE_TYPE')
       return `${challengeTypeList.find((t) => t.challengeType === c.challengeType)?.desc} 전체`;
     if (c.conditionType === 'CHALLENGE_PROGRAM') {
@@ -149,6 +151,7 @@ export function useCouponTargetState(
   const allPayers = $('APPLICATION_ALL');
   const challengeAll = $('CHALLENGE_ALL');
   const liveAll = $('LIVE_ALL');
+  const membershipAll = $('MEMBERSHIP_ALL');
 
   return {
     allPayers,
@@ -325,37 +328,32 @@ export function useCouponTargetState(
       },
     },
 
-    // 멤버십은 MEMBERSHIP_ALL이 없어, "전체"를 현재 패스 id 전부를 개별 조건으로 담는 방식으로 처리(스냅샷)
     membership: {
-      mode: (membershipList.length > 0 &&
-      membershipList.every((p) => $('MEMBERSHIP_PROGRAM', undefined, p.id))
+      mode: (membershipAll
         ? 'all'
-        : conds.some((c) => c.conditionType === 'MEMBERSHIP_PROGRAM')
+        : conds.some((c) => c.conditionType.startsWith('MEMBERSHIP'))
           ? 'partial'
           : 'none') as 'all' | 'partial' | 'none',
-      count: conds.filter((c) => c.conditionType === 'MEMBERSHIP_PROGRAM')
+      count: conds.filter((c) => c.conditionType.startsWith('MEMBERSHIP'))
         .length,
       checkedPrograms: new Set(
         membershipList
-          .filter((p) => $('MEMBERSHIP_PROGRAM', undefined, p.id))
+          .filter(
+            (p) => membershipAll || $('MEMBERSHIP_PROGRAM', undefined, p.id),
+          )
           .map((p) => p.id),
       ),
-      toggleAll: () => {
-        const allChecked =
-          membershipList.length > 0 &&
-          membershipList.every((p) => $('MEMBERSHIP_PROGRAM', undefined, p.id));
+      toggleAll: () =>
         setConds(
-          allChecked
-            ? except(conds, 'MEMBERSHIP_PROGRAM')
+          membershipAll
+            ? except(conds, 'MEMBERSHIP_ALL')
             : [
-                ...except(conds, 'MEMBERSHIP_PROGRAM'),
-                ...membershipList.map((p) =>
-                  mk('MEMBERSHIP_PROGRAM', undefined, p.id),
-                ),
+                ...except(conds, 'MEMBERSHIP_ALL', 'MEMBERSHIP_PROGRAM'),
+                mk('MEMBERSHIP_ALL'),
               ],
-        );
-      },
+        ),
       toggleProgram: (pid: number) => {
+        if (membershipAll) return;
         setConds(
           $('MEMBERSHIP_PROGRAM', undefined, pid)
             ? conds.filter(

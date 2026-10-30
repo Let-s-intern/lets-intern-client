@@ -61,10 +61,18 @@ export const useChallengePassBenefit = ({
     ),
   };
 
+  const openMembershipId = openPrivilege?.membershipId ?? null;
+  const multiOpen = (openPrivilege?.openCount ?? 0) >= 2;
+  const passHref = multiOpen
+    ? '/program?type=MEMBERSHIP'
+    : openMembershipId != null
+      ? `/all-in-one-pass/${openMembershipId}`
+      : null;
+
   return {
     hasPrivilege,
     showPassPrice,
-    openMembershipId: openPrivilege?.membershipId ?? null,
+    passHref,
     passPrices,
   };
 };
