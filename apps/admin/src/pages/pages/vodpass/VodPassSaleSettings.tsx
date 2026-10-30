@@ -21,6 +21,7 @@ const TYPE_LABEL: Record<VodPassSaleProgramType, string> = {
   VOD: 'VOD',
   REPORT: '리포트',
   GUIDEBOOK: '자료집',
+  MEMBERSHIP: '올인원패스',
 };
 
 const isSaleProgramType = (type: string): type is VodPassSaleProgramType =>
@@ -50,6 +51,8 @@ const VodPassSaleSettings = () => {
       (programsQuery.data?.programList ?? [])
         .map((item) => item.programInfo)
         .filter((info) => isSaleProgramType(info.programType))
+        // 올인원패스는 이 목록이 아니라 올인원패스 목록에서 가져온다
+        .filter((info) => info.programType !== 'MEMBERSHIP')
         // 모집 마감은 새로 판매를 켤 일이 없어 목록에서 뺀다. 이미 켜 둔 설정은 그대로 남는다
         .filter((info) => info.programStatusType !== 'POST')
         .filter(

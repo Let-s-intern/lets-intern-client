@@ -36,7 +36,7 @@ const mockApi = (enabled: { programType: string; programId: number }[]) => {
             programList: [
               program(31, 'CHALLENGE', '자소서 챌린지 31기'),
               program(5, 'LIVE', '면접 라이브'),
-              program(9, 'MEMBERSHIP', '멤버십'),
+              program(9, 'VOD_PASS', 'VOD 이용권 상품'),
               program(30, 'CHALLENGE', '지난 챌린지 30기', 'POST'),
               program(32, 'CHALLENGE', '다음 챌린지 32기', 'PREV'),
             ],
@@ -105,7 +105,7 @@ describe('VOD 이용권 판매 설정', () => {
     renderPage();
 
     await screen.findByText('자소서 챌린지 31기');
-    expect(screen.queryByText('멤버십')).not.toBeInTheDocument();
+    expect(screen.queryByText('VOD 이용권 상품')).not.toBeInTheDocument();
   });
 
   it('스위치를 켜면 유형과 id 로 켜기 요청을 보낸다', async () => {
