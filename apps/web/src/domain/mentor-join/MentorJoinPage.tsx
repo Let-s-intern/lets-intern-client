@@ -205,14 +205,14 @@ function SectionHeading({
           {label}
         </p>
         <h2
-          className={`text-[26px] font-bold leading-[1.3] sm:text-[36px] min-[1024px]:text-[44px] ${dark ? 'text-white' : 'text-black'}`}
+          className={`text-balance text-[26px] font-bold leading-[1.3] sm:text-[36px] min-[1024px]:text-[44px] ${dark ? 'text-white' : 'text-black'}`}
         >
           <Lines lines={title} />
         </h2>
       </div>
       {description && (
         <p
-          className={`text-base leading-[1.4] sm:text-xl min-[1024px]:text-2xl ${descriptionClassName}`}
+          className={`text-balance text-base leading-[1.4] sm:text-xl min-[1024px]:text-2xl ${descriptionClassName}`}
         >
           <Lines lines={description} />
         </p>
@@ -304,7 +304,7 @@ function AdvantageRow({
             {painScene}
           </div>
         </div>
-        <p className="text-center text-lg font-semibold leading-[1.4] text-black sm:text-[22px]">
+        <p className="text-balance text-center text-lg font-semibold leading-[1.4] text-black sm:text-[22px]">
           {pain}
         </p>
       </div>
@@ -317,7 +317,7 @@ function AdvantageRow({
             {solutionScene}
           </div>
         </div>
-        <p className="flex items-start justify-center gap-1.5 text-center text-lg font-semibold leading-[1.4] text-black sm:text-[22px]">
+        <p className="flex items-start justify-center gap-1.5 text-balance text-center text-lg font-semibold leading-[1.4] text-black sm:text-[22px]">
           <CheckIcon className="mt-1.5 w-4 shrink-0 text-[#4d55f5] sm:mt-2" />
           {solution}
         </p>
@@ -419,10 +419,10 @@ function ProcessStep({
   );
 }
 
+// <br> 대신 줄마다 블록으로 나눠야 좁은 화면에서 줄마다 text-balance 가 걸린다
 function Lines({ lines }: { lines: ReactNode[] }) {
   return lines.map((line, i) => (
-    <span key={i}>
-      {i > 0 && <br />}
+    <span key={i} className="block">
       {line}
     </span>
   ));
@@ -450,7 +450,7 @@ export default function MentorJoinPage() {
               className="h-auto w-[180px] sm:w-[220px]"
             />
             <div className="flex flex-col gap-4 text-center sm:gap-6">
-              <h1 className="text-[28px] font-extrabold leading-[1.4] tracking-[0.01em] sm:text-[40px] min-[1024px]:text-[52px]">
+              <h1 className="text-balance text-[28px] font-extrabold leading-[1.4] tracking-[0.01em] sm:text-[40px] min-[1024px]:text-[52px]">
                 <span className="bg-gradient-to-b from-[#9762f5] to-[#6963f6] to-70% box-decoration-clone bg-clip-text text-transparent">
                   빠르게 합류하고 수익화까지
                 </span>
@@ -458,7 +458,7 @@ export default function MentorJoinPage() {
                 렛츠커리어 현직자 멘토로 <br className="sm:hidden" />
                 함께하세요
               </h1>
-              <p className="text-base leading-[1.4] text-[#7a7d84] sm:text-xl min-[1024px]:text-2xl">
+              <p className="text-balance text-base leading-[1.4] text-[#7a7d84] sm:text-xl min-[1024px]:text-2xl">
                 모두가 자신만의 커리어를 설계하고 지속할 수 있도록
                 <br />그 과정에 렛츠커리어와 함께 해주세요.
               </p>
@@ -468,7 +468,7 @@ export default function MentorJoinPage() {
                 href={MENTOR_APPLY_PATH}
                 data-track-target="apply"
                 data-track-location="hero"
-                className="w-[136px] rounded-[6px] bg-[#5f66f6] px-5 py-3 text-center text-lg font-medium leading-[1.5] text-white hover:bg-[#4d55f5] sm:w-[150px] sm:text-xl"
+                className="w-[136px] whitespace-nowrap rounded-[6px] bg-[#5f66f6] px-4 py-3 text-center text-base font-medium leading-[1.5] text-white hover:bg-[#4d55f5] sm:w-[150px] sm:px-5 sm:text-xl"
               >
                 멘토 신청하기
               </Link>
@@ -478,7 +478,7 @@ export default function MentorJoinPage() {
                 data-track-location="hero"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-[136px] rounded-[6px] bg-[#27272d] px-5 py-3 text-center text-lg font-medium leading-[1.5] text-white hover:bg-zinc-700 sm:w-[150px] sm:text-xl"
+                className="w-[136px] whitespace-nowrap rounded-[6px] bg-[#27272d] px-4 py-3 text-center text-base font-medium leading-[1.5] text-white hover:bg-zinc-700 sm:w-[150px] sm:px-5 sm:text-xl"
               >
                 문의하기
               </a>
@@ -508,14 +508,9 @@ export default function MentorJoinPage() {
               {MOTIVATIONS.map((m) => (
                 <li key={m.lines[0]} className={`flex flex-col ${m.row}`}>
                   <p
-                    className={`rounded-[9px] px-5 py-4 text-center text-[15px] font-medium leading-[1.4] sm:px-14 sm:py-6 sm:text-xl min-[1024px]:text-2xl ${m.bubble}`}
+                    className={`text-balance rounded-[9px] px-5 py-4 text-center text-[15px] font-medium leading-[1.4] sm:px-14 sm:py-6 sm:text-xl min-[1024px]:text-2xl ${m.bubble}`}
                   >
-                    {m.lines.map((line, i) => (
-                      <span key={line}>
-                        {i > 0 && <br />}
-                        {line}
-                      </span>
-                    ))}
+                    <Lines lines={m.lines} />
                   </p>
                 </li>
               ))}
@@ -555,7 +550,7 @@ export default function MentorJoinPage() {
           {CONCERNS.map((c, i) => (
             <li key={c.title} className="flex flex-col gap-8 sm:gap-10">
               <div className="relative rounded-[12px] bg-white px-5 pb-6 pt-9 text-center sm:p-10">
-                <p className="text-[17px] font-bold leading-[1.5] text-[#27272d] sm:text-2xl">
+                <p className="text-balance text-[17px] font-bold leading-[1.5] text-[#27272d] sm:text-2xl">
                   {c.title}
                 </p>
                 <span className="absolute left-3 top-[-14px] origin-top-left -rotate-[10deg] rounded-[12px] bg-[#4d55f5] px-3 py-0.5 text-base font-bold leading-[1.4] text-white sm:left-[17px] sm:top-[-18px] sm:px-4 sm:py-1 sm:text-[22px]">
@@ -581,7 +576,7 @@ export default function MentorJoinPage() {
                         />
                       </svg>
                     </span>
-                    <span className="text-[15px] font-medium leading-[1.4] text-[#d8d8d8] sm:text-xl">
+                    <span className="text-balance text-[15px] font-medium leading-[1.4] text-[#d8d8d8] sm:text-xl">
                       {d}
                     </span>
                   </li>
@@ -611,7 +606,7 @@ export default function MentorJoinPage() {
                 <ChatBubble tone="dark">
                   현직자 멘토 활동, 관심은 있는데...
                   <br />
-                  제가 어떤 내용을 전달할 수 있을까요?? 🤔
+                  제가 어떤 내용을 전달할 수 있을까요??&nbsp;🤔
                 </ChatBubble>
                 <ChatBubble tone="dark" tail="left">
                   그 내용을 어떻게 전달해야 할지도 잘 모르겠네요
@@ -731,10 +726,10 @@ export default function MentorJoinPage() {
           />
           {/* 데스크톱은 시안 좌표대로 겹쳐 놓고, 좁은 화면에서는 세로로 쌓는다 */}
           <div className="relative flex w-full max-w-[1000px] flex-col items-center gap-5 min-[1024px]:block min-[1024px]:h-[233px]">
-            <p className="order-2 rounded-[12px] bg-white px-6 py-5 text-center text-[17px] font-bold leading-[1.5] text-[#27272d] shadow-[0_2px_8px_rgba(166,170,255,0.5)] sm:text-xl min-[1024px]:absolute min-[1024px]:left-[349px] min-[1024px]:top-[133px] min-[1024px]:whitespace-nowrap min-[1024px]:px-10 min-[1024px]:py-8 min-[1024px]:text-2xl">
+            <p className="order-2 text-balance rounded-[12px] bg-white px-6 py-5 text-center text-[17px] font-bold leading-[1.5] text-[#27272d] shadow-[0_2px_8px_rgba(166,170,255,0.5)] sm:text-xl min-[1024px]:absolute min-[1024px]:left-[349px] min-[1024px]:top-[133px] min-[1024px]:whitespace-nowrap min-[1024px]:px-10 min-[1024px]:py-8 min-[1024px]:text-2xl">
               경쟁의 굴레 속에서 점점 떨어져가는 자신감
             </p>
-            <p className="order-1 -rotate-3 rounded-[12px] bg-white p-5 text-center text-[17px] font-bold leading-[1.5] text-[#27272d] shadow-[0_2px_8px_rgba(77,85,245,0.5)] sm:text-xl min-[1024px]:absolute min-[1024px]:left-[171px] min-[1024px]:top-[80px] min-[1024px]:origin-top-left min-[1024px]:-rotate-[7deg] min-[1024px]:whitespace-nowrap min-[1024px]:p-8 min-[1024px]:text-2xl">
+            <p className="order-1 -rotate-3 text-balance rounded-[12px] bg-white p-5 text-center text-[17px] font-bold leading-[1.5] text-[#27272d] shadow-[0_2px_8px_rgba(77,85,245,0.5)] sm:text-xl min-[1024px]:absolute min-[1024px]:left-[171px] min-[1024px]:top-[80px] min-[1024px]:origin-top-left min-[1024px]:-rotate-[7deg] min-[1024px]:whitespace-nowrap min-[1024px]:p-8 min-[1024px]:text-2xl">
               나의 상황과는 무관하게 쏟아지는 각종 취업 정보
             </p>
           </div>
@@ -744,10 +739,13 @@ export default function MentorJoinPage() {
           <span className="size-2 rounded-full bg-[#8288f8]" />
           <span className="size-2 rounded-full bg-[#4d55f5]" />
         </div>
-        <p className="max-w-[866px] text-center text-2xl font-semibold leading-[1.5] text-[#5c5f66] sm:text-[36px] min-[1024px]:text-[44px]">
-          국내 유일의 서류 작성 교육으로
-          <br />
-          커리어의 첫 시작을 함께하고자 해요
+        <p className="max-w-[866px] text-balance text-center text-2xl font-semibold leading-[1.5] text-[#5c5f66] sm:text-[36px] min-[1024px]:text-[44px]">
+          <Lines
+            lines={[
+              '국내 유일의 서류 작성 교육으로',
+              '커리어의 첫 시작을 함께하고자 해요',
+            ]}
+          />
         </p>
       </section>
 
@@ -785,7 +783,7 @@ export default function MentorJoinPage() {
             <span className="text-xl font-bold leading-[1.4] text-[#4d55f5] sm:text-[26px]">
               Vision
             </span>
-            <span className="text-base font-medium leading-[1.4] text-[#3e4148] sm:text-2xl">
+            <span className="text-balance text-base font-medium leading-[1.4] text-[#3e4148] sm:text-2xl">
               모두의 ‘커리어 시작’ 경험의 퀄리티를 높입니다
             </span>
           </p>
@@ -812,11 +810,14 @@ export default function MentorJoinPage() {
           </ul>
         </div>
 
-        <p className="mt-24 text-center text-2xl font-bold leading-[1.4] tracking-[0.02em] text-[#27272d] sm:mt-[180px] sm:text-[36px] min-[1024px]:text-[44px]">
-          모두가 자신만의 커리어를 설계하고
-          <br />
-          지속할 수 있도록{' '}
-          <span className="text-[#4d55f5]">그 과정에 함께 해주세요</span>
+        <p className="mt-24 text-balance text-center text-2xl font-bold leading-[1.4] tracking-[0.02em] text-[#27272d] sm:mt-[180px] sm:text-[36px] min-[1024px]:text-[44px]">
+          <span className="block">모두가 자신만의 커리어를 설계하고</span>
+          <span className="block">
+            지속할 수 있도록{' '}
+            <span className="whitespace-nowrap text-[#4d55f5]">
+              그 과정에 함께 해주세요
+            </span>
+          </span>
         </p>
       </section>
 
@@ -916,7 +917,7 @@ export default function MentorJoinPage() {
                       </a>
                     )}
                   </div>
-                  <p className="whitespace-pre-line text-[15px] leading-normal text-[#b0b3ba] sm:text-lg">
+                  <p className="text-[15px] leading-normal text-[#b0b3ba] sm:whitespace-pre-line sm:text-lg">
                     {m.description}
                   </p>
                 </div>
@@ -1030,7 +1031,7 @@ export default function MentorJoinPage() {
           unoptimized
           className="h-auto w-[180px] sm:w-[220px]"
         />
-        <h2 className="max-w-[866px] text-center text-[28px] font-bold leading-[1.4] sm:text-[40px] min-[1024px]:text-[52px]">
+        <h2 className="max-w-[866px] text-balance text-center text-[28px] font-bold leading-[1.4] sm:text-[40px] min-[1024px]:text-[52px]">
           <span className="bg-gradient-to-b from-[#c4a3ff] to-[#5b54ff] to-70% box-decoration-clone bg-clip-text text-transparent">
             빠르게 경험하고 수익화까지
           </span>
