@@ -11,14 +11,17 @@ export function Empathy() {
         혹시 지금, 이런 생각 하고 계시나요?
       </h2>
 
-      <ul className="mx-auto mt-[38px] flex max-w-[522px] flex-col gap-3.5 md:mt-10 md:gap-4">
+      <ul
+        data-reveal-group
+        className="mx-auto mt-[38px] flex max-w-[522px] flex-col gap-3.5 md:mt-10 md:gap-4"
+      >
         {EMPATHY_WORRIES.map((worry, index) => {
           const fromLeft = index % 2 === 0;
           return (
             <li
               key={worry}
               data-reveal
-              style={revealDelay(index, 220)}
+              style={revealDelay(index, 70)}
               className={`max-w-[284px] px-4 py-3.5 text-base leading-[25px] text-[#1f222b] shadow-[0_6px_16px_rgba(5,6,30,0.25)] md:max-w-none md:px-5 md:py-[15px] md:text-[15px] ${
                 fromLeft
                   ? 'rounded-bl-xxs self-start rounded-xl bg-white'

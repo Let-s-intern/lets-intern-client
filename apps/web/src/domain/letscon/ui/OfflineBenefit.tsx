@@ -58,7 +58,10 @@ export function OfflineBenefit({
           제공되는 특별 혜택
         </h2>
 
-        <ul className="mt-6 grid gap-[18px] md:mt-10 md:grid-cols-3">
+        <ul
+          data-reveal-group
+          className="mt-6 grid gap-[18px] md:mt-10 md:grid-cols-3"
+        >
           {LETSCON_BENEFITS.map(({ icon: Icon, title, body }, index) => (
             <li
               key={title}

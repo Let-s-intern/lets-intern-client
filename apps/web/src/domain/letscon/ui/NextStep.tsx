@@ -34,7 +34,10 @@ export function NextStep() {
           11월 올인원 패스로 직무별 서류 준비와 실제 지원을 이어가세요.
         </p>
 
-        <ul className="mt-6 grid gap-3 md:grid-cols-3 md:gap-[17px]">
+        <ul
+          data-reveal-group
+          className="mt-6 grid gap-3 md:grid-cols-3 md:gap-[17px]"
+        >
           {LETSCON_NEXT_STEPS.map(({ tag, title, body }, index) => (
             <li
               key={tag}

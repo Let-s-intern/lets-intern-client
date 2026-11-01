@@ -1,4 +1,4 @@
-/* 등장 애니메이션은 숨김 상태를 두지 않는다. 기본은 항상 보이고, useReveal 이 data-revealed 를 붙일 때 from 만 재생한다 */
+/* 등장 애니메이션은 숨김 상태를 두지 않는다. 기본은 항상 보이고, useReveal 이 화면에 닿기 전에 data-revealed 를 붙일 때만 from 을 재생한다 */
 @keyframes reveal {
   from {
     opacity: 0;
@@ -22,7 +22,7 @@
 @media (prefers-reduced-motion: no-preference) {
   /* forwards 를 쓰면 끝난 뒤에도 transform 을 쥐고 있어 data-lift 가 먹지 않는다 */
   .root [data-revealed] {
-    animation: reveal 0.8s ease-out var(--reveal-delay, 0ms) backwards;
+    animation: reveal 0.6s ease-out var(--reveal-delay, 0ms) backwards;
   }
 
   .root [data-twinkle] {

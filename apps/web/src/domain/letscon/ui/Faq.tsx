@@ -12,9 +12,12 @@ export function Faq({ faqs }: { faqs: FaqItem[] }) {
         >
           자주 묻는 질문
         </h2>
-        <ul className="mt-7 flex flex-col gap-2 md:mt-9 md:gap-[13px]">
+        <ul
+          data-reveal-group
+          className="mt-7 flex flex-col gap-2 md:mt-9 md:gap-[13px]"
+        >
           {faqs.map(({ id, question, answer }, index) => (
-            <li key={id} data-reveal style={revealDelay(index, 50)}>
+            <li key={id} data-reveal style={revealDelay(index, 30)}>
               <details className="group rounded-[16px] border border-[#dcdde3] bg-white md:rounded-[12px]">
                 <summary className="flex min-h-[53px] cursor-pointer list-none items-center justify-between gap-3 px-[17px] py-2.5 text-sm leading-[1.15] text-[#1c1e2b] md:min-h-[51px] md:px-[21px] md:text-[15px] [&::-webkit-details-marker]:hidden">
                   <span>{question ?? ''}</span>

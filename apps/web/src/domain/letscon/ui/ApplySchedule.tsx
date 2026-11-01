@@ -37,7 +37,7 @@ const DAYS = [
 
 export function ApplySchedule() {
   return (
-    <div className="flex flex-col gap-4 md:gap-3">
+    <div data-reveal-group className="flex flex-col gap-4 md:gap-3">
       <a data-reveal data-lift href={LINEUP_HREF} className={`${CARD} p-5`}>
         <div className="flex items-center justify-between">
           <p className="text-base font-bold text-[#1c1e2b]">2026년 11월</p>

@@ -193,7 +193,10 @@ export function Lineup() {
           렛츠콘 세미나 라인업
         </h2>
 
-        <ol className="mt-[38px] flex flex-col gap-4 md:mt-10 md:gap-3">
+        <ol
+          data-reveal-group
+          className="mt-[38px] flex flex-col gap-4 md:mt-10 md:gap-3"
+        >
           {LINEUP_TOPICS.map(({ title, description }, index) => (
             <li
               key={title}

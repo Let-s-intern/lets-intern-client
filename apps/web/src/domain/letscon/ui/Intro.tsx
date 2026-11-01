@@ -43,7 +43,10 @@ export function Intro() {
         >
           이런 이야기를 들려드려요!
         </h3>
-        <ul className="mt-4 flex flex-col gap-2 md:gap-[13px]">
+        <ul
+          data-reveal-group
+          className="mt-4 flex flex-col gap-2 md:gap-[13px]"
+        >
           {INTRO_STORIES.map(({ icon, text }, index) => (
             <li
               key={text}
