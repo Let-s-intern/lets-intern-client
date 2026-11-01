@@ -41,8 +41,7 @@ export interface LineupSession {
   /** 미정이면 비워 둔다. \n 은 모바일 줄바꿈이다 */
   profile?: string;
   instagramUrl?: string;
-  /** 없으면 실루엣을 그린다 */
-  photo?: { src: string; width: number; height: number };
+  photo: { src: string; width: number; height: number };
 }
 
 export interface LineupDay {
@@ -81,7 +80,7 @@ export const LINEUP_DAYS: LineupDay[] = [
         title: '신입 PM은 안 뽑는다?\n결국 원하는 회사에 합격하는 방법',
         speaker: '헤이즐 멘토',
         profile: '9년차 · 전) 배달의민족 PM ·\n현) 국내 대표 핀테크 기업 PO',
-        photo: { src: '/letscon/hazel.png', width: 249, height: 369 },
+        photo: { src: '/letscon/raw-hazel.png', width: 249, height: 369 },
       },
       {
         label: 'Session 2',
@@ -89,6 +88,7 @@ export const LINEUP_DAYS: LineupDay[] = [
         offline: false,
         time: '20:40 - 22:10',
         speaker: '연사 공개 예정',
+        photo: { src: '/letscon/hr-cut.png', width: 750, height: 900 },
       },
     ],
   },
@@ -121,11 +121,12 @@ export const LINEUP_DAYS: LineupDay[] = [
         track: '마케팅',
         offline: true,
         time: '14:30 - 16:30',
-        title: '가고 싶은 회사의 마케터가 되기 위해,\n소중한 경험을 하나씩 쌓아온 이야기',
+        title:
+          '가고 싶은 회사의 마케터가 되기 위해,\n소중한 경험을 하나씩 쌓아온 이야기',
         speaker: '팀장 박주삼 멘토',
         profile: '13년차 · 전) 올리브영, 에이블리,\n지그재그 · 현) 뷰티 브랜드',
         instagramUrl: LETSCON_PARK_INSTAGRAM_URL,
-        photo: { src: '/letscon/park.svg', width: 270, height: 363 },
+        photo: { src: '/letscon/park-cut.png', width: 720, height: 900 },
       },
       {
         label: 'Session 2',
@@ -136,7 +137,7 @@ export const LINEUP_DAYS: LineupDay[] = [
         speaker: '프리쪼아 멘토',
         profile: '11년차 · 창업, 스타트업,\n대기업 모두 거친 6년차 면접관',
         instagramUrl: LETSCON_FREEZZOA_INSTAGRAM_URL,
-        photo: { src: '/letscon/freezzoa.png', width: 270, height: 363 },
+        photo: { src: '/letscon/raw-freezzoa.png', width: 270, height: 363 },
       },
     ],
   },

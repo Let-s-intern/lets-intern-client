@@ -31,18 +31,6 @@ function SessionChip({ offline }: { offline?: boolean }) {
   );
 }
 
-function SpeakerSilhouette() {
-  return (
-    <div
-      aria-hidden="true"
-      className="absolute bottom-0 right-[26px] flex flex-col items-center gap-[13px] md:right-7 md:gap-4"
-    >
-      <span className="size-12 rounded-full bg-[#cbcdf6] md:size-[60px]" />
-      <span className="h-11 w-[83px] bg-[#cbcdf6] [border-radius:50%_50%_0_0/100%_100%_0_0] md:h-14 md:w-[104px]" />
-    </div>
-  );
-}
-
 function SessionCard({ session }: { session: LineupSession }) {
   const { photo, profile, instagramUrl, title } = session;
 
@@ -124,17 +112,14 @@ function SessionCard({ session }: { session: LineupSession }) {
           )}
         </div>
 
-        {photo ? (
-          <Image
-            src={photo.src}
-            alt={session.speaker}
-            width={photo.width}
-            height={photo.height}
-            className="absolute bottom-0 right-3 h-[92px] w-auto md:right-9 md:h-[180px]"
-          />
-        ) : (
-          <SpeakerSilhouette />
-        )}
+        <Image
+          src={photo.src}
+          alt={session.speaker}
+          width={photo.width}
+          height={photo.height}
+          sizes="(min-width: 768px) 150px, 77px"
+          className="absolute bottom-0 right-3 h-[92px] w-auto md:right-9 md:h-[180px]"
+        />
       </div>
     </article>
   );
