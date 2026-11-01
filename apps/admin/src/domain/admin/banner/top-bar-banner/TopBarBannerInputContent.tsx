@@ -91,7 +91,7 @@ const TopBarBannerInputContent = ({
                 id="file"
                 name="file"
                 image={value.imgUrl}
-                imageFormat={{ width: 3840, height: 960 }}
+                imageFormat={{ width: 3840, height: 1280 }}
                 onChange={(e) =>
                   onImageChange({
                     file: e.target.files?.[0] ?? null,
@@ -118,7 +118,7 @@ const TopBarBannerInputContent = ({
                 id="mobileFile"
                 name="mobileFile"
                 image={value.mobileImgUrl}
-                imageFormat={{ width: 1536, height: 768 }}
+                imageFormat={{ width: 1536, height: 1024 }}
                 onChange={(e) =>
                   onImageChange({
                     mobileFile: e.target.files?.[0] ?? null,

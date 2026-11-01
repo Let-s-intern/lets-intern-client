@@ -9,8 +9,8 @@ interface TopBannerImageProps {
 /**
  * 상단 띠 배너 아래에 붙는 이미지. 이미지와 이동 링크는 어드민 > 상단 띠 배너에서 설정한다.
  *
- * - PC 3840x960(4:1): 표시 최대폭 1920px 의 2배
- * - 모바일 1536x768(2:1): 표시 최대폭 768px 의 2배
+ * - PC 3840x1280(3:1): 표시 최대폭 1920px 의 2배. 1440px 화면에서 높이 480px 로 첫 화면 대부분을 채운다
+ * - 모바일 1536x1024(3:2): 표시 최대폭 768px 의 2배
  *
  * 와이드 이미지를 모바일로 줄이면 글자가 뭉개져서 공용으로 쓰지 않고 따로 받는다.
  * 한쪽만 올리면 그 화면에서만 보인다.
@@ -47,7 +47,7 @@ const TopBannerImage = ({ banner }: TopBannerImageProps) => {
           src={imgUrl}
           alt={title}
           width={3840}
-          height={960}
+          height={1280}
           sizes="100vw"
           className="hidden h-auto w-full md:block"
         />
@@ -57,7 +57,7 @@ const TopBannerImage = ({ banner }: TopBannerImageProps) => {
           src={mobileImgUrl}
           alt={title}
           width={1536}
-          height={768}
+          height={1024}
           sizes="100vw"
           className="h-auto w-full md:hidden"
         />
