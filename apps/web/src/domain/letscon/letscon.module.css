@@ -1,0 +1,47 @@
+/* 등장 애니메이션은 숨김 상태를 두지 않는다. 기본은 항상 보이고, useReveal 이 data-revealed 를 붙일 때 from 만 재생한다 */
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+@keyframes twinkle {
+  50% {
+    opacity: 0.85;
+  }
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.7;
+    transform: scale(1.15);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* forwards 를 쓰면 끝난 뒤에도 transform 을 쥐고 있어 data-lift 가 먹지 않는다 */
+  .root [data-revealed] {
+    animation: reveal 0.8s ease-out var(--reveal-delay, 0ms) backwards;
+  }
+
+  .root [data-twinkle] {
+    animation: twinkle 6s ease-in-out infinite;
+  }
+
+  .root [data-pulse] {
+    animation: pulse 4s ease-in-out infinite;
+  }
+
+  .root [data-lift] {
+    transition:
+      transform 0.25s ease-out,
+      border-color 0.15s;
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .root [data-lift]:not(:disabled):hover {
+    transform: translateY(-3px);
+  }
+}

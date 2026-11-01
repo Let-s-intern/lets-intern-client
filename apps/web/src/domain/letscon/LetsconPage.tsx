@@ -5,6 +5,8 @@ import { useQuery } from '@tanstack/react-query';
 import { LETSCON_LIVE_IDS } from './data/live';
 import { LETSCON_HERO_ID, LETSCON_SECTION_IDS } from './data/sections';
 import { useLetsconApply } from './hooks/useLetsconApply';
+import { useReveal } from './hooks/useReveal';
+import styles from './letscon.module.css';
 import { sortFaqsById } from './lib/faq';
 import { AnchorTabs } from './ui/AnchorTabs';
 import { Apply } from './ui/Apply';
@@ -34,9 +36,10 @@ export default function LetsconPage() {
   });
   const faqs = sortFaqsById(faqData?.faqList);
   const showFaq = faqs.length > 0;
+  const rootRef = useReveal(showFaq);
 
   return (
-    <div>
+    <div ref={rootRef} className={styles.root}>
       <div id={LETSCON_HERO_ID}>
         <Hero apply={apply} />
       </div>

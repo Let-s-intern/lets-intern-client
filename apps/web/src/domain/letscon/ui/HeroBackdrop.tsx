@@ -37,8 +37,17 @@ export function HeroBackdrop() {
       {CONSTELLATION.slice(0, -1).map(([x, y]) => (
         <circle key={x} cx={x} cy={y} r="4.5" fill="#fff" opacity=".75" />
       ))}
-      {STARS.map(([x, y]) => (
-        <circle key={x} cx={x} cy={y} r="3" fill="#fff" opacity=".3" />
+      {STARS.map(([x, y], index) => (
+        <circle
+          key={x}
+          data-twinkle
+          style={{ animationDelay: `${index * 0.9}s` }}
+          cx={x}
+          cy={y}
+          r="3"
+          fill="#fff"
+          opacity=".3"
+        />
       ))}
       <circle cx={GOAL_X} cy={GOAL_Y} r="43" fill="#ffe066" opacity=".1" />
       <circle cx={GOAL_X} cy={GOAL_Y} r="24" fill="#ffe066" opacity=".3" />

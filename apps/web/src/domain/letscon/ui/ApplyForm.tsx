@@ -31,7 +31,10 @@ export function ApplyForm({ apply }: { apply: LetsconApply }) {
   const isAvailable = status === 'available';
 
   return (
-    <div className="rounded-[16px] border border-[#e8e9f3] bg-white p-5 md:p-6">
+    <div
+      data-reveal
+      className="rounded-[16px] border border-[#e8e9f3] bg-white p-5 md:p-6"
+    >
       <h3 className="text-xl font-extrabold tracking-[-0.01em] text-[#1c1e2b]">
         15일, 현장에도 참여하시겠어요?
       </h3>
@@ -100,6 +103,7 @@ export function ApplyForm({ apply }: { apply: LetsconApply }) {
       </div>
 
       <button
+        data-lift
         type="button"
         disabled={!isAvailable}
         onClick={() => apply.apply(selected)}

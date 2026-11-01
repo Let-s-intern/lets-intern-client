@@ -22,6 +22,7 @@ function ApplyButton({
 
   return (
     <button
+      data-lift
       type="button"
       disabled={status !== 'available'}
       onClick={() => apply.apply(kind)}
@@ -56,6 +57,7 @@ export function Hero({ apply }: { apply: LetsconApply }) {
           LETS<span className="md:text-[#ffe066]">CON</span>
           <span
             aria-hidden="true"
+            data-pulse
             className="mb-[3px] ml-1 grid size-[27px] place-items-center rounded-full bg-[#ffe066]/30 shadow-[0_0_16px_rgba(255,224,102,0.3)] md:mb-3 md:ml-1 md:size-[34px]"
           >
             <span className="size-[13px] rounded-full bg-[#ffe066] md:size-5" />

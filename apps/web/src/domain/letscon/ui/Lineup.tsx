@@ -7,6 +7,7 @@ import {
   type LineupDay,
   type LineupSession,
 } from '../data/lineup';
+import { revealDelay } from '../lib/reveal';
 
 const DARK_BG = 'bg-[#12143a] md:bg-[#11142b]';
 
@@ -46,7 +47,11 @@ function SessionCard({ session }: { session: LineupSession }) {
   const { photo, profile, instagramUrl, title } = session;
 
   return (
-    <article className="overflow-hidden rounded-xl border border-[#e1e3f7] md:border-0">
+    <article
+      data-reveal
+      data-lift
+      className="overflow-hidden rounded-xl border border-[#e1e3f7] md:border-0"
+    >
       <header
         className={`flex items-center justify-between gap-3 px-[18px] py-3 text-white md:px-6 md:py-[15px] ${DARK_BG}`}
       >
@@ -106,7 +111,13 @@ function SessionCard({ session }: { session: LineupSession }) {
               >
                 <rect x="3" y="3" width="18" height="18" rx="5" />
                 <circle cx="12" cy="12" r="4" />
-                <circle cx="17" cy="7" r="1" fill="currentColor" stroke="none" />
+                <circle
+                  cx="17"
+                  cy="7"
+                  r="1"
+                  fill="currentColor"
+                  stroke="none"
+                />
               </svg>
               인스타그램
             </a>
@@ -142,7 +153,10 @@ function LineupDaySection({ day }: { day: LineupDay }) {
 
   return (
     <section className="mt-10 first-of-type:mt-[37px] md:mt-12 md:first-of-type:mt-[37px]">
-      <div className="flex items-baseline gap-3 border-b-2 border-[#1f222b] pb-[19px]">
+      <div
+        data-reveal
+        className="flex items-baseline gap-3 border-b-2 border-[#1f222b] pb-[19px]"
+      >
         <h3 className="text-[22px] font-bold leading-7 text-[#1f222b] md:text-xl">
           {day.label}
         </h3>
@@ -155,13 +169,14 @@ function LineupDaySection({ day }: { day: LineupDay }) {
         세션 구성 · {totalMinutes}분
       </p>
       <ul
+        data-reveal
         style={blockColumns}
         className="mt-2 grid gap-1 md:grid-cols-[var(--block-columns)] md:gap-0"
       >
         {day.blocks.map((block) => (
           <li
             key={block.title}
-            className={`rounded-md px-3 py-3 text-white md:py-3.5 md:rounded-xs md:first:rounded-l-md md:last:rounded-r-md ${BLOCK_TONE[block.tone]}`}
+            className={`md:rounded-xs rounded-md px-3 py-3 text-white md:py-3.5 md:first:rounded-l-md md:last:rounded-r-md ${BLOCK_TONE[block.tone]}`}
           >
             <p className="text-sm font-bold leading-6">
               {block.title} {block.minutes}분
@@ -186,13 +201,21 @@ export function Lineup() {
   return (
     <section className="break-keep bg-white px-5 py-16 md:py-[88px]">
       <div className="mx-auto max-w-[840px]">
-        <h2 className="text-2xl font-bold leading-8 tracking-[-0.02em] text-[#1f222b] md:text-4xl md:leading-[48px]">
+        <h2
+          data-reveal
+          className="text-2xl font-bold leading-8 tracking-[-0.02em] text-[#1f222b] md:text-4xl md:leading-[48px]"
+        >
           렛츠콘 세미나 라인업
         </h2>
 
         <ol className="mt-[38px] flex flex-col gap-4 md:mt-10 md:gap-3">
           {LINEUP_TOPICS.map(({ title, description }, index) => (
-            <li key={title} className="flex gap-4 md:gap-5">
+            <li
+              key={title}
+              data-reveal
+              style={revealDelay(index)}
+              className="flex gap-4 md:gap-5"
+            >
               <span className="w-3 shrink-0 text-center text-sm font-bold leading-6 text-[#4d55f5] md:w-4">
                 {index + 1}
               </span>

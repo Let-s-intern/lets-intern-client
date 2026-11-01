@@ -27,16 +27,23 @@ export function BottomApply({ apply }: { apply: LetsconApply }) {
       </ConnectionLine>
 
       <div className="relative mx-auto flex max-w-[600px] flex-col items-center text-center">
-        <h2 className="text-[22px] font-bold leading-[1.4] tracking-[-0.02em] text-white md:text-3xl md:leading-[1.4]">
+        <h2
+          data-reveal
+          className="text-[22px] font-bold leading-[1.4] tracking-[-0.02em] text-white md:text-3xl md:leading-[1.4]"
+        >
           취업을 향한 여러분의 모든 도전에
           <br />
           렛츠커리어가 끝까지 함께하겠습니다.
         </h2>
-        <p className="mt-3 text-base text-white md:mt-4 md:text-lg">
+        <p data-reveal className="mt-3 text-base text-white md:mt-4 md:text-lg">
           11월 14-15일, 렛츠콘에서 함께해요!
         </p>
-        <div className="mt-8 flex w-full flex-col gap-2.5 md:mt-8 md:w-auto md:flex-row md:gap-3">
+        <div
+          data-reveal
+          className="mt-8 flex w-full flex-col gap-2.5 md:mt-8 md:w-auto md:flex-row md:gap-3"
+        >
           <button
+            data-lift
             type="button"
             disabled={apply.offline !== 'available'}
             onClick={() => apply.apply('offline')}
@@ -50,6 +57,7 @@ export function BottomApply({ apply }: { apply: LetsconApply }) {
             </span>
           </button>
           <button
+            data-lift
             type="button"
             disabled={apply.online !== 'available'}
             onClick={() => apply.apply('online')}

@@ -10,6 +10,7 @@ import {
   LETSCON_DOCUMENT_SUBMIT_URL,
   LETSCON_YOUTUBE_URL,
 } from '../data/links';
+import { revealDelay } from '../lib/reveal';
 import { getYoutubeVideoId } from '../lib/youtube';
 import { ConnectionLine } from './ConnectionLine';
 import { FeedbackVideo } from './FeedbackVideo';
@@ -48,15 +49,24 @@ export function OfflineBenefit({
       />
 
       <div className="relative mx-auto max-w-[880px] px-5">
-        <h2 className="text-2xl font-bold leading-[1.4] tracking-[-0.02em] text-white md:text-4xl md:leading-[1.35]">
+        <h2
+          data-reveal
+          className="text-2xl font-bold leading-[1.4] tracking-[-0.02em] text-white md:text-4xl md:leading-[1.35]"
+        >
           11/15(일) 오프라인 참여자에게만
           <br />
           제공되는 특별 혜택
         </h2>
 
         <ul className="mt-6 grid gap-[18px] md:mt-10 md:grid-cols-3">
-          {LETSCON_BENEFITS.map(({ icon: Icon, title, body }) => (
-            <li key={title} className="bg-primary-5 rounded-[14px] p-5">
+          {LETSCON_BENEFITS.map(({ icon: Icon, title, body }, index) => (
+            <li
+              key={title}
+              data-reveal
+              data-lift
+              style={revealDelay(index)}
+              className="bg-primary-5 rounded-[14px] p-5"
+            >
               <span className="bg-primary-10 text-primary flex h-10 w-10 items-center justify-center rounded-[10px]">
                 <Icon aria-hidden className="h-6 w-6" strokeWidth={1.75} />
               </span>
@@ -70,7 +80,11 @@ export function OfflineBenefit({
           ))}
         </ul>
 
-        <div className="mt-[18px] rounded-[14px] border border-[#2a2f7a] bg-[#000570] p-5">
+        <div
+          data-reveal
+          data-lift
+          className="mt-[18px] rounded-[14px] border border-[#2a2f7a] bg-[#000570] p-5"
+        >
           <span className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-[#1e2363] text-[#ffe566]">
             <FeedbackIcon aria-hidden className="h-6 w-6" strokeWidth={1.75} />
           </span>
@@ -100,7 +114,10 @@ export function OfflineBenefit({
           ) : null}
         </div>
 
-        <div className="mt-7 rounded-[16px] bg-white p-5 md:mt-9 md:p-6">
+        <div
+          data-reveal
+          className="mt-7 rounded-[16px] bg-white p-5 md:mt-9 md:p-6"
+        >
           <h3 className="text-lg font-bold text-[#1c1e2b] md:text-[17px]">
             무료 서류 Live 피드백, 이렇게 진행돼요
           </h3>

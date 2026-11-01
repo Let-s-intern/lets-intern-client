@@ -3,14 +3,20 @@ import { LETSCON_REFUND_STEPS } from '../data/guide';
 export function DepositRefund() {
   return (
     <div className="mt-16 md:mt-12">
-      <h2 className="text-xl font-extrabold tracking-[-0.02em] text-[#1c1e2b] md:text-[28px]">
+      <h2
+        data-reveal
+        className="text-xl font-extrabold tracking-[-0.02em] text-[#1c1e2b] md:text-[28px]"
+      >
         보증금은 이렇게 돌려드려요.
       </h2>
       <p className="mt-2 text-xs text-[#7f8290] md:mt-3 md:text-sm">
         현장 참석이 확인되면 보증금 15,000원을 전액 돌려드립니다.
       </p>
 
-      <div className="mt-5 rounded-[16px] border border-[#e8e9f3] bg-white p-5 md:mt-8 md:p-9">
+      <div
+        data-reveal
+        className="mt-5 rounded-[16px] border border-[#e8e9f3] bg-white p-5 md:mt-8 md:p-9"
+      >
         <ol className="flex flex-col gap-5 md:grid md:grid-cols-[1fr_1fr_0.92fr] md:gap-0">
           {LETSCON_REFUND_STEPS.map(({ when, title, body }, index) => {
             const isLast = index === LETSCON_REFUND_STEPS.length - 1;

@@ -1,5 +1,6 @@
 import { ChevronRight } from 'lucide-react';
 import { LETSCON_SECTION_IDS } from '../data/sections';
+import { revealDelay } from '../lib/reveal';
 
 const LINEUP_HREF = `#${LETSCON_SECTION_IDS.lineup}`;
 const CARD =
@@ -37,7 +38,7 @@ const DAYS = [
 export function ApplySchedule() {
   return (
     <div className="flex flex-col gap-4 md:gap-3">
-      <a href={LINEUP_HREF} className={`${CARD} p-5`}>
+      <a data-reveal data-lift href={LINEUP_HREF} className={`${CARD} p-5`}>
         <div className="flex items-center justify-between">
           <p className="text-base font-bold text-[#1c1e2b]">2026년 11월</p>
           <span className="bg-primary-5 text-primary rounded-full px-2.5 py-1 text-xs font-semibold">
@@ -58,9 +59,12 @@ export function ApplySchedule() {
         </ul>
       </a>
 
-      {DAYS.map(({ date, day, tag, title, body }) => (
+      {DAYS.map(({ date, day, tag, title, body }, index) => (
         <a
           key={date}
+          data-reveal
+          data-lift
+          style={revealDelay(index + 1)}
           href={LINEUP_HREF}
           className={`${CARD} flex-1 p-5 pb-6 md:py-[26px]`}
         >

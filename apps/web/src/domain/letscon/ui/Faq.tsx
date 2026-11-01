@@ -1,16 +1,20 @@
 import type { Faq as FaqItem } from '@/schema';
 import { ChevronDown } from 'lucide-react';
+import { revealDelay } from '../lib/reveal';
 
 export function Faq({ faqs }: { faqs: FaqItem[] }) {
   return (
     <section className="break-keep bg-[#f7f8fc] py-16 md:py-[88px]">
       <div className="mx-auto max-w-[880px] px-5">
-        <h2 className="text-2xl font-extrabold tracking-[-0.02em] text-[#1c1e2b] md:text-4xl">
+        <h2
+          data-reveal
+          className="text-2xl font-extrabold tracking-[-0.02em] text-[#1c1e2b] md:text-4xl"
+        >
           자주 묻는 질문
         </h2>
         <ul className="mt-7 flex flex-col gap-2 md:mt-9 md:gap-[13px]">
-          {faqs.map(({ id, question, answer }) => (
-            <li key={id}>
+          {faqs.map(({ id, question, answer }, index) => (
+            <li key={id} data-reveal style={revealDelay(index, 50)}>
               <details className="group rounded-[16px] border border-[#dcdde3] bg-white md:rounded-[12px]">
                 <summary className="flex min-h-[53px] cursor-pointer list-none items-center justify-between gap-3 px-[17px] py-2.5 text-sm leading-[1.15] text-[#1c1e2b] md:min-h-[51px] md:px-[21px] md:text-[15px] [&::-webkit-details-marker]:hidden">
                   <span>{question ?? ''}</span>

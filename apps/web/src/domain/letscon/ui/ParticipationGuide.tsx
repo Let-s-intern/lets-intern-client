@@ -6,11 +6,14 @@ export function ParticipationGuide() {
   return (
     <section className="break-keep bg-white py-16 md:py-[88px]">
       <div className="mx-auto max-w-[880px] px-5">
-        <h2 className="text-2xl font-extrabold tracking-[-0.02em] text-[#1c1e2b] md:text-4xl">
+        <h2
+          data-reveal
+          className="text-2xl font-extrabold tracking-[-0.02em] text-[#1c1e2b] md:text-4xl"
+        >
           참가 안내
         </h2>
 
-        <dl className="mt-5 border-t-2 border-[#11142b] md:mt-6">
+        <dl data-reveal className="mt-5 border-t-2 border-[#11142b] md:mt-6">
           {LETSCON_GUIDE_ROWS.map(
             ({ label, mobileLabel, lines, hasMapLink }) => (
               <div
@@ -45,7 +48,11 @@ export function ParticipationGuide() {
           )}
         </dl>
 
-        <div className="bg-primary-10 mt-4 flex items-center gap-3 rounded-[16px] p-4 md:mt-8 md:gap-4 md:p-6">
+        <div
+          data-reveal
+          data-lift
+          className="bg-primary-10 mt-4 flex items-center gap-3 rounded-[16px] p-4 md:mt-8 md:gap-4 md:p-6"
+        >
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-white md:h-12 md:w-12 md:rounded-[12px]">
             <ShieldCheck
               aria-hidden
