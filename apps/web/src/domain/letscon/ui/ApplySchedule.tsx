@@ -59,7 +59,11 @@ export function ApplySchedule() {
       </a>
 
       {DAYS.map(({ date, day, tag, title, body }) => (
-        <a key={date} href={LINEUP_HREF} className={`${CARD} flex-1 p-5 pb-6 md:py-[26px]`}>
+        <a
+          key={date}
+          href={LINEUP_HREF}
+          className={`${CARD} flex-1 p-5 pb-6 md:py-[26px]`}
+        >
           <div className="flex items-center justify-between border-b border-[#ededf3] pb-4">
             <p className="flex items-baseline gap-2">
               <span className="text-primary text-[28px] font-extrabold leading-none md:text-[36px]">

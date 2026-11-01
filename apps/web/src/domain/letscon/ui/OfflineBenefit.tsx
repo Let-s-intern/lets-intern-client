@@ -6,7 +6,10 @@ import {
   LETSCON_FEEDBACK_DETAILS,
   LETSCON_FEEDBACK_STEPS,
 } from '../data/benefit';
-import { LETSCON_DOCUMENT_SUBMIT_URL, LETSCON_YOUTUBE_URL } from '../data/links';
+import {
+  LETSCON_DOCUMENT_SUBMIT_URL,
+  LETSCON_YOUTUBE_URL,
+} from '../data/links';
 import { getYoutubeVideoId } from '../lib/youtube';
 import { ConnectionLine } from './ConnectionLine';
 import { FeedbackVideo } from './FeedbackVideo';
@@ -14,7 +17,11 @@ import { FeedbackVideo } from './FeedbackVideo';
 const videoId = getYoutubeVideoId(LETSCON_YOUTUBE_URL);
 const { icon: FeedbackIcon } = LETSCON_FEEDBACK_BENEFIT;
 
-export function OfflineBenefit({ offlineApplied }: { offlineApplied: boolean }) {
+export function OfflineBenefit({
+  offlineApplied,
+}: {
+  offlineApplied: boolean;
+}) {
   const showDocumentSubmit = offlineApplied && LETSCON_DOCUMENT_SUBMIT_URL;
 
   return (
@@ -119,7 +126,10 @@ export function OfflineBenefit({ offlineApplied }: { offlineApplied: boolean }) 
 
           <dl className="mt-5 flex flex-col gap-2.5 md:mt-6">
             {LETSCON_FEEDBACK_DETAILS.map(({ label, value }) => (
-              <div key={label} className="flex gap-1 text-sm leading-[1.45] md:gap-3">
+              <div
+                key={label}
+                className="flex gap-1 text-sm leading-[1.45] md:gap-3"
+              >
                 <dt className="flex w-[74px] shrink-0 items-start gap-[11px] font-bold text-[#1c1e2b] md:w-[90px]">
                   <span className="bg-primary mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full" />
                   <span className="whitespace-nowrap">{label}</span>

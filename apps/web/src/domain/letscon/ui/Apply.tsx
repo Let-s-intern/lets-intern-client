@@ -28,15 +28,13 @@ export function Apply({ apply }: { apply: LetsconApply }) {
 
         <div className="mt-6 text-center text-xs leading-[1.5] tracking-[-0.02em] text-[#7f8290] md:leading-[1.45]">
           <p>
-            온라인 신청 마감 11/15(일) 16:30 ·{' '}
-            <br className="md:hidden" />
+            온라인 신청 마감 11/15(일) 16:30 · <br className="md:hidden" />
             <span className="text-primary">
               오프라인 신청 마감 11/12(목) 23:59
             </span>
           </p>
           <p className="mt-2 md:mt-0">
-            신청 완료 후 카카오 알림톡이 발송되며,{' '}
-            <br className="md:hidden" />
+            신청 완료 후 카카오 알림톡이 발송되며, <br className="md:hidden" />
             생중계 링크는 행사 당일 보내드립니다.
           </p>
         </div>

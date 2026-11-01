@@ -4,7 +4,7 @@ import { LETSCON_ALL_IN_ONE_PASS_URL } from '../data/links';
 import { LETSCON_SECTION_IDS } from '../data/sections';
 
 const BUTTON =
-  'flex h-12 items-center justify-center gap-1 rounded-[8px] px-5 text-[15px] font-bold md:h-14';
+  'flex h-12 items-center justify-center gap-1 rounded-[8px] px-5 text-[15px] font-bold md:h-14 md:text-sm';
 
 export function NextStep() {
   return (
@@ -45,8 +45,10 @@ export function NextStep() {
 
         <div className="border-primary-20 mt-5 flex flex-col gap-3 border-t pt-5 md:mt-8 md:flex-row md:items-center md:justify-between md:pt-6">
           <div>
-            <p className="text-base font-bold text-[#1c1e2b]">11월 올인원 패스</p>
-            <p className="mt-0.5 text-xs leading-[1.3] text-[#5b5e6d]">
+            <p className="text-base font-bold text-[#1c1e2b]">
+              11월 올인원 패스
+            </p>
+            <p className="mt-0.5 text-xs leading-[1.3] tracking-[-0.02em] text-[#5b5e6d]">
               렛츠콘 참여 신청과 별도로 구매하는 프로그램입니다. 세부
               구성·가격·모집 일정은 추후 안내됩니다.
             </p>

@@ -7,7 +7,7 @@ const BUTTON =
 
 export function BottomApply({ apply }: { apply: LetsconApply }) {
   return (
-    <section className="relative overflow-hidden break-keep bg-[linear-gradient(135deg,#2e3ac6,#4753de)] md:bg-[linear-gradient(135deg,#3944cd,#4753de)] px-5 py-12 md:h-[350px] md:py-16">
+    <section className="relative overflow-hidden break-keep bg-[linear-gradient(135deg,#2e3ac6,#4753de)] px-5 py-12 md:h-[350px] md:bg-[linear-gradient(135deg,#3944cd,#4753de)] md:py-16">
       <ConnectionLine
         viewBox="0 0 1440 350"
         points={[
