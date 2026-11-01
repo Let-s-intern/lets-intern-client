@@ -1,38 +1,23 @@
-// 나의 패스 이용 > VOD 탭. 유효한(ACTIVE) VOD 이용권이 있으면 seminar-vod 공개 목록을 카드 그리드로 노출,
-// 클릭 시 외부 상세로 이동. 없으면 잠금 안내만 보여준다. 챌린지에서 산 이용권도 같은 이용권으로 인정한다.
+// 나의 패스 이용 > VOD 탭. 이용 기간을 위에 보여주고, 이용 중이면 seminar-vod 공개 목록을 카드 그리드로 노출,
+// 클릭 시 외부 상세로 이동. 시작 전이면 목록을 조회하지 않는다. 챌린지에서 산 이용권도 같은 이용권으로 인정한다.
 'use client';
 
-import { useVodPassListQuery } from '@/api/vodPass';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import MoreButton from '@/domain/mypage/ui/button/MoreButton';
 import { useMediaQuery } from '@mui/material';
 import { useState } from 'react';
-import LockedTab from '../LockedTab';
+import type { VodPassPeriod } from '../../utils/vodPassPeriod';
 import { useUsageVods } from './useUsageVods';
+import VodPassPeriodCard from './VodPassPeriodCard';
 
-const UsageVodTab = () => {
-  // 이용권과 VOD 목록은 서로 기다리지 않고 함께 조회한다
-  const vodPassQuery = useVodPassListQuery();
+const VodList = () => {
   const { data: vods = [], isLoading, isError } = useUsageVods();
   const [showMore, setShowMore] = useState(false);
   const isDesktop = useMediaQuery('(min-width:768px)');
   const visibleCount = isDesktop ? 12 : 8;
 
-  if (vodPassQuery.isLoading || isLoading) {
+  if (isLoading) {
     return <LoadingContainer className="py-20" />;
-  }
-  if (vodPassQuery.isError) {
-    return (
-      <p className="text-xsmall14 text-neutral-40 py-20 text-center">
-        VOD 이용권 정보를 불러오지 못했어요. 잠시 후 다시 시도해주세요.
-      </p>
-    );
-  }
-  const hasActiveVodPass =
-    vodPassQuery.data?.passes.some((pass) => pass.status === 'ACTIVE') ?? false;
-  if (!hasActiveVodPass) {
-    // 패스 보유자는 랜딩에서 다시 결제할 수 없어 구매 링크 없이 안내만 한다
-    return <LockedTab message="VOD 이용권이 있어야 시청할 수 있어요" />;
   }
   if (isError) {
     return (
@@ -84,5 +69,18 @@ const UsageVodTab = () => {
     </section>
   );
 };
+
+const UsageVodTab = ({ period }: { period: VodPassPeriod }) => (
+  <div className="flex flex-col gap-4 md:gap-[18px]">
+    <VodPassPeriodCard period={period} />
+    {period.isActive ? (
+      <VodList />
+    ) : (
+      <p className="text-xsmall14 text-neutral-40 py-20 text-center">
+        이용 시작일부터 시청할 수 있어요.
+      </p>
+    )}
+  </div>
+);
 
 export default UsageVodTab;

@@ -27,23 +27,44 @@ jest.mock('./UsageMentoringTab', () => ({
 }));
 jest.mock('./UsageVodTab', () => ({ __esModule: true, default: () => null }));
 
-const renderTabs = (
-  privileges: { programType: string }[],
-  vodOptionOnSale: boolean,
-) =>
-  render(
-    <UsageTabs privileges={privileges} vodOptionOnSale={vodOptionOnSale} />,
-  );
+let mockPasses: { status: string; startsAt: string; endsAt: string }[] = [];
+jest.mock('@/api/vodPass', () => ({
+  useVodPassListQuery: () => ({ data: { passes: mockPasses } }),
+}));
+
+const passWith = (status: string) => ({
+  status,
+  startsAt: '2026-10-01T10:00:00+09:00',
+  endsAt: '2026-11-01T10:00:00+09:00',
+});
 
 describe('UsageTabs VOD 탭 노출', () => {
-  it('판매가 켜진 패스면 플랜 권한에 VOD 가 없어도 VOD 탭을 보여준다', () => {
-    renderTabs([{ programType: 'CHALLENGE' }], true);
-    expect(screen.getByText('VOD')).toBeInTheDocument();
-  });
+  it.each(['ACTIVE', 'SCHEDULED'])(
+    '이용권이 %s 면 플랜 권한에 VOD 가 없어도 VOD 탭을 보여준다',
+    (status) => {
+      mockPasses = [passWith(status)];
+      render(<UsageTabs privileges={[{ programType: 'CHALLENGE' }]} />);
+      expect(screen.getByText('VOD')).toBeInTheDocument();
+    },
+  );
 
-  it('판매가 꺼진 패스면 플랜 권한에 VOD 가 있어도 VOD 탭이 없다', () => {
-    renderTabs([{ programType: 'CHALLENGE' }, { programType: 'VOD' }], false);
+  it('이용권이 없으면 플랜 권한에 VOD 가 있어도 VOD 탭이 없다', () => {
+    mockPasses = [];
+    render(
+      <UsageTabs
+        privileges={[{ programType: 'CHALLENGE' }, { programType: 'VOD' }]}
+      />,
+    );
     expect(screen.queryByText('VOD')).toBeNull();
     expect(screen.getByText('챌린지')).toBeInTheDocument();
   });
+
+  it.each(['EXPIRED', 'CANCELED'])(
+    '이용권이 %s 뿐이면 VOD 탭이 없다',
+    (status) => {
+      mockPasses = [passWith(status)];
+      render(<UsageTabs privileges={[{ programType: 'CHALLENGE' }]} />);
+      expect(screen.queryByText('VOD')).toBeNull();
+    },
+  );
 });
