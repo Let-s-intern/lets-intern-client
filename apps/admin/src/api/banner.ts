@@ -16,6 +16,7 @@ export const bannerAdminListItemSchema = z.object({
   contents: z.string().nullable().optional(),
   colorCode: z.string().nullable().optional(),
   textColorCode: z.string().nullable().optional(),
+  imageLink: z.string().nullable().optional(),
 });
 
 export type BannerAdminListItemType = z.infer<typeof bannerAdminListItemSchema>;
@@ -34,6 +35,9 @@ export type BannerItemType = {
   textColorCode?: string | null;
   file?: File | null;
   mobileFile?: File | null;
+  imageLink?: string | null;
+  deleteImage?: boolean;
+  deleteMobileImage?: boolean;
 };
 
 export const bannerAdminListSchema = z.object({

@@ -6,6 +6,7 @@ import {
 import EmptyContainer from '@/common/container/EmptyContainer';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import TopBarBannerInputContent from '@/domain/admin/banner/top-bar-banner/TopBarBannerInputContent';
+import { toUploadFile } from '@/domain/admin/banner/top-bar-banner/toUploadFile';
 import EditorTemplate from '@/domain/admin/program/ui/editor/EditorTemplate';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -23,6 +24,7 @@ const TopBarBannerEdit = () => {
     contents: '',
     textColorCode: '#000000',
     colorCode: '#000000',
+    imageLink: '',
   });
 
   const { data: banner, isLoading: bannerIsLoading } =
@@ -67,6 +69,9 @@ const TopBarBannerEdit = () => {
             contents: value.contents,
             colorCode: value.colorCode,
             textColorCode: value.textColorCode,
+            imageLink: value.imageLink ?? '',
+            deleteImage: value.deleteImage,
+            deleteMobileImage: value.deleteMobileImage,
           }),
         ],
         {
@@ -74,6 +79,11 @@ const TopBarBannerEdit = () => {
         },
       ),
     );
+
+    if (value.file) formData.append('file', toUploadFile(value.file));
+    if (value.mobileFile) {
+      formData.append('mobileFile', toUploadFile(value.mobileFile));
+    }
 
     editTopBarBanner({ bannerId, type: 'LINE', formData });
   };
@@ -95,7 +105,11 @@ const TopBarBannerEdit = () => {
       ) : !banner ? (
         <EmptyContainer />
       ) : (
-        <TopBarBannerInputContent value={value} onChange={handleChange} />
+        <TopBarBannerInputContent
+          value={value}
+          onChange={handleChange}
+          onImageChange={(image) => setValue({ ...value, ...image })}
+        />
       )}
     </EditorTemplate>
   );
