@@ -16,6 +16,12 @@ export const VOD_PASS_SALE_PROGRAM_TYPES = [
 export type VodPassSaleProgramType =
   (typeof VOD_PASS_SALE_PROGRAM_TYPES)[number];
 
+/** 단독 구매 스위치는 VOD_PASS 유형의 단일 상품 행으로 저장한다 */
+export const VOD_PASS_STANDALONE_SALE = {
+  programType: 'VOD_PASS',
+  programId: 1,
+} as const;
+
 /** GET /api/v1/admin/vod-pass-sale 응답. 판매가 켜진 프로그램만 내려온다 */
 export const vodPassSaleSchema = z.object({
   programs: z.array(
@@ -54,7 +60,9 @@ export const useUpdateVodPassSaleMutation = ({
 
   return useMutation({
     mutationFn: async (req: {
-      programType: VodPassSaleProgramType;
+      programType:
+        | VodPassSaleProgramType
+        | typeof VOD_PASS_STANDALONE_SALE.programType;
       programId: number;
       enabled: boolean;
     }) => {

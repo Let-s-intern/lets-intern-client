@@ -8,6 +8,7 @@ import {
   useUpdateVodPassSaleMutation,
   useVodPassSaleQuery,
   VOD_PASS_SALE_PROGRAM_TYPES,
+  VOD_PASS_STANDALONE_SALE,
   type VodPassSaleProgramType,
 } from '@/api/vodPassSale';
 import Table from '@/domain/admin/ui/table/regacy/Table';
@@ -28,6 +29,10 @@ const TYPE_LABEL: Record<VodPassSaleProgramType, string> = {
   GUIDEBOOK: '자료집',
   MEMBERSHIP: '올인원패스',
 };
+
+const STANDALONE_PURCHASE_URL = `${
+  import.meta.env.VITE_WEB_URL || 'https://www.letscareer.co.kr'
+}/vod-pass/purchase`;
 
 const isSaleProgramType = (type: string): type is VodPassSaleProgramType =>
   (VOD_PASS_SALE_PROGRAM_TYPES as readonly string[]).includes(type);
@@ -111,8 +116,52 @@ const VodPassSaleSettings = () => {
         )
       : null;
 
+    const standaloneKey = toVodPassSaleKey(
+      VOD_PASS_STANDALONE_SALE.programType,
+      VOD_PASS_STANDALONE_SALE.programId,
+    );
+
     return (
       <>
+        <section className="rounded-xxs mb-6 flex items-center justify-between gap-4 border border-neutral-300 p-4">
+          <div className="min-w-0">
+            <h2 className="text-xsmall14 font-semibold">단독 구매</h2>
+            <p className="mt-1 text-sm text-neutral-500">
+              프로그램 결제 없이 이 링크에서 VOD 이용권만 구매합니다.
+            </p>
+            <div className="mt-2 flex items-center gap-2">
+              <a
+                className="text-primary break-all text-sm underline"
+                href={STANDALONE_PURCHASE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {STANDALONE_PURCHASE_URL}
+              </a>
+              <button
+                type="button"
+                className="shrink-0 rounded border border-neutral-300 px-2 py-1 text-xs"
+                onClick={async () => {
+                  await navigator.clipboard.writeText(STANDALONE_PURCHASE_URL);
+                  snackbar('링크를 복사했습니다.');
+                }}
+              >
+                복사
+              </button>
+            </div>
+          </div>
+          <Switch
+            checked={enabledKeys.has(standaloneKey)}
+            disabled={pendingKey === standaloneKey}
+            inputProps={{ 'aria-label': 'VOD 이용권 단독 구매 판매' }}
+            onChange={(_, checked) =>
+              updateSale.mutate({
+                ...VOD_PASS_STANDALONE_SALE,
+                enabled: checked,
+              })
+            }
+          />
+        </section>
         <div className="mb-4 flex items-center gap-4">
           <label className="text-xsmall14 font-medium" htmlFor="sale-type">
             프로그램 유형
@@ -183,9 +232,10 @@ const VodPassSaleSettings = () => {
     <div className="p-8">
       <h1 className="text-1.5-bold mb-2">VOD 이용권 판매 설정</h1>
       <p className="mb-6 text-sm text-neutral-500">
-        켠 프로그램에서만 VOD 이용권을 판매합니다. 기본값은 꺼짐입니다. 모집 전,
-        모집 중인 프로그램만 보입니다. 지금은 챌린지·올인원패스에서만 결제가
-        연동되어 있고, 다른 유형은 설정만 저장됩니다.
+        켠 프로그램과 단독 구매 링크에서만 VOD 이용권을 판매합니다. 기본값은
+        꺼짐입니다. 모집 전, 모집 중인 프로그램만 보입니다. 지금은
+        챌린지·올인원패스에서만 결제가 연동되어 있고, 다른 유형은 설정만
+        저장됩니다.
       </p>
       {renderBody()}
     </div>

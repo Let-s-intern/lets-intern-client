@@ -32,7 +32,10 @@ const ConditionalLayout = ({ children }: ConditionalLayoutProps) => {
     pathname.startsWith('/all-in-one-pass') &&
     !/^\/all-in-one-pass\/[^/]+$/.test(pathname);
 
-  if (isSsoLoginPage) {
+  // VOD 이용권 단독 구매는 링크로 바로 여는 작은 창이다. 렛츠커리어 헤더·푸터 없이 카드만 보인다.
+  const isVodPassPurchasePage = pathname.startsWith('/vod-pass/purchase');
+
+  if (isSsoLoginPage || isVodPassPurchasePage) {
     return <div>{children}</div>;
   }
 
