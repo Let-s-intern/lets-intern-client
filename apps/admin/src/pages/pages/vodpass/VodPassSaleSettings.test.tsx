@@ -97,6 +97,31 @@ beforeEach(() => {
 });
 
 describe('VOD 이용권 판매 설정', () => {
+  it('단독 구매 링크를 보여주고 스위치를 켜면 VOD_PASS 로 요청한다', async () => {
+    mockApi([]);
+    const user = userEvent.setup();
+
+    renderPage();
+
+    const toggle = await screen.findByRole('checkbox', {
+      name: 'VOD 이용권 단독 구매 판매',
+    });
+    expect(
+      screen.getByRole('link', { name: /vod-pass\/purchase$/ }),
+    ).toBeTruthy();
+    expect(toggle).not.toBeChecked();
+
+    await user.click(toggle);
+
+    await waitFor(() =>
+      expect(put).toHaveBeenCalledWith('/admin/vod-pass-sale', {
+        programType: 'VOD_PASS',
+        programId: 1,
+        enabled: true,
+      }),
+    );
+  });
+
   it('프로그램마다 판매 여부를 보여주고 기본은 꺼짐이다', async () => {
     mockApi([{ programType: 'CHALLENGE', programId: 31 }]);
 
