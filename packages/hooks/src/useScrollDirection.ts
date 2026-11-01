@@ -10,6 +10,7 @@ const scrollEventPage = [
   '/mentor-join',
   '/mentor-apply',
   '/bigfirm',
+  '/letscon', // [LETSCON] 행사 종료 후 삭제
 ];
 
 const isScrollHidePage = (pathname: string) =>

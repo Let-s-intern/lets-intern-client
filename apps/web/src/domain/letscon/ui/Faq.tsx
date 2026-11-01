@@ -3,7 +3,7 @@ import { ChevronDown } from 'lucide-react';
 
 export function Faq({ faqs }: { faqs: FaqItem[] }) {
   return (
-    <section className="break-keep bg-[#f7f8fc] py-14 md:py-20">
+    <section className="break-keep bg-[#f7f8fc] py-16 md:py-[88px]">
       <div className="mx-auto max-w-[880px] px-5">
         <h2 className="text-2xl font-extrabold tracking-[-0.02em] text-[#1c1e2b] md:text-4xl">
           자주 묻는 질문

@@ -22,6 +22,11 @@ describe('useScrollDirection', () => {
     '/bigfirm',
   ])('%s 에서는 아래로 스크롤하면 DOWN, 위로 올리면 UP 이다', (pathname) => {
     const { result } = renderHook(() => useScrollDirection(pathname));
+    '/letscon', // [LETSCON] 행사 종료 후 삭제
+  ])(
+    '%s 에서는 아래로 스크롤하면 DOWN, 위로 올리면 UP 이다',
+    (pathname) => {
+      const { result } = renderHook(() => useScrollDirection(pathname));
 
     scrollTo(300);
     expect(result.current).toBe('DOWN');

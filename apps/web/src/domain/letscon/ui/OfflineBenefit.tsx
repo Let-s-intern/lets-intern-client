@@ -25,7 +25,7 @@ export function OfflineBenefit({
   const showDocumentSubmit = offlineApplied && LETSCON_DOCUMENT_SUBMIT_URL;
 
   return (
-    <section className="relative overflow-hidden break-keep bg-[#11142b] py-12 md:py-20">
+    <section className="relative overflow-hidden break-keep bg-[#11142b] py-16 md:py-[88px]">
       <ConnectionLine
         viewBox="0 0 250 100"
         points={[
@@ -34,7 +34,7 @@ export function OfflineBenefit({
           [205, 10],
           [250, 40],
         ]}
-        className="absolute right-0 top-[360px] hidden h-[100px] w-[250px] xl:block"
+        className="absolute right-0 top-[368px] hidden h-[100px] w-[250px] xl:block"
       />
       <ConnectionLine
         viewBox="0 0 300 130"
@@ -44,7 +44,7 @@ export function OfflineBenefit({
           [180, 111],
           [300, 45],
         ]}
-        className="absolute bottom-[325px] left-0 hidden h-[130px] w-[300px] xl:block"
+        className="absolute bottom-[333px] left-0 hidden h-[130px] w-[300px] xl:block"
       />
 
       <div className="relative mx-auto max-w-[880px] px-5">

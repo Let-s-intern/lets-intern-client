@@ -4,7 +4,7 @@ import { LETSCON_MAP_URL } from '../data/links';
 
 export function ParticipationGuide() {
   return (
-    <section className="break-keep bg-white py-14 md:py-20">
+    <section className="break-keep bg-white py-16 md:py-[88px]">
       <div className="mx-auto max-w-[880px] px-5">
         <h2 className="text-2xl font-extrabold tracking-[-0.02em] text-[#1c1e2b] md:text-4xl">
           참가 안내

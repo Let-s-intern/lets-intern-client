@@ -5,7 +5,7 @@ import { DepositRefund } from './DepositRefund';
 
 export function Apply({ apply }: { apply: LetsconApply }) {
   return (
-    <section className="break-keep bg-[#f7f8fc] py-14 md:py-20">
+    <section className="break-keep bg-[#f7f8fc] py-16 md:py-[88px]">
       <div className="mx-auto max-w-[920px] px-5">
         <p className="text-primary text-xs font-bold tracking-[0.12em] md:text-[13px] md:tracking-[0.08em]">
           LET&apos;S MAKE A CONNECTION

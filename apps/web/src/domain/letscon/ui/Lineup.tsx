@@ -184,7 +184,7 @@ function LineupDaySection({ day }: { day: LineupDay }) {
 
 export function Lineup() {
   return (
-    <section className="break-keep bg-white px-5 pb-[60px] pt-[60px] md:pb-20 md:pt-20">
+    <section className="break-keep bg-white px-5 py-16 md:py-[88px]">
       <div className="mx-auto max-w-[840px]">
         <h2 className="text-2xl font-bold leading-8 tracking-[-0.02em] text-[#1f222b] md:text-4xl md:leading-[48px]">
           렛츠콘 세미나 라인업

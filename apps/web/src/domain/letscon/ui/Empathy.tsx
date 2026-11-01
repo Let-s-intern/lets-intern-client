@@ -2,7 +2,7 @@ import { EMPATHY_WORRIES } from '../data/intro';
 
 export function Empathy() {
   return (
-    <section className="break-keep bg-[linear-gradient(180deg,#11142b_0%,#222663_100%)] px-5 pb-[60px] pt-[61px] text-white md:pb-20 md:pt-20">
+    <section className="break-keep bg-[linear-gradient(180deg,#11142b_0%,#222663_100%)] px-5 py-16 text-white md:py-[88px]">
       <h2 className="text-center text-xl font-bold leading-7 tracking-[-0.02em] md:text-4xl md:leading-[50px]">
         혹시 지금, 이런 생각 하고 계시나요?
       </h2>

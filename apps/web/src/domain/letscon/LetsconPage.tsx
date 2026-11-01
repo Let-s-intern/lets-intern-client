@@ -19,9 +19,9 @@ import { NextStep } from './ui/NextStep';
 import { OfflineBenefit } from './ui/OfflineBenefit';
 import { ParticipationGuide } from './ui/ParticipationGuide';
 
-// 고정 헤더와 앵커 탭에 가리지 않도록 스크롤 위치를 띄운다
+// 본문의 # 링크는 위로 이동하므로 헤더와 앵커 탭 높이만큼 띄운다. 앵커 탭 클릭은 AnchorTabs 가 방향별로 계산한다
 const ANCHOR_TARGET =
-  'scroll-mt-[calc(var(--letscon-header-height,84px)+50px)] md:scroll-mt-[calc(var(--letscon-header-height,156px)+70px)]';
+  'scroll-mt-[calc(var(--letscon-header-height,84px)+60px)] md:scroll-mt-[calc(var(--letscon-header-height,156px)+72px)]';
 
 export default function LetsconPage() {
   const apply = useLetsconApply();

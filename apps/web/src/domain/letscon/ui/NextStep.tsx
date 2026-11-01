@@ -8,7 +8,7 @@ const BUTTON =
 
 export function NextStep() {
   return (
-    <section className="bg-primary-10 break-keep py-14 md:py-20">
+    <section className="bg-primary-10 break-keep py-16 md:py-[88px]">
       <div className="mx-auto max-w-[880px] px-5">
         <p className="text-primary text-[11px] font-semibold tracking-[0.2em] md:tracking-normal">
           AFTER LETSCON
