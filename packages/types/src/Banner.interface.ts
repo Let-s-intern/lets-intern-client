@@ -20,4 +20,7 @@ export interface ILineBanner {
   isValid: boolean;
   link: string;
   textColorCode: string;
+  imgUrl: string | null;
+  mobileImgUrl: string | null;
+  imageLink: string | null;
 }
