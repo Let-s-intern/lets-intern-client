@@ -30,6 +30,13 @@ const build = (application: ProgramApplicationFormInfo, hasPrivilege = false) =>
     hasPrivilege,
   });
 
+const NO_VOD_PASS = {
+  vodPassProductId: 0,
+  vodPassPrice: 0,
+  vodPassDurationDays: 0,
+  vodPassMonths: 0,
+};
+
 describe('buildApplicationForm', () => {
   it('온라인은 0원 신청이다', () => {
     expect(build(ONLINE)).toMatchObject({
@@ -61,6 +68,17 @@ describe('buildApplicationForm', () => {
     });
   });
 
+  it.each([
+    ['온라인', ONLINE, false],
+    ['현장', OFFLINE, false],
+    ['멤버십 현장', OFFLINE, true],
+  ])(
+    '%s 신청은 챌린지 결제에서 남은 VOD 이용권을 0 으로 덮는다',
+    (_, application, hasPrivilege) => {
+      expect(build(application, hasPrivilege)).toMatchObject(NO_VOD_PASS);
+    },
+  );
+
   it('LiveCTAButtons 와 같은 필드를 모두 채운다', () => {
     expect(build(OFFLINE)).toEqual({
       priceId: 2,
@@ -81,6 +99,7 @@ describe('buildApplicationForm', () => {
       programId: 10,
       programOrderId: 'order-1',
       isFree: false,
+      ...NO_VOD_PASS,
     });
   });
 

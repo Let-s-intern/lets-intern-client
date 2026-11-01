@@ -42,5 +42,10 @@ export const buildApplicationForm = ({
     programId: liveId,
     programOrderId: orderId,
     isFree: payInfo.livePriceType === 'FREE' || totalPrice === 0,
+    // 스토어는 persist 되고 병합만 하므로, 챌린지 결제에서 고르고 이탈한 VOD 이용권이 남아 있으면 덮어야 한다
+    vodPassProductId: 0,
+    vodPassPrice: 0,
+    vodPassDurationDays: 0,
+    vodPassMonths: 0,
   };
 };
