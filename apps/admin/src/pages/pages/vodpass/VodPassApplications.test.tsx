@@ -147,7 +147,7 @@ describe('VOD 이용권 구매자 목록', () => {
     );
   });
 
-  it('함께 결제한 프로그램을 보여주고 단독 구매를 구분한다', async () => {
+  it('함께 결제한 프로그램을 보여주고 없으면 없음으로 표시한다', async () => {
     get.mockResolvedValue({
       data: {
         data: {
@@ -174,7 +174,7 @@ describe('VOD 이용권 구매자 목록', () => {
       await screen.findByText('챌린지 서류 챌린지 42기'),
     ).toBeInTheDocument();
     expect(screen.getByText('올인원패스 마케팅 패스')).toBeInTheDocument();
-    expect(screen.getByText('단독 구매')).toBeInTheDocument();
+    expect(screen.getByText('없음')).toBeInTheDocument();
   });
 
   it('취소 건과 결제 없는 건에는 환불 버튼을 그리지 않는다', async () => {

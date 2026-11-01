@@ -185,7 +185,7 @@ const VodPassApplications = () => {
                   />
                 </TD>
                 <TD whiteSpace="wrap">
-                  {formatBundledProgram(pass) ?? '단독 구매'}
+                  {formatBundledProgram(pass) ?? '없음'}
                 </TD>
                 <TD>
                   {pass.status === 'CANCELED' || pass.paidAmount == null ? (

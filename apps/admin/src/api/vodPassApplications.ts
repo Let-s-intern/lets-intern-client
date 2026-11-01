@@ -33,7 +33,7 @@ export const vodPassApplicationsSchema = z.object({
       status: vodPassStatusSchema,
       paidAmount: z.number().nullable().optional(),
       createDate: z.string().nullable().optional(),
-      // 같은 결제로 함께 산 프로그램. 단독 구매는 null 이다
+      // 같은 결제로 함께 산 프로그램. 결제가 없거나 찾지 못하면 null 이다
       bundledProgramType: z.string().nullable().optional(),
       bundledProgramTitle: z.string().nullable().optional(),
     }),
