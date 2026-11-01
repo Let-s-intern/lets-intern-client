@@ -4,11 +4,22 @@ import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const get = vi.fn();
+const post = vi.fn();
 
 vi.mock('@/utils/axios', () => ({
   default: {
     get: (...args: unknown[]) => get(...args),
+    post: (...args: unknown[]) => post(...args),
   },
+}));
+
+vi.mock('@/hooks/useAdminSnackbar', () => ({
+  useAdminSnackbar: () => ({ snackbar: vi.fn() }),
+}));
+
+// 이용 이력은 환불 실행 조건이 아니다
+vi.mock('@/domain/admin/usage/ui/RefundUsageSummary', () => ({
+  default: () => null,
 }));
 
 import VodPassApplications from './VodPassApplications';
@@ -42,6 +53,7 @@ const renderPage = () =>
 
 beforeEach(() => {
   get.mockReset();
+  post.mockReset();
 });
 
 describe('VOD 이용권 구매자 목록', () => {
@@ -133,5 +145,106 @@ describe('VOD 이용권 구매자 목록', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent(
       '권한이 없습니다.',
     );
+  });
+
+  it('함께 결제한 프로그램을 보여주고 단독 구매를 구분한다', async () => {
+    get.mockResolvedValue({
+      data: {
+        data: {
+          passes: [
+            pass({
+              bundledProgramType: 'CHALLENGE',
+              bundledProgramTitle: '서류 챌린지 42기',
+            }),
+            pass({
+              applicationId: 2,
+              name: '김민수',
+              bundledProgramType: 'MEMBERSHIP',
+              bundledProgramTitle: '마케팅 패스',
+            }),
+            pass({ applicationId: 3, name: '이지은' }),
+          ],
+        },
+      },
+    });
+
+    renderPage();
+
+    expect(
+      await screen.findByText('챌린지 서류 챌린지 42기'),
+    ).toBeInTheDocument();
+    expect(screen.getByText('올인원패스 마케팅 패스')).toBeInTheDocument();
+    expect(screen.getByText('단독 구매')).toBeInTheDocument();
+  });
+
+  it('취소 건과 결제 없는 건에는 환불 버튼을 그리지 않는다', async () => {
+    get.mockResolvedValue({
+      data: {
+        data: {
+          passes: [
+            pass({ status: 'CANCELED' }),
+            pass({ applicationId: 2, name: '김민수', paidAmount: null }),
+          ],
+        },
+      },
+    });
+
+    renderPage();
+
+    await screen.findByText('박서현');
+    expect(screen.queryByRole('button', { name: '전체 환불' })).toBeNull();
+  });
+
+  it('부분 환불은 VOD 결제 금액 미만만 받고 지정한 금액을 요청한다', async () => {
+    get.mockResolvedValue({
+      data: {
+        data: {
+          passes: [
+            pass({
+              bundledProgramType: 'CHALLENGE',
+              bundledProgramTitle: '서류 챌린지 42기',
+            }),
+          ],
+        },
+      },
+    });
+    post.mockResolvedValue({
+      data: { data: { refundedAmount: 10000 } },
+    });
+    const user = userEvent.setup();
+
+    renderPage();
+
+    await user.click(await screen.findByRole('button', { name: '부분 환불' }));
+    expect(screen.getByText('VOD 이용권')).toBeInTheDocument();
+    expect(
+      screen.getByText(/함께 결제한 챌린지 서류 챌린지 42기 금액은 환불되지/),
+    ).toBeInTheDocument();
+
+    await user.type(screen.getByLabelText('환불 금액'), '59000');
+    expect(screen.getByText(/보다 적어야 합니다/)).toBeInTheDocument();
+
+    await user.clear(screen.getByLabelText('환불 금액'));
+    await user.type(screen.getByLabelText('환불 금액'), '10000');
+    await user.type(
+      screen.getByPlaceholderText('환불을 진행하는 담당자 이름'),
+      '운영자',
+    );
+    await user.type(
+      screen.getByPlaceholderText(/예\) 프로그램 오결제/),
+      '오결제',
+    );
+    const sentence = screen.getByText(/환불합니다/, {
+      selector: 'p.font-medium',
+    });
+    await user.type(screen.getByLabelText('확인 문장'), sentence.textContent!);
+    await user.click(screen.getByRole('button', { name: '환불 실행' }));
+
+    expect(post).toHaveBeenCalledWith('/admin/application/1/refund', {
+      managerName: '운영자',
+      reason: '오결제',
+      sendNotification: true,
+      refundAmount: 10000,
+    });
   });
 });

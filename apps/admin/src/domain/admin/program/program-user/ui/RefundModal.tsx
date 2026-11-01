@@ -19,6 +19,8 @@ export interface RefundTarget {
   additionalPaidAmount?: number;
   /** 그중 결제 키가 없어 토스로 취소되지 않고, 환불 완료 기록 전인 금액 */
   pendingManualRefundAmount?: number;
+  /** 환불 전에 운영이 알아야 할 안내. VOD 이용권에만 있다 */
+  notice?: string;
 }
 
 /**
@@ -179,6 +181,12 @@ const RefundModal = ({
             토스로 취소되지 않는 추가 수납{' '}
             {target.pendingManualRefundAmount.toLocaleString()}원이 있습니다.
             환불 후 플랜 변경 이력에서 환불 완료를 기록하세요.
+          </div>
+        )}
+
+        {target.notice && (
+          <div className="mb-3 rounded bg-neutral-100 p-3 text-sm">
+            {target.notice}
           </div>
         )}
 
