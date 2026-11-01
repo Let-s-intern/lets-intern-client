@@ -9,6 +9,7 @@ const scrollEventPage = [
   '/pass-certification',
   '/mentor-join',
   '/mentor-apply',
+  '/bigfirm',
 ];
 
 const isScrollHidePage = (pathname: string) =>
