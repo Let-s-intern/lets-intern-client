@@ -1,8 +1,10 @@
 // 나의 패스 이용 카테고리 탭 바 + 활성 탭 내용.
 'use client';
 
+import { useVodPassListQuery } from '@/api/vodPass';
 import { CategoryChips, CategoryTabs } from '@letscareer/ui';
 import { useState } from 'react';
+import { getVodPassPeriod } from '../../utils/vodPassPeriod';
 import UsageChallengeTab from './UsageChallengeTab';
 import UsageGuidebookTab from './UsageGuidebookTab';
 import UsageLiveTab from './UsageLiveTab';
@@ -22,16 +24,17 @@ const TABS: { value: UsageTabKey; label: string }[] = [
 interface Props {
   privileges: { programType: string }[];
   passTitle?: string;
-  /** VOD 옵션 추가결제 판매 여부. VOD 탭은 플랜 권한이 아니라 이 값으로 노출한다 */
-  vodOptionOnSale: boolean;
 }
 
-const UsageTabs = ({ privileges, passTitle, vodOptionOnSale }: Props) => {
+const UsageTabs = ({ privileges, passTitle }: Props) => {
+  // 챌린지에서 산 이용권도 같은 VOD 이용권이다. 조회 실패면 VOD 탭만 빠진다
+  const { data: vodPassList } = useVodPassListQuery();
+  const vodPassPeriod = getVodPassPeriod(vodPassList?.passes ?? []);
   const ownedTypes = new Set<string>(privileges.map((p) => p.programType));
-  // 멘토링은 쿠폰 기반이라 권한과 무관하게 노출, VOD 는 판매가 켜진 패스만, 나머지는 플랜 권한 보유 시만
+  // 멘토링은 쿠폰 기반이라 권한과 무관하게 노출, VOD 는 이용권 보유 시만, 나머지는 플랜 권한 보유 시만
   const visibleTabs = TABS.filter((t) => {
     if (t.value === 'MENTORING') return true;
-    if (t.value === 'VOD') return vodOptionOnSale;
+    if (t.value === 'VOD') return vodPassPeriod !== null;
     return ownedTypes.has(t.value);
   });
 
@@ -63,7 +66,9 @@ const UsageTabs = ({ privileges, passTitle, vodOptionOnSale }: Props) => {
       <div>
         {active === 'CHALLENGE' && <UsageChallengeTab />}
         {active === 'GUIDEBOOK' && <UsageGuidebookTab passTitle={passTitle} />}
-        {active === 'VOD' && <UsageVodTab />}
+        {active === 'VOD' && vodPassPeriod && (
+          <UsageVodTab period={vodPassPeriod} />
+        )}
         {active === 'MENTORING' && <UsageMentoringTab />}
         {active === 'LIVE' && <UsageLiveTab passTitle={passTitle} />}
       </div>

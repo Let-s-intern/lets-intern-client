@@ -1,68 +1,38 @@
 import { render, screen } from '@testing-library/react';
 import UsageVodTab from './UsageVodTab';
-
-let mockVodPassQuery: Record<string, unknown> = {};
-jest.mock('@/api/vodPass', () => ({
-  useVodPassListQuery: () => mockVodPassQuery,
-}));
+import { useUsageVods } from './useUsageVods';
 
 jest.mock('./useUsageVods', () => ({
-  useUsageVods: () => ({
+  useUsageVods: jest.fn(() => ({
     data: [{ id: 1, title: '면접 VOD', thumbnailUrl: '/t.png', url: '/v/1' }],
     isLoading: false,
     isError: false,
-  }),
+  })),
 }));
 
 jest.mock('@mui/material', () => ({ useMediaQuery: () => true }));
 
-const LOCKED_MESSAGE = 'VOD 이용권이 있어야 시청할 수 있어요';
-
-const passWith = (status: string) => ({
-  isLoading: false,
-  isError: false,
-  data: { passes: [{ applicationId: 1, status, refundable: false }] },
-});
+const period = {
+  startsAt: '2026-10-01T10:00:00+09:00',
+  endsAt: '2099-11-01T10:00:00+09:00',
+};
 
 describe('UsageVodTab', () => {
-  it('ACTIVE 이용권이 있으면 VOD 목록을 보여준다', () => {
-    // 챌린지에서 산 이용권도 같은 목록의 ACTIVE 한 건이다
-    mockVodPassQuery = passWith('ACTIVE');
-    render(<UsageVodTab />);
+  beforeEach(() => jest.mocked(useUsageVods).mockClear());
+
+  it('이용 중이면 이용 기간과 D-day, VOD 목록을 보여준다', () => {
+    render(<UsageVodTab period={{ ...period, isActive: true }} />);
+    expect(screen.getByText('2026.10.01 ~ 2099.11.01')).toBeInTheDocument();
+    expect(screen.getByText(/^D-\d+$/)).toBeInTheDocument();
     expect(screen.getByText('면접 VOD')).toBeInTheDocument();
-    expect(screen.queryByText(LOCKED_MESSAGE)).toBeNull();
   });
 
-  it.each(['EXPIRED', 'SCHEDULED'])(
-    '이용권이 %s 뿐이면 구매 링크 없이 잠금 안내만 보여준다',
-    (status) => {
-      mockVodPassQuery = passWith(status);
-      render(<UsageVodTab />);
-      expect(screen.getByText(LOCKED_MESSAGE)).toBeInTheDocument();
-      expect(screen.queryByRole('link')).toBeNull();
-      expect(screen.queryByText('면접 VOD')).toBeNull();
-    },
-  );
-
-  it('이용권이 하나도 없으면 잠금을 보여준다', () => {
-    mockVodPassQuery = {
-      isLoading: false,
-      isError: false,
-      data: { passes: [] },
-    };
-    render(<UsageVodTab />);
-    expect(screen.getByText(LOCKED_MESSAGE)).toBeInTheDocument();
-  });
-
-  it('이용권 조회가 실패하면 안내 문구를 보여주고 목록·잠금은 그리지 않는다', () => {
-    mockVodPassQuery = { isLoading: false, isError: true, data: undefined };
-    render(<UsageVodTab />);
+  it('시작 전이면 기간만 보여주고 VOD 목록을 조회하지 않는다', () => {
+    render(<UsageVodTab period={{ ...period, isActive: false }} />);
+    expect(screen.getByText('2026.10.01 ~ 2099.11.01')).toBeInTheDocument();
     expect(
-      screen.getByText(
-        'VOD 이용권 정보를 불러오지 못했어요. 잠시 후 다시 시도해주세요.',
-      ),
+      screen.getByText('이용 시작일부터 시청할 수 있어요.'),
     ).toBeInTheDocument();
-    expect(screen.queryByText('면접 VOD')).toBeNull();
-    expect(screen.queryByText(LOCKED_MESSAGE)).toBeNull();
+    expect(useUsageVods).not.toHaveBeenCalled();
   });
 });
