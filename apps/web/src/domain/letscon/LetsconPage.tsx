@@ -20,7 +20,8 @@ import { OfflineBenefit } from './ui/OfflineBenefit';
 import { ParticipationGuide } from './ui/ParticipationGuide';
 
 // 고정 헤더와 앵커 탭에 가리지 않도록 스크롤 위치를 띄운다
-const ANCHOR_TARGET = 'scroll-mt-28';
+const ANCHOR_TARGET =
+  'scroll-mt-[calc(var(--letscon-header-height,84px)+50px)] md:scroll-mt-[calc(var(--letscon-header-height,156px)+70px)]';
 
 export default function LetsconPage() {
   const apply = useLetsconApply();
