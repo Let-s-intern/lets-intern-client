@@ -3,24 +3,6 @@ import {
   LETSCON_PARK_INSTAGRAM_URL,
 } from './links';
 
-export const LINEUP_TOPICS = [
-  {
-    title: '멘토의 커리어 여정과 Connecting the Dots',
-    description:
-      '직무를 선택한 계기, 취준 과정의 시행착오, 과거 경험이 지금 커리어로 이어진 방식',
-  },
-  {
-    title: '원하는 결과를 만들기까지',
-    description:
-      '가장 중요했던 선택, 원하는 결과를 얻지 못했을 때 방향을 다시 잡은 방법, 실제 합격으로 이어진 전략',
-  },
-  {
-    title: '후배들에게',
-    description:
-      '2027년 상반기를 준비하는 사람이 지금부터 하면 좋을 것, 직무별로 갖추면 좋은 역량과 경험',
-  },
-];
-
 export type LineupBlockTone = 'primary' | 'deep' | 'dark';
 
 export interface LineupBlock {
