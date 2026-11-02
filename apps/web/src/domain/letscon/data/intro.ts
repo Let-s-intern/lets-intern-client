@@ -49,5 +49,8 @@ export const INTRO_STORIES: { icon: IntroStoryIcon; text: string }[] = [
     icon: 'gem',
     text: '당시에는 의미 없어 보였지만 결국 합격으로 이어진 경험은 무엇이었는지',
   },
-  { icon: 'calendar', text: '지금 취준생이라면, 남은 2026년을 어떻게 보낼 것인지' },
+  {
+    icon: 'calendar',
+    text: '지금 취준생이라면, 남은 2026년을 어떻게 보낼 것인지',
+  },
 ];

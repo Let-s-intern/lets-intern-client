@@ -16,12 +16,20 @@ const ICONS: Record<IconName, ReactNode> = {
         fill="#60a5fa"
         d="M19 2.5s2.6 3 2.6 4.7a2.6 2.6 0 1 1-5.2 0c0-1.7 2.6-4.7 2.6-4.7z"
       />
-      <path stroke="#7a5b12" strokeWidth="1.4" strokeLinecap="round" d="M9 16.5h4" />
+      <path
+        stroke="#7a5b12"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        d="M9 16.5h4"
+      />
     </>
   ),
   rocket: (
     <>
-      <path fill="#fbbf24" d="M4 21c0-3 1-5.5 3.5-6.5l2 2C8.5 19 7 20.5 4 21z" />
+      <path
+        fill="#fbbf24"
+        d="M4 21c0-3 1-5.5 3.5-6.5l2 2C8.5 19 7 20.5 4 21z"
+      />
       <path
         fill="#ef4444"
         d="M21 3c-5.5.2-9.5 2.4-12.5 7L6 11l7 7 1-2.5c4.6-3 6.8-7 7-12.5z"
@@ -42,7 +50,12 @@ const ICONS: Record<IconName, ReactNode> = {
         fill="#ef4444"
         d="M5.5 5h13A2.5 2.5 0 0 1 21 7.5V10H3V7.5A2.5 2.5 0 0 1 5.5 5z"
       />
-      <path stroke="#ef4444" strokeWidth="2" strokeLinecap="round" d="M8 3v3M16 3v3" />
+      <path
+        stroke="#ef4444"
+        strokeWidth="2"
+        strokeLinecap="round"
+        d="M8 3v3M16 3v3"
+      />
     </>
   ),
 };
@@ -50,7 +63,12 @@ const ICONS: Record<IconName, ReactNode> = {
 export function IntroStoryIcon({ name }: { name: IconName }) {
   return (
     <span className="grid size-7 shrink-0 place-items-center rounded-sm bg-[#edeefe] md:size-[30px]">
-      <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5" fill="none">
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 24 24"
+        className="size-5"
+        fill="none"
+      >
         {ICONS[name]}
       </svg>
     </span>
