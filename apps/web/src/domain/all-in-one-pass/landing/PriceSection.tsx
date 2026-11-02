@@ -56,7 +56,7 @@ export default function PriceSection({
             <div className="flex flex-col gap-4 md:gap-2.5">
               <p className="text-xsmall14 text-neutral-45">패스 구매 가격</p>
               <p className="text-neutral-0 md:leading[48px] flex items-end gap-0.5 text-[40px] font-bold leading-[40px] md:text-[48px]">
-                {passPrice}
+                {passPrice.toLocaleString('ko-KR')}
                 <span className="text-medium24 md:text-xlarge28 leading-6 md:leading-7">
                   원
                 </span>
