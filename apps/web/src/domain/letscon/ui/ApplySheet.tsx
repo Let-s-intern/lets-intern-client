@@ -37,7 +37,7 @@ function SessionCheckbox({
 }) {
   return (
     <label
-      className={`flex cursor-pointer items-center gap-3 rounded-[12px] border px-3 py-2.5 transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[#4d55f5]/40 ${
+      className={`flex cursor-pointer items-center gap-3 rounded-[12px] border px-3 py-2 transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[#4d55f5]/40 ${
         checked
           ? 'border-[#c9ccfb] bg-[#f3f4ff]'
           : 'border-[#e8e9f3] bg-white hover:border-[#c9ccfb]'
@@ -100,15 +100,6 @@ function getSubmitLabel(count: number, selection: LetsconSelection) {
     : '무료로 신청하기';
 }
 
-function getNote(count: number, selection: LetsconSelection) {
-  if (selection.mode === 'offline') {
-    return '오프라인 보증금 15,000원은 참석 시 전액 환급됩니다.';
-  }
-  return count > 0
-    ? '온라인 참여는 무료입니다.'
-    : '참여할 세션을 하나 이상 선택해 주세요.';
-}
-
 export function ApplySheet({ apply }: { apply: LetsconApply }) {
   const isOfflineAvailable = apply.offline === 'available';
   const [selection, setSelection] = useState<LetsconSelection>({
@@ -147,40 +138,35 @@ export function ApplySheet({ apply }: { apply: LetsconApply }) {
           role="dialog"
           aria-modal="true"
           aria-labelledby="letscon-apply-title"
-          className="flex max-h-[92dvh] w-full max-w-[520px] flex-col overflow-hidden break-keep rounded-t-[24px] bg-[#f7f8fc] shadow-[0_-16px_48px_rgba(12,14,44,0.35)] min-[600px]:max-h-[88dvh] min-[600px]:rounded-[24px]"
+          className="flex max-h-[94dvh] w-full max-w-[520px] flex-col overflow-hidden break-keep rounded-t-[24px] bg-[#f7f8fc] shadow-[0_-16px_48px_rgba(12,14,44,0.35)] min-[600px]:max-h-[92dvh] min-[600px]:rounded-[24px] md:max-w-[880px]"
         >
-          <header className="relative shrink-0 bg-[radial-gradient(120%_180%_at_0%_0%,#25226b_0%,#141544_55%,#0f1136_100%)] px-[22px] pb-4 pt-3 min-[600px]:pt-5">
+          <header className="relative shrink-0 bg-[radial-gradient(120%_180%_at_0%_0%,#25226b_0%,#141544_55%,#0f1136_100%)] px-[22px] pb-2.5 pt-2 min-[600px]:py-3">
             <div
               aria-hidden
-              className="mx-auto mb-3 h-1 w-10 rounded-full bg-white/30 min-[600px]:hidden"
+              className="mx-auto mb-1.5 h-1 w-10 rounded-full bg-white/30 min-[600px]:hidden"
             />
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex min-w-0 items-center gap-2.5">
                 <p
                   aria-hidden
-                  className="flex items-end text-[13px] font-black leading-none tracking-[-0.03em] text-white"
+                  className="flex items-end text-[19px] font-black leading-none tracking-[-0.04em] text-white"
                 >
                   LETS<span className="text-[#ffe066]">CON</span>
-                  <span className="mb-px ml-0.5 size-1 rounded-full bg-[#ffe066]" />
+                  <span className="mb-[3px] ml-0.5 size-[5px] rounded-full bg-[#ffe066]" />
                 </p>
+                <span aria-hidden className="h-3.5 w-px bg-white/30" />
                 <h3
                   id="letscon-apply-title"
-                  className="mt-2 text-xl font-bold leading-7 text-white"
+                  className="text-base font-bold leading-7 text-white"
                 >
                   렛츠콘 신청
                 </h3>
-                {apply.isCompleted ? null : (
-                  <p className="mt-0.5 text-[13px] leading-[1.5] text-white/70">
-                    참여할 세션을 선택해 주세요. 11/15 오프라인은 두 세션을 함께
-                    신청합니다.
-                  </p>
-                )}
               </div>
               <button
                 type="button"
                 aria-label="닫기"
                 onClick={closeSheet}
-                className="-mr-2 -mt-1 flex size-9 shrink-0 items-center justify-center rounded-full text-white/80 transition-colors hover:bg-white/10"
+                className="-mr-2 flex size-8 shrink-0 items-center justify-center rounded-full text-white/80 transition-colors hover:bg-white/10"
               >
                 <X aria-hidden className="size-5" />
               </button>
@@ -209,8 +195,8 @@ export function ApplySheet({ apply }: { apply: LetsconApply }) {
             </div>
           ) : (
             <>
-              <div className="grid min-h-0 flex-1 gap-3 overflow-y-auto overscroll-contain p-4">
-                <section className="rounded-[18px] border border-[#e8e9f3] bg-white p-3.5">
+              <div className="grid min-h-0 flex-1 content-start gap-2.5 overflow-y-auto overscroll-contain px-3.5 py-3 md:grid-cols-2 md:gap-3 md:p-4">
+                <section className="rounded-[16px] border border-[#e8e9f3] bg-white p-3">
                   <div className="mb-2.5 flex items-center justify-between gap-2 px-0.5">
                     <DayHeading date="11/14" day="토요일" />
                     <span className="rounded-full bg-[#eef0ff] px-2.5 py-1 text-[11px] font-bold text-[#4d55f5]">
@@ -234,7 +220,7 @@ export function ApplySheet({ apply }: { apply: LetsconApply }) {
                   </div>
                 </section>
 
-                <section className="rounded-[18px] border border-[#e8e9f3] bg-white p-3.5">
+                <section className="rounded-[16px] border border-[#e8e9f3] bg-white p-3">
                   <div className="mb-2.5 px-0.5">
                     <DayHeading date="11/15" day="일요일" />
                   </div>
@@ -290,8 +276,8 @@ export function ApplySheet({ apply }: { apply: LetsconApply }) {
                         )}
                       </ul>
                       <p className="mt-2.5 border-t border-white/15 pt-2.5 text-xs leading-[1.5] text-white/70">
-                        오프라인 선택 시 두 세션 모두 참여해야 합니다 · 무료
-                        서류 Live 피드백 등 특별 혜택 제공
+                        두 세션 모두 참여 · 참석 시 보증금 전액 환급 · 무료 서류
+                        Live 피드백 등 특별 혜택 제공
                       </p>
                     </div>
                   ) : (
@@ -321,12 +307,12 @@ export function ApplySheet({ apply }: { apply: LetsconApply }) {
 
               <footer
                 aria-live="polite"
-                className="shrink-0 rounded-t-[20px] bg-white px-[22px] pb-[max(18px,env(safe-area-inset-bottom))] pt-3.5 shadow-[0_-8px_24px_rgba(20,21,68,0.07)]"
+                className="shrink-0 border-t border-[#e8e9f3] bg-white px-[22px] pb-[max(14px,env(safe-area-inset-bottom))] pt-2.5 md:grid md:grid-cols-2 md:items-center md:gap-x-6 md:px-5 md:py-3.5"
               >
                 {selectedDays.length > 0 ? (
                   <ul
                     aria-label="선택한 세션"
-                    className="mb-2.5 grid gap-1 border-b border-dashed border-[#e1e3ee] pb-2.5"
+                    className="mb-1.5 grid gap-0.5 md:mb-0"
                   >
                     {selectedDays.map(({ label, titles }) => (
                       <li
@@ -343,39 +329,43 @@ export function ApplySheet({ apply }: { apply: LetsconApply }) {
                     ))}
                   </ul>
                 ) : null}
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-[13px] text-[#5b5e6d]">
-                    <span className="font-bold text-[#4d55f5]">
-                      {count > 0
-                        ? `${count}개 세션 선택${isOffline ? ' · 현장' : ''}`
-                        : '미선택'}
-                    </span>{' '}
-                    · 결제 금액
-                  </p>
-                  <p className="whitespace-nowrap text-[24px] font-extrabold leading-8 tracking-[-0.01em] text-[#1c1e2b]">
-                    {isOffline ? '15,000' : '0'}
-                    <span className="ml-0.5 text-sm font-bold">원</span>
-                  </p>
+                <div className="md:col-start-2">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-[13px] text-[#5b5e6d]">
+                      <span className="font-bold text-[#4d55f5]">
+                        {count > 0
+                          ? `${count}개 세션 선택${isOffline ? ' · 현장' : ''}`
+                          : '미선택'}
+                      </span>{' '}
+                      · 결제 금액
+                    </p>
+                    <p className="whitespace-nowrap text-[24px] font-extrabold leading-8 tracking-[-0.01em] text-[#1c1e2b]">
+                      {isOffline ? '15,000' : '0'}
+                      <span className="ml-0.5 text-sm font-bold">원</span>
+                    </p>
+                  </div>
+                  {apply.hasSubmitError || count === 0 ? (
+                    <p
+                      className={`text-xs leading-[1.5] ${
+                        apply.hasSubmitError ? 'text-red-500' : 'text-[#7f8290]'
+                      }`}
+                    >
+                      {apply.hasSubmitError
+                        ? '신청을 처리하지 못했어요. 잠시 후 다시 시도해 주세요.'
+                        : '참여할 세션을 하나 이상 선택해 주세요.'}
+                    </p>
+                  ) : null}
+                  <button
+                    type="button"
+                    disabled={count === 0 || apply.isSubmitting}
+                    onClick={() => apply.submit(selection)}
+                    className="mt-2 h-[52px] w-full rounded-[14px] bg-[#4d55f5] text-base font-bold text-white transition-colors enabled:hover:bg-[#3f47e0] disabled:cursor-not-allowed disabled:bg-[#d7d9e6]"
+                  >
+                    {apply.isSubmitting
+                      ? '신청 중...'
+                      : getSubmitLabel(count, selection)}
+                  </button>
                 </div>
-                <p
-                  className={`mb-3 mt-0.5 text-xs leading-[1.5] ${
-                    apply.hasSubmitError ? 'text-red-500' : 'text-[#7f8290]'
-                  }`}
-                >
-                  {apply.hasSubmitError
-                    ? '신청을 처리하지 못했어요. 잠시 후 다시 시도해 주세요.'
-                    : getNote(count, selection)}
-                </p>
-                <button
-                  type="button"
-                  disabled={count === 0 || apply.isSubmitting}
-                  onClick={() => apply.submit(selection)}
-                  className="h-[56px] w-full rounded-[14px] bg-[#4d55f5] text-base font-bold text-white shadow-[0_8px_20px_rgba(77,85,245,0.28)] transition-colors enabled:hover:bg-[#3f47e0] disabled:cursor-not-allowed disabled:bg-[#d7d9e6] disabled:shadow-none"
-                >
-                  {apply.isSubmitting
-                    ? '신청 중...'
-                    : getSubmitLabel(count, selection)}
-                </button>
               </footer>
             </>
           )}
