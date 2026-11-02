@@ -1,42 +1,6 @@
-import type { LetsconLiveKind } from '../data/live';
 import type { LetsconApply } from '../hooks/useLetsconApply';
 import { getApplyButtonLabel } from '../lib/applyLabel';
 import { HeroBackdrop } from './HeroBackdrop';
-
-interface ApplyButtonProps {
-  apply: LetsconApply;
-  kind: LetsconLiveKind;
-  label: string;
-  caption: string;
-  className: string;
-}
-
-function ApplyButton({
-  apply,
-  kind,
-  label,
-  caption,
-  className,
-}: ApplyButtonProps) {
-  const status = apply[kind];
-
-  return (
-    <button
-      data-lift
-      type="button"
-      disabled={status !== 'available'}
-      onClick={() => apply.apply(kind)}
-      className={`h-[72px] w-full rounded-lg text-white disabled:cursor-not-allowed md:w-[295px] md:rounded-md ${className}`}
-    >
-      <span className="block text-base font-bold leading-6">
-        {getApplyButtonLabel(status, label)}
-      </span>
-      <span className="mt-0.5 block text-xs font-medium leading-[18px] text-white/75">
-        {caption}
-      </span>
-    </button>
-  );
-}
 
 export function Hero({ apply }: { apply: LetsconApply }) {
   return (
@@ -71,20 +35,15 @@ export function Hero({ apply }: { apply: LetsconApply }) {
         </p>
 
         <div className="order-3 mt-[37px] flex w-full max-w-[294px] flex-col gap-3 md:mt-[52px] md:w-auto md:max-w-none md:flex-row">
-          <ApplyButton
-            apply={apply}
-            kind="offline"
-            label="온라인 + 오프라인 신청하기"
-            caption="보증금 15,000원 · 참석 시 전액 환급"
-            className="bg-[#4d55f5]"
-          />
-          <ApplyButton
-            apply={apply}
-            kind="online"
-            label="온라인만 신청하기"
-            caption="무료"
-            className="border border-white/40 bg-[#22223b]"
-          />
+          <button
+            data-lift
+            type="button"
+            disabled={apply.status !== 'available'}
+            onClick={apply.openSheet}
+            className="h-[64px] w-full rounded-lg bg-[#4d55f5] text-lg font-bold text-white disabled:cursor-not-allowed disabled:opacity-60 md:h-[72px] md:w-[320px] md:rounded-md"
+          >
+            {getApplyButtonLabel(apply.status, '렛츠콘 신청하기')}
+          </button>
         </div>
       </div>
     </section>

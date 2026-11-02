@@ -2,9 +2,6 @@ import type { LetsconApply } from '../hooks/useLetsconApply';
 import { getApplyButtonLabel } from '../lib/applyLabel';
 import { ConnectionLine } from './ConnectionLine';
 
-const BUTTON =
-  'flex h-[62px] flex-col items-center justify-center rounded-[14px] md:h-[70px] md:w-[294px] disabled:cursor-not-allowed';
-
 export function BottomApply({ apply }: { apply: LetsconApply }) {
   return (
     <section className="relative overflow-hidden break-keep bg-[linear-gradient(135deg,#2e3ac6,#4753de)] px-5 py-16 md:bg-[linear-gradient(135deg,#3944cd,#4753de)] md:py-24">
@@ -38,35 +35,15 @@ export function BottomApply({ apply }: { apply: LetsconApply }) {
         <p data-reveal className="mt-3 text-base text-white md:mt-4 md:text-lg">
           11월 14-15일, 렛츠콘에서 함께해요!
         </p>
-        <div
-          data-reveal
-          className="mt-8 flex w-full flex-col gap-2.5 md:mt-8 md:w-auto md:flex-row md:gap-3"
-        >
+        <div data-reveal className="mt-8 w-full md:w-auto">
           <button
             data-lift
             type="button"
-            disabled={apply.offline !== 'available'}
-            onClick={() => apply.apply('offline')}
-            className={`${BUTTON} bg-[#ffe566] text-[#11142b] shadow-[0_8px_20px_rgba(10,14,80,0.25)] disabled:bg-white/25 disabled:text-white/80 disabled:shadow-none`}
+            disabled={apply.status !== 'available'}
+            onClick={apply.openSheet}
+            className="h-[62px] w-full rounded-[14px] bg-[#ffe566] text-[17px] font-bold text-[#11142b] shadow-[0_8px_20px_rgba(10,14,80,0.25)] disabled:cursor-not-allowed disabled:bg-white/30 disabled:text-white/70 disabled:shadow-none md:h-[70px] md:w-[320px]"
           >
-            <span className="text-[17px] font-bold">
-              {getApplyButtonLabel(apply.offline, '온라인 + 오프라인 신청하기')}
-            </span>
-            <span className="mt-0.5 text-xs font-medium">
-              보증금 15,000원 · 참석 시 전액 환급
-            </span>
-          </button>
-          <button
-            data-lift
-            type="button"
-            disabled={apply.online !== 'available'}
-            onClick={() => apply.apply('online')}
-            className={`${BUTTON} border border-white bg-white/15 text-white disabled:border-white/50 disabled:text-white/80`}
-          >
-            <span className="text-[17px] font-semibold">
-              {getApplyButtonLabel(apply.online, '온라인만 신청하기')}
-            </span>
-            <span className="mt-0.5 text-xs font-medium">무료</span>
+            {getApplyButtonLabel(apply.status, '렛츠콘 신청하기')}
           </button>
         </div>
       </div>
