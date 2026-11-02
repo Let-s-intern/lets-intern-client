@@ -5,11 +5,6 @@ import { LETSCON_HERO_ID } from '../data/sections';
 import type { LetsconApply } from '../hooks/useLetsconApply';
 import { getApplyButtonLabel } from '../lib/applyLabel';
 
-const BUTTON =
-  'flex h-12 min-w-0 flex-col items-center justify-center whitespace-nowrap rounded-[10px] px-2 transition-[transform,background-color] duration-200 enabled:hover:-translate-y-0.5 enabled:active:translate-y-0 disabled:cursor-not-allowed motion-reduce:transition-none motion-reduce:enabled:hover:translate-y-0';
-const TITLE = 'text-sm font-bold leading-[18px]';
-const CAPTION = 'text-[11px] font-medium leading-[14px]';
-
 export function FloatingApplyBar({ apply }: { apply: LetsconApply }) {
   const [isPastHero, setIsPastHero] = useState(false);
 
@@ -46,32 +41,14 @@ export function FloatingApplyBar({ apply }: { apply: LetsconApply }) {
           </p>
         </div>
 
-        <div className="flex min-w-0 flex-1 gap-2 md:flex-none md:gap-3">
-          <button
-            type="button"
-            disabled={apply.online !== 'available'}
-            onClick={() => apply.apply('online')}
-            className={`${BUTTON} flex-1 border border-[#b7bdff]/90 bg-white/[0.14] text-white enabled:hover:bg-white/[0.22] disabled:border-white/20 disabled:bg-transparent disabled:text-white/50 md:w-[132px] md:flex-none`}
-          >
-            <span className={TITLE}>
-              {getApplyButtonLabel(apply.online, '온라인만 신청')}
-            </span>
-            <span className={CAPTION}>무료</span>
-          </button>
-          <button
-            type="button"
-            disabled={apply.offline !== 'available'}
-            onClick={() => apply.apply('offline')}
-            className={`${BUTTON} flex-[1.7] bg-[#ffe066] text-[#141544] enabled:hover:bg-[#ffe98a] disabled:bg-white/10 disabled:text-white/50 md:w-[212px] md:flex-none`}
-          >
-            <span className={TITLE}>
-              {getApplyButtonLabel(apply.offline, '온라인 + 오프라인 신청')}
-            </span>
-            <span className={`${CAPTION} opacity-80`}>
-              보증금 15,000원 · 참석 시 환급
-            </span>
-          </button>
-        </div>
+        <button
+          type="button"
+          disabled={apply.status !== 'available'}
+          onClick={apply.openSheet}
+          className="h-12 min-w-0 flex-1 rounded-[10px] bg-[#ffe066] px-6 text-sm font-bold text-[#141544] transition-colors enabled:hover:bg-[#ffe98a] disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-white/60 md:w-[240px] md:flex-none"
+        >
+          {getApplyButtonLabel(apply.status, '렛츠콘 신청하기')}
+        </button>
       </div>
     </div>
   );

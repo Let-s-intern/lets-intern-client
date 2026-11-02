@@ -1,6 +1,5 @@
 import type { LetsconApply } from '../hooks/useLetsconApply';
-import { ApplyForm } from './ApplyForm';
-import { ApplySchedule } from './ApplySchedule';
+import { ApplyGuide } from './ApplyGuide';
 import { DepositRefund } from './DepositRefund';
 
 export function Apply({ apply }: { apply: LetsconApply }) {
@@ -30,10 +29,7 @@ export function Apply({ apply }: { apply: LetsconApply }) {
           참여노쇼를 방지하기 위해 보증금이 있습니다.
         </p>
 
-        <div className="mt-8 grid gap-8 md:mt-7 md:grid-cols-2 md:gap-5">
-          <ApplySchedule />
-          <ApplyForm apply={apply} />
-        </div>
+        <ApplyGuide apply={apply} />
 
         <div className="mt-6 text-center text-xs leading-[1.5] tracking-[-0.02em] text-[#7f8290] md:leading-[1.45]">
           <p>
@@ -43,7 +39,7 @@ export function Apply({ apply }: { apply: LetsconApply }) {
             </span>
           </p>
           <p className="mt-2 md:mt-0">
-            신청 완료 후 카카오 알림톡이 발송되며, <br className="md:hidden" />
+            신청 완료 후 안내 문자가 발송되며, <br className="md:hidden" />
             생중계 링크는 행사 당일 보내드립니다.
           </p>
         </div>

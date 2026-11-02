@@ -6,6 +6,7 @@ import { useReveal } from './hooks/useReveal';
 import styles from './letscon.module.css';
 import { AnchorTabs } from './ui/AnchorTabs';
 import { Apply } from './ui/Apply';
+import { ApplySheet } from './ui/ApplySheet';
 import { BottomApply } from './ui/BottomApply';
 import { Empathy } from './ui/Empathy';
 import { Faq } from './ui/Faq';
@@ -52,6 +53,7 @@ export default function LetsconPage() {
       </div>
       <BottomApply apply={apply} />
       <FloatingApplyBar apply={apply} />
+      {apply.isSheetOpen ? <ApplySheet apply={apply} /> : null}
     </div>
   );
 }
