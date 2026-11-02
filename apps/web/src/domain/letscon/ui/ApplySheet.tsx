@@ -10,6 +10,7 @@ import {
 } from '../data/sessions';
 import type { LetsconApply } from '../hooks/useLetsconApply';
 import {
+  getSelectedDays,
   getSelectedSessionCount,
   type LetsconDay15Mode,
   type LetsconSelection,
@@ -97,6 +98,7 @@ export function ApplySheet({ apply }: { apply: LetsconApply }) {
 
   const isOffline = selection.mode === 'offline';
   const count = getSelectedSessionCount(selection);
+  const selectedDays = getSelectedDays(selection);
 
   return (
     <ModalPortal>
@@ -279,6 +281,26 @@ export function ApplySheet({ apply }: { apply: LetsconApply }) {
                 aria-live="polite"
                 className="mt-3 shrink-0 border-t border-[#e1e3ee] pt-3.5"
               >
+                {selectedDays.length > 0 ? (
+                  <ul
+                    aria-label="선택한 세션"
+                    className="mb-3 grid gap-1 rounded-[10px] bg-[#f7f8fc] px-3 py-2.5"
+                  >
+                    {selectedDays.map(({ label, titles }) => (
+                      <li
+                        key={label}
+                        className="flex gap-2.5 text-xs leading-[18px]"
+                      >
+                        <span className="text-primary shrink-0 font-bold">
+                          {label}
+                        </span>
+                        <span className="text-[#1c1e2b]">
+                          {titles.join(', ')}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
                 <div className="flex items-center justify-between gap-3">
                   <p className="text-[13px] text-[#5b5e6d]">
                     <span className="text-primary font-bold">
