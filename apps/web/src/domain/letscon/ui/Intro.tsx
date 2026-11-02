@@ -10,9 +10,9 @@ export function Intro() {
           data-reveal
           className="text-2xl font-bold leading-8 tracking-[-0.02em] text-[#1c1e2e] md:text-4xl md:leading-[48px]"
         >
-          지금의 작은 경험이,
+          Connecting the Dots,
           <br />
-          다음 합격의 연결점이 되도록.
+          고민과 도전 끝에 자신만의 길을 찾은 커리어 선배들의 이야기
         </h2>
 
         <div

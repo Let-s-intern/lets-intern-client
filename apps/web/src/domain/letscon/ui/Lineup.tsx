@@ -2,12 +2,10 @@ import Image from 'next/image';
 import type { CSSProperties } from 'react';
 import {
   LINEUP_DAYS,
-  LINEUP_TOPICS,
   type LineupBlockTone,
   type LineupDay,
   type LineupSession,
 } from '../data/lineup';
-import { revealDelay } from '../lib/reveal';
 
 const DARK_BG = 'bg-[#12143a] md:bg-[#11142b]';
 
@@ -190,32 +188,6 @@ export function Lineup() {
         >
           렛츠콘 세미나 라인업
         </h2>
-
-        <ol
-          data-reveal-group
-          className="mt-[38px] flex flex-col gap-4 md:mt-10 md:gap-3"
-        >
-          {LINEUP_TOPICS.map(({ title, description }, index) => (
-            <li
-              key={title}
-              data-reveal
-              style={revealDelay(index)}
-              className="flex gap-4 md:gap-5"
-            >
-              <span className="w-3 shrink-0 text-center text-sm font-bold leading-6 text-[#4d55f5] md:w-4">
-                {index + 1}
-              </span>
-              <div>
-                <p className="text-sm font-bold leading-6 text-[#1f222b]">
-                  {title}
-                </p>
-                <p className="mt-0.5 text-sm leading-[22px] text-[#666a7e] md:leading-6">
-                  {description}
-                </p>
-              </div>
-            </li>
-          ))}
-        </ol>
 
         {LINEUP_DAYS.map((day) => (
           <LineupDaySection key={day.label} day={day} />

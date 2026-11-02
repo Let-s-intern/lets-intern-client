@@ -11,23 +11,27 @@ const OPTIONS: {
   title: string;
   body: string;
   badge?: string;
+  buttonLabel: string;
 }[] = [
   {
     kind: 'online',
-    title: '온라인으로 편하게 들을게요',
+    title: '온라인으로만 들을게요',
     body: '11/14·15 온라인 참여',
+    buttonLabel: '온라인 신청하기',
   },
   {
     kind: 'offline',
-    title: '15일은 현장에서 함께할게요',
+    title: '혜택 받고 현장에서 함께할게요',
     body: '11/14 온라인 참여 + 11/15 일요일 오프라인 참여',
     badge: '선착순 60명',
+    buttonLabel: '오프라인 신청하기',
   },
 ];
 
 export function ApplyForm({ apply }: { apply: LetsconApply }) {
   const [selected, setSelected] = useState<LetsconLiveKind>('online');
   const status = apply[selected];
+  const { buttonLabel } = OPTIONS.find(({ kind }) => kind === selected)!;
   const isAvailable = status === 'available';
 
   return (
@@ -109,7 +113,7 @@ export function ApplyForm({ apply }: { apply: LetsconApply }) {
         onClick={() => apply.apply(selected)}
         className="bg-primary hover:bg-primary-hover mt-5 flex h-[64px] w-full items-center justify-between rounded-[12px] px-7 text-lg font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {getApplyButtonLabel(status, '렛츠콘 신청하기')}
+        {getApplyButtonLabel(status, buttonLabel)}
         {isAvailable ? <ArrowUpRight aria-hidden className="h-6 w-6" /> : null}
       </button>
     </div>

@@ -22,15 +22,6 @@ export const INTRO_PARAGRAPHS: IntroTextPart[][] = [
       text: ' 작은 경험들을 합격으로 연결한 이야기, 현직자가 바라보는 신입 채용 이야기까지 나눠보려고 합니다.',
     },
   ],
-  [
-    {
-      text: '가고 싶은 대기업은 계속 목표로 두세요. 그 사이 도전하는 중견기업·스타트업·인턴 채용도 다음 기회를 위한 경험이 될 수 있어요. ',
-    },
-    {
-      text: '렛츠콘에서 선배들의 경험을 듣고, 나의 다음 행동을 찾아보세요.',
-      strong: true,
-    },
-  ],
 ];
 
 export type IntroStoryIcon = 'puzzle' | 'sweat' | 'rocket' | 'gem' | 'calendar';
