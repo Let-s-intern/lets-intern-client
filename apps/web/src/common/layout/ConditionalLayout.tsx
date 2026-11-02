@@ -5,6 +5,8 @@ import ChannelTalkBtn from '@/common/layout/channel/ChannelTalkBtn';
 import Footer from '@/common/layout/footer/Footer';
 import NavBar from '@/common/layout/header/NavBar';
 import { BIGFIRM_PATH } from '@/domain/bigfirm/data/links';
+// [LETSCON] 행사 종료 후 아래 조건과 함께 지운다
+import { LETSCON_PATH } from '@/domain/letscon/data/links';
 import MentorJoinLayout, {
   isMentorJoinPath,
 } from '@/domain/mentor-join/layout/MentorJoinLayout';
@@ -47,7 +49,8 @@ const ConditionalLayout = ({ children }: ConditionalLayoutProps) => {
 
   // 대기업 현직 멘토 기획전(LC-3534)은 렛츠커리어 헤더·푸터를 그대로 쓴다. 랜딩이 자체 하단 고정 바(문의하기 포함)를
   // 두므로 채널톡·바텀바는 띄우지 않고, 푸터 아래에 그 바만큼 여백을 둔다.
-  if (pathname === BIGFIRM_PATH) {
+  // [LETSCON] 렛츠콘 랜딩도 자체 플로팅 신청 바를 두므로 같은 레이아웃을 쓴다
+  if (pathname === BIGFIRM_PATH || pathname === LETSCON_PATH) {
     return (
       <div>
         <NavBar />

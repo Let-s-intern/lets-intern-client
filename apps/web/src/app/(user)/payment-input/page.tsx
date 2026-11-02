@@ -9,6 +9,8 @@ import LoadingContainer from '@/common/loading/LoadingContainer';
 // [LC-3219-MEMBERSHIP] 하반기 멤버십 전액할인 쿠폰 차단에만 쓴다 — 시즌 종료 시 이 import 를
 // 지운다(아래 isMembership 블록과 짝). 담당자 임성빈
 import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
+// [LETSCON] 현장 라이브 쿠폰 차단에만 쓴다. 행사 종료 후 아래 조건과 함께 지운다
+import { LETSCON_LIVE_IDS } from '@/domain/letscon/data/live';
 import { MEMBERSHIP_CHALLENGE_ID as LEGACY_MEMBERSHIP_CHALLENGE_ID } from '@/domain/membership-legacy/lib/membershipChallenge';
 import { MEMBERSHIP_CHALLENGE_ID } from '@/domain/membership/lib/membershipChallenge';
 import { COUPON_DISABLED_CHALLENGE_TYPES } from '@/domain/program/program-detail/apply/constants';
@@ -128,7 +130,12 @@ const PaymentInputContent = () => {
   })();
   const isCouponDisabledType =
     COUPON_DISABLED_CHALLENGE_TYPES.includes(challengeType);
-  const showCouponSection = !isCouponDisabledType || hasB2BParam;
+  // [LETSCON] 현장 라이브 15,000원은 보증금이라 쿠폰으로 깎이면 안 된다. b2b 진입도 예외 없이 막는다
+  const isLetsconOfflineLive =
+    programApplicationData.programType === 'live' &&
+    programApplicationData.programId === LETSCON_LIVE_IDS.offline;
+  const showCouponSection =
+    (!isCouponDisabledType || hasB2BParam) && !isLetsconOfflineLive;
 
   // [LC-3219-MEMBERSHIP] 시작 — 하반기 멤버십은 쿠폰을 받되 전액할인만 막는다.
   // 멤버십이 어드민 챌린지로 만들어져 있어, 예전에 챌린지용으로 뿌린 전액할인 쿠폰
