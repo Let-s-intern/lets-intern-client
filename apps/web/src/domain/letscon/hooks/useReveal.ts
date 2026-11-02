@@ -23,7 +23,7 @@ const SCROLL_IDLE_MS = 1000;
  * 숨김은 JS 가 붙이는 속성으로만 걸어, JS 가 실패해도 내용은 보인다.
  * 나중에 그려지는 요소가 있으면 그 조건을 refreshKey 로 넘긴다
  */
-export const useReveal = (refreshKey: unknown) => {
+export const useReveal = (refreshKey?: unknown) => {
   const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

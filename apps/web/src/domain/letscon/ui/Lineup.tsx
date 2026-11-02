@@ -57,69 +57,67 @@ function SessionCard({ session }: { session: LineupSession }) {
         </div>
       </header>
 
-      <div className="relative flex min-h-[180px] flex-col bg-[#edeefe] px-[18px] pb-5 pt-[18px] md:min-h-[200px] md:p-6">
-        <p className="flex h-[29px] items-center rounded-sm bg-[#ffe066] px-3 text-[15px] font-bold text-[#11142b] md:h-7 md:w-fit md:text-sm">
-          {session.time}
-        </p>
-        {title && (
-          <h5 className="mt-5 whitespace-pre-line text-base font-bold leading-6 text-[#1f222b] md:mt-4 md:text-lg md:leading-[26px]">
+      <div className="grid grid-cols-[minmax(0,1fr)_112px] bg-[#edeefe] md:min-h-[214px] md:grid-cols-[minmax(0,1fr)_196px]">
+        <div className="flex min-w-0 flex-col py-[18px] pl-[18px] md:py-6 md:pl-6">
+          <p className="flex h-7 w-fit items-center rounded-md bg-[#ffe066] px-3 text-sm font-bold text-[#11142b]">
+            {session.time}
+          </p>
+          <h5 className="mt-3.5 text-base font-bold leading-6 text-[#1f222b] md:mt-4 md:whitespace-pre-line md:text-xl md:leading-[30px]">
             {title}
           </h5>
-        )}
 
-        <div className="relative z-10 mt-auto flex flex-col gap-1 pr-[80px] pt-5 md:flex-row md:items-center md:gap-3 md:pr-[150px]">
-          <p className="text-sm font-bold leading-5 text-[#1f222b]">
-            {session.speaker}
-          </p>
-          {profile && (
-            <>
-              <span
-                aria-hidden="true"
-                className="hidden h-3 w-px bg-[#a9abc0] md:block"
-              />
-              <p className="whitespace-pre-line text-xs leading-4 text-[#666a7e] md:whitespace-normal">
-                {profile}
-              </p>
-            </>
-          )}
-          {instagramUrl && (
-            <a
-              href={instagramUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1 text-xs font-bold leading-4 text-[#4d55f5] md:ml-1"
-            >
-              <svg
-                aria-hidden="true"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                className="size-3.5"
+          <div className="mt-auto flex flex-col items-start gap-1 pt-4 md:flex-row md:flex-wrap md:items-center md:gap-x-3 md:gap-y-1 md:pt-5">
+            <p className="text-sm font-bold leading-5 text-[#1f222b]">
+              {session.speaker}
+            </p>
+            <span
+              aria-hidden="true"
+              className="hidden h-3 w-px bg-[#a9abc0] md:block"
+            />
+            <p className="text-xs leading-[18px] text-[#666a7e] md:flex-1 md:basis-[260px]">
+              {profile}
+            </p>
+            {instagramUrl && (
+              <a
+                href={instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="-ml-1 flex items-center gap-1 rounded-full px-1 py-0.5 text-xs font-bold leading-4 text-[#4d55f5] transition-colors hover:bg-[#e2e5ff] md:ml-[-4px]"
               >
-                <rect x="3" y="3" width="18" height="18" rx="5" />
-                <circle cx="12" cy="12" r="4" />
-                <circle
-                  cx="17"
-                  cy="7"
-                  r="1"
-                  fill="currentColor"
-                  stroke="none"
-                />
-              </svg>
-              인스타그램
-            </a>
-          )}
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  className="size-3.5"
+                >
+                  <rect x="3" y="3" width="18" height="18" rx="5" />
+                  <circle cx="12" cy="12" r="4" />
+                  <circle
+                    cx="17"
+                    cy="7"
+                    r="1"
+                    fill="currentColor"
+                    stroke="none"
+                  />
+                </svg>
+                인스타그램
+              </a>
+            )}
+          </div>
         </div>
 
-        <Image
-          src={photo.src}
-          alt={session.speaker}
-          width={photo.width}
-          height={photo.height}
-          sizes="(min-width: 768px) 150px, 77px"
-          className="absolute bottom-0 right-3 h-[92px] w-auto md:right-9 md:h-[180px]"
-        />
+        <div className="flex items-end justify-center self-end overflow-hidden pr-1.5 pt-3 md:pr-2">
+          <Image
+            src={photo.src}
+            alt={session.speaker}
+            width={photo.width}
+            height={photo.height}
+            sizes="(min-width: 768px) 188px, 106px"
+            className="h-[148px] w-auto max-w-full object-contain object-bottom md:h-[196px]"
+          />
+        </div>
       </div>
     </article>
   );

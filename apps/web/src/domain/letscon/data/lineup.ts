@@ -35,11 +35,10 @@ export interface LineupSession {
   track: string;
   offline: boolean;
   time: string;
-  /** 미정이면 비워 둔다. 줄바꿈은 \n */
-  title?: string;
+  /** \n 은 데스크톱 줄바꿈이다 */
+  title: string;
   speaker: string;
-  /** 미정이면 비워 둔다. \n 은 모바일 줄바꿈이다 */
-  profile?: string;
+  profile: string;
   instagramUrl?: string;
   photo: { src: string; width: number; height: number };
 }
@@ -74,21 +73,24 @@ export const LINEUP_DAYS: LineupDay[] = [
     sessions: [
       {
         label: 'Session 1',
+        track: 'HR',
+        offline: false,
+        time: '16:00 - 17:30',
+        title: '심리학 전공자가 1년 만에\n현대자동차 채용 직무에 합격하기까지',
+        speaker: '덕양 멘토',
+        profile:
+          '6년차 · 전) 카카오 계열사 · 당근 · 현대자동차 근무 · 현) 국내 IT 예비유니콘 채용 담당자',
+        photo: { src: '/letscon/mentor-deokyang.png', width: 303, height: 450 },
+      },
+      {
+        label: 'Session 2',
         track: '서비스 기획 / PM',
         offline: false,
         time: '19:00 - 20:30',
         title: '신입 PM은 안 뽑는다?\n결국 원하는 회사에 합격하는 방법',
         speaker: '헤이즐 멘토',
-        profile: '9년차 · 전) 배달의민족 PM ·\n현) 국내 대표 핀테크 기업 PO',
-        photo: { src: '/letscon/raw-hazel.png', width: 249, height: 369 },
-      },
-      {
-        label: 'Session 2',
-        track: 'HR',
-        offline: false,
-        time: '20:40 - 22:10',
-        speaker: '연사 공개 예정',
-        photo: { src: '/letscon/hr-cut.png', width: 750, height: 900 },
+        profile: '9년차 · 전) 배달의민족 PM · 현) 국내 대표 핀테크 기업 PO',
+        photo: { src: '/letscon/mentor-hazel.png', width: 226, height: 450 },
       },
     ],
   },
@@ -121,12 +123,11 @@ export const LINEUP_DAYS: LineupDay[] = [
         track: '마케팅',
         offline: true,
         time: '14:30 - 16:30',
-        title:
-          '가고 싶은 회사의 마케터가 되기 위해,\n소중한 경험을 하나씩 쌓아온 이야기',
+        title: '꿈꾸던 마케터가 되기 위해\n하나씩 쌓아온 경험의 이야기',
         speaker: '팀장 박주삼 멘토',
-        profile: '13년차 · 전) 올리브영, 에이블리,\n지그재그 · 현) 뷰티 브랜드',
+        profile: '13년차 · 전) 올리브영, 에이블리, 지그재그 · 현) 뷰티 브랜드',
         instagramUrl: LETSCON_PARK_INSTAGRAM_URL,
-        photo: { src: '/letscon/park-cut.png', width: 720, height: 900 },
+        photo: { src: '/letscon/mentor-park.png', width: 306, height: 450 },
       },
       {
         label: 'Session 2',
@@ -135,9 +136,9 @@ export const LINEUP_DAYS: LineupDay[] = [
         time: '16:45 - 18:45',
         title: '면접관이 뽑고 싶은\n인턴/신입은 누구인가',
         speaker: '프리쪼아 멘토',
-        profile: '11년차 · 창업, 스타트업,\n대기업 모두 거친 6년차 면접관',
+        profile: '11년차 · 창업, 스타트업, 대기업 모두 거친 6년차 면접관',
         instagramUrl: LETSCON_FREEZZOA_INSTAGRAM_URL,
-        photo: { src: '/letscon/raw-freezzoa.png', width: 270, height: 363 },
+        photo: { src: '/letscon/mentor-freezzoa.png', width: 360, height: 450 },
       },
     ],
   },

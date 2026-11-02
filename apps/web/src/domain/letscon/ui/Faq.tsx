@@ -1,8 +1,8 @@
-import type { Faq as FaqItem } from '@/schema';
 import { ChevronDown } from 'lucide-react';
+import { LETSCON_FAQS } from '../data/faq';
 import { revealDelay } from '../lib/reveal';
 
-export function Faq({ faqs }: { faqs: FaqItem[] }) {
+export function Faq() {
   return (
     <section className="break-keep bg-[#f7f8fc] py-16 md:py-[88px]">
       <div className="mx-auto max-w-[880px] px-5">
@@ -16,11 +16,11 @@ export function Faq({ faqs }: { faqs: FaqItem[] }) {
           data-reveal-group
           className="mt-7 flex flex-col gap-2 md:mt-9 md:gap-[13px]"
         >
-          {faqs.map(({ id, question, answer }, index) => (
-            <li key={id} data-reveal style={revealDelay(index, 30)}>
+          {LETSCON_FAQS.map(({ question, answer }, index) => (
+            <li key={question} data-reveal style={revealDelay(index, 30)}>
               <details className="group rounded-[16px] border border-[#dcdde3] bg-white md:rounded-[12px]">
                 <summary className="flex min-h-[53px] cursor-pointer list-none items-center justify-between gap-3 px-[17px] py-2.5 text-sm leading-[1.15] text-[#1c1e2b] md:min-h-[51px] md:px-[21px] md:text-[15px] [&::-webkit-details-marker]:hidden">
-                  <span>{question ?? ''}</span>
+                  <span>{question}</span>
                   <ChevronDown
                     aria-hidden
                     className="h-5 w-5 shrink-0 text-[#3a3d4c] transition-transform group-open:rotate-180"
@@ -28,7 +28,7 @@ export function Faq({ faqs }: { faqs: FaqItem[] }) {
                   />
                 </summary>
                 <p className="whitespace-pre-line border-t border-[#ededf3] px-[17px] py-4 text-sm leading-[1.6] text-[#5b5e6d] md:px-[21px]">
-                  {answer ?? ''}
+                  {answer}
                 </p>
               </details>
             </li>
