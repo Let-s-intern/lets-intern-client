@@ -14,7 +14,7 @@ import useAuthStore from '@/store/useAuthStore';
 import { setProgramApplicationForm } from '@/store/useProgramStore';
 import { extractHttpStatus } from '@/utils/sentry';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { LETSCON_LOGIN_URL } from '../data/links';
 import { LETSCON_MAGNET_ID, LETSCON_OFFLINE_LIVE_ID } from '../data/live';
 import { buildApplicationForm } from '../lib/applicationForm';
@@ -88,6 +88,8 @@ export const useLetsconApply = (): LetsconApply => {
   const [isCompleted, setIsCompleted] = useState(false);
   const [hasSubmitError, setHasSubmitError] = useState(false);
   const [isMovingToPayment, setIsMovingToPayment] = useState(false);
+  // 비활성 표시가 그려지기 전의 연속 클릭도 한 번만 처리한다
+  const isSubmittingRef = useRef(false);
 
   const getOfflineStatus = () =>
     getApplyStatus({
@@ -154,12 +156,7 @@ export const useLetsconApply = (): LetsconApply => {
     }
   };
 
-  const submit = async (selection: LetsconSelection) => {
-    if (!isLoggedIn) {
-      router.push(LETSCON_LOGIN_URL);
-      return;
-    }
-
+  const runSubmit = async (selection: LetsconSelection) => {
     setHasSubmitError(false);
     try {
       await saveOnlineApplication(selection);
@@ -178,6 +175,18 @@ export const useLetsconApply = (): LetsconApply => {
       setIsMovingToPayment(false);
       setHasSubmitError(true);
     }
+  };
+
+  const submit = async (selection: LetsconSelection) => {
+    if (!isLoggedIn) {
+      router.push(LETSCON_LOGIN_URL);
+      return;
+    }
+    if (isSubmittingRef.current) return;
+
+    isSubmittingRef.current = true;
+    await runSubmit(selection);
+    isSubmittingRef.current = false;
   };
 
   const openSheet = () => {
