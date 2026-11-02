@@ -32,7 +32,7 @@ const AllInOnePassSection = () => {
           href="/program?type=MEMBERSHIP"
           className="text-xxsmall12 text-neutral-45 md:text-xsmall16 pb-3 pl-3"
         >
-          올인원패스 더보기
+          더보기
         </Link>
       </div>
       <div className="custom-scrollbar w-full overflow-x-auto">
@@ -40,7 +40,7 @@ const AllInOnePassSection = () => {
           {passList.map(({ programInfo }) => (
             <div
               key={programInfo.id}
-              className="flex w-full min-w-[130px] cursor-pointer flex-col overflow-hidden md:min-w-[200px]"
+              className="flex w-[130px] cursor-pointer flex-col overflow-hidden md:w-[200px]"
               onClick={() => router.push(getProgramCardLink(programInfo))}
             >
               <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm bg-white">
