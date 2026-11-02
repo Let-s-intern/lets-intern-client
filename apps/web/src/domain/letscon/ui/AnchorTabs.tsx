@@ -6,12 +6,47 @@ import { getAnchorTabs } from '../lib/anchorTabs';
 
 const HEADER_SELECTOR = 'header > div';
 
+const scrollToSection = (
+  nav: HTMLElement | null,
+  id: string,
+  behavior: ScrollBehavior,
+) => {
+  const section = document.getElementById(id);
+  if (!section || !nav) return;
+
+  // 아래로 가면 헤더가 숨어 탭이 맨 위에, 위로 가면 헤더가 돌아와 탭이 헤더 아래에 멈춘다
+  const headerHeight =
+    document.querySelector(HEADER_SELECTOR)?.getBoundingClientRect().height ??
+    0;
+  const distanceDown =
+    section.getBoundingClientRect().top - nav.getBoundingClientRect().height;
+  window.scrollBy({
+    top: distanceDown > 0 ? distanceDown : distanceDown - headerHeight,
+    behavior,
+  });
+};
+
 export function AnchorTabs({ showFaq }: { showFaq: boolean }) {
   const tabs = getAnchorTabs(showFaq);
   const [activeId, setActiveId] = useState(tabs[0].id);
   const navRef = useRef<HTMLElement>(null);
   const activeLinkRef = useRef<HTMLAnchorElement>(null);
   const scrollDirection = useScrollDirection();
+  const isHashHandledRef = useRef(false);
+
+  // 해시 진입도 탭 클릭과 같은 위치로 보낸다. FAQ 는 응답 뒤에 그려져 브라우저가 대상을 못 찾는다
+  useEffect(() => {
+    if (isHashHandledRef.current) return;
+    const id = window.location.hash.slice(1);
+    if (!tabs.some((tab) => tab.id === id)) return;
+    isHashHandledRef.current = true;
+    scrollToSection(navRef.current, id, 'auto');
+  }, [tabs]);
+
+  // 새로고침으로 복원된 위치는 스크롤 이벤트 없이 헤더가 돌아와 탭이 내용을 가린다
+  useEffect(() => {
+    if (window.scrollY > 0) window.dispatchEvent(new Event('scroll'));
+  }, []);
 
   useEffect(() => {
     const nav = navRef.current;
@@ -67,24 +102,6 @@ export function AnchorTabs({ showFaq }: { showFaq: boolean }) {
     });
   }, [activeId]);
 
-  const scrollToSection = (event: MouseEvent, id: string) => {
-    event.preventDefault();
-    const section = document.getElementById(id);
-    const nav = navRef.current;
-    if (!section || !nav) return;
-
-    // 아래로 가면 헤더가 숨어 탭이 맨 위에, 위로 가면 헤더가 돌아와 탭이 헤더 아래에 멈춘다
-    const headerHeight =
-      document.querySelector(HEADER_SELECTOR)?.getBoundingClientRect().height ??
-      0;
-    const distanceDown =
-      section.getBoundingClientRect().top - nav.getBoundingClientRect().height;
-    window.scrollBy({
-      top: distanceDown > 0 ? distanceDown : distanceDown - headerHeight,
-      behavior: 'smooth',
-    });
-  };
-
   return (
     <nav
       ref={navRef}
@@ -103,7 +120,10 @@ export function AnchorTabs({ showFaq }: { showFaq: boolean }) {
             ref={active ? activeLinkRef : undefined}
             href={`#${id}`}
             aria-current={active ? 'true' : undefined}
-            onClick={(event) => scrollToSection(event, id)}
+            onClick={(event: MouseEvent) => {
+              event.preventDefault();
+              scrollToSection(navRef.current, id, 'smooth');
+            }}
             className={`relative flex h-[58px] shrink-0 grow items-center justify-center whitespace-nowrap px-5 text-sm font-bold md:h-[70px] md:w-[244px] md:shrink md:grow-0 md:text-base ${
               active ? 'text-[#4d55f5]' : 'text-[#9a9aa3]'
             }`}
