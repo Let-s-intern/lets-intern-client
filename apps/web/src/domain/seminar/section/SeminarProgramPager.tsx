@@ -9,6 +9,12 @@ import SeminarCarouselDots from '../ui/SeminarCarouselDots';
 /** 상태(모집중/종료)에 따라 다른 카드를 그리기 위한 렌더 함수. */
 type RenderCard = (program: ProgramInfo) => ReactNode;
 
+/** 페이지에 놓이는 칸 하나. 세미나 카드 앞에 렛츠콘 같은 고정 카드를 끼우려고 노드로 받는다. */
+interface PagerItem {
+  key: string;
+  node: ReactNode;
+}
+
 const DESKTOP_PAGE_SIZE = 8; // 2행 × 4열
 const MOBILE_PAGE_SIZE = 4; // 2행 × 2열
 
@@ -45,17 +51,11 @@ const PagerArrow = ({ direction, disabled, onClick }: PagerArrowProps) => {
 };
 
 /** 데스크톱(md↑): 2×4 페이지 + 좌우 화살표. 8개 이하이면 화살표 없이 단일 페이지. */
-const DesktopPagedGrid = ({
-  programs,
-  renderCard,
-}: {
-  programs: ProgramInfo[];
-  renderCard: RenderCard;
-}) => {
+const DesktopPagedGrid = ({ items }: { items: PagerItem[] }) => {
   const [page, setPage] = useState(0);
-  const pageCount = Math.ceil(programs.length / DESKTOP_PAGE_SIZE);
+  const pageCount = Math.ceil(items.length / DESKTOP_PAGE_SIZE);
   const start = page * DESKTOP_PAGE_SIZE;
-  const visible = programs.slice(start, start + DESKTOP_PAGE_SIZE);
+  const visible = items.slice(start, start + DESKTOP_PAGE_SIZE);
   const hasPaging = pageCount > 1;
 
   return (
@@ -63,8 +63,8 @@ const DesktopPagedGrid = ({
     // 양옆에 전용 거터를 만든다(화살표는 이 거터 중앙에 배치).
     <div className="relative hidden md:block md:px-20">
       <div className="grid grid-cols-4 gap-x-5 gap-y-11">
-        {visible.map((program) => (
-          <Fragment key={cardKey(program)}>{renderCard(program)}</Fragment>
+        {visible.map((item) => (
+          <Fragment key={item.key}>{item.node}</Fragment>
         ))}
       </div>
 
@@ -87,16 +87,10 @@ const DesktopPagedGrid = ({
 };
 
 /** 모바일(<md): 2×2 페이지를 scroll-snap 스와이프 + 도트로 넘긴다. */
-const MobileSwipeCarousel = ({
-  programs,
-  renderCard,
-}: {
-  programs: ProgramInfo[];
-  renderCard: RenderCard;
-}) => {
+const MobileSwipeCarousel = ({ items }: { items: PagerItem[] }) => {
   const trackRef = useRef<HTMLDivElement>(null);
   const { activeIndex, scrollToSlide } = useCarouselDots(trackRef);
-  const pages = chunk(programs, MOBILE_PAGE_SIZE);
+  const pages = chunk(items, MOBILE_PAGE_SIZE);
 
   return (
     <div className="flex flex-col gap-6 md:hidden">
@@ -111,10 +105,8 @@ const MobileSwipeCarousel = ({
         {pages.map((pageItems, i) => (
           <div key={i} className="w-full shrink-0 snap-center">
             <div className="grid grid-cols-2 gap-x-5 gap-y-8">
-              {pageItems.map((program) => (
-                <Fragment key={cardKey(program)}>
-                  {renderCard(program)}
-                </Fragment>
+              {pageItems.map((item) => (
+                <Fragment key={item.key}>{item.node}</Fragment>
               ))}
             </div>
           </div>
@@ -142,14 +134,25 @@ const MobileSwipeCarousel = ({
 const SeminarProgramPager = ({
   programs,
   renderCard,
+  leadingCard,
 }: {
   programs: ProgramInfo[];
   renderCard: RenderCard;
-}) => (
-  <>
-    <DesktopPagedGrid programs={programs} renderCard={renderCard} />
-    <MobileSwipeCarousel programs={programs} renderCard={renderCard} />
-  </>
-);
+  /** 첫 페이지 맨 앞에 놓을 카드 (렛츠콘) */
+  leadingCard?: ReactNode;
+}) => {
+  const items: PagerItem[] = programs.map((program) => ({
+    key: cardKey(program),
+    node: renderCard(program),
+  }));
+  if (leadingCard) items.unshift({ key: 'leading', node: leadingCard });
+
+  return (
+    <>
+      <DesktopPagedGrid items={items} />
+      <MobileSwipeCarousel items={items} />
+    </>
+  );
+};
 
 export default SeminarProgramPager;
