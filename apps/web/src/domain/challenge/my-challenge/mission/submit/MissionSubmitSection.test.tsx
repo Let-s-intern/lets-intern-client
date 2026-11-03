@@ -134,13 +134,19 @@ describe('MissionSubmitSection 예외 상황', () => {
     expect(container.textContent).toContain('일반 제출 폼');
   });
 
-  it('선택된 미션이 없으면 회차별 폼을 그린다', () => {
+  // LC-3555. LV2 멘티에게 LV1 미션이 선택돼 있으면 레벨로 걸러진 목록에서 미션을 못 찾는다.
+  // 그대로 그리면 화면과 다른 미션(selectedMissionId)으로 제출된다.
+  it('선택된 미션이 걸러진 목록에 없으면 일반 제출 폼을 그리지 않는다', () => {
     jest.useFakeTimers().setSystemTime(NOW.valueOf());
     useMissionStore.setState({ selectedMissionId: 1003, selectedMissionTh: 3 });
 
     const { container } = render(<MissionSubmitSection />);
 
-    expect(container.textContent).toContain('일반 제출 폼');
+    expect(container.textContent).not.toContain('제출 폼');
+  });
+
+  it('선택된 미션이 걸러진 목록에 있으면 일반 제출 폼을 그린다', () => {
+    expect(setup(3, period.inProgress).textContent).toContain('일반 제출 폼');
   });
 
   // 어드민 미리보기는 ?testDate= 로 '지금' 을 옮긴다. 게이트도 그 날짜를 따라야 한다.

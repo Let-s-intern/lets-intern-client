@@ -16,7 +16,7 @@ import MissionSubmitOTRequiredNotice from './ui/MissionSubmitOTRequiredNotice';
 interface MissionSubmitSectionProps {
   className?: string;
   attendanceInfo?: Schedule['attendanceInfo'] | null;
-  /** 선택된 미션. 시작일 판정에 쓴다. */
+  /** 레벨로 걸러진 목록에서 찾은 선택 미션. 시작일 판정과 일반 폼 표시 여부에 쓴다. */
   mission?: ScheduleMission | null;
   onRefreshMissionData?: () => void; // 미션 데이터 새로고침 callback
   onSubmitLastMission?: () => void;
@@ -80,6 +80,11 @@ const MissionSubmitSection = ({
         />
       );
     }
+
+    // 선택된 미션이 레벨로 걸러진 목록에 없으면 폼을 그리지 않는다. 다른 레벨 경험정리
+    // 미션이 선택된 채로 그리면 화면과 다른 미션으로 제출된다(LC-3555). 선택은 /me 에서
+    // 레벨에 맞춰지므로, 맞춰지기 전 한 순간이나 맞출 짝이 없을 때의 방어선이다.
+    if (!mission) return null;
 
     // 마감된 회차도 폼을 연다. 지각 제출은 챌린지 종료 +2일까지 유지된다.
     return (
