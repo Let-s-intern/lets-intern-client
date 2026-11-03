@@ -10,6 +10,7 @@ import { AttendanceResult, AttendanceStatus } from '@/schema';
 import { useMissionStore } from '@/store/useMissionStore';
 import { BONUS_MISSION_TH } from '@/utils/constants';
 import { useEffect, useState } from 'react';
+import { useSubmitLock } from './useSubmitLock';
 
 const FIRST_THIRD_RATIO = 1 / 3;
 const SECOND_THIRD_RATIO = 2 / 3;
@@ -88,6 +89,11 @@ export function useMissionSubmitRegular({
 
   const submitMission = useSubmitMission();
   const patchAttendance = usePatchAttendance();
+  const {
+    isLocked: isSubmitting,
+    lock: lockSubmit,
+    unlock: unlockSubmit,
+  } = useSubmitLock();
 
   const bonusMission = schedules.find(
     (item) => item.missionInfo.th === BONUS_MISSION_TH,
@@ -152,6 +158,7 @@ export function useMissionSubmitRegular({
     }
 
     if (!missionId || missionId === 0) return;
+    if (!lockSubmit()) return;
 
     try {
       await submitMission.mutateAsync({
@@ -188,6 +195,8 @@ export function useMissionSubmitRegular({
     } catch (error) {
       console.error('미션 제출 실패:', error);
       alert(getSubmitErrorMessage(error));
+    } finally {
+      unlockSubmit();
     }
   };
 
@@ -225,6 +234,7 @@ export function useMissionSubmitRegular({
 
   const handleSaveEdit = async () => {
     if (!attendanceInfo?.id) return;
+    if (!lockSubmit()) return;
 
     try {
       await patchAttendance.mutateAsync({
@@ -241,6 +251,8 @@ export function useMissionSubmitRegular({
       onRefreshMissionData?.();
     } catch {
       // 에러 처리 로직 추가 가능
+    } finally {
+      unlockSubmit();
     }
   };
 
@@ -267,6 +279,7 @@ export function useMissionSubmitRegular({
     setSelectedMission,
     textareaValue,
     isSubmitted,
+    isSubmitting,
     showToast,
     toastMessage,
     setShowToast,
