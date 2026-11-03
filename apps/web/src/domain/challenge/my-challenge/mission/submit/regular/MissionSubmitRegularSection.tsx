@@ -48,6 +48,7 @@ const MissionSubmitRegularSection = ({
     feedbackType,
     preQuestionValue,
     isSubmitted,
+    isSubmitting,
     showToast,
     toastMessage,
     setShowToast,
@@ -127,6 +128,7 @@ const MissionSubmitRegularSection = ({
             onCancelEdit={handleCancelEdit}
             onSaveEdit={handleSaveEdit}
             disabled={isResubmitBlocked}
+            isSubmitting={isSubmitting}
           />
         )}
         {/* 제출을 마친 뒤에도 공유가 남아 있다. 모달을 닫았을 때의 유일한 경로다. */}
