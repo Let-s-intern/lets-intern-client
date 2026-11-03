@@ -6,9 +6,10 @@ import { useCurrentChallenge } from '@/context/CurrentChallengeProvider';
 import MissionCalendarSection from '@/domain/challenge/my-challenge/mission/calendar/MissionCalendarSection';
 import MissionGuideSection from '@/domain/challenge/my-challenge/mission/guide/MissionGuideSection';
 import MissionMentorCommentSection from '@/domain/challenge/my-challenge/mission/MissionMentorCommentSection';
+import { useLevelMatchedMissionSelection } from '@/domain/challenge/hooks/useLevelMatchedMissionSelection';
 import MissionSubmitSection from '@/domain/challenge/my-challenge/mission/submit/MissionSubmitSection';
 import { useChallengeProgram } from '@/hooks/useChallengeProgram';
-import { useExperienceLevel } from '@/hooks/useExperienceLevel';
+import { useExperienceLevelState } from '@/hooks/useExperienceLevel';
 import { useFilteredSchedules } from '@/hooks/useFilteredSchedules';
 import { useMissionSelection } from '@/hooks/useMissionSelection';
 import { useMissionStore } from '@/store/useMissionStore';
@@ -27,7 +28,11 @@ function MyChallengeDashboardContent() {
   const { isChallengeDone } = useChallengeProgram();
 
   // 경험정리 레벨 판별
-  const experienceLevel = useExperienceLevel(schedules);
+  const { level: experienceLevel, isLevelReady } =
+    useExperienceLevelState(schedules);
+
+  // 기본 선택 뒤에 선택 미션을 레벨에 맞춘다. 제출 대상과 화면의 회차를 같게 한다.
+  useLevelMatchedMissionSelection(schedules, experienceLevel, isLevelReady);
 
   // 레벨에 맞게 필터링된 schedules
   const filteredSchedules = useFilteredSchedules(schedules, experienceLevel);
