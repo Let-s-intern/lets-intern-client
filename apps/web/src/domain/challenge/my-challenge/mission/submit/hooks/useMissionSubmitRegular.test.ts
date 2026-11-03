@@ -112,3 +112,35 @@ describe('useMissionSubmitRegular — 제출 연타', () => {
     expect(submitMissionMutate).toHaveBeenCalledTimes(2);
   });
 });
+
+describe('useMissionSubmitRegular — 수정 저장 연타', () => {
+  it('저장 중에 handleSaveEdit 을 연속으로 불러도 PATCH 는 한 번만 나간다', async () => {
+    const pending = deferred();
+    patchAttendanceMutate.mockReturnValue(pending.promise);
+    const result = setup({
+      id: 77,
+      link: 'https://example.com',
+      status: 'PRESENT',
+      submitted: true,
+      comments: null,
+      result: 'WAITING',
+      review: '후기',
+    });
+
+    act(() => {
+      void result.current.handleSaveEdit();
+      void result.current.handleSaveEdit();
+      void result.current.handleSaveEdit();
+    });
+
+    expect(patchAttendanceMutate).toHaveBeenCalledTimes(1);
+    expect(result.current.isSubmitting).toBe(true);
+
+    await act(async () => {
+      pending.resolve();
+      await pending.promise;
+    });
+
+    expect(result.current.isSubmitting).toBe(false);
+  });
+});

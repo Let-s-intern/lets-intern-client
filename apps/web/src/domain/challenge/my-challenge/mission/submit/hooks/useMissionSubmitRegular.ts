@@ -234,6 +234,7 @@ export function useMissionSubmitRegular({
 
   const handleSaveEdit = async () => {
     if (!attendanceInfo?.id) return;
+    if (!lockSubmit()) return;
 
     try {
       await patchAttendance.mutateAsync({
@@ -250,6 +251,8 @@ export function useMissionSubmitRegular({
       onRefreshMissionData?.();
     } catch {
       // 에러 처리 로직 추가 가능
+    } finally {
+      unlockSubmit();
     }
   };
 
