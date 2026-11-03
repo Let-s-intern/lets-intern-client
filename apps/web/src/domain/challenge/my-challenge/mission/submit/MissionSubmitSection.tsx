@@ -1,5 +1,6 @@
 import useChallengeNav from '@/domain/challenge/hooks/useChallengeNav';
 import { getMissionTimeState } from '@/domain/challenge/utils/missionTimeState';
+import { useMissionCalculation } from '@/hooks/useMissionCalculation';
 import dayjs from '@/lib/dayjs';
 import { Schedule, ScheduleMission } from '@/schema';
 import { useMissionStore } from '@/store/useMissionStore';
@@ -10,6 +11,7 @@ import MissionSubmitBonusSection from './bonus/MissionSubmitBonusSection';
 import MissionSubmitZeroSection from './MissionSubmitZeroSection';
 import MissionSubmitRegularSection from './regular/MissionSubmitRegularSection';
 import MissionSubmitNotOpenNotice from './ui/MissionSubmitNotOpenNotice';
+import MissionSubmitOTRequiredNotice from './ui/MissionSubmitOTRequiredNotice';
 
 interface MissionSubmitSectionProps {
   className?: string;
@@ -29,6 +31,7 @@ const MissionSubmitSection = ({
 }: MissionSubmitSectionProps) => {
   const { selectedMissionTh, selectedMissionId } = useMissionStore();
   const { testDate } = useChallengeNav();
+  const { zeroMission, isZeroMissionPassed } = useMissionCalculation();
 
   // 어드민 미리보기(?testDate=)에서는 그 날짜를 '지금' 으로 본다.
   const now = testDate ? dayjs(testDate) : dayjs();
@@ -50,6 +53,12 @@ const MissionSubmitSection = ({
     // OT 미션
     if (selectedMissionTh === 0) {
       return <MissionSubmitZeroSection missionId={selectedMissionId} />;
+    }
+
+    // 0회차를 내지 않았으면 1회차 이상(보너스·인재풀 포함)은 서버가 제출을 거절한다.
+    // 0회차가 없는 챌린지는 isZeroMissionPassed 가 false 라 zeroMission 을 같이 본다.
+    if (selectedMissionTh >= 1 && zeroMission && !isZeroMissionPassed) {
+      return <MissionSubmitOTRequiredNotice />;
     }
 
     // 보너스 미션
