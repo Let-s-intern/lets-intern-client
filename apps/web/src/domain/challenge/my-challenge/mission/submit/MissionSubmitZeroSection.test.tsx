@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 // 패키지 entry(@letscareer/api) 는 env.ts 의 import.meta 때문에 jest 환경에서
 // SyntaxError 가 발생한다. ApiError 클래스만 필요하므로 errors 서브경로를 직접
 // import 해서 패키지 entry 로드를 우회한다 (package.json exports "./*").
@@ -113,6 +113,40 @@ describe('MissionSubmitZeroSection — 0회차 미션 제출', () => {
 
     expect(submitGoalMutate).not.toHaveBeenCalled();
     expect(submitButton()).toHaveTextContent('제출하기');
+  });
+
+  // LC-3558 — 응답이 늦는 동안 누른 만큼 출석이 생겼다(운영 5번 중복이 0회차였다).
+  // 한 act 안에서 누르면 그 사이 다시 그려지지 않는다. 버튼이 꺼지기 전 연타다.
+  it('제출 중에 버튼을 연속으로 눌러도 출석 생성 요청은 한 번만 나간다', async () => {
+    let resolveAttendance!: () => void;
+    submitMissionMutate.mockReturnValueOnce(
+      new Promise<void>((resolve) => {
+        resolveAttendance = resolve;
+      }),
+    );
+    submitGoalMutate.mockResolvedValueOnce(undefined);
+    renderSection();
+
+    fireEvent.change(screen.getByRole('textbox'), {
+      target: { value: '목표를 적었습니다' },
+    });
+    const button = submitButton();
+    act(() => {
+      fireEvent.click(button);
+      fireEvent.click(button);
+      fireEvent.click(button);
+    });
+
+    expect(submitMissionMutate).toHaveBeenCalledTimes(1);
+    expect(button).toBeDisabled();
+
+    await act(async () => {
+      resolveAttendance();
+    });
+    await screen.findByRole('button', { name: '제출 완료' });
+
+    expect(submitMissionMutate).toHaveBeenCalledTimes(1);
+    expect(submitGoalMutate).toHaveBeenCalledTimes(1);
   });
 });
 

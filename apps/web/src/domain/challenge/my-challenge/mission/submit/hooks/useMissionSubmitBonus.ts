@@ -7,6 +7,7 @@ import { getSubmitErrorMessage } from '@/domain/challenge/utils/submitErrorMessa
 import dayjs from '@/lib/dayjs';
 import { Schedule } from '@/schema';
 import { useCallback, useEffect, useState } from 'react';
+import { useSubmitLock } from './useSubmitLock';
 
 interface UseMissionSubmitBonusParams {
   missionId?: number;
@@ -48,6 +49,11 @@ export function useMissionSubmitBonus({
 
   const submitBlogBonus = useSubmitMissionBlogBonus();
   const patchAttendance = usePatchAttendance();
+  const {
+    isLocked: isSubmitting,
+    lock: lockSubmit,
+    unlock: unlockSubmit,
+  } = useSubmitLock();
   const { testDate } = useChallengeNav();
 
   const disabled = isSubmitted && !isEditing;
@@ -76,6 +82,7 @@ export function useMissionSubmitBonus({
       console.error('미션 ID가 없습니다.');
       return;
     }
+    if (!lockSubmit()) return;
 
     try {
       const cleanAccountNumber = accountNumber.replace(/[^0-9]/g, '');
@@ -93,6 +100,8 @@ export function useMissionSubmitBonus({
     } catch (error) {
       console.error('제출 실패:', error);
       alert(getSubmitErrorMessage(error));
+    } finally {
+      unlockSubmit();
     }
   };
 
@@ -102,6 +111,7 @@ export function useMissionSubmitBonus({
 
   const handleSaveEdit = async () => {
     if (!attendanceInfo?.id) return;
+    if (!lockSubmit()) return;
 
     try {
       await patchAttendance.mutateAsync({
@@ -115,6 +125,8 @@ export function useMissionSubmitBonus({
       setShowToast(true);
     } catch (error) {
       console.error('미션 수정 실패:', error);
+    } finally {
+      unlockSubmit();
     }
   };
 
@@ -160,6 +172,7 @@ export function useMissionSubmitBonus({
 
   return {
     isSubmitted,
+    isSubmitting,
     isEditing,
     showToast,
     selectedBank,

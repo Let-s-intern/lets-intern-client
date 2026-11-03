@@ -10,6 +10,8 @@ interface MissionSubmitButtonProps {
   onCancelEdit?: () => void;
   onSaveEdit?: () => void;
   disabled?: boolean;
+  /** 제출·저장 요청이 진행 중이면 버튼을 끈다. */
+  isSubmitting?: boolean;
 }
 
 const MissionSubmitButton = ({
@@ -20,9 +22,11 @@ const MissionSubmitButton = ({
   isEditing = false,
   onCancelEdit,
   onSaveEdit,
-  disabled = false,
+  disabled: disabledProp = false,
+  isSubmitting = false,
 }: MissionSubmitButtonProps) => {
   const { selectedMissionTh } = useMissionStore();
+  const disabled = disabledProp || isSubmitting;
 
   // 수정 모드일 때 두 개의 버튼 표시
   if (isEditing) {

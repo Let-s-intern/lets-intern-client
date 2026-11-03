@@ -17,6 +17,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { clsx } from 'clsx';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useSubmitLock } from './hooks/useSubmitLock';
 
 /**  최초 입장을 판별하기 위한 아무값
  * 0회차에서 목표를 사용자가 입력하기 때문에
@@ -50,6 +51,11 @@ const MissionSubmitZeroSection = ({
   const submitChallengeGoal = useSubmitChallengeGoal();
   const submitAttendance = useSubmitMission();
   const { testDate } = useChallengeNav();
+  const {
+    isLocked: isSubmitting,
+    lock: lockSubmit,
+    unlock: unlockSubmit,
+  } = useSubmitLock();
 
   const [textareaValue, setTextareaValue] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(true);
@@ -90,6 +96,8 @@ const MissionSubmitZeroSection = ({
 
   const handleSubmit = async () => {
     if (!isMissionReady) return;
+    // 출석 생성과 목표 저장이 모두 끝날 때까지 잠근다.
+    if (!lockSubmit()) return;
 
     try {
       // 1. 출석 체크 먼저 (어드민 확인용 핵심 데이터)
@@ -117,6 +125,8 @@ const MissionSubmitZeroSection = ({
       console.error('제출 실패:', error);
       setShowToast(false);
       setShowErrorToast(true);
+    } finally {
+      unlockSubmit();
     }
   };
 
@@ -183,6 +193,7 @@ const MissionSubmitZeroSection = ({
           hasContent={textareaValue.trim().length > 0}
           onButtonClick={handleSubmit}
           disabled={isSubmitted || !isMissionReady}
+          isSubmitting={isSubmitting}
         />
       )}
       {/* 제출을 마친 뒤에도 공유가 남아 있다. 모달을 닫았을 때의 유일한 경로다. */}

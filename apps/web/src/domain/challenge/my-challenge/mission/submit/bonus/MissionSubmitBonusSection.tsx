@@ -41,6 +41,7 @@ const MissionSubmitBonusSection = ({
 }: MissionSubmitBonusSectionProps) => {
   const {
     isSubmitted,
+    isSubmitting,
     isEditing,
     showToast,
     selectedBank,
@@ -168,6 +169,7 @@ const MissionSubmitBonusSection = ({
             onSaveEdit={handleSaveEdit}
             onCancelEdit={handleCancelEdit}
             disabled={isResubmitBlocked}
+            isSubmitting={isSubmitting}
           />
         )}
 
