@@ -1,13 +1,18 @@
 import { useSearchUserExperiencesQuery } from '@/api/user/userExperience';
 import dayjs from '@/lib/dayjs';
 import { Schedule } from '@/schema';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 type ExperienceLevel = 'LV1' | 'LV2';
 
-export const useExperienceLevel = (schedules: Schedule[]) => {
-  const [level, setLevel] = useState<ExperienceLevel>('LV1');
-
+/**
+ * 경험정리 레벨과 판정이 끝났는지.
+ *
+ * 경험 조회가 끝나기 전에는 LV1 이 기본값이라, 그 사이의 LV1 은 판정 결과가 아니다.
+ * 경험정리 미션이 없는 일정은 조회하지 않으므로 바로 판정이 끝난 것으로 본다.
+ * 조회가 실패해도 끝난 것으로 본다(LV1). 제출을 영영 막지 않기 위해서다.
+ */
+export const useExperienceLevelState = (schedules: Schedule[]) => {
   // EXPERIENCE_1 타입의 첫 번째 미션의 startDate 추출
   const experience1MissionStartDate = useMemo(() => {
     const experience1Mission = schedules.find(
@@ -17,7 +22,7 @@ export const useExperienceLevel = (schedules: Schedule[]) => {
   }, [schedules]);
 
   // 모든 경험 데이터 검색
-  const { data: allExperiencesData } = useSearchUserExperiencesQuery(
+  const { data: allExperiencesData, isPending } = useSearchUserExperiencesQuery(
     {
       experienceCategories: [],
       activityTypes: [],
@@ -30,11 +35,10 @@ export const useExperienceLevel = (schedules: Schedule[]) => {
     !!experience1MissionStartDate,
   );
 
-  // 레벨 판별 로직
-  useEffect(() => {
+  // 레벨 판별 로직. 판정 완료 여부와 같은 렌더에서 맞도록 상태가 아니라 파생값으로 둔다.
+  const level = useMemo<ExperienceLevel>(() => {
     if (!experience1MissionStartDate || !allExperiencesData?.userExperiences) {
-      setLevel('LV1');
-      return;
+      return 'LV1';
     }
 
     const hasUserCreatedExperienceBeforeMissionStart =
@@ -46,8 +50,13 @@ export const useExperienceLevel = (schedules: Schedule[]) => {
         );
       });
 
-    setLevel(hasUserCreatedExperienceBeforeMissionStart ? 'LV2' : 'LV1');
+    return hasUserCreatedExperienceBeforeMissionStart ? 'LV2' : 'LV1';
   }, [experience1MissionStartDate, allExperiencesData]);
 
-  return level;
+  const isLevelReady = !experience1MissionStartDate || !isPending;
+
+  return { level, isLevelReady };
 };
+
+export const useExperienceLevel = (schedules: Schedule[]) =>
+  useExperienceLevelState(schedules).level;
