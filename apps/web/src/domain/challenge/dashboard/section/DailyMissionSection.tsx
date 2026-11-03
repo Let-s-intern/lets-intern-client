@@ -67,10 +67,6 @@ const DailyMissionSection = ({
 
   const isValid = useCallback(() => {
     if (isAxiosError(error)) {
-      const errorCode = error?.response?.data.status;
-      if (errorCode === 400) {
-        alert('0회차 미션을 먼저 완료해주세요.');
-      }
       return false;
     }
     return true;
