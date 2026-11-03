@@ -148,6 +148,9 @@ export const useLetsconApply = (): LetsconApply => {
                 },
               ]
             : [],
+          // 서버는 마그넷 신청마다 무료 자료집 알림톡을 보낸다. 렛츠콘은 결제 전에도
+          // 신청이 저장되므로 그 알림톡이 혼선을 준다. isExtra 면 서버가 발송을 건너뛴다
+          isExtra: true,
         },
       });
     } catch (error) {
