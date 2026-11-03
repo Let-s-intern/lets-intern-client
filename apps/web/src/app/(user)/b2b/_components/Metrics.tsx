@@ -12,7 +12,7 @@ export default function Metrics() {
     { label: '누적 참여자 수', value: '5,000+명' },
     { label: '수료율', value: '80+%' },
     { label: '누적 후기 개수', value: '3,300+개' },
-    { label: '인스타그램 팔로워 수', value: '1.8M' },
+    { label: '인스타그램 팔로워 수', value: '3.9M+' },
     { label: '커뮤니티 참여자 수', value: '2,500+명' },
   ];
 

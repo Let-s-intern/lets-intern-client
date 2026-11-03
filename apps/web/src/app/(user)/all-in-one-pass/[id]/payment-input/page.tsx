@@ -166,7 +166,7 @@ export default function MembershipPaymentInputPage() {
               programType="MEMBERSHIP"
               maxAmount={originalTotal}
               salePrice={originalTotal}
-              allowFullDiscount={false}
+              // allowFullDiscount={false}
             />
           )}
           <div className="flex flex-col gap-y-5">

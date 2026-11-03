@@ -9,13 +9,13 @@ import type { ChallengeType } from '@/schema';
 
 /** 챌린지 타입별 할인가 (베이직 플랜 기준) */
 export const CHALLENGE_PRICES: Partial<Record<ChallengeType, number>> = {
-  EXPERIENCE_SUMMARY: 10000, // 기필코 경험정리
-  CAREER_START: 10000, // 이력서 1주 완성
-  PERSONAL_STATEMENT: 53500, // 자기소개서 2주 완성
+  EXPERIENCE_SUMMARY: 33000, // 기필코 경험정리
+  CAREER_START: 33000, // 이력서 1주 완성
+  PERSONAL_STATEMENT: 83500, // 자기소개서 2주 완성
   PERSONAL_STATEMENT_LARGE_CORP: 128500, // 대기업 공채 자소서
-  PORTFOLIO: 58500, // 포트폴리오 2주 완성
-  MEETING_PREPARATION: 45000, // 면접 준비 끝장
-  ETC: 59000, // 인적성 검사 수리/추리 뽀개기
+  PORTFOLIO: 88500, // 포트폴리오 2주 완성
+  MEETING_PREPARATION: 75000, // 면접 준비 끝장
+  ETC: 79000, // 인적성 검사 수리/추리 뽀개기
   MARKETING: 99000, // 마케팅 서류 완성 올인원
   HR: 89000, // HR/인사 직무
   PM: 79000, // PM/서비스기획

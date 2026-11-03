@@ -107,7 +107,7 @@ export default function CompareModal({
         {/* 헤더 — 상단 full-width */}
         <div className="border-neutral-80 relative shrink-0 gap-2 border-b pb-3 md:gap-4 md:pb-5">
           <h3 className="text-xsmall16 md:text-medium24 text-neutral-0 font-bold">
-            어떤 프로그램을 이용을 고민하고 계신가요?
+            어떤 프로그램 이용을 고민하고 계신가요?
           </h3>
           <p className="text-xxsmall12 md:text-small18 text-neutral-40 mt-1 md:mt-2">
             필요한 프로그램들을 골라 개별 구매와 패스 가격을 비교해 보세요.
