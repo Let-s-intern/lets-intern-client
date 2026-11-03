@@ -5,6 +5,7 @@ import LoadingContainer from '@/common/loading/LoadingContainer';
 import { ProgramInfo } from '@/schema';
 import { useSeminarList } from '../hooks/useSeminarList';
 import { useSeminarStatusParam } from '../hooks/useSeminarStatusParam';
+import LetsconCard, { isLetsconCardVisible } from '../ui/LetsconCard';
 import SeminarClosedCard from '../ui/SeminarClosedCard';
 import SeminarRecruitingCard from '../ui/SeminarRecruitingCard';
 import { SeminarStatus } from '../utils/seminarStatus';
@@ -22,6 +23,7 @@ interface SeminarListContentProps {
   isError: boolean;
   programs: ProgramInfo[];
   onGoClosed: () => void;
+  showLetscon: boolean;
 }
 
 /** 세미나 리스트 본문 — 로딩/에러/빈 상태를 early return으로 가드한 뒤 카드 그리드를 렌더한다. */
@@ -31,6 +33,7 @@ const SeminarListContent = ({
   isError,
   programs,
   onGoClosed,
+  showLetscon,
 }: SeminarListContentProps) => {
   // 앵콜 이벤트 user_id용. 로그인 시 1회 조회(캐시)해 카드에 내려준다.
   const { data: user } = useUserQuery();
@@ -41,7 +44,8 @@ const SeminarListContent = ({
     return <p className="whitespace-pre-line text-center">{ERROR_MESSAGE}</p>;
   }
 
-  if (programs.length === 0) {
+  // 렛츠콘 카드가 있으면 세미나가 없어도 빈 상태 대신 카드를 보여 준다
+  if (programs.length === 0 && !showLetscon) {
     return status === 'recruiting' ? (
       <SeminarListEmptyState onGoClosed={onGoClosed} />
     ) : (
@@ -58,6 +62,7 @@ const SeminarListContent = ({
         // (컴포넌트 재사용 시 이전 탭의 page/scroll 이 남아 빈 화면이 노출됨).
         key={status}
         programs={programs}
+        leadingCard={showLetscon ? <LetsconCard /> : undefined}
         // 모집 종료는 앵콜 요청 카드(figma 14), 모집 중은 기존 프로그램 카드.
         renderCard={
           status === 'closed'
@@ -124,12 +129,13 @@ const SeminarListSection = () => {
   const [status, setStatus] = useSeminarStatusParam();
   const { data, isLoading, isFetching, isError } = useSeminarList(status);
   const programs = data?.programList ?? [];
+  const showLetscon = status === 'recruiting' && isLetsconCardVisible();
 
   return (
     <section className="mx-auto flex w-full max-w-[1120px] flex-col gap-8 md:gap-11">
       <SeminarStatusTabs />
       {/* 헤더는 세미나가 있을 때만. 비었을 땐 빈 상태 메시지와 중복되지 않게 숨긴다. */}
-      {programs.length > 0 &&
+      {(programs.length > 0 || showLetscon) &&
         (status === 'recruiting' ? <RecruitingHeader /> : <ClosedHeader />)}
       <SeminarListContent
         status={status}
@@ -137,6 +143,7 @@ const SeminarListSection = () => {
         isError={isError}
         programs={programs}
         onGoClosed={() => setStatus('closed')}
+        showLetscon={showLetscon}
       />
     </section>
   );
