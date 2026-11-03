@@ -28,14 +28,22 @@ interface Props {
 const SUMMARY_DESCRIPTION =
   '경험 정리부터 자소서·포폴, 인적성·면접까지.\n필요한 자료와 현직자의 도움을 한 번에 이용해 보세요.';
 
-// 신뢰 지표(하드코딩). value = 큰 숫자, unit = 뒤에 붙는 작은 단위.
-const METRICS = [
-  { label: '교육 만족도', value: '4.6', unit: '' },
+// 신뢰 지표(하드코딩). value = 큰 숫자, unit = 뒤에 붙는 작은 단위. href = 바로가기 링크.
+const METRICS: {
+  label: string;
+  value?: string;
+  unit?: string;
+  href?: string;
+}[] = [
+  { label: '교육 만족도', value: '4.6' },
   { label: '누적 참여자 수', value: '5,000+', unit: '명' },
   { label: '수료율', value: '80+', unit: '%' },
   { label: '누적 후기 개수', value: '3,300+', unit: '개' },
-  { label: '인스타그램 팔로워 수', value: '1.8', unit: 'M' },
   { label: '커뮤니티 참여자 수', value: '2,500+', unit: '명' },
+  {
+    label: '인스타그램',
+    href: 'https://www.instagram.com/letscareer.official/',
+  },
 ];
 
 /** 혜택 섹션(#benefit) — 어드민이 저장한 혜택요약 카드 + VOD 옵션 판매 시 VOD 카드 삽입. */
@@ -185,11 +193,25 @@ export default function BenefitSummarySection({
                   {m.label}
                 </span>
                 <span className="text-xlarge28 md:text-xxlarge32 font-bold">
-                  <CountUpNumber value={m.value} />
-                  {m.unit && (
-                    <span className="text-xsmall16 md:text-medium24 ml-0.5 font-semibold">
-                      {m.unit}
-                    </span>
+                  {m.href ? (
+                    <a
+                      href={m.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-small20 md:text-medium24 inline-flex items-center gap-0.5 text-[#4A76FF]"
+                    >
+                      바로가기
+                      <ChevronRight className="h-6 w-6" />
+                    </a>
+                  ) : (
+                    <>
+                      <CountUpNumber value={m.value ?? ''} />
+                      {m.unit && (
+                        <span className="text-xsmall16 md:text-medium24 ml-0.5 font-semibold">
+                          {m.unit}
+                        </span>
+                      )}
+                    </>
                   )}
                 </span>
               </div>
