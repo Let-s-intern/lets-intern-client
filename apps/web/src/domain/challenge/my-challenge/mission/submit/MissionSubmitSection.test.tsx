@@ -30,8 +30,15 @@ jest.mock('@/domain/challenge/hooks/useChallengeNav', () => ({
   }),
 }));
 
+// 0회차 판정(useMissionCalculation)은 편성(schedules)을 본다. 기본은 0회차 없는 챌린지다.
+let mockSchedules: Schedule[] = [];
+jest.mock('@/context/CurrentChallengeProvider', () => ({
+  useCurrentChallenge: () => ({ schedules: mockSchedules }),
+}));
+
 import { buildSchedule } from '@/domain/challenge/utils/__fixtures__/challengeSchedule';
 import dayjs from '@/lib/dayjs';
+import { Schedule } from '@/schema';
 import { useMissionStore } from '@/store/useMissionStore';
 import { Dayjs } from 'dayjs';
 import MissionSubmitSection from './MissionSubmitSection';
@@ -71,6 +78,7 @@ const setup = (
 
 afterEach(() => {
   mockTestDate = undefined;
+  mockSchedules = [];
   jest.useRealTimers();
 });
 
@@ -142,5 +150,56 @@ describe('MissionSubmitSection 예외 상황', () => {
     const container = setup(3, period.upcoming);
 
     expect(container.textContent).toContain('일반 제출 폼');
+  });
+});
+
+// 0회차를 내지 않으면 1회차 이상은 서버가 제출을 거절한다(LC-3552). 폼 대신 안내를 그린다.
+describe('MissionSubmitSection 0회차 미제출 게이트', () => {
+  const OT_NOTICE = '0회차 미션을 먼저 제출해야 제출할 수 있어요';
+  const zeroSchedule = (result: Schedule['attendanceInfo']['result']) =>
+    buildSchedule({ th: 0, ...period.past, attendance: { result } });
+
+  it.each([[1], [99], [100]])(
+    '0회차 미제출이면 %s회차는 제출 폼 대신 안내를 그린다',
+    (th) => {
+      mockSchedules = [zeroSchedule(null)];
+      const container = setup(th, period.inProgress);
+
+      expect(container.textContent).toContain(OT_NOTICE);
+      expect(container.textContent).not.toContain('제출 폼');
+    },
+  );
+
+  it('0회차를 통과했으면 1회차 제출 폼을 그린다', () => {
+    mockSchedules = [zeroSchedule('PASS')];
+    const container = setup(1, period.inProgress);
+
+    expect(container.textContent).toContain('일반 제출 폼');
+    expect(container.textContent).not.toContain(OT_NOTICE);
+  });
+
+  // 0회차가 없으면 isZeroMissionPassed 는 false 다. 이때 막으면 모든 제출이 막힌다.
+  it('0회차가 없는 챌린지는 1회차 제출 폼을 그린다', () => {
+    mockSchedules = [];
+    const container = setup(1, period.inProgress);
+
+    expect(container.textContent).toContain('일반 제출 폼');
+    expect(container.textContent).not.toContain(OT_NOTICE);
+  });
+
+  it('0회차를 선택하면 0회차 제출 폼을 그린다', () => {
+    mockSchedules = [zeroSchedule(null)];
+    const container = setup(0, period.inProgress);
+
+    expect(container.textContent).toContain('OT 제출 폼');
+    expect(container.textContent).not.toContain(OT_NOTICE);
+  });
+
+  it('시작 전 회차는 0회차 안내보다 오픈 안내가 우선한다', () => {
+    mockSchedules = [zeroSchedule(null)];
+    const container = setup(1, period.upcoming);
+
+    expect(container.textContent).toContain('제출할 수 있습니다');
+    expect(container.textContent).not.toContain(OT_NOTICE);
   });
 });

@@ -1,22 +1,26 @@
 /**
  * @jest-environment jsdom
  */
-import { render } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 
 let mockPathname = '/challenge/1/369';
+let mockAttendanceInfoError: unknown = null;
+const mockPush = jest.fn();
 
 jest.mock('@/api/challenge/challenge', () => ({
-  useChallengeMissionAttendanceInfoQuery: () => ({ error: null }),
+  useChallengeMissionAttendanceInfoQuery: () => ({
+    error: mockAttendanceInfoError,
+  }),
 }));
 
 jest.mock('next/navigation', () => ({
   useParams: () => ({ applicationId: '1', programId: '369' }),
   usePathname: () => mockPathname,
-  useRouter: () => ({ push: jest.fn() }),
+  useRouter: () => ({ push: mockPush }),
   useSearchParams: () => new URLSearchParams(),
 }));
 
-// 이용 기록 모듈은 axios 를 끌고 온다. 카드를 누르지 않는 테스트라 통째로 막는다.
+// 이용 기록 모듈은 axios 를 끌고 온다. 기록 여부는 여기서 보지 않으므로 통째로 막는다.
 jest.mock('@/domain/challenge/api/missionAccessLog', () => ({
   logMissionAccess: jest.fn(),
 }));
@@ -30,6 +34,7 @@ jest.mock('@/context/CurrentChallengeProvider', () => ({
 
 import dayjs from '@/lib/dayjs';
 import { Schedule } from '@/schema';
+import { AxiosError, AxiosHeaders } from 'axios';
 import { Dayjs } from 'dayjs';
 import {
   buildChallengeSchedules,
@@ -158,5 +163,55 @@ describe('MissionCalendarItem — 진행 중인 미션이 없는 새벽', () => 
     for (const schedule of schedules) {
       expect(isCardHighlighted(renderItem(schedule, dawn))).toBe(false);
     }
+  });
+});
+
+// LC-3552 — 서버가 더 이상 0회차 미제출로 상세 조회를 막지 않는다. 남은 400 은 신청하지 않은
+// 미션 같은 다른 사유라 "0회차 미션을 먼저 완료해주세요." 를 띄우면 틀린 안내가 된다.
+describe('MissionCalendarItem — 상세 조회 실패', () => {
+  afterEach(() => {
+    mockAttendanceInfoError = null;
+    mockPush.mockClear();
+  });
+
+  it('400 이면 alert 없이 이동하지 않는다', () => {
+    const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
+    // 카드는 실패한 조회를 console.log 로 남긴다. 테스트 출력만 조용히 한다.
+    const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    mockAttendanceInfoError = new AxiosError(
+      'Request failed',
+      '400',
+      undefined,
+      null,
+      {
+        status: 400,
+        statusText: '',
+        data: { status: 400, message: '신청하지 않은 미션입니다' },
+        headers: new AxiosHeaders(),
+        config: { headers: new AxiosHeaders() },
+      },
+    );
+    const container = renderItem(
+      buildSchedule({ th: 3, day: 2 }),
+      noonOfMission(3),
+    );
+
+    fireEvent.click(container.firstElementChild as HTMLElement);
+
+    expect(alertSpy).not.toHaveBeenCalled();
+    expect(mockPush).not.toHaveBeenCalled();
+    alertSpy.mockRestore();
+    logSpy.mockRestore();
+  });
+
+  it('조회가 성공하면 나의 기록장으로 이동한다', () => {
+    const container = renderItem(
+      buildSchedule({ th: 3, day: 2 }),
+      noonOfMission(3),
+    );
+
+    fireEvent.click(container.firstElementChild as HTMLElement);
+
+    expect(mockPush).toHaveBeenCalledWith('/challenge/1/369/me');
   });
 });
