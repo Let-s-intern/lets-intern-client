@@ -55,6 +55,7 @@ function MyChallengeDashboardContent() {
           <MissionSubmitSection
             attendanceInfo={selectedSchedule?.attendanceInfo}
             mission={selectedSchedule?.missionInfo}
+            isExperienceLevelReady={isLevelReady}
           />
         </div>
         {/* 멘토 피드백 여부에 따라 값 받고 노출 */}

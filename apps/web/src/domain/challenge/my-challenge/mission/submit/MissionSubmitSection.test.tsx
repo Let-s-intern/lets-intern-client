@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 
 // 자식 섹션은 각자 쿼리·폼을 끌고 온다. 여기서 볼 것은 "무엇이 그려지는가" 뿐이다.
 jest.mock('./MissionSubmitZeroSection', () => ({
@@ -18,7 +18,11 @@ jest.mock('../talent/MissionSubmitTalentPoolSection', () => ({
 }));
 jest.mock('./regular/MissionSubmitRegularSection', () => ({
   __esModule: true,
-  default: () => <div>일반 제출 폼</div>,
+  default: ({ submitDisabled }: { submitDisabled?: boolean }) => (
+    <div>
+      일반 제출 폼<button disabled={submitDisabled}>제출하기</button>
+    </div>
+  ),
 }));
 
 let mockTestDate: string | undefined;
@@ -208,4 +212,55 @@ describe('MissionSubmitSection 0회차 미제출 게이트', () => {
     expect(container.textContent).toContain('제출할 수 있습니다');
     expect(container.textContent).not.toContain(OT_NOTICE);
   });
+});
+
+// LC-3555. 경험 조회 전 LV1 기본값으로 경험정리 미션에 제출되는 틈을 막는다.
+describe('MissionSubmitSection 레벨 판정 전 제출 잠금', () => {
+  const renderWith = ({
+    missionType,
+    isExperienceLevelReady,
+  }: {
+    missionType: Schedule['missionInfo']['missionType'];
+    isExperienceLevelReady: boolean;
+  }) => {
+    jest.useFakeTimers().setSystemTime(NOW.valueOf());
+    useMissionStore.setState({ selectedMissionId: 1003, selectedMissionTh: 3 });
+    const schedule = buildSchedule({
+      th: 3,
+      ...period.inProgress,
+      missionType,
+    });
+
+    render(
+      <MissionSubmitSection
+        mission={schedule.missionInfo}
+        isExperienceLevelReady={isExperienceLevelReady}
+      />,
+    );
+    return screen.getByRole('button', { name: '제출하기' });
+  };
+
+  it.each([['EXPERIENCE_1'], ['EXPERIENCE_2']] as const)(
+    '판정 전 %s 미션은 제출 버튼이 꺼진다',
+    (missionType) => {
+      expect(
+        renderWith({ missionType, isExperienceLevelReady: false }),
+      ).toBeDisabled();
+    },
+  );
+
+  it('판정이 끝나면 경험정리 미션 제출 버튼이 켜진다', () => {
+    expect(
+      renderWith({ missionType: 'EXPERIENCE_1', isExperienceLevelReady: true }),
+    ).toBeEnabled();
+  });
+
+  it.each([[null], [undefined]])(
+    '경험정리가 아닌 미션(%s)은 판정과 무관하게 켜져 있다',
+    (missionType) => {
+      expect(
+        renderWith({ missionType, isExperienceLevelReady: false }),
+      ).toBeEnabled();
+    },
+  );
 });

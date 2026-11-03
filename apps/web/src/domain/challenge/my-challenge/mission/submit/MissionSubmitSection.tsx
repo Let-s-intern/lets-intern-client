@@ -1,4 +1,5 @@
 import useChallengeNav from '@/domain/challenge/hooks/useChallengeNav';
+import { isExperienceMissionType } from '@/domain/challenge/utils/experienceLevelMission';
 import { getMissionTimeState } from '@/domain/challenge/utils/missionTimeState';
 import { useMissionCalculation } from '@/hooks/useMissionCalculation';
 import dayjs from '@/lib/dayjs';
@@ -18,6 +19,8 @@ interface MissionSubmitSectionProps {
   attendanceInfo?: Schedule['attendanceInfo'] | null;
   /** 레벨로 걸러진 목록에서 찾은 선택 미션. 시작일 판정과 일반 폼 표시 여부에 쓴다. */
   mission?: ScheduleMission | null;
+  /** 경험정리 레벨 판정이 끝났는지. 끝나기 전에는 경험정리 미션 제출 버튼을 끈다. */
+  isExperienceLevelReady?: boolean;
   onRefreshMissionData?: () => void; // 미션 데이터 새로고침 callback
   onSubmitLastMission?: () => void;
 }
@@ -26,6 +29,7 @@ const MissionSubmitSection = ({
   className,
   mission,
   attendanceInfo,
+  isExperienceLevelReady = true,
   onRefreshMissionData,
   onSubmitLastMission,
 }: MissionSubmitSectionProps) => {
@@ -36,6 +40,10 @@ const MissionSubmitSection = ({
   // 어드민 미리보기(?testDate=)에서는 그 날짜를 '지금' 으로 본다.
   const now = testDate ? dayjs(testDate) : dayjs();
   const timeState = mission ? getMissionTimeState(mission, now) : null;
+
+  // 판정 전 레벨은 LV1 기본값이다. 그대로 제출하면 LV2 멘티가 경험정리1 에 낸다(LC-3555).
+  const isSubmitLockedUntilLevelReady =
+    !isExperienceLevelReady && isExperienceMissionType(mission?.missionType);
 
   const renderSection = () => {
     // 시작 전이면 회차 종류와 무관하게 제출 폼 대신 안내를 그린다.
@@ -92,6 +100,7 @@ const MissionSubmitSection = ({
         selectedMissionTh={selectedMissionTh}
         missionId={selectedMissionId}
         attendanceInfo={attendanceInfo}
+        submitDisabled={isSubmitLockedUntilLevelReady}
         onRefreshMissionData={onRefreshMissionData}
         onSubmitLastMission={onSubmitLastMission}
       />

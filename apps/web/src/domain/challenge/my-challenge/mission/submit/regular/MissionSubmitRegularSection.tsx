@@ -22,6 +22,8 @@ interface MissionSubmitRegularSectionProps {
   selectedMissionTh: number;
   missionId?: number;
   attendanceInfo?: MissionSubmitRegularAttendanceInfo | null;
+  /** 제출 버튼을 끈다. 경험정리 레벨 판정 전에 쓴다. */
+  submitDisabled?: boolean;
   onRefreshMissionData?: () => void;
   onSubmitLastMission?: () => void;
 }
@@ -31,6 +33,7 @@ const MissionSubmitRegularSection = ({
   selectedMissionTh,
   missionId,
   attendanceInfo,
+  submitDisabled = false,
   onRefreshMissionData,
   onSubmitLastMission,
 }: MissionSubmitRegularSectionProps) => {
@@ -126,7 +129,7 @@ const MissionSubmitRegularSection = ({
             isEditing={isEditing}
             onCancelEdit={handleCancelEdit}
             onSaveEdit={handleSaveEdit}
-            disabled={isResubmitBlocked}
+            disabled={isResubmitBlocked || submitDisabled}
           />
         )}
         {/* 제출을 마친 뒤에도 공유가 남아 있다. 모달을 닫았을 때의 유일한 경로다. */}
