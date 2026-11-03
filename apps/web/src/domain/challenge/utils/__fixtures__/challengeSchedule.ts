@@ -35,6 +35,7 @@ export const buildSchedule = ({
   startDate,
   endDate,
   attendance,
+  missionType,
 }: {
   th: number | null;
   id?: number;
@@ -43,6 +44,7 @@ export const buildSchedule = ({
   startDate?: Dayjs | null;
   endDate?: Dayjs | null;
   attendance?: AttendanceOverrides;
+  missionType?: Schedule['missionInfo']['missionType'];
 }): Schedule => ({
   missionInfo: {
     id: id ?? (th ?? 0) + 1000,
@@ -51,6 +53,7 @@ export const buildSchedule = ({
     startDate: startDate !== undefined ? startDate : dayStart(day ?? 0),
     endDate: endDate !== undefined ? endDate : dayEnd(day ?? 0),
     status: null,
+    ...(missionType !== undefined && { missionType }),
   },
   attendanceInfo: { ...emptyAttendance, ...attendance },
 });

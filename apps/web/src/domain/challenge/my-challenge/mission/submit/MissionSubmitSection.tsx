@@ -1,4 +1,5 @@
 import useChallengeNav from '@/domain/challenge/hooks/useChallengeNav';
+import { isExperienceMissionType } from '@/domain/challenge/utils/experienceLevelMission';
 import { getMissionTimeState } from '@/domain/challenge/utils/missionTimeState';
 import { useMissionCalculation } from '@/hooks/useMissionCalculation';
 import dayjs from '@/lib/dayjs';
@@ -16,8 +17,10 @@ import MissionSubmitOTRequiredNotice from './ui/MissionSubmitOTRequiredNotice';
 interface MissionSubmitSectionProps {
   className?: string;
   attendanceInfo?: Schedule['attendanceInfo'] | null;
-  /** 선택된 미션. 시작일 판정에 쓴다. */
+  /** 레벨로 걸러진 목록에서 찾은 선택 미션. 시작일 판정과 일반 폼 표시 여부에 쓴다. */
   mission?: ScheduleMission | null;
+  /** 경험정리 레벨 판정이 끝났는지. 끝나기 전에는 경험정리 미션 제출 버튼을 끈다. */
+  isExperienceLevelReady?: boolean;
   onRefreshMissionData?: () => void; // 미션 데이터 새로고침 callback
   onSubmitLastMission?: () => void;
 }
@@ -26,6 +29,7 @@ const MissionSubmitSection = ({
   className,
   mission,
   attendanceInfo,
+  isExperienceLevelReady = true,
   onRefreshMissionData,
   onSubmitLastMission,
 }: MissionSubmitSectionProps) => {
@@ -36,6 +40,10 @@ const MissionSubmitSection = ({
   // 어드민 미리보기(?testDate=)에서는 그 날짜를 '지금' 으로 본다.
   const now = testDate ? dayjs(testDate) : dayjs();
   const timeState = mission ? getMissionTimeState(mission, now) : null;
+
+  // 판정 전 레벨은 LV1 기본값이다. 그대로 제출하면 LV2 멘티가 경험정리1 에 낸다(LC-3555).
+  const isSubmitLockedUntilLevelReady =
+    !isExperienceLevelReady && isExperienceMissionType(mission?.missionType);
 
   const renderSection = () => {
     // 시작 전이면 회차 종류와 무관하게 제출 폼 대신 안내를 그린다.
@@ -81,12 +89,18 @@ const MissionSubmitSection = ({
       );
     }
 
+    // 선택된 미션이 레벨로 걸러진 목록에 없으면 폼을 그리지 않는다. 다른 레벨 경험정리
+    // 미션이 선택된 채로 그리면 화면과 다른 미션으로 제출된다(LC-3555). 선택은 /me 에서
+    // 레벨에 맞춰지므로, 맞춰지기 전 한 순간이나 맞출 짝이 없을 때의 방어선이다.
+    if (!mission) return null;
+
     // 마감된 회차도 폼을 연다. 지각 제출은 챌린지 종료 +2일까지 유지된다.
     return (
       <MissionSubmitRegularSection
         selectedMissionTh={selectedMissionTh}
         missionId={selectedMissionId}
         attendanceInfo={attendanceInfo}
+        submitDisabled={isSubmitLockedUntilLevelReady}
         onRefreshMissionData={onRefreshMissionData}
         onSubmitLastMission={onSubmitLastMission}
       />
