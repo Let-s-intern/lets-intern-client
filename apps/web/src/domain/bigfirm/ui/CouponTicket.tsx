@@ -56,6 +56,8 @@ export function CouponTicket() {
           <button
             type="button"
             onClick={copy}
+            data-track-target="coupon_copy"
+            data-track-location="coupon"
             className="shrink-0 rounded-sm bg-white px-5 py-3 text-[15px] font-extrabold text-[#3a46e0] hover:brightness-95"
           >
             {label}

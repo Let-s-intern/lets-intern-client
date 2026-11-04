@@ -50,6 +50,9 @@ export function MentorFinder({ images }: { images: MentorImages }) {
             key={tab.key}
             type="button"
             aria-pressed={tab.key === active}
+            data-track-target="company_tab"
+            data-track-location="mentor_finder"
+            data-track-tab={tab.key}
             onClick={() => setActive(tab.key)}
             className={`inline-flex items-center gap-1.5 rounded-full border-[1.5px] px-4 py-2 text-[15px] font-bold transition-colors ${
               tab.key === active
@@ -143,6 +146,9 @@ function MentorCard({
       </p>
       <Link
         href={mentorDetailUrl(mentor.id)}
+        data-track-target="mentor_detail"
+        data-track-location="mentor_finder"
+        data-track-mentor-id={mentor.id}
         target="_blank"
         rel="noopener noreferrer"
         className="text-primary mt-auto flex w-full items-center rounded-md bg-[#e9eaff] px-4 py-2.5 text-sm font-medium after:absolute after:inset-0 after:rounded-[20px] hover:bg-[#dfe1fe]"
