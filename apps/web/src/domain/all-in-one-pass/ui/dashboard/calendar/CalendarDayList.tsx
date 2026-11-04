@@ -3,6 +3,7 @@
 // 선택일의 프로그램/일정 목록 — 상태 뱃지·일시·참여/대시보드 버튼
 import SolidButton from '@/common/button/SolidButton';
 import dayjs from '@/lib/dayjs';
+import { useToast } from '@letscareer/ui';
 import clsx from 'clsx';
 import { ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -12,12 +13,14 @@ import type {
   PassCalendarEventType,
   PassParticipationStatus,
 } from '../../../types';
+import { useCalendarApply } from './CalendarApplyContext';
 
 type Day = ReturnType<typeof dayjs>;
 
 /** 캘린더 유형 라벨 (프로그램 종류 아님 — 어드민 캘린더 유형) */
 const TYPE_LABEL: Record<PassCalendarEventType, string> = {
   CHALLENGE: '챌린지',
+  LIVE: 'LIVE 클래스',
   GUERRILLA: '게릴라세션',
   MILESTONE: '기타 일정',
 };
@@ -41,6 +44,8 @@ interface Props {
 
 export default function CalendarDayList({ date, events, stickyTop }: Props) {
   const router = useRouter();
+  const toast = useToast();
+  const { applyChallenge, applyLive } = useCalendarApply();
   const rootRef = useRef<HTMLDivElement>(null);
   const ulRef = useRef<HTMLUListElement>(null);
 
@@ -90,14 +95,20 @@ export default function CalendarDayList({ date, events, stickyTop }: Props) {
           className="custom-scrollbar flex flex-col px-0 md:h-[480px] md:overflow-y-auto md:px-4"
         >
           {events.map((ev) => {
-            // 챌린지: 참여(challengeApplicationId 있음) 여부로 상세↔대시보드 분기
-            const enrolled = ev.challengeApplicationId != null;
+            // 챌린지 참여 여부는 status 로 판정(참여중/완료). challengeApplicationId 는
+            // '시작한' 참여건만 채워지므로(시작 전이면 null) 참여 판정에 쓰면 안 된다.
+            const participating =
+              ev.type === 'CHALLENGE' &&
+              ev.status != null &&
+              ev.status !== 'BEFORE';
+            // 대시보드 route 는 시작한 챌린지(challengeApplicationId 있음)만 만들 수 있다.
+            const started = ev.challengeApplicationId != null;
             const detailHref =
               ev.programId != null
                 ? `/program/challenge/${ev.programId}`
                 : undefined;
             const dashboardHref =
-              enrolled && ev.programId != null
+              started && ev.programId != null
                 ? `/challenge/${ev.challengeApplicationId}/${ev.programId}`
                 : undefined;
             const showChevron = ev.type === 'CHALLENGE' && detailHref != null;
@@ -108,6 +119,14 @@ export default function CalendarDayList({ date, events, stickyTop }: Props) {
               isJoinEvent &&
               !now.isBefore(dayjs(ev.startDate).subtract(10, 'minute')) &&
               (!ev.endDate || !now.isAfter(dayjs(ev.endDate)));
+            const liveNow =
+              ev.type === 'LIVE' &&
+              ev.status === 'IN_PROGRESS' &&
+              !now.isBefore(dayjs(ev.startDate)) &&
+              (!ev.endDate || !now.isAfter(dayjs(ev.endDate)));
+            // 모집 시작 전(챌린지·라이브 공통) — 신청 불가라 상세 랜딩으로 보낸다
+            const recruitUpcoming =
+              ev.beginning != null && dayjs(ev.beginning).isAfter(now);
 
             const onChevron = () => {
               if (detailHref) router.push(detailHref);
@@ -156,31 +175,39 @@ export default function CalendarDayList({ date, events, stickyTop }: Props) {
                     </p>
                   )}
 
-                  <p className="text-xxsmall12 text-neutral-40 flex gap-1 tracking-tight">
-                    {ev.type === 'GUERRILLA' || ev.type === 'MILESTONE' ? (
-                      <>
-                        <span>일시</span>
-                        <span>
-                          {dayjs(ev.startDate).format('YY.MM.DD HH:mm')}
-                          {ev.endDate &&
-                            (dayjs(ev.endDate).isSame(
-                              dayjs(ev.startDate),
-                              'day',
-                            )
-                              ? ` ~ ${dayjs(ev.endDate).format('HH:mm')}`
-                              : ` ~ ${dayjs(ev.endDate).format('YY.MM.DD HH:mm')}`)}
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        <span>진행기간</span>
-                        <span>
-                          {dayjs(ev.startDate).format('YY.MM.DD')}
-                          {ev.endDate
-                            ? ` ~ ${dayjs(ev.endDate).format('YY.MM.DD')}`
-                            : ''}
-                        </span>
-                      </>
+                  <p className="text-xxsmall12 text-neutral-40 flex flex-wrap items-center justify-between gap-y-1 tracking-tight md:justify-normal md:gap-x-8">
+                    <span className="flex gap-1 whitespace-nowrap">
+                      {ev.type !== 'CHALLENGE' ? (
+                        <>
+                          <span>일시</span>
+                          <span>
+                            {dayjs(ev.startDate).format('YY.MM.DD HH:mm')}
+                            {ev.endDate &&
+                              (dayjs(ev.endDate).isSame(
+                                dayjs(ev.startDate),
+                                'day',
+                              )
+                                ? ` ~ ${dayjs(ev.endDate).format('HH:mm')}`
+                                : ` ~ ${dayjs(ev.endDate).format('YY.MM.DD HH:mm')}`)}
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <span>진행기간</span>
+                          <span>
+                            {dayjs(ev.startDate).format('YY.MM.DD')}
+                            {ev.endDate
+                              ? ` ~ ${dayjs(ev.endDate).format('YY.MM.DD')}`
+                              : ''}
+                          </span>
+                        </>
+                      )}
+                    </span>
+                    {liveNow && (
+                      <span className="text-system-error flex shrink-0 items-center gap-1 whitespace-nowrap font-semibold">
+                        <span className="bg-system-error size-1.5 shrink-0 rounded-full" />
+                        LIVE 진행 중
+                      </span>
                     )}
                   </p>
                 </div>
@@ -189,12 +216,32 @@ export default function CalendarDayList({ date, events, stickyTop }: Props) {
                   <SolidButton
                     size="sm"
                     className="text-xsmall14 w-full"
+                    // 참여 중인데 아직 시작 전이면 입장 불가 → 비활성화
+                    disabled={participating && !started}
                     onClick={() => {
-                      const href = enrolled ? dashboardHref : detailHref;
-                      if (href) router.push(href);
+                      if (participating) {
+                        // 시작한 챌린지만 대시보드 입장, 시작 전이면 안내(마이페이지와 동일).
+                        if (dashboardHref) {
+                          router.push(dashboardHref);
+                        } else {
+                          toast.toast({
+                            variant: 'default',
+                            title: '아직 시작 전인 챌린지예요',
+                            description:
+                              '시작일 이후 대시보드에 입장할 수 있어요.',
+                          });
+                        }
+                        return;
+                      }
+                      // 미참여: 모집예정은 신청 불가 → 랜딩, 모집중은 바텀시트
+                      if (recruitUpcoming) {
+                        if (detailHref) router.push(detailHref);
+                        return;
+                      }
+                      if (ev.programId != null) applyChallenge(ev.programId);
                     }}
                   >
-                    {enrolled ? '대시보드 입장' : '참여하기'}
+                    {participating ? '대시보드 입장' : '참여하기'}
                   </SolidButton>
                 )}
                 {isJoinEvent && ev.url && (
@@ -209,6 +256,24 @@ export default function CalendarDayList({ date, events, stickyTop }: Props) {
                     참여하기
                   </SolidButton>
                 )}
+                {ev.type === 'LIVE' &&
+                  ev.status === 'BEFORE' &&
+                  ev.programId != null && (
+                    <SolidButton
+                      size="sm"
+                      className="text-xsmall14 w-full"
+                      onClick={() => {
+                        // 모집예정 라이브는 신청 불가 → 랜딩, 모집중은 0원 신청 모달
+                        if (recruitUpcoming) {
+                          router.push(`/program/live/${ev.programId}`);
+                          return;
+                        }
+                        applyLive(ev.programId!, ev.title);
+                      }}
+                    >
+                      참여하기
+                    </SolidButton>
+                  )}
               </li>
             );
           })}
