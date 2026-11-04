@@ -255,6 +255,7 @@ export const useGetPassExternalLinks = (applicationId: number) => {
 
 export const useGetPassCalendar = (applicationId: number) => {
   const challengeQuery = useGetBenefitChallenges(applicationId);
+  const liveQuery = useGetBenefitLives(applicationId);
   const calendarQuery = useGetPassCalendarData(applicationId);
   // benefit/challenge엔 신청 id가 없어 대시보드 route(/challenge/{appId}/{programId})를
   // 못 만든다. user/applications(캐시 공유)에서 programId로 매칭해 채운다.
@@ -298,22 +299,65 @@ export const useGetPassCalendar = (applicationId: number) => {
         };
       });
 
+    const liveApps = (appsQuery.data ?? []).filter(
+      (a) => a.programType === 'LIVE' && a.programId != null,
+    );
+    const enrolledLiveIds = new Set(liveApps.map((a) => a.programId));
+
+    const beforeLiveEvents: PassCalendarEvent[] = (
+      liveQuery.data?.programList ?? []
+    )
+      .filter((p) => !enrolledLiveIds.has(p.programId))
+      .map((p) => ({
+        id: p.programId,
+        type: 'LIVE',
+        title: p.title ?? '',
+        description: null,
+        startDate: p.startDate ?? '',
+        endDate: p.endDate ?? null,
+        programId: p.programId,
+        participationStatus: 'BEFORE',
+      }));
+
+    const participatedLiveEvents: PassCalendarEvent[] = liveApps.map((a) => ({
+      id: a.programId as number,
+      type: 'LIVE',
+      title: a.programTitle ?? '',
+      description: null,
+      startDate: a.programStartDate?.toISOString() ?? '',
+      endDate: a.programEndDate?.toISOString() ?? null,
+      programId: a.programId as number,
+      participationStatus:
+        a.programStatusType === 'POST' ? 'DONE' : 'IN_PROGRESS',
+    }));
+
     const descEvents = calendarQuery.data?.description
       ? parsePassDescription(calendarQuery.data.description).calendarEvents
       : [];
 
     return {
-      data: [...beforeEvents, ...participatedEvents, ...descEvents],
+      data: [
+        ...beforeEvents,
+        ...participatedEvents,
+        ...beforeLiveEvents,
+        ...participatedLiveEvents,
+        ...descEvents,
+      ],
       isLoading:
         challengeQuery.isLoading ||
+        liveQuery.isLoading ||
         calendarQuery.isLoading ||
         appsQuery.isLoading,
-      isError: challengeQuery.isError || calendarQuery.isError,
+      isError:
+        challengeQuery.isError || liveQuery.isError || calendarQuery.isError,
     };
   }, [
     challengeQuery.data,
     challengeQuery.isLoading,
     challengeQuery.isError,
+    liveQuery.data,
+    liveQuery.isLoading,
+    liveQuery.isError,
     calendarQuery.data,
     calendarQuery.isLoading,
     calendarQuery.isError,

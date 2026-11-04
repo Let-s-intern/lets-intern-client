@@ -46,7 +46,9 @@ export const normalizeEvents = (
     status:
       e.type === 'CHALLENGE'
         ? (e.participationStatus ?? challengeStatus(e, today))
-        : null,
+        : e.type === 'LIVE'
+          ? (e.participationStatus ?? null)
+          : null,
   }));
 
 export const eventStart = (e: PassCalendarEvent) =>
@@ -58,9 +60,9 @@ export const weekStartOf = (d: Day) =>
   d.subtract((d.day() + 6) % 7, 'day').startOf('day');
 export const colOf = (d: Day) => ((d.day() + 6) % 7) + 1;
 
-// 노출 우선순위: 참여중 챌린지 > 게릴라세션 > 마일스톤/기타 > 참여가능 챌린지 > 참여이력 챌린지.
+// 노출 우선순위: 참여중 챌린지/라이브 > 게릴라세션 > 마일스톤/기타 > 참여가능 > 참여완료.
 const priority = (e: NormalizedCalendarEvent): number => {
-  if (e.type === 'CHALLENGE') {
+  if (e.type === 'CHALLENGE' || e.type === 'LIVE') {
     if (e.status === 'IN_PROGRESS') return 0;
     if (e.status === 'BEFORE') return 3; // 참여가능
     return 4; // 참여완료(DONE)
@@ -99,6 +101,7 @@ export const eventColor = (event: NormalizedCalendarEvent): string => {
       ? CALENDAR_COLORS.challengeInProgress
       : CALENDAR_COLORS.challengeBefore;
   }
+  if (event.type === 'LIVE') return CALENDAR_COLORS.type2;
   if (event.type === 'GUERRILLA') return CALENDAR_COLORS.guerrilla;
   return CALENDAR_COLORS.type1;
 };
