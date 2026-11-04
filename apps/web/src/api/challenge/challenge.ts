@@ -341,9 +341,12 @@ export const usePatchChallengeGoal = () => {
   });
 };
 
+/** 챌린지 대시보드 입장에 필요한 추가정보를 다 넣었는지(pass). 레이아웃이 이 값으로 추가정보 화면에 보낸다 */
+export const userChallengeInfoQueryKey = ['user', 'challenge-info'];
+
 export const useGetUserChallengeInfo = () => {
   return useQuery({
-    queryKey: ['user', 'challenge-info'],
+    queryKey: userChallengeInfoQueryKey,
     queryFn: async () => {
       const res = await axiosV2.get('/user/challenge-info');
       return challengeUserInfoSchema.parse(res.data.data);

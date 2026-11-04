@@ -4,7 +4,10 @@ import {
   PatchApplicationSurveyField,
   usePatchApplicationSurveyMutation,
 } from '@/api/application';
-import { usePatchChallengeGoal } from '@/api/challenge/challenge';
+import {
+  usePatchChallengeGoal,
+  userChallengeInfoQueryKey,
+} from '@/api/challenge/challenge';
 import { useProgramQuery } from '@/api/program';
 import { usePatchUser, useUserQuery } from '@/api/user/user';
 import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
@@ -17,6 +20,7 @@ import CareerInfoForm, {
 } from '@/domain/mypage/career/CareerInfoForm';
 import RadioButton from '@/domain/program/challenge/challenge-view/RadioButton';
 import { GRADE_ENUM_TO_KOREAN, GRADE_KOREAN_TO_ENUM } from '@/utils/constants';
+import { useQueryClient } from '@tanstack/react-query';
 import { josa } from 'es-hangul';
 import { useParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -64,6 +68,7 @@ function ChallengeUserInfoContent() {
   const params = useParams<{ programId: string; applicationId: string }>();
   const programId = params.programId;
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const [value, setValue] = useState<CareerInfoValues>({
     university: '',
@@ -225,6 +230,12 @@ function ChallengeUserInfoContent() {
         'patchApplicationSurvey success',
         patchApplicationSurveyRes.data,
       );
+
+      // 레이아웃은 받아 둔 pass 로 이 화면에 다시 보낸다. 기본 staleTime(60초) 안에서는
+      // 새로 받지 않아, 저장 직후 이동하면 pass=false 를 읽고 되돌아온다(LC-3560)
+      await queryClient.invalidateQueries({
+        queryKey: userChallengeInfoQueryKey,
+      });
 
       router.push(`/challenge/${params.applicationId}/${programId}`);
     } catch (error) {
