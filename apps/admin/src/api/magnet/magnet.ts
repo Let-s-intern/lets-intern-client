@@ -55,6 +55,30 @@ export const useGetMagnetListQuery = (params: MagnetListQueryParams = {}) => {
   });
 };
 
+/**
+ * GET /admin/magnet?keyword= — 제목으로 마그넷을 찾는다(서버가 대소문자 없이 포함 검색, id 내림차순, 페이지 없음).
+ * 메뉴 검색 패널이 입력마다 부르므로 요청을 취소할 수 있게 signal 을 받는다.
+ */
+export const fetchAdminMagnets = async (
+  keyword: string,
+  signal?: AbortSignal,
+) => {
+  const res = await axios.get('/admin/magnet', {
+    params: { keyword },
+    signal,
+  });
+  return magnetListResponseSchema.parse(res.data.data).magnetList;
+};
+
+/** GET /admin/magnet/{id} — 메뉴 검색 패널의 id 검색. 없는 id 는 서버가 실패로 답한다 */
+export const fetchAdminMagnet = async (
+  magnetId: number,
+  signal?: AbortSignal,
+) => {
+  const res = await axios.get(`/admin/magnet/${magnetId}`, { signal });
+  return magnetDetailResponseSchema.parse(res.data.data).magnetInfo;
+};
+
 export const useDeleteMagnetMutation = ({
   successCallback,
   errorCallback,

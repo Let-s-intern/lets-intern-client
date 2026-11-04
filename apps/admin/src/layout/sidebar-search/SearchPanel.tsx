@@ -14,10 +14,11 @@ import { twMerge } from '@/lib/twMerge';
 
 import { matchEntries, splitHighlight } from './matchEntries';
 import type { SearchEntry } from './searchEntries';
+import { useMagnetSearch } from './useMagnetSearch';
 import { useProgramSearch } from './useProgramSearch';
 import { useUserSearch } from './useUserSearch';
 
-/** 유저·프로그램처럼 서버에서 찾는 묶음이 입력이 멈추길 기다리는 시간 */
+/** 유저·프로그램·마그넷처럼 서버에서 찾는 묶음이 입력이 멈추길 기다리는 시간 */
 const REMOTE_DEBOUNCE_MS = 300;
 
 const Highlight = ({ text, query }: { text: string; query: string }) => (
@@ -38,7 +39,7 @@ const Highlight = ({ text, query }: { text: string; query: string }) => (
 type Block =
   | { kind: 'heading'; key: string; text: string }
   | { kind: 'note'; key: string; text: string }
-  | { kind: 'header'; key: string; node: ReactNode }
+  | { kind: 'header'; key: string; node: ReactNode; group?: string }
   | { kind: 'option'; key: string; entry: SearchEntry; isNested?: boolean };
 
 interface Props {
@@ -62,7 +63,7 @@ interface Props {
 /**
  * 화면 위쪽 가운데에 뜨는 메뉴 검색(Spotlight 식). 모달이 아니다 — 배경을 가리거나 스크롤·포커스를
  * 묶지 않아 뒤 화면을 그대로 보고 만질 수 있다. Esc·바깥 클릭·이동으로 닫힌다.
- * 메뉴는 바로 거르고, 그 아래 유저·프로그램은 서버에서 찾아 갈 곳을 하위 항목으로 보여 준다.
+ * 메뉴는 바로 거르고, 그 아래 유저·프로그램·마그넷은 서버에서 찾아 갈 곳을 하위 항목으로 보여 준다.
  */
 export default function SearchPanel({
   entries,
@@ -85,6 +86,7 @@ export default function SearchPanel({
   );
   const userSearch = useUserSearch(query, debouncedQuery);
   const programSearch = useProgramSearch(query, debouncedQuery);
+  const magnetSearch = useMagnetSearch(query, debouncedQuery);
 
   const blocks = useMemo<Block[]>(() => {
     if (isEmptyQuery) {
@@ -219,8 +221,64 @@ export default function SearchPanel({
         });
       }
     }
+
+    if (magnetSearch.status !== 'idle') {
+      list.push({ kind: 'heading', key: 'h-magnet', text: '마그넷' });
+      magnetSearch.magnets.forEach((magnet) => {
+        list.push({
+          kind: 'header',
+          key: `magnet-${magnet.id}`,
+          group: 'magnet',
+          node: (
+            <div className="flex items-center gap-2">
+              <span className="text-[15px] font-semibold text-white">
+                <Highlight text={magnet.title} query={query} />
+              </span>
+              <span className="text-[13px] text-[#9AA4B2]">
+                #{magnet.id}
+                {magnet.summary ? ` · ${magnet.summary}` : null}
+              </span>
+            </div>
+          ),
+        });
+        magnet.destinations.forEach((entry) =>
+          list.push({
+            kind: 'option',
+            key: `magnet-${magnet.id}-${entry.path}`,
+            entry,
+            isNested: true,
+          }),
+        );
+      });
+      if (magnetSearch.status === 'loading') {
+        list.push({
+          kind: 'note',
+          key: 'magnet-loading',
+          text: '마그넷 찾는 중…',
+        });
+      } else if (magnetSearch.status === 'error') {
+        list.push({
+          kind: 'note',
+          key: 'magnet-error',
+          text: '마그넷을 불러오지 못했습니다',
+        });
+      } else if (magnetSearch.magnets.length === 0) {
+        list.push({
+          kind: 'note',
+          key: 'magnet-empty',
+          text: '일치하는 마그넷이 없습니다',
+        });
+      }
+    }
     return list;
-  }, [isEmptyQuery, menuResults, userSearch, programSearch, query]);
+  }, [
+    isEmptyQuery,
+    menuResults,
+    userSearch,
+    programSearch,
+    magnetSearch,
+    query,
+  ]);
 
   const options = blocks.filter(
     (block): block is Extract<Block, { kind: 'option' }> =>
@@ -283,7 +341,7 @@ export default function SearchPanel({
           aria-activedescendant={
             options.length > 0 ? optionId(safeActiveIndex) : undefined
           }
-          placeholder="메뉴·탭 검색 (예: 렛커 픽, 상세페이지, 일괄 등록)"
+          placeholder="메뉴·유저·프로그램·마그넷 검색 (예: 렛커 픽, 자소서 템플릿)"
           value={query}
           onChange={(e) => {
             setQuery(e.target.value);
@@ -324,7 +382,12 @@ export default function SearchPanel({
             }
             if (block.kind === 'header') {
               return (
-                <li key={block.key} role="presentation" className="px-5 pt-2">
+                <li
+                  key={block.key}
+                  role="presentation"
+                  data-group={block.group}
+                  className="px-5 pt-2"
+                >
                   {block.node}
                 </li>
               );
