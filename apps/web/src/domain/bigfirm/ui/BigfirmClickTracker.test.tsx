@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import Link from 'next/link';
 
 import BigfirmClickTracker from './BigfirmClickTracker';
 
@@ -44,14 +45,14 @@ describe('BigfirmClickTracker', () => {
     render(
       <>
         <BigfirmClickTracker />
-        <a
+        <Link
           href="/live-mentoring/12"
           data-track-target="mentor_detail"
           data-track-location="mentor_finder"
           data-track-mentor-id="12"
         >
           <span>상세페이지 보러가기</span>
-        </a>
+        </Link>
       </>,
     );
 
@@ -116,7 +117,7 @@ describe('BigfirmClickTracker', () => {
     render(
       <>
         <BigfirmClickTracker />
-        <a href="/blog/list">블로그</a>
+        <Link href="/blog/list">블로그</Link>
       </>,
     );
 
