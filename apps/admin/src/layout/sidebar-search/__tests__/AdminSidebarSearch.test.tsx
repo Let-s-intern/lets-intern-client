@@ -109,7 +109,7 @@ describe('AdminSidebarSearch 열기', () => {
     expect(document.activeElement).toBe(input());
     expect(input()).toHaveAttribute(
       'placeholder',
-      '메뉴·탭 검색 (예: 렛커 픽, 상세페이지, 일괄 등록)',
+      '메뉴·유저·프로그램·마그넷 검색 (예: 렛커 픽, 자소서 템플릿)',
     );
   });
 
