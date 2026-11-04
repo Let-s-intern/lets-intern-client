@@ -1,5 +1,6 @@
 'use client';
 
+import { useMypageApplicationsQueryKey } from '@/api/application';
 import { useUserQuery } from '@/api/user/user';
 import {
   useGetMyMembershipApplication,
@@ -13,16 +14,25 @@ import ExtensionPopup from '@/domain/all-in-one-pass/ui/dashboard/extension/Exte
 import ExternalLinks from '@/domain/all-in-one-pass/ui/dashboard/ExternalLinks';
 import PassUsageCard from '@/domain/all-in-one-pass/ui/dashboard/PassUsageCard';
 import RemainingPeriodCard from '@/domain/all-in-one-pass/ui/dashboard/RemainingPeriodCard';
+import { useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function AllInOnePassDashboardPage() {
   const params = useParams<{ applicationId: string }>();
   const applicationId = Number(params.applicationId);
+  const queryClient = useQueryClient();
   const { data: user } = useUserQuery();
   const { data: base } = useGetMyMembershipApplication(applicationId);
   const { data: calendarEvents } = useGetPassCalendar(applicationId);
   const [extensionOpen, setExtensionOpen] = useState(false);
+
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: ['allInOnePass'] });
+    queryClient.invalidateQueries({
+      queryKey: [useMypageApplicationsQueryKey],
+    });
+  }, [queryClient]);
 
   return (
     <main className="flex flex-col px-5 pb-16 pt-8 md:gap-10 md:pb-0 md:pl-12 md:pr-0 md:pt-0">
