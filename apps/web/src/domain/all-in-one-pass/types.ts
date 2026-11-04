@@ -70,6 +70,7 @@ export interface PassCalendarEvent {
   programId?: number | null;
   challengeApplicationId?: number | null; // null = 미참여
   participationStatus?: PassParticipationStatus | null;
+  beginning?: string | null;
 }
 
 /** 캘린더 렌더용 이벤트 — FE가 참여 상태를 파생해 채운 형태. 챌린지는 challengeApplicationId + endDate로 계산, 게릴라세션/마일스톤은 null. */

@@ -275,6 +275,7 @@ export const useGetPassCalendar = (applicationId: number) => {
       programId: c.challengeId,
       challengeApplicationId: null,
       participationStatus: 'BEFORE',
+      beginning: c.beginning ?? null,
     }));
 
     // 참여 중/완료 — 유저 전체 참여내역(user/applications). benefit/challenge의
@@ -317,6 +318,7 @@ export const useGetPassCalendar = (applicationId: number) => {
         endDate: p.endDate ?? null,
         programId: p.programId,
         participationStatus: 'BEFORE',
+        beginning: p.beginning ?? null, // 모집예정 판별용(미래면 신청 불가 → 랜딩)
       }));
 
     const participatedLiveEvents: PassCalendarEvent[] = liveApps.map((a) => ({

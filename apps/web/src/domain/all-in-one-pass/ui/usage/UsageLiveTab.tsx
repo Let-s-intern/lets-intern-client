@@ -17,9 +17,13 @@ const UsageLiveTab = ({ passTitle }: { passTitle?: string }) => {
     useUsageLive(applicationId);
   const apply = usePassProgramApply('live');
 
-  // 참여 가능 → 0원 신청 모달, 참여 예정/완료 → 상세 이동
+  // 참여 가능 → 0원 신청 모달(모집 예정은 신청 불가라 상세 랜딩), 참여 예정/완료 → 상세 이동
   const handleCardClick = (item: PassProgramCardData) => {
     if (item.participation === 'BEFORE') {
+      if (item.programStatusType === 'PREV') {
+        router.push(`/program/live/${item.programId}`);
+        return;
+      }
       apply.requestApply(item.programId, item.title);
       return;
     }

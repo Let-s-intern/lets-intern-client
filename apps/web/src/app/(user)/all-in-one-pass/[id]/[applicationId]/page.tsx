@@ -5,6 +5,7 @@ import {
   useGetMyMembershipApplication,
   useGetPassCalendar,
 } from '@/domain/all-in-one-pass/api/dashboard';
+import { CalendarApplyProvider } from '@/domain/all-in-one-pass/ui/dashboard/calendar/CalendarApplyContext';
 import CalendarDesktop from '@/domain/all-in-one-pass/ui/dashboard/calendar/CalendarDesktop';
 import CalendarMobile from '@/domain/all-in-one-pass/ui/dashboard/calendar/CalendarMobile';
 import ExtensionModal from '@/domain/all-in-one-pass/ui/dashboard/extension/ExtensionModal';
@@ -43,7 +44,7 @@ export default function AllInOnePassDashboardPage() {
           <ExternalLinks applicationId={applicationId} variant="box" />
         </div>
         {calendarEvents && (
-          <>
+          <CalendarApplyProvider passTitle={base?.title ?? undefined}>
             <div className="hidden md:block">
               <CalendarDesktop
                 events={calendarEvents}
@@ -58,7 +59,7 @@ export default function AllInOnePassDashboardPage() {
                 periodEnd={base?.endDate ?? undefined}
               />
             </div>
-          </>
+          </CalendarApplyProvider>
         )}
       </div>
 
