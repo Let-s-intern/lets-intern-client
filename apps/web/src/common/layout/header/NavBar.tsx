@@ -34,6 +34,7 @@ import {
   SHOW_LIVE_MENTORING_HEADER_NAV,
   SHOW_LIVE_MENTORING_NAV,
 } from '@/domain/live-mentoring/constants';
+import { BIGFIRM_PATH } from '@/domain/bigfirm/data/links';
 
 // 데스크톱 헤더 맨 위에 서비스 토글 띠(40px)가 있어 아래 값들은 그만큼 크다. 띠 높이는 아래 `h-10`.
 export const FULL_NAVBAR_HEIGHT_OFFSET = 'top-[84px] md:top-[155px]';
@@ -201,6 +202,18 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
               {SHOW_LIVE_MENTORING_HEADER_NAV && (
                 <SwiperSlide className="!w-auto">
                   <GlobalNavItem
+                    className="bigfirm_gnb_click text-xsmall14"
+                    isNew
+                    href={BIGFIRM_PATH}
+                    active={pathname === BIGFIRM_PATH}
+                  >
+                    대기업 멘토관
+                  </GlobalNavItem>
+                </SwiperSlide>
+              )}
+              {SHOW_LIVE_MENTORING_HEADER_NAV && (
+                <SwiperSlide className="!w-auto">
+                  <GlobalNavItem
                     className="text-xsmall14"
                     href="/mentors"
                     active={activeLink === 'MENTORS'}
@@ -212,7 +225,6 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
               <SwiperSlide className="!w-auto">
                 <GlobalNavItem
                   className="text-xsmall14"
-                  isNew
                   href="/seminar"
                   active={activeLink === 'SEMINAR'}
                 >
@@ -239,7 +251,6 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
               <SwiperSlide className="!w-auto">
                 <GlobalNavItem
                   className="text-xsmall14"
-                  isNew
                   href="/library/list"
                   active={activeLink === 'LIBRARY'}
                   rel="noopener noreferrer"
