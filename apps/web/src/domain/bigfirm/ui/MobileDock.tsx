@@ -12,6 +12,8 @@ export function MobileDock() {
         <div className="flex flex-1 items-center gap-3 md:flex-none">
           <a
             href={LETSCAREER_CHAT_URL}
+            data-track-target="inquiry"
+            data-track-location="floating_bar"
             target="_blank"
             rel="noopener noreferrer"
             className="rounded-xs text-primary flex-1 bg-white px-5 py-3 text-center text-base font-medium hover:bg-[#eef0ff] md:flex-none"
@@ -20,6 +22,8 @@ export function MobileDock() {
           </a>
           <Link
             href={LETSCAREER_MENTORING_URL}
+            data-track-target="mentoring_list"
+            data-track-location="floating_bar"
             target="_blank"
             rel="noopener noreferrer"
             className="rounded-xs bg-primary flex-[2] whitespace-nowrap px-5 py-3 text-center text-base font-medium text-white hover:bg-[#3a41d6] md:flex-none"

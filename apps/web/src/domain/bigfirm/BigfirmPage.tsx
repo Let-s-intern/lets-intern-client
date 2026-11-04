@@ -13,6 +13,7 @@ import { MENTORS } from './data/mentors';
 import { CouponTicket } from './ui/CouponTicket';
 import { Hero } from './ui/Hero';
 import { MentorFinder } from './ui/MentorFinder';
+import BigfirmClickTracker from './ui/BigfirmClickTracker';
 import { MobileDock } from './ui/MobileDock';
 
 const WORRIES = [
@@ -510,6 +511,9 @@ export default async function BigfirmPage() {
                   </span>
                   <Link
                     href={mentorDetailUrl(mentor.id)}
+                    data-track-target="mentor_detail"
+                    data-track-location="reviews"
+                    data-track-mentor-id={mentor.id}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-primary mt-1 font-bold"
@@ -524,6 +528,8 @@ export default async function BigfirmPage() {
         <div className="mt-8 flex justify-center">
           <Link
             href={LETSCAREER_REVIEW_URL}
+            data-track-target="review_list"
+            data-track-location="reviews"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:border-primary hover:text-primary rounded-full border border-[#e3e5f0] bg-white px-5 py-2.5 text-sm font-bold text-[#575757]"
@@ -584,6 +590,8 @@ export default async function BigfirmPage() {
           <p className="font-semibold">아직 궁금증이 풀리지 않았다면?</p>
           <a
             href={LETSCAREER_CHAT_URL}
+            data-track-target="inquiry"
+            data-track-location="faq"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:border-primary hover:text-primary rounded-sm border border-[#e3e5f0] bg-white px-4 py-2 text-sm font-bold text-[#575757]"
@@ -644,6 +652,8 @@ export default async function BigfirmPage() {
           </div>
           <a
             href="#mentors-by-company"
+            data-track-target="find_mentor"
+            data-track-location="bottom_cta"
             className="flex h-12 items-center justify-center gap-2 rounded-sm bg-[linear-gradient(272deg,#9762f5_1.88%,#544cff_98.12%)] px-7 py-4 text-lg font-semibold leading-none text-white hover:brightness-110 sm:h-16 sm:px-10 sm:py-6 sm:text-[22px]"
           >
             대기업 멘토 찾기
@@ -652,6 +662,7 @@ export default async function BigfirmPage() {
       </section>
 
       <MobileDock />
+      <BigfirmClickTracker />
     </div>
   );
 }
