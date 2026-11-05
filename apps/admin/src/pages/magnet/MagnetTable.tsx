@@ -13,8 +13,11 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Link } from 'react-router-dom';
 import { useCallback, useMemo } from 'react';
 import {
+  isMagnetApplyManageable,
+  isMagnetExposureLocked,
   isMagnetFormManageable,
   isMagnetManageable,
+  isMagnetMyPageManageable,
   isMagnetPostEditable,
   isMagnetVisibilityManageable,
   MAGNET_TYPE,
@@ -54,6 +57,12 @@ const isMagnetAccessibleNow = (row: MagnetListItem) =>
     ? !isMagnetExpired(row)
     : row.isAccessible && !isMagnetExpired(row) && !isMagnetUpcoming(row);
 
+// 신청 링크가 지금 열리는지. 서버 신청 게이트와 같다: 상세 접속 + 신청 가능 + 노출 기간 안
+// 출시알림은 서버가 신청 가능 플래그 없이 받으므로 기존 판정을 그대로 쓴다
+const isMagnetApplicableNow = (row: MagnetListItem) =>
+  isMagnetAccessibleNow(row) &&
+  (row.type === 'LAUNCH_ALERT' || row.isApplicable);
+
 // 어드민이 한눈에 이해할 수 있게 상태를 세분화한다. (웹 동작과 동일 기준)
 // [일반 타입]
 // - 만료       : 노출 종료일이 지나 접속·노출 모두 불가
@@ -90,10 +99,18 @@ interface MagnetTableProps {
   data: MagnetListResponse;
   onToggleVisibility: (id: number, isVisible: boolean) => void;
   onToggleAccessibility: (id: number, isAccessible: boolean) => void;
+  onToggleExposure: (
+    id: number,
+    exposure: Partial<
+      Pick<Row, 'isApplicable' | 'isMyPageVisible' | 'isSearchVisible'>
+    >,
+  ) => void;
   onDelete: (id: number) => void;
 }
 
 type Row = MagnetListItem;
+
+const EXPOSURE_LOCKED_HINT = '상세 접속이 꺼져 있어 켜도 반영되지 않습니다';
 
 const magnetTypeOptions: MultiSelectFilterOption[] = Object.entries(
   MAGNET_TYPE,
@@ -110,6 +127,7 @@ const MagnetTable = ({
   data,
   onToggleVisibility,
   onToggleAccessibility,
+  onToggleExposure,
   onDelete,
 }: MagnetTableProps) => {
   const { snackbar } = useAdminSnackbar();
@@ -213,6 +231,8 @@ const MagnetTable = ({
           isMagnetVisibilityManageable(row.type) ? (
             <Checkbox
               checked={row.isVisible}
+              disabled={isMagnetExposureLocked(row)}
+              title={isMagnetExposureLocked(row) ? EXPOSURE_LOCKED_HINT : ''}
               onChange={(e) =>
                 onToggleVisibility(row.magnetId, e.target.checked)
               }
@@ -224,9 +244,9 @@ const MagnetTable = ({
       },
       {
         field: 'isAccessible',
-        headerName: '접속 가능',
+        headerName: '상세 접속',
         description:
-          '목록에 안 떠도 링크로 접속·신청 가능. 노출 종료일이 지나면 자동 차단됩니다.',
+          '끄면 상세 페이지가 열리지 않습니다. 목록·마이페이지·검색 노출도 함께 막힙니다. 노출 종료일이 지나면 자동 차단됩니다.',
         type: 'boolean',
         width: 90,
         renderCell: ({ row }) =>
@@ -235,6 +255,78 @@ const MagnetTable = ({
               checked={row.isAccessible}
               onChange={(e) =>
                 onToggleAccessibility(row.magnetId, e.target.checked)
+              }
+              size="small"
+            />
+          ) : (
+            '-'
+          ),
+      },
+      {
+        field: 'isApplicable',
+        headerName: '신청 가능',
+        description:
+          '끄면 상세는 열어 두고 신청만 막습니다. 상세 접속이 꺼지면 신청도 막힙니다. 출시알림은 해당 없음.',
+        type: 'boolean',
+        width: 90,
+        renderCell: ({ row }) =>
+          isMagnetApplyManageable(row.type) ? (
+            <Checkbox
+              checked={row.isApplicable}
+              disabled={isMagnetExposureLocked(row)}
+              title={isMagnetExposureLocked(row) ? EXPOSURE_LOCKED_HINT : ''}
+              onChange={(e) =>
+                onToggleExposure(row.magnetId, {
+                  isApplicable: e.target.checked,
+                })
+              }
+              size="small"
+            />
+          ) : (
+            '-'
+          ),
+      },
+      {
+        field: 'isMyPageVisible',
+        headerName: '마이페이지',
+        description:
+          '신청한 사람의 MY 자료집·마이페이지에 보일지. 이벤트는 해당 없음.',
+        type: 'boolean',
+        width: 90,
+        renderCell: ({ row }) =>
+          isMagnetMyPageManageable(row.type) ? (
+            <Checkbox
+              checked={row.isMyPageVisible}
+              disabled={isMagnetExposureLocked(row)}
+              title={isMagnetExposureLocked(row) ? EXPOSURE_LOCKED_HINT : ''}
+              onChange={(e) =>
+                onToggleExposure(row.magnetId, {
+                  isMyPageVisible: e.target.checked,
+                })
+              }
+              size="small"
+            />
+          ) : (
+            '-'
+          ),
+      },
+      {
+        field: 'isSearchVisible',
+        headerName: '검색 노출',
+        description:
+          '끄면 상세 페이지가 검색엔진에 노출되지 않고(noindex) sitemap 에서 빠집니다.',
+        type: 'boolean',
+        width: 90,
+        renderCell: ({ row }) =>
+          isMagnetVisibilityManageable(row.type) ? (
+            <Checkbox
+              checked={row.isSearchVisible}
+              disabled={isMagnetExposureLocked(row)}
+              title={isMagnetExposureLocked(row) ? EXPOSURE_LOCKED_HINT : ''}
+              onChange={(e) =>
+                onToggleExposure(row.magnetId, {
+                  isSearchVisible: e.target.checked,
+                })
               }
               size="small"
             />
@@ -339,7 +431,7 @@ const MagnetTable = ({
         sortable: false,
         filterable: false,
         renderCell: ({ row }) =>
-          isMagnetAccessibleNow(row) ? (
+          isMagnetApplicableNow(row) ? (
             <Button
               variant="outlined"
               color="secondary"
@@ -356,6 +448,7 @@ const MagnetTable = ({
     [
       onToggleVisibility,
       onToggleAccessibility,
+      onToggleExposure,
       onDelete,
       handleCopyApplyLink,
       handleCopyDetailLink,

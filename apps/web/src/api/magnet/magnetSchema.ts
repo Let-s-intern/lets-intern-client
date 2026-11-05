@@ -100,6 +100,15 @@ const userMagnetInfoSchema = z.object({
   startDate: z.string().nullable(),
   endDate: z.string().nullable(),
   likes: z.number().nullable().optional(),
+  // 노출 위치 분리(LC-3571). 서버 배포 전 응답에는 없으므로 기존 동작(신청 가능·검색 노출)으로 채운다
+  isApplicable: z
+    .boolean()
+    .nullish()
+    .transform((v) => v ?? true),
+  isSearchVisible: z
+    .boolean()
+    .nullish()
+    .transform((v) => v ?? true),
 });
 
 export const userMagnetDetailResponseSchema = z.object({

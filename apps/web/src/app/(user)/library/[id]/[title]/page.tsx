@@ -95,6 +95,8 @@ export async function generateMetadata({
   return {
     title: getLibraryTitle({ title: magnetInfo.title }),
     description: metaDescription,
+    // 검색 노출을 끈 마그넷(링크 전용 등)은 색인하지 않는다. 켜져 있으면 layout 의 기본값을 따른다
+    ...(magnetInfo.isSearchVisible ? {} : { robots: 'noindex, nofollow' }),
     openGraph: {
       title: magnetInfo.title,
       description: metaDescription ?? undefined,

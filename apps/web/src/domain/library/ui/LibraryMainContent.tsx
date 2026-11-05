@@ -134,7 +134,10 @@ function LibraryMainContentInner({ magnetId, isUpcoming, previewRoot }: Props) {
           <LexicalContent node={previewRoot} />
         </PreviewWithFade>
       )}
-      <StickyApplyBox magnetId={magnetId} onApplyClick={handleApplyClick} />
+      {/* 신청 가능이 꺼진 마그넷은 신청 버튼 없이 미리보기만 보여준다 */}
+      {data.magnetInfo.isApplicable && (
+        <StickyApplyBox magnetId={magnetId} onApplyClick={handleApplyClick} />
+      )}
     </>
   );
 }

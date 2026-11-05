@@ -30,6 +30,19 @@ const magnetListItemSchema = z.object({
     .boolean()
     .nullish()
     .transform((v) => v ?? false),
+  // 노출 위치 분리(LC-3571). 서버 배포 전 응답에는 없으므로 서버 기본값(모두 켬)으로 채운다
+  isApplicable: z
+    .boolean()
+    .nullish()
+    .transform((v) => v ?? true),
+  isMyPageVisible: z
+    .boolean()
+    .nullish()
+    .transform((v) => v ?? true),
+  isSearchVisible: z
+    .boolean()
+    .nullish()
+    .transform((v) => v ?? true),
   applicationCount: z.number(),
 });
 
@@ -66,6 +79,19 @@ const magnetInfoSchema = z.object({
     .boolean()
     .nullish()
     .transform((v) => v ?? false),
+  // 노출 위치 분리(LC-3571). 서버 배포 전 응답에는 없으므로 서버 기본값(모두 켬)으로 채운다
+  isApplicable: z
+    .boolean()
+    .nullish()
+    .transform((v) => v ?? true),
+  isMyPageVisible: z
+    .boolean()
+    .nullish()
+    .transform((v) => v ?? true),
+  isSearchVisible: z
+    .boolean()
+    .nullish()
+    .transform((v) => v ?? true),
 });
 
 const magnetQuestionSchema = z.object({

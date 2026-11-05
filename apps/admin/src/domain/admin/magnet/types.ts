@@ -55,6 +55,23 @@ const VISIBILITY_MANAGEABLE_TYPES: MagnetTypeKey[] = [
 export const isMagnetVisibilityManageable = (type: MagnetTypeKey): boolean =>
   VISIBILITY_MANAGEABLE_TYPES.includes(type);
 
+/** 신청 가능 — 출시알림은 서버가 늘 구독을 받으므로 해당 없음 */
+export const isMagnetApplyManageable = (type: MagnetTypeKey): boolean =>
+  isMagnetVisibilityManageable(type) && type !== 'LAUNCH_ALERT';
+
+/** 마이페이지 노출 — 이벤트는 MY 자료집·마이페이지 어디에도 나오지 않는다 */
+export const isMagnetMyPageManageable = (type: MagnetTypeKey): boolean =>
+  isMagnetVisibilityManageable(type) && type !== 'EVENT';
+
+/**
+ * 상세 접속이 꺼지면 상세에 기대는 설정(신청·목록·마이페이지·검색)은 켜도 소용이 없다.
+ * 출시알림은 상세 없이 구독을 받으므로 예외.
+ */
+export const isMagnetExposureLocked = (row: {
+  type: MagnetTypeKey;
+  isAccessible: boolean;
+}): boolean => row.type !== 'LAUNCH_ALERT' && !row.isAccessible;
+
 /** 마그넷 목록 아이템 — API 응답 필드와 일치 */
 export interface MagnetListItem {
   magnetId: number;
@@ -66,6 +83,9 @@ export interface MagnetListItem {
   endDate: string | null;
   isVisible: boolean;
   isAccessible: boolean;
+  isApplicable: boolean;
+  isMyPageVisible: boolean;
+  isSearchVisible: boolean;
   applicationCount: number;
 }
 
@@ -123,6 +143,9 @@ export interface MagnetPostDetail {
   endDate: string | null;
   isVisible: boolean;
   isAccessible: boolean;
+  isApplicable: boolean;
+  isMyPageVisible: boolean;
+  isSearchVisible: boolean;
 }
 
 // --- 마그넷 신청폼 관리 ---
