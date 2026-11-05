@@ -12,6 +12,9 @@ const MOCK_MAGNETS: MagnetListItem[] = [
     endDate: '2026-06-30T23:59:59',
     isVisible: false,
     isAccessible: false,
+    isApplicable: false,
+    isMyPageVisible: true,
+    isSearchVisible: true,
     applicationCount: 9,
   },
   {
@@ -24,6 +27,9 @@ const MOCK_MAGNETS: MagnetListItem[] = [
     endDate: '2026-07-31T23:59:59',
     isVisible: true,
     isAccessible: true,
+    isApplicable: true,
+    isMyPageVisible: true,
+    isSearchVisible: true,
     applicationCount: 99,
   },
   {
@@ -36,6 +42,9 @@ const MOCK_MAGNETS: MagnetListItem[] = [
     endDate: '2026-12-31T23:59:59',
     isVisible: true,
     isAccessible: true,
+    isApplicable: true,
+    isMyPageVisible: true,
+    isSearchVisible: true,
     applicationCount: 999,
   },
   {
@@ -48,6 +57,9 @@ const MOCK_MAGNETS: MagnetListItem[] = [
     endDate: null,
     isVisible: false,
     isAccessible: false,
+    isApplicable: false,
+    isMyPageVisible: true,
+    isSearchVisible: true,
     applicationCount: 0,
   },
   {
@@ -60,6 +72,9 @@ const MOCK_MAGNETS: MagnetListItem[] = [
     endDate: null,
     isVisible: false,
     isAccessible: false,
+    isApplicable: false,
+    isMyPageVisible: true,
+    isSearchVisible: true,
     applicationCount: 0,
   },
 ];

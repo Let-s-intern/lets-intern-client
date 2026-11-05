@@ -2,6 +2,7 @@ import {
   useDeleteMagnetMutation,
   useGetMagnetListQuery,
   usePatchMagnetAccessibilityMutation,
+  usePatchMagnetExposureMutation,
   usePatchMagnetVisibilityMutation,
 } from '@/api/magnet/magnet';
 import ActionButton from '@/domain/admin/ui/button/ActionButton';
@@ -26,6 +27,7 @@ const MagnetListPage = () => {
   const { mutate: deleteMagnet } = useDeleteMagnetMutation();
   const { mutate: patchVisibility } = usePatchMagnetVisibilityMutation();
   const { mutate: patchAccessibility } = usePatchMagnetAccessibilityMutation();
+  const { mutate: patchExposure } = usePatchMagnetExposureMutation();
 
   // React Query로 마그넷 목록 조회 (타입/키워드 필터는 서버에서 처리)
   const { data: queryData } = useGetMagnetListQuery({
@@ -75,6 +77,20 @@ const MagnetListPage = () => {
     [patchAccessibility],
   );
 
+  const handleToggleExposure = useCallback(
+    (
+      id: number,
+      exposure: {
+        isApplicable?: boolean;
+        isMyPageVisible?: boolean;
+        isSearchVisible?: boolean;
+      },
+    ) => {
+      patchExposure({ magnetId: id, ...exposure });
+    },
+    [patchExposure],
+  );
+
   const handleDelete = useCallback(
     (id: number) => {
       const confirmed = window.confirm('정말로 삭제하시겠습니까?');
@@ -122,6 +138,7 @@ const MagnetListPage = () => {
             data={data}
             onToggleVisibility={handleToggleVisibility}
             onToggleAccessibility={handleToggleAccessibility}
+            onToggleExposure={handleToggleExposure}
             onDelete={handleDelete}
           />
         </main>

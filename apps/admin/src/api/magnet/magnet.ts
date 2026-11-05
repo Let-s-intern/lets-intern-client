@@ -135,7 +135,7 @@ export const usePatchMagnetVisibilityMutation = ({
   });
 };
 
-/** 접속 가능 여부(목록 노출과 독립) 토글 — 링크 접속·신청 게이트 */
+/** 상세 접속 가능 여부 토글 — 끄면 상세 페이지가 열리지 않는다 */
 export const usePatchMagnetAccessibilityMutation = ({
   successCallback,
   errorCallback,
@@ -155,6 +155,39 @@ export const usePatchMagnetAccessibilityMutation = ({
       const res = await axios.patch(`/admin/magnet/${magnetId}`, {
         isAccessible,
       });
+      return res.data;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [magnetListQueryKey] });
+      successCallback?.();
+    },
+    onError: (error) => {
+      console.error(error);
+      errorCallback?.();
+    },
+  });
+};
+
+/** 신청 가능·마이페이지 노출·검색 노출 토글. 바꿀 필드만 보낸다 */
+export const usePatchMagnetExposureMutation = ({
+  successCallback,
+  errorCallback,
+}: {
+  successCallback?: () => void;
+  errorCallback?: () => void;
+} = {}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      magnetId,
+      ...exposure
+    }: {
+      magnetId: number;
+      isApplicable?: boolean;
+      isMyPageVisible?: boolean;
+      isSearchVisible?: boolean;
+    }) => {
+      const res = await axios.patch(`/admin/magnet/${magnetId}`, exposure);
       return res.data;
     },
     onSuccess: async () => {
