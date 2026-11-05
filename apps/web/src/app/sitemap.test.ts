@@ -52,6 +52,22 @@ describe('sitemap', () => {
     );
   });
 
+  it('서버를 못 부르면 빌드를 깨지 않고 목록 페이지만 낸다', async () => {
+    mockFetchJson.mockRejectedValue(new Error('getaddrinfo ENOTFOUND'));
+    const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+    const urls = (await sitemap()).map((entry) => entry.url);
+
+    expect(urls).toEqual([
+      'https://www.letscareer.co.kr/',
+      'https://www.letscareer.co.kr/program',
+      'https://www.letscareer.co.kr/blog/list',
+      'https://www.letscareer.co.kr/library/list',
+    ]);
+    expect(errorSpy).toHaveBeenCalled();
+    errorSpy.mockRestore();
+  });
+
   it('수정일이 있으면 lastModified 로 넣는다', async () => {
     const blog = (await sitemap()).find((entry) =>
       entry.url.includes('/blog/10/'),

@@ -34,16 +34,26 @@ const STATIC_PATHS = ['/', '/program', '/blog/list', '/library/list'];
 const toLastModified = (date: string | null) =>
   date ? new Date(date) : undefined;
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const siteUrl = getCanonicalSiteUrl();
-  const { magnetList, blogList, programList } = await fetchJson(
-    `${process.env.NEXT_PUBLIC_SERVER_API}/sitemap`,
-    {
+/**
+ * 서버를 못 부르면 목록 페이지만 낸다. 빌드가 서버에 묶이지 않게 한다
+ * (CI 는 가짜 API 주소로 빌드하고, 서버보다 웹이 먼저 배포될 수도 있다). 상세는 다음 재생성 때 채워진다
+ */
+async function fetchSitemapPages() {
+  try {
+    return await fetchJson(`${process.env.NEXT_PUBLIC_SERVER_API}/sitemap`, {
       code: 'SITEMAP_FETCH_FAILED',
       displayMessage: 'sitemap 조회에 실패했습니다.',
       parse: (data) => sitemapResponseSchema.parse(data),
-    },
-  );
+    });
+  } catch (error) {
+    console.error('[sitemap] 서버 조회 실패, 목록 페이지만 냅니다', error);
+    return { magnetList: [], blogList: [], programList: [] };
+  }
+}
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const siteUrl = getCanonicalSiteUrl();
+  const { magnetList, blogList, programList } = await fetchSitemapPages();
 
   return [
     ...STATIC_PATHS.map((path) => ({ url: `${siteUrl}${path}` })),
