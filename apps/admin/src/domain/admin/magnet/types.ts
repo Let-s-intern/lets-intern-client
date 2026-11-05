@@ -64,7 +64,7 @@ export const isMagnetMyPageManageable = (type: MagnetTypeKey): boolean =>
   isMagnetVisibilityManageable(type) && type !== 'EVENT';
 
 /**
- * 상세 접속이 꺼지면 상세로 이어지는 노출(목록·마이페이지·검색)은 켜도 소용이 없다.
+ * 상세 접속이 꺼지면 상세에 기대는 설정(신청·목록·마이페이지·검색)은 켜도 소용이 없다.
  * 출시알림은 상세 없이 구독을 받으므로 예외.
  */
 export const isMagnetExposureLocked = (row: {

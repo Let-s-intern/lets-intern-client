@@ -57,12 +57,11 @@ const isMagnetAccessibleNow = (row: MagnetListItem) =>
     ? !isMagnetExpired(row)
     : row.isAccessible && !isMagnetExpired(row) && !isMagnetUpcoming(row);
 
-// 신청 링크가 지금 열리는지. 서버 신청 게이트와 같다: 신청 가능 + 노출 기간 안
+// 신청 링크가 지금 열리는지. 서버 신청 게이트와 같다: 상세 접속 + 신청 가능 + 노출 기간 안
 // 출시알림은 서버가 신청 가능 플래그 없이 받으므로 기존 판정을 그대로 쓴다
 const isMagnetApplicableNow = (row: MagnetListItem) =>
-  row.type === 'LAUNCH_ALERT'
-    ? isMagnetAccessibleNow(row)
-    : row.isApplicable && !isMagnetExpired(row) && !isMagnetUpcoming(row);
+  isMagnetAccessibleNow(row) &&
+  (row.type === 'LAUNCH_ALERT' || row.isApplicable);
 
 // 어드민이 한눈에 이해할 수 있게 상태를 세분화한다. (웹 동작과 동일 기준)
 // [일반 타입]
@@ -267,13 +266,15 @@ const MagnetTable = ({
         field: 'isApplicable',
         headerName: '신청 가능',
         description:
-          '끄면 신청 페이지에서 신청할 수 없습니다. 상세 접속과 별개입니다. 출시알림은 해당 없음.',
+          '끄면 상세는 열어 두고 신청만 막습니다. 상세 접속이 꺼지면 신청도 막힙니다. 출시알림은 해당 없음.',
         type: 'boolean',
         width: 90,
         renderCell: ({ row }) =>
           isMagnetApplyManageable(row.type) ? (
             <Checkbox
               checked={row.isApplicable}
+              disabled={isMagnetExposureLocked(row)}
+              title={isMagnetExposureLocked(row) ? EXPOSURE_LOCKED_HINT : ''}
               onChange={(e) =>
                 onToggleExposure(row.magnetId, {
                   isApplicable: e.target.checked,
