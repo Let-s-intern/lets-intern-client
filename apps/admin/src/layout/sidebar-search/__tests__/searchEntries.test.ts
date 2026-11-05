@@ -6,6 +6,9 @@ import { CHALLENGE_OPERATION_TABS } from '../../../pages/challenge/ui/challengeO
 import { buildSearchEntries } from '../searchEntries';
 
 vi.mock('@/api/user/user', () => ({ useIsAdminQuery: vi.fn() }));
+// AdminSidebar 를 따라 들어오는 API 모듈이 axios 를 만들 때 API 주소 환경변수를 요구한다. 이 테스트는 요청을 보내지 않는다
+vi.mock('@/utils/axios', () => ({ default: { get: vi.fn() } }));
+vi.mock('@/utils/axiosV2', () => ({ default: { get: vi.fn() } }));
 
 import { navData } from '../../AdminSidebar';
 
