@@ -9,4 +9,5 @@ export const LETSCON_FREEZZOA_INSTAGRAM_URL =
   'https://www.instagram.com/freezzoa/';
 export const LETSCON_MAP_URL = '';
 export const LETSCON_DOCUMENT_SUBMIT_URL = '';
-export const LETSCON_ALL_IN_ONE_PASS_URL = '';
+export const LETSCON_ALL_IN_ONE_PASS_URL =
+  'https://www.letscareer.co.kr/all-in-one-pass/1';
