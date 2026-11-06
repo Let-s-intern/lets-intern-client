@@ -31,7 +31,8 @@ export function NextStep() {
         >
           렛츠콘에서 얻은 힌트를 일회성 다짐으로 끝내지 않도록.
           <br />
-          11월 올인원 패스로 직무별 서류 준비와 실제 지원을 이어가세요.
+          2027 상반기 얼리 스타트 올인원 패스로 직무별 서류 준비와 실제 지원을
+          이어가세요.
         </p>
 
         <ul
@@ -65,7 +66,7 @@ export function NextStep() {
         >
           <div>
             <p className="text-base font-bold text-[#1c1e2b]">
-              11월 올인원 패스
+              2027 상반기 얼리 스타트 올인원 패스
             </p>
             <p className="mt-0.5 text-xs leading-[1.3] tracking-[-0.02em] text-[#5b5e6d]">
               렛츠콘 참여 신청과 별도로 구매하는 프로그램입니다. 세부
@@ -89,7 +90,7 @@ export function NextStep() {
                 rel="noopener noreferrer"
                 className={`${BUTTON} bg-primary text-white`}
               >
-                올인원 패스 구매하기
+                올인원 패스 구경하기
                 <ArrowUpRight
                   aria-hidden
                   className="h-4 w-4"

@@ -107,7 +107,7 @@ export const LINEUP_DAYS: LineupDay[] = [
         time: '14:30 - 16:30',
         title: '꿈꾸던 마케터가 되기 위해\n하나씩 쌓아온 경험의 이야기',
         speaker: '팀장 박주삼 멘토',
-        profile: '13년차 · 전) 올리브영, 에이블리, 지그재그 · 현) 뷰티 브랜드',
+        profile: '12년차 · 전) 올리브영, 에이블리, 지그재그 · 현) 뷰티 브랜드',
         instagramUrl: LETSCON_PARK_INSTAGRAM_URL,
         photo: { src: '/letscon/mentor-park.png', width: 306, height: 450 },
       },
