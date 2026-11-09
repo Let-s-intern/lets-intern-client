@@ -69,7 +69,8 @@ export const LINEUP_DAYS: LineupDay[] = [
         track: '서비스 기획 / PM',
         offline: false,
         time: '19:00 - 20:30',
-        title: '신입 PM은 안 뽑는다?\n결국 원하는 회사에 합격하는 방법',
+        title:
+          'PM이 되고 싶은데 신입을 안 뽑는다면?\n단계별 커리어를 쌓아가는 방법',
         speaker: '헤이즐 멘토',
         profile: '9년차 · 전) 배달의민족 PM · 현) 국내 대표 핀테크 기업 PO',
         photo: { src: '/letscon/mentor-hazel.png', width: 226, height: 450 },
