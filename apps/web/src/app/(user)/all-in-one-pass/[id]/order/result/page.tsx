@@ -93,6 +93,19 @@ const MembershipOrderResult = () => {
       .then((res) => {
         setResult(res.data.data);
         setState('success');
+        // GA4 purchase·슬랙 결제 알림이 이 이벤트를 받는다. 새 이름을 만들지 않고 프로그램 결제와 같은 키로 보낸다
+        const isExtension = data.orderType === 'EXTENSION';
+        window.dataLayer?.push({
+          event: 'program_payment_success',
+          program_name: data.passTitle,
+          program_id: isExtension
+            ? data.membershipOptionId
+            : data.membershipPlanId,
+          program_type: isExtension ? 'MEMBERSHIP_EXTENSION' : 'MEMBERSHIP',
+          payment_method: res.data.data.tossInfo?.method ?? undefined,
+          payment_amount: Number(amount),
+          order_id: orderId,
+        });
         const next = new URLSearchParams(searchParams.toString());
         next.set('postDone', 'true');
         router.replace(`${window.location.pathname}?${next.toString()}`);
