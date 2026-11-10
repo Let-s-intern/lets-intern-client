@@ -29,8 +29,10 @@ const postMembershipApplication = jest.fn();
 jest.mock('@/domain/all-in-one-pass/api/purchase', () => ({
   postMembershipApplication: (...args: unknown[]) =>
     postMembershipApplication(...args),
-  postMembershipExtension: jest.fn(),
+  postMembershipExtension: (...args: unknown[]) =>
+    postMembershipExtension(...args),
 }));
+const postMembershipExtension = jest.fn();
 
 const BASE_ORDER = {
   orderType: 'PURCHASE',
@@ -123,6 +125,72 @@ describe('올인원패스 결제 결과 화면의 VOD 이용권', () => {
     expect(postMembershipApplication.mock.calls[0][1]).not.toHaveProperty(
       'vodPassProductId',
     );
+  });
+});
+
+describe('올인원패스 결제 완료 dataLayer 이벤트', () => {
+  beforeEach(() => {
+    postMembershipApplication.mockReset();
+    postMembershipExtension.mockReset();
+    window.dataLayer = [];
+  });
+
+  it('구매가 성공하면 프로그램 결제와 같은 이벤트를 한 번 보낸다', async () => {
+    mockData = BASE_ORDER;
+    postMembershipApplication.mockResolvedValue({
+      data: { data: { tossInfo: TOSS_INFO, vodPass: null, payments: [] } },
+    });
+
+    render(<MembershipOrderResultPage />);
+
+    await screen.findByText('영수증 보기');
+    expect(window.dataLayer).toEqual([
+      {
+        event: 'program_payment_success',
+        program_name: '올인원패스 3개월',
+        program_id: 1,
+        program_type: 'MEMBERSHIP',
+        payment_method: '카드',
+        payment_amount: 120000,
+        order_id: 'order-1',
+      },
+    ]);
+  });
+
+  it('연장이 성공하면 연장 옵션 ID 와 연장 구분으로 보낸다', async () => {
+    mockData = {
+      ...BASE_ORDER,
+      orderType: 'EXTENSION',
+      membershipPlanId: null,
+      applicationId: 21,
+      membershipOptionId: 5,
+      passTitle: '올인원패스 1개월 연장',
+    };
+    postMembershipExtension.mockResolvedValue({
+      data: { data: { tossInfo: TOSS_INFO, vodPass: null, payments: [] } },
+    });
+
+    render(<MembershipOrderResultPage />);
+
+    await screen.findByText('영수증 보기');
+    expect(window.dataLayer).toEqual([
+      expect.objectContaining({
+        event: 'program_payment_success',
+        program_name: '올인원패스 1개월 연장',
+        program_id: 5,
+        program_type: 'MEMBERSHIP_EXTENSION',
+      }),
+    ]);
+  });
+
+  it('결제가 실패하면 보내지 않는다', async () => {
+    mockData = BASE_ORDER;
+    postMembershipApplication.mockRejectedValue(new Error('network'));
+
+    render(<MembershipOrderResultPage />);
+
+    await screen.findByRole('link', { name: '다시 결제하기' });
+    expect(window.dataLayer).toEqual([]);
   });
 });
 
