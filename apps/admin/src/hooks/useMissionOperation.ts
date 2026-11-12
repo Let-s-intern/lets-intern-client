@@ -145,7 +145,7 @@ export const useMissionOperations = (
           )?.title
         : undefined;
 
-      // 잠긴 미션(경험정리, 0·99·100 회차)은 셀에 보이는 대로 공통으로 보낸다
+      // 잠긴 미션(0·99·100 회차)은 셀에 보이는 대로 공통으로 보낸다
       const versionIdList = isMissionVersionLocked(row)
         ? []
         : toVersionIdList(row);

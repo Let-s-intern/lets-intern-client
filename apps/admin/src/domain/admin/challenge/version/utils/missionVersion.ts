@@ -9,13 +9,8 @@ const VERSION_LOCKED_THS = [
   BONUS_MISSION_TH,
 ];
 
-/** 경험정리 미션과 OT·인재풀·보너스 회차 미션은 버전을 지정할 수 없고 공통으로 고정한다 (V13) */
-export const isMissionVersionLocked = ({
-  missionType,
-  th,
-}: Pick<Mission, 'missionType' | 'th'>) =>
-  missionType === 'EXPERIENCE_1' ||
-  missionType === 'EXPERIENCE_2' ||
+/** OT·인재풀·보너스 회차 미션은 버전을 지정할 수 없고 공통으로 고정한다 (V13). 경험정리 미션은 LC-3610 부터 버전 지정 가능 */
+export const isMissionVersionLocked = ({ th }: Pick<Mission, 'th'>) =>
   VERSION_LOCKED_THS.includes(th);
 
 /**
