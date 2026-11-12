@@ -892,6 +892,14 @@ export interface DuplicateChallengeReq {
   desktopThumbnail: string | null;
   copyContent: boolean;
   copyDashboard: boolean;
+  /** 원본 버전 id 별 새 썸네일. null 이거나 목록에 없는 버전은 원본 버전 썸네일로 복제된다 */
+  versionThumbnails:
+    | {
+        sourceChallengeVersionId: number;
+        thumbnail: string | null;
+        desktopThumbnail: string | null;
+      }[]
+    | null;
 }
 
 /** POST 챌린지 복제 */
