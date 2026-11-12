@@ -417,6 +417,8 @@ export const convertCurationLocationTypeToText = (
       return '리뷰 하단';
     case 'UNDER_BLOG':
       return '블로그 하단';
+    case 'MENTORING_CATALOG':
+      return '멘토링 카탈로그 상단';
     default:
       return '-';
   }

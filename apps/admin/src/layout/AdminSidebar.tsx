@@ -181,7 +181,7 @@ export const navData = [
     title: '홈 관리',
     itemList: [
       {
-        name: '홈 큐레이션 관리',
+        name: '큐레이션 관리',
         url: '/home/curation',
       },
     ],
