@@ -164,4 +164,15 @@ describe('제출확인 회차 묶음', () => {
       ]),
     ).toBe('대학생 2(제출)/3(전체) · 직장인 0(제출)/4(전체)');
   });
+
+  it('같은 버전의 경험정리1·2 가 묶이면 미션 타입을 붙여 구분한다', () => {
+    expect(
+      formatRoundAttendance([
+        { ...mission(6, 4, [STUDENT], 1, 2), missionType: 'EXPERIENCE_1' },
+        { ...mission(7, 4, [STUDENT], 0, 2), missionType: 'EXPERIENCE_2' },
+      ]),
+    ).toBe(
+      '대학생 경험정리1 1(제출)/2(전체) · 대학생 경험정리2 0(제출)/2(전체)',
+    );
+  });
 });
