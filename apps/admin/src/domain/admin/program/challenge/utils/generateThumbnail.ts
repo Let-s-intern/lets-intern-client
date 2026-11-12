@@ -1,6 +1,5 @@
 import { uploadFile } from '@/api/file';
 import { ChallengeType } from '@/schema';
-import axios from '@/utils/axios';
 
 export const THUMBNAIL_IMAGES: Partial<Record<ChallengeType, string>> = {
   PERSONAL_STATEMENT: '/images/challenge-thumbnail-personal-statement.png',
@@ -233,13 +232,6 @@ export async function drawBadgeOnCanvas(
       else reject(new Error('canvas.toBlob 실패'));
     }, 'image/png');
   });
-}
-
-export async function fetchChallengeType(
-  challengeId: number,
-): Promise<ChallengeType> {
-  const res = await axios.get(`/challenge/${challengeId}/type`);
-  return res.data.data.challengeType as ChallengeType;
 }
 
 export async function generateAndUploadThumbnail(

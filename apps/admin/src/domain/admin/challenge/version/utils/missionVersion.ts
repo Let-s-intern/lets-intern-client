@@ -9,13 +9,8 @@ const VERSION_LOCKED_THS = [
   BONUS_MISSION_TH,
 ];
 
-/** 경험정리 미션과 OT·인재풀·보너스 회차 미션은 버전을 지정할 수 없고 공통으로 고정한다 (V13) */
-export const isMissionVersionLocked = ({
-  missionType,
-  th,
-}: Pick<Mission, 'missionType' | 'th'>) =>
-  missionType === 'EXPERIENCE_1' ||
-  missionType === 'EXPERIENCE_2' ||
+/** OT·인재풀·보너스 회차 미션은 버전을 지정할 수 없고 공통으로 고정한다 (V13). 경험정리 미션은 LC-3610 부터 버전 지정 가능 */
+export const isMissionVersionLocked = ({ th }: Pick<Mission, 'th'>) =>
   VERSION_LOCKED_THS.includes(th);
 
 /**
@@ -68,7 +63,16 @@ export const isMissionForVersion = (
 type RoundMission = Pick<
   Mission,
   'th' | 'challengeVersionList' | 'attendanceCount' | 'applicationCount'
->;
+> &
+  Partial<Pick<Mission, 'missionType'>>;
+
+// 같은 버전에 경험정리1·2 가 함께 묶이면 버전명만으로는 행 안에서 구분되지 않는다 (LC-3610)
+const EXPERIENCE_MISSION_LABELS: Partial<
+  Record<NonNullable<Mission['missionType']>, string>
+> = {
+  EXPERIENCE_1: '경험정리1',
+  EXPERIENCE_2: '경험정리2',
+};
 
 /**
  * 제출확인 행 묶음 (LC-3505). 같은 회차의 버전 미션은 한 행으로 묶고,
@@ -104,7 +108,8 @@ const formatAttendanceCount = ({
 
 /**
  * 제출확인 제출현황 칸. 공통이면 `2(제출)/8(전체)`, 한 버전이면 `0(제출)/1(전체) (대학생)`,
- * 버전 미션이 여럿이면 `대학생 2(제출)/3(전체) · 직장인 0(제출)/4(전체)`
+ * 버전 미션이 여럿이면 `대학생 2(제출)/3(전체) · 직장인 0(제출)/4(전체)`.
+ * 경험정리 미션은 버전명 뒤에 `경험정리1` 처럼 타입을 붙인다
  */
 export const formatRoundAttendance = (missions: RoundMission[]) => {
   if (missions.length === 1) {
@@ -114,9 +119,14 @@ export const formatRoundAttendance = (missions: RoundMission[]) => {
       : `${formatAttendanceCount(mission)} (${formatMissionVersions(mission.challengeVersionList)})`;
   }
   return missions
-    .map(
-      (mission) =>
-        `${formatMissionVersions(mission.challengeVersionList)} ${formatAttendanceCount(mission)}`,
+    .map((mission) =>
+      [
+        formatMissionVersions(mission.challengeVersionList),
+        mission.missionType && EXPERIENCE_MISSION_LABELS[mission.missionType],
+        formatAttendanceCount(mission),
+      ]
+        .filter(Boolean)
+        .join(' '),
     )
     .join(' · ');
 };

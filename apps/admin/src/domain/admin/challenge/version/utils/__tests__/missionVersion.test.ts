@@ -13,17 +13,18 @@ describe('isMissionVersionLocked', () => {
   it.each([
     ['경험정리1', 'EXPERIENCE_1', 3],
     ['경험정리2', 'EXPERIENCE_2', 3],
-  ] as const)('%s 미션은 회차와 상관없이 잠근다', (_, missionType, th) => {
-    expect(isMissionVersionLocked({ missionType, th })).toBe(true);
+  ] as const)('%s 미션은 일반 회차에서 잠그지 않는다', (_, missionType, th) => {
+    const mission = { missionType, th };
+    expect(isMissionVersionLocked(mission)).toBe(false);
   });
 
   it.each([0, 99, 100])('%i 회차 미션은 잠근다', (th) => {
-    expect(isMissionVersionLocked({ missionType: null, th })).toBe(true);
+    expect(isMissionVersionLocked({ th })).toBe(true);
   });
 
   it('일반 회차의 기본 미션은 잠그지 않는다', () => {
-    expect(isMissionVersionLocked({ missionType: null, th: 1 })).toBe(false);
-    expect(isMissionVersionLocked({ missionType: null, th: 98 })).toBe(false);
+    expect(isMissionVersionLocked({ th: 1 })).toBe(false);
+    expect(isMissionVersionLocked({ th: 98 })).toBe(false);
   });
 });
 
@@ -162,5 +163,16 @@ describe('제출확인 회차 묶음', () => {
         mission(4, 3, [WORKER], 0, 4),
       ]),
     ).toBe('대학생 2(제출)/3(전체) · 직장인 0(제출)/4(전체)');
+  });
+
+  it('같은 버전의 경험정리1·2 가 묶이면 미션 타입을 붙여 구분한다', () => {
+    expect(
+      formatRoundAttendance([
+        { ...mission(6, 4, [STUDENT], 1, 2), missionType: 'EXPERIENCE_1' },
+        { ...mission(7, 4, [STUDENT], 0, 2), missionType: 'EXPERIENCE_2' },
+      ]),
+    ).toBe(
+      '대학생 경험정리1 1(제출)/2(전체) · 대학생 경험정리2 0(제출)/2(전체)',
+    );
   });
 });

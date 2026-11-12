@@ -1,5 +1,9 @@
-import { duplicateChallenge } from '@/api/challenge/challenge';
-import { ChallengeType } from '@/schema';
+import {
+  duplicateChallenge,
+  DuplicateChallengeReq,
+} from '@/api/challenge/challenge';
+import { getChallenge } from '@/api/program';
+import { ChallengeType, ChallengeVersion } from '@/schema';
 import {
   Button,
   Checkbox,
@@ -17,15 +21,11 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
 import { useEffect, useState } from 'react';
 import {
-  extractGeneration,
-  extractVersion,
-  extractWeek,
-  fetchChallengeType,
-  generateAndUploadThumbnail,
-  resolveThumbnailImage,
-  THUMBNAIL_TYPE_LABELS,
-  WEEK_TITLE_TEMPLATES,
-} from './utils/generateThumbnail';
+  generateDuplicateThumbnails,
+  getThumbnailBlockReason,
+  THUMBNAIL_BLOCK_REASON_TEXT,
+} from './utils/duplicateThumbnail';
+import { THUMBNAIL_TYPE_LABELS } from './utils/generateThumbnail';
 
 interface Props {
   isOpen: boolean;
@@ -61,22 +61,23 @@ const ChallengeDuplicateModal = ({
   const [challengeType, setChallengeType] = useState<ChallengeType | null>(
     null,
   );
+  const [versions, setVersions] = useState<ChallengeVersion[]>([]);
 
-  // 이력서처럼 Ver 전용 이미지만 있는 타입이 있어 제목까지 봐야 지원 여부가 정해진다
-  const isSupportedType =
-    challengeType !== null &&
-    resolveThumbnailImage(challengeType, extractVersion(title)) !== null;
-  const needsWeek =
-    challengeType !== null && challengeType in WEEK_TITLE_TEMPLATES;
-  const isThumbnailEnabled =
-    !copyContent &&
-    extractGeneration(title) !== null &&
-    (!needsWeek || extractWeek(title) !== null) &&
-    isSupportedType;
+  const hasVersions = versions.length > 0;
+  const thumbnailBlockReason = getThumbnailBlockReason({
+    copyContent,
+    challengeType,
+    title,
+    versionTitles: versions.map((version) => version.title),
+  });
+  const isThumbnailEnabled = thumbnailBlockReason === null;
 
   useEffect(() => {
     if (!isOpen) return;
-    fetchChallengeType(sourceChallenge.id).then(setChallengeType);
+    getChallenge(sourceChallenge.id).then((challenge) => {
+      setChallengeType(challenge.challengeType);
+      setVersions(challenge.versionList);
+    });
   }, [isOpen, sourceChallenge.id]);
 
   const isSubmitDisabled =
@@ -91,6 +92,7 @@ const ChallengeDuplicateModal = ({
     setGenerateThumbnail(false);
     setCopyDashboard(false);
     setChallengeType(null);
+    setVersions([]);
     onClose();
   };
 
@@ -107,11 +109,15 @@ const ChallengeDuplicateModal = ({
       const effectiveTitle = copyContent ? sourceChallenge.title : title;
 
       let thumbnailUrl: string | null = sourceChallenge.thumbnail ?? null;
+      let versionThumbnails: DuplicateChallengeReq['versionThumbnails'] = null;
       if (generateThumbnail && challengeType) {
-        thumbnailUrl = await generateAndUploadThumbnail(
+        const generated = await generateDuplicateThumbnails(
           challengeType,
           effectiveTitle,
+          versions,
         );
+        thumbnailUrl = generated.thumbnail;
+        versionThumbnails = generated.versionThumbnails;
       }
 
       await duplicateChallenge(sourceChallenge.id, {
@@ -129,6 +135,7 @@ const ChallengeDuplicateModal = ({
         desktopThumbnail: thumbnailUrl,
         copyContent,
         copyDashboard,
+        versionThumbnails,
       });
       onSuccess();
       handleClose();
@@ -224,6 +231,11 @@ const ChallengeDuplicateModal = ({
                 }
                 label="썸네일 자동 생성"
               />
+              {thumbnailBlockReason && (
+                <p className="-mt-1 mb-1 ml-8 text-xs text-red-500">
+                  {THUMBNAIL_BLOCK_REASON_TEXT[thumbnailBlockReason]}
+                </p>
+              )}
               <p className="-mt-1 ml-8 text-xs text-gray-400">
                 * <strong>기수가 포함된 제목</strong> 입력 시 활성화됩니다. (ex.
                 포트폴리오 1주 완성 챌린지 32기)
@@ -231,11 +243,20 @@ const ChallengeDuplicateModal = ({
                 <strong>주차도 함께</strong> 입력해야 합니다.
                 <br />* <strong>{SUPPORTED_TYPE_LABELS}</strong> 챌린지만
                 가능합니다.
-                <br />* 제목 앞 <strong>[ ] 안의 문구</strong>가 우측 상단
-                배너로 들어갑니다. 없으면 배너 없이 생성됩니다. (ex. [인턴·실무
-                경험자 Ver.])
-                <br />* 이력서 챌린지는 <strong>[ ] 문구가 있어야</strong>
-                가능합니다.
+                {hasVersions ? (
+                  <>
+                    <br />* 버전마다 <strong>[버전명] 챌린지 제목</strong>으로
+                    썸네일을 만들고, 버전명이 우측 상단 배너로 들어갑니다.
+                  </>
+                ) : (
+                  <>
+                    <br />* 제목 앞 <strong>[ ] 안의 문구</strong>가 우측 상단
+                    배너로 들어갑니다. 없으면 배너 없이 생성됩니다. (ex.
+                    [인턴·실무 경험자 Ver.])
+                    <br />* 이력서 챌린지는 <strong>[ ] 문구가 있어야</strong>
+                    가능합니다.
+                  </>
+                )}
               </p>
             </div>
             <FormControlLabel
