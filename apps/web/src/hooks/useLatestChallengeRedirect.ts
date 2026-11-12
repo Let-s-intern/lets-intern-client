@@ -15,6 +15,10 @@ import { useEffect, useMemo, useRef } from 'react';
  * 1. 모집중인(active) 챌린지 중 B2C 챌린지가 있을 경우 해당 챌린지로 이동
  * 2. 없을 경우 노출된 챌린지 중 활성화되지 않은 가장 최근 B2C 챌린지로 이동
  *
+ * 진입 URL 의 쿼리는 상세 페이지로 그대로 넘긴다 (LC-3611).
+ * 협찬 링크 `latest?source=b2b` 의 source 가 여기서 빠지면 결제창 쿠폰칸이 닫히고,
+ * utm 도 유입 경로에서 사라진다.
+ *
  * @param type 챌린지 타입
  * @returns 로딩 상태 (true면 로딩 중)
  */
@@ -112,7 +116,11 @@ export function useLatestChallengeRedirect(type: ChallengeType) {
         const targetChallenge = filteredActive[0] ?? sortedNonActive[0];
         if (targetChallenge?.id) {
           hasRedirectedRef.current = true;
-          router.replace(`/program/challenge/${targetChallenge.id}`);
+          // useSearchParams 는 Suspense 경계를 요구해 11개 latest 페이지를 모두 건드려야 한다.
+          // 이 시점은 effect 안이라 브라우저에서만 돌므로 location 을 직접 읽는다
+          router.replace(
+            `/program/challenge/${targetChallenge.id}${window.location.search}`,
+          );
           return;
         }
 

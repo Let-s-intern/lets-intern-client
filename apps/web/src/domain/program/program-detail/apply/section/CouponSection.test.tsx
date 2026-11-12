@@ -65,6 +65,33 @@ describe('CouponSection', () => {
     expect(screen.getByText('2장')).toBeInTheDocument();
   });
 
+  describe('[LC-3611] 챌린지 타입 전용 쿠폰 숨김', () => {
+    const renderWithBlocked = (blockedCouponCodes: string[]) =>
+      render(
+        <CouponSection
+          setCoupon={jest.fn()}
+          programType="challenge"
+          blockedCouponCodes={blockedCouponCodes}
+        />,
+      );
+
+    it('막힌 코드의 쿠폰을 목록에서 뺀다', () => {
+      // CODE1 = 협찬 전액할인. 다른 챌린지 결제에서 0원이 되면 안 된다
+      renderWithBlocked(['CODE1']);
+      expect(screen.getByText('1장')).toBeInTheDocument();
+    });
+
+    it('코드 대소문자가 달라도 막는다', () => {
+      renderWithBlocked(['code1']);
+      expect(screen.getByText('1장')).toBeInTheDocument();
+    });
+
+    it('막힌 코드가 없으면 그대로 노출한다', () => {
+      renderWithBlocked([]);
+      expect(screen.getByText('2장')).toBeInTheDocument();
+    });
+  });
+
   describe('[LC-3219-MEMBERSHIP] 전액할인 숨김 (담당자 임성빈, 시즌 종료 시 제거)', () => {
     it('허용하면 전액할인 쿠폰도 함께 노출한다', () => {
       renderSection(true);
