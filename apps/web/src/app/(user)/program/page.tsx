@@ -2,7 +2,6 @@ import { Suspense } from 'react';
 
 import { SHOW_LIVE_MENTORING_HEADER_NAV } from '@/domain/live-mentoring/constants';
 import LiveMentoringListPage from '@/domain/live-mentoring/list/LiveMentoringListPage';
-import MentoringCurationSection from '@/domain/live-mentoring/list/MentoringCurationSection';
 import ProgramCatalogTabs, {
   CATALOG_QUERY_KEY,
   MENTORING_CATALOG,
@@ -54,14 +53,7 @@ const ProgramPage = async ({
     <div className="mw-1180 mx-auto w-full pb-[120px] pt-8 md:px-0 md:pt-12">
       <ProgramCatalogTabs active={isMentoring ? 'mentoring' : 'program'} />
       <Suspense fallback={null}>
-        {isMentoring ? (
-          <>
-            <MentoringCurationSection />
-            <LiveMentoringListPage />
-          </>
-        ) : (
-          <ProgramsPage />
-        )}
+        {isMentoring ? <LiveMentoringListPage /> : <ProgramsPage />}
       </Suspense>
     </div>
   );

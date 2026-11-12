@@ -19,7 +19,7 @@ const MentoringCurationSection = () => {
   if (!curation || items.length === 0) return null;
 
   return (
-    <section className="border-primary-20 bg-primary-5 mb-8 flex flex-col gap-5 rounded-md border px-5 py-6 md:mb-12 md:gap-8 md:px-8 md:py-8">
+    <section className="border-primary-20 bg-primary-5 flex flex-col gap-5 rounded-md border px-5 py-6 md:mb-12 md:gap-8 md:px-8 md:py-8">
       <h2 className="text-small18 md:text-small20 text-neutral-0 font-semibold">
         {curation.curationInfo.title}
       </h2>

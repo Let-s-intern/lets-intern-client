@@ -10,6 +10,7 @@ import type { LiveMentoringCategory } from '@/api/live-mentoring/liveMentoringSc
 import MuiPagination from '@/common/pagination/MuiPagination';
 import LiveMentoringFilterSideBar from './LiveMentoringFilterSideBar';
 import MentorCard from './MentorCard';
+import MentoringCurationSection from './MentoringCurationSection';
 import SortSelect from './SortSelect';
 
 /**
@@ -53,6 +54,7 @@ const LiveMentoringListPage = () => {
       />
 
       <main className="flex min-w-0 flex-1 flex-col gap-5 md:gap-6">
+        <MentoringCurationSection />
         <div className="flex items-center justify-end">
           <SortSelect value={sort} onChange={handleSortChange} />
         </div>
