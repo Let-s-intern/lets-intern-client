@@ -7,6 +7,7 @@ export const curationLocationSchema = z.enum([
   'UNDER_BANNER',
   'UNDER_REVIEW',
   'UNDER_BLOG',
+  'MENTORING_CATALOG',
 ]);
 export type CurationLocationType = z.infer<typeof curationLocationSchema>;
 export const CurationLocationTypeValues = curationLocationSchema._def.values;
