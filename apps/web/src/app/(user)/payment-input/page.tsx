@@ -13,7 +13,10 @@ import { AsyncBoundary } from '@/common/boundary/AsyncBoundary';
 import { LETSCON_OFFLINE_LIVE_ID } from '@/domain/letscon/data/live';
 import { MEMBERSHIP_CHALLENGE_ID as LEGACY_MEMBERSHIP_CHALLENGE_ID } from '@/domain/membership-legacy/lib/membershipChallenge';
 import { MEMBERSHIP_CHALLENGE_ID } from '@/domain/membership/lib/membershipChallenge';
-import { COUPON_DISABLED_CHALLENGE_TYPES } from '@/domain/program/program-detail/apply/constants';
+import {
+  COUPON_DISABLED_CHALLENGE_TYPES,
+  getBlockedCouponCodes,
+} from '@/domain/program/program-detail/apply/constants';
 import AppliedVersionSection from '@/domain/program/program-detail/apply/section/AppliedVersionSection';
 import CouponSection, {
   CouponSectionProps,
@@ -136,6 +139,9 @@ const PaymentInputContent = () => {
     programApplicationData.programId === LETSCON_OFFLINE_LIVE_ID;
   const showCouponSection =
     (!isCouponDisabledType || hasB2BParam) && !isLetsconOfflineLive;
+  // 협찬 전용 코드(YAIREWARD 등)는 묶인 챌린지 타입 결제에서만 보인다 (LC-3611).
+  // 챌린지가 아니면 challengeType 이 '' 라 묶인 코드가 전부 빠진다
+  const blockedCouponCodes = getBlockedCouponCodes(challengeType);
 
   // [LC-3219-MEMBERSHIP] 시작 — 하반기 멤버십은 쿠폰을 받되 전액할인만 막는다.
   // 멤버십이 어드민 챌린지로 만들어져 있어, 예전에 챌린지용으로 뿌린 전액할인 쿠폰
@@ -434,6 +440,7 @@ const PaymentInputContent = () => {
                 }
                 // [LC-3219-MEMBERSHIP] 시즌 종료 시 이 줄을 지운다. 담당자 임성빈
                 allowFullDiscount={!isMembership}
+                blockedCouponCodes={blockedCouponCodes}
               />
             )}
 

@@ -19,6 +19,11 @@ export interface CouponSectionProps {
    * 하반기 멤버십에서만 false 로 넘어온다. 시즌 종료 시 이 prop 과 전달부를 지운다.
    */
   allowFullDiscount?: boolean;
+  /**
+   * 이 결제에서 쓸 수 없는 쿠폰 코드 (LC-3611). 다른 챌린지 타입 전용으로 묶인 협찬 코드다.
+   * 등록은 막지 않고 목록에서만 빼므로, 등록해 두면 허용된 챌린지 결제에서 다시 보인다.
+   */
+  blockedCouponCodes?: string[];
 }
 
 const CouponSection = ({
@@ -27,6 +32,7 @@ const CouponSection = ({
   maxAmount = Infinity,
   salePrice,
   allowFullDiscount = true,
+  blockedCouponCodes = [],
 }: CouponSectionProps) => {
   const { data: myCoupons = [] } = useMyCoupons(programType);
 
@@ -35,10 +41,16 @@ const CouponSection = ({
   // (discount === -1)이 그대로 먹어 169,000원이 0원이 된다. 목록에서 빼 고를 수 없게 한다.
   // 시즌 종료 시 이 블록과 allowFullDiscount prop, 그리고 payment-input/page.tsx 의
   // 전달부·isMembership 블록을 함께 지운다.
-  const coupons = allowFullDiscount
+  const discountAllowedCoupons = allowFullDiscount
     ? myCoupons
     : myCoupons.filter((coupon) => coupon.discount !== -1);
   // [LC-3219-MEMBERSHIP] 끝
+  const blockedCodes = new Set(
+    blockedCouponCodes.map((code) => code.toUpperCase()),
+  );
+  const coupons = discountAllowedCoupons.filter(
+    (coupon) => !blockedCodes.has(coupon.code.toUpperCase()),
+  );
   const [selectedCoupon, setSelectedCoupon] = useState<CouponItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 

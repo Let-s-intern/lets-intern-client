@@ -7,6 +7,7 @@ import Input from '../../../../../common/input/v2/Input';
 import { ICouponForm } from '../../../../../types/interface';
 import ProgramCard from '../../../ProgramCard';
 import { PayInfo, ProgramDate } from '../../section/ApplySection';
+import { getBlockedCouponCodes } from '../constants';
 import CouponSection from '../section/CouponSection';
 import PriceSection from '../section/PriceSection';
 
@@ -124,7 +125,12 @@ const PayContent = ({
           <div className="flex flex-col gap-y-6">
             <div className="text-neutral-0 font-semibold">결제 정보</div>
             <div className="flex flex-col gap-y-5">
-              <CouponSection setCoupon={setCoupon} programType={programType} />
+              {/* 레거시 결제는 챌린지 타입을 모르므로 협찬 전용 코드를 전부 뺀다 (LC-3611) */}
+              <CouponSection
+                setCoupon={setCoupon}
+                programType={programType}
+                blockedCouponCodes={getBlockedCouponCodes('')}
+              />
               <hr className="bg-neutral-85" />
               <PriceSection payInfo={payInfo} coupon={coupon} />
               <hr className="bg-neutral-85" />
