@@ -14,6 +14,12 @@ const KIND_LABEL: Record<HomeSearchItem['kind'], string> = {
 };
 
 const HomeSearchResults = ({ result }: { result: HomeSearchResponse }) => {
+  // 프로그램을 먼저, 블로그는 맨 뒤로. 같은 종류 안에서는 관련도 순서를 유지한다
+  const items = [
+    ...result.items.filter((item) => item.kind !== 'BLOG'),
+    ...result.items.filter((item) => item.kind === 'BLOG'),
+  ];
+
   return (
     <div className="bg-primary-5 mt-6 w-full max-w-[1120px] rounded-md px-4 py-5 md:px-6 md:py-6">
       {result.answer && (
@@ -23,7 +29,7 @@ const HomeSearchResults = ({ result }: { result: HomeSearchResponse }) => {
         </p>
       )}
 
-      {result.items.length === 0 ? (
+      {items.length === 0 ? (
         <p className="text-xsmall14 text-neutral-40 text-center">
           검색 결과가 없어요. 다른 고민이나 키워드로 찾아보세요.
         </p>
@@ -31,7 +37,7 @@ const HomeSearchResults = ({ result }: { result: HomeSearchResponse }) => {
         <ul
           className={`grid grid-cols-1 gap-3 md:grid-cols-3 ${result.answer ? 'mt-4' : ''}`}
         >
-          {result.items.map((item) => (
+          {items.map((item) => (
             <li key={item.key}>
               <Link
                 href={item.href}
