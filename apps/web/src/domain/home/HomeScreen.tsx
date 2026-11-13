@@ -10,14 +10,14 @@ import CurrentBlogSection from '@/domain/home/blog/CurrentBlogSectionClient';
 import InterviewSection from '@/domain/home/blog/InterviewSectionClient';
 import ConcernSection from '@/domain/home/concern/ConcernSection';
 import ReviewSection from '@/domain/home/review/ReviewSectionClient';
-import HomeSearchHero from '@/domain/home/search/HomeSearchHero';
+import HomeHero from '@/domain/home/hero/HomeHero';
 
 export default function HomeScreen() {
   return (
     <>
       <TopBanner />
       <div className="mb-20 flex w-full flex-col items-center justify-center pt-9 md:mb-44 md:pt-[68px]">
-        <HomeSearchHero />
+        <HomeHero />
         <ConcernSection />
         <MainBannerSection />
         <AsyncBoundary pendingFallback={null}>
