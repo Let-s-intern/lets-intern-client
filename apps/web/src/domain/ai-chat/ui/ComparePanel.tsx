@@ -40,16 +40,20 @@ const InfoRow = ({
 const CompareCard = ({
   item,
   isLowest,
+  isCarousel,
 }: {
   item: AiChatItem;
   isLowest: boolean;
+  /** 3개 이상이면 데스크톱도 가로 스와이프라 폭을 고정한다 */
+  isCarousel: boolean;
 }) => {
   const discountRate = getDiscountRate(item.price);
 
   return (
     <li
       className={twMerge(
-        'border-neutral-85 flex w-[220px] shrink-0 snap-start flex-col overflow-hidden rounded-md border bg-white md:w-auto md:min-w-0',
+        'border-neutral-85 flex w-[220px] shrink-0 snap-start flex-col overflow-hidden rounded-md border bg-white',
+        !isCarousel && 'md:w-auto md:min-w-0',
         isLowest && 'border-primary-40',
       )}
     >
@@ -144,19 +148,41 @@ const CompareCard = ({
 
 const ComparePanel = ({ items }: { items: AiChatItem[] }) => {
   const lowest = getLowestPrice(items);
+  const isCarousel = items.length >= 3;
 
   return (
     <div className="flex min-h-0 flex-col md:h-full">
-      <h3 className="text-xsmall16 text-neutral-0 md:text-small18 font-bold">
-        한눈에 비교하기
-      </h3>
-      {/* 모바일은 가로 스와이프, 데스크톱은 2열 그리드(3개 이상이면 세로 스크롤) */}
-      <ul className="-mx-5 mt-3 flex snap-x gap-3 overflow-x-auto px-5 pb-1 md:mx-0 md:grid md:min-h-0 md:flex-1 md:grid-cols-2 md:overflow-y-auto md:overflow-x-visible md:px-0">
+      <div className="flex items-end justify-between gap-2">
+        <h3 className="text-xsmall16 text-neutral-0 md:text-small18 font-bold">
+          한눈에 비교하기
+        </h3>
+        {isCarousel && (
+          <span className="text-xxsmall12 text-neutral-45 flex items-center gap-0.5">
+            {items.length}개 · 옆으로 넘겨 보세요
+            <ChevronRight size={14} />
+          </span>
+        )}
+      </div>
+      {/*
+        모바일은 항상 가로 스와이프.
+        데스크톱은 2개면 2열 그리드(행 높이는 내용만큼, 넘치면 세로 스크롤),
+        3개 이상이면 2열에 다 담기지 않아 가로 스와이프로 한 줄에 둔다.
+        행 높이를 내용만큼(auto-rows-max) 두지 않으면 카드가 패널 높이에 맞춰 눌려 아래가 잘린다.
+      */}
+      <ul
+        className={twMerge(
+          'mt-3 flex snap-x gap-3 overflow-x-auto pb-1 md:min-h-0 md:flex-1',
+          isCarousel
+            ? 'md:overflow-y-hidden md:pb-2'
+            : 'md:grid md:auto-rows-max md:grid-cols-2 md:overflow-y-auto md:overflow-x-visible',
+        )}
+      >
         {items.map((item) => (
           <CompareCard
             key={item.key}
             item={item}
             isLowest={lowest != null && item.price?.selling === lowest}
+            isCarousel={isCarousel}
           />
         ))}
       </ul>

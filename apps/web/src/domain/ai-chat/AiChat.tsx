@@ -12,9 +12,7 @@ import {
 } from './constants/aiChat';
 import useAiChat from './hooks/useAiChat';
 import ChatPanel from './ui/ChatPanel';
-import ComparePanel from './ui/ComparePanel';
-import DetailPanel from './ui/DetailPanel';
-import RecommendPanel from './ui/RecommendPanel';
+import PanelView from './ui/PanelView';
 
 interface AiChatProps {
   /** 대화 시작·종료를 바깥(배치하는 화면)에 알린다. 제목 축소·배너 숨김 등에 쓴다 */
@@ -137,7 +135,7 @@ const AiChat = ({
       {isChatting && panel && (
         <div
           className={twMerge(
-            'mt-4 grid w-full grid-cols-1 gap-6 text-left md:mt-5 md:grid-cols-[3fr_2fr] md:gap-8',
+            'mt-4 grid w-full grid-cols-1 gap-6 text-left md:mt-5 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] md:gap-8',
             desktopHeightClassName,
           )}
         >
@@ -146,9 +144,10 @@ const AiChat = ({
           >
             <ChatPanel turns={turns} isPending={isPending} onAsk={followUp} />
           </div>
-          {panel.type === 'detail' && <DetailPanel detail={panel.detail} />}
-          {panel.type === 'compare' && <ComparePanel items={panel.items} />}
-          {panel.type === 'recommend' && <RecommendPanel items={panel.items} />}
+          {/* 모바일은 대화창 안 답변 아래에 같은 패널을 보여주므로 오른쪽 패널은 데스크톱만 */}
+          <div className="hidden min-h-0 md:block md:h-full">
+            <PanelView panel={panel} />
+          </div>
         </div>
       )}
     </div>

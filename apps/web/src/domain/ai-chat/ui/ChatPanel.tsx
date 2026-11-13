@@ -4,6 +4,7 @@ import { FormEvent, ReactNode, useEffect, useRef, useState } from 'react';
 import { AI_CHAT_QUERY_MAX_LENGTH } from '../constants/aiChat';
 import { AiChatResponse, AiChatTurn } from '../types/aiChat';
 import MarkdownText from './MarkdownText';
+import PanelView from './PanelView';
 
 /** 키워드 대체 응답은 AI 답변이 없어서 고정 문구로 채운다 */
 function getAnswerText(result: AiChatResponse) {
@@ -36,9 +37,17 @@ const ChatPanel = ({
   const [input, setInput] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  const lastTurnRef = useRef<HTMLDivElement>(null);
+
+  // 새 질문·답변이 오면 마지막 질문이 대화창 위쪽에 오도록 스크롤한다.
+  // 맨 아래로 내리면 모바일에서 답변 아래 붙는 긴 패널 때문에 답변 시작을 지나쳐 버린다
   useEffect(() => {
-    scrollRef.current?.scrollTo({
-      top: scrollRef.current.scrollHeight,
+    const container = scrollRef.current;
+    const lastTurn = lastTurnRef.current;
+    if (!container || !lastTurn) return;
+    container.scrollTo({
+      // 스크롤 영역이 relative 라 offsetTop 은 영역 안 기준 위치다
+      top: lastTurn.offsetTop - 16,
       behavior: 'smooth',
     });
   }, [turns]);
@@ -60,10 +69,14 @@ const ChatPanel = ({
 
       <div
         ref={scrollRef}
-        className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 py-4 md:px-5"
+        className="relative flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 py-4 md:px-5"
       >
-        {turns.map((turn) => (
-          <div key={turn.id} className="flex flex-col gap-4">
+        {turns.map((turn, index) => (
+          <div
+            key={turn.id}
+            ref={index === turns.length - 1 ? lastTurnRef : undefined}
+            className="flex flex-col gap-4"
+          >
             <div className="bg-primary text-xsmall14 md:text-xsmall16 ml-auto max-w-[85%] whitespace-pre-line rounded-md rounded-tr-none px-4 py-3 text-white">
               {turn.query}
             </div>
@@ -85,6 +98,12 @@ const ChatPanel = ({
               <AssistantBubble>
                 <MarkdownText text={getAnswerText(turn.result)} />
               </AssistantBubble>
+            )}
+            {/* 모바일은 오른쪽 패널 대신 답변 바로 아래에 추천·비교·상세를 보여준다 */}
+            {turn.status === 'done' && turn.result?.panel && (
+              <div className="min-w-0 pl-9 md:hidden">
+                <PanelView panel={turn.result.panel} />
+              </div>
             )}
           </div>
         ))}
