@@ -6,6 +6,7 @@ import { twMerge } from '@/lib/twMerge';
 import { AI_CHAT_KIND_LABEL } from '../constants/aiChat';
 import { AiChatItem } from '../types/aiChat';
 import { formatPeriod, formatWon } from '../utils/format';
+import ItemThumbnail from './ItemThumbnail';
 
 /** 가장 싼 항목에 표시를 달기 위한 최저 판매가 */
 function getLowestPrice(items: AiChatItem[]) {
@@ -52,13 +53,7 @@ const CompareCard = ({
         isLowest && 'border-primary-40',
       )}
     >
-      {item.thumbnail && (
-        <img
-          src={item.thumbnail}
-          alt=""
-          className="aspect-[4/3] w-full object-cover"
-        />
-      )}
+      <ItemThumbnail item={item} size="lg" className="aspect-[4/3] w-full" />
       <div className="flex flex-1 flex-col p-4">
         <div className="flex items-center gap-1.5">
           <span className="text-xxsmall12 text-primary font-semibold">

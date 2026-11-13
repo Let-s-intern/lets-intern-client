@@ -44,6 +44,7 @@ interface MentoringOpeningRow {
   } | null;
   title?: string | null;
   thumbnail?: string | null;
+  mentorProfileImage?: string | null;
   categories?: string[] | null;
   durations?: number[] | null;
   minimumPrice?: number | null;
@@ -218,7 +219,8 @@ export async function getCatalog(): Promise<CatalogItem[]> {
         kind: 'LIVE_MENTORING',
         title: o.title ?? `${o.mentorNickname ?? ''} 멘토 1:1 LIVE 멘토링`,
         description,
-        thumbnail: o.thumbnail ?? null,
+        // 멘토링 목록 카드(MentorCard)와 같이 썸네일이 없으면 프로필 사진을 쓴다
+        thumbnail: o.thumbnail ?? o.mentorProfileImage ?? null,
         href: `/live-mentoring/${o.mentorId}`,
         price:
           o.minimumPrice != null

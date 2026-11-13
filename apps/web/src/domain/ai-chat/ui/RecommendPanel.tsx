@@ -3,6 +3,7 @@ import Link from 'next/link';
 
 import { AI_CHAT_KIND_LABEL } from '../constants/aiChat';
 import { AiChatItem } from '../types/aiChat';
+import ItemThumbnail from './ItemThumbnail';
 import ProgramMeta from './ProgramMeta';
 
 const RecommendPanel = ({ items }: { items: AiChatItem[] }) => {
@@ -26,13 +27,11 @@ const RecommendPanel = ({ items }: { items: AiChatItem[] }) => {
               data-url={item.href}
               data-text={item.title}
             >
-              {item.thumbnail && (
-                <img
-                  src={item.thumbnail}
-                  alt=""
-                  className="rounded-xs h-16 w-16 shrink-0 object-cover"
-                />
-              )}
+              <ItemThumbnail
+                item={item}
+                size="sm"
+                className="rounded-xs h-16 w-16 shrink-0"
+              />
               <div className="flex min-w-0 flex-1 flex-col gap-1">
                 <span className="text-xxsmall12 text-primary font-semibold">
                   {AI_CHAT_KIND_LABEL[item.kind] ?? item.kind}
