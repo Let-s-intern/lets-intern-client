@@ -6,6 +6,8 @@ import Popup from '@/domain/home/ui/Popup';
 
 import MainBannerSection from '@/domain/home/banner/MainBannerSection';
 import BlogCurationSection from '@/domain/home/blog/BlogCurationSection';
+import CurrentBlogSection from '@/domain/home/blog/CurrentBlogSectionClient';
+import InterviewSection from '@/domain/home/blog/InterviewSectionClient';
 import ConcernSection from '@/domain/home/concern/ConcernSection';
 import ReviewSection from '@/domain/home/review/ReviewSectionClient';
 import HomeSearchHero from '@/domain/home/search/HomeSearchHero';
@@ -20,6 +22,12 @@ export default function HomeScreen() {
         <MainBannerSection />
         <AsyncBoundary pendingFallback={null}>
           <ReviewSection />
+        </AsyncBoundary>
+        <AsyncBoundary pendingFallback={null}>
+          <InterviewSection />
+        </AsyncBoundary>
+        <AsyncBoundary pendingFallback={null}>
+          <CurrentBlogSection />
         </AsyncBoundary>
         <AsyncBoundary pendingFallback={null}>
           <BlogCurationSection />
