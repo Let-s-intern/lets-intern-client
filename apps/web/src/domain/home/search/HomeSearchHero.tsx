@@ -43,8 +43,7 @@ const HomeSearchHero = () => {
   };
 
   return (
-    // 첫 화면의 대부분을 차지하도록 뷰포트 기준 최소 높이를 잡는다
-    <section className="flex min-h-[60svh] w-full max-w-[1120px] flex-col items-center justify-center px-5 pb-24 pt-8 md:min-h-[64svh] md:pb-40 xl:px-0">
+    <section className="flex w-full max-w-[1120px] flex-col items-center px-5 pb-6 md:pb-14 xl:px-0">
       <span className="text-xsmall16 text-primary md:text-small20 font-semibold">
         취업 준비의 모든 순간, 렛츠커리어
       </span>
