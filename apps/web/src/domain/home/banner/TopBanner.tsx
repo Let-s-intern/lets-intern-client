@@ -7,7 +7,6 @@ import { FULL_NAVBAR_HEIGHT_OFFSET } from '@/common/layout/header/NavBar';
 // [TOP-BANNER-IMAGE] 홈 개편으로 띠배너 아래 히어로 이미지를 잠시 숨긴다.
 // 되살릴 때 이 import 와 아래 렌더 주석을 함께 푼다 (grep "[TOP-BANNER-IMAGE]")
 // import TopBannerImage from '@/domain/home/banner/TopBannerImage';
-import { useHomeChatting } from '@/domain/home/hero/HomeChattingContext';
 import useScrollDirection from '@/hooks/useScrollDirection';
 import { twMerge } from '@/lib/twMerge';
 import { ILineBanner } from '@/types/Banner.interface';
@@ -32,8 +31,6 @@ const TopBanner = () => {
   });
 
   const scrollDirection = useScrollDirection();
-  // AI 상담 중에는 대화창이 한 화면에 들어오도록 띠배너를 숨긴다
-  const { isChatting } = useHomeChatting();
 
   useEffect(() => {
     if (data) {
@@ -60,7 +57,7 @@ const TopBanner = () => {
     color: data?.textColorCode,
   };
 
-  if (!isShow || isChatting) return null;
+  if (!isShow) return null;
 
   return (
     <>
