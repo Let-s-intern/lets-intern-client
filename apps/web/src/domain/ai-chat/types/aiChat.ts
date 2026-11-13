@@ -78,3 +78,33 @@ export interface AiChatTurn {
   status: 'pending' | 'done' | 'error';
   result?: AiChatResponse;
 }
+
+/** 로그용: 로그인 유저 프로필 일부. 계좌·관리자 메모는 보내지 않는다 */
+export interface AiChatUserSnapshot {
+  userId: number | null;
+  name: string | null;
+  email: string | null;
+  contactEmail: string | null;
+  phoneNum: string | null;
+  nickname: string | null;
+  university: string | null;
+  major: string | null;
+  grade: string | null;
+  careerType: string | null;
+  wishField: string | null;
+  wishJob: string | null;
+  wishIndustry: string | null;
+  wishEmploymentType: string | null;
+  wishCompany: string | null;
+  inflowPath: string | null;
+  authProvider: string | null;
+  marketingAgree: boolean | null;
+}
+
+/** 로그용: 대화·기기 정보 */
+export interface AiChatLogMeta {
+  conversationId: string | null;
+  turnIndex: number | null;
+  anonId: string | null;
+  device: 'mobile' | 'desktop' | null;
+}
