@@ -2,11 +2,20 @@ import { ArrowUp, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { FormEvent, useEffect, useRef, useState } from 'react';
 
+import { twMerge } from '@/lib/twMerge';
+
 import {
   HOME_SEARCH_QUERY_MAX_LENGTH,
   HomeSearchItem,
   HomeSearchResponse,
 } from './homeSearchTypes';
+
+/**
+ * 한 화면 높이 = 뷰포트 - 네비바·여백(96px / 171px) - 제목·검색창·간격(모바일 약 196px + 하단 탭바 64px / 데스크톱 약 150px, 아래 여백 16px 포함 166px).
+ * 모바일은 추천 패널이 대화창 아래로 내려가서 대화창만 한 화면에 맞춘다.
+ */
+const CHAT_HEIGHT =
+  'mt-4 h-[calc(100svh-96px-260px)] min-h-[360px] text-left md:mt-5 md:h-[calc(100svh-171px-166px)] md:min-h-[400px]';
 
 export interface ChatTurn {
   id: number;
@@ -71,7 +80,7 @@ const ChatPanel = ({
   };
 
   return (
-    <div className="bg-primary-5 border-primary-15 flex h-[420px] flex-col rounded-md border md:h-[480px]">
+    <div className="bg-primary-5 border-primary-15 flex h-full min-h-0 flex-col rounded-md border">
       <div className="border-primary-15 text-xsmall14 text-neutral-0 flex items-center gap-2 border-b px-4 py-3 font-semibold md:px-5">
         <Sparkles size={16} className="text-primary" />
         렛츠커리어 AI
@@ -79,7 +88,7 @@ const ChatPanel = ({
 
       <div
         ref={scrollRef}
-        className="flex flex-1 flex-col gap-4 overflow-y-auto px-4 py-4 md:px-5"
+        className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 py-4 md:px-5"
       >
         {turns.map((turn) => (
           <div key={turn.id} className="flex flex-col gap-4">
@@ -140,11 +149,11 @@ const RecommendPanel = ({ items }: { items: HomeSearchItem[] }) => {
   ];
 
   return (
-    <div className="flex flex-col md:h-[480px]">
+    <div className="flex min-h-0 flex-col md:h-full">
       <h3 className="text-xsmall16 text-neutral-0 md:text-small18 font-bold">
         AI 추천 프로그램
       </h3>
-      <ul className="mt-3 flex flex-col gap-2.5 md:overflow-y-auto">
+      <ul className="mt-3 flex min-h-0 flex-col gap-2.5 md:flex-1 md:overflow-y-auto">
         {sorted.map((item) => (
           <li key={item.key}>
             <Link
@@ -193,15 +202,17 @@ const HomeSearchChat = ({
 
   if (!panelTurn?.result) {
     return (
-      <div className="mt-8 w-full max-w-[760px] text-left md:mt-10">
+      <div className={twMerge(CHAT_HEIGHT, 'w-full max-w-[760px]')}>
         <ChatPanel turns={turns} onAsk={onAsk} />
       </div>
     );
   }
 
   return (
-    <div className="mt-8 grid w-full grid-cols-1 gap-6 text-left md:mt-10 md:grid-cols-[3fr_2fr] md:gap-8">
-      <ChatPanel turns={turns} onAsk={onAsk} />
+    <div className="mt-4 grid w-full grid-cols-1 gap-6 text-left md:mt-5 md:h-[calc(100svh-171px-166px)] md:min-h-[400px] md:grid-cols-[3fr_2fr] md:gap-8">
+      <div className="h-[calc(100svh-96px-260px)] min-h-[360px] md:h-auto md:min-h-0">
+        <ChatPanel turns={turns} onAsk={onAsk} />
+      </div>
       <RecommendPanel items={panelTurn.result.items} />
     </div>
   );

@@ -1,7 +1,8 @@
 'use client';
 
 import { ChevronDown, Search, X } from 'lucide-react';
-import { FormEvent, useRef, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
+import { twMerge } from '@/lib/twMerge';
 
 import HomeSearchChat, { ChatTurn } from './HomeSearchChat';
 import {
@@ -45,6 +46,14 @@ const HomeSearchHero = () => {
   const nextId = useRef(0);
   // 새 대화를 시작하면 이전 대화의 늦은 응답은 버린다
   const conversationId = useRef(0);
+  const sectionRef = useRef<HTMLElement>(null);
+  const isChatting = turns.length > 0;
+
+  // 대화가 시작되면 제목~대화창이 한 화면에 들어오도록 섹션을 네비바 바로 아래로 올린다
+  useEffect(() => {
+    if (!isChatting) return;
+    sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [isChatting]);
 
   const ask = async (text: string, prevTurns: ChatTurn[]) => {
     const id = nextId.current++;
@@ -88,11 +97,17 @@ const HomeSearchHero = () => {
   };
 
   return (
-    <section className="flex w-full max-w-[1120px] flex-col items-center px-5 pb-6 md:pb-14 xl:px-0">
-      <span className="text-xsmall16 text-primary md:text-small20 font-semibold">
-        취업 준비의 모든 순간, 렛츠커리어
-      </span>
-      <h1 className="text-medium24 text-neutral-0 md:text-xxlarge36 mt-2 break-keep text-center font-bold md:mt-3">
+    // scroll-mt: 고정 네비바 높이(84px / 155px) + 여백
+    <section
+      ref={sectionRef}
+      className="flex w-full max-w-[1120px] scroll-mt-[96px] flex-col items-center px-5 pb-6 md:scroll-mt-[171px] md:pb-14 xl:px-0"
+    >
+      {!isChatting && (
+        <span className="text-xsmall16 text-primary md:text-small20 mb-2 font-semibold md:mb-3">
+          취업 준비의 모든 순간, 렛츠커리어
+        </span>
+      )}
+      <h1 className="text-medium24 text-neutral-0 md:text-xxlarge36 break-keep text-center font-bold">
         막막한 취업 준비,
         <br className="md:hidden" />{' '}
         <span className="text-primary">렛츠커리어</span>와 함께 해결해요.
@@ -101,7 +116,10 @@ const HomeSearchHero = () => {
       <form
         role="search"
         onSubmit={handleSubmit}
-        className="border-primary shadow-03 mt-8 flex h-14 w-full max-w-[600px] items-center rounded-full border-2 bg-white pl-5 pr-4 md:mt-10 md:h-[60px] md:pl-6 md:pr-5"
+        className={twMerge(
+          'border-primary shadow-03 mt-8 flex h-14 w-full max-w-[600px] items-center rounded-full border-2 bg-white pl-5 pr-4 md:mt-10 md:h-[60px] md:pl-6 md:pr-5',
+          isChatting && 'mt-4 md:mt-5',
+        )}
       >
         <label className="relative flex shrink-0 items-center">
           <span className="sr-only">검색 범위</span>
@@ -150,7 +168,7 @@ const HomeSearchHero = () => {
         </button>
       </form>
 
-      {turns.length > 0 && (
+      {isChatting && (
         <HomeSearchChat turns={turns} onAsk={(text) => ask(text, turns)} />
       )}
     </section>
