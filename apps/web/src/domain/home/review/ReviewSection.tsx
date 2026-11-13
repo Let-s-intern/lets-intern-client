@@ -3,7 +3,6 @@
 import { BlogType, blogListQueryOptions } from '@/api/blog/blog';
 import {
   GetReview,
-  QuestionType,
   ReviewType,
   reviewTypeSchema,
   useGetProgramReview,
@@ -79,9 +78,9 @@ const ReviewSection = () => {
     <>
       <section
         ref={sectionRef}
-        className="mt-16 flex w-full max-w-[1120px] flex-col gap-6 px-5 md:mt-28 md:flex-row xl:px-0"
+        className="mt-16 flex w-full max-w-[1120px] flex-col gap-6 px-5 md:mt-28 md:flex-row md:items-center md:gap-10 xl:px-0"
       >
-        <div className="flex flex-col md:w-1/2">
+        <div className="flex flex-col md:w-[40%]">
           <div className="text-small20 text-neutral-0 md:text-xlarge28 font-bold md:mt-2">
             <span className="text-primary">
               렛츠커리어 챌린지는 지금도 진행 중!
@@ -100,13 +99,15 @@ const ReviewSection = () => {
             <span> 공유되고 있어요.</span>
           </div>
           <Button
-            className="review_cta rounded-xs text-xsmall14 md:text-small18 mt-4 w-fit px-3 py-2.5 font-semibold md:mt-8 md:rounded-sm md:px-4 md:py-3"
+            className="review_cta rounded-xs text-xsmall14 md:text-small18 shadow-03 mt-4 w-fit px-3 py-2.5 font-semibold md:mt-8 md:rounded-sm md:px-4 md:py-3"
             to="/review"
           >
             수강생들의 생생 후기 더 보기
           </Button>
         </div>
-        <div className="bg-primary-5 h-72 w-full items-center rounded-sm md:h-[520px] md:w-1/2">
+        <div className="border-primary-15 bg-primary-5 relative h-72 w-full items-center overflow-hidden rounded-md border md:h-[336px] md:flex-1">
+          {/* 아래로 갈수록 흐려지는 시안 표현 */}
+          <div className="from-primary-5 pointer-events-none absolute inset-x-0 bottom-0 z-10 h-16 bg-gradient-to-t to-transparent" />
           <Swiper
             className="slide-per-auto-vertical slide-rolling h-full"
             modules={[Autoplay]}
@@ -145,51 +146,22 @@ const ReviewSection = () => {
 export default ReviewSection;
 
 export const ReviewItem = ({ review }: { review: GetReview }) => {
+  // 홈 카드에는 첫 문항 하나만 보여준다
+  const question = review.reviewItemList?.[0];
   return (
-    <div className="mx-auto flex w-[260px] select-none flex-col rounded-sm bg-white px-5 py-4 lg:w-[400px]">
-      <div className="text-xsmall14 flex flex-col gap-y-1.5">
-        <span className="text-primary font-medium">
-          {dayjs(review.reviewInfo.createDate).format(YYYY_MM_DD)} 작성
-        </span>
-        <h3 className="text-neutral-0 line-clamp-2 font-bold">
-          {review.reviewInfo.programTitle}
-        </h3>
-      </div>
-      <div className="mt-3 flex flex-col gap-y-3">
-        {review.reviewItemList?.map((question, index) => (
-          <ReviewItemBlock
-            key={index}
-            answer={question.answer}
-            questionType={question.questionType}
-          />
-        ))}
-      </div>
-      <div className="text-xxsmall12 mt-3 flex w-full items-center gap-2">
-        <span className="text-neutral-20 whitespace-pre font-medium">
-          {review.reviewInfo.name ? `${review.reviewInfo.name[0]}**` : '익명'}
-        </span>
-        <span className="text-neutral-70">|</span>
-        <span className="line-clamp-1">
-          희망직무{' '}
-          <span className="font-medium">{review.reviewInfo.wishJob}</span> ·
-          희망기업{' '}
-          <span className="font-medium">{review.reviewInfo.wishCompany}</span>
-        </span>
-      </div>
-    </div>
-  );
-};
-
-const ReviewItemBlock = (props: {
-  answer?: string | null;
-  questionType?: QuestionType | null;
-}) => {
-  return (
-    <div className="text-xsmall14 flex flex-col gap-y-0.5">
-      <h3 className="text-neutral-10 font-semibold">
-        {props.questionType ? questionTypeToText[props.questionType] : '-'}
+    <div className="mx-4 flex select-none flex-col rounded-sm bg-white px-4 py-4 md:mx-6 md:px-5">
+      <span className="text-xxsmall12 text-neutral-45 line-clamp-1">
+        {dayjs(review.reviewInfo.createDate).format(YYYY_MM_DD)} 작성 ·{' '}
+        {review.reviewInfo.programTitle}
+      </span>
+      <h3 className="text-xsmall14 text-neutral-0 md:text-xsmall16 mt-2 font-bold">
+        {question?.questionType
+          ? questionTypeToText[question.questionType]
+          : '-'}
       </h3>
-      <p className="text-neutral-20 line-clamp-2">{props.answer}</p>
+      <p className="text-xsmall14 text-neutral-20 mt-1 line-clamp-2">
+        {question?.answer}
+      </p>
     </div>
   );
 };
