@@ -16,8 +16,10 @@ import ComparePanel from './ui/ComparePanel';
 import RecommendPanel from './ui/RecommendPanel';
 
 interface AiChatProps {
-  /** 대화 시작·종료를 바깥(배치하는 화면)에 알린다. 스크롤·제목 축소 등에 쓴다 */
+  /** 대화 시작·종료를 바깥(배치하는 화면)에 알린다. 제목 축소·배너 숨김 등에 쓴다 */
   onChattingChange?: (isChatting: boolean) => void;
+  /** 상단 입력창으로 질문할 때마다 호출된다. 대화 영역으로 스크롤할 때 쓴다 */
+  onAsk?: () => void;
   /**
    * 대화 영역 높이. 배치하는 화면의 헤더 높이에 따라 달라서 바깥에서 받는다.
    * 모바일은 패널이 대화창 아래로 내려가므로 대화창에만, 데스크톱은 대화창+패널 전체에 준다.
@@ -46,6 +48,7 @@ function useRotatingPlaceholder(enabled: boolean) {
  */
 const AiChat = ({
   onChattingChange,
+  onAsk,
   mobileHeightClassName,
   desktopHeightClassName,
 }: AiChatProps) => {
@@ -63,6 +66,7 @@ const AiChat = ({
     const trimmed = query.trim();
     if (!trimmed || isPending) return;
     start(trimmed);
+    onAsk?.();
   };
 
   const handleClear = () => {
@@ -80,7 +84,7 @@ const AiChat = ({
         onSubmit={handleSubmit}
         className={twMerge(
           'border-primary shadow-03 mt-8 flex h-14 w-full max-w-[600px] items-center gap-3 rounded-full border-2 bg-white pl-5 pr-2 md:mt-10 md:h-[60px] md:pl-6',
-          isChatting && 'mt-4 md:mt-5',
+          isChatting && 'mt-0 md:mt-0',
         )}
       >
         <span className="text-primary text-xsmall14 md:text-xsmall16 flex shrink-0 items-center gap-1 font-semibold">

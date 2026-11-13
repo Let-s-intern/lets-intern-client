@@ -13,9 +13,10 @@ import {
   MessagesSquare,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { CONCERNS, ConcernAction } from './concernData';
+import styles from './ConcernSection.module.css';
 
 const TAB_STYLE: Record<string, { icon: LucideIcon; color: string }> = {
   experience: { icon: Layers, color: 'text-[#FF6B35]' },
@@ -72,10 +73,28 @@ const ActionCard = ({ action }: { action: ConcernAction }) => (
   </li>
 );
 
+/** 자동 넘김 간격. ConcernSection.module.css 의 진행 바 시간과 맞춘다 */
+const AUTO_ROTATE_MS = 4000;
+
 const ConcernSection = () => {
-  const [selectedId, setSelectedId] = useState('document');
+  const [selectedId, setSelectedId] = useState(CONCERNS[0].id);
+  // 사용자가 탭을 한 번이라도 누르면 자동 넘김을 멈춘다
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const selectedIndex = CONCERNS.findIndex((c) => c.id === selectedId);
   const selected = CONCERNS[selectedIndex];
+
+  useEffect(() => {
+    if (!isAutoPlaying) return;
+    const timer = setTimeout(() => {
+      setSelectedId(CONCERNS[(selectedIndex + 1) % CONCERNS.length].id);
+    }, AUTO_ROTATE_MS);
+    return () => clearTimeout(timer);
+  }, [isAutoPlaying, selectedIndex]);
+
+  const handleSelect = (id: string) => {
+    setIsAutoPlaying(false);
+    setSelectedId(id);
+  };
 
   return (
     <section className="mt-16 flex w-full max-w-[1120px] flex-col px-5 md:mt-28 xl:px-0">
@@ -101,9 +120,9 @@ const ConcernSection = () => {
               type="button"
               role="tab"
               aria-selected={isSelected}
-              onClick={() => setSelectedId(concern.id)}
+              onClick={() => handleSelect(concern.id)}
               className={twMerge(
-                'concern_tab border-neutral-80 flex min-w-[148px] flex-col rounded-md border bg-white p-4 text-left transition-colors md:min-w-0 md:p-5',
+                'concern_tab border-neutral-80 relative flex min-w-[148px] flex-col overflow-hidden rounded-md border bg-white p-4 text-left transition-colors md:min-w-0 md:p-5',
                 isSelected && 'border-primary border-2',
               )}
               data-text={concern.label}
@@ -123,6 +142,13 @@ const ConcernSection = () => {
               <span className="text-xxsmall12 text-neutral-40 mt-auto pt-6">
                 {concern.keywords}
               </span>
+              {isSelected && isAutoPlaying && (
+                <span
+                  aria-hidden
+                  key={selectedId}
+                  className={`bg-primary absolute inset-x-0 bottom-0 h-1 ${styles.progress}`}
+                />
+              )}
             </button>
           );
         })}
@@ -138,7 +164,10 @@ const ConcernSection = () => {
           className="border-primary-15 bg-primary-5 absolute -top-[9px] hidden h-4 w-4 -translate-x-1/2 rotate-45 border-l border-t md:block"
           style={{ left: `${(selectedIndex * 2 + 1) * 10}%` }}
         />
-        <div className="flex flex-col gap-1 md:flex-row md:items-end md:justify-between">
+        <div
+          key={selectedId}
+          className={`flex flex-col gap-1 md:flex-row md:items-end md:justify-between ${styles.panelIn}`}
+        >
           <div>
             <span className="text-xxsmall12 text-primary font-medium">
               {selected.label}
@@ -151,7 +180,10 @@ const ConcernSection = () => {
             {selected.panelDescription}
           </p>
         </div>
-        <ul className="mt-5 flex flex-col gap-3 md:flex-row md:gap-4">
+        <ul
+          key={`actions-${selectedId}`}
+          className={`mt-5 flex flex-col gap-3 md:flex-row md:gap-4 ${styles.panelIn}`}
+        >
           {selected.actions.map((action) => (
             <ActionCard key={action.title} action={action} />
           ))}
