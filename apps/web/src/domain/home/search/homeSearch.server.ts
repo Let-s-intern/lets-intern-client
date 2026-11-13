@@ -192,6 +192,28 @@ async function aiSearch(
   return { mode: 'ai', answer: message.parsed_output.answer, items };
 }
 
+/** 같은 검색어 반복 호출로 AI 비용이 새지 않게 인스턴스 메모리에 결과를 잠시 둔다 */
+const AI_CACHE_TTL_MS = 10 * 60 * 1000;
+const AI_CACHE_MAX_ENTRIES = 500;
+const aiCache = new Map<string, { at: number; result: HomeSearchResponse }>();
+
+function getCachedAi(key: string) {
+  const hit = aiCache.get(key);
+  if (!hit) return null;
+  if (Date.now() - hit.at > AI_CACHE_TTL_MS) {
+    aiCache.delete(key);
+    return null;
+  }
+  return hit.result;
+}
+
+function setCachedAi(key: string, result: HomeSearchResponse) {
+  if (aiCache.size >= AI_CACHE_MAX_ENTRIES) {
+    aiCache.delete(aiCache.keys().next().value!);
+  }
+  aiCache.set(key, { at: Date.now(), result });
+}
+
 export async function searchHome(
   query: string,
   category: HomeSearchCategory,
@@ -201,8 +223,14 @@ export async function searchHome(
 
   if (!process.env.ANTHROPIC_API_KEY) return keywordSearch(catalog, query);
 
+  const cacheKey = `${category}:${query.toLowerCase().replace(/\s+/g, ' ')}`;
+  const cached = getCachedAi(cacheKey);
+  if (cached) return cached;
+
   try {
-    return await aiSearch(catalog, query);
+    const result = await aiSearch(catalog, query);
+    if (result.mode === 'ai') setCachedAi(cacheKey, result);
+    return result;
   } catch (error) {
     console.error('[home-search] AI 검색 실패, 키워드 검색으로 대체', error);
     return keywordSearch(catalog, query);
