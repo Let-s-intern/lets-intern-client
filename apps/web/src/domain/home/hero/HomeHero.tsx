@@ -3,6 +3,8 @@
 import AiChat from '@/domain/ai-chat/AiChat';
 import { useEffect, useRef, useState } from 'react';
 
+import { useHomeChatting } from './HomeChattingContext';
+
 import styles from './HomeHero.module.css';
 
 /**
@@ -14,13 +16,13 @@ const MOBILE_CHAT_HEIGHT = 'h-[calc(100svh-96px-152px)] min-h-[320px]';
 const DESKTOP_CHAT_HEIGHT = 'md:h-[calc(100svh-171px-96px)] md:min-h-[360px]';
 
 const HomeHero = () => {
-  const [isChatting, setIsChatting] = useState(false);
+  const { isChatting, setIsChatting } = useHomeChatting();
   const sectionRef = useRef<HTMLElement>(null);
 
   const [askCount, setAskCount] = useState(0);
 
   // 질문할 때마다 제목~대화창이 한 화면에 들어오도록 섹션을 네비바 바로 아래로 올린다.
-  // isChatting 도 의존해서, 제목이 사라지는 렌더가 끝난 뒤의 위치로 스크롤한다
+  // isChatting 도 의존해서, 제목·히어로 이미지가 사라지는 렌더가 끝난 뒤의 위치로 스크롤한다
   useEffect(() => {
     if (askCount === 0 || !isChatting) return;
     sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });

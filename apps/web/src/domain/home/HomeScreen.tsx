@@ -10,11 +10,12 @@ import CurrentBlogSection from '@/domain/home/blog/CurrentBlogSectionClient';
 import InterviewSection from '@/domain/home/blog/InterviewSectionClient';
 import ConcernSection from '@/domain/home/concern/ConcernSection';
 import ReviewSection from '@/domain/home/review/ReviewSectionClient';
+import { HomeChattingProvider } from '@/domain/home/hero/HomeChattingContext';
 import HomeHero from '@/domain/home/hero/HomeHero';
 
 export default function HomeScreen() {
   return (
-    <>
+    <HomeChattingProvider>
       <TopBanner />
       <div className="mb-20 flex w-full flex-col items-center justify-center pt-9 md:mb-44 md:pt-[68px]">
         <HomeHero />
@@ -34,6 +35,6 @@ export default function HomeScreen() {
         </AsyncBoundary>
       </div>
       <Popup />
-    </>
+    </HomeChattingProvider>
   );
 }
