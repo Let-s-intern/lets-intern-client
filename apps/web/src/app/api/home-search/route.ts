@@ -1,8 +1,11 @@
 import { searchHome } from '@/domain/home/search/homeSearch.server';
 import {
   HOME_SEARCH_CATEGORIES,
+  HOME_SEARCH_HISTORY_MAX_LENGTH,
+  HOME_SEARCH_HISTORY_MAX_MESSAGES,
   HOME_SEARCH_QUERY_MAX_LENGTH,
   HomeSearchCategory,
+  HomeSearchChatMessage,
 } from '@/domain/home/search/homeSearchTypes';
 
 /** 홈 상단 검색창 AI 검색. 페이지 이동 없이 홈에서 결과를 그린다. */
@@ -28,6 +31,23 @@ export async function POST(request: Request) {
     ? body.category
     : 'ALL';
 
+  const history: HomeSearchChatMessage[] = (
+    Array.isArray(body?.history) ? body.history : []
+  )
+    .filter(
+      (m: unknown): m is HomeSearchChatMessage =>
+        typeof m === 'object' &&
+        m !== null &&
+        ((m as HomeSearchChatMessage).role === 'user' ||
+          (m as HomeSearchChatMessage).role === 'assistant') &&
+        typeof (m as HomeSearchChatMessage).content === 'string',
+    )
+    .slice(-HOME_SEARCH_HISTORY_MAX_MESSAGES)
+    .map((m: HomeSearchChatMessage) => ({
+      role: m.role,
+      content: m.content.slice(0, HOME_SEARCH_HISTORY_MAX_LENGTH),
+    }));
+
   if (!query) {
     return Response.json(
       { message: '검색어를 입력해 주세요.' },
@@ -35,5 +55,5 @@ export async function POST(request: Request) {
     );
   }
 
-  return Response.json(await searchHome(query, category));
+  return Response.json(await searchHome(query, category, history));
 }

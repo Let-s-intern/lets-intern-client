@@ -1,20 +1,21 @@
 'use client';
 
-import { useMutation } from '@tanstack/react-query';
-import { ChevronDown, Search, Sparkles, X } from 'lucide-react';
-import { FormEvent, useState } from 'react';
+import { ChevronDown, Search, X } from 'lucide-react';
+import { FormEvent, useRef, useState } from 'react';
 
-import HomeSearchResults from './HomeSearchResults';
+import HomeSearchChat, { ChatTurn } from './HomeSearchChat';
 import {
   HOME_SEARCH_CATEGORIES,
   HOME_SEARCH_QUERY_MAX_LENGTH,
   HomeSearchCategory,
+  HomeSearchChatMessage,
   HomeSearchResponse,
 } from './homeSearchTypes';
 
 async function postHomeSearch(params: {
   query: string;
   category: HomeSearchCategory;
+  history: HomeSearchChatMessage[];
 }): Promise<HomeSearchResponse> {
   const res = await fetch('/api/home-search', {
     method: 'POST',
@@ -25,21 +26,65 @@ async function postHomeSearch(params: {
   return res.json();
 }
 
+/** 답이 온 턴만 대화 이력으로 서버에 보낸다 */
+function toHistory(turns: ChatTurn[]): HomeSearchChatMessage[] {
+  return turns.flatMap((turn) =>
+    turn.status === 'done' && turn.result?.answer
+      ? [
+          { role: 'user' as const, content: turn.query },
+          { role: 'assistant' as const, content: turn.result.answer },
+        ]
+      : [],
+  );
+}
+
 const HomeSearchHero = () => {
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState<HomeSearchCategory>('ALL');
-  const search = useMutation({ mutationFn: postHomeSearch });
+  const [turns, setTurns] = useState<ChatTurn[]>([]);
+  const nextId = useRef(0);
+  // 새 대화를 시작하면 이전 대화의 늦은 응답은 버린다
+  const conversationId = useRef(0);
 
+  const ask = async (text: string, prevTurns: ChatTurn[]) => {
+    const id = nextId.current++;
+    const conversation = conversationId.current;
+    setTurns([...prevTurns, { id, query: text, status: 'pending' }]);
+
+    const update = (patch: Partial<ChatTurn>) => {
+      if (conversation !== conversationId.current) return;
+      setTurns((prev) =>
+        prev.map((turn) => (turn.id === id ? { ...turn, ...patch } : turn)),
+      );
+    };
+
+    try {
+      const result = await postHomeSearch({
+        query: text,
+        category,
+        history: toHistory(prevTurns),
+      });
+      update({ status: 'done', result });
+    } catch {
+      update({ status: 'error' });
+    }
+  };
+
+  const isPending = turns.at(-1)?.status === 'pending';
+
+  /** 상단 검색창은 새 대화를 시작한다 */
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const trimmed = query.trim();
-    if (!trimmed || search.isPending) return;
-    search.mutate({ query: trimmed, category });
+    if (!trimmed || isPending) return;
+    conversationId.current++;
+    ask(trimmed, []);
   };
 
   const handleClear = () => {
     setQuery('');
-    search.reset();
+    conversationId.current++;
+    setTurns([]);
   };
 
   return (
@@ -105,18 +150,9 @@ const HomeSearchHero = () => {
         </button>
       </form>
 
-      {search.isPending && (
-        <div className="text-xsmall14 text-primary md:text-xsmall16 mt-6 flex items-center gap-2 font-medium">
-          <Sparkles size={16} className="animate-pulse" />
-          AI가 딱 맞는 프로그램을 찾고 있어요
-        </div>
+      {turns.length > 0 && (
+        <HomeSearchChat turns={turns} onAsk={(text) => ask(text, turns)} />
       )}
-      {search.isError && (
-        <p className="text-xsmall14 text-system-error mt-6">
-          검색에 실패했어요. 잠시 후 다시 시도해 주세요.
-        </p>
-      )}
-      {search.isSuccess && <HomeSearchResults result={search.data} />}
     </section>
   );
 };

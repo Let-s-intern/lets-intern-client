@@ -4,6 +4,7 @@ import { getBlogPathname, getProgramPathname } from '@/utils/url';
 import {
   HOME_SEARCH_MAX_RESULTS,
   HomeSearchCategory,
+  HomeSearchChatMessage,
   HomeSearchItem,
   HomeSearchResponse,
 } from './homeSearchTypes';
@@ -120,38 +121,60 @@ function keywordSearch(
     mode: 'keyword',
     answer: null,
     items: scored.map(({ item }) => stripSearchText(item)),
+    showPanel: scored.length > 0,
   };
 }
 
-const SYSTEM_PROMPT = `너는 취업 준비 플랫폼 렛츠커리어의 검색 도우미다.
-사용자가 홈 화면 검색창에 입력한 고민이나 키워드를 읽고, 아래 카탈로그에서 가장 도움이 될 항목을 골라라.
+const SYSTEM_PROMPT = `너는 취업 준비 플랫폼 렛츠커리어의 AI 상담사다.
+사용자와 대화하며 취업 준비 고민을 듣고 답한다. 이전 대화가 있으면 그 맥락을 이어서 답한다.
 
-- picks 에는 카탈로그의 key 만 넣는다. 카탈로그에 없는 key 는 절대 만들지 않는다.
-- 관련도가 높은 순서로 최대 ${HOME_SEARCH_MAX_RESULTS}개. 관련 있는 항목이 없으면 빈 배열.
-- 같은 프로그램의 버전 행(대학생·무경력자 Ver., 인턴·실무 경험자 Ver.)은 사용자 상황에 맞는 쪽을 우선한다. 상황을 알 수 없으면 둘 다 넣어도 된다.
-- answer 는 사용자에게 보여줄 한두 문장 안내다. 친근한 해요체로, 왜 이 항목들을 골랐는지 짧게 말한다. 관련 항목이 없으면 다른 검색어를 제안한다.
-
-반드시 아래 형태의 JSON 하나만 출력한다.
-{"answer": "자기소개서 지원동기가 고민이라면 이 챌린지와 글이 도움이 될 거예요.", "picks": ["P443-0", "B239"]}`;
+- 답변은 친근한 해요체로 2~4문장. 고민에 먼저 공감하거나 짧게 조언한다.
+- 사용자에게 도움이 될 프로그램·글이 카탈로그에 있으면 show_programs 도구를 호출해 화면 오른쪽에 띄운다.
+  인사, 잡담, 단순 질문처럼 추천이 필요 없으면 호출하지 않는다.
+- 도구를 호출할 때도 답변 본문은 반드시 함께 쓴다. 추천 목록은 화면에 따로 보이니 제목을 길게 나열하지 않는다.
+- keys 에는 카탈로그의 key 만, 관련도 높은 순서로 최대 ${HOME_SEARCH_MAX_RESULTS}개 넣는다. 카탈로그에 없는 key 는 만들지 않는다.
+- 같은 프로그램의 버전 행(대학생·무경력자 Ver., 인턴·실무 경험자 Ver.)은 사용자 상황에 맞는 쪽을 우선한다.
+- 고민이 모호하면 상황을 묻는 질문을 한다.
+- 취업 준비와 무관한 요청에는 렛츠커리어에서 도울 수 있는 일을 안내한다.`;
 
 const DEEPSEEK_URL = 'https://api.deepseek.com/chat/completions';
 const DEEPSEEK_MODEL = 'deepseek-chat';
 const DEEPSEEK_TIMEOUT_MS = 15_000;
 
-/** 모델 출력은 신뢰하지 않고 형태를 직접 확인한다 */
-function parseAiOutput(
-  content: string | undefined,
-): { answer: string; picks: string[] } | null {
+const SHOW_PROGRAMS_TOOL = {
+  type: 'function',
+  function: {
+    name: 'show_programs',
+    description:
+      '사용자에게 추천할 렛츠커리어 프로그램·블로그 글을 화면 오른쪽 패널에 띄운다.',
+    parameters: {
+      type: 'object',
+      properties: {
+        keys: {
+          type: 'array',
+          items: { type: 'string' },
+          description: '카탈로그의 key 목록, 관련도 높은 순',
+        },
+      },
+      required: ['keys'],
+    },
+  },
+};
+
+const FALLBACK_TOOL_ANSWER =
+  '도움이 될 만한 프로그램을 오른쪽에 띄워 드렸어요.';
+
+/** 모델이 도구에 넘긴 인자는 신뢰하지 않고 형태를 직접 확인한다 */
+function parseToolKeys(args: string | undefined): string[] | null {
   try {
-    const parsed = JSON.parse(content ?? '');
+    const parsed = JSON.parse(args ?? '');
     if (
-      typeof parsed?.answer !== 'string' ||
-      !Array.isArray(parsed?.picks) ||
-      !parsed.picks.every((p: unknown) => typeof p === 'string')
+      !Array.isArray(parsed?.keys) ||
+      !parsed.keys.every((k: unknown) => typeof k === 'string')
     ) {
       return null;
     }
-    return { answer: parsed.answer, picks: parsed.picks };
+    return parsed.keys;
   } catch {
     return null;
   }
@@ -160,6 +183,7 @@ function parseAiOutput(
 async function aiSearch(
   catalog: CatalogItem[],
   query: string,
+  history: HomeSearchChatMessage[],
 ): Promise<HomeSearchResponse> {
   const catalogText = catalog
     .map(
@@ -177,13 +201,15 @@ async function aiSearch(
     body: JSON.stringify({
       model: DEEPSEEK_MODEL,
       max_tokens: 1000,
-      response_format: { type: 'json_object' },
+      tools: [SHOW_PROGRAMS_TOOL],
+      tool_choice: 'auto',
       messages: [
         // 시스템 프롬프트+카탈로그를 앞에 고정해 DeepSeek 컨텍스트 캐시가 맞도록 한다
         {
           role: 'system',
           content: `${SYSTEM_PROMPT}\n\n카탈로그 (key | 종류 | 제목 | 설명)\n${catalogText}`,
         },
+        ...history,
         { role: 'user', content: query },
       ],
     }),
@@ -192,17 +218,33 @@ async function aiSearch(
   if (!res.ok) throw new Error(`DeepSeek ${res.status}`);
 
   const data = await res.json();
-  const output = parseAiOutput(data?.choices?.[0]?.message?.content);
-  if (!output) return keywordSearch(catalog, query);
+  const message = data?.choices?.[0]?.message;
+  const content =
+    typeof message?.content === 'string' ? message.content.trim() : '';
+  const toolCall = (message?.tool_calls ?? []).find(
+    (call: { function?: { name?: string } }) =>
+      call?.function?.name === 'show_programs',
+  );
 
+  if (!toolCall) {
+    if (!content) return keywordSearch(catalog, query);
+    return { mode: 'ai', answer: content, items: [], showPanel: false };
+  }
+
+  const keys = parseToolKeys(toolCall.function.arguments) ?? [];
   const byKey = new Map(catalog.map((item) => [item.key, item]));
-  const items = output.picks
+  const items = keys
     .map((key) => byKey.get(key))
     .filter((item): item is CatalogItem => !!item)
     .slice(0, HOME_SEARCH_MAX_RESULTS)
     .map(stripSearchText);
 
-  return { mode: 'ai', answer: output.answer, items };
+  return {
+    mode: 'ai',
+    answer: content || FALLBACK_TOOL_ANSWER,
+    items,
+    showPanel: items.length > 0,
+  };
 }
 
 /** 같은 검색어 반복 호출로 AI 비용이 새지 않게 인스턴스 메모리에 결과를 잠시 둔다 */
@@ -230,19 +272,26 @@ function setCachedAi(key: string, result: HomeSearchResponse) {
 export async function searchHome(
   query: string,
   category: HomeSearchCategory,
+  history: HomeSearchChatMessage[] = [],
 ): Promise<HomeSearchResponse> {
   const catalog = filterByCategory(await getCatalog(), category);
-  if (catalog.length === 0) return { mode: 'keyword', answer: null, items: [] };
+  if (catalog.length === 0) {
+    return { mode: 'keyword', answer: null, items: [], showPanel: false };
+  }
 
   if (!process.env.DEEPSEEK_API_KEY) return keywordSearch(catalog, query);
 
-  const cacheKey = `${category}:${query.toLowerCase().replace(/\s+/g, ' ')}`;
-  const cached = getCachedAi(cacheKey);
+  // 이어지는 대화는 맥락마다 답이 달라 첫 질문만 캐시한다
+  const cacheKey =
+    history.length === 0
+      ? `${category}:${query.toLowerCase().replace(/\s+/g, ' ')}`
+      : null;
+  const cached = cacheKey ? getCachedAi(cacheKey) : null;
   if (cached) return cached;
 
   try {
-    const result = await aiSearch(catalog, query);
-    if (result.mode === 'ai') setCachedAi(cacheKey, result);
+    const result = await aiSearch(catalog, query, history);
+    if (cacheKey && result.mode === 'ai') setCachedAi(cacheKey, result);
     return result;
   } catch (error) {
     console.error('[home-search] AI 검색 실패, 키워드 검색으로 대체', error);

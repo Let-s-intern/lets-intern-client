@@ -1,5 +1,8 @@
 export const HOME_SEARCH_MAX_RESULTS = 6;
 export const HOME_SEARCH_QUERY_MAX_LENGTH = 100;
+/** 서버로 보내는 이전 대화 수와 메시지당 길이 상한 (비용·남용 방지) */
+export const HOME_SEARCH_HISTORY_MAX_MESSAGES = 6;
+export const HOME_SEARCH_HISTORY_MAX_LENGTH = 500;
 
 export const HOME_SEARCH_CATEGORIES = [
   { value: 'ALL', label: '전체' },
@@ -33,4 +36,11 @@ export interface HomeSearchResponse {
   mode: 'ai' | 'keyword';
   answer: string | null;
   items: HomeSearchItem[];
+  /** AI 가 show_programs 도구를 호출했을 때(키워드 검색은 결과가 있을 때)만 오른쪽 패널을 띄운다 */
+  showPanel: boolean;
+}
+
+export interface HomeSearchChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
 }
