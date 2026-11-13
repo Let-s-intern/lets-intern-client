@@ -258,13 +258,26 @@ function describePeriod(label: string, period: AiChatPeriod | null) {
   return text ? `${label} ${text}` : null;
 }
 
+/**
+ * 카탈로그 텍스트는 멘토 소개처럼 외부 사람이 쓴 값이 섞여 있어 데이터로만 다룬다.
+ * 줄바꿈·구분자(|)·데이터 블록 태그를 지우고 길이를 잘라 프롬프트 구조를 깨지 못하게 한다.
+ */
+function sanitizeField(value: string, maxLength: number) {
+  return value
+    .replace(/<\/?catalog>/gi, '')
+    .replace(/[|\r\n\t]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, maxLength);
+}
+
 /** AI 프롬프트에 넣는 한 줄 표현 */
 export function toCatalogLine(item: CatalogItem) {
   return [
     item.key,
     item.kind,
-    item.title,
-    item.description,
+    sanitizeField(item.title, 100),
+    sanitizeField(item.description, 160),
     item.price ? `가격 ${formatPriceText(item.price)}` : null,
     describePeriod('모집', item.recruit),
     describePeriod('진행', item.schedule),
