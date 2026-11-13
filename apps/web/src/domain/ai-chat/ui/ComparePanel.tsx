@@ -113,7 +113,9 @@ const CompareCard = ({
               formatPeriod(item.schedule) ??
               (item.kind === 'LIVE_MENTORING'
                 ? '멘토와 일정 선택'
-                : '구매 후 바로')
+                : item.kind === 'MEMBERSHIP'
+                  ? '결제일부터 이용'
+                  : '구매 후 바로')
             }
           />
         </div>

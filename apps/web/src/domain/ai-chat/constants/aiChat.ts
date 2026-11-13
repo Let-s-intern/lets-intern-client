@@ -17,6 +17,7 @@ export const AI_CHAT_KIND_LABEL: Record<AiChatItemKind, string> = {
   VOD: 'VOD',
   REPORT: '서류 진단',
   GUIDEBOOK: '가이드북',
+  MEMBERSHIP: '올인원 패스',
   BLOG: '블로그',
 };
 

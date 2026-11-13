@@ -5,6 +5,7 @@ export type AiChatItemKind =
   | 'VOD'
   | 'REPORT'
   | 'GUIDEBOOK'
+  | 'MEMBERSHIP'
   | 'BLOG';
 
 export interface AiChatPrice {

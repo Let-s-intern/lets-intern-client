@@ -33,6 +33,89 @@ interface ProgramRow {
   };
 }
 
+interface MembershipDetail {
+  title?: string | null;
+  thumbnail?: string | null;
+  landingDescription?: string | null;
+  periodDays?: number | null;
+  planList?: {
+    price: number;
+    discount?: number | null;
+    privilegeList?: { programType: string }[] | null;
+  }[];
+}
+
+const PASS_PROGRAM_LABEL: Record<string, string> = {
+  CHALLENGE: '챌린지',
+  GUIDEBOOK: '가이드북',
+  VOD: 'VOD',
+  LIVE: 'LIVE 클래스',
+};
+
+/** 랜딩 JSON 에서 히어로 소개와 노출용 판매 마감일만 꺼낸다. 형식이 깨져 있으면 무시한다 */
+function parseMembershipLanding(raw?: string | null) {
+  try {
+    const parsed = JSON.parse(raw ?? '');
+    return {
+      heroDescription:
+        typeof parsed?.hero?.description === 'string'
+          ? parsed.hero.description
+          : null,
+      displayDeadline:
+        typeof parsed?.displayDeadline === 'string'
+          ? parsed.displayDeadline
+          : null,
+    };
+  } catch {
+    return { heroDescription: null, displayDeadline: null };
+  }
+}
+
+/**
+ * 올인원 패스는 /program 기본 목록에 없고 type=MEMBERSHIP 으로만 나온다.
+ * 가격·혜택·이용 기간은 공개 상세(GET /membership/{id})에만 있다.
+ */
+async function fetchMembershipItem(p: ProgramRow['programInfo']) {
+  const detail = await fetchServerData<MembershipDetail>(`/membership/${p.id}`);
+  const plans = detail?.planList ?? [];
+  // 가장 싼 플랜 기준 (랜딩 가격 표기와 같은 price - discount)
+  const cheapest = plans
+    .map((plan) => ({ plan, selling: plan.price - (plan.discount ?? 0) }))
+    .sort((a, b) => a.selling - b.selling)[0];
+  const benefits = [
+    ...new Set(
+      plans.flatMap((plan) =>
+        (plan.privilegeList ?? []).map(
+          (pv) => PASS_PROGRAM_LABEL[pv.programType] ?? pv.programType,
+        ),
+      ),
+    ),
+  ];
+  const { heroDescription, displayDeadline } = parseMembershipLanding(
+    detail?.landingDescription,
+  );
+
+  return {
+    thumbnail: detail?.thumbnail ?? p.thumbnail ?? null,
+    description: [
+      heroDescription,
+      benefits.length > 0 && `${benefits.join('·')} 이용`,
+      detail?.periodDays && `결제일부터 ${detail.periodDays}일`,
+    ]
+      .filter(Boolean)
+      .join(' · '),
+    price: cheapest
+      ? toPrice(
+          cheapest.selling,
+          cheapest.plan.price,
+          plans.length > 1 ? '가장 낮은 플랜 기준' : undefined,
+        )
+      : null,
+    // 서버 deadline 은 먼 미래 값이 들어 있어 랜딩이 쓰는 노출 마감일을 쓴다
+    recruit: toPeriod(p.beginning, displayDeadline),
+  };
+}
+
 interface MentoringOpeningRow {
   openingId: number;
   mentorId: number;
@@ -144,18 +227,23 @@ function toPeriod(start?: string | null, end?: string | null) {
 
 /** 모집 중·모집 예정 프로그램(가격·기간 포함)과 최신 블로그를 모은다 */
 export async function getCatalog(): Promise<CatalogItem[]> {
-  const [programData, mentoringData, blogData] = await Promise.all([
-    fetchServerData<{ programList: ProgramRow[] }>(
-      '/program?page=1&size=200&status=PREV,PROCEEDING',
-    ),
-    // 1:1 LIVE 멘토링은 /program 목록에 없어서 따로 받는다
-    fetchServerData<{ openingList: MentoringOpeningRow[] }>(
-      `/live-mentoring?page=1&size=${MENTORING_PAGE_SIZE}`,
-    ),
-    fetchServerData<{ blogInfos: BlogRow[] }>(
-      `/blog?page=1&size=${BLOG_CATALOG_SIZE}`,
-    ),
-  ]);
+  const [programData, membershipData, mentoringData, blogData] =
+    await Promise.all([
+      fetchServerData<{ programList: ProgramRow[] }>(
+        '/program?page=1&size=200&status=PREV,PROCEEDING',
+      ),
+      // 올인원 패스는 type=MEMBERSHIP 으로만 나온다
+      fetchServerData<{ programList: ProgramRow[] }>(
+        '/program?page=1&size=50&type=MEMBERSHIP&status=PREV,PROCEEDING',
+      ),
+      // 1:1 LIVE 멘토링은 /program 목록에 없어서 따로 받는다
+      fetchServerData<{ openingList: MentoringOpeningRow[] }>(
+        `/live-mentoring?page=1&size=${MENTORING_PAGE_SIZE}`,
+      ),
+      fetchServerData<{ blogInfos: BlogRow[] }>(
+        `/blog?page=1&size=${BLOG_CATALOG_SIZE}`,
+      ),
+    ]);
   const programRows = programData?.programList ?? [];
 
   // 버전 행은 같은 프로그램 id 를 공유하므로 상세 조회는 한 번만 한다
@@ -193,6 +281,26 @@ export async function getCatalog(): Promise<CatalogItem[]> {
         searchText: `${p.title ?? ''} ${p.shortDesc ?? ''}`,
       };
     }),
+  );
+
+  const memberships = await Promise.all(
+    (membershipData?.programList ?? []).map(
+      async ({ programInfo: p }): Promise<CatalogItem> => {
+        const detail = await fetchMembershipItem(p);
+        return {
+          key: `S${p.id}`,
+          kind: 'MEMBERSHIP',
+          title: p.title ?? '',
+          description: detail.description,
+          thumbnail: detail.thumbnail,
+          href: `/all-in-one-pass/${p.id}`,
+          price: detail.price,
+          recruit: detail.recruit,
+          schedule: null,
+          searchText: `${p.title ?? ''} 올인원 패스 올인원패스 멤버십 ${detail.description}`,
+        };
+      },
+    ),
   );
 
   const mentorings = (mentoringData?.openingList ?? []).map(
@@ -252,7 +360,7 @@ export async function getCatalog(): Promise<CatalogItem[]> {
     }),
   );
 
-  return [...programs, ...mentorings, ...blogs];
+  return [...memberships, ...programs, ...mentorings, ...blogs];
 }
 
 function describePeriod(label: string, period: AiChatPeriod | null) {
