@@ -15,8 +15,14 @@ const SERVER_API = process.env.NEXT_PUBLIC_SERVER_API;
 const CATALOG_REVALIDATE_SECONDS = 600;
 const BLOG_CATALOG_SIZE = 60;
 
-/** AI 프롬프트·키워드 매칭에만 쓰는 필드를 덧붙인 카탈로그 항목 */
-export type CatalogItem = AiChatItem & { searchText: string };
+/**
+ * AI 프롬프트·키워드 매칭·상세 조회에만 쓰는 필드를 덧붙인 카탈로그 항목.
+ * ref.id 는 상세 API 의 id (프로그램 id, 멘토링은 mentorId, 패스는 membershipId)
+ */
+export type CatalogItem = AiChatItem & {
+  searchText: string;
+  ref: { kind: AiChatItemKind; id: number };
+};
 
 interface ProgramRow {
   programInfo: {
@@ -154,7 +160,7 @@ interface BlogRow {
   };
 }
 
-async function fetchServerData<T>(path: string): Promise<T | null> {
+export async function fetchServerData<T>(path: string): Promise<T | null> {
   try {
     const res = await fetch(`${SERVER_API}${path}`, {
       next: { revalidate: CATALOG_REVALIDATE_SECONDS },
@@ -279,6 +285,7 @@ export async function getCatalog(): Promise<CatalogItem[]> {
         recruit,
         schedule,
         searchText: `${p.title ?? ''} ${p.shortDesc ?? ''}`,
+        ref: { kind: p.programType as AiChatItemKind, id: p.id },
       };
     }),
   );
@@ -298,6 +305,7 @@ export async function getCatalog(): Promise<CatalogItem[]> {
           recruit: detail.recruit,
           schedule: null,
           searchText: `${p.title ?? ''} 올인원 패스 올인원패스 멤버십 ${detail.description}`,
+          ref: { kind: 'MEMBERSHIP', id: p.id },
         };
       },
     ),
@@ -341,6 +349,7 @@ export async function getCatalog(): Promise<CatalogItem[]> {
         recruit: null,
         schedule: null,
         searchText: `${o.title ?? ''} 1:1 1대1 라이브 LIVE 멘토링 멘토 ${o.mentorNickname ?? ''} ${career} ${categories} ${o.mentorIntroduction ?? ''}`,
+        ref: { kind: 'LIVE_MENTORING', id: o.mentorId },
       };
     },
   );
@@ -357,6 +366,7 @@ export async function getCatalog(): Promise<CatalogItem[]> {
       recruit: null,
       schedule: null,
       searchText: `${b.title ?? ''} ${b.description ?? ''}`,
+      ref: { kind: 'BLOG', id: b.id },
     }),
   );
 
@@ -372,7 +382,7 @@ function describePeriod(label: string, period: AiChatPeriod | null) {
  * 카탈로그 텍스트는 멘토 소개처럼 외부 사람이 쓴 값이 섞여 있어 데이터로만 다룬다.
  * 줄바꿈·구분자(|)·데이터 블록 태그를 지우고 길이를 잘라 프롬프트 구조를 깨지 못하게 한다.
  */
-function sanitizeField(value: string, maxLength: number) {
+export function sanitizeField(value: string, maxLength: number) {
   return value
     .replace(/<\/?catalog>/gi, '')
     .replace(/[|\r\n\t]+/g, ' ')
@@ -396,6 +406,10 @@ export function toCatalogLine(item: CatalogItem) {
     .join(' | ');
 }
 
-export function toPublicItem({ searchText: _, ...item }: CatalogItem) {
+export function toPublicItem({
+  searchText: _searchText,
+  ref: _ref,
+  ...item
+}: CatalogItem): AiChatItem {
   return item;
 }

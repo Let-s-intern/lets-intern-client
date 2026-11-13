@@ -13,6 +13,7 @@ import {
 import useAiChat from './hooks/useAiChat';
 import ChatPanel from './ui/ChatPanel';
 import ComparePanel from './ui/ComparePanel';
+import DetailPanel from './ui/DetailPanel';
 import RecommendPanel from './ui/RecommendPanel';
 
 interface AiChatProps {
@@ -145,11 +146,9 @@ const AiChat = ({
           >
             <ChatPanel turns={turns} isPending={isPending} onAsk={followUp} />
           </div>
-          {panel.type === 'compare' ? (
-            <ComparePanel items={panel.items} />
-          ) : (
-            <RecommendPanel items={panel.items} />
-          )}
+          {panel.type === 'detail' && <DetailPanel detail={panel.detail} />}
+          {panel.type === 'compare' && <ComparePanel items={panel.items} />}
+          {panel.type === 'recommend' && <RecommendPanel items={panel.items} />}
         </div>
       )}
     </div>
