@@ -33,6 +33,34 @@ interface ProgramRow {
   };
 }
 
+interface MentoringOpeningRow {
+  openingId: number;
+  mentorId: number;
+  mentorNickname?: string | null;
+  mentorIntroduction?: string | null;
+  representativeCareer?: {
+    company?: string | null;
+    job?: string | null;
+  } | null;
+  title?: string | null;
+  thumbnail?: string | null;
+  categories?: string[] | null;
+  durations?: number[] | null;
+  minimumPrice?: number | null;
+}
+
+const MENTORING_CATEGORY_LABEL: Record<string, string> = {
+  RESUME: '이력서',
+  PERSONAL_STATEMENT: '자기소개서',
+  PORTFOLIO: '포트폴리오',
+  CAREER_COFFEE_CHAT: '커리어 커피챗',
+  INTERVIEW: '면접',
+  EXPERIENCE: '경험정리',
+};
+
+/** 서버 max-page-size. 공개(OPEN) 개설 전체를 한 번에 받는다 */
+const MENTORING_PAGE_SIZE = 2000;
+
 interface BlogRow {
   blogThumbnailInfo: {
     id: number;
@@ -115,9 +143,13 @@ function toPeriod(start?: string | null, end?: string | null) {
 
 /** 모집 중·모집 예정 프로그램(가격·기간 포함)과 최신 블로그를 모은다 */
 export async function getCatalog(): Promise<CatalogItem[]> {
-  const [programData, blogData] = await Promise.all([
+  const [programData, mentoringData, blogData] = await Promise.all([
     fetchServerData<{ programList: ProgramRow[] }>(
       '/program?page=1&size=200&status=PREV,PROCEEDING',
+    ),
+    // 1:1 LIVE 멘토링은 /program 목록에 없어서 따로 받는다
+    fetchServerData<{ openingList: MentoringOpeningRow[] }>(
+      `/live-mentoring?page=1&size=${MENTORING_PAGE_SIZE}`,
     ),
     fetchServerData<{ blogInfos: BlogRow[] }>(
       `/blog?page=1&size=${BLOG_CATALOG_SIZE}`,
@@ -162,6 +194,47 @@ export async function getCatalog(): Promise<CatalogItem[]> {
     }),
   );
 
+  const mentorings = (mentoringData?.openingList ?? []).map(
+    (o): CatalogItem => {
+      const career = [
+        o.representativeCareer?.company,
+        o.representativeCareer?.job,
+      ]
+        .filter(Boolean)
+        .join(' ');
+      const categories = (o.categories ?? [])
+        .map((c) => MENTORING_CATEGORY_LABEL[c] ?? c)
+        .join('·');
+      const minDuration = o.durations?.length ? Math.min(...o.durations) : null;
+      const description = [
+        `멘토 ${o.mentorNickname ?? ''}${career ? `(${career})` : ''}`,
+        categories && `분야 ${categories}`,
+        o.mentorIntroduction?.replace(/\s+/g, ' ').slice(0, 80),
+      ]
+        .filter(Boolean)
+        .join(' · ');
+      return {
+        key: `M${o.openingId}`,
+        kind: 'LIVE_MENTORING',
+        title: o.title ?? `${o.mentorNickname ?? ''} 멘토 1:1 LIVE 멘토링`,
+        description,
+        thumbnail: o.thumbnail ?? null,
+        href: `/live-mentoring/${o.mentorId}`,
+        price:
+          o.minimumPrice != null
+            ? {
+                selling: o.minimumPrice,
+                original: null,
+                note: minDuration ? `${minDuration}분 기준 최저가` : '최저가',
+              }
+            : null,
+        recruit: null,
+        schedule: null,
+        searchText: `${o.title ?? ''} 1:1 1대1 라이브 LIVE 멘토링 멘토 ${o.mentorNickname ?? ''} ${career} ${categories} ${o.mentorIntroduction ?? ''}`,
+      };
+    },
+  );
+
   const blogs = (blogData?.blogInfos ?? []).map(
     ({ blogThumbnailInfo: b }): CatalogItem => ({
       key: `B${b.id}`,
@@ -177,7 +250,7 @@ export async function getCatalog(): Promise<CatalogItem[]> {
     }),
   );
 
-  return [...programs, ...blogs];
+  return [...programs, ...mentorings, ...blogs];
 }
 
 function describePeriod(label: string, period: AiChatPeriod | null) {

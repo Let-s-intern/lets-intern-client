@@ -114,7 +114,12 @@ const CompareCard = ({
           <InfoRow
             icon={<Clock size={13} />}
             label="진행"
-            value={formatPeriod(item.schedule) ?? '구매 후 바로'}
+            value={
+              formatPeriod(item.schedule) ??
+              (item.kind === 'LIVE_MENTORING'
+                ? '멘토와 일정 선택'
+                : '구매 후 바로')
+            }
           />
         </div>
 
