@@ -1,8 +1,5 @@
 import 'server-only';
 
-import Anthropic from '@anthropic-ai/sdk';
-import { betaJSONSchemaOutputFormat } from '@anthropic-ai/sdk/helpers/beta/json-schema';
-
 import { getBlogPathname, getProgramPathname } from '@/utils/url';
 import {
   HOME_SEARCH_MAX_RESULTS,
@@ -132,22 +129,32 @@ const SYSTEM_PROMPT = `너는 취업 준비 플랫폼 렛츠커리어의 검색 
 - picks 에는 카탈로그의 key 만 넣는다. 카탈로그에 없는 key 는 절대 만들지 않는다.
 - 관련도가 높은 순서로 최대 ${HOME_SEARCH_MAX_RESULTS}개. 관련 있는 항목이 없으면 빈 배열.
 - 같은 프로그램의 버전 행(대학생·무경력자 Ver., 인턴·실무 경험자 Ver.)은 사용자 상황에 맞는 쪽을 우선한다. 상황을 알 수 없으면 둘 다 넣어도 된다.
-- answer 는 사용자에게 보여줄 한두 문장 안내다. 친근한 해요체로, 왜 이 항목들을 골랐는지 짧게 말한다. 관련 항목이 없으면 다른 검색어를 제안한다.`;
+- answer 는 사용자에게 보여줄 한두 문장 안내다. 친근한 해요체로, 왜 이 항목들을 골랐는지 짧게 말한다. 관련 항목이 없으면 다른 검색어를 제안한다.
 
-const OUTPUT_FORMAT = betaJSONSchemaOutputFormat({
-  type: 'object',
-  properties: {
-    answer: { type: 'string' },
-    picks: { type: 'array', items: { type: 'string' } },
-  },
-  required: ['answer', 'picks'],
-  additionalProperties: false,
-} as const);
+반드시 아래 형태의 JSON 하나만 출력한다.
+{"answer": "자기소개서 지원동기가 고민이라면 이 챌린지와 글이 도움이 될 거예요.", "picks": ["P443-0", "B239"]}`;
 
-let anthropic: Anthropic | null = null;
-function getAnthropic() {
-  anthropic ??= new Anthropic();
-  return anthropic;
+const DEEPSEEK_URL = 'https://api.deepseek.com/chat/completions';
+const DEEPSEEK_MODEL = 'deepseek-chat';
+const DEEPSEEK_TIMEOUT_MS = 15_000;
+
+/** 모델 출력은 신뢰하지 않고 형태를 직접 확인한다 */
+function parseAiOutput(
+  content: string | undefined,
+): { answer: string; picks: string[] } | null {
+  try {
+    const parsed = JSON.parse(content ?? '');
+    if (
+      typeof parsed?.answer !== 'string' ||
+      !Array.isArray(parsed?.picks) ||
+      !parsed.picks.every((p: unknown) => typeof p === 'string')
+    ) {
+      return null;
+    }
+    return { answer: parsed.answer, picks: parsed.picks };
+  } catch {
+    return null;
+  }
 }
 
 async function aiSearch(
@@ -161,35 +168,41 @@ async function aiSearch(
     )
     .join('\n');
 
-  const message = await getAnthropic().beta.messages.parse({
-    model: 'claude-opus-5-5',
-    max_tokens: 2000,
-    betas: ['server-side-fallback-2026-07-01'],
-    fallbacks: 'default',
-    output_config: { effort: 'low', format: OUTPUT_FORMAT },
-    system: [
-      { type: 'text', text: SYSTEM_PROMPT },
-      {
-        type: 'text',
-        text: `카탈로그 (key | 종류 | 제목 | 설명)\n${catalogText}`,
-        cache_control: { type: 'ephemeral' },
-      },
-    ],
-    messages: [{ role: 'user', content: query }],
+  const res = await fetch(DEEPSEEK_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${process.env.DEEPSEEK_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: DEEPSEEK_MODEL,
+      max_tokens: 1000,
+      response_format: { type: 'json_object' },
+      messages: [
+        // 시스템 프롬프트+카탈로그를 앞에 고정해 DeepSeek 컨텍스트 캐시가 맞도록 한다
+        {
+          role: 'system',
+          content: `${SYSTEM_PROMPT}\n\n카탈로그 (key | 종류 | 제목 | 설명)\n${catalogText}`,
+        },
+        { role: 'user', content: query },
+      ],
+    }),
+    signal: AbortSignal.timeout(DEEPSEEK_TIMEOUT_MS),
   });
+  if (!res.ok) throw new Error(`DeepSeek ${res.status}`);
 
-  if (message.stop_reason === 'refusal' || !message.parsed_output) {
-    return keywordSearch(catalog, query);
-  }
+  const data = await res.json();
+  const output = parseAiOutput(data?.choices?.[0]?.message?.content);
+  if (!output) return keywordSearch(catalog, query);
 
   const byKey = new Map(catalog.map((item) => [item.key, item]));
-  const items = message.parsed_output.picks
+  const items = output.picks
     .map((key) => byKey.get(key))
     .filter((item): item is CatalogItem => !!item)
     .slice(0, HOME_SEARCH_MAX_RESULTS)
     .map(stripSearchText);
 
-  return { mode: 'ai', answer: message.parsed_output.answer, items };
+  return { mode: 'ai', answer: output.answer, items };
 }
 
 /** 같은 검색어 반복 호출로 AI 비용이 새지 않게 인스턴스 메모리에 결과를 잠시 둔다 */
@@ -221,7 +234,7 @@ export async function searchHome(
   const catalog = filterByCategory(await getCatalog(), category);
   if (catalog.length === 0) return { mode: 'keyword', answer: null, items: [] };
 
-  if (!process.env.ANTHROPIC_API_KEY) return keywordSearch(catalog, query);
+  if (!process.env.DEEPSEEK_API_KEY) return keywordSearch(catalog, query);
 
   const cacheKey = `${category}:${query.toLowerCase().replace(/\s+/g, ' ')}`;
   const cached = getCachedAi(cacheKey);

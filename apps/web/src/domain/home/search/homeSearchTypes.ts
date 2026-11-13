@@ -29,7 +29,7 @@ export interface HomeSearchItem {
 }
 
 export interface HomeSearchResponse {
-  /** ai: Claude 가 고른 결과, keyword: 키 미설정·실패 시 키워드 매칭 결과 */
+  /** ai: DeepSeek 가 고른 결과, keyword: 키 미설정·실패 시 키워드 매칭 결과 */
   mode: 'ai' | 'keyword';
   answer: string | null;
   items: HomeSearchItem[];
