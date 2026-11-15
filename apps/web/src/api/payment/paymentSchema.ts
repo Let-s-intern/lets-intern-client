@@ -22,6 +22,7 @@ export type PaymentProgramType = z.infer<typeof paymentProgramTypeSchema>;
 export const programInfoType = z.object({
   paymentId: z.number().nullable().optional(),
   applicationId: z.number().nullable().optional(),
+  extensionId: z.number().nullable().optional(), // 멤버십 결제: 연장이면 값, 기본이면 null
   programType: paymentProgramTypeSchema.nullable().optional(),
   reportType: reportTypeSchema.nullable().optional(),
   title: z.string().nullable().optional(),
