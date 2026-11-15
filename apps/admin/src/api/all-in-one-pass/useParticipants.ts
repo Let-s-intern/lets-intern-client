@@ -83,6 +83,7 @@ const toParticipants = (item: ApplicationItem): PassParticipant[] => {
     ? dayjs(a.endDate).subtract(totalExtDays, 'day').toISOString()
     : '';
   const shared = {
+    membershipApplicationId: a.membershipApplicationId,
     name: a.userName ?? '',
     email: a.contactEmail ?? '',
     phoneNum: a.phoneNum ?? '',
