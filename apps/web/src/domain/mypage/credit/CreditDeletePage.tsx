@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import useCredit from './hooks/useCredit';
+import MembershipRefundContent from './ui/MembershipRefundContent';
 import ReportCreditSubRow from './ui/ReportCreditSubRow';
 import {
   getVodPassRefundBlockedReason,
@@ -96,6 +97,16 @@ const CreditDeleteContent = () => {
           ? '이용권 정보를 확인하는 중입니다'
           : '현재 환불할 수 없는 이용권입니다';
   const isRefundBlocked = isVodPass && !isCancelable;
+
+  // 올인원패스: 규정·건별 환불이 달라 전용 화면으로 분기
+  if (paymentDetail.programInfo.programType === 'MEMBERSHIP') {
+    return (
+      <MembershipRefundContent
+        paymentId={paymentId}
+        paymentDetail={paymentDetail}
+      />
+    );
+  }
 
   return (
     <div
