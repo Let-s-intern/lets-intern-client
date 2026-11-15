@@ -10,11 +10,22 @@ import {
 import OrderProgramInfo from '@/domain/program/OrderProgramInfo';
 import PaymentInfoRow from '@/domain/program/paymentSuccess/PaymentInfoRow';
 import dayjs from '@/lib/dayjs';
+import { ApiError } from '@letscareer/api';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import ReportCreditSubRow from './ReportCreditSubRow';
 
 const won = (n?: number | null) => `${(n ?? 0).toLocaleString()}원`;
+
+// preview가 막히는 사유별 안내. REVIEW_REQUIRED는 어드민 수동 처리 대상이라 문의로 유도
+const refundBlockedMessage = (error: unknown): string => {
+  const code = error instanceof ApiError ? error.code : undefined;
+  if (code === 'MEMBERSHIP_REFUND_NOT_AVAILABLE')
+    return '이용 기간이 만료되어 환불이 불가합니다.';
+  if (code === 'MEMBERSHIP_REFUND_REVIEW_REQUIRED')
+    return '환불 확인이 필요한 결제입니다. 1:1문의 부탁드립니다.';
+  return '지금은 환불이 불가합니다. 잠시 후 다시 시도해주세요.';
+};
 
 interface Props {
   paymentId: string;
@@ -90,8 +101,8 @@ export default function MembershipRefundContent({
           </p>
         ) : query.isError ? (
           <>
-            <p className="text-neutral-40 w-full text-sm font-medium">
-              지금은 환불할 수 없습니다. (이용 기간 만료 또는 확인이 필요한 건)
+            <p className="text-neutral-40 mb-10 w-full text-sm font-medium">
+              {refundBlockedMessage(query.error)}
             </p>
             <button
               className="border-primary text-primary-dark h-[46px] w-full rounded-sm border-2 bg-neutral-100 px-5 py-2 font-medium"
@@ -181,7 +192,7 @@ export default function MembershipRefundContent({
                 disabled={mutation.isPending}
                 onClick={handleRefund}
               >
-                환불하기
+                결제 취소하기
               </button>
             </div>
           </>

@@ -23,7 +23,7 @@ const convertDateFormat = (date: string) => dayjs(date).format('YYYY.MM.DD');
 
 const CreditDeletePage = () => {
   return (
-    <section className="flex w-full flex-col px-5 md:px-0">
+    <section className="flex w-full flex-col md:px-0">
       <DescriptionBox type="DELETE" />
       <div className="flex w-full flex-col gap-y-10 py-8">
         <AsyncBoundary
