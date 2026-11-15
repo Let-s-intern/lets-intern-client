@@ -13,6 +13,7 @@ const basePreviewSchema = z.object({
   membershipApplicationId: z.number(),
   orderId: z.string().nullish(),
   programTitle: z.string().nullish(),
+  paymentPlan: z.string().nullish(),
   couponName: z.string().nullish(),
   couponDiscount: z.number().nullish(),
   paidAmount: z.number().nullish(),
