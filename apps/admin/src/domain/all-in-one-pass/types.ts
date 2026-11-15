@@ -136,7 +136,12 @@ export interface AllInOnePassListItem {
 }
 
 /** 멤버십으로 이용한 프로그램 종류 */
-export type UsedProgramType = 'CHALLENGE' | 'GUIDEBOOK' | 'VOD' | 'MENTORING';
+export type UsedProgramType =
+  | 'CHALLENGE'
+  | 'GUIDEBOOK'
+  | 'VOD'
+  | 'MENTORING'
+  | 'LIVE';
 
 /** 참여자가 멤버십으로 이용한 프로그램 1건 (이용 프로그램 조회 모달) */
 export interface UsedProgram {

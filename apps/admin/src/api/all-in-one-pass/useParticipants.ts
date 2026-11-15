@@ -138,9 +138,14 @@ const toParticipants = (item: ApplicationItem): PassParticipant[] => {
 };
 
 const toUsedProgramType = (type?: string | null): UsedProgramType => {
-  if (type === 'GUIDEBOOK' || type === 'VOD' || type === 'CHALLENGE')
+  if (
+    type === 'GUIDEBOOK' ||
+    type === 'VOD' ||
+    type === 'CHALLENGE' ||
+    type === 'LIVE'
+  )
     return type;
-  if (type === 'LIVE' || type === 'LIVE_MENTORING') return 'MENTORING';
+  if (type === 'MENTORING' || type === 'LIVE_MENTORING') return 'MENTORING';
   return 'CHALLENGE';
 };
 
