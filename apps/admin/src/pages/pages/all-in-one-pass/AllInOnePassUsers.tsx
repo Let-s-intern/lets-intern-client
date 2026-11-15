@@ -1,7 +1,4 @@
-import {
-  useGetParticipantsQuery,
-  useRevokeParticipantMutation,
-} from '@/api/all-in-one-pass/useParticipants';
+import { useGetParticipantsQuery } from '@/api/all-in-one-pass/useParticipants';
 import EmptyContainer from '@/common/container/EmptyContainer';
 import LoadingContainer from '@/common/loading/LoadingContainer';
 import Header from '@/domain/admin/ui/header/Header';
@@ -10,20 +7,16 @@ import { PassParticipant } from '@/domain/all-in-one-pass/types';
 import DownloadActions from '@/domain/all-in-one-pass/ui/participant/DownloadActions';
 import ParticipantTable from '@/domain/all-in-one-pass/ui/participant/ParticipantTable';
 import UsedProgramsModal from '@/domain/all-in-one-pass/ui/participant/UsedProgramsModal';
-import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import { isAxiosError } from 'axios';
 import { useMemo, useState } from 'react';
 import { IoArrowBack } from 'react-icons/io5';
 import { Link, useParams } from 'react-router-dom';
 
 /**
- * 올인원패스 참여자 조회 (참여자 목록 + 이용 프로그램 조회 + 권한 회수).
- * 환불은 멤버십 전용 환불 API 미구현이라 토스페이먼츠에서 직접 처리.
+ * 올인원패스 참여자 조회 (참여자 목록 + 이용 프로그램 조회).
  */
 export default function AllInOnePassUsers() {
   const { passId } = useParams();
   const numericPassId = passId ? Number(passId) : undefined;
-  const { snackbar } = useAdminSnackbar();
 
   const { data, isLoading, error } = useGetParticipantsQuery(numericPassId);
   const passTitle = data?.membershipTitle || '올인원패스';
@@ -32,25 +25,6 @@ export default function AllInOnePassUsers() {
   const [usedProgramsOf, setUsedProgramsOf] = useState<PassParticipant | null>(
     null,
   );
-
-  const { mutate: revoke, isPending: isRevoking } =
-    useRevokeParticipantMutation(numericPassId);
-
-  // 돈 환불은 토스에서 수동 처리, 이 버튼은 권한 회수 + 환불 표시만.
-  const handleRevoke = (participant: PassParticipant) => {
-    if (isRevoking) return;
-    if (!window.confirm(`<${participant.name}>님의 권한을 회수하시겠습니까?`))
-      return;
-    revoke(participant.id, {
-      onSuccess: () => snackbar('권한을 회수했습니다.'),
-      onError: (error) =>
-        snackbar(
-          (isAxiosError<{ message?: string }>(error) &&
-            error.response?.data?.message) ||
-            '권한 회수에 실패했습니다.',
-        ),
-    });
-  };
 
   return (
     <main className="flex flex-col gap-5 p-6">
@@ -82,7 +56,6 @@ export default function AllInOnePassUsers() {
       ) : (
         <ParticipantTable
           participants={participants}
-          onRevokeClick={handleRevoke}
           onUsedProgramsClick={setUsedProgramsOf}
         />
       )}

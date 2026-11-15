@@ -34,7 +34,6 @@ export default function ParticipantDetailRows({ apps }: Props) {
         <td className={`${SUB_HEAD} ${BOLD_T}`}>결제금액</td>
         <td className={`${SUB_HEAD} ${BOLD_T}`}>관리</td>
         <td className={`${SUB_HEAD} ${BOLD_T} ${BOLD_R}`}>환불여부</td>
-        <td />
       </tr>
       {apps.map((p, index) => {
         const amount = appAmount(p);
@@ -90,7 +89,6 @@ export default function ParticipantDetailRows({ apps }: Props) {
                 <span className="text-gray-300">{refundLabel.text}</span>
               )}
             </td>
-            <td />
           </tr>
         );
       })}
