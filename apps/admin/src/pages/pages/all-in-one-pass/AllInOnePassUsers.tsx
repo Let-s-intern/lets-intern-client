@@ -5,6 +5,9 @@ import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { PassParticipant } from '@/domain/all-in-one-pass/types';
 import DownloadActions from '@/domain/all-in-one-pass/ui/participant/DownloadActions';
+import MembershipRefundModalHost, {
+  RefundingState,
+} from '@/domain/all-in-one-pass/ui/participant/MembershipRefundModalHost';
 import ParticipantTable from '@/domain/all-in-one-pass/ui/participant/ParticipantTable';
 import UsedProgramsModal from '@/domain/all-in-one-pass/ui/participant/UsedProgramsModal';
 import { useMemo, useState } from 'react';
@@ -25,6 +28,7 @@ export default function AllInOnePassUsers() {
   const [usedProgramsOf, setUsedProgramsOf] = useState<PassParticipant | null>(
     null,
   );
+  const [refunding, setRefunding] = useState<RefundingState | null>(null);
 
   return (
     <main className="flex flex-col gap-5 p-6">
@@ -57,6 +61,9 @@ export default function AllInOnePassUsers() {
         <ParticipantTable
           participants={participants}
           onUsedProgramsClick={setUsedProgramsOf}
+          onRefundClick={(participant, mode) =>
+            setRefunding({ participant, mode })
+          }
         />
       )}
 
@@ -64,6 +71,12 @@ export default function AllInOnePassUsers() {
         participant={usedProgramsOf}
         passId={numericPassId}
         onClose={() => setUsedProgramsOf(null)}
+      />
+
+      <MembershipRefundModalHost
+        passId={numericPassId}
+        refunding={refunding}
+        onClose={() => setRefunding(null)}
       />
     </main>
   );
