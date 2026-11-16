@@ -12,7 +12,7 @@ function ExternalNavList({ isLoggedIn, isAdmin }: Props) {
     '/admin',
   );
   return (
-    <div className="hidden items-center gap-1 md:flex">
+    <div className="hidden items-center gap-1 xl:flex">
       <GlobalNavItem
         className="notice_gnb text-xsmall16 font-normal text-neutral-30"
         href="https://letscareer.oopy.io"
