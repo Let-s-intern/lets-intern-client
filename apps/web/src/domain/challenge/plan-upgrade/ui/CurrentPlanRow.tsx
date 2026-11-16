@@ -10,7 +10,7 @@ const CurrentPlanRow = ({ planType, paidAmount }: CurrentPlanRowProps) => (
   <section className="flex flex-col gap-2">
     <p className="text-xsmall14 text-neutral-40">현재 이용 중</p>
     <div className="flex items-center justify-between gap-3">
-      <span className="text-small18 text-neutral-0 font-semibold">
+      <span className="text-small18 font-semibold text-neutral-0">
         {planType}
       </span>
       <span className="text-xsmall16 text-neutral-20">

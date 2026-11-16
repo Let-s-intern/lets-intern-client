@@ -26,11 +26,11 @@ const BottomBannerSection = () => {
   return (
     <>
       {isLoading ? (
-        <div className="md:mt-22.5 mt-16 w-full max-w-[1120px] px-5 xl:px-0">
+        <div className="mt-16 w-full max-w-[1120px] px-5 md:mt-22.5 xl:px-0">
           <LoadingContainer />
         </div>
       ) : !bannerList || bannerList.length === 0 ? null : (
-        <section className="md:mt-22.5 mt-16 w-full max-w-[1120px] px-5 xl:px-0">
+        <section className="mt-16 w-full max-w-[1120px] px-5 md:mt-22.5 xl:px-0">
           <Swiper
             autoplay={bannerList.length > 1 ? { delay: 2500 } : false}
             modules={[Pagination, Autoplay, Navigation]}

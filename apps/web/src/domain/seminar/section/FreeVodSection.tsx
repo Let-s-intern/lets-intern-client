@@ -11,11 +11,11 @@ const FreeVodSection = () => {
     <section className="w-full bg-black px-5 py-16 md:py-24">
       <div className="mx-auto flex w-full max-w-[1120px] flex-col items-center gap-12">
         <div className="flex flex-col items-center gap-3 break-keep text-center">
-          <p className="text-xsmall14 md:text-xsmall16 text-primary-light font-semibold">
+          <p className="text-xsmall14 font-semibold text-primary-light md:text-xsmall16">
             취업 고민, <br className="md:hidden" />
             렛츠커리어 &amp; 현직자와 함께 해결해요!
           </p>
-          <h2 className="text-small20 md:text-xlarge30 font-bold text-neutral-100">
+          <h2 className="text-small20 font-bold text-neutral-100 md:text-xlarge30">
             누구나 무료로 참여 가능한
             <br />
             {/* 데스크톱(한 줄): 전체를 감싼 하나의 연속 그라데이션 */}

@@ -9,7 +9,7 @@ import OrderResultPage from '@/domain/live-mentoring/order/OrderResultPage';
 const Page = () => (
   <Suspense
     fallback={
-      <p className="text-neutral-40 py-20 text-center">결제를 확인하는 중…</p>
+      <p className="py-20 text-center text-neutral-40">결제를 확인하는 중…</p>
     }
   >
     <OrderResultPage />

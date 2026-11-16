@@ -49,7 +49,7 @@ const SeminarListContent = ({
     return status === 'recruiting' ? (
       <SeminarListEmptyState onGoClosed={onGoClosed} />
     ) : (
-      <p className="text-xsmall14 md:text-xsmall16 text-neutral-45 py-10 text-center">
+      <p className="py-10 text-center text-xsmall14 text-neutral-45 md:text-xsmall16">
         종료된 무료 세미나가 없어요.
       </p>
     );
@@ -86,12 +86,12 @@ const SeminarListContent = ({
 /** 모집 중 탭 전용 헤더 — 앵커(탭) 바로 아래 노출되는 eyebrow + 신청 유도 헤딩(figma). */
 const RecruitingHeader = () => (
   <div className="flex flex-col items-center gap-3 text-center">
-    <p className="text-xsmall14 md:text-xsmall16 text-neutral-45 font-semibold">
+    <p className="text-xsmall14 font-semibold text-neutral-45 md:text-xsmall16">
       모집 중인 무료 라이브 세미나
     </p>
-    <h2 className="text-small20 md:text-xlarge30 text-neutral-0 break-keep font-bold">
+    <h2 className="break-keep text-small20 font-bold text-neutral-0 md:text-xlarge30">
       곧 진행될{' '}
-      <span className="bg-primary inline-block -rotate-2 rounded-none px-2 py-1 text-neutral-100">
+      <span className="inline-block -rotate-2 rounded-none bg-primary px-2 py-1 text-neutral-100">
         무료 세미나
       </span>
       를
@@ -104,20 +104,20 @@ const RecruitingHeader = () => (
 /** 모집 종료 탭 전용 헤더 — eyebrow + 헤딩 + VOD 아카이브 안내 서브텍스트(figma). */
 const ClosedHeader = () => (
   <div className="flex flex-col items-center gap-3 text-center">
-    <p className="text-xsmall14 md:text-xsmall16 text-neutral-45 font-semibold">
+    <p className="text-xsmall14 font-semibold text-neutral-45 md:text-xsmall16">
       종료된 무료 라이브 세미나
     </p>
-    <h2 className="text-small20 md:text-xlarge30 text-neutral-0 break-keep font-bold">
+    <h2 className="break-keep text-small20 font-bold text-neutral-0 md:text-xlarge30">
       <span className="text-small18 md:text-medium22">챌린지 참여자는,</span>
       <br />
-      <span className="bg-primary inline-block -rotate-2 rounded-none px-2 py-1 text-neutral-100">
+      <span className="inline-block -rotate-2 rounded-none bg-primary px-2 py-1 text-neutral-100">
         놓친
       </span>{' '}
       무료 세미나를
       <br />
       언제든지 다시 볼 수 있어요
     </h2>
-    <p className="text-xsmall14 md:text-xsmall16 text-neutral-45 mt-2 break-keep">
+    <p className="mt-2 break-keep text-xsmall14 text-neutral-45 md:text-xsmall16">
       챌린지 1개 이상 참여 시 세미나를 다시 시청할 수 있는 &apos;챌린지 참여자
       전용 VOD 아카이브&apos;를 제공해 드립니다.
     </p>

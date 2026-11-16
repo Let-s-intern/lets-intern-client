@@ -267,10 +267,10 @@ export default function CompanyLogoBulkRegister({
       </div>
 
       {rows.length > 0 ? (
-        <div className="border-neutral-80 overflow-x-auto rounded-lg border">
+        <div className="overflow-x-auto rounded-lg border border-neutral-80">
           <table className="w-full min-w-[960px] border-collapse">
-            <thead className="border-neutral-80 bg-neutral-95 border-b">
-              <tr className="text-neutral-40 text-left text-xs">
+            <thead className="border-b border-neutral-80 bg-neutral-95">
+              <tr className="text-left text-xs text-neutral-40">
                 <th className="px-3 py-2 font-medium">저장</th>
                 <th className="px-3 py-2 font-medium">사이트 주소</th>
                 <th className="px-3 py-2 font-medium">상태</th>

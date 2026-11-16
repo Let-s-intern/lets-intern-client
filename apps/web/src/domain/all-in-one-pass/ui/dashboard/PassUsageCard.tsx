@@ -40,12 +40,12 @@ export default function PassUsageCard({
   ];
 
   return (
-    <div className="border-neutral-80 rounded-xs flex flex-1 flex-col gap-4 border p-3 md:p-4">
+    <div className="flex flex-1 flex-col gap-4 rounded-xs border border-neutral-80 p-3 md:p-4">
       <div className="flex flex-col gap-3">
-        <span className="text-xxsmall12 md:text-xsmall16 text-neutral-10">
+        <span className="text-xxsmall12 text-neutral-10 md:text-xsmall16">
           내 패스 이용권
         </span>
-        <span className="text-medium22 md:text-medium24 text-neutral-0 font-bold">
+        <span className="text-medium22 font-bold text-neutral-0 md:text-medium24">
           {data.title}
         </span>
       </div>
@@ -53,7 +53,7 @@ export default function PassUsageCard({
         {badges.map((label) => (
           <span
             key={label}
-            className="bg-primary-5 border-neutral-90 text-xxsmall10 md:text-xsmall14 text-neutral-10 rounded-full border px-1.5 py-1 font-medium md:px-4 md:py-2"
+            className="rounded-full border border-neutral-90 bg-primary-5 px-1.5 py-1 text-xxsmall10 font-medium text-neutral-10 md:px-4 md:py-2 md:text-xsmall14"
           >
             {label}
           </span>

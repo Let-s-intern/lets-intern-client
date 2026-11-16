@@ -10,14 +10,14 @@ interface MentorCardProps {
 
 const MentorCard = ({ mentor, onClick, className }: MentorCardProps) => {
   const cardClassName = twMerge(
-    'rounded-xs flex h-full w-full items-start gap-4 p-4 text-left transition-colors',
+    'flex h-full w-full items-start gap-4 rounded-xs p-4 text-left transition-colors',
     onClick && 'cursor-pointer',
     className,
   );
 
   const content = (
     <>
-      <div className="rounded-xs relative h-[119px] w-[119px] shrink-0 overflow-hidden">
+      <div className="relative h-[119px] w-[119px] shrink-0 overflow-hidden rounded-xs">
         {mentor.profileImgUrl ? (
           <img
             src={mentor.profileImgUrl}
@@ -25,7 +25,7 @@ const MentorCard = ({ mentor, onClick, className }: MentorCardProps) => {
             className="h-full w-full object-cover"
           />
         ) : (
-          <div className="bg-neutral-90 flex h-full w-full items-center justify-center">
+          <div className="flex h-full w-full items-center justify-center bg-neutral-90">
             <img src="/icons/user.svg" alt="" className="h-14 w-14" />
           </div>
         )}
@@ -38,10 +38,10 @@ const MentorCard = ({ mentor, onClick, className }: MentorCardProps) => {
         )}
       </div>
       <div className="flex w-full flex-col gap-4 py-2">
-        <p className="text-xsmall14 text-neutral-0 font-bold">
+        <p className="text-xsmall14 font-bold text-neutral-0">
           {mentor.nickname}
         </p>
-        <p className="text-xxsmall12 text-neutral-30 line-clamp-4 whitespace-pre-line">
+        <p className="line-clamp-4 whitespace-pre-line text-xxsmall12 text-neutral-30">
           {mentor.introduction}
         </p>
       </div>

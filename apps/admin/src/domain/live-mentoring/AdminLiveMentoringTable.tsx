@@ -124,9 +124,9 @@ const AdminLiveMentoringTable = ({
         })}
       </div>
 
-      <div className="border-neutral-80 overflow-x-auto rounded-lg border">
+      <div className="overflow-x-auto rounded-lg border border-neutral-80">
         <table className="w-full min-w-[1180px] border-collapse">
-          <thead className="border-neutral-80 bg-neutral-95 border-b">
+          <thead className="border-b border-neutral-80 bg-neutral-95">
             <tr>
               <th className={headerCellClass}>멘토</th>
               <th className={headerCellClass}>상품명</th>
@@ -144,7 +144,7 @@ const AdminLiveMentoringTable = ({
               <tr>
                 <td
                   colSpan={9}
-                  className="text-xsmall14 text-neutral-40 py-16 text-center"
+                  className="py-16 text-center text-xsmall14 text-neutral-40"
                 >
                   목록을 불러오지 못했습니다.
                 </td>
@@ -153,7 +153,7 @@ const AdminLiveMentoringTable = ({
               <tr>
                 <td
                   colSpan={9}
-                  className="text-xsmall14 text-neutral-40 py-16 text-center"
+                  className="py-16 text-center text-xsmall14 text-neutral-40"
                 >
                   불러오는 중...
                 </td>
@@ -162,7 +162,7 @@ const AdminLiveMentoringTable = ({
               <tr>
                 <td
                   colSpan={9}
-                  className="text-xsmall14 text-neutral-40 py-16 text-center"
+                  className="py-16 text-center text-xsmall14 text-neutral-40"
                 >
                   해당 조건의 상품이 없습니다.
                 </td>
@@ -177,7 +177,7 @@ const AdminLiveMentoringTable = ({
                 return (
                   <tr
                     key={row.liveMentoringId}
-                    className="border-neutral-90 border-b last:border-b-0"
+                    className="border-b border-neutral-90 last:border-b-0"
                   >
                     <td className={bodyCellClass}>
                       <div className="flex items-center gap-2">
@@ -196,7 +196,7 @@ const AdminLiveMentoringTable = ({
                             <button
                               type="button"
                               onClick={() => onEditMentor(row.mentorId)}
-                              className="text-primary whitespace-nowrap text-xs underline"
+                              className="whitespace-nowrap text-xs text-primary underline"
                             >
                               멘토 수정
                             </button>
@@ -205,7 +205,7 @@ const AdminLiveMentoringTable = ({
                             <button
                               type="button"
                               onClick={() => onEditDetailPage(row.mentorId)}
-                              className="text-primary whitespace-nowrap text-xs underline"
+                              className="whitespace-nowrap text-xs text-primary underline"
                             >
                               상세페이지 수정
                             </button>
@@ -221,7 +221,7 @@ const AdminLiveMentoringTable = ({
                           href={publicDetailUrl(row.mentorId)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-primary w-fit text-xs underline"
+                          className="w-fit text-xs text-primary underline"
                         >
                           공개 페이지 보기
                         </a>
@@ -233,17 +233,17 @@ const AdminLiveMentoringTable = ({
                           <img
                             src={row.thumbnail}
                             alt={`${row.mentorNickname ?? `멘토 #${row.mentorId}`} 썸네일`}
-                            className="aspect-[540/421] w-20 rounded object-cover"
+                            className="rounded aspect-[540/421] w-20 object-cover"
                           />
                         ) : (
-                          <span className="text-neutral-40 whitespace-nowrap text-xs">
+                          <span className="whitespace-nowrap text-xs text-neutral-40">
                             없음(프로필 사진 사용)
                           </span>
                         )}
                         <button
                           type="button"
                           onClick={() => setThumbnailTarget(row)}
-                          className="text-primary whitespace-nowrap text-xs underline"
+                          className="whitespace-nowrap text-xs text-primary underline"
                         >
                           썸네일 수정
                         </button>
@@ -251,7 +251,7 @@ const AdminLiveMentoringTable = ({
                     </td>
                     <td className={bodyCellClass}>
                       <span
-                        className={`whitespace-nowrap rounded px-2 py-0.5 text-xs font-medium ${badge.className}`}
+                        className={`rounded whitespace-nowrap px-2 py-0.5 text-xs font-medium ${badge.className}`}
                       >
                         {badge.label}
                       </span>
@@ -267,11 +267,11 @@ const AdminLiveMentoringTable = ({
                     <td className={`${bodyCellClass} whitespace-nowrap`}>
                       {opening ? (
                         <div className="flex flex-col gap-0.5">
-                          <span className="text-neutral-40 text-xs">
+                          <span className="text-xs text-neutral-40">
                             {durationPricesLabel(opening.durationPrices)}
                           </span>
                           {opening.closeReason && (
-                            <span className="text-neutral-40 text-xs">
+                            <span className="text-xs text-neutral-40">
                               {CLOSE_REASON_LABELS[opening.closeReason]}
                             </span>
                           )}

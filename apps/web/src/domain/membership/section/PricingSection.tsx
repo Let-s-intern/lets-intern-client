@@ -49,37 +49,37 @@ export default function PricingSection() {
           가운데 항목으로 두면 두 방향 모두 같은 마크업으로 끝난다.
         */}
         <div className="mt-10 flex flex-col items-center gap-4 md:mt-14 md:flex-row md:items-stretch md:gap-6">
-          <div className="rounded-xxl w-full bg-white p-6 md:flex-1 md:p-10">
-            <p className="text-xsmall14 text-neutral-45 font-bold">
+          <div className="w-full rounded-xxl bg-white p-6 md:flex-1 md:p-10">
+            <p className="text-xsmall14 font-bold text-neutral-45">
               {PRICING.optionLabel}
             </p>
-            <h3 className="text-neutral-0 mt-3 text-lg font-bold md:text-xl">
+            <h3 className="mt-3 text-lg font-bold text-neutral-0 md:text-xl">
               {PRICING.optionTitle}
             </h3>
 
-            <ul className="border-neutral-85 mt-6 border-t">
+            <ul className="mt-6 border-t border-neutral-85">
               {INDIVIDUAL_ITEMS.map((item) => (
                 <li
-                  className="border-neutral-85 text-xsmall14 md:text-xsmall16 flex items-center justify-between gap-4 border-b py-4"
+                  className="flex items-center justify-between gap-4 border-b border-neutral-85 py-4 text-xsmall14 md:text-xsmall16"
                   key={item.label}
                 >
                   <span className="text-neutral-30">{item.label}</span>
-                  <strong className="text-neutral-0 shrink-0 font-bold">
+                  <strong className="shrink-0 font-bold text-neutral-0">
                     {formatKRW(item.price)}원
                   </strong>
                 </li>
               ))}
             </ul>
 
-            <p className="text-xsmall14 md:text-xsmall16 mt-5 flex items-center justify-between gap-4">
-              <span className="text-neutral-0 font-bold">
+            <p className="mt-5 flex items-center justify-between gap-4 text-xsmall14 md:text-xsmall16">
+              <span className="font-bold text-neutral-0">
                 {PRICING.totalLabel}
               </span>
               {/*
                 취소선은 "이 금액을 내지 않아도 된다" 는 뜻이라 굵기와 색을 함께 죽인다.
                 옆 카드의 파란 판매가가 결론이다.
               */}
-              <strong className="text-neutral-45 shrink-0 text-xl font-bold line-through md:text-2xl">
+              <strong className="shrink-0 text-xl font-bold text-neutral-45 line-through md:text-2xl">
                 {formatKRW(total)}원
               </strong>
             </p>
@@ -87,20 +87,20 @@ export default function PricingSection() {
 
           <span
             aria-hidden="true"
-            className="text-xsmall14 flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#11142B] font-bold text-white"
+            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#11142B] text-xsmall14 font-bold text-white"
           >
             {PRICING.vsLabel}
           </span>
 
-          <div className="rounded-xxl border-primary w-full border-2 bg-white p-6 md:flex-1 md:p-10">
-            <p className="text-xsmall14 text-primary font-bold">
+          <div className="w-full rounded-xxl border-2 border-primary bg-white p-6 md:flex-1 md:p-10">
+            <p className="text-xsmall14 font-bold text-primary">
               {PRICING.passOptionLabel}
             </p>
-            <h3 className="text-neutral-0 mt-3 text-lg font-bold md:text-xl">
+            <h3 className="mt-3 text-lg font-bold text-neutral-0 md:text-xl">
               {PRICING.passTitle}
             </h3>
 
-            <p className="border-neutral-85 text-primary mt-6 border-t pt-8 text-3xl font-bold md:text-[2.5rem]">
+            <p className="mt-6 border-t border-neutral-85 pt-8 text-3xl font-bold text-primary md:text-[2.5rem]">
               {formatKRW(salePrice)}원
             </p>
 
@@ -110,7 +110,7 @@ export default function PricingSection() {
             */}
             {save > 0 ? (
               <p className="mt-4">
-                <span className="text-xsmall14 inline-flex rounded-full bg-[#E8F7F0] px-4 py-2.5 font-bold text-[#16A46B]">
+                <span className="inline-flex rounded-full bg-[#E8F7F0] px-4 py-2.5 text-xsmall14 font-bold text-[#16A46B]">
                   {PRICING.saveLead} {formatKRW(save)}원 {PRICING.saveTail}
                 </span>
               </p>
@@ -119,18 +119,18 @@ export default function PricingSection() {
             <ul className="mt-6 flex flex-col gap-3">
               {PASS_INCLUDE_LINES.map((line) => (
                 <li
-                  className="text-xsmall14 md:text-xsmall16 flex items-start gap-2.5"
+                  className="flex items-start gap-2.5 text-xsmall14 md:text-xsmall16"
                   key={line.text}
                 >
                   <span
                     aria-hidden="true"
-                    className="bg-primary-10 text-primary mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
+                    className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary-10 text-primary"
                   >
                     <Check size={12} strokeWidth={3} />
                   </span>
                   <span className="text-neutral-30">
                     {line.strong ? (
-                      <strong className="text-neutral-0 mr-1.5 font-bold">
+                      <strong className="mr-1.5 font-bold text-neutral-0">
                         {line.strong}
                       </strong>
                     ) : null}
@@ -141,7 +141,7 @@ export default function PricingSection() {
             </ul>
 
             <button
-              className="bg-primary mt-8 w-full rounded-full py-4 text-base font-bold text-white disabled:opacity-50"
+              className="mt-8 w-full rounded-full bg-primary py-4 text-base font-bold text-white disabled:opacity-50"
               disabled={IS_CTA_DISABLED}
               onClick={() => {
                 capturePaymentCtaClicked({ location: 'pricing' });

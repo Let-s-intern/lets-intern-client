@@ -28,8 +28,8 @@
     var(--lc-indigo) 50%,
     var(--lc-sky) 100%
   );
-  --font: \"Pretendard Variable\",Pretendard,system-ui,sans-serif;
-  --num: \"Inter\",var(--font);
+  --font: \"Pretendard Variable\", Pretendard, system-ui, sans-serif;
+  --num: \"Inter\", var(--font);
   --maxw: 1180px;
 }
 .membership-root,

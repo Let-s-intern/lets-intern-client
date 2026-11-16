@@ -173,7 +173,7 @@ const ReportCreditDeleteContent = ({
       data-program-text={reportPaymentDetail.reportApplicationInfo?.title}
     >
       <div className="flex w-full flex-col items-start justify-center gap-y-6">
-        <div className="text-neutral-0 font-semibold">결제 프로그램</div>
+        <div className="font-semibold text-neutral-0">결제 프로그램</div>
         <div className="flex w-full items-start justify-center gap-x-4">
           <img
             className="h-[97px] w-[137px] rounded-sm object-cover"
@@ -186,11 +186,11 @@ const ReportCreditDeleteContent = ({
             </div>
             <div className="flex w-full flex-col gap-y-1">
               <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
-                <div className="text-neutral-30 shrink-0">상품</div>
+                <div className="shrink-0 text-neutral-30">상품</div>
                 <div className="text-primary-dark">{`서류 진단서 (${convertReportPriceType(reportPaymentDetail.reportApplicationInfo.reportPriceType)}${reportPaymentDetail.reportApplicationInfo.reportFeedbackApplicationId ? ', 1:1 온라인 상담' : ''})`}</div>
               </div>
               <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
-                <div className="text-neutral-30 shrink-0">옵션</div>
+                <div className="shrink-0 text-neutral-30">옵션</div>
                 <div className="text-primary-dark">{optionTitle}</div>
               </div>
             </div>
@@ -198,10 +198,10 @@ const ReportCreditDeleteContent = ({
         </div>
       </div>
       <div className="flex w-full flex-col items-start justify-center gap-y-6">
-        <div className="text-neutral-0 font-semibold">환불 정보</div>
+        <div className="font-semibold text-neutral-0">환불 정보</div>
         <div className="flex w-full flex-col items-start justify-start">
-          <div className="border-neutral-0 flex w-full items-center justify-start gap-3 border-y-[1.5px] px-3 py-5">
-            <div className="text-neutral-0 flex w-full items-center justify-start gap-3 font-bold">
+          <div className="flex w-full items-center justify-start gap-3 border-y-[1.5px] border-neutral-0 px-3 py-5">
+            <div className="flex w-full items-center justify-start gap-3 font-bold text-neutral-0">
               <div>예정 환불금액</div>
               <div className="flex grow items-center justify-end">
                 {totalRefund.toLocaleString()}원
@@ -268,7 +268,7 @@ const ReportCreditDeleteContent = ({
                 </div>
               </div>
             )}
-            <div className="text-primary-dark py-2 text-xs font-medium">
+            <div className="py-2 text-xs font-medium text-primary-dark">
               *환불 규정은{' '}
               <a
                 className="underline underline-offset-2"
@@ -281,7 +281,7 @@ const ReportCreditDeleteContent = ({
               을 참고해주세요
             </div>
           </div>
-          <hr className="border-neutral-85 w-full" />
+          <hr className="w-full border-neutral-85" />
           <div className="flex w-full flex-col">
             <PaymentInfoRow
               title="결제일자"
@@ -310,9 +310,9 @@ const ReportCreditDeleteContent = ({
                 />
                 <div className="flex w-full items-center justify-start gap-x-2 px-3 py-2">
                   <div className="text-neutral-40">영수증</div>
-                  <div className="text-neutral-0 flex grow items-center justify-end">
+                  <div className="flex grow items-center justify-end text-neutral-0">
                     <button
-                      className="border-neutral-60 flex items-center justify-center rounded-sm border bg-white px-2.5 py-1.5 text-sm font-medium"
+                      className="flex items-center justify-center rounded-sm border border-neutral-60 bg-white px-2.5 py-1.5 text-sm font-medium"
                       onClick={() => {
                         if (reportPaymentDetail.tossInfo?.receipt) {
                           window.open(
@@ -350,13 +350,13 @@ const ReportCreditDeleteContent = ({
         </div>
         <div className="flex w-full items-center gap-x-3">
           <button
-            className="border-primary text-primary-dark h-[46px] grow rounded-sm border-2 bg-neutral-100 px-5 py-2 font-medium"
+            className="h-[46px] grow rounded-sm border-2 border-primary bg-neutral-100 px-5 py-2 font-medium text-primary-dark"
             onClick={() => router.back()}
           >
             이전
           </button>
           <button
-            className={`h-[46px] grow rounded-sm ${isChecked ? 'bg-primary' : 'bg-primary-20 cursor-not-allowed'} px-5 py-2 font-medium text-neutral-100`}
+            className={`h-[46px] grow rounded-sm ${isChecked ? 'bg-primary' : 'cursor-not-allowed bg-primary-20'} px-5 py-2 font-medium text-neutral-100`}
             onClick={() => {
               if (isChecked) {
                 tryCancelReportApplication(Number(applicationId));

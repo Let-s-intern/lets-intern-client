@@ -33,7 +33,7 @@ export const PremiumSection = ({
         </div>
       }
       <div className="w-full">
-        <span className="text-xsmall14 mb-3 inline-block lg:mb-4">
+        <span className="mb-3 inline-block text-xsmall14 lg:mb-4">
           희망하는 기업의 채용공고를 첨부해주세요.
         </span>
         <FormControl fullWidth>
@@ -53,7 +53,7 @@ export const PremiumSection = ({
                 value="file"
                 subText="(png, jpg, jpeg, pdf 형식 지원, 50MB 이하)"
               />
-              <span className="text-xxsmall12 text-neutral-45 mb-2 mt-2 block md:mt-0">
+              <span className="mb-2 mt-2 block text-xxsmall12 text-neutral-45 md:mt-0">
                 *업무, 지원자격, 우대사항이 보이게 채용공고를 캡처해주세요.
               </span>
               {value === 'file' && (
@@ -73,7 +73,7 @@ export const PremiumSection = ({
                 />
               )}
               {value === 'url' && !isValidUrl && (
-                <span className="text-xsmall14 text-system-error h-3">
+                <span className="h-3 text-xsmall14 text-system-error">
                   올바른 주소를 입력해주세요
                 </span>
               )}

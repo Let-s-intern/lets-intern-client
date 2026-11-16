@@ -43,14 +43,14 @@ const Menu = <Value extends string>({
   value,
   onSelect,
 }: MenuProps<Value>) => (
-  <ul className="shadow-07 rounded-xs bg-static-100 divide-neutral-95 absolute right-0 top-full z-10 mt-1 min-w-full divide-y px-1 py-1.5">
+  <ul className="absolute right-0 top-full z-10 mt-1 min-w-full divide-y divide-neutral-95 rounded-xs bg-static-100 px-1 py-1.5 shadow-07">
     {options.map((option) => (
       <li
         key={option.value}
         onClick={() => onSelect(option.value)}
         className={twMerge(
-          'text-xsmall14 hover:bg-neutral-95 text-neutral-0 rounded-xs cursor-pointer whitespace-nowrap px-3 py-2',
-          option.value === value ? 'text-primary font-medium' : '',
+          'cursor-pointer whitespace-nowrap rounded-xs px-3 py-2 text-xsmall14 text-neutral-0 hover:bg-neutral-95',
+          option.value === value ? 'font-medium text-primary' : '',
         )}
       >
         {option.label}
@@ -94,7 +94,7 @@ const Dropdown = <Value extends string>({
         onClick={() => setIsOpen((prev) => !prev)}
         style={width ? { width } : undefined}
         className={twMerge(
-          'text-xsmall14 text-neutral-0 rounded-xs flex items-center justify-between gap-1.5 px-3',
+          'flex items-center justify-between gap-1.5 rounded-xs px-3 text-xsmall14 text-neutral-0',
           SIZE_PADDING_Y[size],
           TYPE_STYLE[type],
           className,

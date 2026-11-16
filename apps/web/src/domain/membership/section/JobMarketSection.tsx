@@ -14,7 +14,7 @@ export default function JobMarketSection() {
           {/* 좌측 — 공고 예시 카드 */}
           <div className="rounded-xxl bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.05)] md:p-8">
             <div className="flex items-baseline justify-between gap-3">
-              <strong className="text-xsmall16 text-neutral-0 font-bold">
+              <strong className="text-xsmall16 font-bold text-neutral-0">
                 {JOB_MARKET.listTitle}{' '}
                 <span className="text-primary">{JOB_MARKET.listCount}</span>
               </strong>
@@ -23,7 +23,7 @@ export default function JobMarketSection() {
               </span>
             </div>
 
-            <ul className="divide-neutral-90 border-neutral-90 mt-4 divide-y border-t">
+            <ul className="mt-4 divide-y divide-neutral-90 border-t border-neutral-90">
               {JOB_MARKET.postings.map((post) => (
                 <li
                   className="flex items-center gap-4 py-4"
@@ -40,19 +40,19 @@ export default function JobMarketSection() {
                       loading="lazy"
                       src={`/images/membership/${post.logo}`}
                     />
-                    <span className="text-xsmall14 text-neutral-40 min-w-0">
+                    <span className="min-w-0 text-xsmall14 text-neutral-40">
                       {post.industry}
                     </span>
                   </span>
                   <span className="min-w-0 flex-1">
-                    <strong className="text-xsmall14 text-neutral-0 block font-semibold">
+                    <strong className="block text-xsmall14 font-semibold text-neutral-0">
                       {post.role}
                     </strong>
                     <span className="mt-0.5 block text-xs text-neutral-50">
                       {post.tasks}
                     </span>
                   </span>
-                  <span className="text-xsmall14 text-neutral-40 w-14 shrink-0 text-right">
+                  <span className="w-14 shrink-0 text-right text-xsmall14 text-neutral-40">
                     {post.level}
                   </span>
                 </li>
@@ -72,11 +72,11 @@ export default function JobMarketSection() {
 
             {JOB_MARKET.copies.map((copy) => (
               <div key={copy.titleLines[0]}>
-                <h2 className="text-neutral-0 text-xl font-bold leading-snug md:text-[1.75rem]">
+                <h2 className="text-xl font-bold leading-snug text-neutral-0 md:text-[1.75rem]">
                   {copy.titleLines.map((line) => (
                     <span
                       className={
-                        line === copy.highlight ? 'text-primary block' : 'block'
+                        line === copy.highlight ? 'block text-primary' : 'block'
                       }
                       key={line}
                     >
@@ -84,7 +84,7 @@ export default function JobMarketSection() {
                     </span>
                   ))}
                 </h2>
-                <div className="text-xsmall14 md:text-xsmall16 text-neutral-40 mt-4">
+                <div className="mt-4 text-xsmall14 text-neutral-40 md:text-xsmall16">
                   {copy.body.map((line) => (
                     <span className="block leading-relaxed" key={line}>
                       {line}

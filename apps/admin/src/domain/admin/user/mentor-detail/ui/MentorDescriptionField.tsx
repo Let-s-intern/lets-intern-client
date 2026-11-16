@@ -18,14 +18,14 @@ export default function MentorDescriptionField({
 }: Props) {
   return (
     <div className="mt-4">
-      <label className="text-xsmall14 text-neutral-30 mb-1 block font-medium">
+      <label className="mb-1 block text-xsmall14 font-medium text-neutral-30">
         프로필 상세페이지
       </label>
       <EditorApp
         initialEditorStateJsonString={initialDescription || emptyEditorState}
         onChange={onChange}
       />
-      <p className="text-xxsmall12 text-neutral-40 mt-1">
+      <p className="mt-1 text-xxsmall12 text-neutral-40">
         본문을 고치지 않으면 저장할 때 본문은 보내지 않습니다.
       </p>
     </div>

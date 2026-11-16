@@ -174,7 +174,7 @@ function FaqSection<
                 />
                 <div className="flex flex-1 flex-col gap-2">
                   <div className="flex items-center gap-2">
-                    <div className="rounded-xxs flex-1 rounded border border-[#E7E7E7] px-3 py-1.5">
+                    <div className="rounded flex-1 rounded-xxs border border-[#E7E7E7] px-3 py-1.5">
                       <span className="text-xsmall16 text-[#ACAFB6]">
                         {faq.question}
                       </span>
@@ -188,8 +188,8 @@ function FaqSection<
                     </Button>
                   </div>
                   <div className="flex items-start gap-2">
-                    <div className="rounded-xxs flex-1 rounded border border-[#E7E7E7] px-3 py-1.5">
-                      <span className="text-xsmall16 whitespace-pre-wrap text-[#ACAFB6]">
+                    <div className="rounded flex-1 rounded-xxs border border-[#E7E7E7] px-3 py-1.5">
+                      <span className="whitespace-pre-wrap text-xsmall16 text-[#ACAFB6]">
                         {faq.answer}
                       </span>
                     </div>

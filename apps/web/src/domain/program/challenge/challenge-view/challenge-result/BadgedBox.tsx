@@ -26,7 +26,7 @@ function BadgedBox({
     >
       <div
         className={twMerge(
-          'bg-neutral-75 text-xsmall16 md:text-small20 w-full px-2.5 py-1 text-center font-semibold text-white md:py-2.5',
+          'w-full bg-neutral-75 px-2.5 py-1 text-center text-xsmall16 font-semibold text-white md:py-2.5 md:text-small20',
         )}
         style={style}
       >

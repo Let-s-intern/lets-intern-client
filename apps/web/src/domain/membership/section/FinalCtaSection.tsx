@@ -29,8 +29,8 @@ export default function FinalCtaSection() {
               <span
                 className={
                   chip.goal
-                    ? 'bg-primary text-xsmall14 inline-flex items-center gap-1.5 rounded-full px-4 py-2.5 font-bold text-white'
-                    : 'text-xsmall14 inline-flex items-center rounded-full border border-[#3B3E52] bg-[#24273C] px-4 py-2.5 font-medium text-[#D9DCEA]'
+                    ? 'inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2.5 text-xsmall14 font-bold text-white'
+                    : 'inline-flex items-center rounded-full border border-[#3B3E52] bg-[#24273C] px-4 py-2.5 text-xsmall14 font-medium text-[#D9DCEA]'
                 }
               >
                 {chip.icon ? <span aria-hidden="true">{chip.icon}</span> : null}
@@ -53,7 +53,7 @@ export default function FinalCtaSection() {
           ))}
         </h2>
 
-        <p className="text-xsmall14 md:text-xsmall16 mt-6 text-center leading-relaxed text-[#B9BFD4]">
+        <p className="mt-6 text-center text-xsmall14 leading-relaxed text-[#B9BFD4] md:text-xsmall16">
           {FINAL_CTA.descLines.map((line) => (
             <span className="block" key={line}>
               {line}
@@ -62,7 +62,7 @@ export default function FinalCtaSection() {
         </p>
 
         <p className="mt-10 flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1 md:mt-14">
-          <span className="text-xsmall14 md:text-xsmall16 font-bold text-[#8E97FF]">
+          <span className="text-xsmall14 font-bold text-[#8E97FF] md:text-xsmall16">
             {FINAL_CTA.priceLabel}
           </span>
           <strong className="text-2xl font-bold text-white md:text-[2rem]">
@@ -72,7 +72,7 @@ export default function FinalCtaSection() {
 
         <p className="mt-8 text-center">
           <button
-            className="text-primary rounded-full bg-white px-10 py-4 text-base font-bold disabled:opacity-50"
+            className="rounded-full bg-white px-10 py-4 text-base font-bold text-primary disabled:opacity-50"
             disabled={IS_CTA_DISABLED}
             onClick={() => {
               capturePaymentCtaClicked({ location: 'final_cta' });

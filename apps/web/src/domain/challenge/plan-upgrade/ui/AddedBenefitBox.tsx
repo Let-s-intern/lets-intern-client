@@ -21,9 +21,9 @@ const BenefitItem = ({
   children?: ReactNode;
 }) => (
   <li className="flex gap-1.5">
-    <CheckIcon aria-hidden="true" className="text-primary h-6 w-6 shrink-0" />
+    <CheckIcon aria-hidden="true" className="h-6 w-6 shrink-0 text-primary" />
     <div className="flex flex-col gap-1">
-      <p className="text-xsmall16 text-neutral-0 font-semibold">{title}</p>
+      <p className="text-xsmall16 font-semibold text-neutral-0">{title}</p>
       {children}
     </div>
   </li>
@@ -44,10 +44,10 @@ const AddedBenefitBox = ({
     <p className="text-xsmall14 text-neutral-40">
       {currentPlanType}에서 추가되는 혜택
     </p>
-    <ul className="bg-primary-5 flex flex-col gap-5 rounded-md p-5">
+    <ul className="flex flex-col gap-5 rounded-md bg-primary-5 p-5">
       <BenefitItem title={`${currentPlanType} PLAN의 모든 혜택`}>
         {currentPlanDescription && (
-          <p className="text-xsmall14 text-neutral-20 whitespace-pre-line">
+          <p className="whitespace-pre-line text-xsmall14 text-neutral-20">
             {currentPlanDescription}
           </p>
         )}

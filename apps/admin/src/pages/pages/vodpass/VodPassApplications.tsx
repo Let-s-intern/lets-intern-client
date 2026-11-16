@@ -127,7 +127,7 @@ const VodPassApplications = () => {
             type="search"
             aria-label="구매자 검색"
             placeholder="이름, 이메일, 휴대폰, 주문번호 검색"
-            className="rounded-xxs focus:border-primary w-80 border border-neutral-300 px-3 py-2 text-sm outline-none"
+            className="w-80 rounded-xxs border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-primary"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
           />

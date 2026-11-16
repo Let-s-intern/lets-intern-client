@@ -645,7 +645,7 @@ export const getMissionColumns = (
           return (
             <div className="flex items-center justify-center gap-2 px-2">
               <button
-                className="text-primary px-2 py-2"
+                className="px-2 py-2 text-primary"
                 onClick={() => {
                   params.row.onAction({ action: 'edit', row: params.row });
                 }}
@@ -667,7 +667,7 @@ export const getMissionColumns = (
         return (
           <div className="flex items-center justify-center gap-2 px-2">
             <button
-              className="text-primary px-2 py-2"
+              className="px-2 py-2 text-primary"
               onClick={() => {
                 params.row.onAction({ action: 'create', row: params.row });
               }}
@@ -698,7 +698,7 @@ export const getMissionColumns = (
         return (
           <div className="flex items-center justify-center gap-2 px-2">
             <button
-              className="text-primary px-2 py-2"
+              className="px-2 py-2 text-primary"
               onClick={() => {
                 params.row.onAction({ action: 'create', row: params.row });
               }}

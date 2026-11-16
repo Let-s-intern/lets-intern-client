@@ -70,7 +70,7 @@ export const ProgramInfoSection = ({
       />
       <div className="mt-10">
         <CallOut
-          className="bg-primary-5 mb-6"
+          className="mb-6 bg-primary-5"
           header="📄 진단을 위한 서류를 제출해주세요"
           body="서류 제출 순으로 진단이 시작됩니다. 빠른 진단을 원하신다면 제출을 서둘러주세요."
         />

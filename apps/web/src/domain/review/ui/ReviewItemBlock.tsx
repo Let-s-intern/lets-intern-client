@@ -28,7 +28,7 @@ const ReviewItemBlock = (props: Props) => {
   return (
     <div>
       <div className="flex w-fit items-center gap-1">
-        <span className="text-xsmall14 text-neutral-10 font-semibold">
+        <span className="text-xsmall14 font-semibold text-neutral-10">
           {questionText}
         </span>
       </div>
@@ -36,12 +36,12 @@ const ReviewItemBlock = (props: Props) => {
         <ExpandableParagraph
           content={props.answer ?? ''}
           lineClamp={props.lineClamp}
-          className={twMerge('text-xsmall14 text-neutral-20 font-normal')}
+          className={twMerge('text-xsmall14 font-normal text-neutral-20')}
         />
       ) : (
         <p
           className={twMerge(
-            'text-xsmall14 text-neutral-20 font-normal tracking-[-0.028px]',
+            'text-xsmall14 font-normal tracking-[-0.028px] text-neutral-20',
             props.lineClamp ? LINE_CLAMP_CLASS[props.lineClamp] : '',
           )}
         >

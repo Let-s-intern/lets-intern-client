@@ -112,10 +112,10 @@ const EventExtraMagnetSection = ({
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-col gap-1">
-        <span className="text-xsmall14 md:text-xsmall16 text-neutral-0 font-semibold">
+        <span className="text-xsmall14 font-semibold text-neutral-0 md:text-xsmall16">
           함께 받아볼 자료집
         </span>
-        <span className="text-xsmall12 md:text-xsmall14 text-neutral-40">
+        <span className="text-xsmall12 text-neutral-40 md:text-xsmall14">
           관심 있는 자료집을 선택하면 이번 신청과 함께 받아볼 수 있어요.
         </span>
       </div>
@@ -132,7 +132,7 @@ const EventExtraMagnetSection = ({
                   : [...selectedMagnetIds, magnet.magnetId];
                 onSelectedMagnetIdsChange(newIds);
               }}
-              className="text-xsmall14 flex w-full items-center gap-1"
+              className="flex w-full items-center gap-1 text-xsmall14"
             >
               <CheckBox checked={isSelected} width="w-6" showCheckIcon />
               <span className="text-xsmall14 md:text-xsmall16">

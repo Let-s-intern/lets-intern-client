@@ -60,14 +60,14 @@ const OpenChatModal = ({
           <br />
           코드를 복사한 뒤 입장하기를 눌러주세요.
         </p>
-        <div className="rounded-xs bg-neutral-95 flex items-center justify-between gap-2 px-3 py-2.5">
-          <span className="text-xsmall16 text-neutral-0 break-all font-semibold">
+        <div className="flex items-center justify-between gap-2 rounded-xs bg-neutral-95 px-3 py-2.5">
+          <span className="break-all text-xsmall16 font-semibold text-neutral-0">
             {chatPassword}
           </span>
           <button
             type="button"
             onClick={handleCopy}
-            className="rounded-xxs border-primary text-primary text-xsmall14 shrink-0 border bg-white px-2.5 py-1 font-normal"
+            className="shrink-0 rounded-xxs border border-primary bg-white px-2.5 py-1 text-xsmall14 font-normal text-primary"
           >
             {copied ? '복사됨' : '복사'}
           </button>

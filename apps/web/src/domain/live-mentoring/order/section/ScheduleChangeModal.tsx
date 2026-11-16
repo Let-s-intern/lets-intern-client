@@ -60,16 +60,16 @@ const ScheduleChangeModal = ({
       className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 md:items-center"
     >
       <div className="flex max-h-[90vh] w-full max-w-[480px] flex-col overflow-y-auto rounded-t-lg bg-white p-5 md:rounded-lg">
-        <h2 className="text-small18 text-neutral-0 mb-1 font-semibold">
+        <h2 className="mb-1 text-small18 font-semibold text-neutral-0">
           예약 일시를 다시 선택해 주세요
         </h2>
-        <p className="text-xsmall14 text-neutral-45 mb-4">
+        <p className="mb-4 text-xsmall14 text-neutral-45">
           고르신 시간을 다른 분이 먼저 예약했어요. 작성하신 내용은 그대로
           있어요.
         </p>
 
         {isLoading ? (
-          <p className="text-xsmall14 text-neutral-45 py-10 text-center">
+          <p className="py-10 text-center text-xsmall14 text-neutral-45">
             예약 가능한 시간을 불러오는 중이에요.
           </p>
         ) : (
@@ -85,7 +85,7 @@ const ScheduleChangeModal = ({
           <button
             type="button"
             onClick={onClose}
-            className="text-xsmall14 border-neutral-80 text-neutral-30 flex-1 rounded-sm border py-3 font-medium"
+            className="flex-1 rounded-sm border border-neutral-80 py-3 text-xsmall14 font-medium text-neutral-30"
           >
             취소
           </button>
@@ -93,7 +93,7 @@ const ScheduleChangeModal = ({
             type="button"
             disabled={!canConfirm}
             onClick={() => onConfirm(picked)}
-            className="text-xsmall14 bg-primary disabled:bg-neutral-80 flex-1 rounded-sm py-3 font-medium text-white"
+            className="flex-1 rounded-sm bg-primary py-3 text-xsmall14 font-medium text-white disabled:bg-neutral-80"
           >
             이 시간으로 변경
           </button>

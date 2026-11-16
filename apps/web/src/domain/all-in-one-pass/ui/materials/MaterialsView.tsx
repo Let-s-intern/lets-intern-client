@@ -36,24 +36,24 @@ const MaterialCard = ({ material }: { material: LibraryItem }) => {
       href={material.link ?? '#'}
       target="_blank"
       rel="noopener noreferrer"
-      className="border-neutral-80 group flex flex-col gap-3 rounded-md border p-4"
+      className="group flex flex-col gap-3 rounded-md border border-neutral-80 p-4"
     >
       <div className="flex flex-col gap-2 md:gap-3">
-        <span className="text-xxsmall12 text-primary-dark font-medium">
+        <span className="text-xxsmall12 font-medium text-primary-dark">
           {material.type}
         </span>
         <div className="flex flex-col gap-1.5 md:gap-2">
-          <h3 className="text-xsmall16 md:text-small18 text-neutral-0 font-semibold">
+          <h3 className="text-xsmall16 font-semibold text-neutral-0 md:text-small18">
             {material.title}
           </h3>
           {summary && (
-            <p className="text-xxsmall12 md:text-xsmall14 text-neutral-35">
+            <p className="text-xxsmall12 text-neutral-35 md:text-xsmall14">
               {summary}
             </p>
           )}
 
           {bullets.length > 0 && (
-            <div className="bg-primary-5 flex flex-col gap-1.5 rounded-sm px-2 py-2.5">
+            <div className="flex flex-col gap-1.5 rounded-sm bg-primary-5 px-2 py-2.5">
               {bullets.map((bullet, i) => (
                 <div key={i} className="flex items-start gap-1">
                   <img
@@ -70,7 +70,7 @@ const MaterialCard = ({ material }: { material: LibraryItem }) => {
           )}
         </div>
       </div>
-      <span className="text-xxsmall12 md:text-xsmall14 text-primary-dark self-end transition-transform duration-200 group-hover:translate-x-0.5">
+      <span className="self-end text-xxsmall12 text-primary-dark transition-transform duration-200 group-hover:translate-x-0.5 md:text-xsmall14">
         자료 보기 →
       </span>
     </HybridLink>
@@ -98,18 +98,18 @@ const MaterialsView = ({ applicationId }: { applicationId: number }) => {
         options={options}
         selected={selected}
         onChange={setSelected}
-        className="border-neutral-80 sticky top-[84px] z-10 -mx-5 border-b bg-white px-5 py-4 md:static md:mx-0 md:border-none md:bg-transparent md:px-0 md:py-0"
+        className="sticky top-[84px] z-10 -mx-5 border-b border-neutral-80 bg-white px-5 py-4 md:static md:mx-0 md:border-none md:bg-transparent md:px-0 md:py-0"
         activeClassName="bg-primary text-white"
       />
 
       {isLoading ? (
         <LoadingContainer className="py-20" />
       ) : isError ? (
-        <p className="text-xsmall14 text-neutral-40 py-20 text-center">
+        <p className="py-20 text-center text-xsmall14 text-neutral-40">
           목록을 불러오지 못했어요. 잠시 후 다시 시도해주세요.
         </p>
       ) : filtered.length === 0 ? (
-        <div className="bg-neutral-95 flex h-52 w-full items-center justify-center rounded-sm">
+        <div className="flex h-52 w-full items-center justify-center rounded-sm bg-neutral-95">
           <p className="text-xsmall14 text-neutral-40">
             등록된 자료집이 없어요.
           </p>

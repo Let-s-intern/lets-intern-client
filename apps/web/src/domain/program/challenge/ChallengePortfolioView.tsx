@@ -239,7 +239,7 @@ const ChallengePortfolioView: React.FC<{
         >
           {hasChallengeReviews && (
             <section className="challenge_review flex w-full flex-col items-center">
-              <div className="bg-neutral-95 flex w-full flex-col items-center py-[70px] md:py-[110px]">
+              <div className="flex w-full flex-col items-center bg-neutral-95 py-[70px] md:py-[110px]">
                 <ProgramBestReviewSection
                   type="challenge"
                   reviews={receivedContent.challengeReview}

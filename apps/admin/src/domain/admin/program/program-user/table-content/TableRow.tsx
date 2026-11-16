@@ -197,14 +197,14 @@ const TableRow = ({
           <div className="flex gap-1">
             <button
               type="button"
-              className="whitespace-nowrap rounded border border-red-500 px-2 py-1 text-xs text-red-600 hover:bg-red-50"
+              className="rounded whitespace-nowrap border border-red-500 px-2 py-1 text-xs text-red-600 hover:bg-red-50"
               onClick={() => handleRefundClick('full')}
             >
               환불
             </button>
             <button
               type="button"
-              className="whitespace-nowrap rounded border border-red-500 px-2 py-1 text-xs text-red-600 hover:bg-red-50 disabled:border-neutral-300 disabled:text-neutral-400 disabled:hover:bg-transparent"
+              className="rounded whitespace-nowrap border border-red-500 px-2 py-1 text-xs text-red-600 hover:bg-red-50 disabled:border-neutral-300 disabled:text-neutral-400 disabled:hover:bg-transparent"
               onClick={() => handleRefundClick('partial')}
               disabled={!refundable.canPartialRefund}
               title={

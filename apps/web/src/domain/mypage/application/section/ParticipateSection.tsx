@@ -40,7 +40,7 @@ const ParticipateSection = ({
       <h1 className="text-lg font-semibold">참여 중</h1>
       {totalCount === 0 ? (
         <div className="flex w-full flex-col items-center gap-4 py-14">
-          <p className="text-xsmall14 text-neutral-20 font-normal">
+          <p className="text-xsmall14 font-normal text-neutral-20">
             {emptyText}
           </p>
         </div>
@@ -65,7 +65,7 @@ const ParticipateSection = ({
           </div>
           {totalCount > visibleCount && !showMore && (
             <MoreButton
-              className="border-neutral-80 text-primary hover:!bg-primary/5 !bg-transparent px-3 py-2 transition-colors md:flex md:p-3"
+              className="border-neutral-80 !bg-transparent px-3 py-2 text-primary transition-colors hover:!bg-primary/5 md:flex md:p-3"
               onClick={() => {
                 setShowMore(true);
               }}

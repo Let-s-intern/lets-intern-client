@@ -27,11 +27,11 @@ export default function LandingSectionHeader({
       <SectionHeader className="py-2 text-left text-[#F36D32] md:text-center">
         {header}
       </SectionHeader>
-      <h2 className="text-medium24 text-neutral-0 whitespace-pre-line text-left font-bold md:text-center md:text-[40px]">
+      <h2 className="whitespace-pre-line text-left text-medium24 font-bold text-neutral-0 md:text-center md:text-[40px]">
         {mainHeader}
       </h2>
       {subHeader && (
-        <SectionSubHeader className="text-xsmall14 md:text-small20 text-neutral-40 text-left font-normal md:text-center">
+        <SectionSubHeader className="text-left text-xsmall14 font-normal text-neutral-40 md:text-center md:text-small20">
           {subHeader}
         </SectionSubHeader>
       )}

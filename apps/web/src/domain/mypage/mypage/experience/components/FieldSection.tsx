@@ -26,7 +26,7 @@ const FieldSectionLabel = (props: FieldSectionLabelProps) => (
   >
     <span>{props.children}</span>
     <Asterisk
-      className={`text-primary pb-1 ${!props.isRequired && 'hidden'}`}
+      className={`pb-1 text-primary ${!props.isRequired && 'hidden'}`}
       size={16}
     />
   </label>

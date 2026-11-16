@@ -33,7 +33,7 @@ export function DepositRefund() {
                     {index + 1}
                   </span>
                   <span
-                    className={`bg-primary-10 h-px flex-1 md:mr-6 ${isLast ? 'md:hidden' : ''}`}
+                    className={`h-px flex-1 bg-primary-10 md:mr-6 ${isLast ? 'md:hidden' : ''}`}
                   />
                 </div>
                 <p className="mt-2 text-xs text-[#7f8290] md:mt-6">{when}</p>

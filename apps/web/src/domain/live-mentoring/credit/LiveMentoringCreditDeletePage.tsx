@@ -33,16 +33,16 @@ const Row = ({
 }) => (
   <div className="flex w-full items-center justify-between gap-4 text-sm">
     <span
-      className={strong ? 'text-neutral-0 font-semibold' : 'text-neutral-30'}
+      className={strong ? 'font-semibold text-neutral-0' : 'text-neutral-30'}
     >
       {label}
     </span>
     <span
       className={
         accent
-          ? 'text-system-error font-semibold'
+          ? 'font-semibold text-system-error'
           : strong
-            ? 'text-neutral-0 font-semibold'
+            ? 'font-semibold text-neutral-0'
             : 'text-neutral-0'
       }
     >
@@ -98,25 +98,25 @@ const LiveMentoringCreditDeletePage = ({
           className="h-6 w-6 cursor-pointer"
           onClick={() => router.back()}
         />
-        <h1 className="text-neutral-0 text-lg font-medium">결제 취소</h1>
+        <h1 className="text-lg font-medium text-neutral-0">결제 취소</h1>
       </div>
 
       {isLoading ? (
-        <p className="text-neutral-0 py-8">환불 정보를 불러오는 중입니다.</p>
+        <p className="py-8 text-neutral-0">환불 정보를 불러오는 중입니다.</p>
       ) : error || !refundPreview ? (
-        <p className="text-neutral-0 py-8">
+        <p className="py-8 text-neutral-0">
           {error?.message ?? '환불 정보를 불러오지 못했습니다.'}
         </p>
       ) : (
         <section className="flex w-full flex-col gap-y-10 py-8">
           <div className="flex w-full flex-col items-start gap-y-6">
-            <div className="text-neutral-0 font-semibold">환불 정보</div>
+            <div className="font-semibold text-neutral-0">환불 정보</div>
 
-            <div className="bg-neutral-95 flex w-full items-center justify-between gap-4 rounded-sm px-4 py-3">
-              <span className="text-neutral-0 text-sm font-semibold">
+            <div className="flex w-full items-center justify-between gap-4 rounded-sm bg-neutral-95 px-4 py-3">
+              <span className="text-sm font-semibold text-neutral-0">
                 예정 환불금액
               </span>
-              <span className="text-primary text-base font-bold">
+              <span className="text-base font-bold text-primary">
                 {formatPrice(refundPreview.refundAmount)}
               </span>
             </div>
@@ -149,7 +149,7 @@ const LiveMentoringCreditDeletePage = ({
                   accent
                 />
               )}
-              <div className="border-neutral-85 w-full border-t pt-3">
+              <div className="w-full border-t border-neutral-85 pt-3">
                 <Row
                   label="총 결제금액"
                   value={formatPrice(refundPreview.paidAmount)}
@@ -158,12 +158,12 @@ const LiveMentoringCreditDeletePage = ({
               </div>
             </div>
 
-            <p className="text-neutral-45 text-xs leading-relaxed">
+            <p className="text-xs leading-relaxed text-neutral-45">
               {FEE_POLICY_NOTICE}
             </p>
 
             {application && (
-              <p className="text-neutral-45 text-xs">
+              <p className="text-xs text-neutral-45">
                 예약 일시{' '}
                 {formatReservationPeriod(
                   application.reservationStartAt,
@@ -174,25 +174,25 @@ const LiveMentoringCreditDeletePage = ({
           </div>
 
           {/* 시안 4-1 — 확인 체크 전에는 실행할 수 없다 */}
-          <label className="text-neutral-30 flex cursor-pointer items-start gap-2 text-sm">
+          <label className="flex cursor-pointer items-start gap-2 text-sm text-neutral-30">
             <input
               type="checkbox"
               checked={isConfirmed}
               onChange={(event) => setIsConfirmed(event.target.checked)}
-              className="accent-primary mt-0.5 h-4 w-4"
+              className="mt-0.5 h-4 w-4 accent-primary"
             />
             위 환불 금액과 취소 수수료를 확인했으며, 결제 취소에 동의합니다.
           </label>
 
           {cancelError && (
-            <p className="text-system-error text-sm">{cancelError}</p>
+            <p className="text-sm text-system-error">{cancelError}</p>
           )}
 
           <button
             type="button"
             onClick={handleCancel}
             disabled={!canCancel}
-            className="bg-primary disabled:bg-neutral-80 disabled:text-neutral-40 w-full rounded-sm py-3 text-sm font-medium text-white"
+            className="w-full rounded-sm bg-primary py-3 text-sm font-medium text-white disabled:bg-neutral-80 disabled:text-neutral-40"
           >
             {cancelApplication.isPending ? '취소하는 중…' : '결제 취소하기'}
           </button>

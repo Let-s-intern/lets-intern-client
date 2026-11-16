@@ -62,13 +62,13 @@ export default function MentorReviewEditDialog({
         {review.programTitle ? ` · ${review.programTitle}` : ''}
       </DialogTitle>
       <DialogContent className="flex flex-col gap-5 text-sm">
-        <p className="text-neutral-40 text-xs">
+        <p className="text-xs text-neutral-40">
           멘토 프로필과 1:1 LIVE 멘토링 상세에만 반영됩니다. 원본 후기는 바뀌지
           않습니다.
         </p>
 
         <div className="flex flex-col gap-1">
-          <span className="text-neutral-30 font-medium">별점</span>
+          <span className="font-medium text-neutral-30">별점</span>
           <div className="flex items-center gap-2">
             <Rating
               value={score}
@@ -84,34 +84,34 @@ export default function MentorReviewEditDialog({
         </div>
 
         <div className="flex flex-col gap-1">
-          <span className="text-neutral-30 font-medium">후기 내용</span>
+          <span className="font-medium text-neutral-30">후기 내용</span>
           <textarea
             value={content}
             onChange={(e) =>
               setContent(e.target.value.slice(0, REVIEW_EDIT_MAX_LENGTH))
             }
             aria-label="후기 내용"
-            className="border-neutral-80 focus:border-neutral-40 h-48 w-full resize-y rounded border px-3 py-2 outline-none"
+            className="rounded h-48 w-full resize-y border border-neutral-80 px-3 py-2 outline-none focus:border-neutral-40"
           />
-          <span className="text-neutral-40 self-end text-xs">
+          <span className="self-end text-xs text-neutral-40">
             {content.length} / {REVIEW_EDIT_MAX_LENGTH}
           </span>
         </div>
 
-        <div className="bg-neutral-95 flex flex-col gap-1 rounded p-3">
-          <span className="text-neutral-30 font-medium">
+        <div className="rounded flex flex-col gap-1 bg-neutral-95 p-3">
+          <span className="font-medium text-neutral-30">
             원본 · 별점{' '}
             {review.originalScore !== null
               ? review.originalScore.toFixed(1)
               : '-'}
           </span>
-          <p className="text-neutral-20 whitespace-pre-wrap">
+          <p className="whitespace-pre-wrap text-neutral-20">
             {review.originalReview ?? '-'}
           </p>
         </div>
 
         {errorMessage ? (
-          <p role="alert" className="text-system-error text-xs">
+          <p role="alert" className="text-xs text-system-error">
             {errorMessage}
           </p>
         ) : null}

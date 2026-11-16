@@ -79,7 +79,7 @@ export default function AllInOnePassParticipants() {
       filterable: false,
       renderCell: ({ row }) => (
         <div className="flex h-full w-full items-center gap-1.5 pr-1">
-          <span className="text-neutral-0 w-11 shrink-0">
+          <span className="w-11 shrink-0 text-neutral-0">
             {row.totalDays}일
           </span>
           <span className="text-neutral-0">({rangeLabel(row)})</span>

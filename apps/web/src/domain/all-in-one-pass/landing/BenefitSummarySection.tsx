@@ -86,15 +86,15 @@ export default function BenefitSummarySection({
         className,
       )}
     >
-      <span className="rounded-ms flex h-11 w-11 shrink-0 items-center justify-center bg-[#edeffe]">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-ms bg-[#edeffe]">
         <img src={card.iconSrc} alt="" className="h-6 w-6" />
       </span>
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         <div className="flex justify-between">
-          <p className="text-small18 text-neutral-0 font-bold">{card.name}</p>
-          <ChevronRight size={24} className="text-neutral-30 shrink-0" />
+          <p className="text-small18 font-bold text-neutral-0">{card.name}</p>
+          <ChevronRight size={24} className="shrink-0 text-neutral-30" />
         </div>
-        <p className="text-xsmall14 truncate text-[#808799]">
+        <p className="truncate text-xsmall14 text-[#808799]">
           {card.description}
         </p>
       </div>
@@ -157,7 +157,7 @@ export default function BenefitSummarySection({
                   aria-hidden
                   className="reward-shine pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-white/40 to-transparent"
                 />
-                <p className="text-small20 md:text-large26 font-bold">
+                <p className="text-small20 font-bold md:text-large26">
                   포함 혜택 한눈에 보기
                 </p>
                 <p className="text-xsmall16 md:text-small20">
@@ -173,32 +173,32 @@ export default function BenefitSummarySection({
             ))}
           </div>
 
-          <p className="text-xsmall14 md:text-small18 text-neutral-45 mt-8 text-center md:mt-[60px]">
+          <p className="mt-8 text-center text-xsmall14 text-neutral-45 md:mt-[60px] md:text-small18">
             궁금한 혜택을 눌러 자세히 살펴보세요.
           </p>
         </div>
         <div className="flex w-full flex-col items-center gap-8 py-12 md:gap-12 md:py-[100px]">
-          <p className="text-xxlarge36 text-center font-bold md:text-[40px]">
+          <p className="text-center text-xxlarge36 font-bold md:text-[40px]">
             <span className="text-[#4A76FF]">5,000명</span> 이상의 취준생이
             렛츠커리어와 <span className="text-[#4A76FF]">함께</span>했어요.
           </p>
 
-          <div className="bg-static-100 rounded-ms grid w-full grid-cols-2 gap-px overflow-hidden md:grid-cols-6 md:gap-6">
+          <div className="grid w-full grid-cols-2 gap-px overflow-hidden rounded-ms bg-static-100 md:grid-cols-6 md:gap-6">
             {METRICS.map((m) => (
               <div
                 key={m.label}
                 className="flex flex-col items-center gap-3 bg-white px-2 py-6 md:py-7"
               >
-                <span className="text-xsmall14 md:text-xsmall16 text-neutral-20 font-medium">
+                <span className="text-xsmall14 font-medium text-neutral-20 md:text-xsmall16">
                   {m.label}
                 </span>
-                <span className="text-xlarge28 md:text-xxlarge32 font-bold">
+                <span className="text-xlarge28 font-bold md:text-xxlarge32">
                   {m.href ? (
                     <a
                       href={m.href}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-small20 md:text-medium24 inline-flex items-center gap-0.5 text-[#4A76FF]"
+                      className="inline-flex items-center gap-0.5 text-small20 text-[#4A76FF] md:text-medium24"
                     >
                       바로가기
                       <ChevronRight className="h-6 w-6" />
@@ -207,7 +207,7 @@ export default function BenefitSummarySection({
                     <>
                       <CountUpNumber value={m.value ?? ''} />
                       {m.unit && (
-                        <span className="text-xsmall16 md:text-medium24 ml-0.5 font-semibold">
+                        <span className="ml-0.5 text-xsmall16 font-semibold md:text-medium24">
                           {m.unit}
                         </span>
                       )}

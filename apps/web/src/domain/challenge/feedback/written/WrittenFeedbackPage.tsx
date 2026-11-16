@@ -33,7 +33,7 @@ function FeedbackSection({
       <h1 className="text-lg font-semibold">{label}</h1>
       {missions.length === 0 ? (
         <div className="flex w-full flex-col items-center gap-4 py-14">
-          <p className="text-xsmall14 text-neutral-20 font-normal">
+          <p className="text-xsmall14 font-normal text-neutral-20">
             {emptyMessage}
           </p>
         </div>

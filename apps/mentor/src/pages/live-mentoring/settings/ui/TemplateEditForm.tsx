@@ -84,7 +84,7 @@ const VisibleToggle = ({
     />
     <span
       aria-hidden="true"
-      className={`peer-focus-visible:ring-primary/40 relative h-5 w-9 shrink-0 rounded-full transition-colors peer-focus-visible:ring-2 ${
+      className={`relative h-5 w-9 shrink-0 rounded-full transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-primary/40 ${
         checked ? 'bg-primary' : 'bg-gray-300'
       }`}
     >
@@ -184,7 +184,7 @@ const TemplateEditForm = ({
 
           <div className="flex flex-col gap-5">
             <div>
-              <p className="text-xsmall14 text-neutral-10 font-semibold">
+              <p className="text-xsmall14 font-semibold text-neutral-10">
                 유형 안내 문구
               </p>
 
@@ -194,13 +194,13 @@ const TemplateEditForm = ({
                     멘토링 유형 섹션 제목{' '}
                     <span className="text-system-error">*</span>
                   </label>
-                  <div className="border-neutral-80 focus-within:border-primary flex items-center gap-2 rounded-md border bg-white px-3 py-2.5 transition-colors">
+                  <div className="flex items-center gap-2 rounded-md border border-neutral-80 bg-white px-3 py-2.5 transition-colors focus-within:border-primary">
                     <textarea
                       id="typesTitle"
                       value={mentoringTypes.title}
                       maxLength={SECTION_TITLE_MAX}
                       placeholder="OO멘토에서 자소서, 포트폴리오 도움을 받아보세요"
-                      className="text-xsmall14 text-neutral-10 placeholder:text-neutral-60 min-w-0 flex-1 outline-none"
+                      className="min-w-0 flex-1 text-xsmall14 text-neutral-10 outline-none placeholder:text-neutral-60"
                       onChange={(e) =>
                         onChange({
                           mentoringTypes: {
@@ -227,7 +227,7 @@ const TemplateEditForm = ({
                     rows={4}
                     value={mentoringTypes.subtitle}
                     placeholder="현재 고민에 맞는 멘토링 유형을 살펴보고, 멘토링을 통해 고민을 빠르게 해결하세요"
-                    className="border-neutral-80 focus:border-primary text-xsmall14 text-neutral-10 placeholder:text-neutral-60 w-full resize-none rounded-md border bg-white px-3 py-2.5 outline-none transition-colors"
+                    className="w-full resize-none rounded-md border border-neutral-80 bg-white px-3 py-2.5 text-xsmall14 text-neutral-10 outline-none transition-colors placeholder:text-neutral-60 focus:border-primary"
                     onChange={(e) =>
                       onChange({
                         mentoringTypes: {
@@ -385,7 +385,7 @@ const TemplateEditForm = ({
                   <div className="flex flex-col gap-2">
                     {/* 다 채워야 서버로 나간다(LC-3343). 저장을 막는 대신 여기에 적는다. */}
                     {(!point.title.trim() || !point.description.trim()) && (
-                      <span className="text-system-error text-xs">
+                      <span className="text-xs text-system-error">
                         차별 전략과 설명을 채워야 저장돼요
                       </span>
                     )}
@@ -469,13 +469,13 @@ const TemplateEditForm = ({
                 <label className={labelClass} htmlFor="videoTitle">
                   영상 제목
                 </label>
-                <div className="border-neutral-80 focus-within:border-primary flex items-center gap-2 rounded-md border bg-white px-3 py-2.5 transition-colors">
+                <div className="flex items-center gap-2 rounded-md border border-neutral-80 bg-white px-3 py-2.5 transition-colors focus-within:border-primary">
                   <textarea
                     id="videoTitle"
                     value={video.title}
                     maxLength={SECTION_TITLE_MAX}
                     placeholder="예: 멘토는 이렇게 도와드려요"
-                    className="text-xsmall14 text-neutral-10 placeholder:text-neutral-60 min-w-0 flex-1 outline-none"
+                    className="min-w-0 flex-1 text-xsmall14 text-neutral-10 outline-none placeholder:text-neutral-60"
                     onChange={(e) =>
                       onChange({ video: { ...video, title: e.target.value } })
                     }
@@ -526,7 +526,7 @@ const TemplateEditForm = ({
                   }}
                 />
                 {video.videoUrl && !toYoutubeEmbedUrl(video.videoUrl) ? (
-                  <p role="alert" className="text-system-error mt-1 text-xs">
+                  <p role="alert" className="mt-1 text-xs text-system-error">
                     YouTube 주소만 넣을 수 있어요. 공유 링크나
                     youtube.com/watch?v=... 형태를 붙여넣으면 자동으로 바뀝니다.
                   </p>
@@ -592,13 +592,13 @@ const TemplateEditForm = ({
                 <label className={labelClass} htmlFor="resultsTitle">
                   결과 사례 제목
                 </label>
-                <div className="border-neutral-80 focus-within:border-primary flex items-center gap-2 rounded-md border bg-white px-3 py-2.5 transition-colors">
+                <div className="flex items-center gap-2 rounded-md border border-neutral-80 bg-white px-3 py-2.5 transition-colors focus-within:border-primary">
                   <input
                     id="resultsTitle"
                     value={results.title}
                     maxLength={SECTION_TITLE_MAX}
                     placeholder="예: 멘토링 후 이렇게 달라졌어요"
-                    className="text-xsmall14 text-neutral-10 placeholder:text-neutral-60 min-w-0 flex-1 outline-none"
+                    className="min-w-0 flex-1 text-xsmall14 text-neutral-10 outline-none placeholder:text-neutral-60"
                     onChange={(e) =>
                       onChange({
                         results: { ...results, title: e.target.value },

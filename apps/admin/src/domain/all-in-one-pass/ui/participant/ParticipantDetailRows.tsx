@@ -53,7 +53,7 @@ export default function ParticipantDetailRows({ apps }: Props) {
             <td />
             <td className={`${SUB_CELL} ${BOLD_L}${edge}`}>
               <span
-                className={`text-xxsmall12 inline-block whitespace-nowrap rounded-full border px-2 py-0.5 font-medium ${
+                className={`inline-block whitespace-nowrap rounded-full border px-2 py-0.5 text-xxsmall12 font-medium ${
                   p.extendedDays == null
                     ? 'border-neutral-70 text-neutral-40'
                     : 'border-primary text-primary'

@@ -8,7 +8,7 @@ export function Apply({ apply }: { apply: LetsconApply }) {
       <div className="mx-auto max-w-[920px] px-5">
         <p
           data-reveal
-          className="text-primary text-xs font-bold tracking-[0.12em] md:text-[13px] md:tracking-[0.08em]"
+          className="text-xs font-bold tracking-[0.12em] text-primary md:text-[13px] md:tracking-[0.08em]"
         >
           LET&apos;S MAKE A CONNECTION
         </p>

@@ -78,7 +78,7 @@ export const getResponseColumns = ({
           {text && text.length > 40 && (
             <button
               type="button"
-              className="text-primary text-xsmall14 shrink-0 hover:underline"
+              className="shrink-0 text-xsmall14 text-primary hover:underline"
               onClick={() =>
                 onViewAnswer({
                   submitterName: row.submitterName,
@@ -106,7 +106,7 @@ export const getResponseColumns = ({
       const has = hasComment(row.id);
       return (
         <span
-          className={has ? 'text-primary font-semibold' : 'text-neutral-40'}
+          className={has ? 'font-semibold text-primary' : 'text-neutral-40'}
         >
           {has ? 'O' : 'X'}
         </span>

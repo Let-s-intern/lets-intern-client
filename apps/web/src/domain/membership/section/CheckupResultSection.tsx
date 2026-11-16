@@ -69,7 +69,7 @@ function AreaBar({ score }: { score: CheckupAreaScore }) {
     <li>
       <div className="flex items-baseline justify-between gap-3">
         <p
-          className={`text-xsmall14 md:text-xsmall16 font-bold ${
+          className={`text-xsmall14 font-bold md:text-xsmall16 ${
             isWeakest ? 'text-[#F0563F]' : 'text-[#11142B]'
           }`}
           data-testid="checkup-area-name"
@@ -85,7 +85,7 @@ function AreaBar({ score }: { score: CheckupAreaScore }) {
         </p>
 
         <span
-          className={`text-xsmall16 md:text-small18 font-bold ${
+          className={`text-xsmall16 font-bold md:text-small18 ${
             isWeakest ? 'text-[#F0563F]' : 'text-[#4B5BF0]'
           }`}
           data-testid="checkup-area-score"
@@ -108,7 +108,7 @@ function AreaBar({ score }: { score: CheckupAreaScore }) {
       </div>
 
       <p
-        className={`text-xsmall14 mt-2 flex items-center gap-1.5 ${
+        className={`mt-2 flex items-center gap-1.5 text-xsmall14 ${
           isWeakest ? 'font-bold text-[#F0563F]' : 'font-normal text-[#808799]'
         }`}
         data-testid="checkup-area-caption"
@@ -141,7 +141,7 @@ export default function CheckupResultSection({
         id={CHECKUP_RESULT.anchorId}
       >
         <div className="wrap rv">
-          <p className="text-xsmall14 md:text-xsmall16 text-neutral-40 text-center leading-relaxed">
+          <p className="text-center text-xsmall14 leading-relaxed text-neutral-40 md:text-xsmall16">
             {CHECKUP_RESULT.guideLines.map((line) => (
               <span className="block" key={line}>
                 {line}
@@ -175,11 +175,11 @@ export default function CheckupResultSection({
     >
       <div className="wrap rv">
         <div className="mx-auto grid max-w-[1000px] gap-6 md:grid-cols-2">
-          <div className="rounded-xxl flex flex-col bg-white p-7 md:p-10">
+          <div className="flex flex-col rounded-xxl bg-white p-7 md:p-10">
             <p className="text-sm font-bold tracking-wide text-[#F1642B]">
               {CHECKUP_RESULT.eyebrow}
             </p>
-            <h3 className="text-medium22 md:text-medium24 text-neutral-0 mt-3 font-bold">
+            <h3 className="mt-3 text-medium22 font-bold text-neutral-0 md:text-medium24">
               {CHECKUP_RESULT.title}
             </h3>
 
@@ -190,7 +190,7 @@ export default function CheckupResultSection({
             </ul>
 
             <button
-              className="text-neutral-45 text-xsmall16 mt-auto flex items-center justify-center gap-2 pt-10 font-bold"
+              className="mt-auto flex items-center justify-center gap-2 pt-10 text-xsmall16 font-bold text-neutral-45"
               onClick={onRestart}
               type="button"
             >
@@ -199,12 +199,12 @@ export default function CheckupResultSection({
             </button>
           </div>
 
-          <div className="rounded-xxl flex flex-col border border-[#293662] bg-white p-7 md:p-10">
-            <p className="text-xsmall14 w-fit rounded-full bg-[#293662] px-5 py-2.5 font-bold text-white">
+          <div className="flex flex-col rounded-xxl border border-[#293662] bg-white p-7 md:p-10">
+            <p className="w-fit rounded-full bg-[#293662] px-5 py-2.5 text-xsmall14 font-bold text-white">
               {isCaseE ? CHECKUP_RESULT.caseEBadge : CHECKUP_RESULT.badge}
             </p>
 
-            <h3 className="text-medium24 md:text-xlarge28 text-neutral-0 mt-6 font-bold">
+            <h3 className="mt-6 text-medium24 font-bold text-neutral-0 md:text-xlarge28">
               {copy.titleLines.map((line) => (
                 <span
                   className="block"
@@ -226,7 +226,7 @@ export default function CheckupResultSection({
             <div className="mt-7 flex flex-col gap-5">
               {copy.body.map((paragraph) => (
                 <p
-                  className="text-xsmall14 md:text-xsmall16 text-neutral-40 leading-relaxed"
+                  className="text-xsmall14 leading-relaxed text-neutral-40 md:text-xsmall16"
                   data-testid="checkup-body"
                   key={checkupBodyText(paragraph)}
                 >

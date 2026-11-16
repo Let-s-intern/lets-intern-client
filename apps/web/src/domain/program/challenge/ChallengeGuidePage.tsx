@@ -24,7 +24,7 @@ const TabButton = ({
 }) => {
   const getTabStyle = () => {
     return twMerge(
-      'text-xsmall14 md:text-xsmall16 rounded-full px-3 py-1.5 font-medium md:px-4',
+      'rounded-full px-3 py-1.5 text-xsmall14 font-medium md:px-4 md:text-xsmall16',
       isActive ? 'bg-neutral-10 text-white' : 'bg-neutral-90 text-neutral-40',
     );
   };
@@ -50,14 +50,14 @@ const NoticeItem = ({
   onClick?: () => void;
 }) => {
   return (
-    <li className="border-neutral-80 border-b py-4">
+    <li className="border-b border-neutral-80 py-4">
       <Link href={link} target="_blank" onClick={onClick}>
-        <h3 className="text-xsmall16 text-neutral-10 md:text-small18 flex-1 font-medium leading-[26px]">
+        <h3 className="flex-1 text-xsmall16 font-medium leading-[26px] text-neutral-10 md:text-small18">
           {children}{' '}
           {isNew && (
             <span
               aria-label="새 글"
-              className="bg-system-error inline-flex h-3 w-3 items-center justify-center rounded-full align-middle text-[0.5rem] font-bold leading-none text-white"
+              className="inline-flex h-3 w-3 items-center justify-center rounded-full bg-system-error align-middle text-[0.5rem] font-bold leading-none text-white"
             >
               N
             </span>
@@ -80,7 +80,7 @@ const NoticeList = ({ items }: { items: HomeNoticeItem[] }) => {
 
   if (items.length === 0) {
     return (
-      <p className="text-xsmall14 text-neutral-40 mt-6">
+      <p className="mt-6 text-xsmall14 text-neutral-40">
         등록된 공지사항이 없습니다.
       </p>
     );
@@ -103,7 +103,7 @@ const GuideList = ({ items }: { items: HomeNoticeItem[] }) => {
 
   if (items.length === 0) {
     return (
-      <p className="text-xsmall14 text-neutral-40 mt-6">
+      <p className="mt-6 text-xsmall14 text-neutral-40">
         등록된 가이드가 없습니다.
       </p>
     );
@@ -157,7 +157,7 @@ const ChallengeGuidePage = () => {
       <section className="mb-2 md:mb-6">
         <h2
           id="guide-heading"
-          className="text-medium22 text-neutral-0 mt-8 font-semibold md:mt-0"
+          className="mt-8 text-medium22 font-semibold text-neutral-0 md:mt-0"
         >
           공지사항 / 챌린지 가이드
         </h2>
@@ -192,19 +192,19 @@ const ChallengeGuidePage = () => {
       </section>
 
       {showCouponBanner && (
-        <div className="bg-primary-5 rounded-xs mt-10 flex flex-col items-start justify-between gap-5 p-[18px] md:flex-row md:items-center">
+        <div className="mt-10 flex flex-col items-start justify-between gap-5 rounded-xs bg-primary-5 p-[18px] md:flex-row md:items-center">
           <div className="flex flex-col gap-1">
             <p className="text-small18 font-medium tracking-[-0.094px]">
               재구매 할인 쿠폰으로 {currentChallenge!.title}을 더 저렴하게
               들어보세요!
             </p>
-            <p className="text-primary-dark text-xsmall14 font-semibold">
+            <p className="text-xsmall14 font-semibold text-primary-dark">
               유효기간 : ~ {couponEndDate!.format('YYYY년 MM월 DD일 HH시 mm분')}
             </p>
           </div>
           <Link
             href="/mypage/coupon"
-            className="bg-primary-light text-static-100 rounded-xxs text-xsmall16 shrink-0 px-3 py-1 font-semibold"
+            className="shrink-0 rounded-xxs bg-primary-light px-3 py-1 text-xsmall16 font-semibold text-static-100"
           >
             쿠폰함 바로가기
           </Link>

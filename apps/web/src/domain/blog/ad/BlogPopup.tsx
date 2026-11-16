@@ -151,18 +151,18 @@ export function BlogPopup({ blogId }: { blogId: number }) {
         </div>
 
         {/* footer 기능 버튼 (이미지 아님) */}
-        <div className="text-xsmall14 border-neutral-80 flex items-center border-t">
+        <div className="flex items-center border-t border-neutral-80 text-xsmall14">
           <button
             type="button"
             onClick={handleHideForDay}
-            className="text-neutral-40 flex-1 py-3.5"
+            className="flex-1 py-3.5 text-neutral-40"
           >
             하루 동안 보지 않기
           </button>
           <button
             type="button"
             onClick={() => dismiss(DISMISS_REASON.close)}
-            className="border-neutral-80 text-neutral-0 flex-1 border-l py-3.5 font-semibold"
+            className="flex-1 border-l border-neutral-80 py-3.5 font-semibold text-neutral-0"
           >
             닫기
           </button>

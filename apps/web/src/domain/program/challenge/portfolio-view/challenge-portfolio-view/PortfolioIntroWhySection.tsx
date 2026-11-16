@@ -12,7 +12,7 @@ const PortfolioIntroWhySection: React.FC<{ weekText: string }> = ({
   return (
     <div className="flex w-full flex-col items-center overflow-x-hidden bg-gradient-to-t from-[#F0F4FF] to-white">
       <section className="flex w-full max-w-[1000px] flex-col px-5 pt-20 md:px-10 md:pt-40 lg:px-0">
-        <Heading2 className="text-small20 md:text-xlarge28 md:text-center">
+        <Heading2 className="text-small20 md:text-center md:text-xlarge28">
           <span className="text-[#4A76FF]">포트폴리오</span>, 시간 많이 들여야
           할 정도로 중요한가요?
           <br />
@@ -80,17 +80,17 @@ const PortfolioIntroWhySection: React.FC<{ weekText: string }> = ({
               className="flex flex-col gap-6 rounded-md bg-[#F0F4FF] px-8 py-10 md:px-10 md:py-12"
               key={index}
             >
-              <h3 className="text-small18 md:text-medium24 font-bold">
+              <h3 className="text-small18 font-bold md:text-medium24">
                 {item.title}
               </h3>
-              <p className="text-xsmall16 text-neutral-40 md:text-small18 break-keep font-medium">
+              <p className="break-keep text-xsmall16 font-medium text-neutral-40 md:text-small18">
                 {item.content}
               </p>
             </div>
           ))}
         </div>
 
-        <Heading2 className="text-small20 md:text-xlarge28 mt-10 break-keep md:mt-32 md:text-center">
+        <Heading2 className="mt-10 break-keep text-small20 md:mt-32 md:text-center md:text-xlarge28">
           그리고 이런{' '}
           <span style={{ color: challengeColors._4A76FF }}>
             수강생들의 후기 100+개가 인증
@@ -115,12 +115,12 @@ const PortfolioIntroWhySection: React.FC<{ weekText: string }> = ({
           className="mx-auto mt-8 block object-cover"
         />
         <div className="mx-auto mt-4 flex flex-col items-center gap-1.5">
-          <div className="bg-neutral-45 h-1 w-1 rounded-full"></div>
-          <div className="bg-neutral-30 h-1 w-1 rounded-full"></div>
-          <div className="bg-neutral-0 h-1 w-1 rounded-full"></div>
+          <div className="h-1 w-1 rounded-full bg-neutral-45"></div>
+          <div className="h-1 w-1 rounded-full bg-neutral-30"></div>
+          <div className="h-1 w-1 rounded-full bg-neutral-0"></div>
         </div>
 
-        <p className="text-medium22 md:text-medium24 mt-2 text-left font-bold md:text-center">
+        <p className="mt-2 text-left text-medium22 font-bold md:text-center md:text-medium24">
           챌린지로 준비해서 <br className="md:hidden" />
           서류·최종 합격까지 성공했어요!
         </p>
@@ -145,10 +145,10 @@ const PortfolioIntroWhySection: React.FC<{ weekText: string }> = ({
               key={item.title}
             >
               <div className="flex flex-col gap-6">
-                <h3 className="text-small18 md:text-medium24 font-bold">
+                <h3 className="text-small18 font-bold md:text-medium24">
                   {item.title}
                 </h3>
-                <p className="text-xsmall14 text-neutral-40 md:text-small18 font-medium">
+                <p className="text-xsmall14 font-medium text-neutral-40 md:text-small18">
                   {item.content}
                 </p>
               </div>

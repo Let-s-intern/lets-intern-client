@@ -75,10 +75,10 @@ export default function CreditTransactionGroup({
                   data-program-text={programInfo.title}
                 >
                   <CardStatus status={getItemStatus(payment)} />
-                  <div className="text-neutral-0 text-xs font-semibold md:text-sm">
+                  <div className="text-xs font-semibold text-neutral-0 md:text-sm">
                     {getItemTitle(payment)}
                   </div>
-                  <div className="text-neutral-0 text-xs font-medium md:text-sm">
+                  <div className="text-xs font-medium text-neutral-0 md:text-sm">
                     {amount.toLocaleString()}원
                   </div>
                 </Link>
@@ -86,9 +86,9 @@ export default function CreditTransactionGroup({
             );
           })}
         </ul>
-        <div className="border-neutral-80 flex w-full items-center justify-between border-t pt-2">
-          <div className="text-neutral-40 text-xs font-medium">총 결제금액</div>
-          <div className="text-neutral-0 text-sm font-semibold md:text-base">
+        <div className="flex w-full items-center justify-between border-t border-neutral-80 pt-2">
+          <div className="text-xs font-medium text-neutral-40">총 결제금액</div>
+          <div className="text-sm font-semibold text-neutral-0 md:text-base">
             {totalAmount.toLocaleString()}원
           </div>
         </div>

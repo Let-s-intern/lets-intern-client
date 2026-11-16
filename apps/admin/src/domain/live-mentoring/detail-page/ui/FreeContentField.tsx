@@ -75,12 +75,12 @@ export default function FreeContentField({ value, onChange }: Props) {
         </Select>
       </FormControl>
 
-      <ol className="text-xsmall14 text-neutral-30 flex flex-col gap-1">
+      <ol className="flex flex-col gap-1 text-xsmall14 text-neutral-30">
         {SECTIONS.map(({ label, position }) => (
           <li key={label} className="flex flex-col gap-1">
             <span>{label}</span>
             {position === value.position ? (
-              <span className="text-primary font-semibold">자유 입력란</span>
+              <span className="font-semibold text-primary">자유 입력란</span>
             ) : null}
           </li>
         ))}
@@ -90,7 +90,7 @@ export default function FreeContentField({ value, onChange }: Props) {
       </p>
 
       <div>
-        <span className="text-xsmall14 text-neutral-30 mb-1 block font-medium">
+        <span className="mb-1 block text-xsmall14 font-medium text-neutral-30">
           본문
         </span>
         <EditorApp

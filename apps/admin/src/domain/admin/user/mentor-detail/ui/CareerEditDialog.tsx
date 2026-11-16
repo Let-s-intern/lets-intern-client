@@ -154,10 +154,10 @@ export default function CareerEditDialog({
           />
         </div>
         <div className="mt-4 flex items-center gap-3">
-          <span className="text-xsmall14 text-neutral-30 font-medium">
+          <span className="text-xsmall14 font-medium text-neutral-30">
             경력 로고
           </span>
-          <div className="border-neutral-80 flex h-10 w-10 items-center justify-center overflow-hidden rounded border">
+          <div className="rounded flex h-10 w-10 items-center justify-center overflow-hidden border border-neutral-80">
             {values.logoImgUrl ? (
               <img
                 src={values.logoImgUrl}

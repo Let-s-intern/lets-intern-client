@@ -53,7 +53,7 @@ const DetailSection = ({
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 top-0 flex justify-center px-5"
       >
-        <div className="via-neutral-80 h-px w-full max-w-[1000px] bg-gradient-to-r from-transparent to-transparent" />
+        <div className="h-px w-full max-w-[1000px] bg-gradient-to-r from-transparent via-neutral-80 to-transparent" />
       </div>
     )}
 
@@ -63,7 +63,7 @@ const DetailSection = ({
         {label && (
           <span
             className={twMerge(
-              'text-xsmall14 md:text-small20 block font-semibold',
+              'block text-xsmall14 font-semibold md:text-small20',
               dark ? 'text-primary-light' : 'text-neutral-40',
             )}
           >
@@ -86,7 +86,7 @@ const DetailSection = ({
         {subtitle && (
           <p
             className={twMerge(
-              'text-xsmall14 md:text-small18 whitespace-pre-line',
+              'whitespace-pre-line text-xsmall14 md:text-small18',
               dark ? 'text-white/70' : 'text-neutral-40',
             )}
           >

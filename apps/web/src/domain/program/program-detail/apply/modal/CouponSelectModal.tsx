@@ -112,8 +112,8 @@ const CouponSelectModal = ({
     >
       <div className="flex flex-col">
         {/* 헤더 */}
-        <div className="border-neutral-85 flex items-center justify-between border-b px-5 py-4">
-          <span className="text-xsmall16 text-neutral-0 font-semibold">
+        <div className="flex items-center justify-between border-b border-neutral-85 px-5 py-4">
+          <span className="text-xsmall16 font-semibold text-neutral-0">
             쿠폰
           </span>
           <button onClick={handleClose}>
@@ -141,7 +141,7 @@ const CouponSelectModal = ({
                 }}
                 ref={inputRef}
                 placeholder="쿠폰 코드를 입력해주세요."
-                className="bg-neutral-95 text-xsmall16 placeholder:text-neutral-45 flex-1 rounded-md p-3 outline-none"
+                className="flex-1 rounded-md bg-neutral-95 p-3 text-xsmall16 outline-none placeholder:text-neutral-45"
               />
               <SolidButton
                 size="md"
@@ -169,7 +169,7 @@ const CouponSelectModal = ({
           <span>쿠폰 적용</span>
           <span>
             적용 가능{' '}
-            <span className="text-primary font-semibold">
+            <span className="font-semibold text-primary">
               {sortedCoupons.length}장
             </span>
           </span>
@@ -191,7 +191,7 @@ const CouponSelectModal = ({
               return (
                 <button
                   key={coupon.couponId}
-                  className={`rounded-xs flex w-full items-start gap-3 border p-4 text-left transition-colors ${
+                  className={`flex w-full items-start gap-3 rounded-xs border p-4 text-left transition-colors ${
                     isSelected ? 'border-primary' : 'border-neutral-85'
                   }`}
                   onClick={() =>
@@ -200,7 +200,7 @@ const CouponSelectModal = ({
                 >
                   <div
                     className={`mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full ${
-                      isSelected ? 'bg-primary' : 'border-neutral-70 border-2'
+                      isSelected ? 'bg-primary' : 'border-2 border-neutral-70'
                     }`}
                   >
                     {isSelected && (
@@ -213,12 +213,12 @@ const CouponSelectModal = ({
                         {COUPON_TYPE_LABEL[coupon.couponType]}
                       </span>
                       {isBest && (
-                        <span className="bg-primary-10 text-primary text-xxsmall12 rounded rounded-[3px] px-2 py-1">
+                        <span className="rounded rounded-[3px] bg-primary-10 px-2 py-1 text-xxsmall12 text-primary">
                           최대 할인
                         </span>
                       )}
                     </div>
-                    <p className="text-xsmall16 md:text-small18 font-bold">
+                    <p className="text-xsmall16 font-bold md:text-small18">
                       {coupon.discount === -1
                         ? '전액 할인'
                         : coupon.discountType === 'RATE'
@@ -226,7 +226,7 @@ const CouponSelectModal = ({
                           : `${coupon.discount.toLocaleString()}원`}
                     </p>
                     <p className="text-xsmall16 font-semibold">{coupon.name}</p>
-                    <p className="md:text-xsmall14 text-neutral-30 text-xxsmall12 tracking-tighter md:tracking-tight">
+                    <p className="text-xxsmall12 tracking-tighter text-neutral-30 md:text-xsmall14 md:tracking-tight">
                       유효기간 : {formatDate(coupon.startDate)} ~{' '}
                       {formatDate(coupon.endDate)}
                     </p>
@@ -238,7 +238,7 @@ const CouponSelectModal = ({
         </div>
 
         {/* 할인 금액 */}
-        <div className="border-neutral-85 flex items-center justify-between border-b px-6 py-4">
+        <div className="flex items-center justify-between border-b border-neutral-85 px-6 py-4">
           <span>할인 금액</span>
           <span>
             {discountAmount === null
@@ -251,7 +251,7 @@ const CouponSelectModal = ({
         <div className="flex gap-3 px-5 py-4">
           <OutlinedButton
             variant="secondary"
-            className="text-neutral-40 flex-1"
+            className="flex-1 text-neutral-40"
             onClick={handleClose}
           >
             닫기

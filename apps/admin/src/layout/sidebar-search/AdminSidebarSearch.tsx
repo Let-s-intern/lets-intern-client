@@ -77,11 +77,11 @@ export default function AdminSidebarSearch({ navData }: Props) {
         aria-label="메뉴 검색 열기"
         aria-keyshortcuts={isMac() ? 'Meta+K' : 'Control+K'}
         onClick={open}
-        className="text-xsmall14 flex w-full items-center gap-2 rounded bg-[#2A2A2A] px-3 py-2 text-neutral-50 hover:bg-[#3A3A3A]"
+        className="rounded flex w-full items-center gap-2 bg-[#2A2A2A] px-3 py-2 text-xsmall14 text-neutral-50 hover:bg-[#3A3A3A]"
       >
         <IoIosSearch className="shrink-0 text-base" />
         <span className="flex-1 text-left">검색</span>
-        <kbd className="text-xxsmall12 rounded border border-neutral-600 px-1.5 py-0.5 font-sans">
+        <kbd className="rounded border border-neutral-600 px-1.5 py-0.5 font-sans text-xxsmall12">
           {shortcut}
         </kbd>
       </button>

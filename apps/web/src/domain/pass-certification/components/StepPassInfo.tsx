@@ -123,13 +123,13 @@ export default function StepPassInfo() {
                 onChange={(e) => field.onChange(e.target.files?.[0] ?? null)}
               />
               {field.value ? (
-                <span className="text-xsmall14 text-neutral-0 font-medium">
+                <span className="text-xsmall14 font-medium text-neutral-0">
                   {field.value.name}
                 </span>
               ) : (
                 <>
-                  <FiUploadCloud className="text-primary hidden h-6 w-6 md:block" />
-                  <span className="text-xsmall14 text-primary font-medium">
+                  <FiUploadCloud className="hidden h-6 w-6 text-primary md:block" />
+                  <span className="text-xsmall14 font-medium text-primary">
                     클릭해서 업로드
                   </span>
                   <span className="text-xxsmall12 text-neutral-40">

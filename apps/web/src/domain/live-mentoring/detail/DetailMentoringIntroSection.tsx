@@ -42,7 +42,7 @@ const CheckIcon = () => (
       width="18.5"
       height="18.5"
       rx="3.25"
-      className="stroke-primary fill-white"
+      className="fill-white stroke-primary"
       strokeWidth="1.5"
     />
     <path
@@ -77,16 +77,16 @@ const DetailMentoringIntroSection = ({
 }: DetailMentoringIntroSectionProps) => (
   <section
     id={id}
-    className="to-primary-5 w-full scroll-mt-16 bg-gradient-to-b from-white py-14 md:py-20"
+    className="w-full scroll-mt-16 bg-gradient-to-b from-white to-primary-5 py-14 md:py-20"
   >
     <div className="mw-1180 flex flex-col items-center px-5">
-      <span className="text-xsmall14 md:text-small20 text-neutral-30 font-semibold">
+      <span className="text-xsmall14 font-semibold text-neutral-30 md:text-small20">
         멘토링 소개
       </span>
-      <h2 className="text-small20 md:text-xlarge30 mt-2 whitespace-pre-line text-center font-bold">
+      <h2 className="mt-2 whitespace-pre-line text-center text-small20 font-bold md:text-xlarge30">
         {'혼자 막힌 취업 준비,\n1:1 LIVE 멘토링으로 빠르게 정리해요'}
       </h2>
-      <p className="text-xsmall14 md:text-small18 text-neutral-30 mt-3 text-center">
+      <p className="mt-3 text-center text-xsmall14 text-neutral-30 md:text-small18">
         지원서 점검부터 직무 방향까지, 지금 필요한 답을 현직자에게 바로
         들어보세요.
       </p>
@@ -95,15 +95,15 @@ const DetailMentoringIntroSection = ({
         {RECOMMENDATIONS.map((item, i) => (
           <li key={item.headline[0]} className="flex flex-col">
             {/* 뱃지는 카드 좌상단에 걸치게 얹는다 (시안) */}
-            <span className="text-xsmall14 md:text-xsmall16 bg-primary text-static-100 z-10 ml-4 w-fit -translate-y-1/2 rounded-lg px-4 py-1.5 font-semibold md:ml-6">
+            <span className="z-10 ml-4 w-fit -translate-y-1/2 rounded-lg bg-primary px-4 py-1.5 text-xsmall14 font-semibold text-static-100 md:ml-6 md:text-xsmall16">
               추천 {i + 1}
             </span>
-            <div className="bg-primary-10 -mt-4 rounded-2xl px-6 py-9 md:py-12">
-              <p className="text-small18 md:text-medium24 whitespace-pre-line text-center font-bold">
+            <div className="rounded-2xl -mt-4 bg-primary-10 px-6 py-9 md:py-12">
+              <p className="whitespace-pre-line text-center text-small18 font-bold md:text-medium24">
                 {item.headline.join('\n')}
               </p>
             </div>
-            <ul className="text-xsmall14 md:text-small18 text-neutral-35 mt-6 flex flex-col gap-3 px-1 md:mt-8 md:px-4">
+            <ul className="mt-6 flex flex-col gap-3 px-1 text-xsmall14 text-neutral-35 md:mt-8 md:px-4 md:text-small18">
               {item.checks.map((check) => (
                 <li key={check} className="flex items-start gap-3">
                   <CheckIcon />

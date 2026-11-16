@@ -22,12 +22,12 @@ const SeminarListEmptyState = ({ onGoClosed }: SeminarListEmptyStateProps) => {
   return (
     <div className="flex flex-col items-center gap-12 md:gap-16">
       <div className="flex flex-col items-center gap-2 text-center">
-        <p className="text-xsmall14 md:text-xsmall16 text-neutral-45">
+        <p className="text-xsmall14 text-neutral-45 md:text-xsmall16">
           현재 모집 중인 무료 세미나가 없어요
         </p>
-        <h3 className="text-small18 md:text-medium24 text-neutral-0 font-bold">
+        <h3 className="text-small18 font-bold text-neutral-0 md:text-medium24">
           곧{' '}
-          <span className="bg-primary inline-block -rotate-2 rounded-none px-2 py-1 text-neutral-100">
+          <span className="inline-block -rotate-2 rounded-none bg-primary px-2 py-1 text-neutral-100">
             더 유익해진
           </span>{' '}
           <br className="md:hidden" />
@@ -39,7 +39,7 @@ const SeminarListEmptyState = ({ onGoClosed }: SeminarListEmptyStateProps) => {
 
       {previewPrograms.length > 0 && (
         <div className="flex w-full flex-col items-center gap-6">
-          <h4 className="text-small18 md:text-medium24 text-neutral-0 font-bold">
+          <h4 className="text-small18 font-bold text-neutral-0 md:text-medium24">
             지금까지 진행된 무료 세미나에요!
           </h4>
           <div className="grid w-full grid-cols-2 gap-x-5 gap-y-8 md:grid-cols-4 md:gap-y-11">
@@ -53,7 +53,7 @@ const SeminarListEmptyState = ({ onGoClosed }: SeminarListEmptyStateProps) => {
           <button
             type="button"
             onClick={onGoClosed}
-            className="bg-neutral-0 text-xsmall14 md:text-xsmall16 rounded-xs px-5 py-3 font-semibold text-neutral-100"
+            className="rounded-xs bg-neutral-0 px-5 py-3 text-xsmall14 font-semibold text-neutral-100 md:text-xsmall16"
           >
             종료된 무료 세미나 보러가기
           </button>

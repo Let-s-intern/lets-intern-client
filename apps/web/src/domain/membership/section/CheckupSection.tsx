@@ -116,7 +116,7 @@ export default function CheckupSection({ answers, onAnswersChange }: Props) {
           {CHECKUP.title}
         </h2>
 
-        <p className="text-xsmall14 md:text-xsmall16 mt-4 text-center leading-relaxed text-neutral-50">
+        <p className="mt-4 text-center text-xsmall14 leading-relaxed text-neutral-50 md:text-xsmall16">
           {CHECKUP.subLines.map((line) => (
             <span className="block" key={line}>
               {line}

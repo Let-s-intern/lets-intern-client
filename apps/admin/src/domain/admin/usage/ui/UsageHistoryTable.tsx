@@ -160,7 +160,7 @@ const UsageHistoryTable = ({ rows, trackedFrom, isLoading, now }: Props) => {
               */}
               <tr
                 className={twMerge(
-                  'hover:bg-neutral-95 border-b align-top',
+                  'border-b align-top hover:bg-neutral-95',
                   recentUnused && 'bg-amber-50 hover:bg-amber-100',
                 )}
               >
@@ -174,7 +174,7 @@ const UsageHistoryTable = ({ rows, trackedFrom, isLoading, now }: Props) => {
                     aria-expanded={expanded}
                     aria-controls={expanded ? detailRowId : undefined}
                     onClick={() => toggleRow(row.applicationId)}
-                    className="whitespace-nowrap rounded border border-neutral-300 px-2 py-1 text-xs"
+                    className="rounded whitespace-nowrap border border-neutral-300 px-2 py-1 text-xs"
                   >
                     {expanded ? '접기' : '펼치기'}
                   </button>
@@ -198,14 +198,14 @@ const UsageHistoryTable = ({ rows, trackedFrom, isLoading, now }: Props) => {
                       href={participantsHref}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-neutral-40 text-xs underline underline-offset-2"
+                      className="text-xs text-neutral-40 underline underline-offset-2"
                       aria-label={`${programText || '이 프로그램'} 참여자 목록 (새 탭)`}
                     >
                       참여자 목록
                     </a>
                   ) : (
                     /* 링크를 못 만든 자리를 비워 두지 않는다. 빈칸은 누락으로 읽힌다. */
-                    <div className="text-neutral-40 text-xs">-</div>
+                    <div className="text-xs text-neutral-40">-</div>
                   )}
                 </td>
                 {/*

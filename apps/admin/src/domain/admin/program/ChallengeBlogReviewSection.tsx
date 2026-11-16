@@ -32,7 +32,7 @@ const ChallengeBlogReviewSection: React.FC<{
           <span className="text-xs text-neutral-50"></span>
         </div>
       </div>
-      <h3 className="text-small18 mb-2 font-semibold">외부 블로그 후기</h3>
+      <h3 className="mb-2 text-small18 font-semibold">외부 블로그 후기</h3>
       <div className="mb-6">
         {externalBlogReviews.length === 0 ? (
           <p className="text-sm text-neutral-50">{emptyMessage}</p>
@@ -41,7 +41,7 @@ const ChallengeBlogReviewSection: React.FC<{
             {externalBlogReviews.map((item, idx) => (
               <div
                 key={idx}
-                className="relative h-28 w-32 flex-none rounded border"
+                className="rounded relative h-28 w-32 flex-none border"
                 style={{
                   backgroundImage: `url(${item.thumbnail})`,
                   backgroundSize: 'cover',
@@ -60,7 +60,7 @@ const ChallengeBlogReviewSection: React.FC<{
                   ×
                 </button>
                 <div className="flex h-full items-end bg-black/20 p-1">
-                  <span className="text-xxsmall12 line-clamp-2 text-white">
+                  <span className="line-clamp-2 text-xxsmall12 text-white">
                     {item.programTitle} / {item.name}
                   </span>
                 </div>
@@ -69,7 +69,7 @@ const ChallengeBlogReviewSection: React.FC<{
           </div>
         )}
       </div>
-      <h3 className="text-small18 mb-2 font-semibold">
+      <h3 className="mb-2 text-small18 font-semibold">
         렛츠커리어 블로그 후기
       </h3>
       <ProgramBlogReviewEditor

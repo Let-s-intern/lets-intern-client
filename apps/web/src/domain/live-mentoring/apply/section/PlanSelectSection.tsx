@@ -41,12 +41,12 @@ const PlanSelectSection = ({
 }: PlanSelectSectionProps) => {
   return (
     <section className="flex flex-col gap-3">
-      <h3 className="text-xsmall16 text-neutral-0 font-semibold">
+      <h3 className="text-xsmall16 font-semibold text-neutral-0">
         1:1 멘토링 플랜 선택 <span className="text-primary">(필수)</span>
       </h3>
 
-      <div className="border-neutral-80 divide-neutral-85 flex flex-col divide-y rounded-sm border">
-        <p className="bg-neutral-95 text-xsmall14 text-neutral-20 rounded-t-sm px-4 py-3 font-semibold">
+      <div className="flex flex-col divide-y divide-neutral-85 rounded-sm border border-neutral-80">
+        <p className="rounded-t-sm bg-neutral-95 px-4 py-3 text-xsmall14 font-semibold text-neutral-20">
           {productTitle}
         </p>
 
@@ -55,7 +55,7 @@ const PlanSelectSection = ({
             key={option.duration}
             className={`flex items-center justify-between gap-3 px-4 py-4 ${isLocked ? 'cursor-default' : 'cursor-pointer'}`}
           >
-            <span className="text-xsmall14 text-neutral-0 flex items-center gap-2.5">
+            <span className="flex items-center gap-2.5 text-xsmall14 text-neutral-0">
               <input
                 type="radio"
                 name="live-mentoring-plan"
@@ -63,11 +63,11 @@ const PlanSelectSection = ({
                 checked={selectedDuration === option.duration}
                 disabled={isLocked}
                 onChange={() => onSelect(option.duration)}
-                className="accent-primary h-4 w-4"
+                className="h-4 w-4 accent-primary"
               />
               {planLabel(option.duration)}
             </span>
-            <span className="text-xsmall16 text-neutral-0 font-bold">
+            <span className="text-xsmall16 font-bold text-neutral-0">
               {formatPrice(option.price)}
             </span>
           </label>

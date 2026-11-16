@@ -45,13 +45,13 @@ export default function HeroSection({
       <div className="mx-auto flex w-full max-w-[1000px] flex-col gap-8 px-5 py-14 md:flex-row md:items-center md:gap-12 md:px-0 md:py-20">
         <div className="md:gap-15 flex flex-1 flex-col gap-8 md:min-h-[445px] md:justify-between">
           <div className="flex flex-col gap-4 md:gap-8">
-            <span className="bg-static-100 text-xxsmall12 md:text-xsmall14 mb-4 w-fit rounded-full px-5 py-2 font-semibold text-[#F36D32] md:mb-0 md:px-6 md:py-3">
+            <span className="mb-4 w-fit rounded-full bg-static-100 px-5 py-2 text-xxsmall12 font-semibold text-[#F36D32] md:mb-0 md:px-6 md:py-3 md:text-xsmall14">
               {badge}
             </span>
-            <h1 className="text-xlarge28 text-neutral-0 whitespace-pre-line font-extrabold leading-[38px] md:text-[44px] md:leading-[62px]">
+            <h1 className="whitespace-pre-line text-xlarge28 font-extrabold leading-[38px] text-neutral-0 md:text-[44px] md:leading-[62px]">
               {title}
             </h1>
-            <p className="text-xsmall14 md:text-small20 text-neutral-35 whitespace-pre-line">
+            <p className="whitespace-pre-line text-xsmall14 text-neutral-35 md:text-small20">
               {description}
             </p>
           </div>
@@ -60,14 +60,14 @@ export default function HeroSection({
               type="button"
               onClick={onStart}
               disabled={ctaDisabled}
-              className="text-xsmall16 md:text-small20 w-full rounded-sm bg-[#F36D32] px-4 py-3 font-semibold text-neutral-100 hover:bg-[#E15D28] disabled:cursor-not-allowed disabled:bg-[#F9B68F] disabled:hover:bg-[#F9B68F] md:w-[280px] md:px-6 md:py-5"
+              className="w-full rounded-sm bg-[#F36D32] px-4 py-3 text-xsmall16 font-semibold text-neutral-100 hover:bg-[#E15D28] disabled:cursor-not-allowed disabled:bg-[#F9B68F] disabled:hover:bg-[#F9B68F] md:w-[280px] md:px-6 md:py-5 md:text-small20"
             >
               {ctaText}
             </button>
             <button
               type="button"
               onClick={onScrollToBenefit}
-              className="text-xsmall16 md:text-small20 flex w-full items-center justify-center gap-1 px-4 py-3 text-center font-semibold text-[#4A76FF] md:w-[280px] md:px-9 md:py-5"
+              className="flex w-full items-center justify-center gap-1 px-4 py-3 text-center text-xsmall16 font-semibold text-[#4A76FF] md:w-[280px] md:px-9 md:py-5 md:text-small20"
             >
               혜택 먼저 보기
               <ArrowRight size={18} />
@@ -79,14 +79,14 @@ export default function HeroSection({
           <p className="text-xsmall16 font-semibold text-[#F36D32]">
             🔥 선착순 100명 한정 모집
           </p>
-          <p className="text-medium24 md:text-xlarge28 text-neutral-0 font-bold">
+          <p className="text-medium24 font-bold text-neutral-0 md:text-xlarge28">
             시즌 혜택 마감까지
           </p>
           <div className="mt-3">
             <LandingCountdown deadline={deadline} />
           </div>
           {hero.recruitFootnote && (
-            <p className="text-xsmall14 text-neutral-40 mt-4">
+            <p className="mt-4 text-xsmall14 text-neutral-40">
               {hero.recruitFootnote}
             </p>
           )}

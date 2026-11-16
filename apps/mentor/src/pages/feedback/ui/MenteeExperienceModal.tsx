@@ -22,7 +22,7 @@ const MenteeExperienceModal = ({
     <BaseModal
       isOpen={isOpen}
       onClose={onClose}
-      className="mx-2 flex h-[85vh] w-[800px] max-w-full flex-col rounded-2xl md:mx-4 md:h-[680px]"
+      className="rounded-2xl mx-2 flex h-[85vh] w-[800px] max-w-full flex-col md:mx-4 md:h-[680px]"
     >
       <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
         <h3 className="text-lg font-semibold text-neutral-900">
@@ -32,7 +32,7 @@ const MenteeExperienceModal = ({
           type="button"
           onClick={onClose}
           aria-label="닫기"
-          className="flex h-8 w-8 items-center justify-center rounded text-neutral-500 hover:bg-neutral-100"
+          className="rounded flex h-8 w-8 items-center justify-center text-neutral-500 hover:bg-neutral-100"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
             <path

@@ -91,7 +91,7 @@ const LiveFeedbackReviewModal = ({
     >
       <div className="flex flex-col gap-6 p-6">
         <header className="flex flex-col gap-2">
-          <h2 className="text-small18 text-neutral-0 font-bold">
+          <h2 className="text-small18 font-bold text-neutral-0">
             오늘 멘토링, 무엇을 얻으셨나요?
           </h2>
           <p className="text-xsmall14 text-neutral-40">
@@ -101,14 +101,14 @@ const LiveFeedbackReviewModal = ({
         </header>
 
         <section className="flex flex-col gap-2">
-          <h3 className="text-xsmall14 text-neutral-0 font-semibold">
+          <h3 className="text-xsmall14 font-semibold text-neutral-0">
             오늘 멘토링, 얼마나 도움이 됐나요?
           </h3>
           <StarRating value={stars} onChange={setStars} />
         </section>
 
         <section className="flex flex-col gap-2">
-          <h3 className="text-xsmall14 text-neutral-0 font-semibold">
+          <h3 className="text-xsmall14 font-semibold text-neutral-0">
             멘토링을 통해 새롭게 알게 된 점을 작성해주세요
           </h3>
           <div className="flex flex-col gap-1">
@@ -118,9 +118,9 @@ const LiveFeedbackReviewModal = ({
                 setContent(e.target.value.slice(0, REVIEW_MAX_LENGTH))
               }
               placeholder="예) 혼자 볼 때는 이력서가 왜 안 통하는지 몰랐는데, 성과가 숫자로 안 보인다는 점을 짚어주셨어요. 프로젝트마다 지표를 한 줄씩 붙이는 방법까지 알려주셔서 바로 고칠 수 있었어요."
-              className="text-xsmall14 text-neutral-0 border-neutral-80 rounded-xxs font-regular placeholder:text-neutral-70 h-[144px] w-full resize-none border p-3 outline-none"
+              className="font-regular h-[144px] w-full resize-none rounded-xxs border border-neutral-80 p-3 text-xsmall14 text-neutral-0 outline-none placeholder:text-neutral-70"
             />
-            <p className="text-xxsmall12 text-right">
+            <p className="text-right text-xxsmall12">
               <span className="text-neutral-9">{content.length}</span>
               <span className="text-neutral-45">/{REVIEW_MAX_LENGTH}</span>
             </p>
@@ -137,14 +137,14 @@ const LiveFeedbackReviewModal = ({
             type="button"
             onClick={handleSubmit}
             disabled={!canSubmit || isPending}
-            className="bg-primary text-xsmall14 w-full rounded-sm py-3 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-full rounded-sm bg-primary py-3 text-xsmall14 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
           >
             작성 완료
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="text-xsmall14 text-neutral-45 w-full py-2 font-medium"
+            className="w-full py-2 text-xsmall14 font-medium text-neutral-45"
           >
             나중에 쓸게요
           </button>

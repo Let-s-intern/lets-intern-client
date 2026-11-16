@@ -13,20 +13,20 @@ export default function LiveClinicSection() {
     <section className="bg-[#F4F5F9] py-16 md:py-24" id={LIVE_CLINIC.anchorId}>
       <div className="wrap rv">
         <div className="text-center">
-          <span className="text-neutral-0 inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-xs font-bold shadow-[0_2px_12px_rgba(0,0,0,0.06)] md:text-sm">
+          <span className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-xs font-bold text-neutral-0 shadow-[0_2px_12px_rgba(0,0,0,0.06)] md:text-sm">
             <span aria-hidden="true">🎙️</span>
             {LIVE_CLINIC.badge}
           </span>
         </div>
 
-        <h2 className="text-neutral-0 mt-6 text-center text-2xl font-bold leading-snug md:text-[2rem]">
+        <h2 className="mt-6 text-center text-2xl font-bold leading-snug text-neutral-0 md:text-[2rem]">
           <span className="block">{LIVE_CLINIC.titleLines[0]}</span>
-          <span className="text-primary block">
+          <span className="block text-primary">
             {LIVE_CLINIC.titleLines[1]}
           </span>
         </h2>
 
-        <p className="text-xsmall14 md:text-xsmall16 text-neutral-40 mt-4 text-center leading-relaxed">
+        <p className="mt-4 text-center text-xsmall14 leading-relaxed text-neutral-40 md:text-xsmall16">
           {LIVE_CLINIC.subLines.map((line) => (
             <span className="block" key={line}>
               {line}
@@ -36,7 +36,7 @@ export default function LiveClinicSection() {
 
         <div className="mt-8 text-center">
           <span className="inline-flex items-center gap-3 rounded-full bg-white px-6 py-3 shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
-            <strong className="text-primary text-base font-bold">
+            <strong className="text-base font-bold text-primary">
               {LIVE_CLINIC.statValue}
             </strong>
             <span className="text-xsmall14 text-neutral-40">
@@ -46,7 +46,7 @@ export default function LiveClinicSection() {
         </div>
 
         {/* 16:9 비율 유지 — LexicalContent 의 유튜브 임베드와 같은 방식 */}
-        <div className="rounded-xxl mx-auto mt-10 max-w-[840px] overflow-hidden bg-black md:mt-14">
+        <div className="mx-auto mt-10 max-w-[840px] overflow-hidden rounded-xxl bg-black md:mt-14">
           <div className="relative w-full" style={{ paddingTop: '56.25%' }}>
             <iframe
               allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -64,13 +64,13 @@ export default function LiveClinicSection() {
               className="rounded-xxl bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.05)] md:p-7"
               key={step.label}
             >
-              <span className="text-primary text-sm font-bold tracking-wide">
+              <span className="text-sm font-bold tracking-wide text-primary">
                 {step.label}
               </span>
-              <strong className="text-xsmall16 text-neutral-0 mt-3 block font-bold">
+              <strong className="mt-3 block text-xsmall16 font-bold text-neutral-0">
                 {step.title}
               </strong>
-              <p className="text-xsmall14 text-neutral-40 mt-3 leading-relaxed">
+              <p className="mt-3 text-xsmall14 leading-relaxed text-neutral-40">
                 {step.body}
               </p>
             </li>

@@ -69,7 +69,7 @@ const SearchField = ({
   onChange: (value: string) => void;
 }) => (
   <label className="text-sm">
-    <span className="text-neutral-40 mb-1 block">{label}</span>
+    <span className="mb-1 block text-neutral-40">{label}</span>
     <input
       className={FIELD_CLASS}
       placeholder={placeholder}
@@ -180,7 +180,7 @@ const UsageFilterBar = ({ filters, onChange, now }: Props) => {
         />
 
         <label className="text-sm">
-          <span className="text-neutral-40 mb-1 block">이용 상태</span>
+          <span className="mb-1 block text-neutral-40">이용 상태</span>
           <select
             className={FIELD_CLASS}
             value={filters.usageStatus}
@@ -233,7 +233,7 @@ const UsageFilterBar = ({ filters, onChange, now }: Props) => {
         <button
           type="button"
           aria-expanded={advancedOpen}
-          className="text-neutral-40 text-sm underline"
+          className="text-sm text-neutral-40 underline"
           onClick={() => setAdvancedOpen((prev) => !prev)}
         >
           {advancedOpen ? '상세 조건 접기' : '상세 조건 펼치기'}
@@ -241,9 +241,9 @@ const UsageFilterBar = ({ filters, onChange, now }: Props) => {
       </div>
 
       {advancedOpen && (
-        <div className="border-neutral-80 bg-neutral-95 mt-2 flex flex-wrap items-end gap-3 rounded border p-3">
+        <div className="rounded mt-2 flex flex-wrap items-end gap-3 border border-neutral-80 bg-neutral-95 p-3">
           <label className="text-sm">
-            <span className="text-neutral-40 mb-1 block">프로그램 타입</span>
+            <span className="mb-1 block text-neutral-40">프로그램 타입</span>
             <select
               className={FIELD_CLASS}
               value={filters.programType}
@@ -283,7 +283,7 @@ const UsageFilterBar = ({ filters, onChange, now }: Props) => {
           </label>
 
           <label className="text-sm">
-            <span className="text-neutral-40 mb-1 block">정렬</span>
+            <span className="mb-1 block text-neutral-40">정렬</span>
             <select
               className={FIELD_CLASS}
               value={filters.sort}

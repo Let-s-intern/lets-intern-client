@@ -117,7 +117,7 @@ const NoticeEditModal = ({ mode, editingId, onClose }: Props) => {
               콘텐츠 유형
             </label>
             <select
-              className="w-full rounded border px-3 py-2 text-sm"
+              className="rounded w-full border px-3 py-2 text-sm"
               value={form.type}
               onChange={(e) =>
                 setForm((prev) => ({
@@ -143,7 +143,7 @@ const NoticeEditModal = ({ mode, editingId, onClose }: Props) => {
                 </label>
                 <input
                   type="text"
-                  className="w-full rounded border px-3 py-2 text-sm"
+                  className="rounded w-full border px-3 py-2 text-sm"
                   placeholder="제목"
                   value={form.title}
                   onChange={(e) =>
@@ -157,7 +157,7 @@ const NoticeEditModal = ({ mode, editingId, onClose }: Props) => {
                 </label>
                 <input
                   type="text"
-                  className="w-full rounded border px-3 py-2 text-sm"
+                  className="rounded w-full border px-3 py-2 text-sm"
                   placeholder="https://..."
                   value={form.url}
                   onChange={(e) =>
@@ -193,7 +193,7 @@ const NoticeEditModal = ({ mode, editingId, onClose }: Props) => {
               <div className="mb-3">
                 <input
                   type="text"
-                  className="w-full rounded border px-3 py-2 text-sm disabled:bg-neutral-100"
+                  className="rounded w-full border px-3 py-2 text-sm disabled:bg-neutral-100"
                   placeholder="URL을 입력하세요"
                   value={moreButton.url}
                   disabled={!moreButton.visible}
@@ -209,7 +209,7 @@ const NoticeEditModal = ({ mode, editingId, onClose }: Props) => {
         <div className="flex gap-3 border-t px-6 py-4">
           <button
             onClick={onClose}
-            className="flex-1 rounded border border-zinc-300 py-3 text-sm font-medium text-zinc-600 hover:bg-neutral-50"
+            className="rounded flex-1 border border-zinc-300 py-3 text-sm font-medium text-zinc-600 hover:bg-neutral-50"
           >
             취소하기
           </button>
@@ -218,7 +218,7 @@ const NoticeEditModal = ({ mode, editingId, onClose }: Props) => {
             disabled={
               !canSave || createMutation.isPending || updateMutation.isPending
             }
-            className="flex-1 rounded bg-[#4F5BDB] py-3 text-sm font-medium text-white hover:opacity-80 disabled:bg-neutral-300 disabled:text-neutral-500"
+            className="rounded flex-1 bg-[#4F5BDB] py-3 text-sm font-medium text-white hover:opacity-80 disabled:bg-neutral-300 disabled:text-neutral-500"
           >
             저장하기
           </button>

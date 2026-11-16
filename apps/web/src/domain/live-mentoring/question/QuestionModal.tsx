@@ -153,7 +153,7 @@ const QuestionModal = ({
 
   return (
     <div
-      className="bg-neutral-0/50 fixed inset-0 z-[100] flex items-end justify-center md:items-center md:p-5"
+      className="fixed inset-0 z-[100] flex items-end justify-center bg-neutral-0/50 md:items-center md:p-5"
       onClick={onClose}
     >
       <div
@@ -163,12 +163,12 @@ const QuestionModal = ({
         // textarea 의 이름과 겹쳐 접근성 트리에서 구분되지 않는다.
         aria-labelledby="live-mentoring-question-title"
         onClick={(event) => event.stopPropagation()}
-        className="bg-static-100 flex max-h-[90dvh] w-full flex-col gap-5 overflow-y-auto rounded-t-xl px-5 py-6 md:max-w-[720px] md:rounded-xl md:px-8"
+        className="flex max-h-[90dvh] w-full flex-col gap-5 overflow-y-auto rounded-t-xl bg-static-100 px-5 py-6 md:max-w-[720px] md:rounded-xl md:px-8"
       >
         <div className="flex items-start justify-between gap-3">
           <h2
             id="live-mentoring-question-title"
-            className="text-small18 md:text-small20 text-neutral-0 font-bold"
+            className="text-small18 font-bold text-neutral-0 md:text-small20"
           >
             멘토에게 궁금한 점을 작성해 주세요.
           </h2>
@@ -176,18 +176,18 @@ const QuestionModal = ({
             type="button"
             onClick={onClose}
             aria-label="모달 닫기"
-            className="text-neutral-40 shrink-0 text-xl leading-none"
+            className="shrink-0 text-xl leading-none text-neutral-40"
           >
             ×
           </button>
         </div>
 
         {isLoading || !draft ? (
-          <p className="text-neutral-40 py-10 text-center">불러오는 중…</p>
+          <p className="py-10 text-center text-neutral-40">불러오는 중…</p>
         ) : (
           <>
             <div className="flex flex-col gap-1.5">
-              <span className="text-xsmall14 text-neutral-0 font-medium">
+              <span className="text-xsmall14 font-medium text-neutral-0">
                 멘토링 질문
               </span>
               <p className="text-xxsmall12 text-neutral-45">
@@ -203,23 +203,23 @@ const QuestionModal = ({
                 onChange={(event) => patch({ content: event.target.value })}
                 placeholder="멘토링에서 꼭 물어보고 싶은 점을 작성해 주세요."
                 rows={6}
-                className="bg-neutral-95 text-xsmall14 text-neutral-0 resize-none rounded-sm px-4 py-3"
+                className="resize-none rounded-sm bg-neutral-95 px-4 py-3 text-xsmall14 text-neutral-0"
               />
             </div>
 
             <fieldset className="flex flex-col gap-3">
-              <legend className="text-xsmall14 text-neutral-0 mb-2 font-medium">
+              <legend className="mb-2 text-xsmall14 font-medium text-neutral-0">
                 전달 파일
               </legend>
 
-              <label className="text-xsmall14 text-neutral-0 flex items-center gap-2">
+              <label className="flex items-center gap-2 text-xsmall14 text-neutral-0">
                 <input
                   type="radio"
                   name="live-mentoring-question-attachment"
                   checked={draft.attachmentType === 'FILE'}
                   disabled={!canEdit}
                   onChange={() => patch({ attachmentType: 'FILE', url: '' })}
-                  className="accent-primary h-4 w-4"
+                  className="h-4 w-4 accent-primary"
                 />
                 파일 첨부{' '}
                 <span className="text-neutral-45">
@@ -243,7 +243,7 @@ const QuestionModal = ({
                     !canEdit || draft.attachmentType !== 'FILE' || isUploading
                   }
                   onClick={() => fileInputRef.current?.click()}
-                  className="border-neutral-80 text-xsmall14 text-neutral-20 disabled:text-neutral-60 rounded-sm border px-3 py-2 disabled:cursor-default"
+                  className="rounded-sm border border-neutral-80 px-3 py-2 text-xsmall14 text-neutral-20 disabled:cursor-default disabled:text-neutral-60"
                 >
                   {isUploading ? '업로드 중…' : '파일 업로드'}
                 </button>
@@ -277,7 +277,7 @@ const QuestionModal = ({
                 )}
               </div>
 
-              <label className="text-xsmall14 text-neutral-0 flex items-center gap-2">
+              <label className="flex items-center gap-2 text-xsmall14 text-neutral-0">
                 <input
                   type="radio"
                   name="live-mentoring-question-attachment"
@@ -287,7 +287,7 @@ const QuestionModal = ({
                     setFileName(null);
                     patch({ attachmentType: 'URL', fileId: null });
                   }}
-                  className="accent-primary h-4 w-4"
+                  className="h-4 w-4 accent-primary"
                 />
                 URL
               </label>
@@ -300,11 +300,11 @@ const QuestionModal = ({
                 disabled={!canEdit || draft.attachmentType !== 'URL'}
                 onChange={(event) => patch({ url: event.target.value })}
                 placeholder="https://"
-                className="border-neutral-80 text-xsmall14 text-neutral-0 disabled:bg-neutral-95 ml-6 rounded-sm border px-4 py-2.5 disabled:cursor-default"
+                className="ml-6 rounded-sm border border-neutral-80 px-4 py-2.5 text-xsmall14 text-neutral-0 disabled:cursor-default disabled:bg-neutral-95"
               />
             </fieldset>
 
-            <label className="text-xsmall14 text-neutral-30 flex items-center gap-2">
+            <label className="flex items-center gap-2 text-xsmall14 text-neutral-30">
               <input
                 type="checkbox"
                 checked={draft.mentorShareAgreed}
@@ -312,7 +312,7 @@ const QuestionModal = ({
                 onChange={(event) =>
                   patch({ mentorShareAgreed: event.target.checked })
                 }
-                className="accent-primary h-4 w-4"
+                className="h-4 w-4 accent-primary"
               />
               첨부한 파일이 멘토링 진행을 위해 멘토에게 전달되는 데 동의합니다.
             </label>
@@ -346,7 +346,7 @@ const QuestionModal = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="border-primary text-primary text-xsmall16 flex-1 rounded-sm border py-3 font-medium"
+                className="flex-1 rounded-sm border border-primary py-3 text-xsmall16 font-medium text-primary"
               >
                 {hasWrittenQuestion ? '수정 취소' : '닫기'}
               </button>
@@ -354,7 +354,7 @@ const QuestionModal = ({
                 type="button"
                 onClick={handleSave}
                 disabled={!canSave}
-                className="bg-primary text-xsmall16 disabled:bg-neutral-80 disabled:text-neutral-40 flex-1 rounded-sm py-3 font-medium text-white"
+                className="flex-1 rounded-sm bg-primary py-3 text-xsmall16 font-medium text-white disabled:bg-neutral-80 disabled:text-neutral-40"
               >
                 {hasWrittenQuestion ? '수정하기' : '저장하기'}
               </button>

@@ -22,15 +22,15 @@ export default function SectionHeading({
 }: SectionHeadingProps) {
   return (
     <div className="flex w-full flex-col items-start gap-6 text-left md:items-center md:gap-[50px] md:text-center">
-      <h3 className="md:text-xsmall16 text-xsmall14 text-primary font-semibold">
+      <h3 className="text-xsmall14 font-semibold text-primary md:text-xsmall16">
         {label}
       </h3>
       <div className="flex w-full flex-col items-start gap-3 text-left md:items-center md:text-center">
-        <h2 className="text-medium24 text-neutral-0 font-bold leading-8 tracking-[-2.2%] md:text-[38px] md:leading-[49px]">
+        <h2 className="text-medium24 font-bold leading-8 tracking-[-2.2%] text-neutral-0 md:text-[38px] md:leading-[49px]">
           {title}
         </h2>
         {description && (
-          <p className="md:text-xsmall16 text-neutral-40 text-[13px] font-normal tracking-[-1.5%]">
+          <p className="text-[13px] font-normal tracking-[-1.5%] text-neutral-40 md:text-xsmall16">
             {description}
           </p>
         )}

@@ -43,16 +43,16 @@ export const MissionPreQuestionInputSection = ({
     <section>
       <div className="mb-1.5 mt-7">
         <div className="mb-1.5 flex items-center gap-2">
-          <span className="text-xsmall16 text-neutral-0 font-semibold">
+          <span className="text-xsmall16 font-semibold text-neutral-0">
             {label}
           </span>
         </div>
       </div>
       <textarea
         className={clsx(
-          'rounded-xxs border-neutral-80 w-full resize-none border bg-white',
-          'text-xsmall14 text-neutral-0 md:text-xsmall16 px-3 py-2 placeholder:text-neutral-50',
-          'focus:border-primary min-h-[144px] outline-none',
+          'w-full resize-none rounded-xxs border border-neutral-80 bg-white',
+          'px-3 py-2 text-xsmall14 text-neutral-0 placeholder:text-neutral-50 md:text-xsmall16',
+          'min-h-[144px] outline-none focus:border-primary',
           'disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-50',
         )}
         placeholder={placeholder}
@@ -61,7 +61,7 @@ export const MissionPreQuestionInputSection = ({
         disabled={disabled}
         maxLength={PRE_QUESTION_MAX_LENGTH}
       />
-      <div className="text-xxsmall12 mt-1 text-right text-neutral-50">
+      <div className="mt-1 text-right text-xxsmall12 text-neutral-50">
         {value.length}/{PRE_QUESTION_MAX_LENGTH}
       </div>
     </section>

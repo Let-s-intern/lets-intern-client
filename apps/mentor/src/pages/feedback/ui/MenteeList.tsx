@@ -140,7 +140,7 @@ const MenteeList = ({
                       className={twMerge(
                         'flex w-full items-center justify-between gap-2 px-4 py-2 text-left transition-colors',
                         isSelected
-                          ? 'bg-primary-5 rounded-md'
+                          ? 'rounded-md bg-primary-5'
                           : 'hover:bg-neutral-50',
                       )}
                     >
@@ -149,7 +149,7 @@ const MenteeList = ({
                           className={twMerge(
                             'line-clamp-1 text-sm',
                             imminent
-                              ? 'text-primary font-semibold'
+                              ? 'font-semibold text-primary'
                               : 'text-neutral-900',
                           )}
                         >
@@ -160,7 +160,7 @@ const MenteeList = ({
                             className={twMerge(
                               'text-[11px]',
                               imminent
-                                ? 'text-primary font-medium'
+                                ? 'font-medium text-primary'
                                 : 'text-neutral-500',
                             )}
                           >

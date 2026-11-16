@@ -201,9 +201,9 @@ export default function MentorScheduleView() {
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
           placeholder="멘토 이름 검색"
-          className="border-neutral-80 text-xsmall14 w-full max-w-xs rounded-md border px-3 py-2"
+          className="w-full max-w-xs rounded-md border border-neutral-80 px-3 py-2 text-xsmall14"
         />
-        <div className="border-neutral-90 flex max-h-52 flex-wrap gap-2 overflow-y-auto rounded-md border p-2.5">
+        <div className="flex max-h-52 flex-wrap gap-2 overflow-y-auto rounded-md border border-neutral-90 p-2.5">
           {filteredMentors.length === 0 ? (
             <span className="text-xsmall14 text-neutral-40">
               표시할 멘토가 없습니다.
@@ -218,7 +218,7 @@ export default function MentorScheduleView() {
                   type="button"
                   onClick={() => setSelectedMentorId(mentor.id)}
                   className={twMerge(
-                    'text-xsmall14 rounded-full border px-4 py-2 font-medium',
+                    'rounded-full border px-4 py-2 text-xsmall14 font-medium',
                     selected
                       ? twMerge(
                           color.bg,
@@ -226,7 +226,7 @@ export default function MentorScheduleView() {
                           color.text,
                           'font-semibold',
                         )
-                      : 'border-neutral-80 text-neutral-40 bg-white',
+                      : 'border-neutral-80 bg-white text-neutral-40',
                   )}
                 >
                   {mentor.name}
@@ -247,7 +247,7 @@ export default function MentorScheduleView() {
         <div className="flex flex-col gap-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <ViewToggle value={view} onChange={setView} />
-            <span className="text-xsmall14 text-neutral-0 font-semibold">
+            <span className="text-xsmall14 font-semibold text-neutral-0">
               {selectedMentor.name} 스케줄
             </span>
           </div>
@@ -262,7 +262,7 @@ export default function MentorScheduleView() {
                   onToday={() => setWeekStart(getMonday(new Date()))}
                 />
                 <div className="flex items-center gap-3">
-                  <span className="text-xxsmall12 text-neutral-40 flex items-center gap-1.5">
+                  <span className="flex items-center gap-1.5 text-xxsmall12 text-neutral-40">
                     <span
                       className={twMerge(
                         'h-3 w-3 rounded-sm border',
@@ -272,7 +272,7 @@ export default function MentorScheduleView() {
                     />
                     챌린지 예약
                   </span>
-                  <span className="text-xxsmall12 text-neutral-40 flex items-center gap-1.5">
+                  <span className="flex items-center gap-1.5 text-xxsmall12 text-neutral-40">
                     <span
                       className={twMerge(
                         'h-3 w-3 rounded-sm border',
@@ -282,8 +282,8 @@ export default function MentorScheduleView() {
                     />
                     1대1 예약
                   </span>
-                  <span className="text-xxsmall12 text-neutral-40 flex items-center gap-1.5">
-                    <span className="border-neutral-80 bg-neutral-95 h-3 w-3 rounded-sm border" />
+                  <span className="flex items-center gap-1.5 text-xxsmall12 text-neutral-40">
+                    <span className="h-3 w-3 rounded-sm border border-neutral-80 bg-neutral-95" />
                     오픈
                   </span>
                 </div>
@@ -304,7 +304,7 @@ export default function MentorScheduleView() {
           )}
         </div>
       ) : (
-        <div className="text-xsmall14 text-neutral-40 py-16 text-center">
+        <div className="py-16 text-center text-xsmall14 text-neutral-40">
           멘토를 선택하면 해당 멘토의 스케줄이 표시됩니다.
         </div>
       )}

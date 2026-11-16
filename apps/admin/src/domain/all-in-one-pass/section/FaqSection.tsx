@@ -108,7 +108,7 @@ export default function FaqSection({ selectedIds, onChange }: Props) {
 
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-small20 text-neutral-0 font-semibold">FAQ</h2>
+      <h2 className="text-small20 font-semibold text-neutral-0">FAQ</h2>
 
       <div className="flex items-center justify-between gap-3">
         <CategoryTabs
@@ -134,7 +134,7 @@ export default function FaqSection({ selectedIds, onChange }: Props) {
       </div>
 
       {filtered.length === 0 ? (
-        <p className="text-xsmall14 text-neutral-40 py-20 text-center">
+        <p className="py-20 text-center text-xsmall14 text-neutral-40">
           등록된 FAQ가 없습니다.
         </p>
       ) : (
@@ -143,9 +143,9 @@ export default function FaqSection({ selectedIds, onChange }: Props) {
           {filtered.map((faq) => (
             <div
               key={faq.id}
-              className="border-neutral-80 flex shrink-0 overflow-hidden rounded-md border"
+              className="flex shrink-0 overflow-hidden rounded-md border border-neutral-80"
             >
-              <label className="border-neutral-80 hover:bg-neutral-95 flex shrink-0 cursor-pointer items-center justify-center border-r px-2 transition-colors">
+              <label className="flex shrink-0 cursor-pointer items-center justify-center border-r border-neutral-80 px-2 transition-colors hover:bg-neutral-95">
                 <Checkbox
                   size="small"
                   checked={selectedIds.includes(faq.id)}
@@ -154,27 +154,27 @@ export default function FaqSection({ selectedIds, onChange }: Props) {
               </label>
               <div className="flex min-w-0 flex-1 flex-col gap-1 p-4">
                 {faq.category && (
-                  <span className="text-xxsmall12 text-primary font-medium">
+                  <span className="text-xxsmall12 font-medium text-primary">
                     {faq.category}
                   </span>
                 )}
-                <span className="text-xsmall16 text-neutral-0 font-medium">
+                <span className="text-xsmall16 font-medium text-neutral-0">
                   Q. {faq.question || '(질문 없음)'}
                 </span>
                 {faq.answer && (
-                  <span className="text-xsmall14 text-neutral-40 whitespace-pre-wrap">
+                  <span className="whitespace-pre-wrap text-xsmall14 text-neutral-40">
                     A. {faq.answer}
                   </span>
                 )}
               </div>
 
               {/* 오른쪽 세로 스트립: 위 수정 · 아래 삭제 */}
-              <div className="divide-neutral-80 border-neutral-80 flex w-11 shrink-0 flex-col divide-y border-l">
+              <div className="flex w-11 shrink-0 flex-col divide-y divide-neutral-80 border-l border-neutral-80">
                 <button
                   type="button"
                   aria-label="수정"
                   onClick={() => openEdit(faq)}
-                  className="text-neutral-40 hover:bg-neutral-95 hover:text-neutral-0 flex flex-1 items-center justify-center transition-colors"
+                  className="flex flex-1 items-center justify-center text-neutral-40 transition-colors hover:bg-neutral-95 hover:text-neutral-0"
                 >
                   <Pencil size={16} />
                 </button>
@@ -182,7 +182,7 @@ export default function FaqSection({ selectedIds, onChange }: Props) {
                   type="button"
                   aria-label="삭제"
                   onClick={() => handleDelete(faq.id)}
-                  className="text-neutral-40 hover:bg-system-error/10 hover:text-system-error flex flex-1 items-center justify-center transition-colors"
+                  className="flex flex-1 items-center justify-center text-neutral-40 transition-colors hover:bg-system-error/10 hover:text-system-error"
                 >
                   <FaTrashCan size={16} />
                 </button>

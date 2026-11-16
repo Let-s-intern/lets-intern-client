@@ -114,7 +114,7 @@ export default function CalendarMobile({
               />
             </button>
             <button type="button" onClick={() => setPickerOpen(true)}>
-              <span className="text-xsmall16 text-neutral-0 min-w-[69px] font-bold">
+              <span className="min-w-[69px] text-xsmall16 font-bold text-neutral-0">
                 {headerDay.format('YYYY.MM.')}
               </span>
             </button>
@@ -148,7 +148,7 @@ export default function CalendarMobile({
                   type="button"
                   onClick={() => cal.setView(v)}
                   className={clsx(
-                    'text-xsmall14 rounded-xxs px-2 py-1',
+                    'rounded-xxs px-2 py-1 text-xsmall14',
                     cal.view === v
                       ? 'bg-neutral-90 text-neutral-20'
                       : 'text-neutral-40',

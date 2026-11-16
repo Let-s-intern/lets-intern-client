@@ -142,25 +142,25 @@ const ProgramSelectModal = ({
                     </td>
                     <td className="px-2 py-1">
                       <div className="flex items-center justify-center">
-                        <span className="text-xsmall14 whitespace-nowrap">
+                        <span className="whitespace-nowrap text-xsmall14">
                           {getOrder(item)}
                         </span>
                       </div>
                     </td>
                     <td className="p-1">
                       <div className="flex items-center justify-center">
-                        <span className="text-xsmall14 whitespace-nowrap">
+                        <span className="whitespace-nowrap text-xsmall14">
                           {newProgramTypeToText[item.programInfo.programType]}
                         </span>
                       </div>
                     </td>
-                    <td className="text-xsmall14 whitespace-nowrap p-1">
+                    <td className="whitespace-nowrap p-1 text-xsmall14">
                       {item.programInfo.title}
                     </td>
-                    <td className="text-xsmall14 whitespace-nowrap text-center">
+                    <td className="whitespace-nowrap text-center text-xsmall14">
                       {programStatusToText[item.programInfo.programStatusType]}
                     </td>
-                    <td className="text-xsmall14 whitespace-nowrap text-center">
+                    <td className="whitespace-nowrap text-center text-xsmall14">
                       {item.programInfo.isVisible ? '✅' : '❌'}
                     </td>
                   </tr>

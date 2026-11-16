@@ -10,7 +10,7 @@
  */
 const SessionCanceledNotice = () => {
   return (
-    <section className="border-neutral-80 rounded-xxl flex flex-col items-center gap-5 border bg-white p-6 text-center shadow-sm">
+    <section className="flex flex-col items-center gap-5 rounded-xxl border border-neutral-80 bg-white p-6 text-center shadow-sm">
       <img
         src="/logo/horizontal-logo.svg"
         alt="렛츠커리어"
@@ -18,10 +18,10 @@ const SessionCanceledNotice = () => {
       />
 
       <div className="flex flex-col gap-2">
-        <h1 className="text-small18 text-neutral-0 font-bold">
+        <h1 className="text-small18 font-bold text-neutral-0">
           진행할 수 없는 세션이에요
         </h1>
-        <p className="text-xsmall14 text-neutral-40 break-keep">
+        <p className="break-keep text-xsmall14 text-neutral-40">
           예약이 취소됐거나 제출물이 확인되지 않아 진행불가로 처리된 세션이에요.
           자세한 내용은 채팅문의로 알려주세요.
         </p>

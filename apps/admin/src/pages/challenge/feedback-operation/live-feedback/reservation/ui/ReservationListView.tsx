@@ -125,7 +125,7 @@ function ChallengeRow({
   return (
     <tr
       className={twMerge(
-        'border-neutral-80 border-b last:border-b-0',
+        'border-b border-neutral-80 last:border-b-0',
         rowToneClassName,
       )}
     >
@@ -218,7 +218,7 @@ function LiveMentoringRow({
   return (
     <tr
       className={twMerge(
-        'border-neutral-80 border-b last:border-b-0',
+        'border-b border-neutral-80 last:border-b-0',
         rowToneClassName,
       )}
     >
@@ -308,7 +308,7 @@ export default function ReservationListView({
 
   if (isLoading) {
     return (
-      <div className="text-xsmall14 text-neutral-40 py-16 text-center">
+      <div className="py-16 text-center text-xsmall14 text-neutral-40">
         불러오는 중...
       </div>
     );
@@ -316,7 +316,7 @@ export default function ReservationListView({
 
   if (reservations.length === 0) {
     return (
-      <div className="text-xsmall14 text-neutral-40 py-16 text-center">
+      <div className="py-16 text-center text-xsmall14 text-neutral-40">
         {emptyMessage}
       </div>
     );
@@ -326,7 +326,7 @@ export default function ReservationListView({
     <div className="overflow-x-auto">
       <table className="w-full border-collapse">
         <thead>
-          <tr className="border-neutral-60 bg-neutral-95 border-b-2">
+          <tr className="border-b-2 border-neutral-60 bg-neutral-95">
             <th className={twMerge(thClassName, 'text-left')}>
               <SortHeader
                 label="날짜 / 시간"

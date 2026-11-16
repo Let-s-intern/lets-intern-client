@@ -32,11 +32,11 @@ export default function AnswerViewModal({
           {view && dayjs(view.submittedAt).format('YYYY.MM.DD HH:mm')}
         </span>
         <div className="flex flex-col gap-2.5">
-          <span className="text-xsmall14 text-primary-80 font-medium">
+          <span className="text-xsmall14 font-medium text-primary-80">
             Q. {question ?? '-'}
           </span>
-          <div className="bg-neutral-90 rounded-sm p-4">
-            <p className="text-xsmall16 text-neutral-10 whitespace-pre-wrap">
+          <div className="rounded-sm bg-neutral-90 p-4">
+            <p className="whitespace-pre-wrap text-xsmall16 text-neutral-10">
               {view?.answer}
             </p>
           </div>

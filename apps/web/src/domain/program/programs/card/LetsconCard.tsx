@@ -16,7 +16,7 @@ const LetsconCard = () => (
     className="row-span-3 grid w-full grid-rows-subgrid gap-3 overflow-hidden"
   >
     <img
-      className="bg-neutral-80 md:rounded-xs aspect-[540/421] h-auto w-full rounded-sm object-cover"
+      className="aspect-[540/421] h-auto w-full rounded-sm bg-neutral-80 object-cover md:rounded-xs"
       src="/letscon/letscon-thumbnail.webp"
       alt="렛츠콘 11.14(토)~15(일) 이틀 모두 무료 참여"
     />
@@ -27,7 +27,7 @@ const LetsconCard = () => (
       {/* 모집기간은 운영 온라인 신청 마그넷(59)의 시작·마감일 */}
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-1 tracking-[-0.4px] md:gap-1.5">
-          <span className="text-xxsmall12 text-neutral-0 font-normal">
+          <span className="text-xxsmall12 font-normal text-neutral-0">
             모집기간
           </span>
           <span className="text-0.75-medium text-primary-dark">
@@ -35,7 +35,7 @@ const LetsconCard = () => (
           </span>
         </div>
         <div className="flex items-center gap-1 tracking-[-0.4px] md:gap-1.5">
-          <span className="text-xxsmall12 text-neutral-0 font-normal">
+          <span className="text-xxsmall12 font-normal text-neutral-0">
             진행기간
           </span>
           <span className="text-0.75-medium text-primary-dark">
@@ -44,7 +44,7 @@ const LetsconCard = () => (
         </div>
       </div>
       <div className="mt-1 flex flex-wrap gap-1.5">
-        <span className="text-xxsmall12 border-primary-10 bg-primary-10 text-primary rounded-[3px] border px-2 py-1 font-normal">
+        <span className="rounded-[3px] border border-primary-10 bg-primary-10 px-2 py-1 text-xxsmall12 font-normal text-primary">
           모집 중
         </span>
       </div>

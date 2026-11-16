@@ -60,12 +60,12 @@ export default function CalendarSection({
   return (
     <section className="flex flex-col gap-3">
       <div className="flex items-center gap-3">
-        <h2 className="text-small20 text-neutral-0 font-semibold">
+        <h2 className="text-small20 font-semibold text-neutral-0">
           캘린더 관리
         </h2>
         <button
           type="button"
-          className="text-xsmall14 text-primary hover:text-primary-hover underline underline-offset-2"
+          className="text-xsmall14 text-primary underline underline-offset-2 hover:text-primary-hover"
           onClick={handleOpenPreview}
         >
           미리보기
@@ -91,7 +91,7 @@ export default function CalendarSection({
               slotProps={{ textField: { size: 'small' } }}
               className="w-48 shrink-0"
             />
-            <span className="text-neutral-40 shrink-0">~</span>
+            <span className="shrink-0 text-neutral-40">~</span>
             <DateTimePicker
               label="종료일시"
               value={event.endDate ? dayjs(event.endDate) : null}

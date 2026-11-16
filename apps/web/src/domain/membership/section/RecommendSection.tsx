@@ -15,7 +15,7 @@ export default function RecommendSection() {
           {RECOMMEND.eyebrow}
         </p>
 
-        <h2 className="text-neutral-0 mt-4 text-center text-2xl font-bold leading-snug md:text-[2rem]">
+        <h2 className="mt-4 text-center text-2xl font-bold leading-snug text-neutral-0 md:text-[2rem]">
           {RECOMMEND.titleLines.map((line) => (
             <span className="block" key={line}>
               {line}
@@ -23,7 +23,7 @@ export default function RecommendSection() {
           ))}
         </h2>
 
-        <p className="text-xsmall14 md:text-xsmall16 text-neutral-40 mt-4 text-center">
+        <p className="mt-4 text-center text-xsmall14 text-neutral-40 md:text-xsmall16">
           {RECOMMEND.sub}
         </p>
 
@@ -33,13 +33,13 @@ export default function RecommendSection() {
               className="rounded-xxl bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.05)] md:p-7"
               key={card.no}
             >
-              <span className="bg-primary-10 text-primary flex h-9 w-9 items-center justify-center rounded-full text-xs font-bold">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-10 text-xs font-bold text-primary">
                 {card.no}
               </span>
-              <strong className="text-small18 text-neutral-0 mt-5 block font-bold">
+              <strong className="mt-5 block text-small18 font-bold text-neutral-0">
                 {card.title}
               </strong>
-              <p className="text-xsmall14 text-neutral-40 mt-3 leading-relaxed">
+              <p className="mt-3 text-xsmall14 leading-relaxed text-neutral-40">
                 {card.desc}
               </p>
             </div>

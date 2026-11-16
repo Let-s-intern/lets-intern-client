@@ -19,8 +19,8 @@ const MentoringCurationSection = () => {
   if (!curation || items.length === 0) return null;
 
   return (
-    <section className="border-primary-20 bg-primary-5 flex flex-col gap-5 rounded-md border px-5 py-6 md:mb-12 md:gap-8 md:px-8 md:py-8">
-      <h2 className="text-small18 md:text-small20 text-neutral-0 font-semibold">
+    <section className="flex flex-col gap-5 rounded-md border border-primary-20 bg-primary-5 px-5 py-6 md:mb-12 md:gap-8 md:px-8 md:py-8">
+      <h2 className="text-small18 font-semibold text-neutral-0 md:text-small20">
         {curation.curationInfo.title}
       </h2>
       <ul className="grid grid-cols-2 gap-x-4 gap-y-6 md:grid-cols-4 md:gap-x-5">
@@ -33,7 +33,7 @@ const MentoringCurationSection = () => {
                 target={url.startsWith('http') ? '_blank' : undefined}
                 className="flex flex-col gap-3 md:gap-4"
               >
-                <div className="bg-neutral-80 aspect-[415/279] overflow-hidden rounded-sm">
+                <div className="aspect-[415/279] overflow-hidden rounded-sm bg-neutral-80">
                   {item.thumbnail && (
                     <img
                       src={item.thumbnail}
@@ -42,7 +42,7 @@ const MentoringCurationSection = () => {
                     />
                   )}
                 </div>
-                <span className="text-xsmall14 md:text-xsmall16 text-neutral-0 line-clamp-2 font-semibold">
+                <span className="line-clamp-2 text-xsmall14 font-semibold text-neutral-0 md:text-xsmall16">
                   {item.title}
                 </span>
               </Link>

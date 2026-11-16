@@ -11,7 +11,7 @@ export const BLOG_POPUP_IMAGE_NOTICE =
 /** 업로드 필드 아래에 고정으로 붙는 사이즈 고지 (PRD R7). */
 export function BlogPopupImageNotice() {
   return (
-    <p className="text-neutral-40 mt-1 text-xs">{BLOG_POPUP_IMAGE_NOTICE}</p>
+    <p className="mt-1 text-xs text-neutral-40">{BLOG_POPUP_IMAGE_NOTICE}</p>
   );
 }
 
@@ -23,31 +23,31 @@ export default function BlogPopupPreview({ imageUrl }: BlogPopupPreviewProps) {
   return (
     <div className="w-[400px]">
       <div
-        className="shadow-02 overflow-hidden bg-white"
+        className="overflow-hidden bg-white shadow-02"
         style={{ borderRadius: `${BORDER_RADIUS_PX}px` }}
       >
         <div className="relative">
           {imageUrl ? (
             <img src={imageUrl} alt="" className="h-auto w-full" />
           ) : (
-            <div className="bg-neutral-90 text-neutral-40 flex h-60 w-full items-center justify-center text-sm">
+            <div className="flex h-60 w-full items-center justify-center bg-neutral-90 text-sm text-neutral-40">
               이미지를 업로드하면 여기에 미리보기가 표시됩니다
             </div>
           )}
         </div>
 
-        <div className="text-xsmall14 border-neutral-80 flex items-center border-t">
+        <div className="flex items-center border-t border-neutral-80 text-xsmall14">
           <button
             type="button"
             disabled
-            className="text-neutral-40 flex-1 py-3.5"
+            className="flex-1 py-3.5 text-neutral-40"
           >
             하루 동안 보지 않기
           </button>
           <button
             type="button"
             disabled
-            className="border-neutral-80 text-neutral-0 flex-1 border-l py-3.5 font-semibold"
+            className="flex-1 border-l border-neutral-80 py-3.5 font-semibold text-neutral-0"
           >
             닫기
           </button>

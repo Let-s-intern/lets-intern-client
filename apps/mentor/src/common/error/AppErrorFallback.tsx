@@ -15,7 +15,7 @@ interface AppErrorFallbackProps {
  */
 const AppErrorFallback = ({ resetError }: AppErrorFallbackProps) => (
   <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-    <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
+    <div className="rounded-2xl w-full max-w-md bg-white p-8 shadow-lg">
       <h1 className="text-center text-lg font-bold text-neutral-900">
         화면을 표시하지 못했습니다
       </h1>
@@ -33,7 +33,7 @@ const AppErrorFallback = ({ resetError }: AppErrorFallbackProps) => (
         <button
           type="button"
           onClick={() => window.location.reload()}
-          className="bg-primary hover:bg-primary-hover rounded-xl px-4 py-2 text-sm font-medium text-white transition-colors"
+          className="rounded-xl bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-hover"
         >
           새로고침
         </button>

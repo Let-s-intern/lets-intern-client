@@ -40,7 +40,7 @@ const MentorCard = ({ opening }: MentorCardProps) => {
     >
       {/* 썸네일 — 썸네일(없으면 프로필 이미지)이 있으면 흰 배경 위 이미지, 없으면 브랜드 컬러 배경 + 제목 텍스트 */}
       <div
-        className={`md:rounded-xs relative aspect-[540/421] overflow-hidden rounded-sm ${
+        className={`relative aspect-[540/421] overflow-hidden rounded-sm md:rounded-xs ${
           cardImage ? 'bg-white' : 'bg-primary'
         }`}
       >
@@ -54,14 +54,14 @@ const MentorCard = ({ opening }: MentorCardProps) => {
 
         {/* 대표 직무 배지 — 프로그램 카드의 마감임박 배지와 같은 규격 */}
         {badge && (
-          <span className="rounded-xs bg-neutral-0/80 text-xxsmall10 text-static-100 md:text-xxsmall12 absolute left-2 top-2 px-2.5 py-1 font-semibold">
+          <span className="absolute left-2 top-2 rounded-xs bg-neutral-0/80 px-2.5 py-1 text-xxsmall10 font-semibold text-static-100 md:text-xxsmall12">
             {badge}
           </span>
         )}
 
         {!cardImage && (
           <p
-            className={`text-small18 relative line-clamp-3 px-4 pb-4 font-bold text-white ${
+            className={`relative line-clamp-3 px-4 pb-4 text-small18 font-bold text-white ${
               badge ? 'pt-11' : 'pt-4'
             }`}
           >
@@ -76,7 +76,7 @@ const MentorCard = ({ opening }: MentorCardProps) => {
           모바일 2열 카드는 폭이 좁아 글자·여백을 줄이고 각 덩어리 안에서는 줄바꿈하지 않는다.
           그래도 안 들어가는 폭(320px)이면 가격 덩어리째 다음 줄 오른쪽으로 내린다.
         */}
-        <div className="bg-neutral-0 text-xxsmall12 md:text-xsmall14 absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-x-2 whitespace-nowrap px-2.5 py-2 text-white md:px-4 md:py-2.5">
+        <div className="absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-x-2 whitespace-nowrap bg-neutral-0 px-2.5 py-2 text-xxsmall12 text-white md:px-4 md:py-2.5 md:text-xsmall14">
           <span>{durationsLabel(opening.durations)}</span>
           <span className="ml-auto font-bold">
             {cardPriceLabel(opening.durations, opening.minimumPrice)}
@@ -84,7 +84,7 @@ const MentorCard = ({ opening }: MentorCardProps) => {
         </div>
       </div>
 
-      <h2 className="text-1-semibold text-xsmall14 md:text-xsmall16 line-clamp-2">
+      <h2 className="text-1-semibold line-clamp-2 text-xsmall14 md:text-xsmall16">
         {opening.title ?? `${nickname}의 1:1 멘토링`}
       </h2>
 
@@ -94,7 +94,7 @@ const MentorCard = ({ opening }: MentorCardProps) => {
             {opening.categories.map((category) => (
               <div
                 key={category}
-                className="text-xxsmall12 border-neutral-95 bg-neutral-95 text-neutral-40 flex items-center justify-center rounded-[3px] border px-2 py-1 text-center font-normal"
+                className="flex items-center justify-center rounded-[3px] border border-neutral-95 bg-neutral-95 px-2 py-1 text-center text-xxsmall12 font-normal text-neutral-40"
               >
                 {CATEGORY_LABELS[category]}
               </div>

@@ -133,11 +133,11 @@ const LiveMentoringDetailPage = ({
   }, [firstDuration, hasDuration, selectDuration]);
 
   if (isLoading) {
-    return <p className="text-neutral-40 py-20 text-center">불러오는 중…</p>;
+    return <p className="py-20 text-center text-neutral-40">불러오는 중…</p>;
   }
   if (isError || !data) {
     return (
-      <p className="text-neutral-40 py-20 text-center">
+      <p className="py-20 text-center text-neutral-40">
         멘토 정보를 불러오지 못했습니다.
       </p>
     );
@@ -229,11 +229,11 @@ const LiveMentoringDetailPage = ({
             가운데에 놓인다.
           */}
           <div className="flex min-w-0 max-w-[583px] flex-col gap-2 text-left">
-            <p className="text-small20 md:text-medium24 font-bold">
+            <p className="text-small20 font-bold md:text-medium24">
               {nickname}
             </p>
             {intro.affiliation && (
-              <p className="text-xsmall14 md:text-xsmall16 font-semibold">
+              <p className="text-xsmall14 font-semibold md:text-xsmall16">
                 {intro.affiliation}
               </p>
             )}
@@ -248,7 +248,7 @@ const LiveMentoringDetailPage = ({
                   return (
                     <li
                       key={i}
-                      className="text-neutral-30 text-xsmall14 flex items-center gap-2"
+                      className="flex items-center gap-2 text-xsmall14 text-neutral-30"
                     >
                       {logoImgUrl ? (
                         <img
@@ -268,11 +268,11 @@ const LiveMentoringDetailPage = ({
               않았다. 한 단계 진한 primary-10 에 옅은 테두리를 더해 경계를 만든다.
             */}
             {intro.oneLiner && (
-              <div className="bg-primary-10 border-primary-20 mt-4 flex flex-col gap-2 rounded-md border p-5">
-                <p className="text-primary text-xsmall14 flex items-center gap-1.5 font-semibold">
+              <div className="mt-4 flex flex-col gap-2 rounded-md border border-primary-20 bg-primary-10 p-5">
+                <p className="flex items-center gap-1.5 text-xsmall14 font-semibold text-primary">
                   <span aria-hidden="true">💬</span> 멘토님의 한마디
                 </p>
-                <p className="text-neutral-30 text-xsmall14 whitespace-pre-line leading-relaxed">
+                <p className="whitespace-pre-line text-xsmall14 leading-relaxed text-neutral-30">
                   {intro.oneLiner}
                 </p>
               </div>
@@ -306,20 +306,20 @@ const LiveMentoringDetailPage = ({
                 key={i}
                 /* 멘토 설정의 미리보기가 편집 중인 카드로 따라올 때 쓴다(LC-3268). */
                 data-preview-item={i}
-                className="bg-neutral-95 flex flex-col gap-3 rounded-lg p-7"
+                className="flex flex-col gap-3 rounded-lg bg-neutral-95 p-7"
               >
                 <div className="flex items-center gap-2">
-                  <span className="bg-primary text-xxsmall12 rounded-sm px-2 py-1 font-semibold text-white">
+                  <span className="rounded-sm bg-primary px-2 py-1 text-xxsmall12 font-semibold text-white">
                     멘토링 유형 {i + 1}
                   </span>
                   <span className="text-xsmall14 font-medium">
                     {item.typeName}
                   </span>
                 </div>
-                <p className="text-small18 whitespace-pre-line font-bold leading-snug">
+                <p className="whitespace-pre-line text-small18 font-bold leading-snug">
                   {item.title}
                 </p>
-                <p className="text-neutral-40 text-xsmall14 whitespace-pre-line">
+                <p className="whitespace-pre-line text-xsmall14 text-neutral-40">
                   {item.description}
                 </p>
                 {item.tags.length > 0 && (
@@ -327,7 +327,7 @@ const LiveMentoringDetailPage = ({
                     {item.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="bg-neutral-90 text-neutral-40 text-xxsmall12 rounded-sm px-2 py-1"
+                        className="rounded-sm bg-neutral-90 px-2 py-1 text-xxsmall12 text-neutral-40"
                       >
                         # {tag}
                       </span>
@@ -360,7 +360,7 @@ const LiveMentoringDetailPage = ({
                   둘을 합친 덩어리가 가운데에 놓인다. 글에 남은 폭을 다 주면 짧게 쓴
                   Point 는 왼쪽에 몰려 오른쪽이 비어 보인다.
                 */
-                className="bg-primary-5 flex flex-col items-center gap-5 rounded-md p-5 md:flex-row md:items-center md:justify-center md:gap-8"
+                className="flex flex-col items-center gap-5 rounded-md bg-primary-5 p-5 md:flex-row md:items-center md:justify-center md:gap-8"
               >
                 {/* 이미지가 카드 높이를 좌우한다 — 비율 고정 + 상한을 둬 섹션이 늘어나지 않게 한다 */}
                 {/*
@@ -381,20 +381,20 @@ const LiveMentoringDetailPage = ({
                   // 채울 그림이 없으면 높이를 정할 근거도 없다.
                   <div
                     data-preview-item={i * 2}
-                    className="bg-neutral-90 aspect-[4/3] w-full max-w-[380px] shrink-0 rounded-sm"
+                    className="aspect-[4/3] w-full max-w-[380px] shrink-0 rounded-sm bg-neutral-90"
                   />
                 )}
                 <div
                   data-preview-item={i * 2 + 1}
                   className="flex min-w-0 max-w-[520px] flex-col gap-2"
                 >
-                  <span className="bg-primary text-xxsmall12 w-fit rounded-full px-3 py-1 font-semibold text-white">
+                  <span className="w-fit rounded-full bg-primary px-3 py-1 text-xxsmall12 font-semibold text-white">
                     Point {i + 1}
                   </span>
-                  <p className="text-xsmall16 md:text-small18 whitespace-pre-line font-bold">
+                  <p className="whitespace-pre-line text-xsmall16 font-bold md:text-small18">
                     {point.title}
                   </p>
-                  <p className="text-neutral-40 text-xsmall14 whitespace-pre-line leading-relaxed">
+                  <p className="whitespace-pre-line text-xsmall14 leading-relaxed text-neutral-40">
                     {point.description}
                   </p>
                 </div>
@@ -424,7 +424,7 @@ const LiveMentoringDetailPage = ({
             />
           </div>
           {video.caption && (
-            <p className="text-xsmall14 md:text-xsmall16 text-center text-white/80">
+            <p className="text-center text-xsmall14 text-white/80 md:text-xsmall16">
               {video.caption}
             </p>
           )}
@@ -465,7 +465,7 @@ const LiveMentoringDetailPage = ({
                   맨 아래에서 후 설명과 붙어 버린다. 좁을 때는 전·후를 각각 묶는다.
                 */}
                 <div className="order-1 self-end overflow-hidden rounded-md">
-                  <p className="text-neutral-30 text-xsmall14 bg-neutral-75 py-2.5 text-center font-semibold">
+                  <p className="bg-neutral-75 py-2.5 text-center text-xsmall14 font-semibold text-neutral-30">
                     Before
                   </p>
                   <div className="bg-neutral-85 p-4">
@@ -480,7 +480,7 @@ const LiveMentoringDetailPage = ({
                 </div>
 
                 <div className="order-3 mt-5 self-end overflow-hidden rounded-md md:order-2 md:mt-0">
-                  <p className="bg-primary text-xsmall14 py-2.5 text-center font-semibold text-white">
+                  <p className="bg-primary py-2.5 text-center text-xsmall14 font-semibold text-white">
                     After
                   </p>
                   <div className="bg-primary-20 p-4">
@@ -505,13 +505,13 @@ const LiveMentoringDetailPage = ({
                 */}
                 <p
                   data-preview-item={i * 2}
-                  className="text-xsmall14 order-2 whitespace-pre-line text-center text-white/70 md:order-3"
+                  className="order-2 whitespace-pre-line text-center text-xsmall14 text-white/70 md:order-3"
                 >
                   {item.beforeCaption}
                 </p>
                 <p
                   data-preview-item={i * 2 + 1}
-                  className="text-xsmall14 order-4 whitespace-pre-line text-center font-medium text-white"
+                  className="order-4 whitespace-pre-line text-center text-xsmall14 font-medium text-white"
                 >
                   ✓ {item.afterCaption}
                 </p>

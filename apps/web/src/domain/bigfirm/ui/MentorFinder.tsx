@@ -57,7 +57,7 @@ export function MentorFinder({ images }: { images: MentorImages }) {
             className={`inline-flex items-center gap-1.5 rounded-full border-[1.5px] px-4 py-2 text-[15px] font-bold transition-colors ${
               tab.key === active
                 ? 'border-primary bg-primary text-white'
-                : 'hover:text-primary border-[#e3e5f0] bg-white text-[#575757] hover:border-[#9a9ffa]'
+                : 'border-[#e3e5f0] bg-white text-[#575757] hover:border-[#9a9ffa] hover:text-primary'
             }`}
           >
             {tab.label}
@@ -97,7 +97,7 @@ function MentorCard({
   image: string | null;
 }) {
   return (
-    <article className="hover:border-primary relative flex flex-col gap-3.5 rounded-[20px] border-[1.5px] border-[#e3e5f0] bg-white p-[22px] transition hover:-translate-y-0.5">
+    <article className="relative flex flex-col gap-3.5 rounded-[20px] border-[1.5px] border-[#e3e5f0] bg-white p-[22px] transition hover:-translate-y-0.5 hover:border-primary">
       <div className="flex items-center gap-3">
         {image ? (
           <Image
@@ -134,7 +134,7 @@ function MentorCard({
           {mentor.tags.map((tag) => (
             <span
               key={tag}
-              className={`rounded-full px-3 py-1 text-sm font-bold ${TAG_STYLES[tag] ?? 'text-primary bg-[#f1f0ff]'}`}
+              className={`rounded-full px-3 py-1 text-sm font-bold ${TAG_STYLES[tag] ?? 'bg-[#f1f0ff] text-primary'}`}
             >
               {tag}
             </span>
@@ -151,7 +151,7 @@ function MentorCard({
         data-track-mentor-id={mentor.id}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-primary mt-auto flex w-full items-center rounded-md bg-[#e9eaff] px-4 py-2.5 text-sm font-medium after:absolute after:inset-0 after:rounded-[20px] hover:bg-[#dfe1fe]"
+        className="mt-auto flex w-full items-center rounded-md bg-[#e9eaff] px-4 py-2.5 text-sm font-medium text-primary after:absolute after:inset-0 after:rounded-[20px] hover:bg-[#dfe1fe]"
       >
         상세페이지 보러가기 →
       </Link>

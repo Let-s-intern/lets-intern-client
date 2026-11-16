@@ -23,17 +23,17 @@ export function FormField({
 }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label className="text-xsmall16 text-neutral-20 font-medium">
+      <label className="text-xsmall16 font-medium text-neutral-20">
         {label}
-        {required && <span className="text-primary-90 ml-1">*</span>}
+        {required && <span className="ml-1 text-primary-90">*</span>}
       </label>
       {children}
       {error ? (
-        <p className="text-xxsmall12 text-requirement font-normal">{error}</p>
+        <p className="text-xxsmall12 font-normal text-requirement">{error}</p>
       ) : helper ? (
         <p
           className={twMerge(
-            'text-xxsmall12 text-neutral-40 font-normal',
+            'text-xxsmall12 font-normal text-neutral-40',
             hideHelperOnMobile && 'hidden md:block',
           )}
         >
@@ -114,14 +114,14 @@ export function SelectField({
         </span>
         <FiChevronDown
           className={twMerge(
-            'text-neutral-40 h-5 w-5 shrink-0 transition-transform',
+            'h-5 w-5 shrink-0 text-neutral-40 transition-transform',
             open && 'rotate-180',
           )}
         />
       </button>
 
       {open && (
-        <ul className="shadow-07 border-neutral-80 bg-static-100 rounded-xxs absolute left-0 top-full z-10 mt-1 max-h-60 w-full overflow-auto border py-1">
+        <ul className="absolute left-0 top-full z-10 mt-1 max-h-60 w-full overflow-auto rounded-xxs border border-neutral-80 bg-static-100 py-1 shadow-07">
           {options.map((o) => (
             <li key={o.value}>
               <button
@@ -131,8 +131,8 @@ export function SelectField({
                   setOpen(false);
                 }}
                 className={twMerge(
-                  'text-xsmall16 hover:bg-neutral-95 text-neutral-0 block w-full cursor-pointer px-3 py-2 text-left transition-colors',
-                  o.value === value && 'text-primary font-medium',
+                  'block w-full cursor-pointer px-3 py-2 text-left text-xsmall16 text-neutral-0 transition-colors hover:bg-neutral-95',
+                  o.value === value && 'font-medium text-primary',
                 )}
               >
                 {o.label}
@@ -160,9 +160,9 @@ export function Chip({
       type="button"
       onClick={onClick}
       className={twMerge(
-        'text-xsmall14 rounded-full border px-4 py-2 transition-colors',
+        'rounded-full border px-4 py-2 text-xsmall14 transition-colors',
         selected
-          ? 'border-primary bg-primary-10 text-primary font-semibold'
+          ? 'border-primary bg-primary-10 font-semibold text-primary'
           : 'border-neutral-80 bg-static-100 text-neutral-20 hover:border-neutral-60',
       )}
     >
@@ -194,7 +194,7 @@ export function CheckboxRow({
         alt=""
         className="mt-[1px] h-4 w-4 shrink-0 md:h-6 md:w-6"
       />
-      <span className="text-xxsmall12 md:text-xsmall14 text-neutral-30">
+      <span className="text-xxsmall12 text-neutral-30 md:text-xsmall14">
         {children}
       </span>
     </label>

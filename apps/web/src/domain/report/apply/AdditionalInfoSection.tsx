@@ -37,7 +37,7 @@ export const AdditionalInfoSection = () => {
         <Label htmlFor="message">서류 작성 고민</Label>
         <textarea
           id="message"
-          className="bg-neutral-95 text-xsmall14 w-full resize-none rounded-md p-3"
+          className="w-full resize-none rounded-md bg-neutral-95 p-3 text-xsmall14"
           name="message"
           placeholder="진단에 참고할 수 있도록 서류 작성에 대한 고민을 적어주세요"
           rows={2}

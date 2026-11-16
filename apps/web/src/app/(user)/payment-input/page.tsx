@@ -387,7 +387,7 @@ const PaymentInputContent = () => {
           }
         />
         {program && 'deadline' in program && program.deadline ? (
-          <div className="bg-primary-10 text-xsmall14 -mx-5 mb-10 mt-8 flex items-center justify-center gap-2 px-2.5 py-5 lg:mx-0 lg:rounded-sm">
+          <div className="-mx-5 mb-10 mt-8 flex items-center justify-center gap-2 bg-primary-10 px-2.5 py-5 text-xsmall14 lg:mx-0 lg:rounded-sm">
             <span>마감까지</span>
             <Duration
               deadline={program.deadline}
@@ -398,7 +398,7 @@ const PaymentInputContent = () => {
         ) : (
           <div className="mt-10"></div>
         )}
-        <p className="text-xsmall16 text-neutral-0 my-3 font-semibold">
+        <p className="my-3 text-xsmall16 font-semibold text-neutral-0">
           신청 폼을 모두 입력해주세요.
         </p>
         <div className="flex flex-col gap-2.5">
@@ -419,7 +419,7 @@ const PaymentInputContent = () => {
         </div>
       </div>
 
-      <hr className="bg-neutral-95 my-10 block h-2 border-none" />
+      <hr className="my-10 block h-2 border-none bg-neutral-95" />
 
       {appliedVersionTitle && (
         <AppliedVersionSection versionTitle={appliedVersionTitle} />
@@ -427,7 +427,7 @@ const PaymentInputContent = () => {
 
       {!programApplicationData.isFree && (
         <div className="mx-5 mb-10 flex flex-col gap-y-6">
-          <div className="text-neutral-0 font-semibold">결제 정보</div>
+          <div className="font-semibold text-neutral-0">결제 정보</div>
           <div className="flex flex-col gap-y-5">
             {showCouponSection && (
               <CouponSection
@@ -448,7 +448,7 @@ const PaymentInputContent = () => {
 
             {programApplicationData.programType === 'challenge' &&
               !isLoading && (
-                <div className="text-primary flex items-start gap-2.5 px-3">
+                <div className="flex items-start gap-2.5 px-3 text-primary">
                   <CreditCardIcon className="h-auto w-5" />
                   <p className="text-xsmall14 font-medium">
                     {banks.join(', ')}카드로 결제하면{' '}
@@ -476,7 +476,7 @@ const PaymentInputContent = () => {
               }
             />
             <hr className="bg-neutral-85" />
-            <div className="text-neutral-0 flex h-10 items-center justify-between px-3 font-semibold">
+            <div className="flex h-10 items-center justify-between px-3 font-semibold text-neutral-0">
               <span>결제금액</span>
               <span>{totalPrice.toLocaleString()}원</span>
             </div>
@@ -485,7 +485,7 @@ const PaymentInputContent = () => {
           {!isLoading &&
             programApplicationData.programType === 'challenge' &&
             programApplicationData.deposit > 0 && (
-              <div className="text-xsmall14 relative overflow-hidden rounded-sm bg-[#E8F9F2] px-4 py-6 md:px-5">
+              <div className="relative overflow-hidden rounded-sm bg-[#E8F9F2] px-4 py-6 text-xsmall14 md:px-5">
                 <p className="font-medium">
                   모든 미션을 성공하면
                   <br className="md:hidden" />{' '}

@@ -43,13 +43,13 @@ const ApplySection = ({
       <h1 className="text-lg font-semibold">참여 예정</h1>
       {totalCount === 0 ? (
         <div className="flex w-full flex-col items-center gap-5 py-14">
-          <p className="text-xsmall14 text-neutral-20 font-normal">
+          <p className="text-xsmall14 font-normal text-neutral-20">
             참여 예정인 프로그램이 없어요
           </p>
           {!hasInProgress && hasCompleted && (
             <HybridLink
               href="/program"
-              className="other_program rounded-xxs border-primary text-primary hover:bg-primary/5 flex w-auto items-center justify-center border bg-white px-3 py-1.5 text-sm font-medium transition-colors"
+              className="other_program flex w-auto items-center justify-center rounded-xxs border border-primary bg-white px-3 py-1.5 text-sm font-medium text-primary transition-colors hover:bg-primary/5"
             >
               프로그램 둘러보기
             </HybridLink>

@@ -28,26 +28,26 @@ export default function MentorDetailContentSection({
   const { data: user, isLoading } = useUserQuery();
 
   return (
-    <section className="border-neutral-80 bg-static-100 rounded-xl border p-5 md:p-6">
+    <section className="rounded-xl border border-neutral-80 bg-static-100 p-5 md:p-6">
       {/*
         바로가기는 여기 두지 않는다. 아직 저장하지 않은 글을 쓰는 중에 눌러 봐야 옛 페이지가
         열려서, 방금 쓴 내용이 반영되지 않은 것을 보게 된다. 저장에 성공한 뒤에 안내와 함께
         연다(LC-3277) — `ProfilePage` 의 저장 성공 처리에 있다.
       */}
-      <h2 className="text-xsmall16 md:text-small18 text-neutral-0 font-medium tracking-tight">
+      <h2 className="text-xsmall16 font-medium tracking-tight text-neutral-0 md:text-small18">
         프로필 상세페이지 제작
       </h2>
 
       <div className="mt-4">
         <div className="flex flex-col items-center justify-center py-20 md:hidden">
-          <p className="text-xsmall14 text-neutral-40 whitespace-pre-line text-center">
+          <p className="whitespace-pre-line text-center text-xsmall14 text-neutral-40">
             상세페이지 제작은{'\n'}데스크탑을 이용해주세요.
           </p>
         </div>
 
         <div className="hidden md:block">
           {isLoading || !user ? (
-            <div className="text-xsmall14 text-neutral-40 py-4">로딩 중...</div>
+            <div className="py-4 text-xsmall14 text-neutral-40">로딩 중...</div>
           ) : (
             /*
              * 마운트 값은 서버 응답에서 **직접** 읽는다.

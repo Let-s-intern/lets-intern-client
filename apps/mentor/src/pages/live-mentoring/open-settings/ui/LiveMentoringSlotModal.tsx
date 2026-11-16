@@ -124,15 +124,15 @@ const LiveMentoringSlotModal = ({
       onClose={handleClose}
       className="flex h-[85vh] max-w-[980px] flex-col overflow-hidden"
     >
-      <div className="border-neutral-85 flex items-center justify-between gap-4 border-b px-6 py-5">
-        <h2 className="text-medium20 text-neutral-10 font-semibold">
+      <div className="flex items-center justify-between gap-4 border-b border-neutral-85 px-6 py-5">
+        <h2 className="text-medium20 font-semibold text-neutral-10">
           1대1 멘토링 일정 오픈하기
         </h2>
         <button
           type="button"
           onClick={handleClose}
           aria-label="닫기"
-          className="text-neutral-40 hover:text-neutral-10 -mr-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-md transition-colors"
+          className="-mr-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-neutral-40 transition-colors hover:text-neutral-10"
         >
           <svg
             width="20"
@@ -163,7 +163,7 @@ const LiveMentoringSlotModal = ({
           <button
             type="button"
             onClick={() => slotsQuery.refetch()}
-            className="border-neutral-80 text-xsmall14 text-neutral-40 rounded-md border px-4 py-2"
+            className="rounded-md border border-neutral-80 px-4 py-2 text-xsmall14 text-neutral-40"
           >
             다시 시도
           </button>
@@ -173,17 +173,17 @@ const LiveMentoringSlotModal = ({
           {saveError && (
             <div
               role="alert"
-              className="text-xsmall14 border-b border-red-100 bg-red-50 px-6 py-3 text-red-600"
+              className="border-b border-red-100 bg-red-50 px-6 py-3 text-xsmall14 text-red-600"
             >
               {saveError}
             </div>
           )}
           {isSaving && (
-            <div className="border-primary-90 bg-primary-5 text-xsmall14 text-primary-90 border-b px-6 py-3">
+            <div className="border-b border-primary-90 bg-primary-5 px-6 py-3 text-xsmall14 text-primary-90">
               저장 중입니다...
             </div>
           )}
-          <p className="text-xxsmall12 text-neutral-40 border-neutral-85 border-b px-6 py-3">
+          <p className="border-b border-neutral-85 px-6 py-3 text-xxsmall12 text-neutral-40">
             여기서 연 시간은 라이브 피드백 일정과 같은 목록이에요. 어느 화면에서
             열어도 결과가 같습니다.
           </p>

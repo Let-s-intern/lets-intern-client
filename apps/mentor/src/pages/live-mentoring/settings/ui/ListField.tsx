@@ -53,9 +53,9 @@ function ListField<T>({
         유형 카드·결과 사례가 모두 그 모양이라, 여기만 다르면 같은 조작을 매번 다른
         자리에서 찾게 된다.
       */}
-      <p className="text-xsmall14 text-neutral-10 font-semibold">{label}</p>
+      <p className="text-xsmall14 font-semibold text-neutral-10">{label}</p>
       {hint ? (
-        <p className="text-neutral-40 mt-1 whitespace-pre-line text-xs">
+        <p className="mt-1 whitespace-pre-line text-xs text-neutral-40">
           {hint}
         </p>
       ) : null}
@@ -119,7 +119,7 @@ function ListField<T>({
       <button
         type="button"
         onClick={() => onChange([...items, makeEmpty()])}
-        className="border-primary text-primary text-xsmall14 mt-3 w-full rounded-md border py-3 font-medium transition-colors"
+        className="mt-3 w-full rounded-md border border-primary py-3 text-xsmall14 font-medium text-primary transition-colors"
       >
         {addLabel ?? `${label} 추가 +`}
       </button>

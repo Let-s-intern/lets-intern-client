@@ -103,13 +103,13 @@ export default function MentorPickRankDialog({
           </Button>
         ) : null}
         {picks.length === 0 ? (
-          <p className="text-xsmall14 text-neutral-40 py-8 text-center">
+          <p className="py-8 text-center text-xsmall14 text-neutral-40">
             렛커 픽 멘토가 없습니다.
           </p>
         ) : (
           <table className="w-full border-collapse">
-            <thead className="border-neutral-80 border-b">
-              <tr className="text-neutral-40 text-left text-xs">
+            <thead className="border-b border-neutral-80">
+              <tr className="text-left text-xs text-neutral-40">
                 <th className="px-3 py-2 font-medium">순위</th>
                 <th className="px-3 py-2 font-medium">멘토</th>
                 <th className="px-3 py-2 font-medium">닉네임</th>
@@ -126,7 +126,7 @@ export default function MentorPickRankDialog({
                     ref={isCurrent ? currentRowRef : undefined}
                     aria-current={isCurrent ? 'true' : undefined}
                     className={twMerge(
-                      'border-neutral-90 border-b text-sm last:border-b-0',
+                      'border-b border-neutral-90 text-sm last:border-b-0',
                       isCurrent && 'bg-primary-10',
                     )}
                   >
@@ -148,7 +148,7 @@ export default function MentorPickRankDialog({
                     <td className="px-3 py-2">
                       {pick.name}
                       {isCurrent ? (
-                        <span className="text-primary ml-2 text-xs font-semibold">
+                        <span className="ml-2 text-xs font-semibold text-primary">
                           이 멘토
                         </span>
                       ) : null}

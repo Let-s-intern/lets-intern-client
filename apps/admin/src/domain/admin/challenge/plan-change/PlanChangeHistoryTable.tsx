@@ -35,7 +35,7 @@ const ManualRefundCompleteCell = ({ log }: { log: PlanChangeLog }) => {
     return (
       <button
         type="button"
-        className="whitespace-nowrap rounded border border-red-500 px-2 py-1 text-xs text-red-600 hover:bg-red-50"
+        className="rounded whitespace-nowrap border border-red-500 px-2 py-1 text-xs text-red-600 hover:bg-red-50"
         onClick={() => setIsEditing(true)}
       >
         환불 완료
@@ -48,7 +48,7 @@ const ManualRefundCompleteCell = ({ log }: { log: PlanChangeLog }) => {
   return (
     <div className="flex items-center gap-1">
       <input
-        className="w-24 rounded border border-neutral-300 px-2 py-1 text-xs"
+        className="rounded w-24 border border-neutral-300 px-2 py-1 text-xs"
         aria-label="환불 담당자"
         placeholder="담당자 이름"
         value={managerName}
@@ -56,7 +56,7 @@ const ManualRefundCompleteCell = ({ log }: { log: PlanChangeLog }) => {
       />
       <button
         type="button"
-        className="whitespace-nowrap rounded bg-red-600 px-2 py-1 text-xs text-white disabled:bg-neutral-300"
+        className="rounded whitespace-nowrap bg-red-600 px-2 py-1 text-xs text-white disabled:bg-neutral-300"
         disabled={!trimmedName || mutation.isPending}
         onClick={() =>
           mutation.mutate({
@@ -70,7 +70,7 @@ const ManualRefundCompleteCell = ({ log }: { log: PlanChangeLog }) => {
       </button>
       <button
         type="button"
-        className="whitespace-nowrap rounded border border-neutral-300 px-2 py-1 text-xs"
+        className="rounded whitespace-nowrap border border-neutral-300 px-2 py-1 text-xs"
         disabled={mutation.isPending}
         onClick={() => setIsEditing(false)}
       >

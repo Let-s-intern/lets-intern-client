@@ -103,7 +103,7 @@ const OrderPage = ({ mentorId }: OrderPageProps) => {
   }, [draft, isLoggedIn, mentorId, router]);
 
   if (!isInitialized || !isLoggedIn || !draft) {
-    return <p className="text-neutral-40 py-20 text-center">이동 중…</p>;
+    return <p className="py-20 text-center text-neutral-40">이동 중…</p>;
   }
 
   return (
@@ -113,7 +113,7 @@ const OrderPage = ({ mentorId }: OrderPageProps) => {
           type="button"
           onClick={() => router.back()}
           aria-label="이전으로"
-          className="hover:bg-neutral-90 rounded-full p-1"
+          className="rounded-full p-1 hover:bg-neutral-90"
         >
           <img
             src="/icons/Chevron_Left_MD.svg"
@@ -122,7 +122,7 @@ const OrderPage = ({ mentorId }: OrderPageProps) => {
             className="h-6 w-6"
           />
         </button>
-        <h1 className="text-small20 md:text-medium24 text-neutral-0 font-bold">
+        <h1 className="text-small20 font-bold text-neutral-0 md:text-medium24">
           결제하기
         </h1>
       </div>
@@ -254,13 +254,13 @@ const SubmitBlock = ({
       )}
 
       {errorMessage && (
-        <div className="bg-system-error/5 flex flex-col gap-2 rounded-sm px-4 py-3">
+        <div className="flex flex-col gap-2 rounded-sm bg-system-error/5 px-4 py-3">
           <p className="text-xsmall14 text-system-error">{errorMessage}</p>
           {isSlotConflict && (
             <button
               type="button"
               onClick={() => setIsScheduleModalOpen(true)}
-              className="text-xsmall14 text-primary self-start underline"
+              className="self-start text-xsmall14 text-primary underline"
             >
               일정 다시 고르기
             </button>
@@ -272,7 +272,7 @@ const SubmitBlock = ({
         type="button"
         onClick={submit}
         disabled={!canSubmit || isPending}
-        className="bg-primary text-xsmall16 disabled:bg-neutral-80 disabled:text-neutral-40 w-full rounded-sm py-4 font-medium text-white"
+        className="w-full rounded-sm bg-primary py-4 text-xsmall16 font-medium text-white disabled:bg-neutral-80 disabled:text-neutral-40"
       >
         {isPending ? '신청하는 중…' : '결제하기'}
       </button>

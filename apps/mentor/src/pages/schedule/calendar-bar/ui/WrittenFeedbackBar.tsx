@@ -40,25 +40,25 @@ const WrittenFeedbackBar = ({ bar, onBarClick }: WrittenFeedbackBarProps) => {
       onClick={() => onBarClick(bar.challengeId, bar.missionId)}
       className={twMerge(
         scheduleDesign.surface,
-        'hover:bg-neutral-95 flex w-full flex-col gap-0.5 overflow-hidden px-3 py-2 text-left transition-colors',
+        'flex w-full flex-col gap-0.5 overflow-hidden px-3 py-2 text-left transition-colors hover:bg-neutral-95',
       )}
       aria-label={`서면 피드백 기간 — ${bar.challengeTitle} ${bar.th}회차`}
     >
       {/* 1줄: 아이콘 + 라벨 + 챌린지명 */}
       <div className="flex items-center gap-2">
         <WrittenFeedbackIcon size={18} className="shrink-0" />
-        <span className="text-xsmall14 text-neutral-10 shrink-0 whitespace-nowrap font-semibold tracking-[-0.3px]">
+        <span className="shrink-0 whitespace-nowrap text-xsmall14 font-semibold tracking-[-0.3px] text-neutral-10">
           {bar.th}회차 서면 피드백 기간
         </span>
-        <span className="text-xxsmall12 text-neutral-30 min-w-0 truncate font-medium tracking-[-0.3px]">
+        <span className="min-w-0 truncate text-xxsmall12 font-medium tracking-[-0.3px] text-neutral-30">
           {bar.challengeTitle}
         </span>
       </div>
 
       {/* 2줄: 보조 정보 (아이콘 너비만큼 들여쓰기) */}
-      <div className="text-xxsmall12 text-neutral-40 pl-[26px] tracking-[-0.3px]">
+      <div className="pl-[26px] text-xxsmall12 tracking-[-0.3px] text-neutral-40">
         {isDeadlineToday && <span>오늘 마감 · </span>}
-        <span className="text-primary font-medium">
+        <span className="font-medium text-primary">
           남은 피드백 {remaining}건
         </span>
         {` · 완료 ${bar.completedCount} / 제출 ${feedbackTargetCount}`}

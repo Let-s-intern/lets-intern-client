@@ -19,29 +19,29 @@ interface PriceSummarySectionProps {
 const PriceSummarySection = ({ selected }: PriceSummarySectionProps) => {
   return (
     <section className="flex flex-col gap-3">
-      <h3 className="text-xsmall16 text-neutral-0 font-semibold">
+      <h3 className="text-xsmall16 font-semibold text-neutral-0">
         총 결제 금액
       </h3>
 
       {selected === null ? (
-        <p className="bg-neutral-95 text-xsmall14 text-neutral-40 rounded-sm px-4 py-5 text-center">
+        <p className="rounded-sm bg-neutral-95 px-4 py-5 text-center text-xsmall14 text-neutral-40">
           플랜을 선택하면 결제 금액이 표시됩니다.
         </p>
       ) : (
-        <div className="bg-neutral-95 flex items-start justify-between gap-3 rounded-sm px-4 py-4">
+        <div className="flex items-start justify-between gap-3 rounded-sm bg-neutral-95 px-4 py-4">
           <span className="text-xsmall14 text-neutral-0">
             {planLabel(selected.duration)}
           </span>
           <div className="flex items-center gap-3">
-            <span className="text-xsmall16 text-neutral-0 font-bold">
+            <span className="text-xsmall16 font-bold text-neutral-0">
               {formatPrice(selected.price)}
             </span>
           </div>
         </div>
       )}
 
-      <div className="border-neutral-85 flex items-center justify-end border-t pt-3">
-        <span className="text-small18 text-neutral-0 font-bold">
+      <div className="flex items-center justify-end border-t border-neutral-85 pt-3">
+        <span className="text-small18 font-bold text-neutral-0">
           {formatPrice(selected?.price ?? 0)}
         </span>
       </div>

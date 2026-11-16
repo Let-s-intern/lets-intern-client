@@ -416,7 +416,7 @@ export default function ProfilePage() {
             type="button"
             onClick={handleSave}
             disabled={isSaving}
-            className="bg-primary hover:bg-primary-hover rounded-lg px-6 py-2.5 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50 md:px-10"
+            className="rounded-lg bg-primary px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50 md:px-10"
           >
             {isSaving ? '저장 중...' : '저장'}
           </button>

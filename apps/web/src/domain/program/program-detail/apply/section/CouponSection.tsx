@@ -77,13 +77,13 @@ const CouponSection = ({
     <>
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-3">
-          <div className="bg-neutral-95 flex flex-1 items-center justify-between rounded-md p-3">
-            <span className="text-xsmall14 md:text-xsmall16 font-normal">
+          <div className="flex flex-1 items-center justify-between rounded-md bg-neutral-95 p-3">
+            <span className="text-xsmall14 font-normal md:text-xsmall16">
               {selectedCoupon ? (
                 <span className="font-medium">{selectedCoupon.name}</span>
               ) : isEmpty ? (
                 <div>
-                  <span className="text-neutral-45 hidden md:inline">
+                  <span className="hidden text-neutral-45 md:inline">
                     해당 프로그램에 적용 가능한 쿠폰이 없습니다.{' '}
                   </span>
                   <span className="text-neutral-45">
@@ -117,7 +117,7 @@ const CouponSection = ({
             )}
           </div>
           <button
-            className="bg-primary text-xsmall16 rounded-sm px-5 py-[9px] text-neutral-100"
+            className="rounded-sm bg-primary px-5 py-[9px] text-xsmall16 text-neutral-100"
             onClick={() => setIsModalOpen(true)}
           >
             {isEmpty ? '쿠폰 등록' : '쿠폰 적용'}

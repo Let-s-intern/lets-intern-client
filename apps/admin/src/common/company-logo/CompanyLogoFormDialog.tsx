@@ -179,7 +179,7 @@ export default function CompanyLogoFormDialog({
             }
           />
           <div className="flex items-center gap-3">
-            <div className="border-neutral-80 flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded border border-dashed">
+            <div className="rounded flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden border border-dashed border-neutral-80">
               {imageUrl ? (
                 <img
                   src={imageUrl}
@@ -242,7 +242,7 @@ export default function CompanyLogoFormDialog({
             </div>
           ) : null}
           {error ? (
-            <p role="alert" className="text-system-error text-xs">
+            <p role="alert" className="text-xs text-system-error">
               {error}
             </p>
           ) : null}

@@ -157,7 +157,7 @@ function LineupDaySection({ day }: { day: LineupDay }) {
         {day.blocks.map((block) => (
           <li
             key={block.title}
-            className={`md:rounded-xs rounded-md px-3 py-3 text-white md:py-3.5 md:first:rounded-l-md md:last:rounded-r-md ${BLOCK_TONE[block.tone]}`}
+            className={`rounded-md px-3 py-3 text-white md:rounded-xs md:py-3.5 md:first:rounded-l-md md:last:rounded-r-md ${BLOCK_TONE[block.tone]}`}
           >
             <p className="text-sm font-bold leading-6">
               {block.title} {block.minutes}분

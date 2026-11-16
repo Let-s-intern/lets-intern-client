@@ -35,9 +35,9 @@ const Notice = ({
   children: React.ReactNode;
   icon?: string;
 }) => (
-  <div className="bg-neutral-95 flex flex-col items-center justify-center gap-2 rounded-md py-40 text-center md:py-52">
+  <div className="flex flex-col items-center justify-center gap-2 rounded-md bg-neutral-95 py-40 text-center md:py-52">
     {icon && <img src={icon} alt="" className="h-8 w-8" />}
-    <p className="text-xsmall14 md:text-xsmall16 text-neutral-40">{children}</p>
+    <p className="text-xsmall14 text-neutral-40 md:text-xsmall16">{children}</p>
   </div>
 );
 
@@ -107,8 +107,8 @@ const RetroForm = ({
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center gap-2">
-        <h2 className="text-small18 text-neutral-0 hidden md:block">{label}</h2>
-        <div className="bg-neutral-60 hidden h-[18px] w-px md:block" />
+        <h2 className="hidden text-small18 text-neutral-0 md:block">{label}</h2>
+        <div className="hidden h-[18px] w-px bg-neutral-60 md:block" />
         <span className="text-xsmall14 md:text-xsmall16">
           {readOnly ? (
             <span className="text-neutral-40">작성 기간이 마감되었습니다.</span>
@@ -141,18 +141,18 @@ const RetroForm = ({
               }
               placeholder={q.answerGuide}
               disabled={readOnly}
-              className="border-neutral-80 text-xsmall16 placeholder:text-neutral-40 disabled:bg-neutral-95 focus:border-primary min-h-[140px] resize-none rounded-md border p-3 focus:outline-none"
+              className="min-h-[140px] resize-none rounded-md border border-neutral-80 p-3 text-xsmall16 placeholder:text-neutral-40 focus:border-primary focus:outline-none disabled:bg-neutral-95"
             />
           </div>
         ))}
       </div>
 
       {(readOnly || isWrapUp) && round.adminFeedback && (
-        <div className="bg-primary-5 flex flex-col gap-2 rounded-md p-4">
-          <span className="text-xsmall14 text-primary font-semibold">
+        <div className="flex flex-col gap-2 rounded-md bg-primary-5 p-4">
+          <span className="text-xsmall14 font-semibold text-primary">
             운영자 코멘트
           </span>
-          <p className="text-xsmall14 md:text-xsmall16 text-neutral-0 whitespace-pre-wrap">
+          <p className="whitespace-pre-wrap text-xsmall14 text-neutral-0 md:text-xsmall16">
             {round.adminFeedback}
           </p>
         </div>
@@ -164,7 +164,7 @@ const RetroForm = ({
           <OutlinedButton
             type="button"
             onClick={() => setAnswers(buildInitial(round))}
-            className="text-xsmall14 md:text-xsmall16 flex-1 py-3.5 font-semibold"
+            className="flex-1 py-3.5 text-xsmall14 font-semibold md:text-xsmall16"
           >
             취소하기
           </OutlinedButton>
@@ -172,7 +172,7 @@ const RetroForm = ({
             type="button"
             onClick={handleSubmit}
             disabled={!canSubmit || submit.isPending}
-            className="text-xsmall14 md:text-xsmall16 flex-1 py-3.5 font-semibold"
+            className="flex-1 py-3.5 text-xsmall14 font-semibold md:text-xsmall16"
           >
             {isEdit ? '수정하기' : '제출하기'}
           </SolidButton>

@@ -26,14 +26,14 @@ const CurationCardPreview = () => {
       >
         {/* 좌측 썸네일 */}
         <div
-          className="rounded-xs bg-neutral-60 h-32 w-40 flex-none border"
+          className="h-32 w-40 flex-none rounded-xs border bg-neutral-60"
           style={{
             backgroundImage: "url('/images/curation-entry-card.png')",
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}
         >
-          <div className="text-xxsmall12 flex h-full items-center justify-center bg-black bg-opacity-30 p-2">
+          <div className="flex h-full items-center justify-center bg-black bg-opacity-30 p-2 text-xxsmall12">
             <span className="text-white">맞춤 챌린지 탐색 큐레이션</span>
           </div>
         </div>

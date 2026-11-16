@@ -29,7 +29,7 @@ const DetailLoadFailedNotice = ({
 
   return (
     <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-gray-300 px-6 py-16 text-center">
-      <p className="text-xsmall16 text-neutral-10 font-semibold">
+      <p className="text-xsmall16 font-semibold text-neutral-10">
         {needsProduct
           ? '먼저 오픈 설정을 저장해주세요.'
           : '상세 페이지를 불러오지 못했어요.'}
@@ -43,7 +43,7 @@ const DetailLoadFailedNotice = ({
         <button
           type="button"
           onClick={onGoToOpenStep}
-          className="bg-primary hover:bg-primary-hover mt-4 rounded-lg px-6 py-2.5 text-sm font-medium text-white transition-colors"
+          className="mt-4 rounded-lg bg-primary px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-hover"
         >
           오픈 설정으로 가기
         </button>

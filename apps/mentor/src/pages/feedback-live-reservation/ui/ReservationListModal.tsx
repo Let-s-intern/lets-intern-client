@@ -25,15 +25,15 @@ const ReservationListModal = ({
       onClose={onClose}
       className="flex h-[85vh] max-w-[1100px] flex-col overflow-hidden"
     >
-      <header className="border-neutral-85 flex items-center justify-between border-b px-6 py-5">
-        <h2 className="text-medium20 text-neutral-10 font-semibold">
+      <header className="flex items-center justify-between border-b border-neutral-85 px-6 py-5">
+        <h2 className="text-medium20 font-semibold text-neutral-10">
           예약 현황
         </h2>
         <button
           type="button"
           onClick={onClose}
           aria-label="닫기"
-          className="text-neutral-40 hover:text-neutral-20 text-medium22 leading-none"
+          className="text-medium22 leading-none text-neutral-40 hover:text-neutral-20"
         >
           ×
         </button>

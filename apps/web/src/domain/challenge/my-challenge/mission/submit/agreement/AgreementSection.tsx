@@ -11,7 +11,7 @@ const DescriptionBox = ({
 }) => (
   <p
     className={twMerge(
-      'rounded-xxs bg-neutral-95 text-xsmall14 text-neutral-10 p-3',
+      'rounded-xxs bg-neutral-95 p-3 text-xsmall14 text-neutral-10',
       className,
     )}
   >
@@ -38,7 +38,7 @@ export default function AgreementSection({
 }: AgreementSectionProps) {
   return (
     <div className="mt-7 flex flex-col gap-1">
-      <span className="text-xsmall16 text-neutral-0 font-semibold">
+      <span className="text-xsmall16 font-semibold text-neutral-0">
         {title}
       </span>
       <DescriptionBox>{description}</DescriptionBox>

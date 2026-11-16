@@ -101,10 +101,10 @@ export default function PlanSection({
   return (
     <section className="flex flex-col gap-3">
       <div className="flex flex-col justify-between gap-4 selection:items-start">
-        <h2 className="text-small20 text-neutral-0 font-semibold">
+        <h2 className="text-small20 font-semibold text-neutral-0">
           플랜 정보 (권한 구성)
         </h2>
-        <div className="bg-primary-10 border-primary-15 rounded-sm border px-4 py-1">
+        <div className="rounded-sm border border-primary-15 bg-primary-10 px-4 py-1">
           <FormControlLabel
             className="m-0"
             sx={{ cursor: 'not-allowed' }}
@@ -126,7 +126,7 @@ export default function PlanSection({
           return (
             <div
               key={plan.id}
-              className="border-neutral-80 flex overflow-hidden rounded-sm border"
+              className="flex overflow-hidden rounded-sm border border-neutral-80"
             >
               <div className="flex flex-1 flex-col gap-4 p-4">
                 <TextField
@@ -151,8 +151,8 @@ export default function PlanSection({
                   fullWidth
                 />
 
-                <fieldset className="border-neutral-60 -mt-1.5 rounded-[4px] border px-2 pb-2">
-                  <legend className="text-xxsmall12 text-neutral-40 px-1">
+                <fieldset className="-mt-1.5 rounded-[4px] border border-neutral-60 px-2 pb-2">
+                  <legend className="px-1 text-xxsmall12 text-neutral-40">
                     포함 권한
                   </legend>
                   <div className="flex flex-wrap gap-x-2 px-1">
@@ -223,14 +223,14 @@ export default function PlanSection({
               </div>
 
               {managed ? (
-                <div className="border-neutral-80 divide-neutral-80 flex w-9 shrink-0 flex-col divide-y border-l">
+                <div className="flex w-9 shrink-0 flex-col divide-y divide-neutral-80 border-l border-neutral-80">
                   <button
                     type="button"
                     aria-label={canEdit ? '플랜 저장' : '플랜 수정'}
                     onClick={() =>
                       canEdit ? handleSave(plan) : startEdit(plan.id)
                     }
-                    className="text-neutral-40 hover:bg-neutral-95 hover:text-neutral-0 flex flex-1 items-center justify-center transition-colors"
+                    className="flex flex-1 items-center justify-center text-neutral-40 transition-colors hover:bg-neutral-95 hover:text-neutral-0"
                   >
                     {canEdit ? <Check size={16} /> : <Pencil size={16} />}
                   </button>
@@ -238,7 +238,7 @@ export default function PlanSection({
                     type="button"
                     aria-label="플랜 삭제"
                     onClick={() => handleDelete(plan)}
-                    className="text-neutral-40 flex flex-1 items-center justify-center transition-colors hover:bg-[#d32f2f]/5 hover:text-[#d32f2f]"
+                    className="flex flex-1 items-center justify-center text-neutral-40 transition-colors hover:bg-[#d32f2f]/5 hover:text-[#d32f2f]"
                   >
                     <FaTrashCan size={16} />
                   </button>
@@ -248,7 +248,7 @@ export default function PlanSection({
                   type="button"
                   aria-label="플랜 삭제"
                   onClick={() => handleDelete(plan)}
-                  className="border-neutral-80 text-neutral-40 flex w-9 shrink-0 items-center justify-center border-l transition-colors hover:bg-[#d32f2f]/5 hover:text-[#d32f2f]"
+                  className="flex w-9 shrink-0 items-center justify-center border-l border-neutral-80 text-neutral-40 transition-colors hover:bg-[#d32f2f]/5 hover:text-[#d32f2f]"
                 >
                   <FaTrashCan size={16} />
                 </button>

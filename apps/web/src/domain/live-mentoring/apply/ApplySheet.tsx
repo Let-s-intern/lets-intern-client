@@ -73,7 +73,7 @@ const ApplySheet = ({ detail, slots, sheet, onSubmit }: ApplySheetProps) => {
 
   return (
     <div
-      className="bg-neutral-0/50 fixed inset-0 z-[100] flex items-end justify-center md:items-center md:p-5"
+      className="fixed inset-0 z-[100] flex items-end justify-center bg-neutral-0/50 md:items-center md:p-5"
       onClick={close}
     >
       <div
@@ -84,13 +84,13 @@ const ApplySheet = ({ detail, slots, sheet, onSubmit }: ApplySheetProps) => {
         onClick={(event) => event.stopPropagation()}
         // 데스크탑 폭은 캘린더(280px)와 시간 그리드 4열이 나란히 들어가는 최소치다.
         // 더 좁히면 그리드가 3열로 접혀 시안 `1-0` 과 배치가 달라진다.
-        className="bg-static-100 flex max-h-[90dvh] w-full flex-col rounded-t-xl md:max-w-[900px] md:rounded-xl"
+        className="flex max-h-[90dvh] w-full flex-col rounded-t-xl bg-static-100 md:max-w-[900px] md:rounded-xl"
       >
         {/* 시안의 상단 손잡이 — 모바일에서 끌어 내릴 수 있음을 알리는 표식 */}
         <div className="flex shrink-0 justify-center pb-2 pt-3 md:pt-4">
           <span
             aria-hidden="true"
-            className="bg-neutral-80 h-1 w-10 rounded-full"
+            className="h-1 w-10 rounded-full bg-neutral-80"
           />
         </div>
 
@@ -128,7 +128,7 @@ const ApplySheet = ({ detail, slots, sheet, onSubmit }: ApplySheetProps) => {
           <button
             type="button"
             onClick={close}
-            className="border-primary text-primary text-xsmall16 flex-1 rounded-sm border py-3 font-medium"
+            className="flex-1 rounded-sm border border-primary py-3 text-xsmall16 font-medium text-primary"
           >
             이전 단계로
           </button>
@@ -136,7 +136,7 @@ const ApplySheet = ({ detail, slots, sheet, onSubmit }: ApplySheetProps) => {
             type="button"
             onClick={() => onSubmit(draft)}
             disabled={!canSubmit}
-            className="bg-primary text-xsmall16 disabled:bg-neutral-80 disabled:text-neutral-40 flex-[1.4] rounded-sm py-3 font-medium text-white"
+            className="flex-[1.4] rounded-sm bg-primary py-3 text-xsmall16 font-medium text-white disabled:bg-neutral-80 disabled:text-neutral-40"
           >
             신청하기
           </button>

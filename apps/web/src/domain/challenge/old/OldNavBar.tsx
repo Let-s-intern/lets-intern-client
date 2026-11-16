@@ -20,7 +20,7 @@ const OldNavBar = () => {
             <Link
               href={`/old/challenge/${applicationId}/${params.programId}`}
               className={clsx('block px-3 py-2', {
-                'text-primary rounded bg-[#E6E4FD] font-semibold':
+                'rounded bg-[#E6E4FD] font-semibold text-primary':
                   activeStatus === 'DASHBOARD',
                 'text-[#4A495C]': activeStatus === 'DASHBOARD',
               })}
@@ -32,7 +32,7 @@ const OldNavBar = () => {
             <Link
               href={`/old/challenge/${applicationId}/${params.programId}/me`}
               className={clsx('block px-3 py-2', {
-                'text-primary rounded bg-[#E6E4FD] font-medium':
+                'rounded bg-[#E6E4FD] font-medium text-primary':
                   activeStatus === 'MY_DASHBOARD',
                 'text-[#4A495C]': activeStatus === 'MY_DASHBOARD',
               })}

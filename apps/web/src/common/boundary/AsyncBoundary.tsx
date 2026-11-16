@@ -14,7 +14,7 @@ function DefaultErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
     <div className="flex flex-col items-center justify-center gap-4 py-10">
       <p className="text-xsmall14 text-neutral-40">문제가 발생했습니다.</p>
       <button
-        className="rounded-xs border-neutral-80 text-xsmall14 text-neutral-20 border px-4 py-2 font-medium"
+        className="rounded-xs border border-neutral-80 px-4 py-2 text-xsmall14 font-medium text-neutral-20"
         onClick={resetErrorBoundary}
       >
         다시 시도

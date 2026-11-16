@@ -102,7 +102,7 @@ const TopBarBannerInputContent = ({
               {(value.imgUrl || value.file) && (
                 <button
                   type="button"
-                  className="text-0.875 text-neutral-40 self-end underline"
+                  className="text-0.875 self-end text-neutral-40 underline"
                   onClick={() =>
                     deleteImage({ file: null, imgUrl: null, deleteImage: true })
                   }
@@ -129,7 +129,7 @@ const TopBarBannerInputContent = ({
               {(value.mobileImgUrl || value.mobileFile) && (
                 <button
                   type="button"
-                  className="text-0.875 text-neutral-40 self-end underline"
+                  className="text-0.875 self-end text-neutral-40 underline"
                   onClick={() =>
                     deleteImage({
                       mobileFile: null,

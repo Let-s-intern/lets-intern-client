@@ -428,14 +428,12 @@ describe('디버깅 가이드', () => {
       },
       {
         가설: 'v1 mentor PATCH에서 feedback 필수 누락',
-        확인방법:
-          'PATCH /api/v1/attendance/{id}/mentor 응답에 validation error 확인',
+        확인방법: 'PATCH /api/v1/attendance/{id}/mentor 응답에 validation error 확인',
         대안: 'feedback: "" (빈 문자열) 추가 전송',
       },
       {
         가설: 'PATCH는 성공하나 GET에서 값이 안 옴',
-        확인방법:
-          '새로고침 후 GET /feedback/attendances 응답의 feedbackStatus 확인',
+        확인방법: '새로고침 후 GET /feedback/attendances 응답의 feedbackStatus 확인',
         대안: 'fallback에서 일반 attendance의 feedbackStatus 매핑 (이미 적용됨)',
       },
     ];

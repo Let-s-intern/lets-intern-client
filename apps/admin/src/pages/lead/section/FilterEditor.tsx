@@ -41,7 +41,7 @@ const FilterConditionEditor = ({
   const valueOptions = callbacks.getOptionsForField(node.field);
 
   return (
-    <div className="flex w-full flex-wrap items-end gap-2 rounded border border-gray-200 bg-white px-2 py-2">
+    <div className="rounded flex w-full flex-wrap items-end gap-2 border border-gray-200 bg-white px-2 py-2">
       <TextField
         select
         size="small"
@@ -167,7 +167,7 @@ const FilterGroupEditor = ({
   return (
     <div
       className={twMerge(
-        'flex flex-col gap-2 rounded border border-gray-200 bg-gray-50 p-3',
+        'rounded flex flex-col gap-2 border border-gray-200 bg-gray-50 p-3',
         !isRoot && 'ml-4',
       )}
     >

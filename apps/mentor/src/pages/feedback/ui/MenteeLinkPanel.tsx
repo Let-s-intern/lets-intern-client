@@ -79,7 +79,7 @@ const MenteeLinkPanel = ({
               rel="noopener noreferrer"
               title="새 탭에서 열기"
               aria-label="제출물 새 탭에서 열기"
-              className="flex h-6 w-6 items-center justify-center rounded text-neutral-500 hover:bg-neutral-100"
+              className="rounded flex h-6 w-6 items-center justify-center text-neutral-500 hover:bg-neutral-100"
             >
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
                 <path
@@ -95,7 +95,7 @@ const MenteeLinkPanel = ({
               type="button"
               onClick={onClose}
               aria-label="제출물 패널 닫기"
-              className="flex h-6 w-6 items-center justify-center rounded text-neutral-500 hover:bg-neutral-100"
+              className="rounded flex h-6 w-6 items-center justify-center text-neutral-500 hover:bg-neutral-100"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                 <path
@@ -138,7 +138,7 @@ const MenteeLinkPanel = ({
             href={link}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 rounded border border-neutral-300 bg-white px-3 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
+            className="rounded inline-flex items-center gap-1 border border-neutral-300 bg-white px-3 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
           >
             새 탭에서 열기
           </a>

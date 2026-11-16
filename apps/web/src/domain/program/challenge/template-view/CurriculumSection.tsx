@@ -32,7 +32,7 @@ function CurriculumSection({ challenge, content, config }: Props) {
       <MainTitle className="flex flex-col items-center gap-1">
         {config.getTitle(lectureCount, weekText)}
       </MainTitle>
-      <div className="text-small14 text-neutral-0 md:text-small18 mb-[60px] mt-3 text-center md:mt-5">
+      <div className="text-small14 mb-[60px] mt-3 text-center text-neutral-0 md:mt-5 md:text-small18">
         {config.description}
       </div>
       <Curriculums

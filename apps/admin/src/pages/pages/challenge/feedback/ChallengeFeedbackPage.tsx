@@ -101,25 +101,25 @@ export default function ChallengeFeedbackPage() {
         {isAdmin && (
           <Link
             to={`/challenge/operation/${programId}/feedback`}
-            className="border-neutral-80 text-xsmall14 text-neutral-0 hover:bg-neutral-95 rounded-md border bg-white px-4 py-2 font-medium"
+            className="rounded-md border border-neutral-80 bg-white px-4 py-2 text-xsmall14 font-medium text-neutral-0 hover:bg-neutral-95"
           >
             멘토/멘티 배정
           </Link>
         )}
         <Link
           to={`/challenge/operation/${programId}/feedback`}
-          className="border-neutral-80 text-xsmall14 text-neutral-0 hover:bg-neutral-95 rounded-md border bg-white px-4 py-2 font-medium"
+          className="rounded-md border border-neutral-80 bg-white px-4 py-2 text-xsmall14 font-medium text-neutral-0 hover:bg-neutral-95"
         >
           피드백 관리
         </Link>
         <button
           type="button"
-          className="border-neutral-80 text-xsmall14 text-neutral-0 hover:bg-neutral-95 rounded-md border bg-white px-4 py-2 font-medium"
+          className="rounded-md border border-neutral-80 bg-white px-4 py-2 text-xsmall14 font-medium text-neutral-0 hover:bg-neutral-95"
           onClick={handleBackToListWithConfirm}
         >
           {mission?.title ?? '미션'} {mission?.th ?? ''}회차 제출현황
         </button>
-        <span className="border-neutral-0 bg-neutral-0 text-xsmall14 rounded-md border px-4 py-2 font-medium text-white">
+        <span className="rounded-md border border-neutral-0 bg-neutral-0 px-4 py-2 text-xsmall14 font-medium text-white">
           {attendance?.name} 피드백
         </span>
       </div>
@@ -144,11 +144,11 @@ export default function ChallengeFeedbackPage() {
           저장
         </Button>
       </div>
-      <p className="text-xsmall14 mt-2 text-right">
+      <p className="mt-2 text-right text-xsmall14">
         저장 버튼 클릭 후, 피드백 리스트 페이지에서
         <br />
         [진행 상태]를{' '}
-        <b className="text-system-error font-semibold">진행완료</b>로 변경해야
+        <b className="font-semibold text-system-error">진행완료</b>로 변경해야
         최종 제출됩니다.
       </p>
     </div>

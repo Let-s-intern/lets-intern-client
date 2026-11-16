@@ -115,25 +115,25 @@ export default function RewardSection() {
               />
               <div className="flex items-center justify-between">
                 <span
-                  className={`text-xsmall14 md:text-xxlarge36 font-bold ${r.theme.no}`}
+                  className={`text-xsmall14 font-bold md:text-xxlarge36 ${r.theme.no}`}
                 >
                   {r.no}
                 </span>
                 <span
-                  className="text-static-100 text-xxsmall12 rounded-full px-2.5 py-1 font-semibold md:px-4 md:py-1.5"
+                  className="rounded-full px-2.5 py-1 text-xxsmall12 font-semibold text-static-100 md:px-4 md:py-1.5"
                   style={{ backgroundColor: r.theme.point }}
                 >
                   {r.badge}
                 </span>
               </div>
-              <h4 className="text-medium22 text-neutral-0 font-bold leading-snug">
+              <h4 className="text-medium22 font-bold leading-snug text-neutral-0">
                 {r.title}
               </h4>
-              <p className="text-xsmall14 text-neutral-40 font-normal leading-relaxed">
+              <p className="text-xsmall14 font-normal leading-relaxed text-neutral-40">
                 {r.desc}
               </p>
               <p
-                className="text-xxsmall12 mt-auto hidden font-normal md:block"
+                className="mt-auto hidden text-xxsmall12 font-normal md:block"
                 style={{ color: r.theme.point }}
               >
                 {r.quote}
@@ -143,13 +143,13 @@ export default function RewardSection() {
         </div>
       </div>
 
-      <div className="bg-primary hidden items-center px-5 py-20 md:block">
+      <div className="hidden items-center bg-primary px-5 py-20 md:block">
         <div className="mx-auto flex max-w-[1040px] justify-between gap-16">
           <div className="flex shrink-0 flex-col gap-[50px]">
-            <h3 className="text-xsmall16 text-primary-20 font-medium">
+            <h3 className="text-xsmall16 font-medium text-primary-20">
               왜 합격 인증을 받나요?
             </h3>
-            <h2 className="text-static-100 mt-3 text-[38px] font-bold leading-[130%]">
+            <h2 className="mt-3 text-[38px] font-bold leading-[130%] text-static-100">
               여러분의 소식이
               <br />
               다음 취준생의
@@ -162,16 +162,16 @@ export default function RewardSection() {
             {REASONS.map((r) => (
               <li
                 key={r.no}
-                className="border-static-100/15 flex gap-10 border-t py-10 last:border-b"
+                className="flex gap-10 border-t border-static-100/15 py-10 last:border-b"
               >
-                <span className="text-medium24 text-primary-5 w-8 shrink-0">
+                <span className="w-8 shrink-0 text-medium24 text-primary-5">
                   {r.no}
                 </span>
                 <div className="flex flex-col gap-3">
-                  <h4 className="text-medium24 text-primary-5 font-semibold">
+                  <h4 className="text-medium24 font-semibold text-primary-5">
                     {r.title}
                   </h4>
-                  <p className="text-small20 text-primary-5 font-light">
+                  <p className="text-small20 font-light text-primary-5">
                     {r.desc}
                   </p>
                 </div>

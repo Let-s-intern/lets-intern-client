@@ -83,25 +83,25 @@ const StarRating = ({
 };
 
 const ReviewItem = ({ review }: { review: MentorReviewItem }) => (
-  <li className="border-neutral-85 flex flex-col gap-3 rounded-lg border bg-white p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)] md:p-6">
+  <li className="flex flex-col gap-3 rounded-lg border border-neutral-85 bg-white p-5 shadow-[0_2px_12px_rgba(0,0,0,0.04)] md:p-6">
     <div className="flex items-center justify-between gap-3">
       <div className="flex items-center gap-1.5">
         <StarRating score={review.score} starClassName="h-4 w-4" />
-        <span className="text-xsmall14 text-neutral-10 font-bold">
+        <span className="text-xsmall14 font-bold text-neutral-10">
           {review.score.toFixed(1)}
         </span>
       </div>
-      <span className="text-xxsmall12 shrink-0 text-neutral-50">
+      <span className="shrink-0 text-xxsmall12 text-neutral-50">
         {dayjs(review.createDate).format('YYYY.MM.DD')}
       </span>
     </div>
     {review.programTitle && (
-      <span className="bg-primary-10 text-primary text-xxsmall12 w-fit rounded-full px-2.5 py-1 font-semibold">
+      <span className="w-fit rounded-full bg-primary-10 px-2.5 py-1 text-xxsmall12 font-semibold text-primary">
         {review.programTitle}
       </span>
     )}
     {review.review && (
-      <p className="text-xsmall14 md:text-xsmall16 text-neutral-10 whitespace-pre-line leading-relaxed">
+      <p className="whitespace-pre-line text-xsmall14 leading-relaxed text-neutral-10 md:text-xsmall16">
         {review.review}
       </p>
     )}
@@ -173,9 +173,9 @@ const DetailMentorReviewSection = ({
     >
       <div className="mx-auto flex w-full max-w-[840px] flex-col gap-5">
         {/* 요약 — 평균 평점과 점수별 분포 */}
-        <div className="bg-primary-5 border-primary-10 flex flex-col items-center gap-5 rounded-xl border p-6 md:flex-row md:gap-10 md:px-10 md:py-8">
+        <div className="flex flex-col items-center gap-5 rounded-xl border border-primary-10 bg-primary-5 p-6 md:flex-row md:gap-10 md:px-10 md:py-8">
           <div className="flex shrink-0 flex-col items-center gap-2">
-            <span className="text-neutral-0 text-[44px] font-bold leading-none">
+            <span className="text-[44px] font-bold leading-none text-neutral-0">
               {stats.averageScore.toFixed(1)}
             </span>
             <StarRating score={stats.averageScore} starClassName="h-5 w-5" />
@@ -189,12 +189,12 @@ const DetailMentorReviewSection = ({
               return (
                 <li
                   key={score}
-                  className="text-xxsmall12 text-neutral-40 flex items-center gap-3"
+                  className="flex items-center gap-3 text-xxsmall12 text-neutral-40"
                 >
                   <span className="w-6 shrink-0">{score}점</span>
-                  <span className="bg-neutral-90 h-2 flex-1 overflow-hidden rounded-full">
+                  <span className="h-2 flex-1 overflow-hidden rounded-full bg-neutral-90">
                     <span
-                      className="bg-primary block h-full rounded-full"
+                      className="block h-full rounded-full bg-primary"
                       style={{ width: `${(count / maxCount) * 100}%` }}
                     />
                   </span>
@@ -217,7 +217,7 @@ const DetailMentorReviewSection = ({
                 aria-checked={isActive}
                 onClick={() => handleSortChange(option.value)}
                 className={twMerge(
-                  'text-xsmall14 rounded-full px-4 py-2 font-medium transition-colors',
+                  'rounded-full px-4 py-2 text-xsmall14 font-medium transition-colors',
                   isActive
                     ? 'bg-neutral-0 text-white'
                     : 'bg-neutral-95 text-neutral-40 hover:bg-neutral-90',
@@ -239,7 +239,7 @@ const DetailMentorReviewSection = ({
           <button
             type="button"
             onClick={() => setVisibleCount((count) => count + PAGE_SIZE)}
-            className="border-neutral-80 text-xsmall14 text-neutral-20 hover:bg-neutral-95 mx-auto flex items-center gap-1.5 rounded-full border bg-white px-6 py-3 font-semibold transition-colors"
+            className="mx-auto flex items-center gap-1.5 rounded-full border border-neutral-80 bg-white px-6 py-3 text-xsmall14 font-semibold text-neutral-20 transition-colors hover:bg-neutral-95"
           >
             더보기
             <span aria-hidden="true" className="font-normal text-neutral-50">

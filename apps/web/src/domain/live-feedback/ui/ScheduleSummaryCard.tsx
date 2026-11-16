@@ -43,8 +43,8 @@ function Row({ label, value }: { label: string; value?: string | null }) {
   if (!value) return null;
   return (
     <div className="flex items-start justify-between gap-3 py-3">
-      <span className="text-xsmall14 text-neutral-45 shrink-0">{label}</span>
-      <span className="text-xsmall14 text-neutral-0 whitespace-nowrap text-right font-medium">
+      <span className="shrink-0 text-xsmall14 text-neutral-45">{label}</span>
+      <span className="whitespace-nowrap text-right text-xsmall14 font-medium text-neutral-0">
         {value}
       </span>
     </div>
@@ -54,8 +54,8 @@ function Row({ label, value }: { label: string; value?: string | null }) {
 function SkeletonRow() {
   return (
     <div className="flex items-center justify-between gap-3 py-3">
-      <div className="bg-neutral-90 h-4 w-14 shrink-0 animate-pulse rounded" />
-      <div className="bg-neutral-90 h-4 w-40 animate-pulse rounded" />
+      <div className="rounded h-4 w-14 shrink-0 animate-pulse bg-neutral-90" />
+      <div className="rounded h-4 w-40 animate-pulse bg-neutral-90" />
     </div>
   );
 }
@@ -71,7 +71,7 @@ const ScheduleSummaryCard = ({
   isLoading,
 }: Props) => {
   return (
-    <section className="border-neutral-80 rounded-xxl overflow-hidden border bg-white shadow-sm">
+    <section className="overflow-hidden rounded-xxl border border-neutral-80 bg-white shadow-sm">
       {/* 헤더 — 브랜드 그라데이션 + 로고 */}
       <div className="flex flex-col items-center bg-gradient-to-br from-[#4D55F5] to-[#6B6FFF] px-6 pb-10 pt-8 text-center text-white">
         <img
@@ -97,7 +97,7 @@ const ScheduleSummaryCard = ({
             <SkeletonRow />
           </div>
         ) : (
-          <div className="divide-neutral-90 flex flex-col divide-y">
+          <div className="flex flex-col divide-y divide-neutral-90">
             <Row label="프로그램" value={programTitle} />
             <Row label="미션" value={missionLabel} />
             <Row label={counterpartLabel} value={counterpartName} />
@@ -114,7 +114,7 @@ const ScheduleSummaryCard = ({
       </div>
 
       {role === null && !isLoading && (
-        <p className="text-xsmall12 text-neutral-40 px-6 pb-5">
+        <p className="text-xsmall12 px-6 pb-5 text-neutral-40">
           역할 정보를 확인하는 중입니다. 입장에 문제가 있으면 알림톡 링크를 다시
           확인해 주세요.
         </p>

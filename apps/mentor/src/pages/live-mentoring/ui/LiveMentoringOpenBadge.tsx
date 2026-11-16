@@ -24,11 +24,11 @@ const LiveMentoringOpenBadge = () => {
   if (!hasActiveOpening) return null;
 
   return (
-    <span className="bg-primary-10 text-primary text-xxsmall12 flex shrink-0 items-center gap-1.5 rounded px-1.5 py-0.5 font-medium">
+    <span className="rounded flex shrink-0 items-center gap-1.5 bg-primary-10 px-1.5 py-0.5 text-xxsmall12 font-medium text-primary">
       {/* 지금 실시간으로 열려 있다는 신호라, 정적인 점보다 깜빡이는 쪽이 "살아있다"는 뜻을 더 잘 전달한다. */}
       <span className="relative flex h-1.5 w-1.5" aria-hidden="true">
-        <span className="bg-primary absolute inline-flex h-full w-full animate-ping rounded-full opacity-75" />
-        <span className="bg-primary relative inline-flex h-1.5 w-1.5 rounded-full" />
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
+        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
       </span>
       오픈중
     </span>

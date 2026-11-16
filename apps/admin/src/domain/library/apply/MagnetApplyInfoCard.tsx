@@ -14,11 +14,11 @@ const MagnetApplyInfoCard = ({
 }: MagnetApplyInfoCardProps) => {
   return (
     <div className="flex flex-col gap-6">
-      <h2 className="text-xsmall16 text-neutral-0 font-semibold">
+      <h2 className="text-xsmall16 font-semibold text-neutral-0">
         신청 자료집
       </h2>
       <div className="flex items-start gap-4">
-        <div className="rounded-xxs bg-neutral-90 relative h-[97px] w-[137px] flex-shrink-0 overflow-hidden">
+        <div className="relative h-[97px] w-[137px] flex-shrink-0 overflow-hidden rounded-xxs bg-neutral-90">
           {thumbnail && (
             <Image
               src={thumbnail}
@@ -30,12 +30,12 @@ const MagnetApplyInfoCard = ({
           )}
         </div>
         <div className="flex flex-col gap-3">
-          <span className="text-xsmall16 text-neutral-0 font-semibold">
+          <span className="text-xsmall16 font-semibold text-neutral-0">
             {title}
           </span>
-          <div className="text-xxsmall12 text-neutral-40 flex gap-4 md:items-center">
+          <div className="flex gap-4 text-xxsmall12 text-neutral-40 md:items-center">
             <span>열람 방식</span>
-            <span className="text-primary-dark font-medium">
+            <span className="font-medium text-primary-dark">
               {accessDescription.split('/').map((text, i, arr) => (
                 <span key={i}>
                   {text.trim()}

@@ -45,12 +45,12 @@ const MissionGuideRegularSection = ({
       />
 
       {/* 미션 가이드 섹션 */}
-      <section className="rounded-xs border-neutral-80 flex flex-col gap-5 border px-4 py-4">
+      <section className="flex flex-col gap-5 rounded-xs border border-neutral-80 px-4 py-4">
         {/* 미션 목록 섹션 */}
         <section className="flex flex-col gap-3">
           <div className="flex flex-col gap-2">
             <div className="flex items-start gap-2">
-              <span className="text-xsmall14 text-neutral-0 md:text-xsmall16 whitespace-pre-wrap font-medium">
+              <span className="whitespace-pre-wrap text-xsmall14 font-medium text-neutral-0 md:text-xsmall16">
                 {missionData?.missionInfo?.description ||
                   '미션 설명이 없습니다.'}
               </span>
@@ -58,13 +58,13 @@ const MissionGuideRegularSection = ({
           </div>
         </section>
 
-        <div className="bg-neutral-80 h-px" />
+        <div className="h-px bg-neutral-80" />
 
         <section className="flex flex-col gap-3">
-          <h3 className="text-xsmall16 text-neutral-10 font-semibold">
+          <h3 className="text-xsmall16 font-semibold text-neutral-10">
             미션 가이드
           </h3>
-          <p className="text-xsmall14 text-neutral-10 md:text-xsmall16 whitespace-pre-wrap font-medium">
+          <p className="whitespace-pre-wrap text-xsmall14 font-medium text-neutral-10 md:text-xsmall16">
             {missionData?.missionInfo?.guide || '미션 가이드가 없습니다.'}
           </p>
         </section>
@@ -74,9 +74,9 @@ const MissionGuideRegularSection = ({
           결제 직후 콘텐츠를 실제로 받았다는 사실이 남아야 환불 판단 근거가 선다.
           제출은 여전히 해당 미션 날짜에만 가능하고, 서버가 400 으로 막는다.
         */}
-        <section className="rounded-xxs bg-neutral-95 flex flex-col gap-4 p-3 pb-5">
+        <section className="flex flex-col gap-4 rounded-xxs bg-neutral-95 p-3 pb-5">
           <div className="flex flex-col">
-            <h3 className="text-xsmall16 text-neutral-0 font-semibold">
+            <h3 className="text-xsmall16 font-semibold text-neutral-0">
               미션 자료 모음
             </h3>
             <p className="text-xsmall14 text-neutral-10 md:text-xsmall16">

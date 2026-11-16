@@ -50,7 +50,7 @@ export default function PassCertificationForm() {
   };
 
   return (
-    <div className="bg-static-100 mx-auto flex min-h-[600px] w-full min-w-[320px] flex-col rounded-xl p-6 md:min-h-[686px] md:w-[820px] md:p-10 md:pt-[60px]">
+    <div className="mx-auto flex min-h-[600px] w-full min-w-[320px] flex-col rounded-xl bg-static-100 p-6 md:min-h-[686px] md:w-[820px] md:p-10 md:pt-[60px]">
       <Stepper current={step} />
 
       {step === COMPLETE_STEP ? (

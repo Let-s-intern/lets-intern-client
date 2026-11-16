@@ -23,7 +23,7 @@ export const FileUploadButton = React.memo(function FileUploadButton({
   return (
     <>
       <button
-        className="border-neutral-60 text-xsmall14 text-neutral-40 rounded-md border bg-neutral-100 px-3 py-1.5"
+        className="rounded-md border border-neutral-60 bg-neutral-100 px-3 py-1.5 text-xsmall14 text-neutral-40"
         onClick={() => {
           ref.current?.click();
         }}

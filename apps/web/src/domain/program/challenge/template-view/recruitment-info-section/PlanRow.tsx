@@ -6,7 +6,7 @@ const PlanRow = ({ plan }: { plan: PriceInfo }) => {
   return (
     <div className="flex flex-col md:flex-row md:items-center md:justify-between md:gap-3.5">
       <div className="flex-1">
-        <div className="text-xsmall16 text-neutral-0 font-semibold">
+        <div className="text-xsmall16 font-semibold text-neutral-0">
           {plan.title}
         </div>
         <PlanBenefits

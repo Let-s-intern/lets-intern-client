@@ -64,8 +64,8 @@ const RoundCard = ({
     <button type="button" onClick={onClick} className="shrink-0 text-left">
       <div
         className={clsx(
-          'rounded-xxs hover:bg-primary-5 h-[104px] w-[74.8px] border px-2 py-2.5',
-          selected ? 'bg-primary-5 border-[#A6AAFA]' : 'border-neutral-80',
+          'h-[104px] w-[74.8px] rounded-xxs border px-2 py-2.5 hover:bg-primary-5',
+          selected ? 'border-[#A6AAFA] bg-primary-5' : 'border-neutral-80',
         )}
       >
         <i className="block h-3.5 w-3.5">
@@ -83,7 +83,7 @@ const RoundCard = ({
         </div>
         <span
           className={clsx(
-            'text-xxsmall10 block w-full leading-3',
+            'block w-full text-xxsmall10 leading-3',
             item.status === 'OPEN' && 'text-primary',
           )}
         >
@@ -132,7 +132,7 @@ const RetrospectivesView = ({ applicationId }: Props) => {
   if (isLoading) return <LoadingContainer className="py-20" />;
   if (isError) {
     return (
-      <p className="text-xsmall14 text-neutral-40 py-20 text-center">
+      <p className="py-20 text-center text-xsmall14 text-neutral-40">
         회고를 불러오지 못했어요. 잠시 후 다시 시도해주세요.
       </p>
     );
@@ -142,7 +142,7 @@ const RetrospectivesView = ({ applicationId }: Props) => {
     <div className="flex flex-col gap-6 md:gap-10">
       <div className="flex flex-col gap-6 md:gap-4">
         {openRound && (
-          <div className="bg-primary-5 text-xsmall14 md:text-xsmall16 rounded-xxs flex items-center gap-1 p-3 font-medium">
+          <div className="flex items-center gap-1 rounded-xxs bg-primary-5 p-3 text-xsmall14 font-medium md:text-xsmall16">
             <img
               src="/icons/check-star-primary.svg"
               alt=""
@@ -157,7 +157,7 @@ const RetrospectivesView = ({ applicationId }: Props) => {
           </div>
         )}
 
-        <div className="scrollbar-hide -mx-5 flex gap-2 overflow-x-auto px-5 md:mx-0 md:px-0">
+        <div className="-mx-5 flex gap-2 overflow-x-auto px-5 scrollbar-hide md:mx-0 md:px-0">
           {rounds.map((r) => (
             <RoundCard
               key={r.id}

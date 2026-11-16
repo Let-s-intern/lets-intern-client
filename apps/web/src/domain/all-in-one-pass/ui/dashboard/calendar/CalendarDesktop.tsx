@@ -67,11 +67,11 @@ export default function CalendarDesktop({
 
         <div className="flex flex-col gap-10 md:flex-row">
           <div className="min-w-0 flex-1">
-            <div className="border-neutral-80 grid grid-cols-7 border-b pb-3">
+            <div className="grid grid-cols-7 border-b border-neutral-80 pb-3">
               {WEEKDAYS.map((d) => (
                 <span
                   key={d}
-                  className="text-xsmall14 text-neutral-40 text-center font-medium"
+                  className="text-center text-xsmall14 font-medium text-neutral-40"
                 >
                   {d}
                 </span>

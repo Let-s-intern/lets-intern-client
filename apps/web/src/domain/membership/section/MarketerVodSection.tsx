@@ -19,14 +19,14 @@ export default function MarketerVodSection() {
           {MARKETER_VOD.title}
         </h2>
 
-        <p className="text-xsmall14 md:text-xsmall16 text-neutral-70 mt-4 text-center">
+        <p className="mt-4 text-center text-xsmall14 text-neutral-70 md:text-xsmall16">
           {MARKETER_VOD.sub}
         </p>
 
         <div className="mt-10 grid gap-6 md:mt-14 md:grid-cols-2">
           {MARKETER_VOD.cards.map((card) => (
             <div
-              className="rounded-xxl flex flex-col bg-white/5 p-4 md:p-6"
+              className="flex flex-col rounded-xxl bg-white/5 p-4 md:p-6"
               key={card.title}
             >
               {/* 배너 — 제목·배지·연사 소개가 그림 안에 들어 있다. alt 로 문구를 전한다. */}
@@ -37,14 +37,14 @@ export default function MarketerVodSection() {
                 src={`/images/membership/${card.banner}`}
               />
 
-              <strong className="text-xsmall16 mt-6 block font-bold text-white">
+              <strong className="mt-6 block text-xsmall16 font-bold text-white">
                 {card.title}
               </strong>
 
               <ul className="mt-4 flex flex-col gap-2">
                 {card.bullets.map((bullet) => (
                   <li className="flex gap-2" key={bullet}>
-                    <span aria-hidden="true" className="text-primary shrink-0">
+                    <span aria-hidden="true" className="shrink-0 text-primary">
                       ✓
                     </span>
                     <span className="text-xsmall14 text-neutral-70">
@@ -59,7 +59,7 @@ export default function MarketerVodSection() {
                   <span className="text-neutral-60 line-through">
                     정가 {formatKRW(card.regularPrice)}원
                   </span>{' '}
-                  <strong className="text-primary font-bold">무료</strong>
+                  <strong className="font-bold text-primary">무료</strong>
                 </span>
                 {/*
                   아직 공개 전인 세미나는 주소가 없다. 버튼을 남겨 두려고 목록 같은
@@ -68,7 +68,7 @@ export default function MarketerVodSection() {
                 */}
                 {card.url && (
                   <a
-                    className="bg-primary text-xsmall14 rounded-lg px-5 py-2.5 font-medium text-white"
+                    className="rounded-lg bg-primary px-5 py-2.5 text-xsmall14 font-medium text-white"
                     href={card.url}
                   >
                     자세히 보기 →
@@ -79,7 +79,7 @@ export default function MarketerVodSection() {
           ))}
         </div>
 
-        <p className="text-xsmall14 text-neutral-70 mt-10 text-center">
+        <p className="mt-10 text-center text-xsmall14 text-neutral-70">
           {MARKETER_VOD.footnote}
         </p>
       </div>

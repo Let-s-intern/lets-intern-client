@@ -47,7 +47,7 @@ export default function ExpandableRow({
             <span className="flex items-center gap-2">
               {label}
               {code !== undefined && (
-                <span className="rounded-xxs bg-neutral-90 text-xxsmall12 text-neutral-30 px-1.5 py-0.5">
+                <span className="rounded-xxs bg-neutral-90 px-1.5 py-0.5 text-xxsmall12 text-neutral-30">
                   type {code}
                 </span>
               )}
@@ -73,7 +73,7 @@ export default function ExpandableRow({
       {isOpen && (
         <>
           {mode === 'all' && (
-            <p className="text-xxsmall12 px-4 pt-3 text-blue-500">
+            <p className="px-4 pt-3 text-xxsmall12 text-blue-500">
               {allHint ??
                 `${label} 전체 선택 상태입니다. 향후 추가되는 ${label}도 자동 포함됩니다.`}
             </p>

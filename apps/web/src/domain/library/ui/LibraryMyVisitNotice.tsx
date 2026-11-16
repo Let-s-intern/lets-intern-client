@@ -14,20 +14,20 @@ function NoticeContent({ onClose }: { onClose: () => void }) {
       <button
         type="button"
         onClick={onClose}
-        className="text-neutral-40 hover:text-neutral-20 absolute right-4 top-4 hidden md:block"
+        className="absolute right-4 top-4 hidden text-neutral-40 hover:text-neutral-20 md:block"
         aria-label="닫기"
       >
         <X size={20} />
       </button>
-      <div className="bg-primary-10 w-15 flex h-[60px] items-center justify-center rounded-full">
+      <div className="flex h-[60px] w-15 items-center justify-center rounded-full bg-primary-10">
         <Folder size={36} className="fill-[#8288F8] stroke-[#8288F8]" />
       </div>
-      <p className="text-small20 md:text-medium24 font-bold">
+      <p className="text-small20 font-bold md:text-medium24">
         신청한 모든 무료 자료집은
         <br />
         여기 &apos;MY 자료집&apos;에서 볼 수 있어요!
       </p>
-      <p className="text-xsmall14 text-neutral-40 pt-8 md:pt-10">
+      <p className="pt-8 text-xsmall14 text-neutral-40 md:pt-10">
         * 처음 회원가입 시 가입 후 신청한 자료집이 반영되기까지
         <br />
         최대 1주일 소요될 수 있습니다.
@@ -57,8 +57,8 @@ export default function LibraryMyVisitNotice() {
 
   if (!snackbarDismissed) {
     return (
-      <div className="bg-neutral-0 fixed bottom-[4.5rem] left-1/2 z-50 flex -translate-x-1/2 items-center gap-3 rounded-full px-5 py-4 opacity-60 shadow-lg md:bottom-6">
-        <span className="text-xsmall16 whitespace-nowrap text-white">
+      <div className="fixed bottom-[4.5rem] left-1/2 z-50 flex -translate-x-1/2 items-center gap-3 rounded-full bg-neutral-0 px-5 py-4 opacity-60 shadow-lg md:bottom-6">
+        <span className="whitespace-nowrap text-xsmall16 text-white">
           신청한 모든 무료 자료집은
           <br className="md:hidden" /> 여기 MY 자료집에서 볼 수 있어요!
         </span>

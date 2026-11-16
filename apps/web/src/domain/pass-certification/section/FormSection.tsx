@@ -9,7 +9,7 @@ export default function FormSection() {
   return (
     <section
       id={PASS_SECTION_ID.form}
-      className="bg-neutral-90 flex scroll-mt-[56px] flex-col items-start gap-4 px-5 py-10 md:scroll-mt-[60px] md:items-center md:py-[84px]"
+      className="flex scroll-mt-[56px] flex-col items-start gap-4 bg-neutral-90 px-5 py-10 md:scroll-mt-[60px] md:items-center md:py-[84px]"
     >
       <SectionHeading
         label="합격 인증 폼"

@@ -43,7 +43,7 @@ const PagerArrow = ({ direction, disabled, onClick }: PagerArrowProps) => {
       onClick={onClick}
       disabled={disabled}
       aria-label={isPrev ? '이전 세미나' : '다음 세미나'}
-      className={`text-neutral-0 absolute top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.15)] transition disabled:cursor-not-allowed disabled:opacity-30 ${isPrev ? 'left-4' : 'right-4'}`}
+      className={`absolute top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white text-neutral-0 shadow-[0_2px_8px_rgba(0,0,0,0.15)] transition disabled:cursor-not-allowed disabled:opacity-30 ${isPrev ? 'left-4' : 'right-4'}`}
     >
       {isPrev ? <MdChevronLeft size={28} /> : <MdChevronRight size={28} />}
     </button>

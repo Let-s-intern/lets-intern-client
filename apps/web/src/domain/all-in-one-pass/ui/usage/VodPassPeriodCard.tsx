@@ -8,16 +8,16 @@ import {
 const formatDate = (date: string) => dayjs(date).format('YYYY.MM.DD');
 
 const VodPassPeriodCard = ({ period }: { period: VodPassPeriod }) => (
-  <div className="border-neutral-80 rounded-xs flex items-center justify-between gap-3 border p-3 md:p-4">
+  <div className="flex items-center justify-between gap-3 rounded-xs border border-neutral-80 p-3 md:p-4">
     <div className="flex flex-col gap-1">
-      <span className="text-xxsmall12 md:text-xsmall14 text-neutral-40">
+      <span className="text-xxsmall12 text-neutral-40 md:text-xsmall14">
         VOD 이용 기간
       </span>
-      <span className="text-xsmall14 md:text-xsmall16 text-neutral-0 font-semibold">
+      <span className="text-xsmall14 font-semibold text-neutral-0 md:text-xsmall16">
         {formatDate(period.startsAt)} ~ {formatDate(period.endsAt)}
       </span>
     </div>
-    <span className="text-medium22 md:text-medium24 text-neutral-0 shrink-0 font-bold">
+    <span className="shrink-0 text-medium22 font-bold text-neutral-0 md:text-medium24">
       {getVodPassDDayLabel(period.endsAt)}
     </span>
   </div>

@@ -23,7 +23,7 @@ const WrittenPhaseBar = ({ bar, onClick }: WrittenPhaseBarProps) => {
   const totalMentees = bar.submittedCount + bar.notSubmittedCount;
 
   const typeBadge = (
-    <span className="text-xxsmall12 whitespace-nowrap font-bold tracking-[-0.3px]">
+    <span className="whitespace-nowrap text-xxsmall12 font-bold tracking-[-0.3px]">
       {isReview ? '운영진 검수기간' : '유저 제출기간'}
     </span>
   );

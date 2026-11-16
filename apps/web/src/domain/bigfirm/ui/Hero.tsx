@@ -82,7 +82,7 @@ export function Hero() {
               href="#mentors-by-company"
               data-track-target="find_mentor"
               data-track-location="hero"
-              className="bg-primary inline-flex items-center justify-center rounded-sm px-7 py-[15px] font-bold text-white hover:brightness-105 active:scale-[.98]"
+              className="inline-flex items-center justify-center rounded-sm bg-primary px-7 py-[15px] font-bold text-white hover:brightness-105 active:scale-[.98]"
             >
               대기업 멘토 찾기
             </a>
@@ -92,7 +92,7 @@ export function Hero() {
               data-track-location="hero"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary inline-flex items-center justify-center rounded-sm bg-white px-7 py-[15px] font-bold shadow-[inset_0_0_0_1px_#e3e5f0] hover:bg-zinc-50 active:scale-[.98]"
+              className="inline-flex items-center justify-center rounded-sm bg-white px-7 py-[15px] font-bold text-primary shadow-[inset_0_0_0_1px_#e3e5f0] hover:bg-zinc-50 active:scale-[.98]"
             >
               전체 멘토 보기 →
             </Link>
@@ -119,7 +119,7 @@ function RejectedDocument({
     >
       <article
         ref={docRef}
-        className="rounded-xs relative flex origin-bottom-left -rotate-[1.5deg] flex-col bg-[#fffdf8] px-7 pb-6 pt-6 text-sm leading-[1.75] text-[#26262b] shadow-[0_24px_50px_-20px_rgba(40,50,140,.28)]"
+        className="relative flex origin-bottom-left -rotate-[1.5deg] flex-col rounded-xs bg-[#fffdf8] px-7 pb-6 pt-6 text-sm leading-[1.75] text-[#26262b] shadow-[0_24px_50px_-20px_rgba(40,50,140,.28)]"
       >
         <div className="mb-5 flex items-baseline justify-between gap-3 border-b border-[#e4e0d4] pb-2.5 text-xs text-[#77777f]">
           <b className="text-[13px] text-[#26262b]">

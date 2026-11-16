@@ -38,17 +38,17 @@ const InquiryThread = ({
   const canCancel = item.answerStatus === 'WAITING';
 
   return (
-    <div className="bg-neutral-95 flex flex-1 flex-col overflow-hidden">
-      <header className="bg-static-100 border-neutral-85 flex shrink-0 items-center gap-2 border-b px-4 py-4">
+    <div className="flex flex-1 flex-col overflow-hidden bg-neutral-95">
+      <header className="flex shrink-0 items-center gap-2 border-b border-neutral-85 bg-static-100 px-4 py-4">
         <button
           type="button"
           aria-label="뒤로"
           onClick={onBack}
-          className="text-neutral-40 hover:text-neutral-0 shrink-0"
+          className="shrink-0 text-neutral-40 hover:text-neutral-0"
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
-        <p className="text-xsmall16 text-neutral-0 flex-1 truncate font-bold">
+        <p className="flex-1 truncate text-xsmall16 font-bold text-neutral-0">
           {item.title}
         </p>
         <span className="md:hidden">
@@ -59,7 +59,7 @@ const InquiryThread = ({
       <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-4 py-5">
         {/* 내가 보낸 문의 */}
         <div className="flex justify-end">
-          <div className="bg-primary max-w-[80%] rounded-md px-4 py-3 text-sm text-white">
+          <div className="max-w-[80%] rounded-md bg-primary px-4 py-3 text-sm text-white">
             <p className="mb-1 font-bold">{item.title}</p>
             <p className="whitespace-pre-wrap">{item.content}</p>
           </div>
@@ -74,7 +74,7 @@ const InquiryThread = ({
                   <img
                     src={url}
                     alt="첨부 이미지"
-                    className="rounded-xxs border-neutral-85 h-24 w-24 border object-cover"
+                    className="h-24 w-24 rounded-xxs border border-neutral-85 object-cover"
                   />
                 </a>
               </li>
@@ -88,14 +88,14 @@ const InquiryThread = ({
             <img
               src="/logo/logo-simple.svg"
               alt=""
-              className="bg-static-100 h-8 w-8 shrink-0 rounded-sm p-1"
+              className="h-8 w-8 shrink-0 rounded-sm bg-static-100 p-1"
             />
-            <div className="text-neutral-0 bg-static-100 max-w-[80%] rounded-md px-4 py-3 text-sm">
+            <div className="max-w-[80%] rounded-md bg-static-100 px-4 py-3 text-sm text-neutral-0">
               <AnswerBody answer={item.answer as string} />
             </div>
           </div>
         ) : (
-          <p className="text-xsmall14 text-neutral-45 py-4 text-center">
+          <p className="py-4 text-center text-xsmall14 text-neutral-45">
             답변을 준비하고 있어요. 조금만 기다려 주세요.
           </p>
         )}
@@ -106,7 +106,7 @@ const InquiryThread = ({
           <button
             type="button"
             onClick={onRequestCancel}
-            className="text-xxsmall12 text-neutral-45 hover:text-neutral-30 mx-auto block underline underline-offset-2"
+            className="mx-auto block text-xxsmall12 text-neutral-45 underline underline-offset-2 hover:text-neutral-30"
           >
             문의 취소하기
           </button>

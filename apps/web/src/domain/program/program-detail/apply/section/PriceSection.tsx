@@ -56,16 +56,16 @@ const PriceSection = ({
   const discountInfo = handleCouponPrice({ payInfo, coupon });
   return (
     <div className="flex flex-col">
-      <div className="text-neutral-0 flex h-10 items-center justify-between px-3">
+      <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
         <span>결제상품</span>
         <span>{payInfo.price.toLocaleString()}원</span>
       </div>
-      <div className="text-neutral-0 flex h-10 items-center justify-between px-3">
+      <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
         <span>{Math.round(discountInfo.discountPer)}% 할인</span>
         <span>-{payInfo.discount.toLocaleString()}원</span>
       </div>
       {showCouponDiscount && (
-        <div className="text-primary flex h-10 items-center justify-between px-3">
+        <div className="flex h-10 items-center justify-between px-3 text-primary">
           <span>쿠폰할인</span>
           <span className="font-bold">
             -{discountInfo.couponDiscount.toLocaleString()}원
@@ -73,7 +73,7 @@ const PriceSection = ({
         </div>
       )}
       {vodPassPrice > 0 && (
-        <div className="text-neutral-0 flex h-10 items-center justify-between px-3">
+        <div className="flex h-10 items-center justify-between px-3 text-neutral-0">
           <span>
             VOD 이용권{vodPassMonths > 0 ? ` ${vodPassMonths}개월` : ''}
           </span>
@@ -81,7 +81,7 @@ const PriceSection = ({
         </div>
       )}
       {membershipDiscount > 0 && (
-        <div className="text-primary flex h-10 items-center justify-between px-3">
+        <div className="flex h-10 items-center justify-between px-3 text-primary">
           <span>패스 혜택 할인</span>
           <span className="font-bold">
             -{membershipDiscount.toLocaleString()}원

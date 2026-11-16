@@ -52,7 +52,7 @@ function ThumbnailCard({
 }) {
   return (
     <a
-      className="rounded-xxl flex flex-col bg-white p-4 shadow-[0_2px_16px_rgba(0,0,0,0.06)] transition-shadow hover:shadow-[0_4px_24px_rgba(0,0,0,0.1)]"
+      className="flex flex-col rounded-xxl bg-white p-4 shadow-[0_2px_16px_rgba(0,0,0,0.06)] transition-shadow hover:shadow-[0_4px_24px_rgba(0,0,0,0.1)]"
       href={href}
       rel={external ? 'noreferrer' : undefined}
       target={external ? '_blank' : undefined}
@@ -62,14 +62,14 @@ function ThumbnailCard({
       */}
       <img alt="" className="w-full rounded-lg" loading="lazy" src={src} />
       <div className="flex flex-1 flex-col justify-between pt-4">
-        <strong className="text-xsmall16 text-neutral-0 font-bold">
+        <strong className="text-xsmall16 font-bold text-neutral-0">
           {label}
         </strong>
         {/*
           글자색은 `<a>` 가 아니라 안쪽 span 이 든다. `styles/base.css` 의
           `.membership-root a { color: inherit }` 이 명시도로 Tailwind 유틸을 이긴다.
         */}
-        <span className="text-primary text-xsmall14 mt-6 self-end font-medium">
+        <span className="mt-6 self-end text-xsmall14 font-medium text-primary">
           {linkLabel} →
         </span>
       </div>
@@ -124,7 +124,7 @@ function VodBody() {
       <div className="grid gap-6 md:grid-cols-2">
         {cards.map((card) => (
           <div
-            className="rounded-xxl flex flex-col bg-white p-4 shadow-[0_2px_16px_rgba(0,0,0,0.06)] md:p-6"
+            className="flex flex-col rounded-xxl bg-white p-4 shadow-[0_2px_16px_rgba(0,0,0,0.06)] md:p-6"
             key={card.title}
           >
             {/* 배너 — 제목·배지·연사 소개가 그림 안에 들어 있다. alt 로 문구를 전한다. */}
@@ -135,14 +135,14 @@ function VodBody() {
               src={`/images/membership/${card.banner}`}
             />
 
-            <strong className="text-xsmall16 text-neutral-0 mt-6 block font-bold leading-snug">
+            <strong className="mt-6 block text-xsmall16 font-bold leading-snug text-neutral-0">
               {card.title}
             </strong>
 
             <ul className="mt-4 flex flex-1 flex-col gap-2">
               {card.bullets.map((bullet) => (
                 <li className="flex gap-2" key={bullet}>
-                  <span aria-hidden="true" className="text-primary shrink-0">
+                  <span aria-hidden="true" className="shrink-0 text-primary">
                     ✓
                   </span>
                   <span className="text-xsmall14 text-neutral-40">
@@ -152,7 +152,7 @@ function VodBody() {
               ))}
             </ul>
 
-            <p className="border-neutral-90 text-xsmall14 text-neutral-45 mt-6 border-t pt-5 text-right line-through">
+            <p className="mt-6 border-t border-neutral-90 pt-5 text-right text-xsmall14 text-neutral-45 line-through">
               정가 {formatKRW(card.regularPrice)}원
             </p>
 
@@ -161,7 +161,7 @@ function VodBody() {
               여기서 주소를 다시 검사하지 않는다.
             */}
             <a
-              className="bg-primary mt-3 rounded-lg px-5 py-3 text-center"
+              className="mt-3 rounded-lg bg-primary px-5 py-3 text-center"
               href={card.url}
             >
               <span className="text-xsmall14 font-bold text-white">
@@ -172,7 +172,7 @@ function VodBody() {
         ))}
       </div>
 
-      <p className="text-xsmall14 text-primary mt-10 text-center font-bold">
+      <p className="mt-10 text-center text-xsmall14 font-bold text-primary">
         {MARKETER_VOD.footnote}
       </p>
     </>
@@ -182,7 +182,7 @@ function VodBody() {
 function MentoringBody() {
   return (
     <>
-      <div className="rounded-xxl grid overflow-hidden bg-[#232433] md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+      <div className="grid overflow-hidden rounded-xxl bg-[#232433] md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
         {/* 좌측 — 할인율 */}
         <div className="p-8 md:border-r md:border-white/10 md:p-10">
           <span className="inline-block rounded-full bg-[#F1642B] px-3 py-1.5 text-xs font-bold text-white">
@@ -193,7 +193,7 @@ function MentoringBody() {
             {MENTORING_COUPON.rate}
           </strong>
 
-          <strong className="text-small18 mt-4 block font-bold leading-snug text-white">
+          <strong className="mt-4 block text-small18 font-bold leading-snug text-white">
             {MENTORING_COUPON.rateTitleLines.map((line) => (
               <span className="block" key={line}>
                 {line}
@@ -201,7 +201,7 @@ function MentoringBody() {
             ))}
           </strong>
 
-          <p className="text-xsmall14 text-neutral-70 mt-6 leading-relaxed">
+          <p className="mt-6 text-xsmall14 leading-relaxed text-neutral-70">
             {MENTORING_COUPON.rateBody.map((line) => (
               <span className="block" key={line}>
                 {line}
@@ -209,7 +209,7 @@ function MentoringBody() {
             ))}
           </p>
 
-          <p className="text-neutral-60 mt-6 text-xs">
+          <p className="mt-6 text-xs text-neutral-60">
             {MENTORING_COUPON.rateFine}
           </p>
         </div>
@@ -220,7 +220,7 @@ function MentoringBody() {
             <strong className="text-xsmall16 font-bold text-white">
               {MENTORING_COUPON.mentorsTitle}
             </strong>
-            <span className="text-neutral-60 text-xs">
+            <span className="text-xs text-neutral-60">
               {MENTORING_COUPON.mentorsNote}
             </span>
           </div>
@@ -238,10 +238,10 @@ function MentoringBody() {
                   {mentor.short}
                 </span>
                 <span className="min-w-0">
-                  <strong className="text-xsmall14 block font-bold text-white">
+                  <strong className="block text-xsmall14 font-bold text-white">
                     {mentor.company}
                   </strong>
-                  <span className="text-neutral-60 block text-xs">
+                  <span className="block text-xs text-neutral-60">
                     {mentor.role}
                   </span>
                 </span>

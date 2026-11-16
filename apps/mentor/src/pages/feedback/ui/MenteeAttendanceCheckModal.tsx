@@ -115,7 +115,7 @@ const MenteeAttendanceCheckModal = ({
     <BaseModal
       isOpen={isOpen}
       onClose={onClose}
-      className="mx-4 w-[480px] max-w-full rounded-2xl"
+      className="rounded-2xl mx-4 w-[480px] max-w-full"
     >
       <div className="flex flex-col gap-6 p-6">
         {/* 헤더 */}
@@ -191,7 +191,7 @@ const MenteeAttendanceCheckModal = ({
                       className={twMerge(
                         'flex w-full items-center px-4 py-3 text-left text-sm transition-colors hover:bg-neutral-50',
                         selected === status.value
-                          ? 'text-primary font-semibold'
+                          ? 'font-semibold text-primary'
                           : 'text-neutral-700',
                       )}
                     >
@@ -205,13 +205,13 @@ const MenteeAttendanceCheckModal = ({
         </div>
 
         {/* 안내 배너 */}
-        <div className="bg-primary-5 flex items-start gap-2 rounded-lg px-4 py-3">
+        <div className="flex items-start gap-2 rounded-lg bg-primary-5 px-4 py-3">
           <svg
             width="16"
             height="16"
             viewBox="0 0 24 24"
             fill="none"
-            className="text-primary mt-0.5 shrink-0"
+            className="mt-0.5 shrink-0 text-primary"
           >
             <circle
               cx="12"
@@ -228,7 +228,7 @@ const MenteeAttendanceCheckModal = ({
               strokeLinejoin="round"
             />
           </svg>
-          <p className="text-primary text-xs leading-5">
+          <p className="text-xs leading-5 text-primary">
             멘티 참여 상태는 LIVE 피드백 종료 후
             <br />
             {formatGateDate(endDate)}부터 저장할 수 있어요.

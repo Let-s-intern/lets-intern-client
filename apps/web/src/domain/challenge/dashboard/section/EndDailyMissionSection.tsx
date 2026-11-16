@@ -31,12 +31,12 @@ const EndDailyMissionSection = () => {
         <div className="mt-4 flex w-full items-center gap-x-3">
           <Link
             href={`/old/challenge/${applicationId}/${currentChallenge?.id}/me`}
-            className="border-primary text-primary flex-1 rounded-sm border bg-white px-4 py-3 text-center font-medium"
+            className="flex-1 rounded-sm border border-primary bg-white px-4 py-3 text-center font-medium text-primary"
           >
             이전 미션 돌아보기
           </Link>
           <button
-            className="bg-primary flex-1 rounded-sm px-4 py-3 text-center font-medium text-white"
+            className="flex-1 rounded-sm bg-primary px-4 py-3 text-center font-medium text-white"
             onClick={() => setModalOpen(true)}
           >
             {isReviewCompleted

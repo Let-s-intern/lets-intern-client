@@ -54,7 +54,7 @@ export default function MentorReviewExposureRow({
   };
 
   return (
-    <tr className="border-neutral-80 border-t align-top">
+    <tr className="border-t border-neutral-80 align-top">
       <td className="whitespace-nowrap px-3 py-2">
         {rankControl ?? <span className="text-neutral-40">순위 없음</span>}
       </td>
@@ -67,7 +67,7 @@ export default function MentorReviewExposureRow({
       <td className="whitespace-nowrap px-3 py-2">
         {review.score !== null ? review.score.toFixed(1) : '-'}
         {review.isEdited ? (
-          <span className="text-xxsmall12 border-neutral-70 text-neutral-40 ml-1.5 rounded-full border px-1.5 py-0.5">
+          <span className="ml-1.5 rounded-full border border-neutral-70 px-1.5 py-0.5 text-xxsmall12 text-neutral-40">
             수정됨
           </span>
         ) : null}
@@ -85,7 +85,7 @@ export default function MentorReviewExposureRow({
               <button
                 type="button"
                 onClick={() => setIsExpanded((prev) => !prev)}
-                className="text-neutral-40 text-xxsmall12 mt-1 underline"
+                className="mt-1 text-xxsmall12 text-neutral-40 underline"
               >
                 {isExpanded ? '접기' : '더보기'}
               </button>

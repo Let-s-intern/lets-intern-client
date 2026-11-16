@@ -127,7 +127,7 @@ const FeedbackLiveAvailabilityPage = () => {
     <div className="flex h-full min-h-0 flex-col gap-6">
       <div className="flex shrink-0 flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div className="flex flex-col gap-2">
-          <h1 className="text-medium22 text-neutral-10 font-semibold leading-8">
+          <h1 className="text-medium22 font-semibold leading-8 text-neutral-10">
             LIVE 가능 시간 등록
           </h1>
           <p className="text-xsmall14 text-neutral-40">
@@ -145,7 +145,7 @@ const FeedbackLiveAvailabilityPage = () => {
         </OutlinedButton>
       </div>
 
-      <div className="border-neutral-85 flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded-md border bg-white">
+      <div className="flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded-md border border-neutral-85 bg-white">
         {slotsQuery.isPending ? (
           <div className="flex flex-1 items-center justify-center py-20">
             <p className="text-xsmall14 text-neutral-40">
@@ -160,7 +160,7 @@ const FeedbackLiveAvailabilityPage = () => {
             <button
               type="button"
               onClick={() => slotsQuery.refetch()}
-              className="border-neutral-80 text-xsmall14 text-neutral-40 rounded-md border px-4 py-2"
+              className="rounded-md border border-neutral-80 px-4 py-2 text-xsmall14 text-neutral-40"
             >
               다시 시도
             </button>
@@ -168,12 +168,12 @@ const FeedbackLiveAvailabilityPage = () => {
         ) : (
           <>
             {saveError && (
-              <div className="text-xsmall14 border-b border-red-100 bg-red-50 px-6 py-3 text-red-600">
+              <div className="border-b border-red-100 bg-red-50 px-6 py-3 text-xsmall14 text-red-600">
                 저장 중 문제가 발생했어요: {saveError}
               </div>
             )}
             {isSaving && (
-              <div className="border-primary-90 bg-primary-5 text-xsmall14 text-primary-90 border-b px-6 py-3">
+              <div className="border-b border-primary-90 bg-primary-5 px-6 py-3 text-xsmall14 text-primary-90">
                 저장 중입니다...
               </div>
             )}

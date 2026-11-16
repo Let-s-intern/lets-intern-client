@@ -84,7 +84,7 @@ const LoginPrompt = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-lg">
+      <div className="rounded-2xl w-full max-w-sm bg-white p-8 shadow-lg">
         <div className="mb-6 text-center">
           <img
             src="/logo/horizontal-logo.svg"
@@ -111,7 +111,7 @@ const LoginPrompt = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="이메일을 입력하세요"
-              className="focus:border-primary focus:ring-primary rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none transition-colors placeholder:text-neutral-400 focus:ring-1"
+              className="rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none transition-colors placeholder:text-neutral-400 focus:border-primary focus:ring-1 focus:ring-primary"
               autoComplete="email"
             />
           </div>
@@ -129,7 +129,7 @@ const LoginPrompt = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="비밀번호를 입력하세요"
-              className="focus:border-primary focus:ring-primary rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none transition-colors placeholder:text-neutral-400 focus:ring-1"
+              className="rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none transition-colors placeholder:text-neutral-400 focus:border-primary focus:ring-1 focus:ring-primary"
               autoComplete="current-password"
             />
           </div>
@@ -143,7 +143,7 @@ const LoginPrompt = () => {
           <button
             type="submit"
             disabled={buttonDisabled || fetchLogin.isPending}
-            className="bg-primary hover:bg-primary-hover mt-1 rounded-xl py-3 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            className="mt-1 rounded-xl bg-primary py-3 text-sm font-medium text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
           >
             {fetchLogin.isPending ? '로그인 중...' : '로그인'}
           </button>
@@ -170,7 +170,7 @@ const NotMentorPrompt = ({ onGoBack }: { onGoBack: () => void }) => {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-lg">
+      <div className="rounded-2xl w-full max-w-sm bg-white p-8 shadow-lg">
         <div className="mb-2 flex justify-center">
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-amber-50">
             <svg
@@ -212,7 +212,7 @@ const NotMentorPrompt = ({ onGoBack }: { onGoBack: () => void }) => {
           <button
             type="button"
             onClick={onGoBack}
-            className="bg-primary hover:bg-primary-hover rounded-xl py-3 text-sm font-medium text-white transition-colors"
+            className="rounded-xl bg-primary py-3 text-sm font-medium text-white transition-colors hover:bg-primary-hover"
           >
             나가기
           </button>

@@ -57,7 +57,7 @@ function PlanOption({
     <div
       className={twMerge(
         'flex flex-col gap-1 py-3 pl-2 pr-3 md:gap-2',
-        !isLast && 'border-neutral-80 border-b',
+        !isLast && 'border-b border-neutral-80',
       )}
     >
       <OptionFormRadioControlLabel
@@ -70,7 +70,7 @@ function PlanOption({
         }
       />
       {description && (
-        <p className="rounded-xs text-xsmall14 text-neutral-10 bg-neutral-100 px-4 py-2 font-normal">
+        <p className="rounded-xs bg-neutral-100 px-4 py-2 text-xsmall14 font-normal text-neutral-10">
           {description}
         </p>
       )}
@@ -121,21 +121,21 @@ function VodPassLabel({
           <b className="font-bold">{title}</b>
           <span
             className={twMerge(
-              'text-xxsmall12 text-primary rounded-full px-2 py-0.5 font-medium',
+              'rounded-full px-2 py-0.5 text-xxsmall12 font-medium text-primary',
               checked ? 'bg-static-100' : 'bg-primary-10',
             )}
           >
             {durationDays}일 이용권
           </span>
         </span>
-        <span className="text-xxsmall12 text-neutral-30 mt-1 block font-normal leading-5">
+        <span className="mt-1 block text-xxsmall12 font-normal leading-5 text-neutral-30">
           결제 즉시 이용이 시작됩니다. 이용 중인 이용권이 있으면 종료 후 이어서
           시작됩니다
         </span>
       </span>
       <span
         className={twMerge(
-          'text-xsmall14 flex shrink-0 items-baseline font-bold',
+          'flex shrink-0 items-baseline text-xsmall14 font-bold',
           checked ? 'text-primary' : 'text-neutral-10',
         )}
       >
@@ -161,15 +161,15 @@ function VodPassMonthsStepper({
   onChange: (months: number) => void;
 }) {
   return (
-    <div className="border-primary-20 flex items-center justify-between gap-3 border-t px-3 py-3">
+    <div className="flex items-center justify-between gap-3 border-t border-primary-20 px-3 py-3">
       <span className="min-w-0">
-        <span className="text-xsmall14 block font-medium">이용 기간</span>
+        <span className="block text-xsmall14 font-medium">이용 기간</span>
         {additionalMonthPrice > 0 && (
-          <span className="text-xxsmall12 text-neutral-30 mt-0.5 block">
+          <span className="mt-0.5 block text-xxsmall12 text-neutral-30">
             2개월부터 매월 +{additionalMonthPrice.toLocaleString()}원
           </span>
         )}
-        <span className="text-xxsmall12 text-neutral-30 mt-0.5 block">
+        <span className="mt-0.5 block text-xxsmall12 text-neutral-30">
           최대 {maxMonths}개월까지 선택할 수 있어요
         </span>
       </span>
@@ -184,7 +184,7 @@ function VodPassMonthsStepper({
           -
         </button>
         <span
-          className="text-xsmall14 min-w-[3.5rem] text-center font-semibold"
+          className="min-w-[3.5rem] text-center text-xsmall14 font-semibold"
           aria-live="polite"
         >
           {months}개월
@@ -519,7 +519,7 @@ function PricePlanBottomSheet({
           <FeedbackMentoringLink
             challengeType={challenge.challengeType}
             themeColor={getChallengeThemeColor(challenge.challengeType)}
-            className="text-xxsmall12 px-2.5 py-1"
+            className="px-2.5 py-1 text-xxsmall12"
           />
         </div>
         <OptionDropdown
@@ -603,12 +603,12 @@ function PricePlanBottomSheet({
         {/* VOD 이용권 (플랜과 독립) */}
         {vodPassProduct && (
           <>
-            <span className="text-xsmall14 mb-3 mt-6 block font-semibold">
+            <span className="mb-3 mt-6 block text-xsmall14 font-semibold">
               VOD 이용권 추가 (선택)
             </span>
             <div
               className={twMerge(
-                'rounded-xs overflow-hidden border transition-colors',
+                'overflow-hidden rounded-xs border transition-colors',
                 isVodPassChecked
                   ? 'border-primary bg-primary-5'
                   : 'border-neutral-80 hover:bg-neutral-100',
@@ -654,11 +654,11 @@ function PricePlanBottomSheet({
         )}
 
         {/* 총 결제 금액 */}
-        <span className="text-xsmall14 mt-5 block font-semibold md:mt-6">
+        <span className="mt-5 block text-xsmall14 font-semibold md:mt-6">
           총 결제 금액
         </span>
         <hr className="my-3" />
-        <span className="text-small18 text-neutral-10 block text-right font-bold">
+        <span className="block text-right text-small18 font-bold text-neutral-10">
           {totalPrice.toLocaleString()}원
         </span>
 

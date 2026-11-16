@@ -22,9 +22,9 @@ const ColumnDividers = ({ days, gridCols }: ColumnDividersProps) => {
             key={i}
             className={`${isToday ? 'bg-[#fbf9fe]' : ''} ${
               isMonthStart
-                ? 'border-primary-20 border-l-2'
+                ? 'border-l-2 border-primary-20'
                 : i > 0
-                  ? 'border-neutral-90 border-l'
+                  ? 'border-l border-neutral-90'
                   : ''
             }`}
           />

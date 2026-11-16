@@ -111,8 +111,8 @@ const VodPassPayment = ({ product }: { product: StandaloneVodPassProduct }) => {
     <>
       <div className="flex items-center justify-between gap-3">
         <span className="min-w-0">
-          <span className="text-xsmall14 block font-medium">이용 기간</span>
-          <span className="text-xxsmall12 text-neutral-30 mt-0.5 block">
+          <span className="block text-xsmall14 font-medium">이용 기간</span>
+          <span className="mt-0.5 block text-xxsmall12 text-neutral-30">
             {durationDays}일 · 최대 {maxMonths}개월
           </span>
         </span>
@@ -127,7 +127,7 @@ const VodPassPayment = ({ product }: { product: StandaloneVodPassProduct }) => {
             -
           </button>
           <span
-            className="text-xsmall14 min-w-[3.5rem] text-center font-semibold"
+            className="min-w-[3.5rem] text-center text-xsmall14 font-semibold"
             aria-live="polite"
           >
             {months}개월
@@ -143,7 +143,7 @@ const VodPassPayment = ({ product }: { product: StandaloneVodPassProduct }) => {
           </button>
         </span>
       </div>
-      <p className="text-xxsmall12 text-neutral-30 leading-5">
+      <p className="text-xxsmall12 leading-5 text-neutral-30">
         결제 즉시 이용이 시작됩니다. 이용 중인 이용권이 있으면 종료 후 이어서
         시작됩니다.
       </p>
@@ -151,7 +151,7 @@ const VodPassPayment = ({ product }: { product: StandaloneVodPassProduct }) => {
       <div id="agreement" className="-mx-5" />
       <button
         type="button"
-        className="bg-primary text-1.125-medium block w-full rounded-md px-6 py-3 font-medium text-neutral-100 disabled:opacity-50"
+        className="text-1.125-medium block w-full rounded-md bg-primary px-6 py-3 font-medium text-neutral-100 disabled:opacity-50"
         disabled={!ready}
         onClick={handlePay}
       >
@@ -162,7 +162,7 @@ const VodPassPayment = ({ product }: { product: StandaloneVodPassProduct }) => {
 };
 
 const Notice = ({ children }: { children: string }) => (
-  <p className="text-xsmall14 text-neutral-30 py-10 text-center">{children}</p>
+  <p className="py-10 text-center text-xsmall14 text-neutral-30">{children}</p>
 );
 
 export default function VodPassPurchaseView() {

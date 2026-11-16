@@ -157,7 +157,7 @@ function DevPageContent() {
         </Suspense>
       </div>
 
-      <div className="text-xsmall14 text-neutral-20 my-20 flex gap-2">
+      <div className="my-20 flex gap-2 text-xsmall14 text-neutral-20">
         <div>
           <p className="font-light leading-[22px]">
             폰트 테스트입니다. 14px 가나다라마바사 abcdefg ABCDEFG -_=
@@ -194,7 +194,7 @@ function NotAdminPrompt() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-lg">
+      <div className="rounded-2xl w-full max-w-sm bg-white p-8 shadow-lg">
         <div className="mb-2 flex justify-center">
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-amber-50">
             <svg
@@ -234,7 +234,7 @@ function NotAdminPrompt() {
         <button
           type="button"
           onClick={() => router.push('/')}
-          className="bg-primary hover:bg-primary-hover w-full rounded-xl py-3 text-sm font-medium text-white transition-colors"
+          className="w-full rounded-xl bg-primary py-3 text-sm font-medium text-white transition-colors hover:bg-primary-hover"
         >
           홈으로 돌아가기
         </button>

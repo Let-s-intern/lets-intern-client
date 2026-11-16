@@ -27,7 +27,7 @@ const columns: GridColDef<MentorAssignmentRow>[] = [
       const color = PLAN_COLORS[plan] ?? PLAN_COLORS.BASIC;
       return (
         <span
-          className={`text-xxsmall12 inline-flex items-center rounded-full px-2 py-0.5 font-medium ${color.bg} ${color.text}`}
+          className={`inline-flex items-center rounded-full px-2 py-0.5 text-xxsmall12 font-medium ${color.bg} ${color.text}`}
         >
           {plan}
         </span>
@@ -49,7 +49,7 @@ const columns: GridColDef<MentorAssignmentRow>[] = [
       <div className="flex flex-col items-start gap-1 py-1">
         <span>{params.row.name}</span>
         {params.row.mentorReassignmentRequired ? (
-          <span className="text-xxsmall12 bg-requirement/10 text-requirement inline-flex items-center rounded-full px-2 py-0.5 font-medium">
+          <span className="inline-flex items-center rounded-full bg-requirement/10 px-2 py-0.5 text-xxsmall12 font-medium text-requirement">
             재배정 필요
           </span>
         ) : null}
@@ -66,7 +66,7 @@ const columns: GridColDef<MentorAssignmentRow>[] = [
       if (wishCompany === '-' && wishJob === '-')
         return <span className="text-neutral-40">-</span>;
       return (
-        <div className="text-xxsmall12 flex flex-col py-1">
+        <div className="flex flex-col py-1 text-xxsmall12">
           <span className="text-neutral-30">{wishCompany}</span>
           <span className="text-neutral-40">{wishJob}</span>
         </div>
@@ -142,7 +142,7 @@ export default function MentorMenteeAssignment() {
 
   if (isLoading) {
     return (
-      <div className="text-xsmall14 text-neutral-40 py-16 text-center">
+      <div className="py-16 text-center text-xsmall14 text-neutral-40">
         불러오는 중...
       </div>
     );

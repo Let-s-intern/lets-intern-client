@@ -28,34 +28,34 @@ const LiveMentoringCard = ({ bar }: { bar: PeriodBarData }) => {
   return (
     <div
       className={twMerge(
-        'border-primary-20 bg-primary-5 flex h-full w-full flex-col gap-1.5 overflow-hidden rounded-md border px-2.5 py-2',
+        'flex h-full w-full flex-col gap-1.5 overflow-hidden rounded-md border border-primary-20 bg-primary-5 px-2.5 py-2',
       )}
     >
       {/* Row 1: 시작 시간 + 진행시간 */}
       <div className="flex items-center justify-between gap-1">
-        <span className="text-neutral-10 shrink-0 text-sm font-bold leading-none">
+        <span className="shrink-0 text-sm font-bold leading-none text-neutral-10">
           {lm.startTime}
         </span>
-        <span className="text-primary bg-primary-10 shrink-0 whitespace-nowrap rounded-[4px] px-1.5 py-0.5 text-[10px] font-medium leading-none">
+        <span className="shrink-0 whitespace-nowrap rounded-[4px] bg-primary-10 px-1.5 py-0.5 text-[10px] font-medium leading-none text-primary">
           {lm.durationMinutes}분
         </span>
       </div>
 
       {/* Row 2: 1대1 라이브 멘토링 라벨 */}
       <div className="flex min-w-0 items-center gap-1.5">
-        <span className="bg-primary h-2 w-2 shrink-0 rounded-full" />
-        <span className="text-xxsmall12 text-primary shrink-0 font-bold leading-none">
+        <span className="h-2 w-2 shrink-0 rounded-full bg-primary" />
+        <span className="shrink-0 text-xxsmall12 font-bold leading-none text-primary">
           {bar.challengeTitle}
         </span>
       </div>
 
       {/* Row 3: 멘티명 */}
-      <span className="text-xxsmall12 text-neutral-40 min-w-0 truncate leading-tight">
+      <span className="min-w-0 truncate text-xxsmall12 leading-tight text-neutral-40">
         {lm.menteeName} 멘티
       </span>
 
       {/* Row 4: 멘티가 낸 것 — 빈 줄을 남기지 않는다 */}
-      <span className="text-xxsmall12 text-neutral-40 min-w-0 truncate leading-tight">
+      <span className="min-w-0 truncate text-xxsmall12 leading-tight text-neutral-40">
         {submissionSummary(lm.questionWritten, lm.attachmentSubmitted)}
       </span>
     </div>

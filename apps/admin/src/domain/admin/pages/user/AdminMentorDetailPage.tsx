@@ -190,7 +190,7 @@ export default function AdminMentorDetailPage() {
   if (isLoading) {
     return (
       <section className="p-5">
-        <div className="text-xsmall14 text-neutral-40 py-16 text-center">
+        <div className="py-16 text-center text-xsmall14 text-neutral-40">
           불러오는 중...
         </div>
       </section>
@@ -200,7 +200,7 @@ export default function AdminMentorDetailPage() {
   if (!userDetail) {
     return (
       <section className="p-5">
-        <div className="text-xsmall14 text-neutral-40 py-16 text-center">
+        <div className="py-16 text-center text-xsmall14 text-neutral-40">
           멘토 정보를 찾을 수 없습니다.
         </div>
       </section>
@@ -222,11 +222,11 @@ export default function AdminMentorDetailPage() {
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
         {/* 기본 정보 */}
-        <div className="border-neutral-80 rounded-lg border p-6">
+        <div className="rounded-lg border border-neutral-80 p-6">
           <h2 className="text-medium18 mb-4 font-semibold">기본 정보</h2>
 
           <div className="mb-6 flex items-center gap-4">
-            <div className="border-neutral-80 bg-neutral-95 relative flex h-24 w-24 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border">
+            <div className="relative flex h-24 w-24 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-neutral-80 bg-neutral-95">
               {form.profileImgUrl ? (
                 <img
                   src={form.profileImgUrl}
@@ -237,7 +237,7 @@ export default function AdminMentorDetailPage() {
                 <span className="text-xsmall14 text-neutral-40">이미지</span>
               )}
             </div>
-            <label className="border-neutral-80 text-xsmall14 hover:bg-neutral-95 cursor-pointer rounded border px-3 py-1.5">
+            <label className="rounded cursor-pointer border border-neutral-80 px-3 py-1.5 text-xsmall14 hover:bg-neutral-95">
               이미지 업로드
               <input
                 type="file"
@@ -251,7 +251,7 @@ export default function AdminMentorDetailPage() {
           <div className="flex flex-col gap-4">
             {BASIC_FORM_FIELDS.map(({ label, key }) => (
               <div key={key} className="flex items-center gap-3">
-                <label className="text-xsmall14 text-neutral-30 w-20 flex-shrink-0 font-medium">
+                <label className="w-20 flex-shrink-0 text-xsmall14 font-medium text-neutral-30">
                   {label}
                 </label>
                 <input
@@ -260,14 +260,14 @@ export default function AdminMentorDetailPage() {
                   onChange={(e) =>
                     setForm((prev) => ({ ...prev, [key]: e.target.value }))
                   }
-                  className="border-neutral-80 text-xsmall14 focus:border-neutral-40 flex-1 rounded border px-3 py-2 outline-none"
+                  className="rounded flex-1 border border-neutral-80 px-3 py-2 text-xsmall14 outline-none focus:border-neutral-40"
                 />
               </div>
             ))}
           </div>
 
           <div className="mt-4">
-            <label className="text-xsmall14 text-neutral-30 mb-1 block font-medium">
+            <label className="mb-1 block text-xsmall14 font-medium text-neutral-30">
               한줄 소개
             </label>
             <textarea
@@ -276,7 +276,7 @@ export default function AdminMentorDetailPage() {
                 setForm((prev) => ({ ...prev, introduction: e.target.value }))
               }
               placeholder="한줄 소개를 입력해주세요"
-              className="border-neutral-80 text-xsmall14 focus:border-neutral-40 h-24 w-full resize-none rounded border px-3 py-2 outline-none"
+              className="rounded h-24 w-full resize-none border border-neutral-80 px-3 py-2 text-xsmall14 outline-none focus:border-neutral-40"
             />
           </div>
 
@@ -293,7 +293,7 @@ export default function AdminMentorDetailPage() {
         </div>
 
         {/* 경력 사항 */}
-        <div className="border-neutral-80 rounded-lg border p-6">
+        <div className="rounded-lg border border-neutral-80 p-6">
           <div className="mb-2 flex items-center justify-between">
             <h2 className="text-medium18 font-semibold">경력사항</h2>
             <Button
@@ -305,12 +305,12 @@ export default function AdminMentorDetailPage() {
               경력 추가 +
             </Button>
           </div>
-          <p className="text-xxsmall12 text-neutral-40 mb-4">
+          <p className="mb-4 text-xxsmall12 text-neutral-40">
             멘토가 직접 등록한 경력은 수정/삭제할 수 없습니다.
           </p>
 
           {careers.length === 0 ? (
-            <div className="text-xsmall14 text-neutral-40 py-8 text-center">
+            <div className="py-8 text-center text-xsmall14 text-neutral-40">
               등록된 경력이 없습니다.
             </div>
           ) : (
@@ -322,7 +322,7 @@ export default function AdminMentorDetailPage() {
                 return (
                   <div
                     key={career.id ?? index}
-                    className="border-neutral-80 flex w-full flex-col gap-1 rounded border p-4"
+                    className="rounded flex w-full flex-col gap-1 border border-neutral-80 p-4"
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-xsmall14 text-neutral-0">
@@ -338,10 +338,10 @@ export default function AdminMentorDetailPage() {
                         </button>
                       ) : null}
                     </div>
-                    <div className="text-xsmall14 text-neutral-0 font-medium">
+                    <div className="text-xsmall14 font-medium text-neutral-0">
                       {career.company || '-'}
                     </div>
-                    <div className="text-xsmall14 text-neutral-0 flex items-center gap-2">
+                    <div className="flex items-center gap-2 text-xsmall14 text-neutral-0">
                       <span>{career.employmentType || '-'}</span>
                       <span className="text-neutral-40">
                         {career.startDate || '-'}
@@ -349,7 +349,7 @@ export default function AdminMentorDetailPage() {
                       </span>
                     </div>
                     {hasDetails ? (
-                      <div className="text-xsmall14 text-neutral-35 mt-1 flex flex-wrap gap-x-3 gap-y-0.5">
+                      <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xsmall14 text-neutral-35">
                         {career.field ? (
                           <span>업무분야: {career.field}</span>
                         ) : null}
@@ -362,7 +362,7 @@ export default function AdminMentorDetailPage() {
                       </div>
                     ) : null}
                     {!career.isAddedByAdmin ? (
-                      <span className="text-xxsmall12 mt-1 text-neutral-50">
+                      <span className="mt-1 text-xxsmall12 text-neutral-50">
                         멘토 등록
                       </span>
                     ) : null}

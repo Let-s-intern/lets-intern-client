@@ -14,7 +14,7 @@ import {
 function StarDisplay({ score }: { score: number }) {
   return (
     <div className="flex items-center">
-      <span className="text-xsmall14 text-neutral-0 mr-2 font-semibold">
+      <span className="mr-2 text-xsmall14 font-semibold text-neutral-0">
         만족도
       </span>
       <div className="mr-1 flex">
@@ -31,7 +31,7 @@ function StarDisplay({ score }: { score: number }) {
           />
         ))}
       </div>
-      <span className="text-neutral-40 text-[10px]">({score}.0)</span>
+      <span className="text-[10px] text-neutral-40">({score}.0)</span>
     </div>
   );
 }
@@ -61,12 +61,12 @@ const LiveFeedbackReview = ({ feedbackId }: Props) => {
   if (existingScore !== null && existingReview !== null) {
     return (
       <div className="flex flex-col gap-4">
-        <h3 className="text-xsmall16 text-neutral-0 font-semibold md:-ml-4">
+        <h3 className="text-xsmall16 font-semibold text-neutral-0 md:-ml-4">
           내가 작성한 후기
         </h3>
         <div className="flex flex-col gap-2">
           <StarDisplay score={existingScore} />
-          <p className="text-xxsmall12 text-neutral-30 break-words">
+          <p className="break-words text-xxsmall12 text-neutral-30">
             {existingReview}
           </p>
         </div>
@@ -77,7 +77,7 @@ const LiveFeedbackReview = ({ feedbackId }: Props) => {
   if (isReviewing) {
     return (
       <div className="flex flex-col gap-4">
-        <h2 className="text-xsmall16 text-neutral-0 font-semibold md:-ml-4">
+        <h2 className="text-xsmall16 font-semibold text-neutral-0 md:-ml-4">
           오늘 멘토링, 무엇을 얻으셨나요?
         </h2>
         <div className="flex flex-col gap-2">
@@ -91,7 +91,7 @@ const LiveFeedbackReview = ({ feedbackId }: Props) => {
               별점과 내용을 채우면 저장할 수 있어요.
             </p>
           )}
-          <h3 className="text-xsmall14 text-neutral-0 font-semibold">
+          <h3 className="text-xsmall14 font-semibold text-neutral-0">
             멘토링을 통해 새롭게 알게 된 점을 작성해주세요
           </h3>
           <div className="flex flex-col gap-1">
@@ -99,9 +99,9 @@ const LiveFeedbackReview = ({ feedbackId }: Props) => {
               value={content}
               onChange={(e) => setContent(e.target.value.slice(0, MAX_LENGTH))}
               placeholder="예) 혼자 볼 때는 이력서가 왜 안 통하는지 몰랐는데, 성과가 숫자로 안 보인다는 점을 짚어주셨어요. 프로젝트마다 지표를 한 줄씩 붙이는 방법까지 알려주셔서 바로 고칠 수 있었어요."
-              className="text-xsmall14 text-neutral-0 border-neutral-80 rounded-xxs font-regular placeholder:text-neutral-70 h-[144px] w-full resize-none border p-3 outline-none"
+              className="font-regular h-[144px] w-full resize-none rounded-xxs border border-neutral-80 p-3 text-xsmall14 text-neutral-0 outline-none placeholder:text-neutral-70"
             />
-            <p className="text-xxsmall12 text-right">
+            <p className="text-right text-xxsmall12">
               <span className="text-neutral-9">{content.length}</span>
               <span className="text-neutral-45">/{MAX_LENGTH}</span>
             </p>
@@ -110,7 +110,7 @@ const LiveFeedbackReview = ({ feedbackId }: Props) => {
             type="button"
             onClick={handleSubmit}
             disabled={!canSubmit || isPending}
-            className="bg-primary text-xsmall14 w-full rounded-sm py-3 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-full rounded-sm bg-primary py-3 text-xsmall14 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
           >
             작성 완료
           </button>
@@ -123,7 +123,7 @@ const LiveFeedbackReview = ({ feedbackId }: Props) => {
     <button
       type="button"
       onClick={() => setIsReviewing(true)}
-      className="bg-primary text-xsmall16 flex-1 whitespace-nowrap rounded-sm py-4 font-semibold text-white"
+      className="flex-1 whitespace-nowrap rounded-sm bg-primary py-4 text-xsmall16 font-semibold text-white"
     >
       멘토링 후기 작성하기
     </button>

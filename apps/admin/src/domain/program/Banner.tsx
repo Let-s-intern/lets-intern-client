@@ -53,7 +53,7 @@ const Banner = () => {
   if (isLoading || !bannerList || bannerList.length === 0) return null;
 
   return (
-    <div className="bg-static-0 text-static-100 relative flex h-40 w-full max-w-[59rem] items-center overflow-hidden rounded-sm md:h-44 lg:h-56 xl:h-72">
+    <div className="relative flex h-40 w-full max-w-[59rem] items-center overflow-hidden rounded-sm bg-static-0 text-static-100 md:h-44 lg:h-56 xl:h-72">
       <div
         ref={innerRef}
         className="flex flex-nowrap items-center transition-transform duration-300 ease-in-out"

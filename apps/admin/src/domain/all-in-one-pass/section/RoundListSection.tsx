@@ -121,7 +121,7 @@ export default function RoundListSection({ passId }: Props) {
   return (
     <section className="flex flex-col gap-3">
       <div className="flex flex-col gap-1">
-        <h2 className="text-small20 text-neutral-0 font-semibold">
+        <h2 className="text-small20 font-semibold text-neutral-0">
           회차별 질문
         </h2>
         <p className="text-xsmall14 text-neutral-40">

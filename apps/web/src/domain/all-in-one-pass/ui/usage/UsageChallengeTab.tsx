@@ -46,7 +46,7 @@ const UsageChallengeTab = () => {
   }
   if (isError) {
     return (
-      <p className="text-xsmall14 text-neutral-40 py-20 text-center">
+      <p className="py-20 text-center text-xsmall14 text-neutral-40">
         목록을 불러오지 못했어요. 잠시 후 다시 시도해주세요.
       </p>
     );

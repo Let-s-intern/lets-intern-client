@@ -12,7 +12,7 @@ const CareerHeader = ({
 }: CareerHeaderProps) => {
   return (
     <header className="flex h-9 items-center justify-between">
-      <span className="text-xsmall16 md:text-small18 font-medium">
+      <span className="text-xsmall16 font-medium md:text-small18">
         커리어 기록(경력사항)
       </span>
       {showCreateButton && (

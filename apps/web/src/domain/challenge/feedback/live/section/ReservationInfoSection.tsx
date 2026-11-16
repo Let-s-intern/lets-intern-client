@@ -104,7 +104,7 @@ const ReservationInfoSection = ({
   return (
     <div className="flex w-full flex-col gap-5 p-0 md:flex-row md:p-4">
       <section className="flex w-full flex-col">
-        <h2 className="text-xsmall16 text-neutral-0 font-semibold">
+        <h2 className="text-xsmall16 font-semibold text-neutral-0">
           담당 멘토
         </h2>
         <MentorCard
@@ -115,7 +115,7 @@ const ReservationInfoSection = ({
 
       {feedbackInfo && (
         <section className="flex w-full flex-col">
-          <h2 className="text-xsmall16 text-neutral-0 font-semibold">
+          <h2 className="text-xsmall16 font-semibold text-neutral-0">
             LIVE 피드백 예약내역
           </h2>
           <div className="flex h-full flex-col gap-4 px-0 py-4 md:px-4">
@@ -123,7 +123,7 @@ const ReservationInfoSection = ({
               {/* 예약 일시 */}
               <div className="flex items-start gap-1">
                 <img src="/icons/clock.svg" alt="" className="mt-0.5" />
-                <span className="text-xsmall14 text-neutral-40 shrink-0 pr-2">
+                <span className="shrink-0 pr-2 text-xsmall14 text-neutral-40">
                   예약 일시
                 </span>
                 <span className="text-xsmall14 text-neutral-20">
@@ -166,8 +166,8 @@ const ReservationInfoSection = ({
                   disabled={!entranceActive || isPreparingRoom}
                   className={
                     entranceActive && !isPreparingRoom
-                      ? 'text-xsmall14 flex flex-1 items-center justify-center whitespace-nowrap rounded-sm bg-gradient-to-r from-[#4B53FF] to-[#763CFF] py-3 font-semibold text-white'
-                      : 'bg-neutral-70 text-xsmall14 pointer-events-none flex flex-1 items-center justify-center whitespace-nowrap rounded-sm py-3 font-semibold text-neutral-100'
+                      ? 'flex flex-1 items-center justify-center whitespace-nowrap rounded-sm bg-gradient-to-r from-[#4B53FF] to-[#763CFF] py-3 text-xsmall14 font-semibold text-white'
+                      : 'pointer-events-none flex flex-1 items-center justify-center whitespace-nowrap rounded-sm bg-neutral-70 py-3 text-xsmall14 font-semibold text-neutral-100'
                   }
                 >
                   {isPreparingRoom ? '회의실 준비 중…' : 'LIVE 피드백 입장하기'}

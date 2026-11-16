@@ -19,7 +19,7 @@ const ProgramCardSection = ({ draft }: ProgramCardSectionProps) => {
 
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-xsmall16 text-neutral-0 font-semibold">
+      <h2 className="text-xsmall16 font-semibold text-neutral-0">
         결제 프로그램
       </h2>
 
@@ -34,27 +34,27 @@ const ProgramCardSection = ({ draft }: ProgramCardSectionProps) => {
         ) : (
           <div
             aria-hidden="true"
-            className="bg-primary h-20 w-20 shrink-0 rounded-sm md:h-[88px] md:w-[88px]"
+            className="h-20 w-20 shrink-0 rounded-sm bg-primary md:h-[88px] md:w-[88px]"
           />
         )}
 
         <div className="flex flex-col gap-2">
           <div className="flex flex-col gap-0.5">
-            <span className="text-primary text-xxsmall12 font-semibold">
+            <span className="text-xxsmall12 font-semibold text-primary">
               1:1 LIVE 멘토링
             </span>
-            <p className="text-xsmall16 text-neutral-0 font-bold">
+            <p className="text-xsmall16 font-bold text-neutral-0">
               {draft.productName}
             </p>
           </div>
 
-          <dl className="text-xsmall14 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1">
+          <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-xsmall14">
             <dt className="text-neutral-40">예약 일시</dt>
-            <dd className="text-primary font-medium">
+            <dd className="font-medium text-primary">
               {reservation ?? '선택한 일정이 없습니다'}
             </dd>
             <dt className="text-neutral-40">구매 플랜</dt>
-            <dd className="text-primary font-medium">
+            <dd className="font-medium text-primary">
               {durationLabel(draft.duration)}
             </dd>
           </dl>

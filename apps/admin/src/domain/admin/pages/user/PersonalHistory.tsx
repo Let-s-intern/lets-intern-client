@@ -60,11 +60,11 @@ const PersonalHistory = ({ data }: { data: UserAdminDetail }) => {
               {data.careerInfos?.map((career, index) => (
                 <div
                   key={index}
-                  className="rounded-xs border-neutral-80 flex w-full flex-col gap-1 border p-4"
+                  className="flex w-full flex-col gap-1 rounded-xs border border-neutral-80 p-4"
                 >
-                  <div className="text-neutral-0 text-sm">{career.job}</div>
+                  <div className="text-sm text-neutral-0">{career.job}</div>
                   <span className="text-neutral-0">{career.company}</span>
-                  <div className="text-neutral-0 flex items-center gap-2 text-sm">
+                  <div className="flex items-center gap-2 text-sm text-neutral-0">
                     <span>{career.employmentType}</span>
                     <span className="text-neutral-40">
                       {career.startDate} - {career.endDate}

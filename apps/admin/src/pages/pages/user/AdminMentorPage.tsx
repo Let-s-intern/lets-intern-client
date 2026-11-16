@@ -99,41 +99,41 @@ function MentorManagementTable() {
 
   return (
     <div>
-      <div className="border-neutral-80 rounded-lg border">
+      <div className="rounded-lg border border-neutral-80">
         {isLoading ? (
-          <div className="text-xsmall14 text-neutral-40 py-16 text-center">
+          <div className="py-16 text-center text-xsmall14 text-neutral-40">
             불러오는 중...
           </div>
         ) : mentors.length === 0 ? (
-          <div className="text-xsmall14 text-neutral-40 py-16 text-center">
+          <div className="py-16 text-center text-xsmall14 text-neutral-40">
             등록된 멘토가 없습니다.
           </div>
         ) : (
           <table className="w-full border-collapse">
             <thead>
-              <tr className="border-neutral-60 bg-neutral-95 border-b-2">
-                <th className="text-xsmall14 text-neutral-0 px-6 py-3 text-left font-semibold">
+              <tr className="border-b-2 border-neutral-60 bg-neutral-95">
+                <th className="px-6 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
                   이름
                 </th>
-                <th className="text-xsmall14 text-neutral-0 px-6 py-3 text-left font-semibold">
+                <th className="px-6 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
                   닉네임
                 </th>
-                <th className="text-xsmall14 text-neutral-0 px-6 py-3 text-left font-semibold">
+                <th className="px-6 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
                   전화번호
                 </th>
-                <th className="text-xsmall14 text-neutral-0 px-6 py-3 text-left font-semibold">
+                <th className="px-6 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
                   이메일
                 </th>
-                <th className="text-xsmall14 text-neutral-0 px-6 py-3 text-left font-semibold">
+                <th className="px-6 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
                   키워드
                 </th>
-                <th className="text-xsmall14 text-neutral-0 px-6 py-3 text-left font-semibold">
+                <th className="px-6 py-3 text-left text-xsmall14 font-semibold text-neutral-0">
                   상세페이지
                 </th>
-                <th className="text-xsmall14 text-neutral-0 px-6 py-3 text-center font-semibold">
+                <th className="px-6 py-3 text-center text-xsmall14 font-semibold text-neutral-0">
                   노출여부
                 </th>
-                <th className="text-xsmall14 text-neutral-0 px-6 py-3 text-center font-semibold">
+                <th className="px-6 py-3 text-center text-xsmall14 font-semibold text-neutral-0">
                   멘토 삭제
                 </th>
               </tr>
@@ -142,26 +142,26 @@ function MentorManagementTable() {
               {mentors.map((mentor) => (
                 <tr
                   key={mentor.id}
-                  className="border-neutral-80 hover:bg-neutral-95 cursor-pointer border-b transition-colors last:border-b-0"
+                  className="cursor-pointer border-b border-neutral-80 transition-colors last:border-b-0 hover:bg-neutral-95"
                 >
-                  <td className="text-xsmall14 px-6 py-4">
+                  <td className="px-6 py-4 text-xsmall14">
                     <Link
                       to={`/mentors/${mentor.id}`}
-                      className="text-neutral-0 hover:text-primary-30 underline"
+                      className="text-neutral-0 underline hover:text-primary-30"
                     >
                       {mentor.name}
                     </Link>
                   </td>
-                  <td className="text-xsmall14 px-6 py-4">
+                  <td className="px-6 py-4 text-xsmall14">
                     {mentor.nickname ?? '-'}
                   </td>
-                  <td className="text-xsmall14 px-6 py-4">
+                  <td className="px-6 py-4 text-xsmall14">
                     {mentor.phoneNum ?? '-'}
                   </td>
-                  <td className="text-xsmall14 px-6 py-4">
+                  <td className="px-6 py-4 text-xsmall14">
                     {mentor.email ?? '-'}
                   </td>
-                  <td className="text-xsmall14 px-6 py-4">
+                  <td className="px-6 py-4 text-xsmall14">
                     {mentor.hashTagList.length === 0 ? (
                       '-'
                     ) : (
@@ -178,7 +178,7 @@ function MentorManagementTable() {
                       </button>
                     )}
                   </td>
-                  <td className="text-xsmall14 px-6 py-4">
+                  <td className="px-6 py-4 text-xsmall14">
                     <a
                       href={`${WEB_URL}/mentors/${mentor.id}`}
                       target="_blank"
@@ -222,7 +222,7 @@ function MentorManagementTable() {
         maxWidth="xs"
         fullWidth
       >
-        <DialogTitle className="border-neutral-80 border-b">
+        <DialogTitle className="border-b border-neutral-80">
           {viewingMentor?.name}님 멘토키워드
         </DialogTitle>
         <IconButton
@@ -237,7 +237,7 @@ function MentorManagementTable() {
             {viewingMentor?.hashTagList.map((tag: MentorHashTag) => (
               <span
                 key={tag.id}
-                className="border-neutral-80 text-xsmall14 text-neutral-30 rounded-full border px-3 py-1.5"
+                className="rounded-full border border-neutral-80 px-3 py-1.5 text-xsmall14 text-neutral-30"
               >
                 # {tag.title}
               </span>
@@ -266,17 +266,17 @@ export default function AdminMentorPage() {
     <section className="p-5">
       <Heading className="mb-4">멘토 관리</Heading>
 
-      <nav className="border-neutral-80 mb-4 flex gap-1 border-b">
+      <nav className="mb-4 flex gap-1 border-b border-neutral-80">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             type="button"
             onClick={() => setActiveTab(tab.id)}
             className={twMerge(
-              'text-xsmall14 -mb-px border-b-2 px-4 py-2',
+              '-mb-px border-b-2 px-4 py-2 text-xsmall14',
               activeTab === tab.id
-                ? 'border-neutral-0 text-neutral-0 font-semibold'
-                : 'text-neutral-40 border-transparent',
+                ? 'border-neutral-0 font-semibold text-neutral-0'
+                : 'border-transparent text-neutral-40',
             )}
           >
             {tab.label}
@@ -288,7 +288,7 @@ export default function AdminMentorPage() {
         <MentorManagementTable />
       ) : (
         <>
-          <div className="text-xsmall14 text-neutral-40 mb-4 flex flex-wrap gap-x-6 gap-y-1">
+          <div className="mb-4 flex flex-wrap gap-x-6 gap-y-1 text-xsmall14 text-neutral-40">
             {applyPageLinks.map(({ label, path }) => (
               <span key={path}>
                 {label}{' '}

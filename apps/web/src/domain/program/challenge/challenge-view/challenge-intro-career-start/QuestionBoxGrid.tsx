@@ -8,7 +8,7 @@ const QuestionBoxGrid = ({ boxes }: { boxes: string[] }) => (
         <div
           key={index}
           className={twMerge(
-            'md:text-small20 h-20 whitespace-pre rounded-md bg-white px-2.5 py-3 text-[10px] font-semibold md:h-40 md:px-5 md:py-6',
+            'h-20 whitespace-pre rounded-md bg-white px-2.5 py-3 text-[10px] font-semibold md:h-40 md:px-5 md:py-6 md:text-small20',
             box === '' && 'hidden md:invisible md:block',
           )}
         >
@@ -17,8 +17,8 @@ const QuestionBoxGrid = ({ boxes }: { boxes: string[] }) => (
       ))}
     </div>
     {/* grid 양 옆에 회색 그라데이션 박스 */}
-    <div className="from-neutral-90 absolute bottom-0 left-0 top-0 h-full w-40 bg-gradient-to-r to-transparent md:w-80" />
-    <div className="from-neutral-90 absolute bottom-0 right-0 top-0 h-full w-40 bg-gradient-to-l to-transparent md:w-80" />
+    <div className="absolute bottom-0 left-0 top-0 h-full w-40 bg-gradient-to-r from-neutral-90 to-transparent md:w-80" />
+    <div className="absolute bottom-0 right-0 top-0 h-full w-40 bg-gradient-to-l from-neutral-90 to-transparent md:w-80" />
   </div>
 );
 

@@ -32,7 +32,7 @@ const Block = ({
 }) => (
   <section className="flex flex-1 flex-col gap-4">
     <div className="flex flex-col gap-0.5">
-      <h2 className="text-small20 text-neutral-0 font-semibold">{title}</h2>
+      <h2 className="text-small20 font-semibold text-neutral-0">{title}</h2>
       {description && (
         <p className="text-xxsmall12 text-neutral-40">{description}</p>
       )}
@@ -52,7 +52,7 @@ const LexicalField = ({
   onChange: (json: string) => void;
 }) => (
   <div className="flex flex-col">
-    <span className="text-xsmall16 text-neutral-0 font-medium">{label}</span>
+    <span className="text-xsmall16 font-medium text-neutral-0">{label}</span>
     {/* 높이 고정 + 큰 이미지는 보기에만 너비에 맞춰 축소(저장 원본 크기는 유지) */}
     <div className="[&_.editor-scroller]:h-[360px] [&_.editor-scroller_img]:!h-auto [&_.editor-scroller_img]:!w-auto [&_.editor-scroller_img]:!max-w-full">
       <Suspense fallback={null}>
@@ -204,9 +204,9 @@ export default function LandingSection({
                       <img
                         src={vod.thumbnail}
                         alt=""
-                        className="h-10 w-16 shrink-0 rounded object-cover"
+                        className="rounded h-10 w-16 shrink-0 object-cover"
                       />
-                      <span className="text-xsmall14 text-neutral-0 line-clamp-1">
+                      <span className="line-clamp-1 text-xsmall14 text-neutral-0">
                         {vod.title}
                       </span>
                     </li>

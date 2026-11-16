@@ -71,8 +71,8 @@ const ResultCaseField = ({ cases, onChange }: ResultCaseFieldProps) => {
 
   return (
     <div>
-      <p className="text-xsmall14 text-neutral-10 font-semibold">전후 사례</p>
-      <p className="text-neutral-40 mt-1 text-xs">
+      <p className="text-xsmall14 font-semibold text-neutral-10">전후 사례</p>
+      <p className="mt-1 text-xs text-neutral-40">
         사례는 2~3개 작성을 권장해요.
       </p>
 
@@ -80,7 +80,7 @@ const ResultCaseField = ({ cases, onChange }: ResultCaseFieldProps) => {
         {cases.map((item, index) => (
           <li
             key={index}
-            className="border-neutral-80 rounded-lg border bg-white p-4"
+            className="rounded-lg border border-neutral-80 bg-white p-4"
           >
             <div className="mb-4 flex items-center gap-2">
               <button
@@ -92,7 +92,7 @@ const ResultCaseField = ({ cases, onChange }: ResultCaseFieldProps) => {
               >
                 <DragHandleIcon />
               </button>
-              <span className="text-xsmall14 text-neutral-10 font-semibold">
+              <span className="text-xsmall14 font-semibold text-neutral-10">
                 사례 {index + 1}
               </span>
               {/*
@@ -101,7 +101,7 @@ const ResultCaseField = ({ cases, onChange }: ResultCaseFieldProps) => {
                 모른 채 저장 버튼만 잠겨 보였다.
               */}
               {(!item.beforeCaption.trim() || !item.afterCaption.trim()) && (
-                <span className="text-system-error text-xs">
+                <span className="text-xs text-system-error">
                   전·후 문구를 채워야 저장돼요
                 </span>
               )}
@@ -109,7 +109,7 @@ const ResultCaseField = ({ cases, onChange }: ResultCaseFieldProps) => {
                 type="button"
                 onClick={() => removeAt(index)}
                 aria-label={`${index + 1}번 사례 삭제`}
-                className="hover:text-system-error ml-auto text-neutral-50 transition-colors"
+                className="ml-auto text-neutral-50 transition-colors hover:text-system-error"
               >
                 <TrashIcon />
               </button>
@@ -192,7 +192,7 @@ const ResultCaseField = ({ cases, onChange }: ResultCaseFieldProps) => {
             },
           ])
         }
-        className="border-primary text-primary text-xsmall14 mt-3 w-full rounded-md border py-3 font-medium transition-colors"
+        className="mt-3 w-full rounded-md border border-primary py-3 text-xsmall14 font-medium text-primary transition-colors"
       >
         사례 추가 +
       </button>

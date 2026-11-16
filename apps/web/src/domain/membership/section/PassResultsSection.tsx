@@ -20,7 +20,7 @@ export default function PassResultsSection() {
           {PASS_RESULTS.eyebrow}
         </p>
 
-        <h2 className="text-neutral-0 mt-4 text-center text-2xl font-bold leading-snug md:text-[2rem]">
+        <h2 className="mt-4 text-center text-2xl font-bold leading-snug text-neutral-0 md:text-[2rem]">
           <span className="block">
             {title.slice(0, at)}
             <span className="text-primary">{PASS_RESULTS.titleHighlight}</span>
@@ -29,7 +29,7 @@ export default function PassResultsSection() {
           <span className="block">{PASS_RESULTS.titleLines[1]}</span>
         </h2>
 
-        <p className="text-xsmall14 md:text-xsmall16 text-neutral-40 mt-4 text-center leading-relaxed">
+        <p className="mt-4 text-center text-xsmall14 leading-relaxed text-neutral-40 md:text-xsmall16">
           {PASS_RESULTS.subLines.map((line) => (
             <span className="block" key={line}>
               {line}
@@ -55,25 +55,25 @@ export default function PassResultsSection() {
           {[...PASS_RESULTS.cards, ...PASS_RESULTS.cards].map((card, index) => (
             <li
               aria-hidden={index >= PASS_RESULTS.cards.length}
-              className="rounded-xxl w-[280px] shrink-0 bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.05)] md:w-[320px] md:p-7"
+              className="w-[280px] shrink-0 rounded-xxl bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.05)] md:w-[320px] md:p-7"
               key={`${card.company}-${card.role}-${index}`}
             >
-              <strong className="text-small18 text-neutral-0 block font-bold">
+              <strong className="block text-small18 font-bold text-neutral-0">
                 {card.company}
               </strong>
-              <p className="text-xsmall14 text-neutral-40 mt-2">{card.role}</p>
+              <p className="mt-2 text-xsmall14 text-neutral-40">{card.role}</p>
 
               <span
                 className={`mt-5 inline-flex rounded-full px-4 py-1.5 text-xs font-bold ${
                   card.employment === '정규직'
                     ? 'bg-primary text-white'
-                    : 'border-neutral-80 text-neutral-40 border'
+                    : 'border border-neutral-80 text-neutral-40'
                 }`}
               >
                 {card.employment}
               </span>
 
-              <p className="border-neutral-90 text-neutral-45 mt-5 border-t pt-4 text-xs">
+              <p className="mt-5 border-t border-neutral-90 pt-4 text-xs text-neutral-45">
                 {PASS_RESULTS.studentNote}
               </p>
             </li>
@@ -82,7 +82,7 @@ export default function PassResultsSection() {
       </div>
 
       <div className="wrap rv">
-        <p className="text-xsmall14 md:text-xsmall16 text-neutral-20 mt-10 text-center font-bold leading-relaxed md:mt-14">
+        <p className="mt-10 text-center text-xsmall14 font-bold leading-relaxed text-neutral-20 md:mt-14 md:text-xsmall16">
           {PASS_RESULTS.footnote}
         </p>
       </div>

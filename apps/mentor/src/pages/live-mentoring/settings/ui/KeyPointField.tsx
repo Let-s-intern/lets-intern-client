@@ -77,10 +77,10 @@ const KeyPointField = ({ bullets, onChange }: KeyPointFieldProps) => {
 
   return (
     <div>
-      <p className="text-xsmall14 text-neutral-10 font-semibold">
+      <p className="text-xsmall14 font-semibold text-neutral-10">
         소개 문구 <span className="text-system-error">*</span>
       </p>
-      <p className="text-neutral-40 mt-1 text-xs">
+      <p className="mt-1 text-xs text-neutral-40">
         최대 {KEY_POINT_MAX}개까지 등록할 수 있으며, 작성한 순서대로 표시돼요.
       </p>
 
@@ -104,12 +104,12 @@ const KeyPointField = ({ bullets, onChange }: KeyPointFieldProps) => {
                   <DragHandleIcon />
                 </button>
               </span>
-              <span className="text-xsmall14 text-neutral-20 w-4 text-center font-medium">
+              <span className="w-4 text-center text-xsmall14 font-medium text-neutral-20">
                 {index + 1}
               </span>
             </span>
 
-            <div className="border-neutral-80 focus-within:border-primary flex flex-1 items-start gap-2 rounded-md border bg-white px-3 py-2.5 transition-colors">
+            <div className="flex flex-1 items-start gap-2 rounded-md border border-neutral-80 bg-white px-3 py-2.5 transition-colors focus-within:border-primary">
               <textarea
                 value={bullet}
                 rows={2}
@@ -117,7 +117,7 @@ const KeyPointField = ({ bullets, onChange }: KeyPointFieldProps) => {
                 onChange={(event) => replaceAt(index, event.target.value)}
                 placeholder="멘토링 소개 문구를 입력해주세요"
                 aria-label={`소개 문구 ${index + 1}`}
-                className="text-xsmall14 text-neutral-10 placeholder:text-neutral-60 min-w-0 flex-1 resize-none outline-none"
+                className="min-w-0 flex-1 resize-none text-xsmall14 text-neutral-10 outline-none placeholder:text-neutral-60"
               />
               <CharCounter value={bullet} max={KEY_POINT_MAX_LENGTH} />
             </div>
@@ -128,7 +128,7 @@ const KeyPointField = ({ bullets, onChange }: KeyPointFieldProps) => {
               onClick={() => removeAt(index)}
               disabled={rows.length <= KEY_POINT_MIN}
               aria-label={`${index + 1}번 소개 문구 삭제`}
-              className="hover:text-system-error shrink-0 text-neutral-50 transition-colors disabled:cursor-not-allowed disabled:opacity-30"
+              className="shrink-0 text-neutral-50 transition-colors hover:text-system-error disabled:cursor-not-allowed disabled:opacity-30"
             >
               <TrashIcon />
             </button>
@@ -141,7 +141,7 @@ const KeyPointField = ({ bullets, onChange }: KeyPointFieldProps) => {
         type="button"
         onClick={() => onChange([...rows, ''])}
         disabled={rows.length >= KEY_POINT_MAX}
-        className="border-primary text-primary text-xsmall14 mt-2 w-full rounded-md border py-3 font-medium transition-colors disabled:cursor-not-allowed disabled:border-gray-200 disabled:text-gray-400"
+        className="mt-2 w-full rounded-md border border-primary py-3 text-xsmall14 font-medium text-primary transition-colors disabled:cursor-not-allowed disabled:border-gray-200 disabled:text-gray-400"
       >
         소개 문구 추가 +
       </button>

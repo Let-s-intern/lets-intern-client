@@ -24,7 +24,7 @@ const LiveMentoringSettingsPage = lazy(
   () => import('@/pages/live-mentoring/settings/LiveMentoringSettingsPage'),
 );
 const RouteFallback = () => (
-  <div className="text-xsmall14 text-neutral-40 px-4 py-10">
+  <div className="px-4 py-10 text-xsmall14 text-neutral-40">
     페이지를 불러오는 중...
   </div>
 );

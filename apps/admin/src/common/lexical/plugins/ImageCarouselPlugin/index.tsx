@@ -119,11 +119,11 @@ function CarouselImageRow({
   onRemove: () => void;
 }) {
   return (
-    <div className="mb-2 flex items-center gap-2 rounded border border-gray-200 p-2">
+    <div className="rounded mb-2 flex items-center gap-2 border border-gray-200 p-2">
       <img
         src={image.src}
         alt={image.altText}
-        className="h-14 w-20 rounded object-cover"
+        className="rounded h-14 w-20 object-cover"
       />
       <span className="flex-1 truncate text-xs text-gray-500">
         {image.altText}
@@ -182,7 +182,7 @@ function AddSlideForm({ onAdd }: { onAdd: (images: CarouselImage[]) => void }) {
   };
 
   return (
-    <div className="mt-2 rounded border border-dashed border-gray-300 p-3">
+    <div className="rounded mt-2 border border-dashed border-gray-300 p-3">
       <FileInput
         label={loading ? '업로드 중...' : '+ 슬라이드 이미지 추가'}
         onChange={handleUpload}

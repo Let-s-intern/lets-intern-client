@@ -39,7 +39,7 @@ const MissionShareModal = ({
     <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/50 px-5">
       <div className="w-full max-w-[400px] rounded-md bg-white p-6">
         {/* 완료·축하는 이 앱에서 🎉 로 표시한다(MissionEndSection, 결제 완료 화면). */}
-        <h3 className="text-small18 text-neutral-0 text-center font-bold">
+        <h3 className="text-center text-small18 font-bold text-neutral-0">
           🎉 미션 제출에 성공했습니다
         </h3>
 
@@ -47,7 +47,7 @@ const MissionShareModal = ({
           공유 요청이 이 모달의 목적이다. 설명문과 같은 크기면 세 줄이 뭉쳐 보여
           한 단계 키우고 색으로 띄운다.
         */}
-        <p className="text-xsmall16 text-primary mt-4 text-center font-bold">
+        <p className="mt-4 text-center text-xsmall16 font-bold text-primary">
           미션을 공유해 주세요!
         </p>
         {/*
@@ -55,14 +55,14 @@ const MissionShareModal = ({
           <br /> 로 고정하면 한쪽이 어긋난다. 줄을 고르게 나눠 마지막 줄에 두 글자만
           남는 것을 막고(text-balance), 어절 중간에서 끊기지 않게 한다(break-keep).
         */}
-        <p className="text-xsmall14 text-neutral-40 mt-1.5 text-balance break-keep text-center">
+        <p className="mt-1.5 text-balance break-keep text-center text-xsmall14 text-neutral-40">
           제출 후, 미션과 소감을 {placeName}에 공유해야 제출이 인정됩니다.
         </p>
 
         {password && (
-          <div className="rounded-xs bg-neutral-95 mt-4 flex items-center justify-between gap-2 px-3 py-2.5">
+          <div className="mt-4 flex items-center justify-between gap-2 rounded-xs bg-neutral-95 px-3 py-2.5">
             <span className="text-xxsmall12 text-neutral-40">참여코드</span>
-            <span className="text-xsmall16 text-neutral-0 break-all font-semibold">
+            <span className="break-all text-xsmall16 font-semibold text-neutral-0">
               {password}
             </span>
           </div>
@@ -73,14 +73,14 @@ const MissionShareModal = ({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xs border-neutral-70 text-xsmall16 text-neutral-40 hover:bg-neutral-95 flex-1 border bg-white py-3 font-medium transition-colors"
+            className="flex-1 rounded-xs border border-neutral-70 bg-white py-3 text-xsmall16 font-medium text-neutral-40 transition-colors hover:bg-neutral-95"
           >
             나중에
           </button>
           <button
             type="button"
             onClick={handleEnter}
-            className="rounded-xs bg-primary text-xsmall16 flex-1 py-3 font-medium text-white transition-opacity hover:opacity-90"
+            className="flex-1 rounded-xs bg-primary py-3 text-xsmall16 font-medium text-white transition-opacity hover:opacity-90"
           >
             {isSlack ? '슬랙 채널 입장' : '오픈채팅방 입장'}
           </button>

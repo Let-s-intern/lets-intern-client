@@ -21,7 +21,7 @@ const BlogHashtag = ({ text, tagId }: { text: string; tagId: number }) => {
   };
   return (
     <div
-      className="text-xsmall14 text-primary-dark flex cursor-pointer items-center justify-center rounded-full bg-[#F3F5FA] px-2.5 py-1"
+      className="flex cursor-pointer items-center justify-center rounded-full bg-[#F3F5FA] px-2.5 py-1 text-xsmall14 text-primary-dark"
       onClick={onClick}
     >
       #{text}

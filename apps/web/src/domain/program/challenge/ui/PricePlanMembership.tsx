@@ -5,10 +5,10 @@ import Link from 'next/link';
 function PassMemberPrice({ price }: { price: number }) {
   return (
     <div className="flex shrink-0 flex-col items-end gap-0.5">
-      <span className="bg-primary-10 text-primary rounded-xxs p-1 text-[11px] font-medium leading-none">
+      <span className="rounded-xxs bg-primary-10 p-1 text-[11px] font-medium leading-none text-primary">
         패스 회원가
       </span>
-      <span className="text-primary text-xsmall14 font-bold">
+      <span className="text-xsmall14 font-bold text-primary">
         {price.toLocaleString()}원
       </span>
     </div>
@@ -63,8 +63,8 @@ export function MembershipBenefitNotice({
   if (hasPrivilege) {
     return (
       <div className={containerClass}>
-        <p className="text-xxsmall12 md:text-xsmall14 flex w-full items-center justify-between gap-2">
-          <span className="text-primary hidden shrink-0 font-bold md:inline">
+        <p className="flex w-full items-center justify-between gap-2 text-xxsmall12 md:text-xsmall14">
+          <span className="hidden shrink-0 font-bold text-primary md:inline">
             올인원 패스 회원
           </span>
           <span className="text-neutral-30">
@@ -77,25 +77,25 @@ export function MembershipBenefitNotice({
 
   return (
     <div className={containerClass}>
-      <p className="text-xxsmall12 md:text-xsmall14 flex min-w-0 items-center gap-2">
+      <p className="flex min-w-0 items-center gap-2 text-xxsmall12 md:text-xsmall14">
         <span className="text-neutral-10 md:hidden">
           올인원 패스 회원은 베이직 0원
         </span>
-        <span className="text-neutral-30 hidden shrink-0 md:inline">
+        <span className="hidden shrink-0 text-neutral-30 md:inline">
           챌린지 2개 이상 참여한다면, 패스가 더 유리해요!
         </span>
         <span
           aria-hidden
-          className="bg-neutral-60 hidden h-[22px] w-px shrink-0 md:inline-block"
+          className="hidden h-[22px] w-px shrink-0 bg-neutral-60 md:inline-block"
         />
-        <span className="text-neutral-30 hidden md:inline">
+        <span className="hidden text-neutral-30 md:inline">
           베이직 플랜 0원, 플랜 업그레이드 시 차액만 결제
         </span>
       </p>
       {passHref && (
         <Link
           href={passHref}
-          className="text-primary text-xxsmall12 md:text-xsmall14 flex shrink-0 items-center gap-0.5 font-semibold"
+          className="flex shrink-0 items-center gap-0.5 text-xxsmall12 font-semibold text-primary md:text-xsmall14"
         >
           <span className="flex items-center gap-1 md:hidden">
             알아보기{' '}

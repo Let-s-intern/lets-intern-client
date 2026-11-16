@@ -196,7 +196,7 @@ const GuideSection = ({ className }: { className?: string }) => {
             <input
               type="text"
               id="guide"
-              className="mb-4 w-full rounded border px-3 py-1"
+              className="rounded mb-4 w-full border px-3 py-1"
               placeholder="제목"
               value={editingGuide.title}
               onChange={(e) =>
@@ -211,7 +211,7 @@ const GuideSection = ({ className }: { className?: string }) => {
             <input
               type="text"
               id="guide-link"
-              className="mb-4 w-full rounded border px-3 py-1"
+              className="rounded mb-4 w-full border px-3 py-1"
               placeholder="링크"
               value={editingGuide.link}
               onChange={(e) =>

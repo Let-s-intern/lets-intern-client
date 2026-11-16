@@ -168,20 +168,20 @@ const TreeBranch = ({
     {throughLeft && (
       <span
         aria-hidden
-        className={`border-neutral-70 absolute top-0 h-full border-l ${throughLeft}`}
+        className={`absolute top-0 h-full border-l border-neutral-70 ${throughLeft}`}
       />
     )}
     <span
       aria-hidden
       className={clsx(
-        'border-neutral-70 absolute top-0 border-l',
+        'absolute top-0 border-l border-neutral-70',
         left,
         last ? 'h-1/2' : 'h-full',
       )}
     />
     <span
       aria-hidden
-      className={`border-neutral-70 absolute top-1/2 w-2 border-t ${left}`}
+      className={`absolute top-1/2 w-2 border-t border-neutral-70 ${left}`}
     />
   </>
 );
@@ -220,7 +220,7 @@ const UsageDetailRow = ({ applicationId, colSpan, status, id }: Props) => {
     <table className="w-full border-collapse">
       <thead>
         {/* 목록 표 헤더와 같은 위계로 읽히게 한다. 흐리게 두면 상세가 부록처럼 보인다. */}
-        <tr className="border-neutral-75 text-neutral-20 border-b text-left">
+        <tr className="border-b border-neutral-75 text-left text-neutral-20">
           <th className="px-3 py-1.5 font-medium">항목</th>
           <th className="px-3 py-1.5 font-medium">최초 이용</th>
           <th className="px-3 py-1.5 font-medium">최근 이용</th>
@@ -307,7 +307,7 @@ const UsageDetailRow = ({ applicationId, colSpan, status, id }: Props) => {
                   마지막 자료는 세로선을 절반만 그린다. 끝까지 내리면 다음 미션으로 이어지는
                   것처럼 보여 소속을 잘못 읽는다.
                 */}
-                <td className="text-neutral-20 relative py-1 pl-9 pr-3">
+                <td className="relative py-1 pl-9 pr-3 text-neutral-20">
                   <TreeBranch
                     left="left-7"
                     last={index === group.contents.length - 1}
@@ -343,9 +343,9 @@ const UsageDetailRow = ({ applicationId, colSpan, status, id }: Props) => {
       `neutral-100` 이 가장 밝다(#FAFAFA). 여느 Tailwind 감각으로 `bg-neutral-50` 을 쓰면
       거의 흰색이 아니라 중간 회색(#ACAFB6)이 깔려 글자가 묻힌다.
     */
-    <tr id={id} className="bg-neutral-95 border-b">
+    <tr id={id} className="border-b bg-neutral-95">
       <td colSpan={colSpan} className="px-6 py-3 text-sm">
-        <div className="border-neutral-75 border-l-2 pl-4">{body}</div>
+        <div className="border-l-2 border-neutral-75 pl-4">{body}</div>
       </td>
     </tr>
   );

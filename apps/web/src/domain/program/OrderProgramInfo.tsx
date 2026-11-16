@@ -56,7 +56,7 @@ const OrderProgramInfo = ({
 
   return (
     <div className="flex w-full flex-col items-start justify-center gap-y-6">
-      <div className="text-neutral-0 font-semibold">프로그램 정보</div>
+      <div className="font-semibold text-neutral-0">프로그램 정보</div>
       <div className="flex w-full items-start justify-center gap-x-4">
         {thumbnail ? (
           <img
@@ -67,7 +67,7 @@ const OrderProgramInfo = ({
         ) : (
           !isVodPass && (
             <div
-              className="bg-neutral-90 h-[97px] w-[137px] shrink-0 rounded-sm"
+              className="h-[97px] w-[137px] shrink-0 rounded-sm bg-neutral-90"
               aria-hidden
             />
           )
@@ -78,14 +78,14 @@ const OrderProgramInfo = ({
             {isLiveMentoring ? (
               <>
                 <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
-                  <div className="text-neutral-30 shrink-0">예약 일시</div>
+                  <div className="shrink-0 text-neutral-30">예약 일시</div>
                   <div className="text-primary-dark">
                     {formatReservationDateTime(startDate, endDate)}
                   </div>
                 </div>
                 {mentoringPlan && (
                   <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
-                    <div className="text-neutral-30 shrink-0">구매 플랜</div>
+                    <div className="shrink-0 text-neutral-30">구매 플랜</div>
                     <div className="text-primary-dark">{mentoringPlan}</div>
                   </div>
                 )}
@@ -96,19 +96,19 @@ const OrderProgramInfo = ({
                   key={label}
                   className="flex w-full items-start justify-start gap-x-4 text-xs font-medium"
                 >
-                  <div className="text-neutral-30 shrink-0">{label}</div>
+                  <div className="shrink-0 text-neutral-30">{label}</div>
                   <div className="text-primary-dark">{value}</div>
                 </div>
               ))
             ) : isGuidebook || isVod ? (
               <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
-                <div className="text-neutral-30 shrink-0">열람 방식</div>
+                <div className="shrink-0 text-neutral-30">열람 방식</div>
                 <div className="text-primary-dark">{accessMethod || '-'}</div>
               </div>
             ) : (
               <>
                 <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
-                  <div className="text-neutral-30 shrink-0">
+                  <div className="shrink-0 text-neutral-30">
                     {isMembership ? '이용 기간' : '진행 일정'}
                   </div>
                   <div className="text-primary-dark">{`${convertDateFormat(startDate || '')} - ${convertDateFormat(endDate || '')}`}</div>
@@ -117,7 +117,7 @@ const OrderProgramInfo = ({
                   progressType !== 'none' &&
                   programType !== 'CHALLENGE' && (
                     <div className="flex w-full items-center justify-start gap-x-4 text-xs font-medium">
-                      <div className="text-neutral-30 shrink-0">진행 방식</div>
+                      <div className="shrink-0 text-neutral-30">진행 방식</div>
                       <div className="text-primary-dark">{`${
                         progressType === 'ALL'
                           ? '온라인/오프라인'

@@ -8,11 +8,11 @@ interface Props {
 const MissionSubmitOTRequiredNotice = ({ className }: Props) => (
   <section
     className={clsx(
-      'rounded-xs border-neutral-80 flex flex-col gap-1 border px-4 py-4',
+      'flex flex-col gap-1 rounded-xs border border-neutral-80 px-4 py-4',
       className,
     )}
   >
-    <p className="text-xsmall14 md:text-xsmall16 text-neutral-0 font-medium">
+    <p className="text-xsmall14 font-medium text-neutral-0 md:text-xsmall16">
       0회차 미션을 먼저 제출해야 제출할 수 있어요
     </p>
   </section>

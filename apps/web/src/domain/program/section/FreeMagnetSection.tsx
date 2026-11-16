@@ -15,14 +15,14 @@ const FreeMagnetSection = () => {
   if (isLoading || !data || data.magnetList.length === 0) return null;
 
   return (
-    <section className="bg-primary-5 flex w-full flex-col gap-5 rounded-lg border border-[#9499F9] p-5 pb-4 md:px-8 md:pb-5 md:pt-6">
+    <section className="flex w-full flex-col gap-5 rounded-lg border border-[#9499F9] bg-primary-5 p-5 pb-4 md:px-8 md:pb-5 md:pt-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-xsmall16 md:text-small20 font-semibold">
+        <h2 className="text-xsmall16 font-semibold md:text-small20">
           취준 꿀팁이 담긴 무료 자료집
         </h2>
         <Link
           href="/library/list"
-          className="text-xxsmall12 text-neutral-45 md:text-xsmall16 pb-3 pl-3"
+          className="pb-3 pl-3 text-xxsmall12 text-neutral-45 md:text-xsmall16"
         >
           자료집 더보기
         </Link>
@@ -48,12 +48,12 @@ const FreeMagnetSection = () => {
                   src={magnet.desktopThumbnail || undefined}
                   alt={magnet.title}
                 />
-                <span className="rounded-xxs bg-neutral-10 text-xxsmall10 text-static-100 md:text-xxsmall12 absolute left-2 top-2 px-1.5 py-[5px]">
+                <span className="absolute left-2 top-2 rounded-xxs bg-neutral-10 px-1.5 py-[5px] text-xxsmall10 text-static-100 md:text-xxsmall12">
                   무료
                 </span>
               </div>
               <div className="pt-3">
-                <p className="text-xsmall16 line-clamp-2 font-semibold">
+                <p className="line-clamp-2 text-xsmall16 font-semibold">
                   {magnet.title}
                 </p>
               </div>

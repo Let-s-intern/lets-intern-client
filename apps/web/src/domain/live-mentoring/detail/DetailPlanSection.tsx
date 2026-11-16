@@ -51,7 +51,7 @@ const VideoIcon = () => (
   <svg
     aria-hidden="true"
     viewBox="0 0 20 14"
-    className="fill-neutral-40 h-[14px] w-5 shrink-0"
+    className="h-[14px] w-5 shrink-0 fill-neutral-40"
   >
     <rect x="0" y="0" width="13" height="14" rx="2.5" />
     <path d="M14.5 5.2 19.2 2.3a.6.6 0 0 1 .9.5v8.4a.6.6 0 0 1-.9.5l-4.7-2.9V5.2Z" />
@@ -62,7 +62,7 @@ const DocumentIcon = () => (
   <svg
     aria-hidden="true"
     viewBox="0 0 16 18"
-    className="fill-neutral-40 h-[18px] w-4 shrink-0"
+    className="h-[18px] w-4 shrink-0 fill-neutral-40"
   >
     <path d="M2.5 0h7L16 6v10a2 2 0 0 1-2 2H2.5a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2Zm7 1.6V6H14L9.5 1.6ZM4 9h8v1.5H4V9Zm0 3.5h8V14H4v-1.5Z" />
   </svg>
@@ -80,16 +80,16 @@ const PlanCard = ({
   const rate = discountRate(price, listPrice);
 
   return (
-    <div className="flex flex-col justify-center gap-6 rounded-2xl bg-white p-6 md:p-8">
-      <p className="text-small18 md:text-small20 font-bold">
+    <div className="rounded-2xl flex flex-col justify-center gap-6 bg-white p-6 md:p-8">
+      <p className="text-small18 font-bold md:text-small20">
         {PLAN_COPY[duration].name}
       </p>
-      <ul className="text-xsmall14 md:text-xsmall16 flex flex-col gap-2.5 rounded-lg bg-[#f0f4ff] px-4 py-4">
+      <ul className="flex flex-col gap-2.5 rounded-lg bg-[#f0f4ff] px-4 py-4 text-xsmall14 md:text-xsmall16">
         <li className="flex items-center gap-2">
           <VideoIcon />
           <span>
             1:1 LIVE 멘토링{' '}
-            <span className="text-primary font-semibold">
+            <span className="font-semibold text-primary">
               {durationLabel(duration)}
             </span>
           </span>
@@ -101,14 +101,14 @@ const PlanCard = ({
       </ul>
       <div className="flex flex-col gap-0.5">
         {rate > 0 && (
-          <p className="text-xsmall14 md:text-xsmall16 flex items-center gap-2 font-semibold">
+          <p className="flex items-center gap-2 text-xsmall14 font-semibold md:text-xsmall16">
             <span className="text-system-error">{rate}%</span>
-            <span className="text-neutral-45 font-normal line-through">
+            <span className="font-normal text-neutral-45 line-through">
               {formatPrice(listPrice)}
             </span>
           </p>
         )}
-        <p className="text-small20 md:text-medium24 font-bold">
+        <p className="text-small20 font-bold md:text-medium24">
           {formatPrice(price)}
         </p>
       </div>
@@ -141,10 +141,10 @@ const DetailPlanSection = ({ durationPrices }: DetailPlanSectionProps) => {
   return (
     <section className="w-full scroll-mt-16 bg-[#e5ecff] py-12 md:py-16">
       <div className="mw-1180 flex flex-col items-center px-5">
-        <p className="text-xsmall14 md:text-small18 text-primary font-semibold">
+        <p className="text-xsmall14 font-semibold text-primary md:text-small18">
           필요한 깊이에 맞게 플랜을 선택하세요
         </p>
-        <h2 className="text-small20 md:text-xlarge30 mt-2 text-center font-bold">
+        <h2 className="mt-2 text-center text-small20 font-bold md:text-xlarge30">
           내게 알맞은 구성을 선택할 수 있어요!
         </h2>
 
@@ -155,16 +155,16 @@ const DetailPlanSection = ({ durationPrices }: DetailPlanSectionProps) => {
               className="grid grid-cols-1 gap-4 md:grid-cols-[1.75fr_auto_1fr] md:items-stretch md:gap-8"
             >
               {/* 좌 · 추천 대상 */}
-              <div className="flex flex-col gap-5 rounded-2xl bg-white p-6 md:p-9">
-                <h3 className="text-small18 md:text-small20 font-bold">
+              <div className="rounded-2xl flex flex-col gap-5 bg-white p-6 md:p-9">
+                <h3 className="text-small18 font-bold md:text-small20">
                   {PLAN_COPY[duration].recommend}
                 </h3>
-                <div className="text-xsmall14 md:text-xsmall16 text-neutral-30">
+                <div className="text-xsmall14 text-neutral-30 md:text-xsmall16">
                   {PLAN_COPY[duration].summary.map((line) => (
                     <p key={line}>{line}</p>
                   ))}
                 </div>
-                <ul className="text-xsmall14 md:text-xsmall16 text-neutral-40 bg-neutral-90 flex flex-col gap-2 rounded-lg px-5 py-5">
+                <ul className="flex flex-col gap-2 rounded-lg bg-neutral-90 px-5 py-5 text-xsmall14 text-neutral-40 md:text-xsmall16">
                   {PLAN_COPY[duration].needs.map((need) => (
                     <li key={need}>{need}</li>
                   ))}

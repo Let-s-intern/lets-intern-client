@@ -121,7 +121,7 @@ const FloatingCalendarNav = ({
     <>
       {/* ① 좌우 이동 + 날짜 범위 — 뷰포트 하단 고정, 가로는 캘린더 중앙 */}
       <div
-        className="border-neutral-80 fixed bottom-6 left-1/2 z-40 flex h-10 -translate-x-1/2 items-center gap-1.5 rounded-full border bg-white px-2 shadow-lg"
+        className="fixed bottom-6 left-1/2 z-40 flex h-10 -translate-x-1/2 items-center gap-1.5 rounded-full border border-neutral-80 bg-white px-2 shadow-lg"
         style={box ? { left: box.centerX } : undefined}
       >
         <button
@@ -129,7 +129,7 @@ const FloatingCalendarNav = ({
           onClick={() => moveByDays(-MOVE_STEP_DAYS)}
           disabled={!range}
           aria-label="이전 주"
-          className="hover:bg-neutral-95 flex h-7 w-7 items-center justify-center rounded-full transition-colors disabled:opacity-40"
+          className="flex h-7 w-7 items-center justify-center rounded-full transition-colors hover:bg-neutral-95 disabled:opacity-40"
         >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path
@@ -142,7 +142,7 @@ const FloatingCalendarNav = ({
           </svg>
         </button>
 
-        <span className="text-xsmall14 text-neutral-10 min-w-[140px] text-center font-semibold tabular-nums">
+        <span className="min-w-[140px] text-center text-xsmall14 font-semibold tabular-nums text-neutral-10">
           {label}
         </span>
 
@@ -151,7 +151,7 @@ const FloatingCalendarNav = ({
           onClick={() => moveByDays(MOVE_STEP_DAYS)}
           disabled={!range}
           aria-label="다음 주"
-          className="hover:bg-neutral-95 flex h-7 w-7 items-center justify-center rounded-full transition-colors disabled:opacity-40"
+          className="flex h-7 w-7 items-center justify-center rounded-full transition-colors hover:bg-neutral-95 disabled:opacity-40"
         >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path
@@ -171,7 +171,7 @@ const FloatingCalendarNav = ({
           type="button"
           onClick={onGoToToday}
           aria-label="오늘로 이동"
-          className="border-neutral-80 text-primary text-xsmall14 hover:bg-neutral-95 fixed bottom-6 right-6 z-40 flex h-10 items-center gap-1 whitespace-nowrap rounded-full border bg-white pl-3 pr-3.5 font-medium shadow-lg transition-colors"
+          className="fixed bottom-6 right-6 z-40 flex h-10 items-center gap-1 whitespace-nowrap rounded-full border border-neutral-80 bg-white pl-3 pr-3.5 text-xsmall14 font-medium text-primary shadow-lg transition-colors hover:bg-neutral-95"
           style={
             box
               ? {

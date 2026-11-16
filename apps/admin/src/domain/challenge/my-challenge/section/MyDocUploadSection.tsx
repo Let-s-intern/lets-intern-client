@@ -78,7 +78,7 @@ export const DocumentFileItem = ({
   const canEdit = !isSubmitted;
 
   return (
-    <div className="border-neutral-90 border-b pb-5">
+    <div className="border-b border-neutral-90 pb-5">
       <div className="mb-2">
         <span className="text-xsmall14 text-neutral-35">{label}</span>
       </div>
@@ -88,18 +88,18 @@ export const DocumentFileItem = ({
           <button
             type="button"
             onClick={() => displayFile && handleFilePreview(displayFile)}
-            className="text-xsmall14 text-neutral-0 truncate font-normal underline"
+            className="truncate text-xsmall14 font-normal text-neutral-0 underline"
           >
             {typeof displayFile === 'string'
               ? getFileNameFromUrl(type, displayFile)
               : displayFile?.name}
           </button>
           {isUploading && (
-            <div className="text-xsmall14 text-neutral-35 flex items-center">
+            <div className="flex items-center text-xsmall14 text-neutral-35">
               <span>업로드 중...</span>
               <LoaderCircle
                 size={16}
-                className="text-primary flex-shrink-0 animate-spin"
+                className="flex-shrink-0 animate-spin text-primary"
               />
             </div>
           )}
@@ -118,7 +118,7 @@ export const DocumentFileItem = ({
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={isSubmitted}
-          className="rounded-xs bg-primary-10 text-xsmall14 text-primary hover:bg-primary-15 disabled:bg-neutral-85 flex items-center gap-1 px-3 py-2 font-medium transition disabled:cursor-not-allowed disabled:text-neutral-50"
+          className="flex items-center gap-1 rounded-xs bg-primary-10 px-3 py-2 text-xsmall14 font-medium text-primary transition hover:bg-primary-15 disabled:cursor-not-allowed disabled:bg-neutral-85 disabled:text-neutral-50"
         >
           <Upload size={16} />
           파일 업로드

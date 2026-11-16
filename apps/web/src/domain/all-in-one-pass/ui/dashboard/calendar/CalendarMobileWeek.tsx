@@ -35,7 +35,7 @@ export default function CalendarMobileWeek({
     <div
       ref={ref}
       onScroll={onScroll}
-      className="bg-neutral-95 flex snap-x snap-mandatory overflow-x-auto rounded-sm py-1.5 [&::-webkit-scrollbar]:hidden"
+      className="flex snap-x snap-mandatory overflow-x-auto rounded-sm bg-neutral-95 py-1.5 [&::-webkit-scrollbar]:hidden"
       style={{ scrollbarWidth: 'none' }}
     >
       {cal.weeks.map((week, wi) => (

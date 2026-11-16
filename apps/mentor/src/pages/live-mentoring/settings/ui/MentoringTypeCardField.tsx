@@ -118,8 +118,8 @@ const MentoringTypeCardField = ({
 
   return (
     <div>
-      <p className="text-xsmall14 text-neutral-10 font-semibold">멘토링 유형</p>
-      <p className="text-neutral-40 mt-1 text-xs">
+      <p className="text-xsmall14 font-semibold text-neutral-10">멘토링 유형</p>
+      <p className="mt-1 text-xs text-neutral-40">
         멘토링 유형별 상세 설명 카드예요. 입력한 순서대로 표시돼요.
         <br />
         2~{TYPE_CARD_MAX}개 작성을 권장해요.
@@ -131,7 +131,7 @@ const MentoringTypeCardField = ({
             key={index}
             /* 미리보기가 편집 중인 항목으로 따라올 때 쓴다(LC-3268). */
             data-preview-index={index}
-            className="border-neutral-80 rounded-lg border bg-white p-4"
+            className="rounded-lg border border-neutral-80 bg-white p-4"
           >
             <div className="mb-3 flex items-center gap-2">
               <button
@@ -143,10 +143,10 @@ const MentoringTypeCardField = ({
               >
                 <DragHandleIcon />
               </button>
-              <span className="text-xsmall14 text-neutral-10 font-semibold">
+              <span className="text-xsmall14 font-semibold text-neutral-10">
                 멘토링 소개 카드 {index + 1}
                 {index === 0 ? (
-                  <span className="text-system-error ml-0.5">*</span>
+                  <span className="ml-0.5 text-system-error">*</span>
                 ) : null}
               </span>
               {/*
@@ -157,7 +157,7 @@ const MentoringTypeCardField = ({
               {(!item.typeName.trim() ||
                 !item.title.trim() ||
                 !item.description.trim()) && (
-                <span className="text-system-error text-xs">
+                <span className="text-xs text-system-error">
                   모두 채워야 저장돼요
                 </span>
               )}
@@ -167,7 +167,7 @@ const MentoringTypeCardField = ({
                 onClick={() => removeAt(index)}
                 disabled={rows.length <= TYPE_CARD_MIN}
                 aria-label={`${index + 1}번 소개 카드 삭제`}
-                className="hover:text-system-error ml-auto text-neutral-50 transition-colors disabled:cursor-not-allowed disabled:opacity-30"
+                className="ml-auto text-neutral-50 transition-colors hover:text-system-error disabled:cursor-not-allowed disabled:opacity-30"
               >
                 <TrashIcon />
               </button>
@@ -248,7 +248,7 @@ const MentoringTypeCardField = ({
                           aria-pressed={selected}
                           className={`rounded-full border px-2.5 py-1 text-xs transition-colors ${
                             selected
-                              ? 'border-primary bg-primary-10 text-primary font-medium'
+                              ? 'border-primary bg-primary-10 font-medium text-primary'
                               : 'border-neutral-80 text-neutral-30 disabled:opacity-40'
                           }`}
                         >
@@ -271,7 +271,7 @@ const MentoringTypeCardField = ({
         type="button"
         onClick={() => onChange([...rows, makeEmptyCard()])}
         disabled={rows.length >= TYPE_CARD_MAX}
-        className="border-primary text-primary text-xsmall14 mt-3 w-full rounded-md border py-3 font-medium transition-colors disabled:cursor-not-allowed disabled:border-gray-200 disabled:text-gray-400"
+        className="mt-3 w-full rounded-md border border-primary py-3 text-xsmall14 font-medium text-primary transition-colors disabled:cursor-not-allowed disabled:border-gray-200 disabled:text-gray-400"
       >
         소개 카드 추가 +
       </button>

@@ -29,15 +29,15 @@ export default function FaqSection({ faqs }: Props) {
             return (
               <li
                 key={faq.id}
-                className="border-neutral-80 overflow-hidden rounded-lg border"
+                className="overflow-hidden rounded-lg border border-neutral-80"
               >
                 <button
                   type="button"
                   onClick={() => setOpenId(open ? null : faq.id)}
                   className="flex w-full items-center justify-between gap-4 px-4 py-5 text-left md:px-[26px] md:py-[22px]"
                 >
-                  <p className="text-xsmall16 md:text-small20 text-neutral-0 flex items-center gap-2 font-semibold md:gap-4">
-                    <span className="text-small20 md:text-medium24 font-bold text-[#4A76FF]">
+                  <p className="flex items-center gap-2 text-xsmall16 font-semibold text-neutral-0 md:gap-4 md:text-small20">
+                    <span className="text-small20 font-bold text-[#4A76FF] md:text-medium24">
                       Q
                     </span>
                     {faq.question}
@@ -60,7 +60,7 @@ export default function FaqSection({ faqs }: Props) {
                   )}
                 >
                   <div className="overflow-hidden">
-                    <p className="text-xsmall14 md:text-xsmall16 text-neutral-40 whitespace-pre-line px-5 pb-5">
+                    <p className="whitespace-pre-line px-5 pb-5 text-xsmall14 text-neutral-40 md:text-xsmall16">
                       {faq.answer}
                     </p>
                   </div>

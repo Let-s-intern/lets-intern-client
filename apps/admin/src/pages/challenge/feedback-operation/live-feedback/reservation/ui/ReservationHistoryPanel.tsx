@@ -23,7 +23,7 @@ export default function ReservationHistoryPanel({
 
   if (isLoading) {
     return (
-      <div className="text-xxsmall12 text-neutral-40 py-4 text-center">
+      <div className="py-4 text-center text-xxsmall12 text-neutral-40">
         변경 내역 불러오는 중...
       </div>
     );
@@ -31,7 +31,7 @@ export default function ReservationHistoryPanel({
 
   if (isError) {
     return (
-      <div className="text-xxsmall12 py-4 text-center text-red-500">
+      <div className="py-4 text-center text-xxsmall12 text-red-500">
         변경 내역을 불러오지 못했습니다.
       </div>
     );
@@ -39,7 +39,7 @@ export default function ReservationHistoryPanel({
 
   if (!history || history.length === 0) {
     return (
-      <div className="text-xxsmall12 text-neutral-40 py-4 text-center">
+      <div className="py-4 text-center text-xxsmall12 text-neutral-40">
         예약을 옮긴 내역이 없습니다.
       </div>
     );
@@ -49,7 +49,7 @@ export default function ReservationHistoryPanel({
     <ol className="flex flex-col gap-2 py-2">
       {history.map((item) => (
         <li key={item.id} className="flex items-center gap-3">
-          <span className="text-xxsmall12 text-neutral-40 w-20 shrink-0">
+          <span className="w-20 shrink-0 text-xxsmall12 text-neutral-40">
             이전 예약일
           </span>
           <span className="text-xsmall14 text-neutral-0">

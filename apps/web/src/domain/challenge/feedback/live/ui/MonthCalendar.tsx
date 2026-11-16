@@ -47,14 +47,14 @@ const MonthCalendar = ({
   ];
 
   return (
-    <div className="border-neutral-80 flex w-full flex-col gap-5 rounded-sm border p-5 md:w-[298px] md:shrink-0">
+    <div className="flex w-full flex-col gap-5 rounded-sm border border-neutral-80 p-5 md:w-[298px] md:shrink-0">
       {/* 월 네비게이션 */}
       <div className="flex items-center justify-between">
         <button
           type="button"
           onClick={onPrev}
           disabled={!canGoPrev}
-          className="hover:bg-neutral-90 rounded-full p-1 disabled:opacity-30"
+          className="rounded-full p-1 hover:bg-neutral-90 disabled:opacity-30"
         >
           <img
             src="/icons/Chevron_Left_MD.svg"
@@ -62,14 +62,14 @@ const MonthCalendar = ({
             className="h-5 w-5"
           />
         </button>
-        <span className="text-xsmall16 text-neutral-0 font-semibold">
+        <span className="text-xsmall16 font-semibold text-neutral-0">
           {year}년 {month + 1}월
         </span>
         <button
           type="button"
           onClick={onNext}
           disabled={!canGoNext}
-          className="hover:bg-neutral-90 rounded-full p-1 disabled:opacity-30"
+          className="rounded-full p-1 hover:bg-neutral-90 disabled:opacity-30"
         >
           <img
             src="/icons/Chevron_Right_MD.svg"
@@ -86,7 +86,7 @@ const MonthCalendar = ({
             <span
               key={day}
               className={clsx(
-                'text-xsmall14 inline-flex h-8 w-8 items-center justify-center font-medium',
+                'inline-flex h-8 w-8 items-center justify-center text-xsmall14 font-medium',
                 i === 6 ? 'text-red-500' : 'text-neutral-40',
               )}
             >
@@ -121,7 +121,7 @@ const MonthCalendar = ({
                 type="button"
                 disabled={isDisabled}
                 onClick={() => onDateSelect(dateStr)}
-                className={`text-xsmall14 mx-auto flex h-8 w-8 items-center justify-center ${DAY_STATE_CLASSES[dayState]}`}
+                className={`mx-auto flex h-8 w-8 items-center justify-center text-xsmall14 ${DAY_STATE_CLASSES[dayState]}`}
               >
                 {day}
               </button>

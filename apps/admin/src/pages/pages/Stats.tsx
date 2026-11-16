@@ -49,7 +49,7 @@ const Stats = () => {
             key={embed.key}
             to={`/stats/${embed.key}`}
             className={({ isActive }) =>
-              `text-xsmall14 -mb-px border-b-2 px-4 py-2 transition-colors ${
+              `-mb-px border-b-2 px-4 py-2 text-xsmall14 transition-colors ${
                 isActive
                   ? 'border-neutral-800 font-semibold text-neutral-900'
                   : 'border-transparent text-neutral-400 hover:text-neutral-700'
@@ -63,7 +63,7 @@ const Stats = () => {
 
       <div className="min-h-0 flex-1 p-6">
         {active ? (
-          <div className="h-full w-full overflow-hidden rounded">
+          <div className="rounded h-full w-full overflow-hidden">
             <iframe
               key={active.key}
               title={active.title}
@@ -78,7 +78,7 @@ const Stats = () => {
             />
           </div>
         ) : (
-          <div className="text-xsmall14 flex h-full w-full items-center justify-center text-neutral-400">
+          <div className="flex h-full w-full items-center justify-center text-xsmall14 text-neutral-400">
             상단에서 통계 항목을 선택하세요.
           </div>
         )}

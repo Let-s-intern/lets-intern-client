@@ -43,7 +43,7 @@ export default function PlaybookIntroSection() {
           ))}
         </h2>
 
-        <p className="text-xsmall14 md:text-xsmall16 text-neutral-40 mt-6 text-center leading-relaxed">
+        <p className="mt-6 text-center text-xsmall14 leading-relaxed text-neutral-40 md:text-xsmall16">
           {P.descLines.map((line) => (
             <span className="block" key={line.strong}>
               <EmphasisLine line={line} />
@@ -58,7 +58,7 @@ export default function PlaybookIntroSection() {
         <ol className="mt-10 flex flex-wrap items-center justify-center gap-2 md:mt-14 md:gap-3">
           {P.chips.map((chip, i) => (
             <li className="flex items-center gap-2 md:gap-3" key={chip}>
-              <span className="border-neutral-85 text-xsmall14 text-neutral-0 rounded-full border bg-white px-4 py-2.5 font-medium">
+              <span className="rounded-full border border-neutral-85 bg-white px-4 py-2.5 text-xsmall14 font-medium text-neutral-0">
                 {chip}
               </span>
               {i < P.chips.length - 1 ? (
@@ -70,7 +70,7 @@ export default function PlaybookIntroSection() {
           ))}
         </ol>
 
-        <p className="text-xsmall14 md:text-xsmall16 text-neutral-0 mt-8 text-center font-bold md:mt-10">
+        <p className="mt-8 text-center text-xsmall14 font-bold text-neutral-0 md:mt-10 md:text-xsmall16">
           <EmphasisLine line={P.footer} />
         </p>
       </div>

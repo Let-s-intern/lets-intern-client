@@ -75,7 +75,7 @@ const LiveFeedbackPage = () => {
   );
 
   return (
-    <div className="md:mb-22 mb-10 flex flex-col gap-10">
+    <div className="mb-10 flex flex-col gap-10 md:mb-22">
       <LiveFeedbackSection
         label="진행 전"
         missions={needReservation}

@@ -12,18 +12,18 @@ const UsageMentoringTab = () => {
 
   return (
     <div className="flex flex-col gap-6 md:gap-8">
-      <div className="bg-primary-5 flex justify-between gap-3 rounded-sm px-3 py-2 md:px-4 md:py-3">
-        <p className="md:text-xsmall16 text-neutral-10 text-[13px]">
+      <div className="flex justify-between gap-3 rounded-sm bg-primary-5 px-3 py-2 md:px-4 md:py-3">
+        <p className="text-[13px] text-neutral-10 md:text-xsmall16">
           매월{' '}
           <Link
             href="/mypage/coupon"
-            className="text-primary font-semibold underline underline-offset-2"
+            className="font-semibold text-primary underline underline-offset-2"
           >
             쿠폰함
           </Link>
           에 <b className="font-semibold">1:1 LIVE 멘토링 50% 할인 쿠폰</b>이
           지급됩니다. 멘토링 신청 시 적용해주세요.
-          <span className="text-neutral-40 md:text-xxsmall12 text-xxsmall10 mt-1 block tracking-tight md:tracking-normal">
+          <span className="mt-1 block text-xxsmall10 tracking-tight text-neutral-40 md:text-xxsmall12 md:tracking-normal">
             패스 기간 만료 시 미사용 쿠폰도 함께 소멸됩니다. 기간 내에
             사용해주세요.
           </span>
@@ -33,11 +33,11 @@ const UsageMentoringTab = () => {
       {isLoading ? (
         <LoadingContainer className="py-20" />
       ) : isError ? (
-        <p className="text-xsmall14 text-neutral-40 py-20 text-center">
+        <p className="py-20 text-center text-xsmall14 text-neutral-40">
           멘토링 프로그램 목록을 불러오지 못했어요. 잠시 후 다시 시도해주세요.
         </p>
       ) : openings.length === 0 ? (
-        <div className="bg-neutral-95 flex h-52 w-full items-center justify-center rounded-sm md:h-60">
+        <div className="flex h-52 w-full items-center justify-center rounded-sm bg-neutral-95 md:h-60">
           <p className="text-xsmall14 text-neutral-40">
             현재 진행 중인 1:1 LIVE 멘토링이 없어요.
           </p>

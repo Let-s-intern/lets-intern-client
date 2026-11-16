@@ -76,12 +76,12 @@ export default function PassBenefitModal({
         <div
           aria-label={titleLines.join(' ')}
           aria-modal="true"
-          className="rounded-xxl relative flex max-h-full w-full max-w-[1000px] flex-col overflow-hidden bg-white"
+          className="relative flex max-h-full w-full max-w-[1000px] flex-col overflow-hidden rounded-xxl bg-white"
           role="dialog"
         >
           <button
             aria-label="닫기"
-            className="text-neutral-40 absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-lg md:right-6 md:top-6"
+            className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-lg text-neutral-40 md:right-6 md:top-6"
             onClick={onClose}
             type="button"
           >
@@ -99,7 +99,7 @@ export default function PassBenefitModal({
               </span>
             </div>
 
-            <h2 className="text-neutral-0 mt-4 text-center text-xl font-bold leading-snug md:text-[2rem]">
+            <h2 className="mt-4 text-center text-xl font-bold leading-snug text-neutral-0 md:text-[2rem]">
               {titleLines.map((line) => (
                 <span className="block" key={line}>
                   {line}
@@ -107,7 +107,7 @@ export default function PassBenefitModal({
               ))}
             </h2>
 
-            <p className="text-xsmall14 md:text-xsmall16 text-neutral-40 mt-4 text-center leading-relaxed">
+            <p className="mt-4 text-center text-xsmall14 leading-relaxed text-neutral-40 md:text-xsmall16">
               {subLines.map((line) => (
                 <span className="block" key={line}>
                   {line}

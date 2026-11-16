@@ -63,7 +63,7 @@ const LoginGate = ({ feedbackId, role }: Props) => {
   };
 
   return (
-    <section className="border-neutral-80 rounded-xxl flex flex-col gap-5 border bg-white p-6 shadow-sm">
+    <section className="flex flex-col gap-5 rounded-xxl border border-neutral-80 bg-white p-6 shadow-sm">
       <div className="flex flex-col items-center gap-3 text-center">
         <img
           src="/logo/horizontal-logo.svg"
@@ -71,7 +71,7 @@ const LoginGate = ({ feedbackId, role }: Props) => {
           className="h-6 w-auto"
         />
         <div className="flex flex-col gap-1">
-          <h1 className="text-small18 text-neutral-0 font-bold">
+          <h1 className="text-small18 font-bold text-neutral-0">
             {role === 'MENTOR' ? '멘티' : '멘토'}와 1:1 라이브 피드백
           </h1>
           <p className="text-xsmall14 text-neutral-40">
@@ -88,7 +88,7 @@ const LoginGate = ({ feedbackId, role }: Props) => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="이메일"
-          className="border-neutral-80 text-xsmall14 focus:border-primary rounded-md border px-4 py-3 outline-none"
+          className="rounded-md border border-neutral-80 px-4 py-3 text-xsmall14 outline-none focus:border-primary"
         />
         <input
           type="password"
@@ -96,13 +96,13 @@ const LoginGate = ({ feedbackId, role }: Props) => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="비밀번호"
-          className="border-neutral-80 text-xsmall14 focus:border-primary rounded-md border px-4 py-3 outline-none"
+          className="rounded-md border border-neutral-80 px-4 py-3 text-xsmall14 outline-none focus:border-primary"
         />
         {error && <p className="text-xsmall14 text-rose-500">{error}</p>}
         <button
           type="submit"
           disabled={!email || !password || loading}
-          className="text-xsmall16 bg-primary flex min-h-[52px] w-full items-center justify-center rounded-md px-4 py-3 font-semibold text-white disabled:opacity-40"
+          className="flex min-h-[52px] w-full items-center justify-center rounded-md bg-primary px-4 py-3 text-xsmall16 font-semibold text-white disabled:opacity-40"
         >
           {loading ? '로그인 중…' : '로그인하고 입장'}
         </button>

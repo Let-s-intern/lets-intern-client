@@ -21,7 +21,7 @@ const FEATURES = [
 export default function IntroSection() {
   return (
     <section
-      className="text-static-100 relative overflow-hidden"
+      className="relative overflow-hidden text-static-100"
       style={{ background: INTRO_GRADIENT }}
     >
       {/* 뒤 반투명 로고 (웹) */}
@@ -34,7 +34,7 @@ export default function IntroSection() {
 
       <div className="relative mx-auto flex w-full flex-col items-start gap-6 px-5 pb-10 pt-10 text-left md:max-w-[1000px] md:items-center md:gap-10 md:px-0 md:pb-10 md:pt-20 md:text-center">
         {/* 뱃지 */}
-        <span className="border-static-100/35 bg-static-100/5 text-xxsmall12 md:text-xsmall14 rounded-full border px-5 py-2 font-medium md:font-semibold">
+        <span className="rounded-full border border-static-100/35 bg-static-100/5 px-5 py-2 text-xxsmall12 font-medium md:text-xsmall14 md:font-semibold">
           매월 10분께 축하 리워드 1만원 지급 중
         </span>
         <div className="flex flex-col gap-6">
@@ -49,7 +49,7 @@ export default function IntroSection() {
           </h2>
 
           {/* 서브텍스트 */}
-          <p className="text-static-100/85 text-xsmall14 md:text-small18 leading-6 md:leading-7">
+          <p className="text-xsmall14 leading-6 text-static-100/85 md:text-small18 md:leading-7">
             새로운 커리어를 향해 첫 발걸음을 내딛으신 점 축하드려요.
             <br />
             로그인 없이 5분, 사원증이나 합격 메일 한 장이면 인증 끝!
@@ -60,14 +60,14 @@ export default function IntroSection() {
           <button
             type="button"
             onClick={() => scrollToSection(PASS_SECTION_ID.form)}
-            className="bg-primary hover:bg-primary-hover text-xsmall14 md:text-xsmall16 rounded-md px-6 py-3.5 font-semibold shadow-[0_8px_24px_rgba(0,0,0,0.18)] transition-colors md:px-11 md:py-4"
+            className="rounded-md bg-primary px-6 py-3.5 text-xsmall14 font-semibold shadow-[0_8px_24px_rgba(0,0,0,0.18)] transition-colors hover:bg-primary-hover md:px-11 md:py-4 md:text-xsmall16"
           >
             합격 소식 들려주기
           </button>
           <button
             type="button"
             onClick={() => scrollToSection(PASS_SECTION_ID.reward)}
-            className="border-static-100/45 bg-static-100/15 text-xsmall14 md:text-xsmall16 hover:bg-static-100/20 rounded-md border px-6 py-3.5 font-semibold transition-colors md:px-11 md:py-4"
+            className="rounded-md border border-static-100/45 bg-static-100/15 px-6 py-3.5 text-xsmall14 font-semibold transition-colors hover:bg-static-100/20 md:px-11 md:py-4 md:text-xsmall16"
           >
             리워드 먼저 보기
           </button>
@@ -78,12 +78,12 @@ export default function IntroSection() {
           {FEATURES.map((f) => (
             <div
               key={f.title}
-              className="bg-static-100 flex flex-col gap-1.5 rounded-lg px-[22px] py-5 text-left shadow-[0_8px_24px_rgba(0,0,0,0.18)]"
+              className="flex flex-col gap-1.5 rounded-lg bg-static-100 px-[22px] py-5 text-left shadow-[0_8px_24px_rgba(0,0,0,0.18)]"
             >
-              <h3 className="text-xsmall14 md:text-xsmall16 text-neutral-0 min-h-[40px] font-bold md:min-h-0">
+              <h3 className="min-h-[40px] text-xsmall14 font-bold text-neutral-0 md:min-h-0 md:text-xsmall16">
                 {f.title}
               </h3>
-              <p className="text-xxsmall12 md:text-xsmall14 text-neutral-45 font-normal tracking-tight">
+              <p className="text-xxsmall12 font-normal tracking-tight text-neutral-45 md:text-xsmall14">
                 {f.desc}
               </p>
             </div>

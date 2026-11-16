@@ -135,7 +135,7 @@ export default function Client() {
       <Process />
 
       {/* Case studies */}
-      <section className="bg-neutral-95 w-full">
+      <section className="w-full bg-neutral-95">
         <div className="py-16 text-center md:py-32">
           <SectionHeader
             align="center"

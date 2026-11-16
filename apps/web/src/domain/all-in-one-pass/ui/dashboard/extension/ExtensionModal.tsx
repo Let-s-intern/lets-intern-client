@@ -102,10 +102,10 @@ export default function ExtensionModal({ applicationId, onClose }: Props) {
                   type="button"
                   onClick={() => setSelectedId(o.membershipOptionId)}
                   className={clsx(
-                    'rounded-xxs flex w-full flex-col items-center gap-1 border px-3 py-4 transition-colors',
+                    'flex w-full flex-col items-center gap-1 rounded-xxs border px-3 py-4 transition-colors',
                     active
                       ? 'border-primary bg-primary-5 text-primary'
-                      : 'border-neutral-80 text-neutral-20 bg-white',
+                      : 'border-neutral-80 bg-white text-neutral-20',
                   )}
                 >
                   <span className="text-small18 font-bold">
@@ -126,21 +126,21 @@ export default function ExtensionModal({ applicationId, onClose }: Props) {
         </ul>
       </div>
       {selected && extendedEnd && (
-        <div className="bg-primary-5 mt-2 flex items-start gap-4 rounded-sm p-3">
+        <div className="mt-2 flex items-start gap-4 rounded-sm bg-primary-5 p-3">
           <div className="flex flex-1 flex-col gap-1">
-            <span className="text-xsmall14 text-neutral-35 font-normal">
+            <span className="text-xsmall14 font-normal text-neutral-35">
               현재 이용 종료일
             </span>
-            <span className="text-xsmall14 md:text-xsmall16 text-neutral-0 font-normal">
+            <span className="text-xsmall14 font-normal text-neutral-0 md:text-xsmall16">
               {formatDate(base.endDate)}
             </span>
           </div>
           <img src="/icons/Arrow_Right_LG.svg" alt="" className="p-1" />
           <div className="flex flex-1 flex-col gap-1">
-            <span className="text-xsmall14 text-neutral-35 font-normal">
+            <span className="text-xsmall14 font-normal text-neutral-35">
               연장 후 종료일
             </span>
-            <span className="text-xsmall14 md:text-xsmall16 text-primary font-normal">
+            <span className="text-xsmall14 font-normal text-primary md:text-xsmall16">
               {formatDate(extendedEnd.toISOString())}
             </span>
           </div>
@@ -148,17 +148,17 @@ export default function ExtensionModal({ applicationId, onClose }: Props) {
       )}
 
       <div className="flex items-center justify-between px-3 py-2">
-        <span className="text-xsmall16 text-neutral-0 font-normal">
+        <span className="text-xsmall16 font-normal text-neutral-0">
           결제 금액
         </span>
-        <span className="text-xsmall16 text-neutral-0 font-medium">
+        <span className="text-xsmall16 font-medium text-neutral-0">
           {price.toLocaleString()}원
         </span>
       </div>
 
-      <div className="border-neutral-85 -mx-6 flex items-center gap-3 border-t px-6 pt-4">
+      <div className="-mx-6 flex items-center gap-3 border-t border-neutral-85 px-6 pt-4">
         <OutlinedButton
-          className="border-neutral-80 flex-1 text-neutral-50"
+          className="flex-1 border-neutral-80 text-neutral-50"
           onClick={onClose}
         >
           닫기
