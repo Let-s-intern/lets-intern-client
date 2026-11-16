@@ -243,6 +243,7 @@ export const paymentDetailType = z.object({
     startDate: z.string().nullable().optional(),
     endDate: z.string().nullable().optional(),
     applicationId: z.number().nullable().optional(),
+    extensionId: z.number().nullable().optional(), // 멤버십 결제: 연장이면 값, 기본이면 null
   }),
   priceInfo: z.object({
     id: z.number().nullable().optional(),

@@ -136,7 +136,12 @@ export interface AllInOnePassListItem {
 }
 
 /** 멤버십으로 이용한 프로그램 종류 */
-export type UsedProgramType = 'CHALLENGE' | 'GUIDEBOOK' | 'VOD' | 'MENTORING';
+export type UsedProgramType =
+  | 'CHALLENGE'
+  | 'GUIDEBOOK'
+  | 'VOD'
+  | 'MENTORING'
+  | 'LIVE';
 
 /** 참여자가 멤버십으로 이용한 프로그램 1건 (이용 프로그램 조회 모달) */
 export interface UsedProgram {
@@ -150,6 +155,7 @@ export interface UsedProgram {
 /** 참여자(멤버십 구매자)의 신청서(application) 1건. 연장마다 새 application이 생겨 한 유저가 여러 건을 가질 수 있어 테이블에선 email로 묶어 1행 + [전체 내역]으로 펼침. 환불 상태·라벨은 refundState util이 isCanceled/finalPrice/originalPrice로 파생, 환불은 건별 독립 처리. */
 export interface PassParticipant {
   id: number;
+  membershipApplicationId: number;
   orderId: string;
   name: string;
   email: string;

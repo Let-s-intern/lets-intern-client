@@ -1,6 +1,5 @@
 import { useGetUsedProgramsQuery } from '@/api/all-in-one-pass/useParticipants';
 import dayjs from '@/lib/dayjs';
-import { PassParticipant, UsedProgramType } from '../../types';
 import {
   Chip,
   Dialog,
@@ -9,11 +8,13 @@ import {
   IconButton,
 } from '@mui/material';
 import { IoClose } from 'react-icons/io5';
+import { PassParticipant, UsedProgramType } from '../../types';
 
 const usedProgramTypeToText: Record<UsedProgramType, string> = {
   CHALLENGE: '챌린지',
   GUIDEBOOK: '가이드북',
   VOD: 'VOD',
+  LIVE: 'LIVE 클래스',
   MENTORING: '멘토링',
 };
 

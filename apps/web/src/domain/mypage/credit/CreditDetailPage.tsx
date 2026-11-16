@@ -22,7 +22,7 @@ const CreditDetailPage = () => {
   const params = useParams<{ paymentId: string }>();
 
   return (
-    <section className="flex w-full flex-col px-5 md:px-0">
+    <section className="flex w-full flex-col md:px-0">
       <div className="flex items-center justify-start gap-x-2">
         {/* 이전 버튼 */}
         <img
@@ -93,7 +93,7 @@ export const CreditDetailContent = ({ paymentId }: { paymentId: string }) => {
   } = useUserQuery();
 
   const isMembership = paymentDetail.programInfo.programType === 'MEMBERSHIP';
-  // 현재 멤버십 환불은 어드민 수동 처리: 이용기간 중이면 취소 대신 1:1 문의 안내(disabled)로 노출, 추후 개발 진행 예정
+  // 멤버십: 만료 전·미취소면 환불 가능(실제 가부는 /delete 화면 preview에서 재확인)
   const isMembershipRefundable =
     isMembership &&
     !isCanceled &&
@@ -389,15 +389,10 @@ export const CreditDetailContent = ({ paymentId }: { paymentId: string }) => {
         {(isMembership ? isMembershipRefundable : isCancelable) ? (
           <button
             type="button"
-            disabled={isMembership}
-            className="flex w-full items-center justify-center rounded-sm bg-neutral-80 px-5 py-2.5 font-medium text-neutral-40 disabled:cursor-not-allowed"
-            onClick={
-              isMembership
-                ? undefined
-                : () => router.push(`/mypage/credit/${paymentId}/delete`)
-            }
+            className="flex w-full items-center justify-center rounded-sm bg-neutral-80 px-5 py-2.5 font-medium text-neutral-40"
+            onClick={() => router.push(`/mypage/credit/${paymentId}/delete`)}
           >
-            {isMembership ? '환불은 1:1 문의 부탁드립니다.' : '결제 취소하기'}
+            결제 취소하기
           </button>
         ) : (
           <MoreButton

@@ -37,6 +37,8 @@ interface RefundModalProps {
   isSubmitting: boolean;
   onSubmit: (body: AdminRefundRequest) => void;
   onClose: () => void;
+  /** 멤버십 환불 등 챌린지 이용이력(accessLog)이 없는 대상은 이용이력 블록을 숨긴다 */
+  hideUsageSummary?: boolean;
 }
 
 /** 공백·줄바꿈 차이로 막히지 않도록 정규화 후 비교한다. */
@@ -66,6 +68,7 @@ const RefundModal = ({
   isSubmitting,
   onSubmit,
   onClose,
+  hideUsageSummary = false,
 }: RefundModalProps) => {
   const [managerName, setManagerName] = useState('');
   const [reason, setReason] = useState('');
@@ -198,7 +201,9 @@ const RefundModal = ({
           아래의 금액 입력과 실행 버튼은 그대로 동작한다 — 실행 조건(`canSubmit`)이
           이 블록을 참조하지 않는 것이 그 보장이다.
         */}
-        <RefundUsageSummary applicationId={target.applicationId} />
+        {!hideUsageSummary && (
+          <RefundUsageSummary applicationId={target.applicationId} />
+        )}
 
         {isFull ? (
           <div className="rounded mb-3 bg-neutral-100 p-3 text-sm">

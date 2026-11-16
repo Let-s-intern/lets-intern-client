@@ -1,6 +1,7 @@
 import Table from '@/domain/admin/ui/table/regacy/Table';
 import TD from '@/domain/admin/ui/table/regacy/TD';
 import TH, { THProps } from '@/domain/admin/ui/table/regacy/TH';
+import { RefundMode } from '@/domain/admin/program/program-user/ui/RefundModal';
 import { PassParticipant } from '@/domain/all-in-one-pass/types';
 import dayjs from '@/lib/dayjs';
 import { useMemo, useState } from 'react';
@@ -9,14 +10,14 @@ import ParticipantDetailRows, { appAmount } from './ParticipantDetailRows';
 
 interface Props {
   participants: PassParticipant[];
-  onRevokeClick: (participant: PassParticipant) => void;
   onUsedProgramsClick: (participant: PassParticipant) => void;
+  onRefundClick: (participant: PassParticipant, mode: RefundMode) => void;
 }
 
 export default function ParticipantTable({
   participants,
-  onRevokeClick,
   onUsedProgramsClick,
+  onRefundClick,
 }: Props) {
   const [nameOrder, setNameOrder] = useState<THProps['inOrder']>(null);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
@@ -67,7 +68,6 @@ export default function ParticipantTable({
         <col style={{ width: 150 }} />
         <col style={{ width: 230 }} />
         <col style={{ width: 120 }} />
-        <col style={{ width: 120 }} />
       </colgroup>
       <thead>
         <tr>
@@ -81,7 +81,6 @@ export default function ParticipantTable({
           <TH>총 결제금액</TH>
           <TH>참여 기간</TH>
           <TH>이용 프로그램</TH>
-          <TH>권한 회수</TH>
         </tr>
       </thead>
       <tbody>
@@ -94,7 +93,7 @@ export default function ParticipantTable({
               isOpen={expanded.has(email)}
               onToggle={() => toggle(email)}
               onUsedProgramsClick={onUsedProgramsClick}
-              onRevokeClick={onRevokeClick}
+              onRefundClick={onRefundClick}
             />
           );
         })}
@@ -108,7 +107,7 @@ interface GroupRowsProps {
   isOpen: boolean;
   onToggle: () => void;
   onUsedProgramsClick: (participant: PassParticipant) => void;
-  onRevokeClick: (participant: PassParticipant) => void;
+  onRefundClick: (participant: PassParticipant, mode: RefundMode) => void;
 }
 
 function ParticipantGroupRows({
@@ -116,13 +115,9 @@ function ParticipantGroupRows({
   isOpen,
   onToggle,
   onUsedProgramsClick,
-  onRevokeClick,
+  onRefundClick,
 }: GroupRowsProps) {
   const head = apps[0];
-  const revokeTarget = [...apps]
-    .reverse()
-    .find((p) => p.extendedDays == null && !p.isAdminRefunded);
-  const canRevoke = revokeTarget != null;
   const total = apps.reduce((sum, p) => sum + appAmount(p), 0);
   // startDate 는 최초로 고정, createDate 오름차순이라 마지막이 최신 종료
   const firstStart = head.startDate;
@@ -166,27 +161,11 @@ function ParticipantGroupRows({
             조회
           </button>
         </TD>
-        <TD>
-          {/* 미회수 최초건이 있으면 활성, 전부 회수됐으면 비활 */}
-          <button
-            type="button"
-            disabled={!canRevoke}
-            className={`rounded w-24 whitespace-nowrap border py-1 text-xs ${
-              canRevoke
-                ? 'border-red-500 text-red-600 hover:bg-red-50'
-                : 'cursor-not-allowed border-neutral-80 text-neutral-40'
-            }`}
-            onClick={(e) => {
-              e.stopPropagation();
-              if (revokeTarget) onRevokeClick(revokeTarget);
-            }}
-          >
-            {canRevoke ? '권한 회수' : '회수 완료'}
-          </button>
-        </TD>
       </tr>
 
-      {isOpen && <ParticipantDetailRows apps={apps} />}
+      {isOpen && (
+        <ParticipantDetailRows apps={apps} onRefundClick={onRefundClick} />
+      )}
     </>
   );
 }
