@@ -158,9 +158,7 @@ const ChallengeBasicInfo = ({
   }, [challenge.priceInfo]);
   const livePrice = useChallengePlanPrice(challenge.priceInfo, cheapestPlan);
 
-  const { guidebookId, guidebook } = useTemplateGuidebook(
-    challenge.challengeType,
-  );
+  const { guidebook } = useTemplateGuidebook(challenge.challengeType);
   const isTemplateMode = useChallengeApplySheetStore(
     (state) => state.isTemplateMode,
   );
@@ -333,7 +331,7 @@ const ChallengeBasicInfo = ({
       <div className="mt-6 flex flex-col gap-4 md:mt-8 md:flex-row md:items-start md:justify-between md:gap-8">
         <div className="md:flex-1 lg:max-w-[600px]">
           <ApplyOptionCard
-            showModeSelect={guidebookId !== null}
+            showModeSelect={guidebook !== null}
             mode={showTemplate ? 'TEMPLATE' : 'LIVE'}
             onChangeMode={(mode) => setTemplateMode(mode === 'TEMPLATE')}
             targetOptions={targetOptions}
