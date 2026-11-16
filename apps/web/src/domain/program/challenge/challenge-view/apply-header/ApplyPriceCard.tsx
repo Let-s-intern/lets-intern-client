@@ -1,7 +1,7 @@
 'use client';
 
-import Link from 'next/link';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
+import PassBenefitModal from './PassBenefitModal';
 
 export type ApplyButtonState = 'OPEN' | 'APPLIED' | 'CLOSED';
 
@@ -10,8 +10,6 @@ export interface PriceSummary {
   regularPrice: number;
   discountAmount: number;
   discountPercentage: number;
-  /** 패스 혜택 할인. 0 이면 줄을 숨긴다 */
-  membershipDiscount: number;
   /** 미션 환급액. 0 이면 줄을 숨긴다 */
   deposit: number;
   /** 실제 결제 금액 */
@@ -49,14 +47,22 @@ interface Props {
   passHref: string | null;
   /** 패스 회원이 신청할 때 내는 금액. null 이면 패스 카드를 숨긴다 */
   passPrice: number | null;
+  /** 열린 패스가 하나일 때 그 패스 id. 모달에 가격·구성을 보일 때 쓴다 */
+  membershipId: number | null;
 }
 
-function ApplyPriceCard({ price, applyButton, passHref, passPrice }: Props) {
+function ApplyPriceCard({
+  price,
+  applyButton,
+  passHref,
+  passPrice,
+  membershipId,
+}: Props) {
+  const [isPassModalOpen, setIsPassModalOpen] = useState(false);
   const {
     regularPrice,
     discountAmount,
     discountPercentage,
-    membershipDiscount,
     deposit,
     paymentPrice,
   } = price;
@@ -85,12 +91,6 @@ function ApplyPriceCard({ price, applyButton, passHref, passPrice }: Props) {
               <span>-{discountAmount.toLocaleString()}원</span>
             </div>
           )}
-          {membershipDiscount > 0 && (
-            <div className="flex items-center justify-between">
-              <span className="font-semibold text-primary">패스 혜택 할인</span>
-              <span>-{membershipDiscount.toLocaleString()}원</span>
-            </div>
-          )}
           {deposit > 0 && (
             <div className="flex items-center justify-between rounded-xxs bg-[#FFEFED] px-3 py-2">
               <span>모든 미션 수행 시, 환급</span>
@@ -109,9 +109,10 @@ function ApplyPriceCard({ price, applyButton, passHref, passPrice }: Props) {
       {applyButton}
 
       {passHref && passPrice !== null && (
-        <Link
-          href={passHref}
-          className="flex items-center justify-between gap-3 rounded-md bg-primary-5 px-4 py-5"
+        <button
+          type="button"
+          onClick={() => setIsPassModalOpen(true)}
+          className="pass_benefit_card flex items-center justify-between gap-3 rounded-md bg-primary-5 px-4 py-5 text-left"
         >
           <span className="text-xsmall16 font-semibold text-primary md:text-small18">
             {passPrice === 0
@@ -136,7 +137,17 @@ function ApplyPriceCard({ price, applyButton, passHref, passPrice }: Props) {
               {passPrice.toLocaleString()}원
             </strong>
           </span>
-        </Link>
+        </button>
+      )}
+
+      {isPassModalOpen && passHref && passPrice !== null && (
+        <PassBenefitModal
+          passHref={passHref}
+          membershipId={membershipId}
+          programPrice={paymentPrice}
+          passProgramPrice={passPrice}
+          onClose={() => setIsPassModalOpen(false)}
+        />
       )}
     </div>
   );
