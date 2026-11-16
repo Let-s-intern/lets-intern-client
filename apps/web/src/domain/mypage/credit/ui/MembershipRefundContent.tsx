@@ -93,19 +93,19 @@ export default function MembershipRefundContent({
       />
 
       <div className="flex w-full flex-col items-start justify-center gap-y-6">
-        <div className="text-neutral-0 font-semibold">환불 정보</div>
+        <div className="font-semibold text-neutral-0">환불 정보</div>
 
         {query.isLoading ? (
-          <p className="text-neutral-40 w-full text-sm font-medium">
+          <p className="w-full text-sm font-medium text-neutral-40">
             환불 정보를 불러오는 중입니다.
           </p>
         ) : query.isError ? (
           <>
-            <p className="text-neutral-40 mb-10 w-full text-sm font-medium">
+            <p className="mb-10 w-full text-sm font-medium text-neutral-40">
               {refundBlockedMessage(query.error)}
             </p>
             <button
-              className="border-primary text-primary-dark h-[46px] w-full rounded-sm border-2 bg-neutral-100 px-5 py-2 font-medium"
+              className="h-[46px] w-full rounded-sm border-2 border-primary bg-neutral-100 px-5 py-2 font-medium text-primary-dark"
               onClick={() => router.back()}
             >
               이전
@@ -114,7 +114,7 @@ export default function MembershipRefundContent({
         ) : (
           <>
             <div className="flex w-full flex-col items-start justify-start gap-y-3">
-              <div className="border-neutral-0 text-neutral-0 flex w-full items-center justify-start gap-3 border-y-[1.5px] px-3 py-5 font-bold">
+              <div className="flex w-full items-center justify-start gap-3 border-y-[1.5px] border-neutral-0 px-3 py-5 font-bold text-neutral-0">
                 <div>예정 환불금액</div>
                 <div className="flex grow items-center justify-end">
                   {won(refundAmount)}
@@ -126,7 +126,7 @@ export default function MembershipRefundContent({
                   title="환불 차감 금액"
                   content={`-${won(deduction)}`}
                 />
-                <div className="text-primary-dark py-2 text-xs font-medium">
+                <div className="py-2 text-xs font-medium text-primary-dark">
                   *환불 규정은{' '}
                   <a
                     className="underline underline-offset-2"
@@ -140,7 +140,7 @@ export default function MembershipRefundContent({
                 </div>
               </div>
 
-              <hr className="border-neutral-85 w-full" />
+              <hr className="w-full border-neutral-85" />
 
               <div className="flex w-full flex-col">
                 <PaymentInfoRow
@@ -156,7 +156,7 @@ export default function MembershipRefundContent({
               </div>
             </div>
 
-            <div className="bg-neutral-90 w-full rounded-sm px-4 py-3 text-sm font-medium">
+            <div className="w-full rounded-sm bg-neutral-90 px-4 py-3 text-sm font-medium">
               <p className="text-neutral-0">
                 환불 시 해당 올인원패스 및 혜택 이용이 종료됩니다.
               </p>
@@ -182,13 +182,13 @@ export default function MembershipRefundContent({
             </div>
             <div className="flex w-full items-center gap-x-3">
               <button
-                className="border-primary text-primary-dark h-[46px] grow rounded-sm border-2 bg-neutral-100 px-5 py-2 font-medium"
+                className="h-[46px] grow rounded-sm border-2 border-primary bg-neutral-100 px-5 py-2 font-medium text-primary-dark"
                 onClick={() => router.back()}
               >
                 이전
               </button>
               <button
-                className={`h-[46px] grow rounded-sm ${isChecked ? 'bg-primary' : 'bg-primary-20 cursor-not-allowed'} px-5 py-2 font-medium text-neutral-100`}
+                className={`h-[46px] grow rounded-sm ${isChecked ? 'bg-primary' : 'cursor-not-allowed bg-primary-20'} px-5 py-2 font-medium text-neutral-100`}
                 disabled={mutation.isPending}
                 onClick={handleRefund}
               >

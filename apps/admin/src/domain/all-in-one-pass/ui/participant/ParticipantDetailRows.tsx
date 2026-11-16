@@ -83,14 +83,14 @@ export default function ParticipantDetailRows({ apps, onRefundClick }: Props) {
                   <button
                     type="button"
                     onClick={() => onRefundClick(p, 'full')}
-                    className="whitespace-nowrap rounded border border-red-500 px-2 py-1 text-xs text-red-600 hover:bg-red-50"
+                    className="rounded whitespace-nowrap border border-red-500 px-2 py-1 text-xs text-red-600 hover:bg-red-50"
                   >
                     환불
                   </button>
                   <button
                     type="button"
                     onClick={() => onRefundClick(p, 'partial')}
-                    className="whitespace-nowrap rounded border border-red-500 px-2 py-1 text-xs text-red-600 hover:bg-red-50"
+                    className="rounded whitespace-nowrap border border-red-500 px-2 py-1 text-xs text-red-600 hover:bg-red-50"
                   >
                     부분환불
                   </button>
