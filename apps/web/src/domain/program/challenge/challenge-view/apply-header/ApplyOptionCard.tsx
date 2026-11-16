@@ -20,10 +20,10 @@ const OptionButton = ({
     aria-pressed={selected}
     onClick={onClick}
     className={twMerge(
-      'flex flex-1 flex-col items-start rounded-sm border bg-white px-4 py-3.5 text-left transition-colors md:px-5 md:py-4',
+      'flex flex-1 flex-col items-start rounded-sm border bg-white px-4 py-3.5 text-left transition-colors',
       selected
         ? 'border-primary text-neutral-0 ring-1 ring-primary'
-        : 'border-neutral-80 text-neutral-40 hover:border-neutral-60',
+        : 'border-neutral-85 text-neutral-30 hover:border-neutral-60',
       className,
     )}
   >
@@ -39,9 +39,7 @@ const OptionGroup = ({
   children: ReactNode;
 }) => (
   <div className="flex flex-col gap-2.5">
-    <p className="text-xsmall14 font-semibold text-neutral-20 md:text-xsmall16">
-      {title}
-    </p>
+    <p className="text-xsmall14 font-semibold text-neutral-30">{title}</p>
     {children}
   </div>
 );
@@ -93,7 +91,7 @@ function ApplyOptionCard({
   startDateOptions,
 }: Props) {
   return (
-    <div className="flex flex-col gap-6 rounded-md bg-primary-5 px-4 py-5 md:px-6 md:py-6">
+    <div className="flex flex-col gap-6 rounded-md bg-primary-5 px-4 py-6 md:px-5">
       {showModeSelect && (
         <OptionGroup title="진행 방식 선택">
           <div className="flex flex-col gap-2.5 md:flex-row md:gap-4">
@@ -101,10 +99,10 @@ function ApplyOptionCard({
               selected={mode === 'LIVE'}
               onClick={() => onChangeMode('LIVE')}
             >
-              <span className="text-xsmall16 font-bold md:text-small18">
+              <span className="text-xsmall16 font-bold">
                 렛츠커리어와 실시간으로 함께
               </span>
-              <span className="mt-1 text-xsmall14 text-neutral-40">
+              <span className="mt-1.5 text-xxsmall12 text-neutral-40">
                 매일 미션 · 멘토 피드백 · 가이드북 포함
               </span>
             </OptionButton>
@@ -112,10 +110,8 @@ function ApplyOptionCard({
               selected={mode === 'TEMPLATE'}
               onClick={() => onChangeMode('TEMPLATE')}
             >
-              <span className="text-xsmall16 font-bold md:text-small18">
-                템플릿으로 혼자
-              </span>
-              <span className="mt-1 text-xsmall14 text-neutral-40">
+              <span className="text-xsmall16 font-bold">템플릿으로 혼자</span>
+              <span className="mt-1.5 text-xxsmall12 text-neutral-40">
                 PDF + 템플릿 즉시 다운로드
               </span>
             </OptionButton>
@@ -132,9 +128,7 @@ function ApplyOptionCard({
                 selected={option.selected}
                 onClick={option.onSelect}
               >
-                <span className="text-xsmall16 font-bold md:text-small18">
-                  {option.label}
-                </span>
+                <span className="text-xsmall16 font-bold">{option.label}</span>
               </OptionButton>
             ))}
           </div>
@@ -143,27 +137,28 @@ function ApplyOptionCard({
 
       {startDateOptions.length > 0 && (
         <OptionGroup title="시작일 선택">
-          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 md:gap-4">
+          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-3">
             {startDateOptions.map((option) => (
               <OptionButton
                 key={option.key}
                 selected={option.selected}
                 onClick={option.onSelect}
+                className="px-3.5"
               >
                 <span className="flex w-full items-center justify-between gap-2">
-                  <span className="text-xsmall14 text-neutral-40">
+                  <span className="text-xxsmall12 text-neutral-40">
                     {option.tag ? `시작일 · ${option.tag}` : '시작일'}
                   </span>
                   {isClosingSoon(option.deadline) && (
-                    <span className="rounded-xxs bg-[#FFEFED] px-1.5 py-0.5 text-xxsmall12 font-medium text-system-error">
+                    <span className="shrink-0 rounded-xxs bg-[#FFEFED] px-1.5 py-0.5 text-xxsmall10 font-medium text-system-error">
                       마감 임박
                     </span>
                   )}
                 </span>
-                <span className="mt-2 text-xsmall16 font-bold md:text-small18">
+                <span className="mt-2.5 whitespace-nowrap text-xsmall16 font-bold">
                   {formatDateWithDay(option.startDate)}
                 </span>
-                <span className="mt-1 text-xxsmall12 text-neutral-40 md:text-xsmall14">
+                <span className="mt-1 text-xxsmall12 text-neutral-40">
                   {dayjs(option.endDate).format('YYYY년 M월 D일')} 종료
                 </span>
               </OptionButton>

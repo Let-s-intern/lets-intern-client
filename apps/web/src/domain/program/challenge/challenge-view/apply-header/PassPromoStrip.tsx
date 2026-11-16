@@ -27,12 +27,12 @@ function PassPromoStrip({ passHref, membershipId }: Props) {
   return (
     <Link
       href={passHref}
-      className="flex flex-col gap-2 rounded-sm border border-primary-20 bg-primary-5 px-4 py-3 md:flex-row md:items-center md:gap-4 md:px-6 md:py-4"
+      className="flex flex-col gap-2 rounded-xs border border-primary-20 bg-primary-5 px-4 py-3 md:flex-row md:items-center md:gap-4 md:px-6 md:py-4"
     >
-      <span className="w-fit shrink-0 rounded-xxs bg-primary px-2 py-1 text-xxsmall12 font-semibold text-white md:text-xsmall14">
+      <span className="w-fit shrink-0 rounded-xxs bg-primary px-2 py-1 text-xxsmall12 font-semibold text-white">
         ALL-IN-ONE PASS
       </span>
-      <span className="flex-1 text-xsmall14 text-neutral-0 md:text-xsmall16">
+      <span className="flex-1 text-xsmall14 text-neutral-0">
         <strong className="font-bold">올인원 패스</strong>면 이 챌린지 포함
         이력서 · 자소서 · 포트폴리오 챌린지, VOD, 1:1 멘토링까지
         {monthlyPrice !== null && (
@@ -42,7 +42,7 @@ function PassPromoStrip({ passHref, membershipId }: Props) {
           </strong>
         )}
       </span>
-      <span className="shrink-0 text-xsmall14 font-semibold text-primary md:text-xsmall16">
+      <span className="shrink-0 text-xsmall14 font-semibold text-primary">
         패스 자세히 보기 →
       </span>
     </Link>

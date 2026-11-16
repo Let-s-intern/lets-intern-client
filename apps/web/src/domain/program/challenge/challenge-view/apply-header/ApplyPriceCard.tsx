@@ -54,8 +54,7 @@ function ApplyPriceCard({
     showDeposit,
     isPassApplied,
     membershipDiscount,
-    sellingPrice,
-    finalPrice,
+    paymentPrice,
   } = useChallengePlanPrice(priceInfoList, plan);
 
   const showPassCard =
@@ -64,16 +63,14 @@ function ApplyPriceCard({
     passHref !== null &&
     passPrice !== null;
   const passDiscountPercent =
-    sellingPrice > 0 && passPrice !== null
-      ? Math.round(((sellingPrice - passPrice) / sellingPrice) * 100)
+    paymentPrice > 0 && passPrice !== null
+      ? Math.round(((paymentPrice - passPrice) / paymentPrice) * 100)
       : 0;
 
   return (
     <div className="flex flex-col gap-3 md:gap-4">
-      <div className="flex flex-col rounded-md border border-neutral-85 bg-white px-4 py-5 shadow-[0px_0px_12px_rgba(0,0,0,0.06)] md:px-5">
-        <p className="text-small18 font-bold text-neutral-0 md:text-small20">
-          최종 결제 금액
-        </p>
+      <div className="flex flex-col bg-white py-2 md:px-4">
+        <p className="text-small18 font-bold text-neutral-0">최종 결제 금액</p>
 
         {planTabs.length > 1 && (
           <div className="mt-3 flex items-center rounded-xs bg-neutral-95 px-2 py-1.5">
@@ -95,12 +92,10 @@ function ApplyPriceCard({
           </div>
         )}
 
-        <div className="mt-3 flex flex-col gap-2 text-xsmall16 text-neutral-20">
-          <div className="flex items-center justify-between text-neutral-40">
-            <span>정가</span>
-            <span className="text-neutral-20">
-              {regularPrice.toLocaleString()}원
-            </span>
+        <div className="mt-2 flex flex-col gap-2 text-xsmall16 text-neutral-20">
+          <div className="flex items-center justify-between">
+            <span className="text-xsmall14 text-neutral-30">정가</span>
+            <span>{regularPrice.toLocaleString()}원</span>
           </div>
           {discountAmount !== 0 && (
             <div className="flex items-center justify-between">
@@ -126,7 +121,7 @@ function ApplyPriceCard({
 
         <div className="mt-3 border-t border-neutral-80 pt-3 text-right">
           <strong className="text-medium24 font-bold text-primary md:text-xlarge28">
-            {finalPrice.toLocaleString()}원
+            {paymentPrice.toLocaleString()}원
           </strong>
         </div>
       </div>
@@ -135,7 +130,7 @@ function ApplyPriceCard({
         type="button"
         disabled={applyState !== 'OPEN'}
         onClick={onApply}
-        className="apply_button w-full rounded-sm bg-primary px-6 py-3.5 text-small18 font-medium text-white disabled:bg-neutral-80 disabled:text-neutral-40"
+        className="apply_button w-full rounded-sm bg-primary px-6 py-3 text-small18 font-medium text-white disabled:bg-neutral-80 disabled:text-neutral-40"
       >
         {APPLY_BUTTON_TEXT[applyState]}
       </button>
@@ -143,9 +138,9 @@ function ApplyPriceCard({
       {showPassCard && passHref && passPrice !== null && (
         <Link
           href={passHref}
-          className="flex items-center justify-between gap-3 rounded-md border border-primary-20 bg-primary-5 px-4 py-4 md:px-5"
+          className="flex items-center justify-between gap-3 rounded-sm bg-primary-5 px-4 py-5"
         >
-          <span className="text-xsmall16 font-bold text-primary md:text-small18">
+          <span className="text-xsmall16 font-semibold text-primary md:text-small18">
             {passPrice === 0
               ? '올인원 패스 구독하고 무료로 참여하기'
               : '올인원 패스 구독하고 참여하기'}
@@ -153,11 +148,14 @@ function ApplyPriceCard({
           <span className="flex shrink-0 flex-col items-end">
             {passDiscountPercent > 0 && (
               <span className="text-xxsmall12">
-                <span className="font-semibold text-system-error">
-                  {passDiscountPercent}%
-                </span>{' '}
+                {/* 100% 는 정가 취소선만으로 충분해 비율을 숨긴다 */}
+                {passDiscountPercent < 100 && (
+                  <span className="font-semibold text-system-error">
+                    {passDiscountPercent}%{' '}
+                  </span>
+                )}
                 <span className="text-neutral-40 line-through">
-                  {sellingPrice.toLocaleString()}원
+                  {paymentPrice.toLocaleString()}원
                 </span>
               </span>
             )}
