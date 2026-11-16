@@ -1,5 +1,8 @@
 import { useProgramApplicationQuery } from '@/api/application';
-import { useGetOpenMembershipPrivilege } from '@/domain/all-in-one-pass/api/privilege';
+import {
+  useGetMembershipPrivilege,
+  useGetOpenMembershipPrivilege,
+} from '@/domain/all-in-one-pass/api/privilege';
 import { challengeColors } from '@/domain/program/challenge/challengeColors';
 import dayjs from '@/lib/dayjs';
 import {
@@ -260,8 +263,19 @@ const ChallengeBasicInfo = ({
       prices: getChallengeOptionPriceInfo(challenge.priceInfo),
     });
   const { data: openPrivilege } = useGetOpenMembershipPrivilege();
-  const passPrice =
-    !hasPrivilege && showPassPrice && !showTemplate
+  // 템플릿 모드: 열린 패스에 가이드북 권한이 있으면 패스로 0원에 받을 수 있다
+  const { data: guidebookPrivilege } = useGetMembershipPrivilege(
+    'GUIDEBOOK',
+    guidebook?.id ?? -1,
+  );
+  const openHasGuidebook =
+    !!openPrivilege?.exists &&
+    openPrivilege.privilegeList.some((p) => p.programType === 'GUIDEBOOK');
+  const passPrice = showTemplate
+    ? openHasGuidebook && !guidebookPrivilege?.hasPrivilege
+      ? 0
+      : null
+    : !hasPrivilege && showPassPrice
       ? passPrices[cheapestPlan as 'BASIC' | 'STANDARD' | 'PREMIUM']
       : null;
 
