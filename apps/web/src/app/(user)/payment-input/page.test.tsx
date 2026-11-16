@@ -74,6 +74,12 @@ jest.mock(
   }),
 );
 
+// 패스 업그레이드 구좌는 패스 API 를 부르므로 결제 금액 계산 테스트에서는 뺀다
+jest.mock('@/domain/program/pass-upgrade/PassUpgradeSection', () => ({
+  __esModule: true,
+  default: () => null,
+}));
+
 jest.mock(
   '@/domain/program/program-detail/apply/section/PaymentSubmitSection',
   () => ({

@@ -23,6 +23,7 @@ import CouponSection, {
 } from '@/domain/program/program-detail/apply/section/CouponSection';
 import MotiveAnswerSection from '@/domain/program/program-detail/apply/section/MotiveAnswerSection';
 import PaymentSubmitSection from '@/domain/program/program-detail/apply/section/PaymentSubmitSection';
+import PassUpgradeSection from '@/domain/program/pass-upgrade/PassUpgradeSection';
 import PriceSection from '@/domain/program/program-detail/apply/section/PriceSection';
 import UserInputSection from '@/domain/program/program-detail/apply/section/UserInputSection';
 import {
@@ -398,6 +399,15 @@ const PaymentInputContent = () => {
         ) : (
           <div className="mt-10"></div>
         )}
+        {programApplicationData.programType === 'challenge' &&
+          !programApplicationData.isFree &&
+          !isMembership &&
+          !programApplicationData.membershipDiscount && (
+            <PassUpgradeSection
+              challengeId={programApplicationData.programId ?? 0}
+              paymentAmount={totalPrice}
+            />
+          )}
         <p className="my-3 text-xsmall16 font-semibold text-neutral-0">
           신청 폼을 모두 입력해주세요.
         </p>
