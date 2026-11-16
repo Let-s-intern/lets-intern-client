@@ -12,7 +12,8 @@ import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import { getProgramPathname } from '@/utils/url';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
+import { useChallengePlanPrice } from '../hooks/useChallengePlanPrice';
 import { useOpenChallengeApply } from '../hooks/useOpenChallengeApply';
 import { useChallengeApplySheetStore } from '../store/useChallengeApplySheetStore';
 import { useChallengePassBenefit } from '../useChallengePassBenefit';
@@ -27,10 +28,13 @@ import ApplyOptionCard, {
   TargetOption,
 } from './apply-header/ApplyOptionCard';
 import ApplyPriceCard, {
+  ApplyButton,
   ApplyButtonState,
-  PlanTab,
+  PriceSummary,
 } from './apply-header/ApplyPriceCard';
 import PassPromoStrip from './apply-header/PassPromoStrip';
+import TemplateApplyButton from '../template-guidebook/TemplateApplyButton';
+import { useTemplateGuidebook } from '../template-guidebook/useTemplateGuidebook';
 
 const {
   CAREER_START,
@@ -47,6 +51,11 @@ export const getDiscountPercent = (
   if (originalPrice === 0) return 0;
   return Math.round((discountPrice / originalPrice) * 100);
 };
+
+const hasPlan = (
+  priceInfo: ChallengeIdSchema['priceInfo'],
+  plan: ChallengePricePlan,
+) => priceInfo.some((item) => item.challengePricePlanType === plan);
 
 const ChallengeBasicInfo = ({
   challenge,
@@ -124,35 +133,47 @@ const ChallengeBasicInfo = ({
   const openApply = useOpenChallengeApply();
   const numericChallengeId = Number(challengeId);
 
-  /* 플랜: LIGHT 는 '템플릿으로 혼자', 나머지는 '실시간으로 함께' */
-  const planTabs = useMemo(() => {
-    const titleOf = (plan: ChallengePricePlan) =>
-      challenge.priceInfo.find((item) => item.challengePricePlanType === plan)
-        ?.title;
-    const tabs: PlanTab[] = [
-      { plan: 'BASIC', label: titleOf('BASIC') || '베이직' },
+  /*
+   * 실시간으로 함께: 가장 낮은 금액의 플랜을 보이고, 플랜은 결제 시트에서 고른다.
+   * 템플릿으로 혼자: 챌린지 타입에 연결된 가이드북의 가격·결제를 보인다 (LC-3631).
+   */
+  const cheapestPlan = useMemo<ChallengePricePlan>(() => {
+    const prices = getChallengeOptionPriceInfo(challenge.priceInfo);
+    const candidates: [ChallengePricePlan, number][] = [
+      ['BASIC', prices.basicRegularPrice - prices.basicDiscountAmount],
     ];
-    const defaultLabels = { STANDARD: '스탠다드', PREMIUM: '프리미엄' };
-    (['STANDARD', 'PREMIUM'] as const).forEach((plan) => {
-      if (
-        challenge.priceInfo.some((item) => item.challengePricePlanType === plan)
-      ) {
-        tabs.push({ plan, label: titleOf(plan) || defaultLabels[plan] });
-      }
-    });
-    return tabs;
+    if (hasPlan(challenge.priceInfo, 'STANDARD')) {
+      candidates.push([
+        'STANDARD',
+        prices.standardRegularPrice - prices.standardDiscountAmount,
+      ]);
+    }
+    if (hasPlan(challenge.priceInfo, 'PREMIUM')) {
+      candidates.push([
+        'PREMIUM',
+        prices.premiumRegularPrice - prices.premiumDiscountAmount,
+      ]);
+    }
+    return candidates.reduce((min, cur) => (cur[1] < min[1] ? cur : min))[0];
   }, [challenge.priceInfo]);
-  const hasLightPlan = challenge.priceInfo.some(
-    (item) => item.challengePricePlanType === 'LIGHT',
+  const livePrice = useChallengePlanPrice(challenge.priceInfo, cheapestPlan);
+
+  const { guidebookId, guidebook } = useTemplateGuidebook(
+    challenge.challengeType,
   );
-  const [livePlan, setLivePlan] = useState<ChallengePricePlan>('BASIC');
-  const [isTemplateMode, setIsTemplateMode] = useState(false);
-  const plan: ChallengePricePlan = isTemplateMode ? 'LIGHT' : livePlan;
-  // 하단 고정 바가 같은 플랜의 금액을 보이도록 고른 플랜을 공유한다
+  const isTemplateMode = useChallengeApplySheetStore(
+    (state) => state.isTemplateMode,
+  );
+  const setTemplateMode = useChallengeApplySheetStore(
+    (state) => state.setTemplateMode,
+  );
+  const showTemplate = isTemplateMode && guidebook !== null;
+
+  // 하단 고정 바와 결제 시트가 같은 플랜으로 열리도록 공유한다
   const setSheetPlan = useChallengeApplySheetStore((state) => state.setPlan);
   useEffect(() => {
-    setSheetPlan(plan);
-  }, [plan, setSheetPlan]);
+    setSheetPlan(cheapestPlan);
+  }, [cheapestPlan, setSheetPlan]);
 
   /* 참여 대상 = 버전 (LC-3247). 고르면 해당 버전 URL 로 이동한다 */
   const targetOptions: TargetOption[] = [...(challenge.versionList ?? [])]
@@ -242,9 +263,32 @@ const ChallengeBasicInfo = ({
     });
   const { data: openPrivilege } = useGetOpenMembershipPrivilege();
   const passPrice =
-    !hasPrivilege && showPassPrice && plan !== 'LIGHT'
-      ? passPrices[plan]
+    !hasPrivilege && showPassPrice && !showTemplate
+      ? passPrices[cheapestPlan as 'BASIC' | 'STANDARD' | 'PREMIUM']
       : null;
+
+  const priceSummary: PriceSummary = showTemplate
+    ? {
+        regularPrice: guidebook.price,
+        discountAmount: guidebook.discount,
+        discountPercentage:
+          guidebook.price > 0
+            ? Math.round((guidebook.discount / guidebook.price) * 100)
+            : 0,
+        membershipDiscount: 0,
+        deposit: 0,
+        paymentPrice: guidebook.price - guidebook.discount,
+      }
+    : {
+        regularPrice: livePrice.regularPrice,
+        discountAmount: livePrice.discountAmount,
+        discountPercentage: livePrice.discountPercentage,
+        membershipDiscount: livePrice.isPassApplied
+          ? livePrice.membershipDiscount
+          : 0,
+        deposit: livePrice.showDeposit ? livePrice.deposit : 0,
+        paymentPrice: livePrice.paymentPrice,
+      };
 
   return (
     <div className="flex w-full flex-col">
@@ -289,21 +333,30 @@ const ChallengeBasicInfo = ({
       <div className="mt-6 flex flex-col gap-4 md:mt-8 md:flex-row md:items-start md:justify-between md:gap-8">
         <div className="md:flex-1 lg:max-w-[600px]">
           <ApplyOptionCard
-            showModeSelect={hasLightPlan}
-            mode={isTemplateMode ? 'TEMPLATE' : 'LIVE'}
-            onChangeMode={(mode) => setIsTemplateMode(mode === 'TEMPLATE')}
+            showModeSelect={guidebookId !== null}
+            mode={showTemplate ? 'TEMPLATE' : 'LIVE'}
+            onChangeMode={(mode) => setTemplateMode(mode === 'TEMPLATE')}
             targetOptions={targetOptions}
             startDateOptions={startDateOptions}
           />
         </div>
         <div className="md:w-[340px] md:shrink-0 lg:w-[450px] lg:pt-10">
           <ApplyPriceCard
-            priceInfoList={challenge.priceInfo}
-            plan={plan}
-            planTabs={isTemplateMode ? [] : planTabs}
-            onChangePlan={setLivePlan}
-            applyState={applyState}
-            onApply={() => openApply(plan)}
+            price={priceSummary}
+            applyButton={
+              showTemplate ? (
+                <TemplateApplyButton
+                  guidebookId={guidebook.id}
+                  title={guidebook.title}
+                />
+              ) : (
+                <ApplyButton
+                  state={applyState}
+                  label="챌린지 신청하기"
+                  onClick={() => openApply(cheapestPlan)}
+                />
+              )
+            }
             passHref={passHref}
             passPrice={passPrice}
           />

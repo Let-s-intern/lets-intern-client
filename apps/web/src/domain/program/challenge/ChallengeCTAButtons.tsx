@@ -14,6 +14,8 @@ import NotiModal from '@/domain/program/program-detail/button/NotiModal';
 import PricePlanBottomSheet from '../PricePlanBottomSheet';
 import { useChallengePlanPrice } from './hooks/useChallengePlanPrice';
 import { useOpenChallengeApply } from './hooks/useOpenChallengeApply';
+import GuidebookCTAButtons from '../guidebook/ui/GuidebookCTAButtons';
+import { useTemplateGuidebook } from './template-guidebook/useTemplateGuidebook';
 import { useChallengeApplySheetStore } from './store/useChallengeApplySheetStore';
 
 const ChallengeCTAButtons = ({
@@ -26,7 +28,8 @@ const ChallengeCTAButtons = ({
   challengeVersionId: number | null;
 }) => {
   const { isLoggedIn } = useAuthStore();
-  const { isOpen, plan, close } = useChallengeApplySheetStore();
+  const { isOpen, plan, close, isTemplateMode } = useChallengeApplySheetStore();
+  const { guidebook } = useTemplateGuidebook(challenge.challengeType);
   const openApply = useOpenChallengeApply();
 
   const [isNotiOpen, setIsNotiOpen] = useState(false);
@@ -47,7 +50,11 @@ const ChallengeCTAButtons = ({
   // 다른 챌린지로 이동하면 시트 상태를 비운다
   useEffect(
     () => () =>
-      useChallengeApplySheetStore.setState({ isOpen: false, plan: null }),
+      useChallengeApplySheetStore.setState({
+        isOpen: false,
+        plan: null,
+        isTemplateMode: false,
+      }),
     [],
   );
 
@@ -70,6 +77,17 @@ const ChallengeCTAButtons = ({
   const isAlreadyApplied = application?.applied ?? false;
 
   const handleOpen = () => openApply();
+
+  // 템플릿으로 혼자: 하단 바도 가이드북 제목·금액·결제로 바꾼다 (LC-3631)
+  if (isTemplateMode && guidebook) {
+    return (
+      <GuidebookCTAButtons
+        guidebookId={String(guidebook.id)}
+        title={guidebook.title}
+        price={guidebook.price - guidebook.discount}
+      />
+    );
+  }
 
   return (
     <>

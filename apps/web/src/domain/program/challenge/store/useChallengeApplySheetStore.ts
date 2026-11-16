@@ -13,6 +13,9 @@ interface ChallengeApplySheetState {
   open: (plan?: ChallengePricePlan | null) => void;
   close: () => void;
   setPlan: (plan: ChallengePricePlan) => void;
+  /** '템플릿으로 혼자' 선택 여부. 가격·하단 바·상세 본문이 가이드북으로 바뀐다 (LC-3631) */
+  isTemplateMode: boolean;
+  setTemplateMode: (isTemplateMode: boolean) => void;
 }
 
 export const useChallengeApplySheetStore = create<ChallengeApplySheetState>(
@@ -23,5 +26,7 @@ export const useChallengeApplySheetStore = create<ChallengeApplySheetState>(
       set((state) => ({ isOpen: true, plan: plan ?? state.plan })),
     close: () => set({ isOpen: false }),
     setPlan: (plan) => set({ plan }),
+    isTemplateMode: false,
+    setTemplateMode: (isTemplateMode) => set({ isTemplateMode }),
   }),
 );
