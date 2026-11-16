@@ -11,7 +11,8 @@ on:
       - 'pnpm-workspace.yaml'
       - 'turbo.json'
       - 'package.json'
-      - '.prettierrc.mjs'
+      - '.oxfmtrc.json'
+      - '.oxlintrc.json'
       - '.github/workflows/build-admin.yml'
   # main 머지 시에도 빌드해 "기본 브랜치 스코프" 캐시를 시딩한다.
   # GitHub Actions 캐시 규칙: 기본 브랜치(main)에서 만든 캐시는 모든 PR 이
@@ -26,7 +27,8 @@ on:
       - 'pnpm-workspace.yaml'
       - 'turbo.json'
       - 'package.json'
-      - '.prettierrc.mjs'
+      - '.oxfmtrc.json'
+      - '.oxlintrc.json'
       - '.github/workflows/build-admin.yml'
 
 concurrency:
@@ -65,8 +67,8 @@ jobs:
           restore-keys: |
             turbo-admin-
 
-      - name: Prettier check
-        run: pnpm exec prettier --check "apps/admin/**/*.{ts,tsx,js,jsx,json,md}"
+      - name: Format check (oxfmt)
+        run: pnpm exec oxfmt --check apps/admin
 
       - name: Lint (oxlint)
         run: pnpm --filter @letscareer/admin lint

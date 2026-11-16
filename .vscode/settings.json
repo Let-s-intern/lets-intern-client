@@ -11,7 +11,7 @@
     "ngClass",
     ".+ClassName"
   ],
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.defaultFormatter": "oxc.oxc-vscode",
   "files.exclude": {
     "**/.git": true,
     "**/.svn": true,
