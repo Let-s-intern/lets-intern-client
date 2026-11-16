@@ -7,23 +7,28 @@ import { ReactNode } from 'react';
 const OptionButton = ({
   selected,
   onClick,
+  disabled = false,
   className,
   children,
 }: {
   selected: boolean;
   onClick: () => void;
+  disabled?: boolean;
   className?: string;
   children: ReactNode;
 }) => (
   <button
     type="button"
     aria-pressed={selected}
+    disabled={disabled}
     onClick={onClick}
     className={twMerge(
       'flex flex-1 flex-col items-start rounded-sm border bg-white px-4 py-3.5 text-left transition-colors',
       selected
         ? 'border-primary text-neutral-0 ring-1 ring-primary'
         : 'border-neutral-85 text-neutral-30 hover:border-neutral-60',
+      disabled &&
+        'cursor-not-allowed border-neutral-85 bg-neutral-95 text-neutral-60 ring-0 hover:border-neutral-85',
       className,
     )}
   >
@@ -75,7 +80,7 @@ const formatDateWithDay = (date: string) =>
   dayjs(date).format('YYYY년 M월 D일 (dd)');
 
 interface Props {
-  /** LIGHT 플랜이 있을 때만 진행 방식을 고를 수 있다 */
+  /** 연결된 가이드북이 있을 때만 진행 방식을 고를 수 있다 */
   showModeSelect: boolean;
   mode: ApplyMode;
   onChangeMode: (mode: ApplyMode) => void;
@@ -90,6 +95,9 @@ function ApplyOptionCard({
   targetOptions,
   startDateOptions,
 }: Props) {
+  // 템플릿(가이드북)은 기수·버전과 무관해 참여 대상·시작일을 고를 수 없게 한다
+  const isTemplate = mode === 'TEMPLATE';
+
   return (
     <div className="flex flex-col gap-6 rounded-md bg-primary-5 px-4 py-6 md:px-5">
       {showModeSelect && (
@@ -127,6 +135,7 @@ function ApplyOptionCard({
                 key={option.key}
                 selected={option.selected}
                 onClick={option.onSelect}
+                disabled={isTemplate}
               >
                 <span className="text-xsmall16 font-bold">{option.label}</span>
               </OptionButton>
@@ -143,6 +152,7 @@ function ApplyOptionCard({
                 key={option.key}
                 selected={option.selected}
                 onClick={option.onSelect}
+                disabled={isTemplate}
                 className="px-3.5"
               >
                 <span className="flex w-full items-center justify-between gap-2">
