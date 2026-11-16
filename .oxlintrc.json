@@ -1,0 +1,55 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["eslint", "typescript", "react", "oxc"],
+  "categories": {
+    "correctness": "warn"
+  },
+  "env": {
+    "browser": true,
+    "es2022": true
+  },
+  "settings": {
+    "react": { "version": "18.3" }
+  },
+  "rules": {
+    "no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_",
+        "destructuredArrayIgnorePattern": "^_"
+      }
+    ],
+    "typescript/no-explicit-any": "warn",
+    "typescript/ban-ts-comment": "warn",
+    "no-console": ["warn", { "allow": ["error", "warn"] }],
+    "no-useless-rename": "warn",
+    "react/jsx-key": ["warn", { "checkFragmentShorthand": true }],
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "warn"
+  },
+  "overrides": [
+    {
+      "files": ["apps/web/**"],
+      "plugins": ["eslint", "typescript", "react", "oxc", "nextjs"],
+      "rules": {
+        "no-console": ["error", { "allow": ["error", "warn"] }],
+        "nextjs/no-img-element": "off"
+      }
+    },
+    {
+      "files": ["**/*.test.{ts,tsx,js,jsx}", "**/__tests__/**"],
+      "rules": {
+        "typescript/no-require-imports": "off"
+      }
+    }
+  ],
+  "ignorePatterns": [
+    "**/dist/**",
+    "**/.next/**",
+    "**/node_modules/**",
+    "**/coverage/**",
+    "**/storybook-static/**"
+  ]
+}
