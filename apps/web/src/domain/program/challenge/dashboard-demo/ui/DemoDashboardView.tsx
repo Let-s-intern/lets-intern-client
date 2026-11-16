@@ -52,7 +52,6 @@ const DemoDashboardView = ({
         <div className="flex flex-col gap-3 lg:flex-row">
           {/* 진행 중인 미션 — DailyMissionSection 모양 */}
           <section className="relative flex h-[338px] flex-col rounded-xs border border-primary-80 lg:h-[360px] lg:min-w-0 lg:flex-1">
-            {renderTip(0)}
             <div className="flex flex-col border-b px-4 py-3 lg:flex-row lg:items-center lg:gap-2 lg:py-4">
               <h2 className="flex flex-row font-semibold text-[#4A495C]">
                 <span className="relative inline-block font-semibold text-neutral-10 after:mx-[6px] after:h-[18px] after:border-r after:border-neutral-60 after:content-['']">
@@ -69,13 +68,17 @@ const DemoDashboardView = ({
                 {DEMO_ZERO_MISSION.description}
               </p>
             </div>
-            <button
-              type="button"
-              onClick={onOpenMission}
-              className="m-4 rounded-xs bg-primary py-3 text-center text-white"
-            >
-              미션 수행하기
-            </button>
+            {/* 첫 말풍선은 '미션 수행하기' 버튼을 가리킨다. 카드 위에 두면 체험 창 위쪽에 잘린다 */}
+            <div className="relative m-4">
+              {renderTip(0)}
+              <button
+                type="button"
+                onClick={onOpenMission}
+                className="w-full rounded-xs bg-primary py-3 text-center text-white"
+              >
+                미션 수행하기
+              </button>
+            </div>
           </section>
 
           <div className="flex flex-col gap-2.5 lg:w-[20rem]">
