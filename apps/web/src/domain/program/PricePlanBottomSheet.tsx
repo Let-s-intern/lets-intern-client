@@ -211,6 +211,7 @@ function PricePlanBottomSheet({
   onClose,
   showMembershipBenefit = false,
   onFreeApply,
+  initialPlan,
 }: {
   challenge: ChallengeIdPrimitive;
   challengeId: string;
@@ -230,6 +231,8 @@ function PricePlanBottomSheet({
     orderId: string;
     title: string;
   }) => void;
+  /** 상세 상단에서 고른 플랜. 이 챌린지에 없는 플랜이면 무시한다 */
+  initialPlan?: ChallengePricePlan | null;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -258,13 +261,21 @@ function PricePlanBottomSheet({
   const lightPriceInfo = challenge.priceInfo.find(
     (item) => item.challengePricePlanType === LIGHT,
   );
-  const defaultValue = lightPriceInfo
-    ? LIGHT
-    : premiumPriceInfo
-      ? PREMIUM
-      : standardPriceInfo
-        ? STANDARD
-        : BASIC;
+  const hasInitialPlan =
+    initialPlan != null &&
+    challenge.priceInfo.some(
+      (item) => item.challengePricePlanType === initialPlan,
+    );
+  const defaultValue =
+    initialPlan && hasInitialPlan
+      ? initialPlan
+      : lightPriceInfo
+        ? LIGHT
+        : premiumPriceInfo
+          ? PREMIUM
+          : standardPriceInfo
+            ? STANDARD
+            : BASIC;
 
   const [pricePlan, setPricePlan] = useState<ChallengePricePlan>(defaultValue);
   // VOD 이용권 선택 여부와 개월 수. 플랜과 독립이라 플랜을 바꿔도 유지한다 (LC-3438)
