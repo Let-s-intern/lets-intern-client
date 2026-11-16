@@ -11,6 +11,7 @@ import { ChallengeIdPrimitive, challengeTypeSchema } from '@/schema';
 import LexicalContent from '@/common/lexical/LexicalContent';
 import MoreReviewButton from '@/domain/review/ui/MoreReviewButton';
 import ChallengeDetailBlogReviewSection from './ChallengeDetailBlogReviewSection';
+import DashboardDemo from './dashboard-demo/ui/DashboardDemo';
 import ProgramDetailNavigation, {
   CHALLENGE_DIFFERENT_ID,
   PROGRAM_CURRICULUM_ID,
@@ -99,6 +100,7 @@ const ChallengeView: React.FC<{
               id={PROGRAM_INTRO_ID}
               className="challenge_program flex w-full flex-col items-center"
             >
+              <DashboardDemo />
               {/* 인트로 (최상단) */}
               {receivedContent.intro?.root &&
                 typeof receivedContent.intro.root === 'object' &&

@@ -1,0 +1,74 @@
+import { Dayjs } from 'dayjs';
+
+export const DEMO_USER_NAME = '렛츠커리어';
+
+/** 체험에서 열어 둔 회차. 나머지는 모두 잠근다. */
+export const DEMO_OPEN_MISSION_TH = 0;
+
+export interface DemoSchedule {
+  th: number;
+  title: string;
+  startDate: Dayjs;
+  endDate: Dayjs;
+}
+
+// 0회차(OT)는 오늘부터 사흘 동안 열려 있고, 1회차는 그다음 날부터 하루씩 열린다.
+const ZERO_MISSION_DAYS = 3;
+
+// 인덱스가 곧 회차다.
+const MISSION_TITLES = [
+  'OT 시청 및 목표 작성',
+  '나의 경험 리스트업',
+  '경험 상세 정리',
+  '직무 탐색',
+  '공고 분석',
+  '나만의 강점 찾기',
+  '이력서 초안 작성',
+  '이력서 피드백 반영',
+  '자기소개서 문항 분석',
+  '자기소개서 초안 작성',
+  '최종 점검',
+];
+
+/** 오늘 0회차가 열린 것처럼 0~10회차 일정을 만든다 */
+export const buildDemoSchedules = (today: Dayjs): DemoSchedule[] => {
+  const dayStart = today.startOf('day');
+
+  return MISSION_TITLES.map((title, th) => {
+    const startDay = th === 0 ? 0 : ZERO_MISSION_DAYS + th - 1;
+    const lastDay = th === 0 ? ZERO_MISSION_DAYS - 1 : startDay;
+    return {
+      th,
+      title,
+      startDate: dayStart.add(startDay, 'day'),
+      endDate: dayStart.add(lastDay, 'day').endOf('day'),
+    };
+  });
+};
+
+export const DEMO_NOTICES = [
+  { id: 1, title: '[필독] 챌린지 진행 방식 안내' },
+  { id: 2, title: '미션 제출 전 꼭 확인해 주세요' },
+  { id: 3, title: 'LIVE 피드백 일정 안내' },
+  { id: 4, title: '오픈채팅방 입장 안내' },
+];
+
+export const DEMO_GUIDES = [
+  { id: 1, title: '대시보드 이용 가이드' },
+  { id: 2, title: '미션 제출 가이드' },
+  { id: 3, title: '수료증 발급 안내' },
+];
+
+export const DEMO_SCORE = { current: 0, total: 100 };
+
+export const DEMO_ZERO_MISSION = {
+  description:
+    '환영합니다!\n챌린지가 시작하기 전에, 전체적인 챌린지 흐름과 일정, 미션 제출 방법 등을 미리 알아보는 시간이에요.\n\n이번 0회차에서는 OT 영상을 보고, 챌린지 참여 목표를 적어 주세요.',
+  guide:
+    '0회차는 앞으로의 챌린지를 어렵지 않게 시작하기 위한 준비 운동이에요.\nOT 자료를 확인하고, 챌린지를 통해 이루고 싶은 목표를 자유롭게 정리해 봅시다.',
+  materials: [
+    { label: '미션 템플릿', name: '0회차 미션 템플릿' },
+    { label: '필수 콘텐츠', name: '챌린지 OT 자료' },
+    { label: '추가 콘텐츠', name: '선배들의 챌린지 목표 예시' },
+  ],
+};
