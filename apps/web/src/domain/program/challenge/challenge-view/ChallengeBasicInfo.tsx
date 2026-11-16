@@ -1,32 +1,35 @@
-import Announcement from '@/assets/icons/announcement.svg?react';
-import ClockIcon from '@/assets/icons/clock.svg?react';
-import Pin from '@/assets/icons/pin.svg';
+import { useProgramApplicationQuery } from '@/api/application';
+import { useGetOpenMembershipPrivilege } from '@/domain/all-in-one-pass/api/privilege';
 import { challengeColors } from '@/domain/program/challenge/challengeColors';
-import BasicInfoRow from '@/domain/program/program-detail/basicInfo/BasicInfoRow';
 import dayjs from '@/lib/dayjs';
 import {
   ActiveChallengeType,
   ChallengeIdSchema,
+  ChallengePricePlan,
   challengeTypeSchema,
 } from '@/schema';
-import {
-  formatFullDate,
-  formatFullDateTime,
-  formatFullDateTimeWithOutYear,
-} from '@/utils/formatDateString';
+import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
+import { getProgramPathname } from '@/utils/url';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { CSSProperties, useMemo } from 'react';
-import { LuCalendarDays } from 'react-icons/lu';
-import ChallengePriceInfoContent from './ChallengePriceInfoContent';
+import { useMemo, useState } from 'react';
+import { useOpenChallengeApply } from '../hooks/useOpenChallengeApply';
+import { useChallengePassBenefit } from '../useChallengePassBenefit';
 import {
   getActiveChallengePathname,
   getActiveChallengeTag,
   isActiveChallengeSelected,
   sortActiveChallenges,
 } from '../utils/activeChallengeRadio';
-import ChallengeVersionTag from './ChallengeVersionTag';
-import RadioButton from './RadioButton';
+import ApplyOptionCard, {
+  StartDateOption,
+  TargetOption,
+} from './apply-header/ApplyOptionCard';
+import ApplyPriceCard, {
+  ApplyButtonState,
+  PlanTab,
+} from './apply-header/ApplyPriceCard';
+import PassPromoStrip from './apply-header/PassPromoStrip';
 
 const {
   CAREER_START,
@@ -117,160 +120,185 @@ const ChallengeBasicInfo = ({
     }
   }, [challenge.challengeType]);
 
-  const handleClickActiveChallenge = (activeChallenge: ActiveChallengeType) => {
-    router.push(getActiveChallengePathname(activeChallenge));
-  };
+  const openApply = useOpenChallengeApply();
+  const numericChallengeId = Number(challengeId);
 
-  const activeOnly =
-    activeChallengeList === undefined || activeChallengeList.length <= 1;
-  const startDate = formatFullDateTime(challenge.startDate);
-  const endDate =
-    challenge.startDate?.year() === challenge.endDate?.year()
-      ? formatFullDateTimeWithOutYear(challenge.endDate)
-      : formatFullDateTime(challenge.endDate);
+  /* 플랜: LIGHT 는 '템플릿으로 혼자', 나머지는 '실시간으로 함께' */
+  const planTabs = useMemo(() => {
+    const titleOf = (plan: ChallengePricePlan) =>
+      challenge.priceInfo.find((item) => item.challengePricePlanType === plan)
+        ?.title;
+    const tabs: PlanTab[] = [
+      { plan: 'BASIC', label: titleOf('BASIC') || '베이직' },
+    ];
+    (['STANDARD', 'PREMIUM'] as const).forEach((plan) => {
+      if (
+        challenge.priceInfo.some((item) => item.challengePricePlanType === plan)
+      ) {
+        tabs.push({ plan, label: titleOf(plan) || plan });
+      }
+    });
+    return tabs;
+  }, [challenge.priceInfo]);
+  const hasLightPlan = challenge.priceInfo.some(
+    (item) => item.challengePricePlanType === 'LIGHT',
+  );
+  const [livePlan, setLivePlan] = useState<ChallengePricePlan>('BASIC');
+  const [isTemplateMode, setIsTemplateMode] = useState(false);
+  const plan: ChallengePricePlan = isTemplateMode ? 'LIGHT' : livePlan;
+
+  /* 참여 대상 = 버전 (LC-3247). 고르면 해당 버전 URL 로 이동한다 */
+  const targetOptions: TargetOption[] = [...(challenge.versionList ?? [])]
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+    .map((version) => ({
+      key: String(version.challengeVersionId),
+      label: version.title,
+      selected: version.challengeVersionId === currentVersionId,
+      onSelect: () =>
+        router.push(
+          getProgramPathname({
+            programType: 'challenge',
+            id: numericChallengeId,
+            title: version.programTitle ?? challenge.title ?? '',
+            challengeVersionId: version.challengeVersionId,
+          }),
+        ),
+    }));
+
+  /* 시작일 = 같은 버전으로 모집 중인 기수. 지금 챌린지가 목록에 없으면 앞에 넣는다 */
+  const startDateOptions: StartDateOption[] = useMemo(() => {
+    const sameVersion = sortActiveChallenges(activeChallengeList ?? []).filter(
+      (item) => (item.challengeVersionId ?? null) === currentVersionId,
+    );
+    const options: StartDateOption[] = sameVersion.map((item) => ({
+      key: `${item.id}-${item.challengeVersionId ?? ''}`,
+      startDate: item.startDate,
+      endDate: item.endDate,
+      deadline: item.deadline ?? null,
+      // 버전 데이터가 있으면 참여 대상에서 고르므로 태그가 필요 없다
+      tag: currentVersionId === null ? getActiveChallengeTag(item) : null,
+      selected: isActiveChallengeSelected(
+        item,
+        numericChallengeId,
+        currentVersionId,
+      ),
+      onSelect: () => router.push(getActiveChallengePathname(item)),
+    }));
+    if (
+      !options.some((option) => option.selected) &&
+      challenge.startDate &&
+      challenge.endDate
+    ) {
+      options.unshift({
+        key: `current-${numericChallengeId}`,
+        startDate: challenge.startDate.format(),
+        endDate: challenge.endDate.format(),
+        deadline: challenge.deadline?.format() ?? null,
+        tag: null,
+        selected: true,
+        onSelect: () => {},
+      });
+    }
+    return options;
+  }, [
+    activeChallengeList,
+    currentVersionId,
+    numericChallengeId,
+    challenge.startDate,
+    challenge.endDate,
+    challenge.deadline,
+    router,
+  ]);
+
+  /* 신청 버튼 상태: 하단 CTA 와 같은 기준 */
+  const { data: application } = useProgramApplicationQuery(
+    'challenge',
+    numericChallengeId,
+  );
+  const isOutOfDate =
+    challenge.beginning && challenge.deadline
+      ? dayjs().isBefore(challenge.beginning) ||
+        dayjs().isAfter(challenge.deadline)
+      : false;
+  const applyState: ApplyButtonState = isOutOfDate
+    ? 'CLOSED'
+    : application?.applied
+      ? 'APPLIED'
+      : 'OPEN';
+
+  /* 올인원 패스: 열린 패스 링크와 이 플랜의 패스회원가 */
+  const { hasPrivilege, showPassPrice, passHref, passPrices } =
+    useChallengePassBenefit({
+      challengeId: challengeId ?? '',
+      enabled: challengeId !== undefined,
+      prices: getChallengeOptionPriceInfo(challenge.priceInfo),
+    });
+  const { data: openPrivilege } = useGetOpenMembershipPrivilege();
+  const passPrice =
+    !hasPrivilege && showPassPrice && plan !== 'LIGHT'
+      ? passPrices[plan]
+      : null;
 
   return (
-    <div className="flex w-full flex-col gap-y-6 md:gap-y-5">
-      <div className="flex flex-col items-stretch gap-3 md:flex-row md:gap-[22px]">
-        {/* 썸네일 */}
-        <div className="relative aspect-[4/3] h-full flex-1 overflow-hidden rounded-sm bg-blue-500">
-          {challenge.thumbnail && (
-            <Image
-              className="object-cover"
-              src={challenge.thumbnail}
-              alt={`${challenge.title} 썸네일`}
-              fill={true}
-              priority
-            />
-          )}
-        </div>
+    <div className="flex w-full flex-col gap-y-6 md:gap-y-8">
+      {passHref && (
+        <PassPromoStrip
+          passHref={passHref}
+          membershipId={
+            (openPrivilege?.openCount ?? 0) === 1
+              ? (openPrivilege?.membershipId ?? null)
+              : null
+          }
+        />
+      )}
 
-        {/* 챌린지 정보 */}
-        <div className="w-full md:max-w-[424px]">
-          <h1 className="mb-2 py-1 text-medium22 font-bold text-neutral-0 md:text-medium24">
-            {challenge.title}
-          </h1>
-
-          <ChallengePriceInfoContent
-            priceInfoList={challenge.priceInfo}
-            challengeType={challenge.challengeType}
-          />
-        </div>
-      </div>
+      {/* 히어로 이미지 */}
       <div
-        className="flex w-full flex-col gap-3 md:flex-row"
-        style={styles.basicInfoStyle}
+        className="relative aspect-[4/3] w-full overflow-hidden rounded-md md:aspect-[5/1]"
+        style={styles.thumbnailStyle}
       >
-        {!activeOnly && (
-          <div className="flex w-full flex-col gap-y-2 rounded-ms bg-neutral-95 px-4 pb-5 pt-3 md:flex-1 md:p-5 md:pt-4">
-            <div className="flex w-full items-center gap-x-2">
-              <Pin className="shrink-0" width={20} height={20} />
-              <p className="shrink-0 text-xsmall16 font-semibold text-neutral-0">
-                시작 일자
-              </p>
-              <span
-                className="speech-bubble relative ml-3 animate-bounce-x break-keep rounded-xxs px-2 py-1 text-xxsmall12 font-normal text-white"
-                style={{
-                  backgroundColor: styles.basicInfoStyle.color,
-                  ['--after-border-color' as keyof CSSProperties]:
-                    styles.basicInfoStyle.color,
-                }}
-              >
-                참여 가능한 일자를 선택해주세요!
-              </span>
-            </div>
-            <div className="flex w-full flex-col gap-y-2">
-              {challengeId !== undefined &&
-                activeChallengeList !== undefined &&
-                activeChallengeList.length > 0 &&
-                sortActiveChallenges(activeChallengeList).map(
-                  (activeChallenge) => {
-                    // 같은 날 여러 버전이 열리면 날짜만으로는 구분이 안 돼 태그를 붙인다.
-                    // 비교 대상이 하나뿐이면 붙이지 않는다.
-                    const versionLabel =
-                      activeChallengeList.length > 1
-                        ? getActiveChallengeTag(activeChallenge)
-                        : null;
-
-                    return (
-                      <RadioButton
-                        key={`${activeChallenge.id}-${activeChallenge.challengeVersionId ?? ''}`}
-                        color={styles.basicInfoStyle.color}
-                        checked={isActiveChallengeSelected(
-                          activeChallenge,
-                          Number(challengeId),
-                          currentVersionId,
-                        )}
-                        label={formatFullDate(dayjs(activeChallenge.startDate))}
-                        onClick={() =>
-                          handleClickActiveChallenge(activeChallenge)
-                        }
-                        rightSlot={
-                          versionLabel ? (
-                            <ChallengeVersionTag
-                              label={versionLabel}
-                              color={styles.basicInfoStyle.color}
-                            />
-                          ) : undefined
-                        }
-                      />
-                    );
-                  },
-                )}
-            </div>
-          </div>
-        )}
-
-        <div className="hidden w-full flex-col gap-y-3 rounded-ms bg-neutral-95 px-4 pb-5 pt-3 md:flex md:flex-1 md:p-5 md:pt-4">
-          {activeOnly ? (
-            <>
-              <div className="flex w-full flex-col gap-y-2">
-                <div className="flex w-full items-center gap-x-2">
-                  <Pin className="shrink-0" width={20} height={20} />
-                  <p className="text-xsmall16 font-semibold text-neutral-0">
-                    시작 일자
-                  </p>
-                </div>
-                <p className="text-xsmall16 text-neutral-0">
-                  {formatFullDate(challenge.startDate)}
-                </p>
-              </div>
-              <BasicInfoRow
-                icon={<Announcement />}
-                title="진행 기간"
-                content={`${startDate} - ${endDate}`}
-              />
-            </>
-          ) : (
-            <BasicInfoRow
-              icon={<Announcement />}
-              title="진행 기간"
-              content={`${startDate}-\n${endDate}`}
-            />
-          )}
-        </div>
-        <div className="flex w-full flex-col gap-y-3 rounded-ms bg-neutral-95 px-4 pb-5 pt-3 md:flex-1 md:p-5 md:pt-4">
-          <div className="w-full md:hidden">
-            <BasicInfoRow
-              icon={<Announcement />}
-              title="진행 기간"
-              content={`${startDate}-\n${endDate}`}
-            />
-          </div>
-          <BasicInfoRow
-            icon={<ClockIcon />}
-            title="모집 마감"
-            content={`${formatFullDateTime(challenge.deadline)}`}
+        {(challenge.desktopThumbnail || challenge.thumbnail) && (
+          <Image
+            className="object-contain md:object-cover"
+            src={(challenge.desktopThumbnail || challenge.thumbnail) as string}
+            alt={`${challenge.title} 썸네일`}
+            fill={true}
+            priority
           />
-          <BasicInfoRow
-            icon={<LuCalendarDays size={20} />}
-            title="OT 안내"
-            content={
-              <>
-                챌린지 대시보드 입장 후 0회차 미션을 통해 OT 영상 시청
-                부탁드립니다.
-              </>
-            }
+        )}
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <h1 className="text-medium22 font-bold text-neutral-0 md:text-xlarge30">
+          {challenge.title}
+        </h1>
+        {challenge.shortDesc && (
+          <p className="text-xsmall14 text-neutral-30 md:text-small18">
+            {challenge.shortDesc}
+          </p>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-4 md:flex-row md:items-start md:gap-8">
+        <div className="md:flex-1">
+          <ApplyOptionCard
+            showModeSelect={hasLightPlan}
+            mode={isTemplateMode ? 'TEMPLATE' : 'LIVE'}
+            onChangeMode={(mode) => setIsTemplateMode(mode === 'TEMPLATE')}
+            targetOptions={targetOptions}
+            startDateOptions={startDateOptions}
+          />
+        </div>
+        <div className="md:w-[380px] md:shrink-0">
+          <ApplyPriceCard
+            priceInfoList={challenge.priceInfo}
+            plan={plan}
+            planTabs={isTemplateMode ? [] : planTabs}
+            onChangePlan={setLivePlan}
+            applyState={applyState}
+            onApply={() => openApply(plan)}
+            passHref={passHref}
+            passPrice={passPrice}
           />
         </div>
       </div>

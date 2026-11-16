@@ -4,7 +4,6 @@ import { useProgramApplicationQuery } from '@/api/application';
 import dayjs from '@/lib/dayjs';
 import { ChallengeIdPrimitive } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import NotiToast from './NotiToast';
 import {
@@ -13,6 +12,8 @@ import {
 } from '../../../common/button/ApplyCTA';
 import NotiModal from '@/domain/program/program-detail/button/NotiModal';
 import PricePlanBottomSheet from '../PricePlanBottomSheet';
+import { useOpenChallengeApply } from './hooks/useOpenChallengeApply';
+import { useChallengeApplySheetStore } from './store/useChallengeApplySheetStore';
 
 const ChallengeCTAButtons = ({
   challenge,
@@ -24,10 +25,9 @@ const ChallengeCTAButtons = ({
   challengeVersionId: number | null;
 }) => {
   const { isLoggedIn } = useAuthStore();
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const { isOpen, plan, close } = useChallengeApplySheetStore();
+  const openApply = useOpenChallengeApply();
 
-  const [isOpen, setIsOpen] = useState(false);
   const [isNotiOpen, setIsNotiOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
@@ -43,29 +43,17 @@ const ChallengeCTAButtons = ({
     }
   }, [isLoggedIn, refetch]);
 
+  // 다른 챌린지로 이동하면 시트 상태를 비운다
+  useEffect(
+    () => () =>
+      useChallengeApplySheetStore.setState({ isOpen: false, plan: null }),
+    [],
+  );
+
   /** 이미 신청했는지 체크하는 정보 */
   const isAlreadyApplied = application?.applied ?? false;
 
-  const handleOpen = () => {
-    if (!isLoggedIn) {
-      // 현재 URL의 전체 경로와 쿼리 파라미터를 포함하여 로그인 후 리다이렉트 URL 생성
-      // window.location.pathname을 사용해야 title이 포함된 전체 경로를 가져올 수 있음
-      const currentPath = window.location.pathname;
-      const currentSearch = searchParams.toString();
-      const redirectUrl = currentSearch
-        ? `${currentPath}?${currentSearch}`
-        : currentPath;
-
-      router.push(`/login?redirect=${encodeURIComponent(redirectUrl)}`);
-
-      return;
-    }
-
-    if (!isOpen) {
-      setIsOpen(true);
-      return;
-    }
-  };
+  const handleOpen = () => openApply();
 
   return (
     <>
@@ -110,11 +98,14 @@ const ChallengeCTAButtons = ({
       <NotiToast isVisible={showToast} onClose={() => setShowToast(false)} />
       {/* 가격 플랜 선택 바텀 시트 */}
       <PricePlanBottomSheet
+        // 상단에서 고른 플랜으로 시트를 다시 초기화한다
+        key={plan ?? 'default'}
+        initialPlan={plan}
         isOpen={isOpen}
         challenge={challenge}
         challengeId={challengeId}
         challengeVersionId={challengeVersionId}
-        onClose={() => setIsOpen(false)}
+        onClose={close}
         showMembershipBenefit
       />
     </>
