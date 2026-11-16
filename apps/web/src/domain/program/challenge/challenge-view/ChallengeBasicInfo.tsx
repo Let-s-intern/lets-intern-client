@@ -131,11 +131,12 @@ const ChallengeBasicInfo = ({
     const tabs: PlanTab[] = [
       { plan: 'BASIC', label: titleOf('BASIC') || '베이직' },
     ];
+    const defaultLabels = { STANDARD: '스탠다드', PREMIUM: '프리미엄' };
     (['STANDARD', 'PREMIUM'] as const).forEach((plan) => {
       if (
         challenge.priceInfo.some((item) => item.challengePricePlanType === plan)
       ) {
-        tabs.push({ plan, label: titleOf(plan) || plan });
+        tabs.push({ plan, label: titleOf(plan) || defaultLabels[plan] });
       }
     });
     return tabs;
