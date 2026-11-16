@@ -2,7 +2,7 @@
 
 import dayjs from '@/lib/dayjs';
 import { useRef, useState } from 'react';
-import { buildDemoSchedules } from '../data/demoMock';
+import { buildDemoSchedules, DEMO_TIPS } from '../data/demoMock';
 import DemoDashboardView from './DemoDashboardView';
 import DemoLockPopover from './DemoLockPopover';
 import DemoMyMissionView from './DemoMyMissionView';
@@ -17,9 +17,15 @@ const DashboardDemo = () => {
   const [schedules] = useState(() => buildDemoSchedules(dayjs.tz()));
   const [view, setView] = useState<DemoView>('dashboard');
   const [isLockOpen, setIsLockOpen] = useState(false);
+  // 화면을 오가도 이어서 보도록 안내 순서는 여기서 들고 있는다.
+  const [tipStep, setTipStep] = useState<number | null>(0);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const openLock = () => setIsLockOpen(true);
+  const showNextTip = () =>
+    setTipStep((step) =>
+      step !== null && step + 1 < DEMO_TIPS.length ? step + 1 : null,
+    );
 
   const changeView = (next: DemoView) => {
     setView(next);
@@ -41,6 +47,7 @@ const DashboardDemo = () => {
         </div>
         <div
           ref={scrollRef}
+          data-demo-scroll
           className="flex h-[600px] flex-col overflow-y-auto md:h-[640px] md:flex-row md:px-6 md:py-8"
         >
           <DemoNavBar view={view} onSelect={changeView} onLocked={openLock} />
@@ -50,6 +57,8 @@ const DashboardDemo = () => {
                 schedules={schedules}
                 onOpenMission={() => changeView('my-mission')}
                 onLocked={openLock}
+                tipStep={tipStep}
+                onNextTip={showNextTip}
               />
             ) : (
               <DemoMyMissionView schedules={schedules} onLocked={openLock} />
