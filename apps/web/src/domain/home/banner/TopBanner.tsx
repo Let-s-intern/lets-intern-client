@@ -5,6 +5,7 @@ import { FULL_NAVBAR_HEIGHT_OFFSET } from '@/common/layout/header/NavBar';
 // 컴포넌트는 남긴다(다음 시즌 재사용). 되살릴 때 이 import 와 아래 렌더를 함께 되돌린다.
 // import MembershipPromoBanner from '@/domain/home/banner/MembershipPromoBanner';
 import TopBannerImage from '@/domain/home/banner/TopBannerImage';
+import { useHomeChatting } from '@/domain/home/hero/HomeChattingContext';
 import useScrollDirection from '@/hooks/useScrollDirection';
 import { twMerge } from '@/lib/twMerge';
 import { ILineBanner } from '@/types/Banner.interface';
@@ -29,6 +30,8 @@ const TopBanner = () => {
   });
 
   const scrollDirection = useScrollDirection();
+  // AI 상담 중에는 대화창이 한 화면에 들어오도록 띠배너 아래 히어로 이미지만 숨긴다 (띠배너는 유지)
+  const { isChatting } = useHomeChatting();
 
   useEffect(() => {
     if (data) {
@@ -87,7 +90,7 @@ const TopBanner = () => {
       {/* [PROMO-BANNER] 하반기 멤버십 프로모션 배너 — LC-3294 로 껐다.
           되살리려면 이 줄과 상단 import 주석을 함께 푼다 (grep "[PROMO-BANNER]") */}
       {/* <MembershipPromoBanner /> */}
-      {data && <TopBannerImage banner={data} />}
+      {data && !isChatting && <TopBannerImage banner={data} />}
     </>
   );
 };
