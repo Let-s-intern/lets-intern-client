@@ -37,8 +37,8 @@ import {
 import { BIGFIRM_PATH } from '@/domain/bigfirm/data/links';
 
 // 데스크톱 헤더 맨 위에 서비스 토글 띠(40px)가 있어 아래 값들은 그만큼 크다. 띠 높이는 아래 `h-10`.
-export const FULL_NAVBAR_HEIGHT_OFFSET = 'top-[84px] md:top-[155px]';
-export const SINGLE_ROW_NAVBAR_HEIGHT_OFFSET = 'top-[43px] md:top-[155px]';
+export const FULL_NAVBAR_HEIGHT_OFFSET = 'top-[84px] lg:top-[155px]';
+export const SINGLE_ROW_NAVBAR_HEIGHT_OFFSET = 'top-[43px] lg:top-[155px]';
 
 export const hideMobileBottomNavBar = (pathname: string) =>
   pathname.startsWith('/program/') ||
@@ -53,7 +53,7 @@ export const hideMobileBottomNavBar = (pathname: string) =>
   pathname.startsWith('/all-in-one-pass');
 
 export const getBottomNavBarClassNameByPath = (pathname: string) => {
-  return hideMobileBottomNavBar(pathname) && 'hidden md:flex';
+  return hideMobileBottomNavBar(pathname) && 'hidden lg:flex';
 };
 
 interface NavBarProps extends React.ComponentProps<'header'> {
@@ -78,7 +78,7 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
   // TODO(1:1 라이브 멘토링): 아래 서류 피드백 REPORT 메뉴 블록들과 함께 제거할 것.
   // const reportNavList = useActiveReportNav();
   const scrollDirection = useScrollDirection(pathname);
-  const isMobile = useMediaQuery('(max-width:768px)');
+  const isMobile = useMediaQuery('(max-width:990px)');
   const membershipNav = useMembershipNavEntry();
 
   const { isLoggedIn } = useAuthStore();
@@ -143,7 +143,7 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
         )}
       >
         {/* 서비스 토글 띠(데스크톱). 모바일은 1단의 로고 옆에 붙는다. 높이(`h-10`)는 `FULL_NAVBAR_HEIGHT_OFFSET`·`Spacer` 와 맞춘다. */}
-        <div className="hidden border-b border-neutral-90 md:block">
+        <div className="hidden border-b border-neutral-90 lg:block">
           <div className="mw-1180 flex h-10 items-center whitespace-nowrap pt-2">
             <ServiceToggle size="desktop" />
           </div>
@@ -158,7 +158,7 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
         {/* 2단 */}
         <nav
           className={twMerge(
-            'mw-1180 items-center justify-between pb-[14px] pt-1.5 text-xsmall14 md:flex md:pb-[18px] md:pt-1 md:text-xsmall16',
+            'mw-1180 items-center justify-between pb-[14px] pt-1.5 text-xsmall14 lg:flex lg:pb-[18px] lg:pt-1 lg:text-xsmall16',
             getBottomNavBarClassNameByPath(pathname),
           )}
         >
@@ -261,7 +261,7 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
             </Swiper>
           )}
           {/* 데스크톱: 기존 flex 레이아웃 */}
-          <div className="hidden items-center gap-4 md:flex">
+          <div className="hidden items-center gap-4 lg:flex">
             <div className="flex items-center gap-6">
               <GlobalNavItem
                 className="text-xsmall16"
@@ -328,10 +328,10 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
               </GlobalNavItem>
             </div>
             <div
-              className="hidden h-[18px] w-[1px] bg-[#D9D9D9] md:block"
+              className="hidden h-[18px] w-[1px] bg-[#D9D9D9] lg:block"
               aria-hidden="true"
             />
-            <div className="hidden items-center gap-6 md:flex">
+            <div className="hidden items-center gap-6 lg:flex">
               <GlobalNavItem
                 className="text-xsmall16"
                 href="/review"
