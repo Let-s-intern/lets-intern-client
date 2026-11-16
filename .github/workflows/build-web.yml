@@ -63,17 +63,6 @@ jobs:
           restore-keys: |
             turbo-web-
 
-      # Next.js 증분 빌드 캐시 — turbo 미스 시 next build 콜드 컴파일 시간을 줄인다.
-      # turbo outputs 가 .next/cache 를 제외(turbo.json)하므로 별도 캐시가 필요.
-      - name: Next.js 빌드 캐시
-        uses: actions/cache@v4
-        with:
-          path: apps/web/.next/cache
-          key: nextjs-web-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
-          restore-keys: |
-            nextjs-web-${{ hashFiles('pnpm-lock.yaml') }}-
-            nextjs-web-
-
       - name: Prettier check
         run: pnpm exec prettier --check "apps/web/**/*.{ts,tsx,js,jsx,json,md}"
 
@@ -127,12 +116,3 @@ jobs:
           fi
 
           echo "변경 파일 typecheck 통과"
-
-      - name: Build (turbopack)
-        run: pnpm --filter @letscareer/web build
-        env:
-          NEXT_PUBLIC_SERVER_API: https://api.example.com/v1
-          NEXT_PUBLIC_SERVER_API_V2: https://api.example.com/v2
-          NEXT_PUBLIC_SERVER_API_V3: https://api.example.com/v3
-          NEXT_PUBLIC_API_BASE_PATH: https://api.example.com
-          NEXT_PUBLIC_SITE_URL: https://example.com

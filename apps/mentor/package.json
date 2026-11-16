@@ -8,7 +8,7 @@
     "dev:prod": "vite --mode prod",
     "build": "vite build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsgo --noEmit",
     "lint": "eslint src",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",

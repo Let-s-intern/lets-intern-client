@@ -55,6 +55,7 @@
   "devDependencies": {
     "@letscareer/prettier-config": "workspace:*",
     "@types/node": "^20.14.9",
+    "@typescript/native-preview": "7.0.0-dev.20260707.2",
     "prettier": "^3.3.2",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "turbo": "^2.5.6",
