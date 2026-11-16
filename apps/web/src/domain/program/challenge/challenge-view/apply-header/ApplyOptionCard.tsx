@@ -143,7 +143,7 @@ function ApplyOptionCard({
 
       {startDateOptions.length > 0 && (
         <OptionGroup title="시작일 선택">
-          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 md:grid-cols-3 md:gap-4">
+          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 md:gap-4">
             {startDateOptions.map((option) => (
               <OptionButton
                 key={option.key}
