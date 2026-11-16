@@ -251,12 +251,11 @@ const ChallengeBasicInfo = ({
       : 'OPEN';
 
   /* 올인원 패스: 열린 패스 링크와 이 플랜의 패스회원가 */
-  const { hasPrivilege, showPassPrice, passHref, passPrices } =
-    useChallengePassBenefit({
-      challengeId: challengeId ?? '',
-      enabled: challengeId !== undefined,
-      prices: getChallengeOptionPriceInfo(challenge.priceInfo),
-    });
+  const { showPassPrice, passHref, passPrices } = useChallengePassBenefit({
+    challengeId: challengeId ?? '',
+    enabled: challengeId !== undefined,
+    prices: getChallengeOptionPriceInfo(challenge.priceInfo),
+  });
   const { data: openPrivilege } = useGetOpenMembershipPrivilege();
   // 템플릿 모드: 열린 패스에 가이드북 권한이 있으면 패스로 0원에 받을 수 있다
   const { data: guidebookPrivilege } = useGetMembershipPrivilege(
@@ -267,10 +266,10 @@ const ChallengeBasicInfo = ({
     !!openPrivilege?.exists &&
     openPrivilege.privilegeList.some((p) => p.programType === 'GUIDEBOOK');
   const passPrice = showTemplate
-    ? openHasGuidebook && !guidebookPrivilege?.hasPrivilege
+    ? openHasGuidebook || guidebookPrivilege?.hasPrivilege
       ? 0
       : null
-    : !hasPrivilege && showPassPrice
+    : showPassPrice
       ? passPrices[cheapestPlan as 'BASIC' | 'STANDARD' | 'PREMIUM']
       : null;
 
@@ -282,7 +281,6 @@ const ChallengeBasicInfo = ({
           guidebook.price > 0
             ? Math.round((guidebook.discount / guidebook.price) * 100)
             : 0,
-        membershipDiscount: 0,
         deposit: 0,
         paymentPrice: guidebook.price - guidebook.discount,
       }
@@ -290,11 +288,9 @@ const ChallengeBasicInfo = ({
         regularPrice: livePrice.regularPrice,
         discountAmount: livePrice.discountAmount,
         discountPercentage: livePrice.discountPercentage,
-        membershipDiscount: livePrice.isPassApplied
-          ? livePrice.membershipDiscount
-          : 0,
-        deposit: livePrice.showDeposit ? livePrice.deposit : 0,
-        paymentPrice: livePrice.paymentPrice,
+        // 시안대로 가격 카드는 패스 혜택을 빼고 원래 금액만 보인다. 패스 금액은 아래 패스 카드·모달에서 보인다
+        deposit: livePrice.deposit,
+        paymentPrice: livePrice.sellingPrice,
       };
 
   return (
@@ -366,6 +362,11 @@ const ChallengeBasicInfo = ({
             }
             passHref={passHref}
             passPrice={passPrice}
+            membershipId={
+              (openPrivilege?.openCount ?? 0) === 1
+                ? (openPrivilege?.membershipId ?? null)
+                : null
+            }
           />
         </div>
       </div>

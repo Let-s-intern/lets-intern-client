@@ -5,7 +5,10 @@ import { usePassPricing } from '@/domain/all-in-one-pass/landing/usePassPricing'
 import Link from 'next/link';
 
 /** 패스 기간을 30일 단위 개월 수로 바꿔 월 금액을 낸다. 기간이 없으면 null */
-const getMonthlyPrice = (passPrice: number, periodDays: number | null) => {
+export const getMonthlyPrice = (
+  passPrice: number,
+  periodDays: number | null,
+) => {
   if (!periodDays || passPrice <= 0) return null;
   const months = Math.max(1, Math.round(periodDays / 30));
   return Math.round(passPrice / months);
