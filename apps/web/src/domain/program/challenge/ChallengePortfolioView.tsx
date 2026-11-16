@@ -30,6 +30,7 @@ import ProgramChallengePortfolioDetailNavigation, {
 } from './portfolio-view/ProgramChallengePortfolioDetailNavigation';
 import PortfolioIntroWhySection from './portfolio-view/challenge-portfolio-view/PortfolioIntroWhySection';
 import PortfolioWorriesSection from './portfolio-view/challenge-portfolio-view/PortfolioWorriesSection';
+import DashboardDemo from './dashboard-demo/ui/DashboardDemo';
 import TemplateModeBody from './template-guidebook/TemplateModeBody';
 import { useChallengeDetailView } from './useChallengeDetailView';
 
@@ -91,6 +92,7 @@ const ChallengePortfolioView: React.FC<{
             id={PROGRAM_INTRO_ID}
             className="flex w-full flex-col items-center overflow-x-hidden"
           >
+            <DashboardDemo />
             {/* LEXICAL */}
             {/* 상세설명 렉시컬에서 인트로 렉시컬로 변경 */}
             <ChallengeIntroEditorContent challenge={challenge} />
