@@ -14,7 +14,7 @@ import {
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import { getProgramPathname } from '@/utils/url';
 import Image from 'next/image';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 import { useChallengePlanPrice } from '../hooks/useChallengePlanPrice';
 import { useOpenChallengeApply } from '../hooks/useOpenChallengeApply';
@@ -69,7 +69,6 @@ const ChallengeBasicInfo = ({
   challengeId: string | undefined;
   activeChallengeList: ActiveChallengeType[] | undefined;
 }) => {
-  const router = useRouter();
   // 상세 page 가 version 파라미터를 검증한 뒤 렌더하므로 그대로 믿는다
   const versionParam = useSearchParams().get('version');
   const currentVersionId = versionParam ? Number(versionParam) : null;
@@ -183,15 +182,12 @@ const ChallengeBasicInfo = ({
       key: String(version.challengeVersionId),
       label: version.title,
       selected: version.challengeVersionId === currentVersionId,
-      onSelect: () =>
-        router.push(
-          getProgramPathname({
-            programType: 'challenge',
-            id: numericChallengeId,
-            title: version.programTitle ?? challenge.title ?? '',
-            challengeVersionId: version.challengeVersionId,
-          }),
-        ),
+      href: getProgramPathname({
+        programType: 'challenge',
+        id: numericChallengeId,
+        title: version.programTitle ?? challenge.title ?? '',
+        challengeVersionId: version.challengeVersionId,
+      }),
     }));
 
   /* 시작일 = 같은 버전으로 모집 중인 기수. 지금 챌린지가 목록에 없으면 앞에 넣는다 */
@@ -211,7 +207,7 @@ const ChallengeBasicInfo = ({
         numericChallengeId,
         currentVersionId,
       ),
-      onSelect: () => router.push(getActiveChallengePathname(item)),
+      href: getActiveChallengePathname(item),
     }));
     if (
       !options.some((option) => option.selected) &&
@@ -225,7 +221,7 @@ const ChallengeBasicInfo = ({
         deadline: challenge.deadline?.format() ?? null,
         tag: null,
         selected: true,
-        onSelect: () => {},
+        href: '',
       });
     }
     return options;
@@ -236,7 +232,6 @@ const ChallengeBasicInfo = ({
     challenge.startDate,
     challenge.endDate,
     challenge.deadline,
-    router,
   ]);
 
   /* 신청 버튼 상태: 하단 CTA 와 같은 기준 */
@@ -342,7 +337,7 @@ const ChallengeBasicInfo = ({
         )}
       </div>
 
-      <div className="mt-6 flex flex-col gap-4 md:mt-8 md:flex-row md:items-start md:justify-between md:gap-8">
+      <div className="mt-6 flex flex-col gap-4 md:mt-8 md:flex-row md:items-stretch md:justify-between md:gap-8">
         <div className="md:flex-1 lg:max-w-[600px]">
           <ApplyOptionCard
             showModeSelect={guidebook !== null}
@@ -352,7 +347,7 @@ const ChallengeBasicInfo = ({
             startDateOptions={startDateOptions}
           />
         </div>
-        <div className="md:w-[340px] md:shrink-0 lg:w-[450px] lg:pt-10">
+        <div className="md:w-[340px] md:shrink-0 lg:w-[450px]">
           <ApplyPriceCard
             price={priceSummary}
             applyButton={

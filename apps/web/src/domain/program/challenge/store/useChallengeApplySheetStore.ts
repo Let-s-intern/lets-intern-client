@@ -16,6 +16,12 @@ interface ChallengeApplySheetState {
   /** '템플릿으로 혼자' 선택 여부. 가격·하단 바·상세 본문이 가이드북으로 바뀐다 (LC-3631) */
   isTemplateMode: boolean;
   setTemplateMode: (isTemplateMode: boolean) => void;
+  /**
+   * 참여 대상·시작일을 바꿔 다음 페이지로 갈 때 맨 위로 올리지 않도록 표시한다.
+   * 다음 페이지의 ChallengeScrollToTop 이 한 번 읽고 지운다 (LC-3632)
+   */
+  keepScroll: boolean;
+  keepScrollOnNextPage: () => void;
 }
 
 export const useChallengeApplySheetStore = create<ChallengeApplySheetState>(
@@ -28,5 +34,7 @@ export const useChallengeApplySheetStore = create<ChallengeApplySheetState>(
     setPlan: (plan) => set({ plan }),
     isTemplateMode: false,
     setTemplateMode: (isTemplateMode) => set({ isTemplateMode }),
+    keepScroll: false,
+    keepScrollOnNextPage: () => set({ keepScroll: true }),
   }),
 );

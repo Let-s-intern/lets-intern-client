@@ -67,8 +67,9 @@ function ApplyPriceCard({ price, applyButton, passHref, passPrice }: Props) {
       : 0;
 
   return (
-    <div className="flex flex-col gap-3 md:gap-4">
-      <div className="flex flex-col bg-white py-2 md:px-4">
+    // 왼쪽 옵션 카드와 높이를 맞춘다. 금액 영역이 남는 높이를 차지해 버튼·패스 카드가 아래에 붙는다
+    <div className="flex h-full flex-col gap-3 md:gap-4">
+      <div className="flex flex-col bg-white py-2 md:flex-1 md:px-4">
         <p className="text-small18 font-bold text-neutral-0">최종 결제 금액</p>
 
         <div className="mt-2 flex flex-col gap-2 text-xsmall16 text-neutral-20">

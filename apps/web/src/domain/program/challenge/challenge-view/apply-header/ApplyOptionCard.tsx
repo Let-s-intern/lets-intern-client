@@ -2,7 +2,24 @@
 
 import dayjs from '@/lib/dayjs';
 import { twMerge } from '@/lib/twMerge';
+import Link from 'next/link';
 import { ReactNode } from 'react';
+import { useChallengeApplySheetStore } from '../../store/useChallengeApplySheetStore';
+
+const optionClassName = (
+  selected: boolean,
+  disabled: boolean,
+  className?: string,
+) =>
+  twMerge(
+    'flex flex-1 flex-col items-start rounded-sm border bg-white px-4 py-3 text-left transition-colors',
+    selected
+      ? 'border-primary text-neutral-0 ring-1 ring-primary'
+      : 'border-neutral-85 text-neutral-30 hover:border-neutral-60',
+    disabled &&
+      'cursor-not-allowed border-neutral-85 bg-neutral-95 text-neutral-60 ring-0 hover:border-neutral-85',
+    className,
+  );
 
 const OptionButton = ({
   selected,
@@ -22,19 +39,56 @@ const OptionButton = ({
     aria-pressed={selected}
     disabled={disabled}
     onClick={onClick}
-    className={twMerge(
-      'flex flex-1 flex-col items-start rounded-sm border bg-white px-4 py-3.5 text-left transition-colors',
-      selected
-        ? 'border-primary text-neutral-0 ring-1 ring-primary'
-        : 'border-neutral-85 text-neutral-30 hover:border-neutral-60',
-      disabled &&
-        'cursor-not-allowed border-neutral-85 bg-neutral-95 text-neutral-60 ring-0 hover:border-neutral-85',
-      className,
-    )}
+    className={optionClassName(selected, disabled, className)}
   >
     {children}
   </button>
 );
+
+/**
+ * 다른 페이지(버전·기수)로 가는 선택지. 링크로 두고 미리 받아 둬서 누를 때
+ * 로딩 화면 없이 바로 바뀌게 하고, 스크롤 위치도 유지한다 (LC-3632).
+ */
+const OptionLink = ({
+  selected,
+  href,
+  disabled = false,
+  className,
+  children,
+}: {
+  selected: boolean;
+  href: string;
+  disabled?: boolean;
+  className?: string;
+  children: ReactNode;
+}) => {
+  const keepScroll = useChallengeApplySheetStore(
+    (state) => state.keepScrollOnNextPage,
+  );
+  if (selected || disabled) {
+    return (
+      <OptionButton
+        selected={selected}
+        disabled={disabled}
+        onClick={() => {}}
+        className={className}
+      >
+        {children}
+      </OptionButton>
+    );
+  }
+  return (
+    <Link
+      href={href}
+      prefetch
+      scroll={false}
+      onClick={keepScroll}
+      className={optionClassName(false, false, className)}
+    >
+      {children}
+    </Link>
+  );
+};
 
 const OptionGroup = ({
   title,
@@ -43,7 +97,7 @@ const OptionGroup = ({
   title: string;
   children: ReactNode;
 }) => (
-  <div className="flex flex-col gap-2.5">
+  <div className="flex flex-col gap-2">
     <p className="text-xsmall14 font-semibold text-neutral-30">{title}</p>
     {children}
   </div>
@@ -59,14 +113,14 @@ export interface StartDateOption {
   /** 버전 데이터가 없는 챌린지에서 제목 대괄호로 구분하는 태그 */
   tag: string | null;
   selected: boolean;
-  onSelect: () => void;
+  href: string;
 }
 
 export interface TargetOption {
   key: string;
   label: string;
   selected: boolean;
-  onSelect: () => void;
+  href: string;
 }
 
 /** 모집 마감까지 3일 이내면 마감 임박 */
@@ -99,7 +153,7 @@ function ApplyOptionCard({
   const isTemplate = mode === 'TEMPLATE';
 
   return (
-    <div className="flex flex-col gap-6 rounded-md bg-primary-5 px-4 py-6 md:px-5">
+    <div className="flex h-full flex-col gap-5 rounded-md bg-primary-5 px-4 py-5 md:px-5">
       {showModeSelect && (
         <OptionGroup title="진행 방식 선택">
           <div className="flex flex-col gap-2.5 md:flex-row md:gap-4">
@@ -131,14 +185,14 @@ function ApplyOptionCard({
         <OptionGroup title="참여 대상">
           <div className="flex flex-col gap-2.5 md:flex-row md:gap-4">
             {targetOptions.map((option) => (
-              <OptionButton
+              <OptionLink
                 key={option.key}
                 selected={option.selected}
-                onClick={option.onSelect}
+                href={option.href}
                 disabled={isTemplate}
               >
                 <span className="text-xsmall16 font-bold">{option.label}</span>
-              </OptionButton>
+              </OptionLink>
             ))}
           </div>
         </OptionGroup>
@@ -148,10 +202,10 @@ function ApplyOptionCard({
         <OptionGroup title="시작일 선택">
           <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-3">
             {startDateOptions.map((option) => (
-              <OptionButton
+              <OptionLink
                 key={option.key}
                 selected={option.selected}
-                onClick={option.onSelect}
+                href={option.href}
                 disabled={isTemplate}
                 className="px-3.5"
               >
@@ -171,7 +225,7 @@ function ApplyOptionCard({
                 <span className="mt-1 text-xxsmall12 text-neutral-40">
                   {dayjs(option.endDate).format('YYYY년 M월 D일')} 종료
                 </span>
-              </OptionButton>
+              </OptionLink>
             ))}
           </div>
         </OptionGroup>
