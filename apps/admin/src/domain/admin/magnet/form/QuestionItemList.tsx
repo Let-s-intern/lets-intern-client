@@ -52,7 +52,7 @@ const QuestionItemList = ({ items, onUpdateItems }: QuestionItemListProps) => {
               {index + 1}.
             </span>
             {item.isOther ? (
-              <div className="flex min-h-[40px] flex-1 items-center gap-2 rounded border border-neutral-300 px-3">
+              <div className="rounded flex min-h-[40px] flex-1 items-center gap-2 border border-neutral-300 px-3">
                 <span className="text-sm text-neutral-500">기타(직접입력)</span>
                 <Chip
                   label="직접입력"

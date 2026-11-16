@@ -28,7 +28,7 @@ interface DetailCTAButtonsProps {
 const NoSlotButton = () => (
   <button
     disabled
-    className="bg-neutral-80 text-xsmall16 text-neutral-40 w-full rounded-sm px-6 py-3 font-medium"
+    className="w-full rounded-sm bg-neutral-80 px-6 py-3 text-xsmall16 font-medium text-neutral-40"
   >
     현재 예약 가능한 일정이 없습니다
   </button>

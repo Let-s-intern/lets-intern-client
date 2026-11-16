@@ -22,13 +22,13 @@ const CurriculumCard = ({
   return (
     <div className="relative flex flex-shrink-0 flex-col items-center justify-center gap-2 rounded-md bg-[#f3f3f3] px-[25px] py-[27px] md:w-full md:flex-1 md:rounded-sm">
       <span
-        className="text-xsmall14 md:text-small18 w-full items-center justify-center text-center font-semibold md:-top-7 md:px-4"
+        className="w-full items-center justify-center text-center text-xsmall14 font-semibold md:-top-7 md:px-4 md:text-small18"
         style={{ color: primaryColor }}
       >
         Point {index}
       </span>
       <div className="gap-[47px]text-neutral-0 flex flex-col items-center justify-center gap-10 md:gap-[47px]">
-        <div className="text-small20 md:text-medium24 font-bold">{title}</div>
+        <div className="text-small20 font-bold md:text-medium24">{title}</div>
         <div className="text-xsmall14 text-neutral-40 md:text-small18">
           {description}
         </div>

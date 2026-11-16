@@ -63,7 +63,7 @@ const JitsiEmbedModal = ({
       closeOnOverlayClick={false}
       // z-10: 모달 콘텐츠(Jitsi iframe)를 오버레이 위로 명시 합성 — 모바일(iOS)에서
       // fixed 오버레이가 iframe 위를 덮어 터치가 막히던 문제 방지.
-      className="rounded-xxl relative z-10 aspect-[4/3] h-[94vh] max-h-[980px] w-auto max-w-[96vw] overflow-hidden bg-neutral-900"
+      className="relative z-10 aspect-[4/3] h-[94vh] max-h-[980px] w-auto max-w-[96vw] overflow-hidden rounded-xxl bg-neutral-900"
     >
       <div className="relative h-full w-full">
         {/* 모달 자체가 4:3(웹캠 480p 기본 비율) → 화상이 박스를 꽉 채워 확대/크롭 없이 보인다.

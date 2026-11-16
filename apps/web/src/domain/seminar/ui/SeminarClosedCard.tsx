@@ -72,19 +72,19 @@ const SeminarClosedCard = ({
       className="flex h-full w-full cursor-pointer flex-col gap-3"
     >
       <img
-        className="bg-neutral-80 aspect-[540/421] w-full rounded-lg object-cover"
+        className="aspect-[540/421] w-full rounded-lg bg-neutral-80 object-cover"
         src={programInfo.thumbnail || undefined}
         alt="세미나 썸네일"
       />
-      <h3 className="text-xsmall14 md:text-xsmall16 line-clamp-2 font-semibold">
+      <h3 className="line-clamp-2 text-xsmall14 font-semibold md:text-xsmall16">
         {programInfo.title}
       </h3>
       {/* 진행일자 */}
       <div className="flex items-center gap-1.5">
-        <span className="text-xxsmall12 md:text-xsmall14 text-neutral-0">
+        <span className="text-xxsmall12 text-neutral-0 md:text-xsmall14">
           진행일자
         </span>
-        <span className="text-xxsmall12 md:text-xsmall14 text-primary font-semibold">
+        <span className="text-xxsmall12 font-semibold text-primary md:text-xsmall14">
           {dayjs(programInfo.startDate).format('YY.MM.DD')}
         </span>
       </div>
@@ -96,7 +96,7 @@ const SeminarClosedCard = ({
           type="button"
           onClick={handleEncore}
           aria-pressed={requested}
-          className={`text-xsmall14 rounded-xxs flex w-full items-center justify-center gap-1 whitespace-nowrap px-3.5 py-2 font-medium transition-colors ${requested ? 'bg-primary-80 text-neutral-85' : 'bg-primary-10 text-neutral-20'}`}
+          className={`flex w-full items-center justify-center gap-1 whitespace-nowrap rounded-xxs px-3.5 py-2 text-xsmall14 font-medium transition-colors ${requested ? 'bg-primary-80 text-neutral-85' : 'bg-primary-10 text-neutral-20'}`}
         >
           <MegaphoneIcon className="h-4 w-4" />
           {requested ? '앵콜 요청 완료' : '앵콜 요청하기'}

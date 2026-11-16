@@ -13,7 +13,7 @@ function SuperTitle({
   return (
     <span
       className={twMerge(
-        'text-xsmall14 md:text-small20 block font-semibold md:text-center',
+        'block text-xsmall14 font-semibold md:text-center md:text-small20',
         className,
       )}
       style={style}

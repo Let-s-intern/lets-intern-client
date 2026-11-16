@@ -75,15 +75,15 @@ export default function CalendarMobileRow({ week, variant }: Props) {
               )}
             >
               {isSelected && !disabled && (
-                <span className="bg-primary-10 rounded-xs absolute inset-x-0 inset-y-0" />
+                <span className="absolute inset-x-0 inset-y-0 rounded-xs bg-primary-10" />
               )}
               <span
                 className={clsx(
-                  'text-xsmall14 relative z-10 h-5 font-medium leading-5',
+                  'relative z-10 h-5 text-xsmall14 font-medium leading-5',
                   disabled
                     ? 'text-neutral-80'
                     : isToday
-                      ? 'text-primary font-bold'
+                      ? 'font-bold text-primary'
                       : dim
                         ? 'text-neutral-60'
                         : 'text-neutral-0',
@@ -151,7 +151,7 @@ export default function CalendarMobileRow({ week, variant }: Props) {
                   <span
                     key={`badge-${d.toString()}`}
                     style={{ gridColumn: di + 1 }}
-                    className="text-xxsmall10 text-primary text-center font-medium leading-none"
+                    className="text-center text-xxsmall10 font-medium leading-none text-primary"
                   >
                     +{n}
                   </span>

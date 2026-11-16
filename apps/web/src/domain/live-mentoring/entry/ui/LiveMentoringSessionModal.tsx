@@ -186,7 +186,7 @@ const LiveMentoringSessionModal = ({
       onClose={handleClose}
       closeOnOverlayClick={false}
       overlayClassName="bg-black/50 backdrop-blur-sm"
-      className="rounded-xxl relative z-10 h-[96dvh] max-h-[96dvh] w-[98vw] overflow-hidden bg-black md:mt-3 md:aspect-[4/3] md:h-[96vh] md:max-h-[1080px] md:w-auto md:max-w-[96vw] md:self-start"
+      className="relative z-10 h-[96dvh] max-h-[96dvh] w-[98vw] overflow-hidden rounded-xxl bg-black md:mt-3 md:aspect-[4/3] md:h-[96vh] md:max-h-[1080px] md:w-auto md:max-w-[96vw] md:self-start"
     >
       <div className="relative h-full w-full">
         <div className="absolute inset-0">

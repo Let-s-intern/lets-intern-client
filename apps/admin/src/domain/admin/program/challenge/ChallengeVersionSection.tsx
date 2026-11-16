@@ -229,7 +229,7 @@ function ChallengeVersionSection({
 
           return (
             <div
-              className="rounded-xxs border-neutral-80 border p-3"
+              className="rounded-xxs border border-neutral-80 p-3"
               key={index}
             >
               <div className="flex items-start gap-2">

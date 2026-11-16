@@ -40,7 +40,7 @@ const CompleteSection = ({
       <h1 className="text-lg font-semibold">참여 완료</h1>
       {totalCount === 0 ? (
         <div className="flex w-full flex-col items-center gap-4 py-20">
-          <p className="text-xsmall14 text-neutral-20 font-normal">
+          <p className="text-xsmall14 font-normal text-neutral-20">
             {emptyText}
           </p>
         </div>

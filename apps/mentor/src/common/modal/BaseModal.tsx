@@ -51,7 +51,7 @@ const BaseModal = ({
         />
         <div
           className={twMerge(
-            'rounded-ms relative w-full overflow-hidden bg-white',
+            'relative w-full overflow-hidden rounded-ms bg-white',
             className,
           )}
         >

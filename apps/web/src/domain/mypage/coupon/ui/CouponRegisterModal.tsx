@@ -30,7 +30,7 @@ const CouponRegisterModal = ({ isOpen, onClose }: CouponRegisterModalProps) => {
       <div className="flex flex-col">
         <div className="flex flex-col gap-8 px-5 pb-6 pt-6">
           <div className="flex items-center justify-between">
-            <p className="text-neutral-0 text-small18 font-semibold">
+            <p className="text-small18 font-semibold text-neutral-0">
               쿠폰 등록
             </p>
             <button onClick={handleClose}>
@@ -51,15 +51,15 @@ const CouponRegisterModal = ({ isOpen, onClose }: CouponRegisterModalProps) => {
                   clearError();
                 }}
                 placeholder="쿠폰 코드를 입력해주세요."
-                className="bg-neutral-95 text-xsmall16 placeholder:text-neutral-45 rounded-md p-3 outline-none"
+                className="rounded-md bg-neutral-95 p-3 text-xsmall16 outline-none placeholder:text-neutral-45"
               />
               {errorMessage && (
-                <span className="text-xxsmall12 mt-1 text-red-500">
+                <span className="mt-1 text-xxsmall12 text-red-500">
                   {errorMessage}
                 </span>
               )}
             </div>
-            <ul className="text-xsmall14 text-neutral-45 flex flex-col gap-1">
+            <ul className="flex flex-col gap-1 text-xsmall14 text-neutral-45">
               <li className="flex gap-2">
                 <span>•</span>
                 <span>유효기간이 지난 쿠폰은 등록할 수 없습니다.</span>
@@ -74,15 +74,15 @@ const CouponRegisterModal = ({ isOpen, onClose }: CouponRegisterModalProps) => {
             </ul>
           </div>
         </div>
-        <div className="border-neutral-85 flex gap-3 border-t px-5 py-4">
+        <div className="flex gap-3 border-t border-neutral-85 px-5 py-4">
           <button
-            className="border-neutral-80 rounded-xs flex-1 border py-3 font-medium text-neutral-50"
+            className="flex-1 rounded-xs border border-neutral-80 py-3 font-medium text-neutral-50"
             onClick={handleClose}
           >
             닫기
           </button>
           <button
-            className="rounded-xs bg-primary disabled:bg-neutral-85 flex-1 py-3 font-medium text-white disabled:cursor-not-allowed disabled:text-neutral-50"
+            className="flex-1 rounded-xs bg-primary py-3 font-medium text-white disabled:cursor-not-allowed disabled:bg-neutral-85 disabled:text-neutral-50"
             disabled={!code.trim() || isPending}
             onClick={() => register(code)}
           >

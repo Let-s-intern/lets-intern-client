@@ -60,23 +60,23 @@ export default function ProcessSection() {
           }
         />
 
-        <ul className="divide-neutral-90 flex w-full flex-col gap-5 md:gap-0 md:divide-y">
+        <ul className="flex w-full flex-col gap-5 divide-neutral-90 md:gap-0 md:divide-y">
           {PROCESS_STEPS.map((s) => (
             <li key={s.no} className="flex gap-4 py-0 md:gap-10 md:py-[26px]">
               <span
-                className="text-xsmall14 md:text-small20 text-static-100 flex h-10 w-10 shrink-0 items-center justify-center rounded-full font-bold md:h-12 md:w-12"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-xsmall14 font-bold text-static-100 md:h-12 md:w-12 md:text-small20"
                 style={{ backgroundColor: s.color }}
               >
                 {s.no}
               </span>
               <div className="flex flex-col gap-1 md:gap-2">
-                <span className="text-primary text-xsmall14 font-semibold">
+                <span className="text-xsmall14 font-semibold text-primary">
                   {s.label}
                 </span>
-                <h4 className="text-xsmall16 md:text-medium22 text-neutral-0 font-bold">
+                <h4 className="text-xsmall16 font-bold text-neutral-0 md:text-medium22">
                   {s.title}
                 </h4>
-                <p className="text-xsmall14 md:text-xsmall16 text-neutral-40">
+                <p className="text-xsmall14 text-neutral-40 md:text-xsmall16">
                   {s.desc}
                 </p>
               </div>

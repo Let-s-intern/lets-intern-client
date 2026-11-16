@@ -104,7 +104,7 @@ export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <nav className="border-neutral-80 flex h-screen w-[296px] flex-col justify-between border-r bg-white p-4">
+        <nav className="flex h-screen w-[296px] flex-col justify-between border-r border-neutral-80 bg-white p-4">
           <div className="flex flex-col">
             <div className="flex h-[70px] items-center justify-between px-3 py-2.5">
               <Link to="/" onClick={onClose}>
@@ -120,7 +120,7 @@ export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
                 <button
                   type="button"
                   onClick={onClose}
-                  className="text-neutral-40 p-1 lg:hidden"
+                  className="p-1 text-neutral-40 lg:hidden"
                   aria-label="메뉴 닫기"
                 >
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -143,10 +143,10 @@ export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
                       <Link
                         to={item.url}
                         onClick={onClose}
-                        className={`text-xsmall16 block rounded px-3 py-2.5 tracking-[-0.6px] ${
+                        className={`rounded block px-3 py-2.5 text-xsmall16 tracking-[-0.6px] ${
                           isActive
-                            ? 'bg-primary-5 text-primary font-semibold'
-                            : 'text-neutral-40 font-medium'
+                            ? 'bg-primary-5 font-semibold text-primary'
+                            : 'font-medium text-neutral-40'
                         }`}
                       >
                         {/* 오픈 중이 아니면 배지 컴포넌트가 스스로 null 을 낸다. */}
@@ -215,10 +215,10 @@ export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
                               <Link
                                 to={child.url}
                                 onClick={onClose}
-                                className={`text-xsmall14 flex items-center gap-1.5 rounded px-3 py-2 pl-6 tracking-[-0.6px] ${
+                                className={`rounded flex items-center gap-1.5 px-3 py-2 pl-6 text-xsmall14 tracking-[-0.6px] ${
                                   childActive
-                                    ? 'bg-primary-5 text-primary font-semibold'
-                                    : 'text-neutral-40 font-medium'
+                                    ? 'bg-primary-5 font-semibold text-primary'
+                                    : 'font-medium text-neutral-40'
                                 }`}
                               >
                                 <span className="truncate">{child.name}</span>
@@ -236,7 +236,7 @@ export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
           {!isPwa && (
             <a
               href={import.meta.env.VITE_WEB_URL ?? '#'}
-              className="flex items-center gap-1 rounded px-3 py-2.5"
+              className="rounded flex items-center gap-1 px-3 py-2.5"
             >
               <svg
                 width="24"
@@ -271,7 +271,7 @@ export const MentorSidebar = ({ isOpen, onClose }: MentorSidebarProps) => {
                   strokeLinejoin="round"
                 />
               </svg>
-              <span className="text-xsmall16 text-neutral-40 font-medium tracking-[-0.6px]">
+              <span className="text-xsmall16 font-medium tracking-[-0.6px] text-neutral-40">
                 홈페이지로 이동
               </span>
             </a>

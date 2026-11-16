@@ -23,7 +23,7 @@ function formatNoticeDate(dateStr: string): string {
 function NoticeLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-6 md:gap-8">
-      <h1 className="text-medium22 text-neutral-0 font-semibold">공지사항</h1>
+      <h1 className="text-medium22 font-semibold text-neutral-0">공지사항</h1>
       {children}
     </div>
   );
@@ -44,7 +44,7 @@ function SearchBar({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="검색어를 입력해주세요"
-        className="bg-neutral-95 text-xsmall14 text-neutral-0 placeholder:text-neutral-40 focus:border-primary-20 w-full rounded-xl border border-transparent py-3.5 pl-5 pr-12 outline-none transition-colors focus:bg-white"
+        className="w-full rounded-xl border border-transparent bg-neutral-95 py-3.5 pl-5 pr-12 text-xsmall14 text-neutral-0 outline-none transition-colors placeholder:text-neutral-40 focus:border-primary-20 focus:bg-white"
       />
       <svg
         width="20"
@@ -52,7 +52,7 @@ function SearchBar({
         viewBox="0 0 24 24"
         fill="none"
         aria-hidden
-        className="text-neutral-40 absolute right-4 top-1/2 -translate-y-1/2"
+        className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-40"
       >
         <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
         <path
@@ -89,9 +89,9 @@ function GuideRow({
   const hasLink = !!guide.link;
 
   const leftLabel = guide.isFixed ? (
-    <span className="text-primary text-xxsmall12 font-semibold">중요</span>
+    <span className="text-xxsmall12 font-semibold text-primary">중요</span>
   ) : (
-    <span className="text-neutral-40 text-xxsmall12">
+    <span className="text-xxsmall12 text-neutral-40">
       {guide.createDate ? formatNoticeDate(guide.createDate) : ''}
     </span>
   );
@@ -102,16 +102,16 @@ function GuideRow({
         {leftLabel}
       </div>
       <div className="flex min-w-0 flex-1 items-center gap-2">
-        <span className="text-xxsmall12 md:text-xsmall14 text-neutral-20 truncate">
+        <span className="truncate text-xxsmall12 text-neutral-20 md:text-xsmall14">
           {guide.title}
         </span>
         {challengeName && (
-          <span className="border-primary-20 text-primary text-xxsmall12 shrink-0 rounded-full border px-2 py-0.5 font-medium">
+          <span className="shrink-0 rounded-full border border-primary-20 px-2 py-0.5 text-xxsmall12 font-medium text-primary">
             {challengeName}
           </span>
         )}
       </div>
-      <span className="text-xxsmall12 text-neutral-40 hidden shrink-0 items-center gap-1 md:flex">
+      <span className="hidden shrink-0 items-center gap-1 text-xxsmall12 text-neutral-40 md:flex">
         자세히 보기
         <ChevronRight />
       </span>
@@ -214,16 +214,16 @@ export default function NoticeListPage() {
       <SearchBar value={query} onChange={handleSearch} />
 
       {isLoading ? (
-        <div className="text-xsmall14 text-neutral-40 py-20 text-center">
+        <div className="py-20 text-center text-xsmall14 text-neutral-40">
           불러오는 중...
         </div>
       ) : filteredGuides.length === 0 ? (
-        <div className="text-xsmall14 text-neutral-40 py-20 text-center">
+        <div className="py-20 text-center text-xsmall14 text-neutral-40">
           {query.trim() ? '검색 결과가 없습니다.' : '등록된 공지가 없습니다.'}
         </div>
       ) : (
         <div className="flex flex-col gap-8">
-          <div className="border-neutral-80 flex flex-col border-t">
+          <div className="flex flex-col border-t border-neutral-80">
             {pagedGuides.map((guide) => (
               <GuideRow
                 key={guide.challengeMentorGuideId}

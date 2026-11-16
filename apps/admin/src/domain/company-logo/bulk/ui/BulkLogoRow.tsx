@@ -45,7 +45,7 @@ export default function BulkLogoRow({
   );
 
   return (
-    <tr className="border-neutral-90 border-b last:border-b-0">
+    <tr className="border-b border-neutral-90 last:border-b-0">
       <td className={cellClass}>
         <Checkbox
           size="small"
@@ -62,14 +62,14 @@ export default function BulkLogoRow({
             row.status === 'fetchFailed' || row.status === 'saveFailed'
               ? 'text-system-error'
               : isSaved
-                ? 'text-primary font-medium'
+                ? 'font-medium text-primary'
                 : 'text-neutral-30'
           }
         >
           {STATUS_LABELS[row.status]}
         </span>
         {row.error ? (
-          <p className="text-system-error text-xs">{row.error}</p>
+          <p className="text-xs text-system-error">{row.error}</p>
         ) : null}
         {row.status === 'fetchFailed' ? (
           <Button
@@ -89,7 +89,7 @@ export default function BulkLogoRow({
             aria-label={`${row.siteUrl} 로고 후보 바꾸기`}
             disabled={!canEdit}
             onClick={(e) => setPickerAnchor(e.currentTarget)}
-            className="bg-neutral-90 flex h-10 w-10 items-center justify-center overflow-hidden rounded"
+            className="rounded flex h-10 w-10 items-center justify-center overflow-hidden bg-neutral-90"
           >
             <img
               src={selected.url}
@@ -99,7 +99,7 @@ export default function BulkLogoRow({
             />
           </button>
         ) : (
-          <span className="text-neutral-40 text-xs">-</span>
+          <span className="text-xs text-neutral-40">-</span>
         )}
         <Popover
           open={pickerAnchor !== null}
@@ -132,7 +132,7 @@ export default function BulkLogoRow({
             onChange={(e) => onChange({ name: e.target.value })}
           />
           {isDuplicate && !isSaved ? (
-            <span className="shrink-0 rounded bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-700">
+            <span className="rounded shrink-0 bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-700">
               중복
             </span>
           ) : null}

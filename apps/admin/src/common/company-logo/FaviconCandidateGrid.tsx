@@ -56,9 +56,9 @@ export default function FaviconCandidateGrid({
                   : 'border-neutral-80',
               )}
             >
-              <div className="bg-neutral-90 flex h-16 w-16 items-center justify-center overflow-hidden rounded">
+              <div className="rounded flex h-16 w-16 items-center justify-center overflow-hidden bg-neutral-90">
                 {isBroken ? (
-                  <span className="text-xxsmall12 text-neutral-40 text-center">
+                  <span className="text-center text-xxsmall12 text-neutral-40">
                     미리보기 불가
                   </span>
                 ) : (
@@ -76,7 +76,7 @@ export default function FaviconCandidateGrid({
               <span className="text-xxsmall12 font-medium">
                 {sizeLabel(candidate)}
               </span>
-              <span className="text-xxsmall10 text-neutral-40 break-all">
+              <span className="break-all text-xxsmall10 text-neutral-40">
                 {SOURCE_LABELS[candidate.source] ?? candidate.source}
               </span>
             </button>

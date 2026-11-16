@@ -65,7 +65,7 @@ function WheelColumn({ items, value, onChange, format }: WheelProps) {
           className={clsx(
             'flex w-full cursor-pointer snap-center items-center justify-center',
             it === value
-              ? 'text-primary text-base font-semibold'
+              ? 'text-base font-semibold text-primary'
               : 'text-sm text-neutral-50',
           )}
         >
@@ -144,7 +144,7 @@ export default function CalendarDatePicker({
     <BaseBottomSheet isOpen={isOpen} onClose={onClose}>
       <div className="relative flex" style={{ height: ITEM_H * 5 }}>
         <div
-          className="bg-neutral-95 pointer-events-none absolute inset-x-0 top-1/2 -translate-y-1/2 rounded-lg"
+          className="pointer-events-none absolute inset-x-0 top-1/2 -translate-y-1/2 rounded-lg bg-neutral-95"
           style={{ height: ITEM_H }}
         />
         <WheelColumn
@@ -170,13 +170,13 @@ export default function CalendarDatePicker({
       <div className="mt-4 flex gap-3">
         <OutlinedButton
           onClick={onClose}
-          className="text-xsmall16 flex-1 py-3 font-medium"
+          className="flex-1 py-3 text-xsmall16 font-medium"
         >
           취소
         </OutlinedButton>
         <SolidButton
           onClick={handleConfirm}
-          className="text-xsmall16 flex-1 py-3"
+          className="flex-1 py-3 text-xsmall16"
         >
           확인
         </SolidButton>

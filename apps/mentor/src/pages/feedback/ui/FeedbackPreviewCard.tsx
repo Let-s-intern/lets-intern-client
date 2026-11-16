@@ -92,7 +92,7 @@ const FeedbackPreviewCard = ({
       </div>
 
       {hasContent ? (
-        <div className="text-xsmall14 mt-3 min-h-0 flex-1 overflow-y-auto text-neutral-700">
+        <div className="mt-3 min-h-0 flex-1 overflow-y-auto text-xsmall14 text-neutral-700">
           <LexicalContent node={root} />
         </div>
       ) : (

@@ -86,7 +86,7 @@ export default function ExposureModal({
                   onChange={(e) => toggleAll(e.target.checked)}
                 />
               </TableCell>
-              <TableCell colSpan={2} className="text-neutral-0 font-medium">
+              <TableCell colSpan={2} className="font-medium text-neutral-0">
                 전체선택
               </TableCell>
             </TableRow>
@@ -111,7 +111,7 @@ export default function ExposureModal({
                 <TableCell
                   colSpan={3}
                   align="center"
-                  className="text-neutral-40 py-20"
+                  className="py-20 text-neutral-40"
                 >
                   개설된 올인원패스가 없습니다.
                 </TableCell>

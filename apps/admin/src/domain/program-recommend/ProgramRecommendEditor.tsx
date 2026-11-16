@@ -123,14 +123,14 @@ const ProgramRecommendEditor = ({
               className="flex items-center gap-2"
             >
               <div
-                className="rounded-xs bg-neutral-60 h-32 w-40 flex-none border"
+                className="h-32 w-40 flex-none rounded-xs border bg-neutral-60"
                 style={{
                   backgroundImage: `url(${item.programInfo.thumbnail})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                 }}
               >
-                <div className="text-xxsmall12 flex h-full items-center justify-center bg-black bg-opacity-30 p-2">
+                <div className="flex h-full items-center justify-center bg-black bg-opacity-30 p-2 text-xxsmall12">
                   <span className="text-white">{item.programInfo.title}</span>
                 </div>
               </div>
@@ -282,7 +282,7 @@ const ProgramRecommendEditor = ({
                         {/* 순서 */}
                         <td className="px-2 py-1">
                           <div className="flex items-center justify-center">
-                            <span className="text-xsmall14 whitespace-nowrap">
+                            <span className="whitespace-nowrap text-xsmall14">
                               {order}
                             </span>
                           </div>
@@ -290,7 +290,7 @@ const ProgramRecommendEditor = ({
                         {/* 프로그램 분류 */}
                         <td className="p-1">
                           <div className="flex items-center justify-center">
-                            <span className="text-xsmall14 whitespace-nowrap">
+                            <span className="whitespace-nowrap text-xsmall14">
                               {
                                 newProgramTypeToText[
                                   item.programInfo.programType
@@ -300,11 +300,11 @@ const ProgramRecommendEditor = ({
                           </div>
                         </td>
                         {/* 제목 */}
-                        <td className="text-xsmall14 whitespace-nowrap p-1">
+                        <td className="whitespace-nowrap p-1 text-xsmall14">
                           {item.programInfo.title}
                         </td>
                         {/* 모집 상태 */}
-                        <td className="text-xsmall14 whitespace-nowrap text-center">
+                        <td className="whitespace-nowrap text-center text-xsmall14">
                           {
                             programStatusToText[
                               item.programInfo.programStatusType
@@ -312,7 +312,7 @@ const ProgramRecommendEditor = ({
                           }
                         </td>
                         {/* 노출 여부 */}
-                        <td className="text-xsmall14 whitespace-nowrap text-center">
+                        <td className="whitespace-nowrap text-center text-xsmall14">
                           {item.programInfo.isVisible ? '✅' : '❌'}
                         </td>
                       </tr>

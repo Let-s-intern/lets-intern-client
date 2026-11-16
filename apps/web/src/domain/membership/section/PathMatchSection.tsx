@@ -9,21 +9,21 @@ export default function PathMatchSection() {
           {PATH_MATCH.eyebrow}
         </p>
 
-        <h2 className="text-neutral-0 mt-4 text-center text-2xl font-bold leading-snug md:text-[2rem]">
+        <h2 className="mt-4 text-center text-2xl font-bold leading-snug text-neutral-0 md:text-[2rem]">
           {PATH_MATCH.title}
         </h2>
 
-        <p className="text-xsmall14 md:text-xsmall16 text-neutral-40 mt-4 text-center">
+        <p className="mt-4 text-center text-xsmall14 text-neutral-40 md:text-xsmall16">
           {PATH_MATCH.sub}
         </p>
 
         <ul className="mt-10 flex flex-col gap-3 md:mt-14">
           {PATH_MATCH.rows.map((row) => (
             <li
-              className="rounded-xxl flex flex-col gap-3 bg-white p-6 shadow-[0_2px_12px_rgba(0,0,0,0.04)] md:flex-row md:items-center md:gap-8 md:p-7"
+              className="flex flex-col gap-3 rounded-xxl bg-white p-6 shadow-[0_2px_12px_rgba(0,0,0,0.04)] md:flex-row md:items-center md:gap-8 md:p-7"
               key={row.program}
             >
-              <strong className="text-xsmall16 text-neutral-0 flex-1 font-bold">
+              <strong className="flex-1 text-xsmall16 font-bold text-neutral-0">
                 {row.situation}
               </strong>
 
@@ -32,10 +32,10 @@ export default function PathMatchSection() {
               </span>
 
               <span className="flex-1">
-                <strong className="text-primary text-xsmall16 block font-bold">
+                <strong className="block text-xsmall16 font-bold text-primary">
                   {row.program}
                 </strong>
-                <span className="text-xsmall14 text-neutral-40 mt-1 block">
+                <span className="mt-1 block text-xsmall14 text-neutral-40">
                   {row.outcome}
                 </span>
               </span>

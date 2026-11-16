@@ -327,7 +327,7 @@ const AdminReportEditPage = () => {
               노출일시 삭제
             </Button>
             <FormControlLabel
-              className="text-neutral-40 pl-4"
+              className="pl-4 text-neutral-40"
               control={
                 <Checkbox
                   checked={

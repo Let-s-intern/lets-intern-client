@@ -90,7 +90,7 @@ const VersionChangeModal = ({
       >
         <div className="flex flex-col gap-6 px-5 pb-6 pt-6">
           <div className="flex flex-col gap-2">
-            <h2 className="text-neutral-0 text-small18 font-semibold">
+            <h2 className="text-small18 font-semibold text-neutral-0">
               버전 변경
             </h2>
             <p className="text-xsmall14 text-neutral-30">
@@ -121,7 +121,7 @@ const VersionChangeModal = ({
                   />
                   <span className="text-xsmall16 font-semibold">{title}</span>
                   {challengeVersionId === currentId && (
-                    <span className="rounded-xxs text-xxsmall12 bg-primary-10 text-primary px-2 py-1">
+                    <span className="rounded-xxs bg-primary-10 px-2 py-1 text-xxsmall12 text-primary">
                       현재
                     </span>
                   )}
@@ -135,17 +135,17 @@ const VersionChangeModal = ({
           )}
         </div>
 
-        <div className="border-neutral-85 flex gap-3 border-t px-5 py-4">
+        <div className="flex gap-3 border-t border-neutral-85 px-5 py-4">
           <button
             type="button"
-            className="border-neutral-80 rounded-xs flex-1 border py-3 font-medium text-neutral-50"
+            className="flex-1 rounded-xs border border-neutral-80 py-3 font-medium text-neutral-50"
             onClick={onClose}
           >
             취소
           </button>
           <button
             type="button"
-            className="rounded-xs bg-primary disabled:bg-neutral-85 flex-1 py-3 font-medium text-white disabled:cursor-not-allowed disabled:text-neutral-50"
+            className="flex-1 rounded-xs bg-primary py-3 font-medium text-white disabled:cursor-not-allowed disabled:bg-neutral-85 disabled:text-neutral-50"
             disabled={!canSubmit}
             onClick={() => setIsConfirmOpen(true)}
           >
@@ -163,7 +163,7 @@ const VersionChangeModal = ({
           onConfirm={handleSubmit}
           onCancel={() => setIsConfirmOpen(false)}
         >
-          <p className="text-xsmall14 text-neutral-20 whitespace-pre-line text-center">
+          <p className="whitespace-pre-line text-center text-xsmall14 text-neutral-20">
             {`버전을 바꾸면 이후 회차 미션이 바뀝니다. 이미 제출한 미션은 그대로 남습니다.\n${selectedTitle ?? '선택한'} 버전으로 변경하면 다시 변경하기 어려워요.`}
           </p>
         </AlertModal>

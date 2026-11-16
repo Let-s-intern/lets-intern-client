@@ -58,7 +58,7 @@ const MentorProfileCard = ({ intro }: MentorProfileCardProps) => {
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-4 sm:flex-row sm:gap-5">
         {intro.profileImage === null ? (
-          <div className="bg-neutral-90 flex h-40 w-40 shrink-0 items-center justify-center rounded-lg text-xs text-neutral-50">
+          <div className="flex h-40 w-40 shrink-0 items-center justify-center rounded-lg bg-neutral-90 text-xs text-neutral-50">
             프로필 사진 없음
           </div>
         ) : (
@@ -70,15 +70,15 @@ const MentorProfileCard = ({ intro }: MentorProfileCardProps) => {
         )}
 
         <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <p className="text-xsmall16 text-neutral-0 font-semibold">
+          <p className="text-xsmall16 font-semibold text-neutral-0">
             {intro.nickname}
           </p>
           {affiliationLine === '' ? null : (
-            <p className="text-neutral-40 text-xs">{affiliationLine}</p>
+            <p className="text-xs text-neutral-40">{affiliationLine}</p>
           )}
 
           {intro.careerLines.length === 0 ? null : (
-            <ul className="text-neutral-20 mt-2 flex flex-col gap-1 text-xs">
+            <ul className="mt-2 flex flex-col gap-1 text-xs text-neutral-20">
               {intro.careerLines.map((line) => (
                 <li key={line}>{line}</li>
               ))}
@@ -86,12 +86,12 @@ const MentorProfileCard = ({ intro }: MentorProfileCardProps) => {
           )}
 
           {intro.oneLiner.trim() === '' ? null : (
-            <div className="bg-primary-5 mt-3 rounded-lg px-4 py-3">
-              <p className="text-primary flex items-center gap-1.5 text-xs font-semibold">
+            <div className="mt-3 rounded-lg bg-primary-5 px-4 py-3">
+              <p className="flex items-center gap-1.5 text-xs font-semibold text-primary">
                 <ChatIcon />
                 멘토님의 한마디
               </p>
-              <p className="text-neutral-20 mt-1.5 whitespace-pre-line text-xs leading-relaxed">
+              <p className="mt-1.5 whitespace-pre-line text-xs leading-relaxed text-neutral-20">
                 {intro.oneLiner}
               </p>
             </div>
@@ -102,7 +102,7 @@ const MentorProfileCard = ({ intro }: MentorProfileCardProps) => {
       {/* 고치는 길은 여기 하나뿐이다. 이 카드에는 입력이 없다. */}
       <a
         href="/profile"
-        className="border-primary text-primary text-xsmall14 flex w-full items-center justify-center gap-1 rounded-md border py-3 font-medium transition-colors"
+        className="flex w-full items-center justify-center gap-1 rounded-md border border-primary py-3 text-xsmall14 font-medium text-primary transition-colors"
       >
         프로필 수정하기
         <ExternalLinkIcon />

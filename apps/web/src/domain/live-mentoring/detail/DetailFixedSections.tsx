@@ -72,11 +72,11 @@ export const DetailProcessSection = ({ period }: DetailProcessSectionProps) => (
   >
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       <div className="flex flex-col gap-2 rounded-md bg-white/10 p-5">
-        <p className="text-xsmall14 text-primary-light font-semibold">
+        <p className="text-xsmall14 font-semibold text-primary-light">
           진행 기간
         </p>
         <p className="text-xsmall14">{period}</p>
-        <p className="text-xsmall14 text-primary-light mt-2 font-semibold">
+        <p className="mt-2 text-xsmall14 font-semibold text-primary-light">
           진행 방식
         </p>
         <p className="text-xsmall14">
@@ -85,13 +85,13 @@ export const DetailProcessSection = ({ period }: DetailProcessSectionProps) => (
       </div>
 
       <div className="flex flex-col gap-2 rounded-md bg-white/10 p-5">
-        <p className="text-xsmall14 text-primary-light font-semibold">
+        <p className="text-xsmall14 font-semibold text-primary-light">
           멘토링 진행 방법
         </p>
         <ul className="flex flex-col gap-2">
           {PROCESS_HOW.map((line) => (
-            <li key={line} className="text-xsmall14 flex gap-2 text-white/85">
-              <span className="text-primary-light shrink-0">✓</span>
+            <li key={line} className="flex gap-2 text-xsmall14 text-white/85">
+              <span className="shrink-0 text-primary-light">✓</span>
               {line}
             </li>
           ))}
@@ -102,7 +102,7 @@ export const DetailProcessSection = ({ period }: DetailProcessSectionProps) => (
     <ol className="grid grid-cols-1 gap-5 md:grid-cols-4">
       {PROCESS_STEPS.map((step, i) => (
         <li key={step.title} className="flex flex-col gap-2.5">
-          <span className="bg-primary text-xxsmall12 w-fit rounded-full px-3 py-1.5 font-semibold text-white">
+          <span className="w-fit rounded-full bg-primary px-3 py-1.5 text-xxsmall12 font-semibold text-white">
             Step {i + 1}
           </span>
           <p className="text-xsmall16 font-bold">{step.title}</p>
@@ -135,14 +135,14 @@ export const DetailFaqSection = ({ id }: DetailFaqSectionProps) => (
       ))}
     </div>
 
-    <div className="bg-neutral-95 flex flex-col items-center justify-between gap-3 rounded-md px-5 py-4 md:flex-row">
-      <p className="text-xsmall14 md:text-xsmall16 font-medium">
+    <div className="flex flex-col items-center justify-between gap-3 rounded-md bg-neutral-95 px-5 py-4 md:flex-row">
+      <p className="text-xsmall14 font-medium md:text-xsmall16">
         아직 궁금증이 풀리지 않았다면?
       </p>
       <button
         type="button"
         onClick={() => window.ChannelIO?.('showMessenger')}
-        className="border-neutral-80 text-xsmall14 rounded-sm border bg-white px-4 py-2 font-medium"
+        className="rounded-sm border border-neutral-80 bg-white px-4 py-2 text-xsmall14 font-medium"
       >
         1:1 채팅 문의하기
       </button>

@@ -89,7 +89,7 @@ const WeeklyCalendar = ({
     <div className="relative">
       <div
         ref={containerRef}
-        className="border-neutral-80 overflow-x-auto overflow-y-hidden rounded-2xl border"
+        className="rounded-2xl overflow-x-auto overflow-y-hidden border border-neutral-80"
       >
         <div
           style={{
@@ -99,7 +99,7 @@ const WeeklyCalendar = ({
         >
           {/* Day header */}
           <div
-            className="border-neutral-80 border-b"
+            className="border-b border-neutral-80"
             style={{ display: 'grid', gridTemplateColumns: gridCols }}
           >
             {days.map((day, i) => (
@@ -142,9 +142,9 @@ const WeeklyCalendar = ({
 
       {/* Empty state overlay */}
       {barLayouts.length === 0 && (
-        <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-white/60">
-          <div className="border-neutral-80 pointer-events-auto rounded-xl border bg-white px-8 py-6 shadow-lg">
-            <p className="text-xsmall16 text-neutral-30 text-center font-medium">
+        <div className="rounded-2xl pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-white/60">
+          <div className="pointer-events-auto rounded-xl border border-neutral-80 bg-white px-8 py-6 shadow-lg">
+            <p className="text-center text-xsmall16 font-medium text-neutral-30">
               진행 예정인 피드백 일정이 없습니다.
             </p>
           </div>

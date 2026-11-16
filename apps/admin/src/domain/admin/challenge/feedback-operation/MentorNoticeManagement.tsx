@@ -164,7 +164,7 @@ export default function MentorNoticeManagement() {
 
   return (
     <>
-      <div className="border-neutral-80 rounded-lg border p-6">
+      <div className="rounded-lg border border-neutral-80 p-6">
         <div className="mb-6 flex items-center justify-between">
           <Heading>멘토 공지 관리</Heading>
           <Button variant="contained" onClick={openCreateModal}>
@@ -173,14 +173,14 @@ export default function MentorNoticeManagement() {
         </div>
 
         <div className="mb-6 flex items-center gap-3">
-          <label className="text-xsmall16 text-neutral-0 font-medium">
+          <label className="text-xsmall16 font-medium text-neutral-0">
             검색
           </label>
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="border-neutral-80 text-xsmall14 w-[400px] rounded border px-3 py-2"
+            className="rounded w-[400px] border border-neutral-80 px-3 py-2 text-xsmall14"
             placeholder="제목, 링크, 내용으로 검색"
           />
         </div>

@@ -312,7 +312,7 @@ const LiveMentoringSettingsPage = () => {
   const header = (
     <header className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
       <div className="flex flex-col gap-2">
-        <h1 className="text-medium22 text-neutral-10 font-semibold leading-8">
+        <h1 className="text-medium22 font-semibold leading-8 text-neutral-10">
           1:1 LIVE 멘토링 설정
         </h1>
         <p className="text-xsmall14 text-neutral-40">
@@ -550,7 +550,7 @@ const LiveMentoringSettingsPage = () => {
           onGoToOpenStep={() => setActiveTab(OPEN_TAB_ID)}
         />
       ) : !template ? (
-        <div className="text-xsmall14 text-neutral-40 px-1 py-10">
+        <div className="px-1 py-10 text-xsmall14 text-neutral-40">
           템플릿을 불러오는 중...
         </div>
       ) : (

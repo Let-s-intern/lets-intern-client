@@ -32,7 +32,7 @@ const ChallengeIntroExpericeSummary = ({
 }) => {
   return (
     <section className="flex w-full flex-col md:items-center">
-      <div className="bg-neutral-90 flex w-full flex-col items-center">
+      <div className="flex w-full flex-col items-center bg-neutral-90">
         <div className="flex w-full max-w-[1000px] flex-col gap-y-10 px-5 py-20 md:gap-y-[60px] md:px-10 md:py-[120px] lg:px-0">
           <div className="flex w-full flex-col gap-y-3 md:gap-y-[30px]">
             <Heading2>
@@ -55,7 +55,7 @@ const ChallengeIntroExpericeSummary = ({
                   <div
                     key={index}
                     className={twMerge(
-                      'md:text-small20 h-20 whitespace-pre rounded-md bg-white px-2.5 py-3 text-[10px] font-semibold md:h-40 md:px-5 md:py-6',
+                      'h-20 whitespace-pre rounded-md bg-white px-2.5 py-3 text-[10px] font-semibold md:h-40 md:px-5 md:py-6 md:text-small20',
                       box === '' && 'hidden md:invisible md:block',
                     )}
                   >
@@ -65,21 +65,21 @@ const ChallengeIntroExpericeSummary = ({
               })}
             </div>
             {/* grid 양 옆에 회색 그라데이션 박스 */}
-            <div className="from-neutral-90 absolute bottom-0 left-0 top-0 h-full w-40 bg-gradient-to-r to-transparent md:w-80" />
-            <div className="from-neutral-90 absolute bottom-0 right-0 top-0 h-full w-40 bg-gradient-to-l to-transparent md:w-80" />
+            <div className="absolute bottom-0 left-0 top-0 h-full w-40 bg-gradient-to-r from-neutral-90 to-transparent md:w-80" />
+            <div className="absolute bottom-0 right-0 top-0 h-full w-40 bg-gradient-to-l from-neutral-90 to-transparent md:w-80" />
           </div>
         </div>
       </div>
-      <div className="bg-neutral-95 flex w-full flex-col md:items-center">
+      <div className="flex w-full flex-col bg-neutral-95 md:items-center">
         <div className="flex w-full max-w-[1000px] flex-col gap-y-[50px] px-5 py-[70px] md:gap-y-20 md:px-10 md:py-[120px] lg:px-0">
           <div className="flex w-full flex-col gap-y-3 md:items-center">
-            <p className="text-xsmall16 md:text-small20 font-bold text-[#F26646]">
+            <p className="text-xsmall16 font-bold text-[#F26646] md:text-small20">
               취업 성공 전략
             </p>
             <Heading2>
               {new Date().getFullYear()} 채용 트렌드는{' '}
-              <span className="text-[#F26646]">직무 연관성</span>
-              , <br className="hidden md:block" />
+              <span className="text-[#F26646]">직무 연관성</span>,{' '}
+              <br className="hidden md:block" />
               나에 <br className="md:hidden" />
               대한 이해를 직무와 결합시켜야 해요
             </Heading2>
@@ -88,7 +88,7 @@ const ChallengeIntroExpericeSummary = ({
             <div>
               <div className="mb-8 md:mb-20 md:flex md:items-center md:justify-between">
                 <div className="md:flex md:gap-3">
-                  <CircularBox className="text-xsmall14 md:text-small20 mb-2 h-5 w-5 shrink-0 bg-[#F26646] font-semibold md:mt-0.5 md:h-8 md:w-8">
+                  <CircularBox className="mb-2 h-5 w-5 shrink-0 bg-[#F26646] text-xsmall14 font-semibold md:mt-0.5 md:h-8 md:w-8 md:text-small20">
                     1
                   </CircularBox>
                   <div>
@@ -115,7 +115,7 @@ const ChallengeIntroExpericeSummary = ({
             <div>
               <div className="mb-8 md:flex md:items-center md:justify-between">
                 <div className="md:flex md:gap-3">
-                  <CircularBox className="text-xsmall14 md:text-small20 mb-2 h-5 w-5 bg-[#F26646] font-semibold md:mt-0.5 md:h-8 md:w-8">
+                  <CircularBox className="mb-2 h-5 w-5 bg-[#F26646] text-xsmall14 font-semibold md:mt-0.5 md:h-8 md:w-8 md:text-small20">
                     2
                   </CircularBox>
                   <div>
@@ -148,7 +148,7 @@ const ChallengeIntroExpericeSummary = ({
 
 function Title({ children }: { children?: ReactNode }) {
   return (
-    <span className="text-small18 text-neutral-0 md:text-medium22 font-semibold md:font-bold">
+    <span className="text-small18 font-semibold text-neutral-0 md:text-medium22 md:font-bold">
       {children}
     </span>
   );
@@ -156,7 +156,7 @@ function Title({ children }: { children?: ReactNode }) {
 
 function Paragraph({ children }: { children?: ReactNode }) {
   return (
-    <p className="text-xsmall14 text-neutral-45 md:text-small18 mb-5 mt-2.5">
+    <p className="mb-5 mt-2.5 text-xsmall14 text-neutral-45 md:text-small18">
       {children}
     </p>
   );

@@ -2,7 +2,7 @@
 const AppliedVersionSection = ({ versionTitle }: { versionTitle: string }) => {
   return (
     <div className="mx-5 mb-10 flex items-center gap-x-3">
-      <span className="text-neutral-0 font-semibold">신청 버전</span>
+      <span className="font-semibold text-neutral-0">신청 버전</span>
       <span className="text-xsmall16 text-neutral-10">{versionTitle}</span>
     </div>
   );

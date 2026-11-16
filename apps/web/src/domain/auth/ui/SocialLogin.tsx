@@ -34,7 +34,7 @@ function SocialLoginContent({ type }: SocialLoginProps) {
 
   return (
     <div className="mt-8 flex flex-col items-center">
-      <h2 className="text-xsmall14 text-neutral-45 font-normal">
+      <h2 className="text-xsmall14 font-normal text-neutral-45">
         또는 SNS 간편 {type === 'LOGIN' ? '로그인' : '회원 가입'}
       </h2>
       <div className="mt-8 flex gap-4">

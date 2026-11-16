@@ -72,7 +72,7 @@ export const OptionFormRadioControlLabel: React.FC<ExtendedControlLabelProps> =
             {...restProps}
           />
           {subText && (
-            <span className="text-xsmall14 -ml-2 inline-block font-medium text-neutral-50">
+            <span className="-ml-2 inline-block text-xsmall14 font-medium text-neutral-50">
               {subText}
             </span>
           )}
@@ -107,7 +107,7 @@ export const OptionFormCheckboxControlLabel: React.FC<
           {...restProps}
         />
         {subText && (
-          <span className="text-xsmall14 -ml-2 inline-block font-medium text-neutral-50">
+          <span className="-ml-2 inline-block text-xsmall14 font-medium text-neutral-50">
             {subText}
           </span>
         )}

@@ -30,29 +30,29 @@ const LiveFeedbackCard = ({ bar }: { bar: PeriodBarData }) => {
           <span className="h-2 w-2 animate-pulse rounded-full bg-red-500" />
           <span className="text-xxsmall12 font-bold text-red-500">LIVE</span>
         </span>
-        <span className="text-xxsmall12 text-neutral-10 whitespace-nowrap font-medium tracking-[-0.3px]">
+        <span className="whitespace-nowrap text-xxsmall12 font-medium tracking-[-0.3px] text-neutral-10">
           [ {bar.th}회차 ]
         </span>
       </div>
 
       {/* Row 2: 오전 9시 ~ 9시 30분 */}
-      <div className="text-xxsmall12 text-neutral-40 flex items-center whitespace-nowrap font-medium tracking-[-0.3px]">
+      <div className="flex items-center whitespace-nowrap text-xxsmall12 font-medium tracking-[-0.3px] text-neutral-40">
         {formatTimeRange(lf.startTime, lf.endTime)}
       </div>
 
       {/* Row 3: 구분선 */}
       <div className="flex h-3 items-center">
-        <div className="bg-neutral-80 h-full w-0.5" />
-        <div className="bg-neutral-80 h-0.5 flex-1" />
-        <div className="bg-neutral-80 h-full w-0.5" />
+        <div className="h-full w-0.5 bg-neutral-80" />
+        <div className="h-0.5 flex-1 bg-neutral-80" />
+        <div className="h-full w-0.5 bg-neutral-80" />
       </div>
 
       {/* Row 4: 챌린지 배지 + 멘티 이름 */}
-      <div className="bg-neutral-95 flex flex-col gap-1 p-2">
-        <span className="text-xxsmall12 bg-neutral-30 shrink-0 whitespace-nowrap rounded-[3px] px-2 py-1 font-medium tracking-[-0.3px] text-white">
+      <div className="flex flex-col gap-1 bg-neutral-95 p-2">
+        <span className="shrink-0 whitespace-nowrap rounded-[3px] bg-neutral-30 px-2 py-1 text-xxsmall12 font-medium tracking-[-0.3px] text-white">
           {bar.challengeTitle}
         </span>
-        <div className="text-xxsmall12 flex items-center gap-1 whitespace-nowrap font-medium tracking-[-0.3px]">
+        <div className="flex items-center gap-1 whitespace-nowrap text-xxsmall12 font-medium tracking-[-0.3px]">
           <span className="text-neutral-40">멘티</span>
           <span className="text-neutral-10">{lf.menteeName}님</span>
         </div>
@@ -97,7 +97,7 @@ export const LiveFeedbackTimeBlock = ({ bar }: { bar: PeriodBarData }) => {
     >
       {/* Row 1: 시작 시간 + 상태 배지 */}
       <div className="flex items-center justify-between gap-1">
-        <span className="text-neutral-10 shrink-0 text-sm font-bold leading-none">
+        <span className="shrink-0 text-sm font-bold leading-none text-neutral-10">
           {lf.startTime}
         </span>
         <span
@@ -114,18 +114,18 @@ export const LiveFeedbackTimeBlock = ({ bar }: { bar: PeriodBarData }) => {
       {/* Row 2: ▶ LIVE 피드백 (빨강 비디오 아이콘 + 검정 라벨) */}
       <div className="flex min-w-0 items-center gap-1.5">
         <LiveFeedbackIcon size={18} className="shrink-0" />
-        <span className="text-xxsmall12 text-neutral-10 shrink-0 font-bold leading-none">
+        <span className="shrink-0 text-xxsmall12 font-bold leading-none text-neutral-10">
           {bar.th}회차 LIVE 피드백
         </span>
       </div>
 
       {/* Row 3: 멘티명 */}
-      <span className="text-xxsmall12 text-neutral-40 min-w-0 truncate leading-tight">
+      <span className="min-w-0 truncate text-xxsmall12 leading-tight text-neutral-40">
         {lf.menteeName} 멘티
       </span>
 
       {/* Row 4: 챌린지명 */}
-      <span className="text-xxsmall12 text-neutral-40 min-w-0 truncate leading-tight">
+      <span className="min-w-0 truncate text-xxsmall12 leading-tight text-neutral-40">
         {bar.challengeTitle}
       </span>
 
@@ -136,7 +136,7 @@ export const LiveFeedbackTimeBlock = ({ bar }: { bar: PeriodBarData }) => {
           height="14"
           viewBox="0 0 24 24"
           fill="currentColor"
-          className="text-neutral-40 shrink-0"
+          className="shrink-0 text-neutral-40"
           aria-hidden
         >
           <circle cx="12" cy="5" r="1.7" />

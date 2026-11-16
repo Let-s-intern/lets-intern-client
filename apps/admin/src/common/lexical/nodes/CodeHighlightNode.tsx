@@ -15,7 +15,6 @@ import type {
   TabNode,
 } from 'lexical';
 import { ElementNode, TextNode } from 'lexical';
-import './CodeHighlighterPrism';
 export declare const DEFAULT_CODE_LANGUAGE = 'javascript';
 export type SerializedCodeHighlightNode = Spread<
   {

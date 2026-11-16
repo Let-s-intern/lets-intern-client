@@ -18,14 +18,14 @@ const ProgramRecommendItem = ({
   return (
     <div className="flex items-center gap-2">
       <div
-        className="rounded-xs bg-neutral-60 h-32 w-40 flex-none border"
+        className="h-32 w-40 flex-none rounded-xs border bg-neutral-60"
         style={{
           backgroundImage: `url(${item.programInfo.thumbnail})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
       >
-        <div className="text-xxsmall12 flex h-full items-center justify-center bg-black bg-opacity-30 p-2">
+        <div className="flex h-full items-center justify-center bg-black bg-opacity-30 p-2 text-xxsmall12">
           <span className="text-white">{item.programInfo.title}</span>
         </div>
       </div>

@@ -77,7 +77,7 @@ function BlogGridContent({ types, page, onChangePage }: BlogGridSectionProps) {
             text={`준비 중인 콘텐츠입니다.\n조금만 기다려주세요!`}
           />
           <BaseButton
-            className="rounded-xs text-xsmall14 border px-5 py-2"
+            className="rounded-xs border px-5 py-2 text-xsmall14"
             variant="outlined"
             onClick={() => router.replace('/blog/list')}
           >
@@ -91,7 +91,7 @@ function BlogGridContent({ types, page, onChangePage }: BlogGridSectionProps) {
               이런 콘텐츠는 어떠세요?
             </h2>
             <Link
-              className="text-xsmall14 text-neutral-45 font-medium"
+              className="text-xsmall14 font-medium text-neutral-45"
               href="/blog/list"
             >
               더보기
@@ -228,7 +228,7 @@ function BlogGridContent({ types, page, onChangePage }: BlogGridSectionProps) {
                   isUpcoming ? (
                     <BaseButton
                       variant="point"
-                      className="rounded-xs text-xxsmall12 relative z-10 flex items-center gap-1 p-2.5 font-medium"
+                      className="relative z-10 flex items-center gap-1 rounded-xs p-2.5 text-xxsmall12 font-medium"
                     >
                       <BellIcon width={16} height={16} />
                       <span>알림신청</span>

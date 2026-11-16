@@ -68,9 +68,9 @@ export function OfflineBenefit({
               data-reveal
               data-lift
               style={revealDelay(index)}
-              className="bg-primary-5 rounded-[14px] p-5"
+              className="rounded-[14px] bg-primary-5 p-5"
             >
-              <span className="bg-primary-10 text-primary flex h-10 w-10 items-center justify-center rounded-[10px]">
+              <span className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-primary-10 text-primary">
                 <Icon aria-hidden className="h-6 w-6" strokeWidth={1.75} />
               </span>
               <h3 className="mt-5 text-base font-bold text-[#1c1e2b]">
@@ -131,7 +131,7 @@ export function OfflineBenefit({
                 key={title}
                 className="grid grid-cols-[26px_1fr] items-center gap-x-2 rounded-[12px] bg-[#f7f8fc] p-4 md:block"
               >
-                <span className="bg-primary flex h-[26px] w-[26px] items-center justify-center rounded-full text-[13px] font-semibold text-white">
+                <span className="flex h-[26px] w-[26px] items-center justify-center rounded-full bg-primary text-[13px] font-semibold text-white">
                   {index + 1}
                 </span>
                 <p className="text-sm font-bold text-[#1c1e2b] md:mt-3">
@@ -151,7 +151,7 @@ export function OfflineBenefit({
                 className="flex gap-1 text-sm leading-[1.45] md:gap-3"
               >
                 <dt className="flex w-[74px] shrink-0 items-start gap-[11px] font-bold text-[#1c1e2b] md:w-[90px]">
-                  <span className="bg-primary mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full" />
+                  <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
                   <span className="whitespace-nowrap">{label}</span>
                 </dt>
                 <dd className="text-[#5b5e6d]">{value}</dd>

@@ -231,15 +231,15 @@ const MissionProgressBar = ({
   progress: number;
 }) => (
   <div
-    className="bg-neutral-70 absolute left-0 top-0 hidden h-1 rounded-full md:block"
+    className="absolute left-0 top-0 hidden h-1 rounded-full bg-neutral-70 md:block"
     style={{ width: `${width}px` }}
   >
     <div
-      className="bg-primary absolute h-1 rounded-full"
+      className="absolute h-1 rounded-full bg-primary"
       style={{ width: `${progress}%` }}
     />
     <div
-      className="bg-primary absolute top-1/2 h-2 w-2 rounded-full"
+      className="absolute top-1/2 h-2 w-2 rounded-full bg-primary"
       style={{
         left: `clamp(4px, ${progress}%, calc(100% - 4px))`,
         transform: 'translate(-50%, -50%)',

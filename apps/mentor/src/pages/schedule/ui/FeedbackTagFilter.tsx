@@ -43,7 +43,7 @@ const FeedbackTagFilter = ({
         type="button"
         onClick={onClearAll}
         className={twMerge(
-          'border-neutral-80 rounded-md border bg-white px-3 py-2 text-xs font-medium leading-5 transition-colors',
+          'rounded-md border border-neutral-80 bg-white px-3 py-2 text-xs font-medium leading-5 transition-colors',
           isAllSelected
             ? 'border-primary bg-primary text-white'
             : 'text-neutral-500 hover:bg-neutral-50',

@@ -37,13 +37,13 @@ export default function FinalCtaSection({
       }}
     >
       <div className="mx-auto flex w-full max-w-[1080px] flex-col items-center gap-6 md:gap-8">
-        <span className="text-xsmall14 rounded-full bg-[#F36D32] px-5 py-2 font-bold">
+        <span className="rounded-full bg-[#F36D32] px-5 py-2 text-xsmall14 font-bold">
           선착순 마감 임박
         </span>
-        <h2 className="text-xlarge28 whitespace-pre-line font-bold leading-snug md:text-[40px]">
+        <h2 className="whitespace-pre-line text-xlarge28 font-bold leading-snug md:text-[40px]">
           {title}
         </h2>
-        <p className="text-xsmall14 md:text-small18 whitespace-pre-line text-white/70">
+        <p className="whitespace-pre-line text-xsmall14 text-white/70 md:text-small18">
           {description}
         </p>
 
@@ -58,7 +58,7 @@ export default function FinalCtaSection({
           onClick={onStart}
           disabled={ctaDisabled}
           className={clsx(
-            'text-small18 mt-2 w-full rounded-sm font-bold md:w-[234px]',
+            'mt-2 w-full rounded-sm text-small18 font-bold md:w-[234px]',
             ctaDisabled
               ? 'cursor-not-allowed bg-[#F9B68F]'
               : 'bg-[#F36D32] hover:bg-[#E15D28]',

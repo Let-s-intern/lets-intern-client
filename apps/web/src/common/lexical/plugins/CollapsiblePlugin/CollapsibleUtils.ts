@@ -7,8 +7,8 @@
  */
 
 export function setDomHiddenUntilFound(dom: HTMLElement): void {
-  // @ts-expect-error Property 'hidden' does not exist on type 'HTMLElement'
-  dom.hidden = 'until-found';
+  // lib.dom 버전에 따라 hidden 이 boolean 만 받기도 해서 tsc·tsgo 양쪽에서 통과하도록 넓힌다
+  (dom as { hidden: unknown }).hidden = 'until-found';
 }
 
 export function domOnBeforeMatch(dom: HTMLElement, callback: () => void): void {

@@ -56,10 +56,10 @@ const SuggestSeminarCta = ({ variant = 'card' }: SuggestSeminarCtaProps) => {
     <div
       className={`flex flex-col gap-1 ${variant === 'banner' ? 'text-center md:text-left' : 'items-center text-center'}`}
     >
-      <p className="text-xsmall16 md:text-small18 text-primary font-bold">
+      <p className="text-xsmall16 font-bold text-primary md:text-small18">
         듣고 싶은 세미나 주제가 있나요?
       </p>
-      <p className="text-xxsmall12 md:text-xsmall14 text-neutral-45">
+      <p className="text-xxsmall12 text-neutral-45 md:text-xsmall14">
         보고 싶은 기업·직무 현직자와 세미나 주제를 알려주세요!
       </p>
     </div>
@@ -69,7 +69,7 @@ const SuggestSeminarCta = ({ variant = 'card' }: SuggestSeminarCtaProps) => {
     <button
       type="button"
       onClick={handleClick}
-      className="bg-primary text-xsmall14 md:text-xsmall16 rounded-xs min-h-[44px] shrink-0 px-5 py-3 font-semibold text-neutral-100"
+      className="min-h-[44px] shrink-0 rounded-xs bg-primary px-5 py-3 text-xsmall14 font-semibold text-neutral-100 md:text-xsmall16"
     >
       듣고 싶은 세미나 제안하기
     </button>
@@ -84,7 +84,7 @@ const SuggestSeminarCta = ({ variant = 'card' }: SuggestSeminarCtaProps) => {
 
   if (variant === 'banner') {
     return (
-      <div className="bg-primary-5 flex w-full flex-col items-center gap-4 rounded-md px-6 py-6 md:flex-row md:justify-between md:gap-6 md:px-8">
+      <div className="flex w-full flex-col items-center gap-4 rounded-md bg-primary-5 px-6 py-6 md:flex-row md:justify-between md:gap-6 md:px-8">
         <div className="flex items-center gap-3">
           {icon}
           {heading}
@@ -96,7 +96,7 @@ const SuggestSeminarCta = ({ variant = 'card' }: SuggestSeminarCtaProps) => {
   }
 
   return (
-    <div className="bg-primary-5 mx-auto flex w-full max-w-[720px] flex-col items-center gap-4 rounded-md px-6 py-8 md:py-10">
+    <div className="mx-auto flex w-full max-w-[720px] flex-col items-center gap-4 rounded-md bg-primary-5 px-6 py-8 md:py-10">
       {icon}
       {heading}
       {button}

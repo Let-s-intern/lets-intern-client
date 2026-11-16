@@ -194,7 +194,7 @@ const LeadUserDetailPage = () => {
         <div className="lg:w-60">
           <WishIndustryPieChart applications={applications} />
         </div>
-        <div className="flex flex-col rounded border border-gray-200 lg:w-48">
+        <div className="rounded flex flex-col border border-gray-200 lg:w-48">
           <div className="flex-1 border-b border-gray-200 p-3">
             <TodayApplicationCountStat applications={applications} />
           </div>

@@ -17,7 +17,7 @@ function SectionHeader({
   return (
     <span
       className={twMerge(
-        'text-xsmall14 text-neutral-45 md:text-small18 block text-center font-semibold',
+        'block text-center text-xsmall14 font-semibold text-neutral-45 md:text-small18',
         className,
       )}
       style={style}

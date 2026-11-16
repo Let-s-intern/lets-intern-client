@@ -49,7 +49,7 @@ export default function MentoringTypesField({ value, onChange }: Props) {
       {value.items.map((item, index) => (
         <div
           key={index}
-          className="border-neutral-80 flex flex-col gap-3 rounded border p-4"
+          className="rounded flex flex-col gap-3 border border-neutral-80 p-4"
         >
           <div className="flex items-center justify-between">
             <span className="text-xsmall14 font-medium">유형 {index + 1}</span>

@@ -188,7 +188,7 @@ const RecruitmentInfoSection = ({ challenge }: Props) => {
                 <Fragment key={plan.planType}>
                   <PlanRow plan={plan} />
                   {!isLast && (
-                    <hr className="bg-neutral-80 h-[1px] w-full border-none" />
+                    <hr className="h-[1px] w-full border-none bg-neutral-80" />
                   )}
                 </Fragment>
               );

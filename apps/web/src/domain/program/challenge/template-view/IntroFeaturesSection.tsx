@@ -34,20 +34,20 @@ const Card = ({
 
       <div className="relative z-10 flex h-full flex-col items-center">
         <div
-          className="text-xsmall16 md:text-small18 flex w-fit items-center justify-center rounded-md px-[14px] py-[6px] font-semibold text-white"
+          className="flex w-fit items-center justify-center rounded-md px-[14px] py-[6px] text-xsmall16 font-semibold text-white md:text-small18"
           style={{ backgroundColor: primaryColor }}
         >
           Point {index}
         </div>
 
-        <div className="text-small18 text-neutral-0 md:text-medium24 mt-[18px] text-center font-bold">
+        <div className="mt-[18px] text-center text-small18 font-bold text-neutral-0 md:text-medium24">
           {title}
         </div>
 
         <div className="min-h-[97px] flex-1" />
 
         <div
-          className="text-xsmall16 text-neutral-0 md:text-small18 text-center"
+          className="text-center text-xsmall16 text-neutral-0 md:text-small18"
           style={{ letterSpacing: '-0.022px' }}
         >
           {description}
@@ -78,7 +78,7 @@ function IntroFeaturesSection({ config, content }: Props) {
         <MainTitle className="flex flex-col items-center gap-1">
           {getTitle(weekText)}
         </MainTitle>
-        <div className="text-small14 text-neutral-0 md:text-small18 mt-3 md:mt-5 md:text-center">
+        <div className="text-small14 mt-3 text-neutral-0 md:mt-5 md:text-center md:text-small18">
           {description}
         </div>
       </div>

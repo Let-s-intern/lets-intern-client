@@ -48,7 +48,7 @@ const UsageTabs = ({ privileges, passTitle }: Props) => {
         options={visibleTabs}
         selected={active}
         onChange={setActive}
-        className="border-neutral-80 sticky top-[84px] z-10 -mx-5 border-b bg-white px-5 py-4 md:hidden md:border-none md:py-0"
+        className="sticky top-[84px] z-10 -mx-5 border-b border-neutral-80 bg-white px-5 py-4 md:hidden md:border-none md:py-0"
         activeClassName="bg-primary  text-static-100"
         inactiveClassName="bg-neutral-95 text-neutral-0 "
       />

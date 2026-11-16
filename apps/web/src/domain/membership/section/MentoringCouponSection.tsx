@@ -14,7 +14,7 @@ export default function MentoringCouponSection() {
           </span>
         </div>
 
-        <h2 className="text-neutral-0 mt-4 text-center text-2xl font-bold leading-snug md:text-[2rem]">
+        <h2 className="mt-4 text-center text-2xl font-bold leading-snug text-neutral-0 md:text-[2rem]">
           {MENTORING_COUPON.titleLines.map((line) => (
             <span className="block" key={line}>
               {line}
@@ -22,11 +22,11 @@ export default function MentoringCouponSection() {
           ))}
         </h2>
 
-        <p className="text-xsmall14 md:text-xsmall16 text-neutral-40 mt-4 text-center">
+        <p className="mt-4 text-center text-xsmall14 text-neutral-40 md:text-xsmall16">
           {MENTORING_COUPON.sub}
         </p>
 
-        <div className="rounded-xxl mt-10 grid overflow-hidden bg-[#232433] md:mt-14 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+        <div className="mt-10 grid overflow-hidden rounded-xxl bg-[#232433] md:mt-14 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
           {/* 좌측 — 할인율 */}
           <div className="p-8 md:border-r md:border-white/10 md:p-10">
             <span className="inline-block rounded-full bg-[#F1642B] px-3 py-1.5 text-xs font-bold text-white">
@@ -37,7 +37,7 @@ export default function MentoringCouponSection() {
               {MENTORING_COUPON.rate}
             </strong>
 
-            <strong className="text-small18 mt-4 block font-bold leading-snug text-white">
+            <strong className="mt-4 block text-small18 font-bold leading-snug text-white">
               {MENTORING_COUPON.rateTitleLines.map((line) => (
                 <span className="block" key={line}>
                   {line}
@@ -45,7 +45,7 @@ export default function MentoringCouponSection() {
               ))}
             </strong>
 
-            <p className="text-xsmall14 text-neutral-70 mt-6 leading-relaxed">
+            <p className="mt-6 text-xsmall14 leading-relaxed text-neutral-70">
               {MENTORING_COUPON.rateBody.map((line) => (
                 <span className="block" key={line}>
                   {line}
@@ -53,7 +53,7 @@ export default function MentoringCouponSection() {
               ))}
             </p>
 
-            <p className="text-neutral-60 mt-6 text-xs">
+            <p className="mt-6 text-xs text-neutral-60">
               {MENTORING_COUPON.rateFine}
             </p>
           </div>
@@ -64,7 +64,7 @@ export default function MentoringCouponSection() {
               <strong className="text-xsmall16 font-bold text-white">
                 {MENTORING_COUPON.mentorsTitle}
               </strong>
-              <span className="text-neutral-60 text-xs">
+              <span className="text-xs text-neutral-60">
                 {MENTORING_COUPON.mentorsNote}
               </span>
             </div>
@@ -82,10 +82,10 @@ export default function MentoringCouponSection() {
                     {mentor.short}
                   </span>
                   <span className="min-w-0">
-                    <strong className="text-xsmall14 block font-bold text-white">
+                    <strong className="block text-xsmall14 font-bold text-white">
                       {mentor.company}
                     </strong>
-                    <span className="text-neutral-60 block text-xs">
+                    <span className="block text-xs text-neutral-60">
                       {mentor.role}
                     </span>
                   </span>

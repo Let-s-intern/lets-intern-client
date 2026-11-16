@@ -11,7 +11,7 @@
  */
 const EntryUnavailableNotice = () => {
   return (
-    <section className="border-neutral-80 rounded-xxl flex flex-col items-center gap-5 border bg-white p-6 text-center shadow-sm">
+    <section className="flex flex-col items-center gap-5 rounded-xxl border border-neutral-80 bg-white p-6 text-center shadow-sm">
       <img
         src="/logo/horizontal-logo.svg"
         alt="렛츠커리어"
@@ -19,10 +19,10 @@ const EntryUnavailableNotice = () => {
       />
 
       <div className="flex flex-col gap-2">
-        <h1 className="text-small18 text-neutral-0 font-bold">
+        <h1 className="text-small18 font-bold text-neutral-0">
           입장할 수 없는 링크예요
         </h1>
-        <p className="text-xsmall14 text-neutral-40 break-keep">
+        <p className="break-keep text-xsmall14 text-neutral-40">
           링크가 만료됐거나, 지금 로그인한 계정의 세션이 아니에요. 알림톡을 받은
           계정으로 로그인했는지 확인해 주세요.
         </p>

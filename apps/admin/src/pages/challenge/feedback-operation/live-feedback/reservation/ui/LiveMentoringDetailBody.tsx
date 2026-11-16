@@ -40,7 +40,7 @@ function getWebBaseUrl(): string {
 function InfoRow({ label, value }: { label: string; value?: string | null }) {
   return (
     <div className="flex gap-2">
-      <span className="text-neutral-40 w-24 shrink-0">{label}</span>
+      <span className="w-24 shrink-0 text-neutral-40">{label}</span>
       <span className="break-words">{value || '-'}</span>
     </div>
   );
@@ -86,23 +86,23 @@ function EntryLinkPanel({ applicationId }: { applicationId: number }) {
   return (
     <section
       aria-label="입장 링크"
-      className="border-neutral-80 rounded-xl border p-4"
+      className="rounded-xl border border-neutral-80 p-4"
     >
-      <p className="text-xxsmall12 text-neutral-40 font-medium">
+      <p className="text-xxsmall12 font-medium text-neutral-40">
         입장 링크 복사
       </p>
       <div className="mt-3 flex flex-wrap gap-2">
         <button
           type="button"
           onClick={() => copyLink('mentor')}
-          className="border-neutral-80 text-xsmall14 text-neutral-0 hover:bg-neutral-95 rounded-md border px-3 py-2 font-medium transition-colors"
+          className="rounded-md border border-neutral-80 px-3 py-2 text-xsmall14 font-medium text-neutral-0 transition-colors hover:bg-neutral-95"
         >
           멘토 입장 링크 복사
         </button>
         <button
           type="button"
           onClick={() => copyLink('mentee')}
-          className="border-neutral-80 text-xsmall14 text-neutral-0 hover:bg-neutral-95 rounded-md border px-3 py-2 font-medium transition-colors"
+          className="rounded-md border border-neutral-80 px-3 py-2 text-xsmall14 font-medium text-neutral-0 transition-colors hover:bg-neutral-95"
         >
           멘티 입장 링크 복사
         </button>
@@ -155,11 +155,11 @@ function AttendanceEditPanel({
   };
 
   return (
-    <section className="border-neutral-80 flex flex-col gap-3 rounded-xl border p-4">
-      <h3 className="text-xsmall14 text-neutral-0 font-semibold">출석 수정</h3>
+    <section className="flex flex-col gap-3 rounded-xl border border-neutral-80 p-4">
+      <h3 className="text-xsmall14 font-semibold text-neutral-0">출석 수정</h3>
 
       <div className="flex items-center gap-3 py-1">
-        <span className="text-xxsmall12 text-neutral-40 w-24 shrink-0">
+        <span className="w-24 shrink-0 text-xxsmall12 text-neutral-40">
           멘토 출석
         </span>
         <select
@@ -167,7 +167,7 @@ function AttendanceEditPanel({
           onChange={(e) =>
             setMentorStatus(e.target.value as LiveMentoringAttendanceStatus)
           }
-          className="border-neutral-80 text-xsmall14 rounded-md border px-2 py-1"
+          className="rounded-md border border-neutral-80 px-2 py-1 text-xsmall14"
         >
           {ATTENDANCE_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>
@@ -178,7 +178,7 @@ function AttendanceEditPanel({
       </div>
 
       <div className="flex items-center gap-3 py-1">
-        <span className="text-xxsmall12 text-neutral-40 w-24 shrink-0">
+        <span className="w-24 shrink-0 text-xxsmall12 text-neutral-40">
           멘티 출석
         </span>
         <select
@@ -186,7 +186,7 @@ function AttendanceEditPanel({
           onChange={(e) =>
             setMenteeStatus(e.target.value as LiveMentoringAttendanceStatus)
           }
-          className="border-neutral-80 text-xsmall14 rounded-md border px-2 py-1"
+          className="rounded-md border border-neutral-80 px-2 py-1 text-xsmall14"
         >
           {ATTENDANCE_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>
@@ -200,7 +200,7 @@ function AttendanceEditPanel({
         type="button"
         onClick={handleSave}
         disabled={isPending}
-        className="bg-primary hover:bg-primary-hover text-xsmall14 mt-1 rounded-lg py-2.5 font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+        className="mt-1 rounded-lg bg-primary py-2.5 text-xsmall14 font-semibold text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isPending ? '저장 중…' : '저장하기'}
       </button>
@@ -219,28 +219,28 @@ export default function LiveMentoringDetailBody({
 
   return (
     <div className="flex flex-col gap-3">
-      <section className="border-neutral-80 rounded-xl border p-4">
+      <section className="rounded-xl border border-neutral-80 p-4">
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between md:gap-7">
           <div className="flex flex-1 flex-col gap-6">
             <div className="flex flex-wrap items-baseline gap-2">
-              <h3 className="text-medium20 text-neutral-0 font-semibold">
+              <h3 className="text-medium20 font-semibold text-neutral-0">
                 {reservation.menteeName || '-'}
               </h3>
-              <span className="text-xxsmall12 text-neutral-40 font-medium">
+              <span className="text-xxsmall12 font-medium text-neutral-40">
                 {reservation.productName || '상품명 없음'}
               </span>
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <div className="text-xxsmall12 text-neutral-40 flex items-center gap-2">
+              <div className="flex items-center gap-2 text-xxsmall12 text-neutral-40">
                 <span>결제 상태</span>
-                <span className="text-neutral-20 font-medium">
+                <span className="font-medium text-neutral-20">
                   {APPLICATION_STATUS_LABELS[reservation.status]}
                 </span>
               </div>
-              <div className="text-xxsmall12 text-neutral-40 flex items-center gap-2">
+              <div className="flex items-center gap-2 text-xxsmall12 text-neutral-40">
                 <span>플랜</span>
-                <span className="text-neutral-20 font-medium">
+                <span className="font-medium text-neutral-20">
                   {reservation.durationMinutes != null
                     ? `${reservation.durationMinutes}분`
                     : '-'}
@@ -250,7 +250,7 @@ export default function LiveMentoringDetailBody({
           </div>
 
           <div className="flex flex-1 flex-col justify-between gap-3">
-            <div className="text-xsmall14 text-neutral-20 grid gap-2">
+            <div className="grid gap-2 text-xsmall14 text-neutral-20">
               <InfoRow
                 label="멘토"
                 value={reservation.mentorNickname || reservation.mentorName}
@@ -265,22 +265,22 @@ export default function LiveMentoringDetailBody({
         </div>
       </section>
 
-      <section className="border-neutral-80 rounded-xl border p-4">
-        <p className="text-xxsmall12 text-neutral-40 font-medium">
+      <section className="rounded-xl border border-neutral-80 p-4">
+        <p className="text-xxsmall12 font-medium text-neutral-40">
           사전 Q&amp;A
         </p>
-        <p className="text-xsmall14 text-neutral-20 mt-3 whitespace-pre-wrap leading-6">
+        <p className="mt-3 whitespace-pre-wrap text-xsmall14 leading-6 text-neutral-20">
           {preQuestionText(reservation)}
         </p>
       </section>
 
       <section
         aria-label="예약 정보"
-        className="border-neutral-80 rounded-xl border p-4"
+        className="rounded-xl border border-neutral-80 p-4"
       >
-        <ul className="text-xsmall14 flex flex-col gap-3">
+        <ul className="flex flex-col gap-3 text-xsmall14">
           <li className="flex items-center gap-3">
-            <span className="text-xxsmall12 text-neutral-40 w-20 shrink-0 font-medium">
+            <span className="w-20 shrink-0 text-xxsmall12 font-medium text-neutral-40">
               예약 일시
             </span>
             <span className="text-neutral-0">
@@ -293,7 +293,7 @@ export default function LiveMentoringDetailBody({
             </span>
           </li>
           <li className="flex items-center gap-3">
-            <span className="text-xxsmall12 text-neutral-40 w-20 shrink-0 font-medium">
+            <span className="w-20 shrink-0 text-xxsmall12 font-medium text-neutral-40">
               신청 시각
             </span>
             <span className="text-neutral-0">
@@ -301,7 +301,7 @@ export default function LiveMentoringDetailBody({
             </span>
           </li>
           <li className="flex items-center gap-3">
-            <span className="text-xxsmall12 text-neutral-40 w-20 shrink-0 font-medium">
+            <span className="w-20 shrink-0 text-xxsmall12 font-medium text-neutral-40">
               신청 번호
             </span>
             <span className="text-neutral-0">{reservation.applicationId}</span>
@@ -315,10 +315,10 @@ export default function LiveMentoringDetailBody({
 
       <section
         aria-label="제한 사항"
-        className="border-neutral-80 rounded-xl border p-4"
+        className="rounded-xl border border-neutral-80 p-4"
       >
-        <p className="text-xxsmall12 text-neutral-40 font-medium">제한 사항</p>
-        <ul className="text-xsmall14 text-neutral-20 mt-3 flex flex-col gap-2">
+        <p className="text-xxsmall12 font-medium text-neutral-40">제한 사항</p>
+        <ul className="mt-3 flex flex-col gap-2 text-xsmall14 text-neutral-20">
           {LIMITATIONS.map((item) => (
             <li key={item.label} className="flex flex-col gap-0.5">
               <span className="font-medium">{item.label}</span>

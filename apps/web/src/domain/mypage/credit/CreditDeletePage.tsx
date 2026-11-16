@@ -108,9 +108,9 @@ const CreditDeleteContent = () => {
         vodPassRows={vodPass ? getVodPassInfoRows(vodPass) : undefined}
       />
       <div className="flex w-full flex-col items-start justify-center gap-y-6">
-        <div className="text-neutral-0 font-semibold">환불 정보</div>
+        <div className="font-semibold text-neutral-0">환불 정보</div>
         <div className="flex w-full flex-col items-start justify-start gap-y-3">
-          <div className="border-neutral-0 text-neutral-0 flex w-full items-center justify-start gap-3 border-y-[1.5px] px-3 py-5 font-bold">
+          <div className="flex w-full items-center justify-start gap-3 border-y-[1.5px] border-neutral-0 px-3 py-5 font-bold text-neutral-0">
             <div>예정 환불금액</div>
             <div className="flex grow items-center justify-end">
               {expectedTotalRefund.toLocaleString()}원
@@ -125,7 +125,7 @@ const CreditDeleteContent = () => {
               title="환불 차감 금액"
               content={`-${(expectedPartialRefundDeductionAmount ?? 0).toLocaleString()}원`}
             />
-            <div className="text-primary-dark py-2 text-xs font-medium">
+            <div className="py-2 text-xs font-medium text-primary-dark">
               *환불 규정은{' '}
               <a
                 className="underline underline-offset-2"
@@ -139,7 +139,7 @@ const CreditDeleteContent = () => {
             </div>
           </div>
 
-          <hr className="border-neutral-85 w-full" />
+          <hr className="w-full border-neutral-85" />
 
           <div className="flex w-full flex-col">
             <PaymentInfoRow
@@ -167,9 +167,9 @@ const CreditDeleteContent = () => {
                 />
                 <div className="flex w-full items-center justify-start gap-x-2 px-3 py-2">
                   <div className="text-neutral-40">영수증</div>
-                  <div className="text-neutral-0 flex grow items-center justify-end">
+                  <div className="flex grow items-center justify-end text-neutral-0">
                     <button
-                      className="border-neutral-60 flex items-center justify-center rounded-sm border bg-white px-2.5 py-1.5 text-sm font-medium"
+                      className="flex items-center justify-center rounded-sm border border-neutral-60 bg-white px-2.5 py-1.5 text-sm font-medium"
                       onClick={() => {
                         if (paymentDetail.tossInfo?.receipt) {
                           window.open(
@@ -189,7 +189,7 @@ const CreditDeleteContent = () => {
         </div>
         {/* 챌린지를 취소해도 함께 결제한 이용권은 자동으로 환불되지 않는다. 환불 금액에도 포함되지 않는다 */}
         {hasUnrefundableBundledVodPass && (
-          <div className="bg-neutral-90 flex w-full flex-col gap-y-1 rounded-sm px-4 py-3 text-sm font-medium">
+          <div className="flex w-full flex-col gap-y-1 rounded-sm bg-neutral-90 px-4 py-3 text-sm font-medium">
             <p className="text-neutral-0">
               함께 결제한 VOD 이용권은 이용이 시작되어 환불되지 않으며, 챌린지
               환불 금액에도 포함되지 않습니다
@@ -197,7 +197,7 @@ const CreditDeleteContent = () => {
           </div>
         )}
         {refundableBundledVodPassPaymentId !== null && (
-          <div className="bg-neutral-90 flex w-full flex-col gap-y-1 rounded-sm px-4 py-3 text-sm font-medium">
+          <div className="flex w-full flex-col gap-y-1 rounded-sm bg-neutral-90 px-4 py-3 text-sm font-medium">
             <p className="text-neutral-0">
               함께 결제한 VOD 이용권은 별도로 환불해야 합니다
             </p>
@@ -210,7 +210,7 @@ const CreditDeleteContent = () => {
           </div>
         )}
         {isVodPass && isCancelable && hasLaterVodPass && (
-          <div className="bg-neutral-90 w-full rounded-sm px-4 py-3 text-sm font-medium">
+          <div className="w-full rounded-sm bg-neutral-90 px-4 py-3 text-sm font-medium">
             <p className="text-neutral-0">
               이 이용권을 환불해도 뒤에 예약된 이용권의 시작일은 앞당겨지지
               않습니다
@@ -220,12 +220,12 @@ const CreditDeleteContent = () => {
         {isRefundBlocked ? (
           <>
             {vodPassNotice && (
-              <p className="text-neutral-40 w-full text-sm font-medium">
+              <p className="w-full text-sm font-medium text-neutral-40">
                 {vodPassNotice}
               </p>
             )}
             <button
-              className="border-primary text-primary-dark h-[46px] w-full rounded-sm border-2 bg-neutral-100 px-5 py-2 font-medium"
+              className="h-[46px] w-full rounded-sm border-2 border-primary bg-neutral-100 px-5 py-2 font-medium text-primary-dark"
               onClick={() => router.back()}
             >
               이전
@@ -253,13 +253,13 @@ const CreditDeleteContent = () => {
             </div>
             <div className="flex w-full items-center gap-x-3">
               <button
-                className="border-primary text-primary-dark h-[46px] grow rounded-sm border-2 bg-neutral-100 px-5 py-2 font-medium"
+                className="h-[46px] grow rounded-sm border-2 border-primary bg-neutral-100 px-5 py-2 font-medium text-primary-dark"
                 onClick={() => router.back()}
               >
                 이전
               </button>
               <button
-                className={`h-[46px] grow rounded-sm ${isChecked ? 'bg-primary' : 'bg-primary-20 cursor-not-allowed'} px-5 py-2 font-medium text-neutral-100`}
+                className={`h-[46px] grow rounded-sm ${isChecked ? 'bg-primary' : 'cursor-not-allowed bg-primary-20'} px-5 py-2 font-medium text-neutral-100`}
                 onClick={() => {
                   if (isChecked) {
                     tryCancelPayment({

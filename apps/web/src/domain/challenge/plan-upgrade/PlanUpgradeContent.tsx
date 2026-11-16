@@ -83,7 +83,7 @@ const PlanUpgradeForm = ({
   const summary = (
     <>
       {challengeTitle && (
-        <h2 className="text-small18 text-neutral-0 font-bold">
+        <h2 className="text-small18 font-bold text-neutral-0">
           {challengeTitle}
         </h2>
       )}
@@ -140,7 +140,7 @@ const PlanUpgradeForm = ({
               <span className="text-xsmall16 text-neutral-0">
                 추가 결제 금액
               </span>
-              <span className="text-medium24 text-primary font-bold">
+              <span className="text-medium24 font-bold text-primary">
                 {selectedOption.additionalAmount.toLocaleString()}원
               </span>
             </div>
@@ -175,7 +175,7 @@ const PlanUpgradeForm = ({
           onConfirm={goToPayment}
           onCancel={() => setIsConfirmOpen(false)}
         >
-          <p className="text-xsmall14 text-neutral-20 whitespace-pre-line text-center">
+          <p className="whitespace-pre-line text-center text-xsmall14 text-neutral-20">
             {`플랜 업그레이드는 한 번만 할 수 있어요.\n${selectedOption.planType} 플랜으로 결제하면 다시 변경하기 어려워요.`}
           </p>
         </AlertModal>

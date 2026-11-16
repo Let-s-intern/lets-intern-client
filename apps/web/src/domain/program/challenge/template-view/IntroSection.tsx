@@ -70,7 +70,7 @@ function IntroSection({ config }: Props) {
               <div className="flex items-center gap-1 md:gap-1.5">
                 <span>어디까지가</span>
                 <div
-                  className="rounded-xxs text-small20 md:text-xlarge30 -rotate-[2deg] px-2 py-1 leading-none text-neutral-100 md:px-2 md:py-0.5"
+                  className="-rotate-[2deg] rounded-xxs px-2 py-1 text-small20 leading-none text-neutral-100 md:px-2 md:py-0.5 md:text-xlarge30"
                   style={{ backgroundColor: primaryColor }}
                 >
                   제대로 된 준비

@@ -21,7 +21,7 @@ const VodList = () => {
   }
   if (isError) {
     return (
-      <p className="text-xsmall14 text-neutral-40 py-20 text-center">
+      <p className="py-20 text-center text-xsmall14 text-neutral-40">
         목록을 불러오지 못했어요. 잠시 후 다시 시도해주세요.
       </p>
     );
@@ -50,12 +50,12 @@ const VodList = () => {
             className="flex h-full cursor-pointer flex-col gap-3"
           >
             <img
-              className="bg-neutral-80 md:rounded-xs aspect-[540/421] h-auto w-full rounded-sm object-cover"
+              className="aspect-[540/421] h-auto w-full rounded-sm bg-neutral-80 object-cover md:rounded-xs"
               src={vod.thumbnailUrl}
               alt=""
               loading="lazy"
             />
-            <h3 className="text-xsmall14 md:text-xsmall16 text-neutral-0 line-clamp-2 font-semibold">
+            <h3 className="line-clamp-2 text-xsmall14 font-semibold text-neutral-0 md:text-xsmall16">
               {vod.title}
             </h3>
           </a>
@@ -76,7 +76,7 @@ const UsageVodTab = ({ period }: { period: VodPassPeriod }) => (
     {period.isActive ? (
       <VodList />
     ) : (
-      <p className="text-xsmall14 text-neutral-40 py-20 text-center">
+      <p className="py-20 text-center text-xsmall14 text-neutral-40">
         이용 시작일부터 시청할 수 있어요.
       </p>
     )}

@@ -49,23 +49,23 @@ const LiveFeedbackOpenBar = ({
       className={twMerge(
         scheduleDesign.surface,
         'flex w-full flex-col gap-0.5 overflow-hidden px-3 py-2 text-left',
-        interactive ? 'hover:bg-neutral-95 transition-colors' : '',
+        interactive ? 'transition-colors hover:bg-neutral-95' : '',
       )}
       aria-label={`라이브 피드백 일정 오픈 — ${bar.challengeTitle}`}
     >
       {/* 1줄: 아이콘 + 라벨 + 챌린지명 */}
       <div className="flex items-center gap-2">
         <LiveFeedbackOpenIcon size={18} className="shrink-0" />
-        <span className="text-xsmall14 text-neutral-10 shrink-0 whitespace-nowrap font-semibold tracking-[-0.3px]">
+        <span className="shrink-0 whitespace-nowrap text-xsmall14 font-semibold tracking-[-0.3px] text-neutral-10">
           <span className="text-red-500">LIVE</span> 피드백 일정 오픈
         </span>
-        <span className="text-xxsmall12 text-neutral-30 min-w-0 truncate font-medium tracking-[-0.3px]">
+        <span className="min-w-0 truncate text-xxsmall12 font-medium tracking-[-0.3px] text-neutral-30">
           {bar.challengeTitle}
         </span>
       </div>
 
       {/* 2줄: 보조 정보 (아이콘 너비만큼 들여쓰기) */}
-      <div className="text-xxsmall12 text-neutral-40 pl-[26px] tracking-[-0.3px]">
+      <div className="pl-[26px] text-xxsmall12 tracking-[-0.3px] text-neutral-40">
         {ddayLabel} · 예약 가능 멘티 {bar.notSubmittedCount}
       </div>
     </Tag>

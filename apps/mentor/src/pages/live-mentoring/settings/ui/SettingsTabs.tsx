@@ -27,7 +27,7 @@ const CheckIcon = () => (
   <svg
     aria-hidden="true"
     viewBox="0 0 20 20"
-    className="text-primary h-4 w-4"
+    className="h-4 w-4 text-primary"
     fill="currentColor"
   >
     <path d="M8.2 14.4 4.4 10.6l1.4-1.4 2.4 2.4 5.6-5.6 1.4 1.4z" />
@@ -81,7 +81,7 @@ const SettingsTabs = ({
           onClick={() => onChange(tab.id)}
           className={`flex flex-1 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap border-b-2 px-3 py-3 text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
             isActive
-              ? 'border-primary text-primary font-semibold'
+              ? 'border-primary font-semibold text-primary'
               : 'border-transparent font-medium text-gray-500 enabled:hover:text-gray-700'
           }`}
         >
@@ -90,7 +90,7 @@ const SettingsTabs = ({
             aria-hidden="true"
             className={
               tab.required
-                ? 'text-primary text-sm font-medium'
+                ? 'text-sm font-medium text-primary'
                 : 'text-sm font-medium text-gray-400'
             }
           >

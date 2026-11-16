@@ -75,13 +75,13 @@ export default function MentorHashTagSection({
   const isLoading = isAllLoading || isSelectionLoading;
 
   return (
-    <section className="border-neutral-80 bg-static-100 rounded-xl border p-5 md:p-6">
-      <h2 className="text-xsmall16 md:text-small18 text-neutral-0 font-medium">
+    <section className="rounded-xl border border-neutral-80 bg-static-100 p-5 md:p-6">
+      <h2 className="text-xsmall16 font-medium text-neutral-0 md:text-small18">
         해시태그(노출 필터링)
       </h2>
 
       {isLoading ? (
-        <div className="text-xsmall14 text-neutral-40 py-4">로딩 중...</div>
+        <div className="py-4 text-xsmall14 text-neutral-40">로딩 중...</div>
       ) : (
         <div className="mt-4 flex flex-col gap-5 md:gap-6">
           <CategoryTabs
@@ -125,9 +125,9 @@ const HashTagChip = ({ tag, isSelected, onToggle }: HashTagChipProps) => (
     onClick={onToggle}
     aria-pressed={isSelected}
     className={twMerge(
-      'md:text-xsmall14 text-xxsmall12 rounded-full border px-3 py-2 transition-colors',
+      'rounded-full border px-3 py-2 text-xxsmall12 transition-colors md:text-xsmall14',
       isSelected
-        ? 'border-primary bg-primary-5 text-primary font-medium'
+        ? 'border-primary bg-primary-5 font-medium text-primary'
         : 'border-neutral-80 text-neutral-40 hover:bg-neutral-95',
     )}
   >

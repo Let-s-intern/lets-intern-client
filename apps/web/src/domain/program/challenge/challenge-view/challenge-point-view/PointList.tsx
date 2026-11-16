@@ -25,17 +25,17 @@ function PointList({
     >
       <div className="break-keep text-center">
         <span
-          className="text-xsmall14 md:text-small18 rounded-md px-3.5 py-1.5 font-semibold text-white"
+          className="rounded-md px-3.5 py-1.5 text-xsmall14 font-semibold text-white md:text-small18"
           style={{ backgroundColor: listPointBgColor }}
         >
           Point {index + 1}
         </span>
       </div>
       <div>
-        <h3 className="text-small20 text-neutral-0 mb-2 break-keep text-center font-bold">
+        <h3 className="mb-2 break-keep text-center text-small20 font-bold text-neutral-0">
           <Balancer fallback={<span>{item.title}</span>}>{item.title}</Balancer>
         </h3>
-        <p className="text-xsmall16 text-neutral-40 break-keep text-center font-medium">
+        <p className="break-keep text-center text-xsmall16 font-medium text-neutral-40">
           <Balancer fallback={<span>{item.subtitle}</span>}>
             {item.subtitle}
           </Balancer>

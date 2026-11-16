@@ -229,7 +229,7 @@ const ApplySection = ({
 
   return (
     <section
-      className={`shadow-03 scrollbar-hide sticky top-[7rem] max-h-[calc(100vh-11.75rem)] w-[22rem] overflow-y-auto rounded-lg px-5 py-6`}
+      className={`sticky top-[7rem] max-h-[calc(100vh-11.75rem)] w-[22rem] overflow-y-auto rounded-lg px-5 py-6 shadow-03 scrollbar-hide`}
     >
       {contentIndex === 0 && programDate ? (
         <OverviewContent

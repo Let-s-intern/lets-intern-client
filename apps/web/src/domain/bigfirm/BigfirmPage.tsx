@@ -205,7 +205,7 @@ export default async function BigfirmPage() {
               <p>앞날에 건승을 기원합니다.</p>
             </div>
             <p className="mt-auto pt-3.5 text-right text-base font-bold leading-[1.4] tracking-[-0.02em] text-[#575757]">
-              …그래서, <em className="text-primary not-italic">어디가 문제</em>
+              …그래서, <em className="not-italic text-primary">어디가 문제</em>
               였을까요?
             </p>
           </div>
@@ -219,7 +219,7 @@ export default async function BigfirmPage() {
                   <input
                     id={`worry-${i}`}
                     type="checkbox"
-                    className="accent-primary mt-[3px] size-[18px] shrink-0 cursor-pointer"
+                    className="mt-[3px] size-[18px] shrink-0 cursor-pointer accent-primary"
                   />
                   <label htmlFor={`worry-${i}`} className="cursor-pointer">
                     {worry}
@@ -273,7 +273,7 @@ export default async function BigfirmPage() {
           <div className="grid gap-4 md:grid-cols-2">
             <article
               aria-label="PM 지원자의 자기소개서 문항 예시"
-              className="rounded-xs flex flex-col bg-[#fffdf8] px-5 pb-3.5 pt-4 text-[15px] leading-[1.75] text-[#26262b] shadow-[0_14px_32px_-20px_rgba(40,50,140,.35)] sm:px-6"
+              className="flex flex-col rounded-xs bg-[#fffdf8] px-5 pb-3.5 pt-4 text-[15px] leading-[1.75] text-[#26262b] shadow-[0_14px_32px_-20px_rgba(40,50,140,.35)] sm:px-6"
             >
               <div className="mb-3.5 flex items-baseline justify-between gap-3 border-b border-[#e4e0d4] pb-2 text-xs text-[#77777f]">
                 <b className="text-[13px] text-[#26262b]">
@@ -316,7 +316,7 @@ export default async function BigfirmPage() {
                 </p>
               </div>
               <div className="grid content-start gap-2 rounded-[15px] bg-[#e9eaff] px-5 py-[18px] shadow-[inset_0_0_0_1.5px_#4d55f5]">
-                <p className="text-primary text-[13px] font-extrabold">
+                <p className="text-[13px] font-extrabold text-primary">
                   대기업 현직 멘토의 피드백
                 </p>
                 <p className="text-[15px] font-semibold leading-[1.65]">
@@ -331,7 +331,7 @@ export default async function BigfirmPage() {
                   {MENTOR_FEEDBACK_POINTS.map((point) => (
                     <li
                       key={point}
-                      className="text-primary rounded-full bg-white px-2.5 py-1 text-xs font-bold"
+                      className="rounded-full bg-white px-2.5 py-1 text-xs font-bold text-primary"
                     >
                       ✓ {point}
                     </li>
@@ -361,7 +361,7 @@ export default async function BigfirmPage() {
               key={step.title}
               className="grid content-start gap-2 rounded-[20px] border border-[#e3e5f0] bg-white px-6 py-[26px]"
             >
-              <span className="text-primary text-xs font-extrabold tracking-[.08em]">
+              <span className="text-xs font-extrabold tracking-[.08em] text-primary">
                 STEP {i + 1}
               </span>
               <h3 className="text-[19px] font-extrabold">{step.title}</h3>
@@ -410,7 +410,7 @@ export default async function BigfirmPage() {
                 <svg
                   aria-hidden
                   viewBox="0 0 20 20"
-                  className="text-primary size-6 shrink-0"
+                  className="size-6 shrink-0 text-primary"
                 >
                   <circle cx="10" cy="10" r="10" fill="currentColor" />
                   <path
@@ -463,7 +463,7 @@ export default async function BigfirmPage() {
                 </>,
               ].map((text, i) => (
                 <li key={i} className="flex items-start gap-3">
-                  <span className="text-primary grid size-[26px] shrink-0 place-items-center rounded-full bg-[#e9eaff] text-[13px] font-extrabold">
+                  <span className="grid size-[26px] shrink-0 place-items-center rounded-full bg-[#e9eaff] text-[13px] font-extrabold text-primary">
                     {i + 1}
                   </span>
                   <span>{text}</span>
@@ -498,7 +498,7 @@ export default async function BigfirmPage() {
                 </div>
                 <p
                   aria-label={`별점 ${review.score}점`}
-                  className="text-primary text-[15px] tracking-[.1em]"
+                  className="text-[15px] tracking-[.1em] text-primary"
                 >
                   {'★'.repeat(review.score)}
                 </p>
@@ -516,7 +516,7 @@ export default async function BigfirmPage() {
                     data-track-mentor-id={mentor.id}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-primary mt-1 font-bold"
+                    className="mt-1 font-bold text-primary"
                   >
                     이 멘토 보기 →
                   </Link>
@@ -532,7 +532,7 @@ export default async function BigfirmPage() {
             data-track-location="reviews"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:border-primary hover:text-primary rounded-full border border-[#e3e5f0] bg-white px-5 py-2.5 text-sm font-bold text-[#575757]"
+            className="rounded-full border border-[#e3e5f0] bg-white px-5 py-2.5 text-sm font-bold text-[#575757] hover:border-primary hover:text-primary"
           >
             더 자세한 후기가 궁금하다면 →
           </Link>
@@ -550,7 +550,7 @@ export default async function BigfirmPage() {
               className="group rounded-[15px] border border-[#e3e5f0] bg-white"
             >
               <summary className="flex cursor-pointer list-none items-start gap-3 px-[22px] py-5 text-[18px] font-bold [&::-webkit-details-marker]:hidden">
-                <span className="text-primary font-extrabold">Q</span>
+                <span className="font-extrabold text-primary">Q</span>
                 <span className="flex-1">{faq.question}</span>
                 <svg
                   aria-hidden
@@ -594,7 +594,7 @@ export default async function BigfirmPage() {
             data-track-location="faq"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:border-primary hover:text-primary rounded-sm border border-[#e3e5f0] bg-white px-4 py-2 text-sm font-bold text-[#575757]"
+            className="rounded-sm border border-[#e3e5f0] bg-white px-4 py-2 text-sm font-bold text-[#575757] hover:border-primary hover:text-primary"
           >
             1:1 채팅 문의하기
           </a>

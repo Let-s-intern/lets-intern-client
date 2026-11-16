@@ -159,7 +159,7 @@ const OpenSettingsSection = ({
 
   if (!form || !original) {
     return (
-      <div className="text-xsmall14 text-neutral-40 px-1 py-10">
+      <div className="px-1 py-10 text-xsmall14 text-neutral-40">
         설정을 불러오는 중...
       </div>
     );
@@ -286,10 +286,10 @@ const OpenSettingsSection = ({
                   value={form.title ?? ''}
                   onChange={(e) => patch({ title: e.target.value })}
                   placeholder="예) 자소서 실전 첨삭 멘토링"
-                  className="focus:border-primary w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none transition-colors"
+                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none transition-colors focus:border-primary"
                 />
                 {noTitleEntered && (
-                  <p role="alert" className="text-system-error mt-2 text-xs">
+                  <p role="alert" className="mt-2 text-xs text-system-error">
                     타이틀을 입력해야 저장할 수 있어요.
                   </p>
                 )}
@@ -311,7 +311,7 @@ const OpenSettingsSection = ({
                       <li>
                         <p
                           role="alert"
-                          className="text-system-error mb-1 text-xs"
+                          className="mb-1 text-xs text-system-error"
                         >
                           대표 경력을 지정하지 않으면 공개 카드에 경력이
                           노출되지 않아요.
@@ -329,7 +329,7 @@ const OpenSettingsSection = ({
                             onChange={() =>
                               handleRepresentativeCareerChange(career.id)
                             }
-                            className="accent-primary h-4 w-4"
+                            className="h-4 w-4 accent-primary"
                           />
                           <span className="text-sm text-gray-700">
                             {representativeCareerLabel(career)}
@@ -367,7 +367,7 @@ const OpenSettingsSection = ({
               <button
                 type="button"
                 onClick={() => setSlotModalOpen(true)}
-                className="border-primary text-primary rounded-lg border px-4 py-2.5 text-sm font-medium"
+                className="rounded-lg border border-primary px-4 py-2.5 text-sm font-medium text-primary"
               >
                 일정 등록하기
               </button>
@@ -401,7 +401,7 @@ const OpenSettingsSection = ({
                   </div>
                   <p className="text-sm text-gray-600">
                     가격{' '}
-                    <span className="text-primary font-semibold">
+                    <span className="font-semibold text-primary">
                       {formatPrice(getLowestPrice(form.durations))}
                     </span>{' '}
                     <span className="text-xs text-gray-400">
@@ -409,7 +409,7 @@ const OpenSettingsSection = ({
                     </span>
                   </p>
                   {noDurationSelected && (
-                    <p role="alert" className="text-system-error text-xs">
+                    <p role="alert" className="text-xs text-system-error">
                       진행시간을 최소 1개 이상 선택해야 오픈할 수 있어요.
                     </p>
                   )}
@@ -435,7 +435,7 @@ const OpenSettingsSection = ({
                   })}
                 </div>
                 {noCategorySelected && (
-                  <p role="alert" className="text-system-error mt-3 text-xs">
+                  <p role="alert" className="mt-3 text-xs text-system-error">
                     타입을 최소 1개 이상 선택해야 저장할 수 있어요.
                   </p>
                 )}

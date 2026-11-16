@@ -64,7 +64,7 @@ function PromoSection({ reportType }: PromoSectionProps) {
         <MainHeader>{MAIN_HEADER}</MainHeader>
       </div>
 
-      <main className="text-neutral-0 relative flex max-w-[50rem] flex-col items-center gap-5 bg-white px-5 py-7 text-center md:mx-auto md:gap-11 md:py-10">
+      <main className="relative flex max-w-[50rem] flex-col items-center gap-5 bg-white px-5 py-7 text-center text-neutral-0 md:mx-auto md:gap-11 md:py-10">
         <div
           className="absolute left-0 top-0 h-[6px] w-full"
           style={borderStyle}
@@ -120,7 +120,7 @@ const CardTitle = memo(function CardTitle({
   return (
     <span
       className={twMerge(
-        'text-small18 md:text-medium22 mb-2 block font-semibold',
+        'mb-2 block text-small18 font-semibold md:text-medium22',
         className,
       )}
     >
@@ -139,7 +139,7 @@ const CardContent = memo(function CardContent({
   return (
     <p
       className={twMerge(
-        'text-xsmall14 md:text-small18 whitespace-pre-line font-medium',
+        'whitespace-pre-line text-xsmall14 font-medium md:text-small18',
         className,
       )}
     >

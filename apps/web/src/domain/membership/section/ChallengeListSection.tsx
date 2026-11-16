@@ -31,11 +31,11 @@ export default function ChallengeListSection() {
           </span>
         </div>
 
-        <h2 className="text-neutral-0 mt-4 text-center text-2xl font-bold leading-snug md:text-[2rem]">
+        <h2 className="mt-4 text-center text-2xl font-bold leading-snug text-neutral-0 md:text-[2rem]">
           취준 필수 챌린지 참여 10종 - 베이직
         </h2>
 
-        <p className="text-xsmall14 md:text-xsmall16 text-neutral-40 mt-4 text-center">
+        <p className="mt-4 text-center text-xsmall14 text-neutral-40 md:text-xsmall16">
           <span className="block">
             진단 결과에 따라 10주 합격 플레이북을 활용해 나의 단계에 맞는
             챌린지에 참여하세요.
@@ -48,7 +48,7 @@ export default function ChallengeListSection() {
         <div className="mt-10 grid gap-6 md:mt-14 md:grid-cols-3">
           {CHALLENGE_ITEMS.map((item) => (
             <a
-              className="rounded-xxl flex flex-col bg-white p-4 shadow-[0_2px_16px_rgba(0,0,0,0.06)] transition-shadow hover:shadow-[0_4px_24px_rgba(0,0,0,0.1)]"
+              className="flex flex-col rounded-xxl bg-white p-4 shadow-[0_2px_16px_rgba(0,0,0,0.06)] transition-shadow hover:shadow-[0_4px_24px_rgba(0,0,0,0.1)]"
               href={item.url}
               key={item.label}
             >
@@ -66,10 +66,10 @@ export default function ChallengeListSection() {
                 )}
               />
               <div className="flex flex-1 flex-col justify-between pt-4">
-                <strong className="text-xsmall16 text-neutral-0 font-bold">
+                <strong className="text-xsmall16 font-bold text-neutral-0">
                   {item.label}
                 </strong>
-                <span className="text-primary text-xsmall14 mt-6 self-end font-medium">
+                <span className="mt-6 self-end text-xsmall14 font-medium text-primary">
                   챌린지 자세히 보기 →
                 </span>
               </div>

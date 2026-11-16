@@ -26,7 +26,7 @@ const FaqItem = ({
   return (
     <div
       data-state={state}
-      className="border-neutral-85 overflow-hidden rounded-md border"
+      className="overflow-hidden rounded-md border border-neutral-85"
     >
       <button
         type="button"
@@ -35,11 +35,11 @@ const FaqItem = ({
         aria-controls={contentId}
         data-state={state}
         onClick={onToggle}
-        className="bg-neutral-95 text-xsmall16 md:text-small18 text-neutral-0 group flex w-full items-center justify-between gap-4 px-5 py-4 text-left font-bold data-[state=open]:bg-neutral-100"
+        className="group flex w-full items-center justify-between gap-4 bg-neutral-95 px-5 py-4 text-left text-xsmall16 font-bold text-neutral-0 data-[state=open]:bg-neutral-100 md:text-small18"
       >
         <span className="break-keep">{faq.question}</span>
         <svg
-          className="text-neutral-40 shrink-0 transition-transform group-data-[state=open]:rotate-180"
+          className="shrink-0 text-neutral-40 transition-transform group-data-[state=open]:rotate-180"
           width="20"
           height="20"
           viewBox="0 0 20 20"
@@ -61,7 +61,7 @@ const FaqItem = ({
         aria-labelledby={triggerId}
         hidden={!isOpen}
         data-state={state}
-        className="text-xsmall14 md:text-xsmall16 text-neutral-30 whitespace-pre-line px-5 py-4 leading-relaxed"
+        className="whitespace-pre-line px-5 py-4 text-xsmall14 leading-relaxed text-neutral-30 md:text-xsmall16"
       >
         {faq.answer}
       </div>

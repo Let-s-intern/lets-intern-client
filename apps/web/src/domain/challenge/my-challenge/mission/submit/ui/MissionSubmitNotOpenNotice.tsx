@@ -21,14 +21,14 @@ const formatOpenAt = (startDate: Dayjs) =>
 const MissionSubmitNotOpenNotice = ({ className, startDate }: Props) => (
   <section
     className={clsx(
-      'rounded-xs border-neutral-80 flex flex-col gap-1 border px-4 py-4',
+      'flex flex-col gap-1 rounded-xs border border-neutral-80 px-4 py-4',
       className,
     )}
   >
-    <p className="text-xsmall14 md:text-xsmall16 text-neutral-0 font-medium">
+    <p className="text-xsmall14 font-medium text-neutral-0 md:text-xsmall16">
       이 미션은 {formatOpenAt(startDate)}부터 제출할 수 있습니다.
     </p>
-    <p className="text-xsmall14 md:text-xsmall16 text-neutral-30">
+    <p className="text-xsmall14 text-neutral-30 md:text-xsmall16">
       미리 자료를 확인하고 준비해 주세요.
     </p>
   </section>

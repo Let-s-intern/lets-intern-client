@@ -44,11 +44,11 @@ export default function ResponseCommentModal({
         <div className="flex flex-col gap-3">
           {response?.answers.map((a) => (
             <div key={a.questionId} className="flex flex-col gap-1.5">
-              <span className="text-xsmall14 text-primary-80 font-medium">
+              <span className="text-xsmall14 font-medium text-primary-80">
                 Q. {a.questionLabel}
               </span>
-              <div className="bg-neutral-90 rounded-sm p-3">
-                <p className="text-xsmall16 text-neutral-10 whitespace-pre-wrap">
+              <div className="rounded-sm bg-neutral-90 p-3">
+                <p className="whitespace-pre-wrap text-xsmall16 text-neutral-10">
                   {a.answer}
                 </p>
               </div>

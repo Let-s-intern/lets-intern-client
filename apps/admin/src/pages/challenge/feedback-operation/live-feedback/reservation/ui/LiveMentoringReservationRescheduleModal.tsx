@@ -127,32 +127,32 @@ export default function LiveMentoringReservationRescheduleModal({
         onClick={onClose}
         aria-hidden="true"
       />
-      <div className="relative z-10 flex max-h-[85dvh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-lg">
+      <div className="rounded-2xl relative z-10 flex max-h-[85dvh] w-full max-w-2xl flex-col overflow-hidden bg-white shadow-lg">
         <div className="flex items-start justify-between gap-4 px-7 pb-2 pt-7">
-          <h3 className="text-medium16 text-neutral-0 font-bold">
+          <h3 className="text-medium16 font-bold text-neutral-0">
             이미 멘티가 예약완료한 1대1 일정입니다. 예약 일시를 변경할까요?
           </h3>
           <button
             type="button"
             onClick={onClose}
             aria-label="닫기"
-            className="text-neutral-40 hover:text-neutral-0 shrink-0 text-lg"
+            className="shrink-0 text-lg text-neutral-40 hover:text-neutral-0"
           >
             ✕
           </button>
         </div>
 
         <div className="flex flex-col gap-5 overflow-y-auto px-7 py-5">
-          <div className="border-neutral-80 text-xsmall14 rounded-xl border">
-            <div className="border-neutral-80 flex items-center gap-3 border-b px-4 py-3">
-              <span className="text-neutral-40 w-24 shrink-0">예약한 멘티</span>
-              <span className="text-neutral-0 font-medium">
+          <div className="rounded-xl border border-neutral-80 text-xsmall14">
+            <div className="flex items-center gap-3 border-b border-neutral-80 px-4 py-3">
+              <span className="w-24 shrink-0 text-neutral-40">예약한 멘티</span>
+              <span className="font-medium text-neutral-0">
                 {reservation.menteeName || `멘티 #${reservation.menteeId}`} 님
               </span>
             </div>
             <div className="flex items-center gap-3 px-4 py-3">
-              <span className="text-neutral-40 w-24 shrink-0">상품</span>
-              <span className="text-neutral-0 font-medium">
+              <span className="w-24 shrink-0 text-neutral-40">상품</span>
+              <span className="font-medium text-neutral-0">
                 {reservation.productName || '-'}
                 {reservation.durationMinutes != null &&
                   ` · ${reservation.durationMinutes}분`}
@@ -161,12 +161,12 @@ export default function LiveMentoringReservationRescheduleModal({
           </div>
 
           <div className="flex flex-col gap-2">
-            <h4 className="text-medium16 text-neutral-0 font-bold">
+            <h4 className="text-medium16 font-bold text-neutral-0">
               변경할 예약 일시
             </h4>
-            <div className="border-neutral-80 text-xsmall14 flex flex-col gap-3 rounded-xl border px-4 py-4">
+            <div className="flex flex-col gap-3 rounded-xl border border-neutral-80 px-4 py-4 text-xsmall14">
               <div className="flex items-center gap-3">
-                <span className="text-neutral-40 w-20 shrink-0">현재 예약</span>
+                <span className="w-20 shrink-0 text-neutral-40">현재 예약</span>
                 <span className="text-neutral-0">
                   {reservation.reservationStartAt &&
                   reservation.reservationEndAt
@@ -179,7 +179,7 @@ export default function LiveMentoringReservationRescheduleModal({
               </div>
 
               <div className="flex items-center gap-3">
-                <span className="text-primary w-20 shrink-0 font-medium">
+                <span className="w-20 shrink-0 font-medium text-primary">
                   변경 후
                 </span>
                 <div className="flex flex-1 flex-wrap items-center gap-2">
@@ -237,7 +237,7 @@ export default function LiveMentoringReservationRescheduleModal({
             </div>
           </div>
 
-          <div className="text-xsmall14 text-primary flex items-center justify-center gap-2 rounded-xl bg-[#EEF0FF] px-4 py-3 text-center">
+          <div className="flex items-center justify-center gap-2 rounded-xl bg-[#EEF0FF] px-4 py-3 text-center text-xsmall14 text-primary">
             멘티와 사전 합의되지 않은 변경 및 취소는 혼선을 줄 수 있으니, 반드시
             조율 후 진행해 주세요.
           </div>
@@ -248,11 +248,11 @@ export default function LiveMentoringReservationRescheduleModal({
           </p>
         </div>
 
-        <div className="border-neutral-80 flex items-center justify-end gap-2 border-t px-7 py-4">
+        <div className="flex items-center justify-end gap-2 border-t border-neutral-80 px-7 py-4">
           <button
             type="button"
             onClick={onClose}
-            className="border-neutral-80 text-xsmall14 text-neutral-0 hover:bg-neutral-95 rounded-lg border px-6 py-2.5 font-semibold transition-colors"
+            className="rounded-lg border border-neutral-80 px-6 py-2.5 text-xsmall14 font-semibold text-neutral-0 transition-colors hover:bg-neutral-95"
           >
             닫기
           </button>
@@ -260,7 +260,7 @@ export default function LiveMentoringReservationRescheduleModal({
             type="button"
             onClick={handleSubmit}
             disabled={!selectedRun || isPending}
-            className="bg-primary hover:bg-primary-hover text-xsmall14 rounded-lg px-6 py-2.5 font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg bg-primary px-6 py-2.5 text-xsmall14 font-semibold text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isPending ? '변경 중…' : '변경하기'}
           </button>

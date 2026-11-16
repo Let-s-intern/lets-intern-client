@@ -25,7 +25,7 @@ const Checklist = ({
 
   return (
     <div
-      className="rounded-xs flex flex-col gap-3 p-5 md:gap-5 md:rounded-md md:px-[34px] md:py-[35px]"
+      className="flex flex-col gap-3 rounded-xs p-5 md:gap-5 md:rounded-md md:px-[34px] md:py-[35px]"
       style={{ backgroundColor: bgColor }}
     >
       {items.map((item, index) => (
@@ -58,16 +58,16 @@ const Differentiator = ({
   return (
     <div className="flex flex-col gap-5 md:gap-8">
       <div className="flex flex-col gap-2">
-        <span className="text-medium32 text-neutral-0 md:text-medium24 font-semibold">
+        <span className="text-medium32 font-semibold text-neutral-0 md:text-medium24">
           {number}
         </span>
-        <h3 className="text-small16 text-neutral-0 md:text-medium24 font-bold md:font-semibold">
+        <h3 className="text-small16 font-bold text-neutral-0 md:text-medium24 md:font-semibold">
           {title}
         </h3>
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
         <div className="flex flex-col gap-2">
-          <span className="text-xsmall14 md:text-small20 pl-[6px] font-semibold text-neutral-50">
+          <span className="pl-[6px] text-xsmall14 font-semibold text-neutral-50 md:text-small20">
             Before
           </span>
           <Checklist
@@ -79,7 +79,7 @@ const Differentiator = ({
         </div>
         <div className="flex flex-col gap-2">
           <span
-            className="pl-[6px]text-xsmall14 md:text-small20 font-semibold"
+            className="pl-[6px]text-xsmall14 font-semibold md:text-small20"
             style={{ color: primaryColor }}
           >
             After
@@ -112,7 +112,7 @@ function DifferentiatorsSection({ config }: Props) {
       <SectionHeader className="mb-6 w-full text-left md:mb-[42px] md:text-center">
         차별점
       </SectionHeader>
-      <div className="text-small14 text-neutral-35 md:text-small18 mb-3 text-center">
+      <div className="text-small14 mb-3 text-center text-neutral-35 md:text-small18">
         {subtitle}
       </div>
       <MainTitle className="mb-12 flex flex-col items-center">

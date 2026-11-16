@@ -41,7 +41,7 @@ export const PlanUpgradeFailView = ({
 }: PlanUpgradeFailViewProps) => (
   <div className="mx-auto max-w-5xl px-5 py-10">
     <div className="flex min-h-52 w-full flex-col items-center justify-center gap-2 rounded-md bg-neutral-100 py-6 text-center">
-      <h1 className="text-small20 text-primary font-semibold">{title}</h1>
+      <h1 className="text-small20 font-semibold text-primary">{title}</h1>
       <p className="text-xsmall16 text-neutral-20">{message}</p>
       {notice && <p className="text-xsmall16 text-primary">{notice}</p>}
     </div>

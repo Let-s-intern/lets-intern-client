@@ -24,8 +24,8 @@ export function Empathy() {
               style={revealDelay(index, 70)}
               className={`max-w-[284px] px-4 py-3.5 text-base leading-[25px] text-[#1f222b] shadow-[0_6px_16px_rgba(5,6,30,0.25)] md:max-w-none md:px-5 md:py-[15px] md:text-[15px] ${
                 fromLeft
-                  ? 'rounded-bl-xxs self-start rounded-xl bg-white'
-                  : 'rounded-br-xxs self-end rounded-xl bg-[#eef0ff]'
+                  ? 'self-start rounded-xl rounded-bl-xxs bg-white'
+                  : 'self-end rounded-xl rounded-br-xxs bg-[#eef0ff]'
               }`}
             >
               {worry}

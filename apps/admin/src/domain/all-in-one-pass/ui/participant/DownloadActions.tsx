@@ -62,7 +62,7 @@ export default function DownloadActions({ participants, programTitle }: Props) {
         다운로드
       </ActionButton>
       {open && (
-        <ul className="rounded-xs border-neutral-80 absolute right-0 top-full z-10 mt-1 w-40 overflow-hidden border bg-white shadow-lg">
+        <ul className="absolute right-0 top-full z-10 mt-1 w-40 overflow-hidden rounded-xs border border-neutral-80 bg-white shadow-lg">
           <li className={menuItemClass} onClick={downloadCsv}>
             CSV 다운로드
           </li>

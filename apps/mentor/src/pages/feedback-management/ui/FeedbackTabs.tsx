@@ -33,7 +33,7 @@ const FeedbackTabs = ({ activeTab, onChange }: FeedbackTabsProps) => {
           >
             {tab.label}
             {isActive && (
-              <span className="bg-primary absolute bottom-0 left-0 h-[2px] w-full" />
+              <span className="absolute bottom-0 left-0 h-[2px] w-full bg-primary" />
             )}
           </button>
         );

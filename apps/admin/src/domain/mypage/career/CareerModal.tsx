@@ -183,7 +183,7 @@ export default function CareerModals({
             <button
               key={grade}
               onClick={() => onGradeComplete(grade)}
-              className={`rounded-xxs flex w-full items-center justify-between px-3 py-1.5 leading-[26px] ${
+              className={`flex w-full items-center justify-between rounded-xxs px-3 py-1.5 leading-[26px] ${
                 isSelected
                   ? 'text-primary'
                   : 'text-neutral-20 hover:bg-neutral-95'
@@ -208,7 +208,7 @@ export default function CareerModals({
             <button
               key={item.id}
               onClick={() => handleFieldSelect(item.id)}
-              className={`rounded-xxs flex w-full items-center justify-between px-3 py-1.5 leading-[26px] ${
+              className={`flex w-full items-center justify-between rounded-xxs px-3 py-1.5 leading-[26px] ${
                 isSelected
                   ? 'text-primary'
                   : 'text-neutral-20 hover:bg-neutral-95'
@@ -240,16 +240,16 @@ export default function CareerModals({
           <>
             <button
               onClick={handleBackToField}
-              className="rounded-xxs border-primary text-primary flex-1 border py-3"
+              className="flex-1 rounded-xxs border border-primary py-3 text-primary"
             >
               이전으로
             </button>
             <button
               onClick={() => onPositionsComplete(selectedPositions)}
-              className={`rounded-xxs flex-1 py-3 text-white ${
+              className={`flex-1 rounded-xxs py-3 text-white ${
                 selectedPositions.length > 0
                   ? 'bg-primary'
-                  : 'bg-neutral-70 cursor-not-allowed'
+                  : 'cursor-not-allowed bg-neutral-70'
               }`}
             >
               선택 완료
@@ -287,10 +287,10 @@ export default function CareerModals({
         footer={
           <button
             onClick={() => onIndustriesComplete(selectedIndustries)}
-            className={`rounded-xs flex-1 py-3 text-white ${
+            className={`flex-1 rounded-xs py-3 text-white ${
               selectedIndustries.length > 0
                 ? 'bg-primary'
-                : 'bg-neutral-70 cursor-not-allowed'
+                : 'cursor-not-allowed bg-neutral-70'
             }`}
           >
             선택 완료

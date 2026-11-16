@@ -40,14 +40,14 @@ function ProfileInfoRow({
 }: ProfileInfoRowProps) {
   return (
     <div className="flex h-5 flex-nowrap gap-1.5">
-      <span className="text-neutral-40 flex-shrink-0 text-sm">{label}</span>
+      <span className="flex-shrink-0 text-sm text-neutral-40">{label}</span>
       {isLoading ? (
         <div
-          className={`bg-neutral-90 h-5 animate-pulse rounded ${skeletonWidth}`}
+          className={`rounded h-5 animate-pulse bg-neutral-90 ${skeletonWidth}`}
         />
       ) : (
         <span
-          className="text-primary-dark overflow-hidden text-ellipsis whitespace-nowrap text-sm"
+          className="overflow-hidden text-ellipsis whitespace-nowrap text-sm text-primary-dark"
           title={value}
         >
           {value}
@@ -100,13 +100,13 @@ function ProfileCard({
   const router = useRouter();
 
   return (
-    <div className="border-neutral-80 flex flex-col rounded-sm border p-4">
+    <div className="flex flex-col rounded-sm border border-neutral-80 p-4">
       <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full">
         <ProfileAvatar />
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <p className="text-xsmall16 text-neutral-0 flex font-medium">
+        <p className="flex text-xsmall16 font-medium text-neutral-0">
           {userName} 님
         </p>
 
@@ -115,7 +115,7 @@ function ProfileCard({
       </div>
 
       <button
-        className="rounded-xxs border-neutral-80 text-xsmall14 text-neutral-20 mt-5 w-full border px-3 py-1.5 font-normal"
+        className="mt-5 w-full rounded-xxs border border-neutral-80 px-3 py-1.5 text-xsmall14 font-normal text-neutral-20"
         onClick={() => router.push('/mypage/career/plan')}
       >
         프로필 수정
@@ -126,13 +126,13 @@ function ProfileCard({
 
 function ProfileSkeleton() {
   return (
-    <div className="border-neutral-80 flex flex-col rounded-sm border p-4">
+    <div className="flex flex-col rounded-sm border border-neutral-80 p-4">
       <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full">
-        <div className="bg-neutral-90 h-12 w-12 animate-pulse rounded-full" />
+        <div className="h-12 w-12 animate-pulse rounded-full bg-neutral-90" />
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <div className="bg-neutral-90 h-6 w-20 animate-pulse rounded" />
+        <div className="rounded h-6 w-20 animate-pulse bg-neutral-90" />
         <ProfileInfoRow
           label="희망직무"
           value=""
@@ -147,7 +147,7 @@ function ProfileSkeleton() {
         />
       </div>
 
-      <div className="rounded-xxs bg-neutral-90 mt-5 h-9 w-full animate-pulse" />
+      <div className="mt-5 h-9 w-full animate-pulse rounded-xxs bg-neutral-90" />
     </div>
   );
 }

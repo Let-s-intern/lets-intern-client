@@ -107,7 +107,7 @@ export default function AllInOnePassEdit() {
       <div className="flex flex-col gap-2">
         <Link
           to="/all-in-one-pass"
-          className="text-xsmall14 text-neutral-40 hover:text-neutral-0 flex w-fit items-center gap-1"
+          className="flex w-fit items-center gap-1 text-xsmall14 text-neutral-40 hover:text-neutral-0"
         >
           <IoArrowBack />
           올인원패스 개설
@@ -137,7 +137,7 @@ export default function AllInOnePassEdit() {
       ) : (
         <>
           <PassForm input={input} patch={patch} view={view} />
-          <div className="border-neutral-80 sticky bottom-0 z-10 -mx-6 -mb-6 flex justify-end gap-2 border-t bg-neutral-100 px-6 py-4">
+          <div className="sticky bottom-0 z-10 -mx-6 -mb-6 flex justify-end gap-2 border-t border-neutral-80 bg-neutral-100 px-6 py-4">
             <Button
               variant="outlined"
               onClick={() => navigate('/all-in-one-pass')}

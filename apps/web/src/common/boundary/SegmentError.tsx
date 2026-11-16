@@ -39,7 +39,7 @@ export default function SegmentError({
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center gap-6 px-5 text-center">
       <div className="flex flex-col items-center gap-2">
-        <p className="text-small18 text-neutral-0 font-semibold">
+        <p className="text-small18 font-semibold text-neutral-0">
           문제가 발생했어요
         </p>
         <p className="text-xsmall14 text-neutral-40">
@@ -50,13 +50,13 @@ export default function SegmentError({
       </div>
       <div className="flex items-center gap-2">
         <button
-          className="bg-primary text-xsmall14 rounded-sm px-5 py-2.5 font-medium text-neutral-100"
+          className="rounded-sm bg-primary px-5 py-2.5 text-xsmall14 font-medium text-neutral-100"
           onClick={reset}
         >
           다시 시도
         </button>
         <Link
-          className="border-neutral-80 text-xsmall14 text-neutral-20 rounded-sm border px-5 py-2.5 font-medium"
+          className="rounded-sm border border-neutral-80 px-5 py-2.5 text-xsmall14 font-medium text-neutral-20"
           href="/"
         >
           홈으로

@@ -105,21 +105,21 @@ export default function AdminLiveMentoringPage() {
   return (
     <section className="p-5">
       <Heading className="mb-1">1:1 LIVE 멘토링 관리</Heading>
-      <p className="text-xsmall14 text-neutral-40 mb-4">
+      <p className="mb-4 text-xsmall14 text-neutral-40">
         {TAB_DESCRIPTION[activeTab]}
       </p>
 
-      <nav className="border-neutral-80 mb-4 flex gap-1 border-b">
+      <nav className="mb-4 flex gap-1 border-b border-neutral-80">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             type="button"
             onClick={() => setActiveTab(tab.id)}
             className={twMerge(
-              'text-xsmall14 -mb-px border-b-2 px-4 py-2',
+              '-mb-px border-b-2 px-4 py-2 text-xsmall14',
               activeTab === tab.id
-                ? 'border-neutral-0 text-neutral-0 font-semibold'
-                : 'text-neutral-40 border-transparent',
+                ? 'border-neutral-0 font-semibold text-neutral-0'
+                : 'border-transparent text-neutral-40',
             )}
           >
             {tab.label}
@@ -144,7 +144,7 @@ export default function AdminLiveMentoringPage() {
             <MentorReviewExposureSection key={mentorId} mentorId={mentorId} />
           </>
         ) : (
-          <p className="text-xsmall14 text-neutral-40 py-16 text-center">
+          <p className="py-16 text-center text-xsmall14 text-neutral-40">
             상품 관리 탭에서 멘토의 후기 관리 버튼을 눌러 주세요.
           </p>
         )
@@ -163,7 +163,7 @@ export default function AdminLiveMentoringPage() {
             />
           </>
         ) : (
-          <p className="text-xsmall14 text-neutral-40 py-16 text-center">
+          <p className="py-16 text-center text-xsmall14 text-neutral-40">
             상품 관리 탭에서 멘토의 상세페이지 수정 버튼을 눌러 주세요.
           </p>
         )

@@ -28,11 +28,11 @@ const UsageSection = ({
   return (
     <section className="flex flex-col gap-4 md:gap-[18px]">
       <div className="flex flex-col gap-2">
-        <h2 className="text-xsmall16 md:text-small18 font-semibold">{title}</h2>
+        <h2 className="text-xsmall16 font-semibold md:text-small18">{title}</h2>
         {note && (
-          <div className="bg-primary-5 rounded-xxs flex items-start gap-1 px-1.5 py-1.5">
-            <p className="text-neutral-35 text-[11px] md:text-[13px]">*</p>
-            <p className="text-neutral-35 text-[11px] md:text-[13px]">{note}</p>
+          <div className="flex items-start gap-1 rounded-xxs bg-primary-5 px-1.5 py-1.5">
+            <p className="text-[11px] text-neutral-35 md:text-[13px]">*</p>
+            <p className="text-[11px] text-neutral-35 md:text-[13px]">{note}</p>
           </div>
         )}
       </div>

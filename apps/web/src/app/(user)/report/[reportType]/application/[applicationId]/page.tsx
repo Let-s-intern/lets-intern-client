@@ -130,7 +130,7 @@ const ReportApplicationPageContent = () => {
 
           {/* 데스크탑 제출 버튼 */}
           <BaseButton
-            className="text-small18 hidden w-full max-w-[55rem] md:block"
+            className="hidden w-full max-w-[55rem] text-small18 md:block"
             onClick={async () => {
               const { isValid: isValidFile, message: fileValidationMessage } =
                 validateFile();
@@ -158,7 +158,7 @@ const ReportApplicationPageContent = () => {
       {/* 모바일 바텀시트 */}
       <BottomSheet className="md:hidden">
         <BaseButton
-          className="text-small18 w-full"
+          className="w-full text-small18"
           onClick={async () => {
             const { isValid: isValidFile, message: fileValidationMessage } =
               validateFile();

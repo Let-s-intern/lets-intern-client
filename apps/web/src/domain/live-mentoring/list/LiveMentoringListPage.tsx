@@ -60,11 +60,11 @@ const LiveMentoringListPage = () => {
         </div>
 
         {isError ? (
-          <p className="text-neutral-40 py-20 text-center">
+          <p className="py-20 text-center text-neutral-40">
             멘토 목록을 불러오지 못했습니다.
           </p>
         ) : isLoading ? (
-          <p className="text-neutral-40 py-20 text-center">불러오는 중…</p>
+          <p className="py-20 text-center text-neutral-40">불러오는 중…</p>
         ) : data && data.openingList.length > 0 ? (
           <>
             {/* 카드가 grid-rows-subgrid 로 행 높이를 공유하므로 래퍼 없이 직속 자식으로 둔다 */}
@@ -83,7 +83,7 @@ const LiveMentoringListPage = () => {
             )}
           </>
         ) : (
-          <p className="text-neutral-40 py-20 text-center">
+          <p className="py-20 text-center text-neutral-40">
             해당 조건의 멘토가 없습니다.
           </p>
         )}

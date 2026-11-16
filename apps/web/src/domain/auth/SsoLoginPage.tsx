@@ -61,10 +61,10 @@ const SsoLoginPage = () => {
           말한다 — 창을 연 서비스 이름은 제목이 이미 들고 있다.
         */}
         <div className="mb-8 text-center">
-          <h1 className="text-medium24 text-neutral-0 font-semibold tracking-tight">
+          <h1 className="text-medium24 font-semibold tracking-tight text-neutral-0">
             {title}
           </h1>
-          <p className="text-xsmall14 text-neutral-40 mt-2">
+          <p className="mt-2 text-xsmall14 text-neutral-40">
             렛츠커리어 계정으로 계속합니다
           </p>
         </div>
@@ -73,7 +73,7 @@ const SsoLoginPage = () => {
           // 화이트리스트에 없는 서비스다 — 다시 시도해도 결과가 같으므로 폼을 보여주지 않는다.
           <p
             role="alert"
-            className="rounded-ms text-xsmall14 bg-red-50 p-4 text-center font-medium text-red-600"
+            className="rounded-ms bg-red-50 p-4 text-center text-xsmall14 font-medium text-red-600"
           >
             {errorMessage}
           </p>
@@ -100,7 +100,7 @@ const SsoLoginPage = () => {
               <p
                 role="alert"
                 aria-live="polite"
-                className="text-xsmall14 min-h-5 text-center font-medium text-red-600"
+                className="min-h-5 text-center text-xsmall14 font-medium text-red-600"
               >
                 {errorMessage && !isPending ? errorMessage : ''}
               </p>
@@ -116,13 +116,13 @@ const SsoLoginPage = () => {
             {redirectUri && (
               <div className="mt-7 flex flex-col items-center">
                 <div className="mb-5 flex w-full items-center gap-3">
-                  <div className="bg-neutral-90 h-px flex-1" />
+                  <div className="h-px flex-1 bg-neutral-90" />
                   <span className="text-xxsmall12 text-neutral-45">또는</span>
-                  <div className="bg-neutral-90 h-px flex-1" />
+                  <div className="h-px flex-1 bg-neutral-90" />
                 </div>
                 <div className="flex gap-4">
                   <a
-                    className="shadow-02 hover:shadow-03 flex h-12 w-12 items-center justify-center rounded-full bg-[#FEE500] transition-transform hover:scale-105"
+                    className="flex h-12 w-12 items-center justify-center rounded-full bg-[#FEE500] shadow-02 transition-transform hover:scale-105 hover:shadow-03"
                     href={buildSocialLoginHref('kakao', redirectUri)}
                     rel="noopener noreferrer"
                   >
@@ -133,7 +133,7 @@ const SsoLoginPage = () => {
                     />
                   </a>
                   <a
-                    className="shadow-02 hover:shadow-03 flex h-12 w-12 items-center justify-center rounded-full bg-[#2db400] transition-transform hover:scale-105"
+                    className="flex h-12 w-12 items-center justify-center rounded-full bg-[#2db400] shadow-02 transition-transform hover:scale-105 hover:shadow-03"
                     href={buildSocialLoginHref('naver', redirectUri)}
                     rel="noopener noreferrer"
                   >

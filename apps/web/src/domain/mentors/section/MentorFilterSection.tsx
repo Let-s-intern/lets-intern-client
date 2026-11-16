@@ -44,7 +44,7 @@ const MentorFilterSection = ({
     return (
       <section
         className={twMerge(
-          'bg-static-100 sticky z-20 min-h-10 w-full md:static md:mt-[54px] md:min-h-20',
+          'sticky z-20 min-h-10 w-full bg-static-100 md:static md:mt-[54px] md:min-h-20',
           FULL_NAVBAR_HEIGHT_OFFSET,
         )}
       />
@@ -54,7 +54,7 @@ const MentorFilterSection = ({
   return (
     <section
       className={twMerge(
-        'bg-static-100 sticky z-20 flex w-full flex-col gap-5 py-4 md:static md:mt-12 md:gap-10 md:py-0',
+        'sticky z-20 flex w-full flex-col gap-5 bg-static-100 py-4 md:static md:mt-12 md:gap-10 md:py-0',
         FULL_NAVBAR_HEIGHT_OFFSET,
       )}
     >
@@ -63,7 +63,7 @@ const MentorFilterSection = ({
           key={group.type}
           className="flex flex-row items-center gap-5 md:flex-col md:items-start"
         >
-          <h2 className="text-xsmall14 md:text-small18 text-neutral-0 shrink-0 whitespace-nowrap font-semibold">
+          <h2 className="shrink-0 whitespace-nowrap text-xsmall14 font-semibold text-neutral-0 md:text-small18">
             {group.label}
           </h2>
           <div className="min-w-0 flex-1">

@@ -12,12 +12,12 @@ const COMPLETE_LINES = [
 export default function StepComplete({ onReset }: { onReset: () => void }) {
   return (
     <div className="flex w-full flex-1 flex-col items-start gap-5 text-center md:gap-6">
-      <h2 className="text-medium24 text-neutral-0 font-bold">
+      <h2 className="text-medium24 font-bold text-neutral-0">
         합격 소식이 제출 되었어요!
       </h2>
       <div className="flex w-full flex-1 flex-col justify-between gap-6 md:gap-5">
         {/* 모바일에서만 한 줄씩 순차 페이드인 · 데스크톱은 바로 노출 */}
-        <p className="text-neutral-20 text-xsmall16 flex flex-col gap-2.5 text-left tracking-tight md:gap-1">
+        <p className="flex flex-col gap-2.5 text-left text-xsmall16 tracking-tight text-neutral-20 md:gap-1">
           {COMPLETE_LINES.map((line, i) => (
             <span
               key={i}

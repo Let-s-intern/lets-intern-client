@@ -32,7 +32,7 @@ const MagnetApplicationMonthlyChart = ({
   const totalCount = counts.reduce((sum, count) => sum + count, 0);
 
   return (
-    <div className="flex h-full flex-col rounded border border-gray-200 p-3">
+    <div className="rounded flex h-full flex-col border border-gray-200 p-3">
       <p className="mb-2 text-sm text-gray-700">
         {`월별 신청자 수 (총 ${totalCount}건, ${series.length}개월)`}
       </p>

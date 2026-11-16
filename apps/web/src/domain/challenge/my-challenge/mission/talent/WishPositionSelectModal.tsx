@@ -44,16 +44,16 @@ export default function WishPositionSelectModal({
         <>
           <button
             onClick={onBackToField}
-            className="rounded-xxs border-primary text-primary flex-1 border py-3"
+            className="flex-1 rounded-xxs border border-primary py-3 text-primary"
           >
             이전으로
           </button>
           <button
             onClick={onClose}
-            className={`rounded-xxs flex-1 py-3 text-white ${
+            className={`flex-1 rounded-xxs py-3 text-white ${
               selectedPositions.length > 0
                 ? 'bg-primary'
-                : 'bg-neutral-70 cursor-not-allowed'
+                : 'cursor-not-allowed bg-neutral-70'
             }`}
           >
             선택 완료

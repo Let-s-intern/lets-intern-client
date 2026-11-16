@@ -192,7 +192,7 @@ function ChallengeCheckList({
             className="flex w-full flex-col gap-6 md:items-center md:gap-10"
           >
             <Box
-              className="text-small18 md:text-medium24 relative flex w-full max-w-[860px] flex-col py-6 font-bold md:flex-row md:justify-center md:gap-1 md:p-10"
+              className="relative flex w-full max-w-[860px] flex-col py-6 text-small18 font-bold md:flex-row md:justify-center md:gap-1 md:p-10 md:text-medium24"
               style={styles.boxStyle}
             >
               <Badge style={styles.badgeStyle}>Check {index + 1}</Badge>
@@ -214,7 +214,7 @@ function ChallengeCheckList({
                   {group.map((ele) => (
                     <span
                       key={ele}
-                      className="text-xsmall14 text-neutral-35 xs:text-xsmall16 md:text-small20 shrink-0 font-semibold"
+                      className="shrink-0 text-xsmall14 font-semibold text-neutral-35 xs:text-xsmall16 md:text-small20"
                     >
                       {ele}
                     </span>
@@ -228,7 +228,7 @@ function ChallengeCheckList({
             >
               {item.solution.map((ele) => (
                 <span
-                  className="text-xsmall16 md:text-medium24 shrink-0 text-center font-semibold"
+                  className="shrink-0 text-center text-xsmall16 font-semibold md:text-medium24"
                   key={ele}
                 >
                   {ele}

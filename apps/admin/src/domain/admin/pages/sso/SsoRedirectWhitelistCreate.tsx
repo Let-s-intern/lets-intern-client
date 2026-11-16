@@ -96,7 +96,7 @@ const SsoRedirectWhitelistCreate = () => {
           placeholder="https://vod.letscareer.co.kr/auth/callback"
           onChange={(e) => setAllowedRedirectUri(e.target.value)}
         />
-        <span className="text-neutral-40 text-xs">
+        <span className="text-xs text-neutral-40">
           SSO 로그인 후 이동할 콜백 주소를 전체 주소로 입력합니다.
         </span>
       </div>

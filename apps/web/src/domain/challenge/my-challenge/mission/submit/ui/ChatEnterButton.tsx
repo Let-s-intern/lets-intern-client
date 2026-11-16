@@ -58,7 +58,7 @@ const ChatEnterButton = ({
         type="button"
         onClick={handleClick}
         className={twMerge(
-          'rounded-xxs border-neutral-80 text-xxsmall12 text-neutral-0 mt-2 inline-flex items-center gap-1 border bg-white px-3 py-1.5 font-medium',
+          'mt-2 inline-flex items-center gap-1 rounded-xxs border border-neutral-80 bg-white px-3 py-1.5 text-xxsmall12 font-medium text-neutral-0',
           className,
         )}
       >
@@ -92,14 +92,14 @@ const ChatEnterButton = ({
               <br />
               코드를 복사한 뒤 입장하기를 눌러주세요.
             </p>
-            <div className="rounded-xs bg-neutral-95 flex items-center justify-between gap-2 px-3 py-2.5">
-              <span className="text-xsmall16 text-neutral-0 break-all font-semibold">
+            <div className="flex items-center justify-between gap-2 rounded-xs bg-neutral-95 px-3 py-2.5">
+              <span className="break-all text-xsmall16 font-semibold text-neutral-0">
                 {password}
               </span>
               <button
                 type="button"
                 onClick={handleCopy}
-                className="rounded-xxs border-primary text-primary text-xsmall14 shrink-0 border bg-white px-2.5 py-1 font-normal"
+                className="shrink-0 rounded-xxs border border-primary bg-white px-2.5 py-1 text-xsmall14 font-normal text-primary"
               >
                 {copied ? '복사됨' : '복사'}
               </button>

@@ -8,7 +8,7 @@
  */
 const ReservationHistoryPanel = () => {
   return (
-    <div className="text-xxsmall12 text-neutral-40 py-4 text-center">
+    <div className="py-4 text-center text-xxsmall12 text-neutral-40">
       예약을 옮긴 내역이 없습니다.
     </div>
   );

@@ -94,13 +94,13 @@ const MissionRow = ({
     <div className="flex flex-col gap-3 rounded-lg border border-gray-200 p-3 transition-colors hover:bg-gray-50 md:flex-row md:items-center md:justify-between md:p-4">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <span className="bg-primary-10 text-primary-dark shrink-0 rounded-lg px-2.5 py-1 text-xs font-medium">
+          <span className="shrink-0 rounded-lg bg-primary-10 px-2.5 py-1 text-xs font-medium text-primary-dark">
             {mission.th}회차
           </span>
           <div className="flex flex-col gap-0.5">
             {mission.challengeOptionTitle ? (
               <span
-                className={`w-fit rounded px-1.5 py-0.5 text-[11px] font-medium ${
+                className={`rounded w-fit px-1.5 py-0.5 text-[11px] font-medium ${
                   isLive
                     ? 'bg-red-50 text-red-500'
                     : 'bg-neutral-100 text-neutral-500'
@@ -166,7 +166,7 @@ const MissionRow = ({
           className={`min-h-[44px] w-full rounded-lg px-4 py-2 text-sm font-medium transition-colors md:min-h-0 md:w-auto ${
             disabled
               ? 'cursor-not-allowed bg-gray-100 text-gray-400'
-              : 'bg-primary hover:bg-primary-hover text-white'
+              : 'bg-primary text-white hover:bg-primary-hover'
           }`}
         >
           {disabled ? '예약 없음' : '피드백 작성'}

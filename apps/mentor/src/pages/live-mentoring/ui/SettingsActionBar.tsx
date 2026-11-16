@@ -69,7 +69,7 @@ const SettingsActionBar = ({
             type="button"
             onClick={onNext}
             disabled={nextDisabled}
-            className={`${stepButton} bg-primary hover:bg-primary-hover text-white`}
+            className={`${stepButton} bg-primary text-white hover:bg-primary-hover`}
           >
             다음으로
           </button>
@@ -78,7 +78,7 @@ const SettingsActionBar = ({
             type="button"
             onClick={publish.onClick}
             disabled={publish.disabled}
-            className={`${stepButton} bg-primary hover:bg-primary-hover text-white`}
+            className={`${stepButton} bg-primary text-white hover:bg-primary-hover`}
           >
             {publish.label}
           </button>

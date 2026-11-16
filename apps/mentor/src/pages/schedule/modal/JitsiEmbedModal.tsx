@@ -197,7 +197,7 @@ const FloatingPanel = ({
 }) => (
   <div
     className={twMerge(
-      'rounded-xxl flex flex-col overflow-hidden border border-neutral-200 bg-white shadow-2xl',
+      'flex flex-col overflow-hidden rounded-xxl border border-neutral-200 bg-white shadow-2xl',
       className,
     )}
   >
@@ -349,7 +349,7 @@ const JitsiEmbedModal = ({
       // 뒷배경 딤 + 블러(frosted). 이 모달에만 적용(opt-in prop). web과 동일.
       overlayClassName="bg-black/50 backdrop-blur-sm"
       // 크기·위치 web LiveFeedbackModal과 동일: 모바일 96dvh×98vw, 데스크탑 4:3·96vh·위쪽정렬.
-      className="rounded-xxl relative z-10 h-[96dvh] max-h-[96dvh] w-[98vw] overflow-hidden bg-black md:mt-3 md:aspect-[4/3] md:h-[96vh] md:max-h-[1080px] md:w-auto md:max-w-[96vw] md:self-start"
+      className="relative z-10 h-[96dvh] max-h-[96dvh] w-[98vw] overflow-hidden rounded-xxl bg-black md:mt-3 md:aspect-[4/3] md:h-[96vh] md:max-h-[1080px] md:w-auto md:max-w-[96vw] md:self-start"
     >
       <div className="relative h-full w-full">
         {/* 모달 자체가 4:3(웹캠 480p 기본 비율) → 화상이 박스를 꽉 채워 확대/크롭 없이 보인다.

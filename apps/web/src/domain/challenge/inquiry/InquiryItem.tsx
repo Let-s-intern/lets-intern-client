@@ -41,7 +41,7 @@ const InquiryItem = ({
   const showAsCompleted = isCompleted && item.isVisible;
 
   return (
-    <li className="border-neutral-90 border-b last:border-b-0">
+    <li className="border-b border-neutral-90 last:border-b-0">
       {/* 수정 폼 — isEditing일 때 fade-in */}
       <div
         className={`transition-all duration-300 ${
@@ -72,7 +72,7 @@ const InquiryItem = ({
         }`}
       >
         <span
-          className={`text-md shrink-0 rounded px-2 py-0.5 font-medium ${
+          className={`text-md rounded shrink-0 px-2 py-0.5 font-medium ${
             showAsCompleted
               ? 'bg-primary-5 text-primary'
               : 'bg-neutral-90 text-neutral-40'
@@ -85,7 +85,7 @@ const InquiryItem = ({
           {item.title}
         </span>
 
-        <div className="text-xsmall16 text-neutral-40 flex shrink-0 items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2 text-xsmall16 text-neutral-40">
           {showAsCompleted ? (
             <button
               className="flex items-center gap-0.5"
@@ -145,21 +145,21 @@ const InquiryItem = ({
         }`}
       >
         <div className="overflow-hidden">
-          <div className="rounded-xxs border-neutral-90 mb-5 flex flex-col gap-3 border p-4">
+          <div className="mb-5 flex flex-col gap-3 rounded-xxs border border-neutral-90 p-4">
             <div>
-              <p className="text-xsmall14 text-neutral-30 mb-1 font-medium">
+              <p className="mb-1 text-xsmall14 font-medium text-neutral-30">
                 질문 내용
               </p>
-              <div className="rounded-xxs bg-neutral-95 text-neutral-30 whitespace-pre-wrap px-4 py-3 text-sm">
+              <div className="whitespace-pre-wrap rounded-xxs bg-neutral-95 px-4 py-3 text-sm text-neutral-30">
                 {item.content}
               </div>
             </div>
             {item.isVisible && item.answer && (
               <div>
-                <p className="text-xsmall14 text-neutral-30 mb-1 font-medium">
+                <p className="mb-1 text-xsmall14 font-medium text-neutral-30">
                   질문 답변
                 </p>
-                <div className="rounded-xxs bg-primary-5 text-neutral-30 px-4 py-3 text-sm">
+                <div className="rounded-xxs bg-primary-5 px-4 py-3 text-sm text-neutral-30">
                   <AnswerContent answer={item.answer} />
                 </div>
               </div>

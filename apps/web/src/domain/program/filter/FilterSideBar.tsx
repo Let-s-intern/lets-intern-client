@@ -42,7 +42,7 @@ const AccordionSection = ({
         onClick={() => setIsOpen(!isOpen)}
         className="flex w-full items-center justify-between py-1.5 lg:hidden"
       >
-        <h2 className="text-xsmall16 text-neutral-0 font-semibold">{title}</h2>
+        <h2 className="text-xsmall16 font-semibold text-neutral-0">{title}</h2>
         <img
           className={clsx('transform-gpu transition-transform duration-300', {
             'scale-y-[-1]': isOpen,
@@ -51,7 +51,7 @@ const AccordionSection = ({
           alt="필터"
         />
       </button>
-      <h2 className="text-1-semibold text-neutral-0 hidden py-2 lg:block">
+      <h2 className="text-1-semibold hidden py-2 text-neutral-0 lg:block">
         {title}
       </h2>
       {/* 모바일: 아코디언 애니메이션 */}
@@ -166,7 +166,7 @@ const FilterSideBar = ({
         {sections.map((section, index) => (
           <React.Fragment key={section.title}>
             <section>
-              <h2 className="text-1-semibold text-neutral-0 mb-5">
+              <h2 className="text-1-semibold mb-5 text-neutral-0">
                 {section.title}
               </h2>
               <div className="flex flex-col gap-3">
@@ -189,13 +189,13 @@ const FilterSideBar = ({
       {/* 모바일: 바텀시트 */}
       <div
         className={clsx(
-          'bg-static-100 fixed inset-x-0 bottom-0 z-50 flex max-h-[62vh] flex-col rounded-t-xl transition-transform duration-300 ease-in-out lg:hidden',
+          'fixed inset-x-0 bottom-0 z-50 flex max-h-[62vh] flex-col rounded-t-xl bg-static-100 transition-transform duration-300 ease-in-out lg:hidden',
           isOpen ? 'translate-y-0' : 'translate-y-full',
         )}
       >
         {/* 바텀시트 헤더 */}
         <div className="flex shrink-0 items-center justify-between py-4 pl-5 pr-4">
-          <h2 className="text-small18 text-neutral-0 font-semibold">필터</h2>
+          <h2 className="text-small18 font-semibold text-neutral-0">필터</h2>
           <button onClick={() => setIsOpen(false)}>
             <img src="/icons/filter-close.svg" alt="닫기" />
           </button>
@@ -227,7 +227,7 @@ const FilterSideBar = ({
         <div className="flex shrink-0 gap-2 px-5 py-4">
           <button
             onClick={onReset}
-            className="rounded-xs border-neutral-80 text-xsmall16 text-primary flex-1 border p-3 font-medium"
+            className="flex-1 rounded-xs border border-neutral-80 p-3 text-xsmall16 font-medium text-primary"
           >
             초기화
           </button>
@@ -236,7 +236,7 @@ const FilterSideBar = ({
               onApply?.();
               setIsOpen(false);
             }}
-            className="rounded-xs bg-primary text-xsmall16 text-static-100 flex-1 py-3 font-medium"
+            className="flex-1 rounded-xs bg-primary py-3 text-xsmall16 font-medium text-static-100"
           >
             적용하기
           </button>

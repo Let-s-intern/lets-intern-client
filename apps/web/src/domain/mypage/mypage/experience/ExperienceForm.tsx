@@ -454,14 +454,14 @@ export const ExperienceForm = ({
         {/* 스크롤 가능한 메인 컨텐츠 */}
         <div className="flex-1 overflow-y-auto px-7 pb-[60px]">
           {/* 가이드 텍스트 */}
-          <div className="bg-primary-5 mb-6 rounded-sm px-4 py-3">
-            <p className="text-xsmall14 text-neutral-30 font-normal leading-[1.375rem]">
+          <div className="mb-6 rounded-sm bg-primary-5 px-4 py-3">
+            <p className="text-xsmall14 font-normal leading-[1.375rem] text-neutral-30">
               활동이 다양할 수록 좋겠지만, 활동 내용 보다는 구체적인
               에피소드(직면한 문제, 내 역할, 역량, 배운점 등)을 중심으로 STAR
               양식을 정리해 주세요. 즉, 하나의 활동에도 여러 STAR 양식이 나올 수
               있습니다.
             </p>
-            <span className="text-primary-dark mt-1 flex items-center gap-1 text-sm underline">
+            <span className="mt-1 flex items-center gap-1 text-sm text-primary-dark underline">
               <a
                 href="https://letsintern.notion.site/28f5e77cbee180e6b9eff73282349c88"
                 target="_blank"
@@ -476,11 +476,11 @@ export const ExperienceForm = ({
           <form
             id="experienceForm"
             onSubmit={handleSubmit(onSubmit)}
-            className="divide-neutral-85 flex flex-col gap-8 divide-y"
+            className="flex flex-col gap-8 divide-y divide-neutral-85"
           >
             {/* 기본 정보 섹션 */}
             <div className="flex flex-col gap-5">
-              <h2 className="text-small16 text-neutral-0 font-semibold">
+              <h2 className="text-small16 font-semibold text-neutral-0">
                 기본 정보
               </h2>
 
@@ -500,7 +500,7 @@ export const ExperienceForm = ({
                     {...registerWithAutoSave('title')}
                   />
                   {errors.title && (
-                    <p className="text-xxsmall12 mt-1 text-red-500">
+                    <p className="mt-1 text-xxsmall12 text-red-500">
                       {errors.title.message}
                     </p>
                   )}
@@ -509,19 +509,19 @@ export const ExperienceForm = ({
                 <div className="flex flex-col">
                   <label
                     htmlFor="experienceCategory"
-                    className="text-xsmall14 text-neutral-20 md:text-xsmall16 mb-[6px] flex items-center gap-1.5 font-medium"
+                    className="mb-[6px] flex items-center gap-1.5 text-xsmall14 font-medium text-neutral-20 md:text-xsmall16"
                   >
                     <span>
                       {EXPERIENCE_FORM_TEXT['experienceCategory'].label}
                     </span>
-                    <Asterisk className="text-primary pb-1" size={16} />
+                    <Asterisk className="pb-1 text-primary" size={16} />
                   </label>
                   {/* TODO: SelectButton 컴포넌트 적용 */}
                   <button
                     id="experienceCategory"
                     type="button"
                     onClick={() => setIsCategoryModalOpen(true)}
-                    className="rounded-xs border-neutral-80 text-xsmall14 focus:border-primary md:text-xsmall16 flex items-center justify-between border border-solid px-3 py-[9px] font-normal focus:outline-none"
+                    className="flex items-center justify-between rounded-xs border border-solid border-neutral-80 px-3 py-[9px] text-xsmall14 font-normal focus:border-primary focus:outline-none md:text-xsmall16"
                   >
                     <span
                       className={
@@ -549,7 +549,7 @@ export const ExperienceForm = ({
                         className="block w-full"
                       />
                       {errors.customCategoryName && (
-                        <p className="text-xxsmall12 mt-1 text-red-500">
+                        <p className="mt-1 text-xxsmall12 text-red-500">
                           {errors.customCategoryName.message}
                         </p>
                       )}
@@ -572,7 +572,7 @@ export const ExperienceForm = ({
                     {...registerWithAutoSave('organ')}
                   />
                   {errors.organ && (
-                    <p className="text-xxsmall12 mt-1 text-red-500">
+                    <p className="mt-1 text-xxsmall12 text-red-500">
                       {errors.organ.message}
                     </p>
                   )}
@@ -593,7 +593,7 @@ export const ExperienceForm = ({
                     {...registerWithAutoSave('role')}
                   />
                   {errors.role && (
-                    <p className="text-xxsmall12 mt-1 text-red-500">
+                    <p className="mt-1 text-xxsmall12 text-red-500">
                       {errors.role.message}
                     </p>
                   )}
@@ -601,9 +601,9 @@ export const ExperienceForm = ({
 
                 {/* 팀·개인 여부 */}
                 <fieldset className="relative flex flex-col border-0 p-0">
-                  <legend className="text-xsmall14 text-neutral-20 md:text-xsmall16 mb-[6px] flex items-center font-medium">
+                  <legend className="mb-[6px] flex items-center text-xsmall14 font-medium text-neutral-20 md:text-xsmall16">
                     <span>팀·개인 여부</span>
-                    <Asterisk className="text-primary pb-1" size={16} />
+                    <Asterisk className="pb-1 text-primary" size={16} />
                   </legend>
                   <div className="flex gap-4" role="radiogroup">
                     <label
@@ -617,7 +617,7 @@ export const ExperienceForm = ({
                         {...registerWithAutoSave('activityType')}
                         aria-invalid={!!errors.activityType}
                       />
-                      <span className="text-xsmall14 text-neutral-0 md:text-xsmall16 font-normal">
+                      <span className="text-xsmall14 font-normal text-neutral-0 md:text-xsmall16">
                         개인
                       </span>
                     </label>
@@ -632,13 +632,13 @@ export const ExperienceForm = ({
                         {...registerWithAutoSave('activityType')}
                         aria-invalid={!!errors.activityType}
                       />
-                      <span className="text-xsmall14 text-neutral-0 md:text-xsmall16 font-normal">
+                      <span className="text-xsmall14 font-normal text-neutral-0 md:text-xsmall16">
                         팀
                       </span>
                     </label>
                   </div>
                   {errors.activityType && (
-                    <p className="text-xxsmall12 mt-1 text-red-500">
+                    <p className="mt-1 text-xxsmall12 text-red-500">
                       {errors.activityType.message}
                     </p>
                   )}
@@ -658,7 +658,7 @@ export const ExperienceForm = ({
                       <button
                         type="button"
                         onClick={() => setPeriodMode('start')}
-                        className="rounded-xs border-neutral-80 text-xsmall14 focus:border-primary md:text-xsmall16 flex w-full items-center justify-between border border-solid px-3 py-[10px] text-left font-normal focus:outline-none"
+                        className="flex w-full items-center justify-between rounded-xs border border-solid border-neutral-80 px-3 py-[10px] text-left text-xsmall14 font-normal focus:border-primary focus:outline-none md:text-xsmall16"
                       >
                         <span
                           className={
@@ -673,7 +673,7 @@ export const ExperienceForm = ({
                         <ChevronRight size={20} className="text-neutral-400" />
                       </button>
                     </div>
-                    <span className="text-xsmall14 md:text-xsmall16 w-2 text-neutral-400">
+                    <span className="w-2 text-xsmall14 text-neutral-400 md:text-xsmall16">
                       -
                     </span>
                     <div className="relative flex-1">
@@ -688,7 +688,7 @@ export const ExperienceForm = ({
                             setPeriodMode('end');
                           }
                         }}
-                        className="rounded-xs border-neutral-80 text-xsmall14 focus:border-primary md:text-xsmall16 flex w-full items-center justify-between border border-solid px-3 py-[10px] text-left font-normal focus:outline-none"
+                        className="flex w-full items-center justify-between rounded-xs border border-solid border-neutral-80 px-3 py-[10px] text-left text-xsmall14 font-normal focus:border-primary focus:outline-none md:text-xsmall16"
                       >
                         <span
                           className={
@@ -705,7 +705,7 @@ export const ExperienceForm = ({
                     </div>
                   </div>
                   {(errors.endDate || errors.startDate) && (
-                    <p className="text-xxsmall12 mt-1 text-red-500">
+                    <p className="mt-1 text-xxsmall12 text-red-500">
                       {errors.startDate?.message ?? errors.endDate?.message}
                     </p>
                   )}
@@ -729,7 +729,7 @@ export const ExperienceForm = ({
                     }
                     placeholder={EXPERIENCE_FORM_TEXT['year'].placeholder}
                     readOnly
-                    className="rounded-xs border-neutral-80 text-xsmall14 text-neutral-0 focus:border-primary disabled:bg-neutral-95 md:text-xsmall16 border border-solid px-3 py-[10px] font-normal placeholder:text-neutral-50 focus:outline-none disabled:text-neutral-50"
+                    className="rounded-xs border border-solid border-neutral-80 px-3 py-[10px] text-xsmall14 font-normal text-neutral-0 placeholder:text-neutral-50 focus:border-primary focus:outline-none disabled:bg-neutral-95 disabled:text-neutral-50 md:text-xsmall16"
                   />
                 </FieldSection.Root>
               </div>
@@ -737,7 +737,7 @@ export const ExperienceForm = ({
 
             {/* ============================== 경험 상세 작성 섹션 ============================= */}
             <div className="flex flex-col gap-5 pt-8">
-              <h2 className="text-small16 text-neutral-0 font-semibold">
+              <h2 className="text-small16 font-semibold text-neutral-0">
                 경험 상세 작성
               </h2>
 
@@ -775,7 +775,7 @@ export const ExperienceForm = ({
 
             {/* ============================== 핵심 역량 섹션 ============================= */}
             <div className="flex flex-col gap-5 pt-8">
-              <h2 className="text-small16 text-neutral-0 font-semibold">
+              <h2 className="text-small16 font-semibold text-neutral-0">
                 핵심 역량
               </h2>
 
@@ -815,12 +815,12 @@ export const ExperienceForm = ({
         </div>
 
         {/* 푸터 */}
-        <footer className="border-neutral-85 flex h-[100px] flex-col items-center gap-1 border-t px-5 py-4 md:h-[64px] md:flex-row md:justify-end md:gap-4 md:border-t-0 md:py-3">
+        <footer className="flex h-[100px] flex-col items-center gap-1 border-t border-neutral-85 px-5 py-4 md:h-[64px] md:flex-row md:justify-end md:gap-4 md:border-t-0 md:py-3">
           {/* 자동 저장 시간 표시 */}
           {!isAdminMode && (
             <div
               aria-live="polite"
-              className="text-xxsmall12 md:text-xsmall14 h-4 text-neutral-50 md:h-[22px] md:leading-[1.375rem]"
+              className="h-4 text-xxsmall12 text-neutral-50 md:h-[22px] md:text-xsmall14 md:leading-[1.375rem]"
             >
               {lastAutoSaveTime &&
                 `자동 저장 완료 ${lastAutoSaveTime.getMonth() + 1}.${lastAutoSaveTime.getDate()} ${String(lastAutoSaveTime.getHours()).padStart(2, '0')}:${String(lastAutoSaveTime.getMinutes()).padStart(2, '0')}`}
@@ -829,7 +829,7 @@ export const ExperienceForm = ({
           <button
             type="submit"
             form="experienceForm"
-            className="bg-primary text-xsmall16 hover:bg-primary-hover disabled:bg-neutral-70 w-full rounded-sm px-3 py-3 font-medium text-white disabled:text-white md:w-[80px] md:py-2"
+            className="w-full rounded-sm bg-primary px-3 py-3 text-xsmall16 font-medium text-white hover:bg-primary-hover disabled:bg-neutral-70 disabled:text-white md:w-[80px] md:py-2"
             disabled={!isValid || isManualSavingRef.current}
           >
             저장

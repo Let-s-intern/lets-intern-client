@@ -17,7 +17,7 @@ const TrendItem = ({
   <div>
     <div className="mb-8 md:mb-20 md:flex md:items-center md:justify-between">
       <div className="md:flex md:gap-3">
-        <CircularBox className="bg-primary text-xsmall14 md:text-small20 mb-2 h-5 w-5 shrink-0 font-semibold md:mt-0.5 md:h-8 md:w-8">
+        <CircularBox className="mb-2 h-5 w-5 shrink-0 bg-primary text-xsmall14 font-semibold md:mt-0.5 md:h-8 md:w-8 md:text-small20">
           {number}
         </CircularBox>
         <div>
@@ -32,7 +32,7 @@ const TrendItem = ({
 
 function Title({ children }: { children?: ReactNode }) {
   return (
-    <span className="text-small18 text-neutral-0 md:text-medium22 font-semibold md:font-bold">
+    <span className="text-small18 font-semibold text-neutral-0 md:text-medium22 md:font-bold">
       {children}
     </span>
   );
@@ -40,7 +40,7 @@ function Title({ children }: { children?: ReactNode }) {
 
 function Paragraph({ children }: { children?: ReactNode }) {
   return (
-    <p className="text-xsmall14 text-neutral-45 md:text-small18 mb-5 mt-2.5">
+    <p className="mb-5 mt-2.5 text-xsmall14 text-neutral-45 md:text-small18">
       {children}
     </p>
   );

@@ -42,7 +42,7 @@ const MissionTitleContainer = ({
   return (
     <div
       className={twMerge(
-        'rounded-xxs bg-primary-5 flex items-center gap-2 px-3 py-3',
+        'flex items-center gap-2 rounded-xxs bg-primary-5 px-3 py-3',
         className,
       )}
     >
@@ -51,7 +51,7 @@ const MissionTitleContainer = ({
         alt="status icon"
         className="h-6 w-6"
       />
-      <span className="text-xsmall16 text-primary flex-1 font-semibold">
+      <span className="flex-1 text-xsmall16 font-semibold text-primary">
         {children}
       </span>
       {isFixed && (

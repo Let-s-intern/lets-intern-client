@@ -60,7 +60,7 @@ const MenteeSubmissionModal = ({
 
   return (
     <div
-      className="bg-neutral-0/50 fixed inset-0 z-[100] flex items-end justify-center md:items-center md:p-5"
+      className="fixed inset-0 z-[100] flex items-end justify-center bg-neutral-0/50 md:items-center md:p-5"
       onClick={onClose}
     >
       <div
@@ -68,12 +68,12 @@ const MenteeSubmissionModal = ({
         aria-modal="true"
         aria-labelledby="live-mentoring-submission-title"
         onClick={(event) => event.stopPropagation()}
-        className="bg-static-100 flex max-h-[90dvh] w-full flex-col gap-5 overflow-y-auto rounded-t-xl px-5 py-6 md:max-w-[720px] md:rounded-xl md:px-8"
+        className="flex max-h-[90dvh] w-full flex-col gap-5 overflow-y-auto rounded-t-xl bg-static-100 px-5 py-6 md:max-w-[720px] md:rounded-xl md:px-8"
       >
         <div className="flex items-start justify-between gap-3">
           <h2
             id="live-mentoring-submission-title"
-            className="text-small18 md:text-small20 text-neutral-0 font-bold"
+            className="text-small18 font-bold text-neutral-0 md:text-small20"
           >
             {isOwnSubmission
               ? '내 제출물'
@@ -85,29 +85,29 @@ const MenteeSubmissionModal = ({
             type="button"
             onClick={onClose}
             aria-label="모달 닫기"
-            className="text-neutral-40 shrink-0 text-xl leading-none"
+            className="shrink-0 text-xl leading-none text-neutral-40"
           >
             ×
           </button>
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <span className="text-xsmall14 text-neutral-0 font-medium">
+          <span className="text-xsmall14 font-medium text-neutral-0">
             멘토링 질문
           </span>
           {question ? (
-            <p className="bg-neutral-95 text-xsmall14 text-neutral-0 whitespace-pre-wrap rounded-sm px-4 py-3">
+            <p className="whitespace-pre-wrap rounded-sm bg-neutral-95 px-4 py-3 text-xsmall14 text-neutral-0">
               {question}
             </p>
           ) : (
-            <p className="bg-neutral-95 text-xsmall14 text-neutral-45 rounded-sm px-4 py-3">
+            <p className="rounded-sm bg-neutral-95 px-4 py-3 text-xsmall14 text-neutral-45">
               작성된 질문이 없습니다.
             </p>
           )}
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <span className="text-xsmall14 text-neutral-0 font-medium">
+          <span className="text-xsmall14 font-medium text-neutral-0">
             전달 파일
           </span>
           {/*
@@ -131,7 +131,7 @@ const MenteeSubmissionModal = ({
               {...(attachmentType === 'FILE'
                 ? {}
                 : { target: '_blank', rel: 'noreferrer' })}
-              className="text-xsmall14 text-primary font-medium underline"
+              className="text-xsmall14 font-medium text-primary underline"
             >
               {attachmentType === 'URL' ? '첨부 링크 열기' : '첨부 파일 저장'}
             </a>
@@ -158,7 +158,7 @@ const MenteeSubmissionModal = ({
         <button
           type="button"
           onClick={onClose}
-          className="text-small16 bg-primary text-static-100 min-h-[52px] w-full rounded-md font-semibold"
+          className="text-small16 min-h-[52px] w-full rounded-md bg-primary font-semibold text-static-100"
         >
           확인
         </button>

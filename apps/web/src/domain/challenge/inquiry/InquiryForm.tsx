@@ -24,21 +24,21 @@ const InquiryForm = ({
 
   return (
     <div
-      className={`border-neutral-90 rounded-xxs flex flex-col gap-3 border p-4 ${className}`}
+      className={`flex flex-col gap-3 rounded-xxs border border-neutral-90 p-4 ${className}`}
     >
       <label className="flex flex-col gap-1">
-        <p className="text-xsmall14 text-neutral-30 font-medium">제목</p>
+        <p className="text-xsmall14 font-medium text-neutral-30">제목</p>
         <input
-          className="border-neutral-90 rounded-xxs focus:ring-primary border px-3 py-2 text-sm focus:outline-none focus:ring-1"
+          className="rounded-xxs border border-neutral-90 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
           placeholder="문의 제목을 입력하세요"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
       </label>
       <label className="flex flex-col gap-1">
-        <p className="text-xsmall14 text-neutral-30 font-medium">내용</p>
+        <p className="text-xsmall14 font-medium text-neutral-30">내용</p>
         <textarea
-          className="border-neutral-90 rounded-xxs focus:ring-primary min-h-[120px] border px-3 py-2 text-sm focus:outline-none focus:ring-1"
+          className="min-h-[120px] rounded-xxs border border-neutral-90 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
           placeholder="문의 내용을 입력하세요"
           value={content}
           onChange={(e) => setContent(e.target.value)}
@@ -46,7 +46,7 @@ const InquiryForm = ({
       </label>
       <div className="flex gap-2">
         <button
-          className="text-primary-90 border-primary-90 rounded-xxs flex-1 border py-2 text-sm"
+          className="flex-1 rounded-xxs border border-primary-90 py-2 text-sm text-primary-90"
           onClick={() => {
             setTitle(initialTitle);
             setContent(initialContent);
@@ -56,7 +56,7 @@ const InquiryForm = ({
           취소하기
         </button>
         <button
-          className="bg-primary rounded-xxs flex-1 py-2 text-sm text-white disabled:opacity-50"
+          className="flex-1 rounded-xxs bg-primary py-2 text-sm text-white disabled:opacity-50"
           disabled={
             !title.trim() ||
             !content.trim() ||

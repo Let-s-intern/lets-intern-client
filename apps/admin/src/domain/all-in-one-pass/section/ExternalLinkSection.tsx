@@ -20,7 +20,7 @@ export default function ExternalLinkSection({ links, onChange }: Props) {
 
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-small20 text-neutral-0 font-semibold">외부 링크</h2>
+      <h2 className="text-small20 font-semibold text-neutral-0">외부 링크</h2>
 
       <div className="flex flex-col gap-2">
         {links.map((link) => (

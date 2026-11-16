@@ -59,7 +59,7 @@ const PassProgramCard = ({ item, onClick }: Props) => {
     >
       <img
         className={twMerge(
-          'bg-neutral-80 md:rounded-xs aspect-[540/421] h-auto w-full rounded-sm object-cover',
+          'aspect-[540/421] h-auto w-full rounded-sm bg-neutral-80 object-cover md:rounded-xs',
           isDone && 'opacity-80 grayscale',
         )}
         src={item.thumbnail || undefined}
@@ -68,7 +68,7 @@ const PassProgramCard = ({ item, onClick }: Props) => {
 
       <div className="flex flex-1 flex-col justify-between gap-2.5">
         <div className="flex flex-col gap-1.5">
-          <h3 className="text-xsmall14 md:text-xsmall16 text-neutral-0 line-clamp-2 font-semibold">
+          <h3 className="line-clamp-2 text-xsmall14 font-semibold text-neutral-0 md:text-xsmall16">
             {item.title}
           </h3>
         </div>
@@ -76,7 +76,7 @@ const PassProgramCard = ({ item, onClick }: Props) => {
         <div className="flex flex-col gap-2">
           {item.periodText && (
             <div className="flex items-center gap-1.5 tracking-[-0.4px]">
-              <span className="text-xxsmall12 text-neutral-0 font-normal">
+              <span className="text-xxsmall12 font-normal text-neutral-0">
                 진행기간
               </span>
               <span className="text-0.75-medium text-primary-dark">
@@ -86,12 +86,12 @@ const PassProgramCard = ({ item, onClick }: Props) => {
           )}
 
           {pill && (
-            <span className="text-xxsmall12 w-fit rounded-[3px] bg-[#F2ECFC] px-2 py-1 font-semibold text-[#8444FF]">
+            <span className="w-fit rounded-[3px] bg-[#F2ECFC] px-2 py-1 text-xxsmall12 font-semibold text-[#8444FF]">
               {pill}
             </span>
           )}
           {item.isMembershipApplied && (
-            <span className="rounded-xxs text-xxsmall12 w-fit bg-[#edeffe] px-2 py-1 font-medium text-[#4A76FF]">
+            <span className="w-fit rounded-xxs bg-[#edeffe] px-2 py-1 text-xxsmall12 font-medium text-[#4A76FF]">
               패스 혜택
             </span>
           )}

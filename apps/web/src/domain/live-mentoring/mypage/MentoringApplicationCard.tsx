@@ -84,7 +84,7 @@ const MentoringApplicationCard = ({
 
   return (
     <>
-      <div className="border-neutral-85 flex flex-col gap-4 rounded-md border p-4 md:flex-row md:gap-5">
+      <div className="flex flex-col gap-4 rounded-md border border-neutral-85 p-4 md:flex-row md:gap-5">
         {application.thumbnail ? (
           <img
             src={application.thumbnail}
@@ -95,14 +95,14 @@ const MentoringApplicationCard = ({
         ) : (
           <div
             aria-hidden="true"
-            className="bg-neutral-90 h-[120px] w-full shrink-0 rounded-sm md:h-[100px] md:w-[160px]"
+            className="h-[120px] w-full shrink-0 rounded-sm bg-neutral-90 md:h-[100px] md:w-[160px]"
           />
         )}
 
         <div className="flex flex-1 flex-col gap-2">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
             <span
-              className={`text-xxsmall12 rounded-sm px-2 py-1 font-semibold ${badge.className}`}
+              className={`rounded-sm px-2 py-1 text-xxsmall12 font-semibold ${badge.className}`}
             >
               {badge.label}
             </span>
@@ -125,7 +125,7 @@ const MentoringApplicationCard = ({
                 <button
                   type="button"
                   onClick={() => onQuestionClick(application.applicationId)}
-                  className="border-primary text-primary text-xxsmall12 rounded-sm border px-3 py-2 font-medium"
+                  className="rounded-sm border border-primary px-3 py-2 text-xxsmall12 font-medium text-primary"
                 >
                   {questionButtonLabel(application.questionWritten)}
                 </button>
@@ -138,20 +138,20 @@ const MentoringApplicationCard = ({
                 type="button"
                 disabled={application.entryLink === null}
                 onClick={() => setIsEntryOpen(true)}
-                className="border-neutral-80 text-neutral-20 text-xxsmall12 disabled:border-neutral-85 disabled:text-neutral-60 rounded-sm border px-3 py-2 font-medium disabled:cursor-default"
+                className="rounded-sm border border-neutral-80 px-3 py-2 text-xxsmall12 font-medium text-neutral-20 disabled:cursor-default disabled:border-neutral-85 disabled:text-neutral-60"
               >
                 멘토링 입장
               </button>
             </div>
           </div>
 
-          <p className="text-xsmall16 text-neutral-0 font-bold">
+          <p className="text-xsmall16 font-bold text-neutral-0">
             {application.productName ?? '1:1 LIVE 멘토링'}
           </p>
 
-          <p className="text-xxsmall12 text-neutral-40 mt-auto">
+          <p className="mt-auto text-xxsmall12 text-neutral-40">
             구매플랜{' '}
-            <span className="text-neutral-20 font-medium">
+            <span className="font-medium text-neutral-20">
               {durationLabel(
                 application.durationMinutes as LiveMentoringDuration,
               )}

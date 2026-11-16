@@ -106,7 +106,7 @@ export function AnchorTabs({ showFaq }: { showFaq: boolean }) {
     <nav
       ref={navRef}
       aria-label="렛츠콘 섹션"
-      className={`scrollbar-hide sticky z-20 flex overflow-x-auto border-y border-[#e4e4e7] bg-white transition-[top] duration-300 motion-reduce:transition-none md:justify-center md:overflow-x-visible ${
+      className={`sticky z-20 flex overflow-x-auto border-y border-[#e4e4e7] bg-white transition-[top] duration-300 scrollbar-hide motion-reduce:transition-none md:justify-center md:overflow-x-visible ${
         scrollDirection === 'DOWN'
           ? 'top-0'
           : 'top-[var(--letscon-header-height,84px)] md:top-[var(--letscon-header-height,156px)]'

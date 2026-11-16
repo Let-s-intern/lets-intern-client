@@ -58,7 +58,7 @@ export default function LandingNav({ isReady = true }: Props) {
   return (
     <nav
       className={twMerge(
-        'border-neutral-80 sticky z-20 flex w-full justify-center border-b-2 bg-white px-6 transition-all',
+        'sticky z-20 flex w-full justify-center border-b-2 border-neutral-80 bg-white px-6 transition-all',
         scrollStyleClassName,
       )}
     >
@@ -70,7 +70,7 @@ export default function LandingNav({ isReady = true }: Props) {
               key={item.to}
               type="button"
               onClick={() => handleScroll(item.to)}
-              className="md:text-xsmall16 text-xsmall14 border-b-[2.4px] px-1.5 py-4 font-semibold md:min-w-[100px]"
+              className="border-b-[2.4px] px-1.5 py-4 text-xsmall14 font-semibold md:min-w-[100px] md:text-xsmall16"
               style={{
                 borderBottomColor: active ? ACTIVE_COLOR : 'transparent',
                 color: active ? ACTIVE_COLOR : INACTIVE_COLOR,

@@ -75,7 +75,7 @@ export default function VodExposureModal({
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>
         노출 VOD 선택
-        <span className="text-xsmall14 text-neutral-40 ml-2 font-normal">
+        <span className="ml-2 text-xsmall14 font-normal text-neutral-40">
           {selectedIds.length}/{REQUIRED_COUNT} 선택 · {REQUIRED_COUNT}개 필수
           (선택하지 않으면 자동 선택되어 노출됩니다.)
         </span>
@@ -86,7 +86,7 @@ export default function VodExposureModal({
             <CircularProgress size={28} />
           </div>
         ) : vods.length === 0 ? (
-          <p className="text-neutral-40 py-16 text-center">
+          <p className="py-16 text-center text-neutral-40">
             불러온 VOD가 없습니다.
           </p>
         ) : (
@@ -117,9 +117,9 @@ export default function VodExposureModal({
                   <img
                     src={vod.thumbnailUrl}
                     alt=""
-                    className="h-14 w-24 shrink-0 rounded object-cover"
+                    className="rounded h-14 w-24 shrink-0 object-cover"
                   />
-                  <span className="text-xsmall14 text-neutral-0 line-clamp-2 flex-1 font-medium">
+                  <span className="line-clamp-2 flex-1 text-xsmall14 font-medium text-neutral-0">
                     {vod.title}
                   </span>
                 </button>

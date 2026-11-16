@@ -54,13 +54,13 @@ const CompactFeedbackCard = ({
             </clipPath>
           </defs>
         </svg>
-        <span className="text-xxsmall12 text-neutral-10 whitespace-nowrap font-medium tracking-[-0.3px]">
+        <span className="whitespace-nowrap text-xxsmall12 font-medium tracking-[-0.3px] text-neutral-10">
           [ {bar.th}회차 ]
         </span>
       </div>
 
       {/* Row 2: 시작 전 · 진행 중 · 완료 */}
-      <div className="text-xxsmall12 flex items-center gap-1 whitespace-nowrap font-medium tracking-[-0.3px]">
+      <div className="flex items-center gap-1 whitespace-nowrap text-xxsmall12 font-medium tracking-[-0.3px]">
         <span className="text-[#f64e39]">시작 전</span>
         <span className="text-[#f64e39]">{bar.waitingCount}</span>
         <span className="text-neutral-10">·</span>
@@ -73,17 +73,17 @@ const CompactFeedbackCard = ({
 
       {/* Row 3: H-line ├────┤ */}
       <div className="flex h-3 items-center">
-        <div className="bg-neutral-80 h-full w-0.5" />
-        <div className="bg-neutral-80 h-0.5 flex-1" />
-        <div className="bg-neutral-80 h-full w-0.5" />
+        <div className="h-full w-0.5 bg-neutral-80" />
+        <div className="h-0.5 flex-1 bg-neutral-80" />
+        <div className="h-full w-0.5 bg-neutral-80" />
       </div>
 
       {/* Row 4-5: card body */}
-      <div className="bg-neutral-95 flex flex-col gap-1 p-2">
-        <span className="text-xxsmall12 bg-neutral-30 shrink-0 whitespace-nowrap rounded-[3px] px-2 py-1 font-medium tracking-[-0.3px] text-white">
+      <div className="flex flex-col gap-1 bg-neutral-95 p-2">
+        <span className="shrink-0 whitespace-nowrap rounded-[3px] bg-neutral-30 px-2 py-1 text-xxsmall12 font-medium tracking-[-0.3px] text-white">
           {bar.challengeTitle}
         </span>
-        <div className="text-xxsmall12 flex items-center gap-1 whitespace-nowrap font-medium tracking-[-0.3px]">
+        <div className="flex items-center gap-1 whitespace-nowrap text-xxsmall12 font-medium tracking-[-0.3px]">
           <span className="text-neutral-40">미제출</span>
           <span className="text-neutral-40">{bar.notSubmittedCount}</span>
           <span className="text-neutral-10">·</span>

@@ -73,7 +73,7 @@ export default function CareerSection() {
   if (isLoading) {
     return (
       <section className="rounded-xl border border-gray-200 bg-white p-5 md:p-6">
-        <h2 className="text-xsmall16 md:text-small18 text-neutral-0 font-medium">
+        <h2 className="text-xsmall16 font-medium text-neutral-0 md:text-small18">
           경력사항
         </h2>
         <div className="py-4 text-sm text-gray-400">로딩 중...</div>

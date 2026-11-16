@@ -23,11 +23,11 @@ const PANEL_DESC = 'text-neutral-45 mt-1 block text-xs';
 function MockCheckbox({ done }: { done: boolean }) {
   if (!done) {
     return (
-      <span className="border-neutral-75 block h-[18px] w-[18px] shrink-0 rounded-[5px] border bg-white" />
+      <span className="block h-[18px] w-[18px] shrink-0 rounded-[5px] border border-neutral-75 bg-white" />
     );
   }
   return (
-    <span className="bg-primary flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[5px]">
+    <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[5px] bg-primary">
       <svg
         className="h-3 w-3"
         fill="none"
@@ -56,19 +56,19 @@ function PlanPanel() {
         {S.checklist.map((row) => (
           <li
             className={`flex items-center gap-3 rounded-xl px-3 py-3 md:px-4 ${
-              row.done ? 'bg-[#F7F8FC]' : 'border-neutral-85 border bg-white'
+              row.done ? 'bg-[#F7F8FC]' : 'border border-neutral-85 bg-white'
             }`}
             key={row.label}
           >
             <MockCheckbox done={row.done} />
             <span
-              className={`text-xsmall14 min-w-0 flex-1 ${
+              className={`min-w-0 flex-1 text-xsmall14 ${
                 row.done ? 'text-neutral-50 line-through' : 'text-neutral-0'
               }`}
             >
               {row.label}
             </span>
-            <span className="bg-primary-10 text-primary shrink-0 rounded-full px-2.5 py-1 text-[0.65rem] font-bold">
+            <span className="shrink-0 rounded-full bg-primary-10 px-2.5 py-1 text-[0.65rem] font-bold text-primary">
               {row.tag}
             </span>
           </li>
@@ -89,23 +89,23 @@ function JobsPanel() {
       <strong className={PANEL_TITLE}>{S.jobs.title}</strong>
       <span className={PANEL_DESC}>{S.jobs.desc}</span>
 
-      <ul className="border-neutral-85 mt-4 overflow-hidden rounded-xl border">
+      <ul className="mt-4 overflow-hidden rounded-xl border border-neutral-85">
         {S.jobs.rows.map((row) => (
           <li
-            className="border-neutral-85 flex items-center gap-3 border-b px-3 py-4 last:border-b-0 md:px-5"
+            className="flex items-center gap-3 border-b border-neutral-85 px-3 py-4 last:border-b-0 md:px-5"
             key={row.title}
           >
             <div className="min-w-0 flex-1">
-              <span className="text-neutral-45 block text-xs">
+              <span className="block text-xs text-neutral-45">
                 {row.company}
               </span>
-              <strong className="text-xsmall14 text-neutral-0 mt-1 block font-bold">
+              <strong className="mt-1 block text-xsmall14 font-bold text-neutral-0">
                 {row.title}
               </strong>
               <ul className="mt-2 flex flex-wrap gap-1.5">
                 {row.tags.map((tag) => (
                   <li
-                    className="border-neutral-85 text-neutral-45 rounded-full border bg-[#F7F8FC] px-2.5 py-1 text-[0.65rem]"
+                    className="rounded-full border border-neutral-85 bg-[#F7F8FC] px-2.5 py-1 text-[0.65rem] text-neutral-45"
                     key={tag}
                   >
                     {tag}
@@ -117,7 +117,7 @@ function JobsPanel() {
             <span
               className={`shrink-0 rounded-full px-2.5 py-1 text-[0.65rem] font-bold ${
                 row.alwaysOpen
-                  ? 'border-neutral-80 text-neutral-45 border bg-white'
+                  ? 'border border-neutral-80 bg-white text-neutral-45'
                   : 'bg-[#FFF2F0] text-[#F0563F]'
               }`}
             >
@@ -147,7 +147,7 @@ function LeaderboardPanel() {
           <li
             className={`flex items-center gap-3 rounded-xl px-3 py-3 md:gap-4 md:px-5 ${
               row.isMe
-                ? 'border-primary border bg-[#F0F1FE]'
+                ? 'border border-primary bg-[#F0F1FE]'
                 : 'border border-transparent bg-[#F7F8FC]'
             }`}
             data-testid="playbook-leader-row"
@@ -163,7 +163,7 @@ function LeaderboardPanel() {
 
             <div className="min-w-0 flex-1">
               <strong
-                className={`text-xsmall14 block font-bold ${
+                className={`block text-xsmall14 font-bold ${
                   row.isMe ? 'text-primary' : 'text-neutral-0'
                 }`}
               >
@@ -183,12 +183,12 @@ function LeaderboardPanel() {
               className="h-1.5 w-14 shrink-0 overflow-hidden rounded-full bg-[#E7E9F2] md:w-40"
             >
               <span
-                className="bg-primary block h-full rounded-full"
+                className="block h-full rounded-full bg-primary"
                 data-testid="playbook-leader-bar"
                 style={{ width: `${row.percent}%` }}
               />
             </span>
-            <span className="text-primary w-9 shrink-0 text-right text-xs font-bold">
+            <span className="w-9 shrink-0 text-right text-xs font-bold text-primary">
               {row.percent}%
             </span>
           </li>
@@ -213,23 +213,23 @@ export default function PlaybookMockTabs() {
   const Panel = PANELS[active];
 
   return (
-    <div className="border-neutral-85 rounded-xxl overflow-hidden border bg-white shadow-[0_8px_32px_rgba(0,0,0,0.06)]">
+    <div className="overflow-hidden rounded-xxl border border-neutral-85 bg-white shadow-[0_8px_32px_rgba(0,0,0,0.06)]">
       {/* 브라우저 크롬의 점과 주소 표시줄은 그림일 뿐이라 읽히지 않게 둔다 */}
       <div
         aria-hidden="true"
         className="flex select-none items-center gap-2 bg-[#F7F8FC] px-4 py-3"
       >
-        <span className="bg-neutral-80 h-2.5 w-2.5 rounded-full" />
-        <span className="bg-neutral-80 h-2.5 w-2.5 rounded-full" />
-        <span className="bg-neutral-80 h-2.5 w-2.5 rounded-full" />
-        <span className="text-neutral-45 mx-auto max-w-[70%] truncate rounded-full bg-white px-4 py-1.5 text-xs">
+        <span className="h-2.5 w-2.5 rounded-full bg-neutral-80" />
+        <span className="h-2.5 w-2.5 rounded-full bg-neutral-80" />
+        <span className="h-2.5 w-2.5 rounded-full bg-neutral-80" />
+        <span className="mx-auto max-w-[70%] truncate rounded-full bg-white px-4 py-1.5 text-xs text-neutral-45">
           {S.addressBar}
         </span>
       </div>
 
       <div
         aria-label={S.tabsLabel}
-        className="border-neutral-85 flex flex-wrap gap-1 border-b bg-[#F7F8FC] px-3 pt-2"
+        className="flex flex-wrap gap-1 border-b border-neutral-85 bg-[#F7F8FC] px-3 pt-2"
         role="tablist"
       >
         {S.tabs.map((tab) => {
@@ -240,7 +240,7 @@ export default function PlaybookMockTabs() {
               aria-selected={selected}
               className={`flex items-center gap-1.5 rounded-t-lg px-3 py-2.5 text-xs font-bold transition-colors md:text-sm ${
                 selected
-                  ? 'border-primary text-primary border border-b-white bg-white'
+                  ? 'border border-primary border-b-white bg-white text-primary'
                   : 'text-neutral-40 hover:text-neutral-0'
               }`}
               id={tabId(tab.id)}

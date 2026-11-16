@@ -23,7 +23,7 @@ const MissionFileLink = ({
       )}
     >
       {title ? (
-        <h4 className="text-xsmall16 text-neutral-0 w-[74px] font-medium">
+        <h4 className="w-[74px] text-xsmall16 font-medium text-neutral-0">
           {title}
         </h4>
       ) : (
@@ -43,7 +43,7 @@ const MissionFileLink = ({
             'text-xsmall16 font-medium',
             disabled
               ? 'cursor-not-allowed text-neutral-50'
-              : 'text-primary cursor-pointer',
+              : 'cursor-pointer text-primary',
           )}
         >
           {fileName}

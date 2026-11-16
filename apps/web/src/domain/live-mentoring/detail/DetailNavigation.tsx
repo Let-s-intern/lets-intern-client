@@ -123,7 +123,7 @@ const DetailNavigation = ({ isReady, className }: DetailNavigationProps) => {
   return (
     <nav
       className={twMerge(
-        'border-neutral-80 sticky z-20 flex w-full justify-center gap-x-1 border-b-2 bg-white px-6 transition-all md:gap-x-[100px]',
+        'sticky z-20 flex w-full justify-center gap-x-1 border-b-2 border-neutral-80 bg-white px-6 transition-all md:gap-x-[100px]',
         scrollStyleClassName,
         className,
       )}
@@ -136,7 +136,7 @@ const DetailNavigation = ({ isReady, className }: DetailNavigationProps) => {
               key={navItem.to}
               type="button"
               onClick={() => handleScroll(navItem.to)}
-              className="xs:text-xsmall16 border-b-[2.4px] px-1.5 py-4 text-[10px] font-semibold md:min-w-[100px]"
+              className="border-b-[2.4px] px-1.5 py-4 text-[10px] font-semibold xs:text-xsmall16 md:min-w-[100px]"
               style={{
                 borderBottomColor: isActive ? '#4d55f5' : 'transparent',
                 color: isActive ? '#4d55f5' : '#989ba2',

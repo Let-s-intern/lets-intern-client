@@ -15,12 +15,12 @@ interface ApplicantFormSectionProps {
 /** 읽기 전용 칸. 시안 `2-0` 의 회색 입력 상자와 같은 모양이다. */
 const ReadOnlyField = ({ label, value }: { label: string; value: string }) => (
   <label className="flex flex-col gap-1.5">
-    <span className="text-xsmall14 text-neutral-0 font-medium">{label}</span>
+    <span className="text-xsmall14 font-medium text-neutral-0">{label}</span>
     <input
       type="text"
       value={value}
       readOnly
-      className="bg-neutral-95 text-xsmall14 text-neutral-30 rounded-sm px-4 py-3"
+      className="rounded-sm bg-neutral-95 px-4 py-3 text-xsmall14 text-neutral-30"
     />
   </label>
 );
@@ -46,7 +46,7 @@ const ApplicantFormSection = ({
 }: ApplicantFormSectionProps) => {
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="text-xsmall16 text-neutral-0 font-semibold">
+      <h2 className="text-xsmall16 font-semibold text-neutral-0">
         신청 폼을 모두 입력해주세요.
       </h2>
 
@@ -55,7 +55,7 @@ const ApplicantFormSection = ({
       <ReadOnlyField label="가입한 이메일" value={accountEmail} />
 
       <div className="flex flex-col gap-1.5">
-        <span className="text-xsmall14 text-neutral-0 font-medium">
+        <span className="text-xsmall14 font-medium text-neutral-0">
           렛츠커리어 정보 수신용 이메일
         </span>
         <p className="text-xxsmall12 text-neutral-45">
@@ -63,14 +63,14 @@ const ApplicantFormSection = ({
           이메일 주소를 입력해주세요!
         </p>
 
-        <label className="text-xsmall14 text-neutral-30 flex cursor-pointer items-center gap-2 py-1">
+        <label className="flex cursor-pointer items-center gap-2 py-1 text-xsmall14 text-neutral-30">
           <input
             type="checkbox"
             checked={sameAsAccountEmail}
             onChange={(event) =>
               onSameAsAccountEmailChange(event.target.checked)
             }
-            className="accent-primary h-4 w-4"
+            className="h-4 w-4 accent-primary"
           />
           가입한 이메일과 동일
         </label>
@@ -82,8 +82,8 @@ const ApplicantFormSection = ({
           readOnly={sameAsAccountEmail}
           onChange={(event) => onContactEmailChange(event.target.value)}
           placeholder="example@letscareer.co.kr"
-          className={`text-xsmall14 text-neutral-0 rounded-sm px-4 py-3 ${
-            sameAsAccountEmail ? 'bg-neutral-95' : 'border-neutral-80 border'
+          className={`rounded-sm px-4 py-3 text-xsmall14 text-neutral-0 ${
+            sameAsAccountEmail ? 'bg-neutral-95' : 'border border-neutral-80'
           }`}
         />
       </div>

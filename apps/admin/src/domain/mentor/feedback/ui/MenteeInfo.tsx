@@ -90,7 +90,7 @@ const MenteeInfo = ({
             href={mentee.link!}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex shrink-0 items-center gap-1 rounded border border-neutral-300 bg-white px-2.5 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
+            className="rounded inline-flex shrink-0 items-center gap-1 border border-neutral-300 bg-white px-2.5 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
           >
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
               <path
@@ -134,7 +134,7 @@ const MenteeInfo = ({
                 href={mentee.link!}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex w-fit items-center gap-1 rounded border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
+                className="rounded inline-flex w-fit items-center gap-1 border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
               >
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path

@@ -147,7 +147,7 @@ const PlanChangeModal = ({
               </span>
               <div className="flex items-center gap-2">
                 <input
-                  className="w-40 rounded border border-neutral-300 px-3 py-2 text-right text-sm"
+                  className="rounded w-40 border border-neutral-300 px-3 py-2 text-right text-sm"
                   inputMode="numeric"
                   aria-label="수납 금액"
                   disabled={!selected}
@@ -173,7 +173,7 @@ const PlanChangeModal = ({
             담당자 이름
           </span>
           <input
-            className="w-full rounded border border-neutral-300 px-3 py-2 text-sm"
+            className="rounded w-full border border-neutral-300 px-3 py-2 text-sm"
             value={managerName}
             onChange={(e) => setManagerName(e.target.value)}
             placeholder="플랜을 변경하는 담당자 이름"
@@ -183,7 +183,7 @@ const PlanChangeModal = ({
         <label className="mb-3 block">
           <span className="mb-1 block text-sm text-neutral-500">사유</span>
           <input
-            className="w-full rounded border border-neutral-300 px-3 py-2 text-sm"
+            className="rounded w-full border border-neutral-300 px-3 py-2 text-sm"
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             placeholder="예: 9/12 계좌이체 입금 확인"
@@ -191,7 +191,7 @@ const PlanChangeModal = ({
         </label>
 
         {data?.currentPlan && selected && amount !== null ? (
-          <div className="mb-3 rounded bg-neutral-100 p-3 text-sm">
+          <div className="rounded mb-3 bg-neutral-100 p-3 text-sm">
             {buildPlanChangeConfirmSentence({
               name: target.name,
               fromPlan: data.currentPlan,

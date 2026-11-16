@@ -23,7 +23,7 @@ function OptionMark({ checked }: { checked: boolean }) {
       }`}
     >
       {checked ? (
-        <span className="bg-primary h-2.5 w-2.5 rounded-full" />
+        <span className="h-2.5 w-2.5 rounded-full bg-primary" />
       ) : null}
     </span>
   );
@@ -52,32 +52,32 @@ export default function CheckupQuestionCard({
   return (
     <div className="rounded-xxl bg-white p-6 md:p-10">
       <div className="flex items-center justify-between">
-        <span className="text-primary text-xs font-bold tracking-wide md:text-sm">
+        <span className="text-xs font-bold tracking-wide text-primary md:text-sm">
           QUESTION {question.no} / {String(total).padStart(2, '0')}
         </span>
-        <span className="text-neutral-45 text-xs md:text-sm">
+        <span className="text-xs text-neutral-45 md:text-sm">
           {total - index}문항 남음
         </span>
       </div>
 
-      <div className="bg-neutral-85 mt-3 h-1.5 w-full overflow-hidden rounded-full">
+      <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-neutral-85">
         <div
-          className="bg-primary h-full rounded-full transition-[width] duration-300"
+          className="h-full rounded-full bg-primary transition-[width] duration-300"
           style={{ width: `${(answered / total) * 100}%` }}
         />
       </div>
 
-      <p className="text-neutral-45 mt-7 text-xs font-bold md:mt-9 md:text-sm">
+      <p className="mt-7 text-xs font-bold text-neutral-45 md:mt-9 md:text-sm">
         {area.no} {area.label}
       </p>
 
-      <h3 className="text-neutral-0 text-small18 md:text-medium22 mt-2 font-bold leading-snug">
+      <h3 className="mt-2 text-small18 font-bold leading-snug text-neutral-0 md:text-medium22">
         {question.question}
       </h3>
 
       {question.hint ? (
-        <div className="bg-primary-10 mt-6 rounded-lg p-5 md:p-6">
-          <strong className="text-primary text-xsmall14 font-bold">
+        <div className="mt-6 rounded-lg bg-primary-10 p-5 md:p-6">
+          <strong className="text-xsmall14 font-bold text-primary">
             {question.hint.title}
           </strong>
           <ul className="mt-3 space-y-2">
@@ -106,7 +106,7 @@ export default function CheckupQuestionCard({
               type="button"
             >
               <OptionMark checked={checked} />
-              <span className="text-xsmall14 md:text-xsmall16 text-neutral-20 leading-relaxed">
+              <span className="text-xsmall14 leading-relaxed text-neutral-20 md:text-xsmall16">
                 {option}
               </span>
             </button>
@@ -117,7 +117,7 @@ export default function CheckupQuestionCard({
       <div className="mt-6 flex items-center justify-between gap-4">
         {onPrev ? (
           <button
-            className="text-neutral-45 text-xsmall14"
+            className="text-xsmall14 text-neutral-45"
             onClick={onPrev}
             type="button"
           >
@@ -126,7 +126,7 @@ export default function CheckupQuestionCard({
         ) : (
           <span />
         )}
-        <span className="text-neutral-45 text-xsmall14 text-right">
+        <span className="text-right text-xsmall14 text-neutral-45">
           {answered === total
             ? '답변을 선택하면 아래에 결과가 나옵니다'
             : '답변을 선택하면 다음 질문으로 넘어갑니다'}

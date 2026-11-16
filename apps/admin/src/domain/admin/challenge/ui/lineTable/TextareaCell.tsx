@@ -41,7 +41,7 @@ const TextareaCell = ({
           'rounded-md border border-neutral-400 focus:border-neutral-600 focus:outline-none':
             !disabled,
         },
-        'bg-static-100 w-full resize-none overflow-hidden p-2',
+        'w-full resize-none overflow-hidden bg-static-100 p-2',
       )}
       placeholder={placeholder}
       disabled={disabled}

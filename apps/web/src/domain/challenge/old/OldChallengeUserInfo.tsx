@@ -155,7 +155,7 @@ const OldChallengeUserInfo = () => {
         <h1 className="text-center text-xl font-semibold">
           챌린지 대시보드 추가정보 입력
         </h1>
-        <p className="text-neutral-40 text-center">
+        <p className="text-center text-neutral-40">
           안녕하세요, {username}님! {programTitle}에 입장하신 걸 환영합니다!
           <br />
           챌린지 대시보드 입장을 위해 추가정보를 입력해주세요.
@@ -247,7 +247,7 @@ const OldChallengeUserInfo = () => {
         </section>
 
         <button
-          className="bg-primary disabled:bg-neutral-60 rounded-md px-4 py-3 font-medium text-white"
+          className="rounded-md bg-primary px-4 py-3 font-medium text-white disabled:bg-neutral-60"
           onClick={handleSubmit}
           disabled={buttonDisabled}
         >

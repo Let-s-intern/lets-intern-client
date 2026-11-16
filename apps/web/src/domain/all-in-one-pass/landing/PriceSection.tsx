@@ -46,24 +46,24 @@ export default function PriceSection({
           subHeader={`자소서·포폴부터 인적성·면접까지.\n각각 준비하며 드는 비용, ${passTitle}로 줄여보세요.`}
         />
         <div className="flex flex-col overflow-hidden rounded-[22px] bg-white">
-          <div className="border-neutral-80 border-b p-5 md:px-[30px] md:py-6">
-            <strong className="text-small20 text-neutral-0 font-bold">
+          <div className="border-b border-neutral-80 p-5 md:px-[30px] md:py-6">
+            <strong className="text-small20 font-bold text-neutral-0">
               {passTitle}
             </strong>
           </div>
 
-          <div className="border-neutral-80 flex flex-col gap-4 border-b p-5 md:flex-row md:items-start md:justify-between md:gap-5 md:px-[30px] md:py-6">
+          <div className="flex flex-col gap-4 border-b border-neutral-80 p-5 md:flex-row md:items-start md:justify-between md:gap-5 md:px-[30px] md:py-6">
             <div className="flex flex-col gap-4 md:gap-2.5">
               <p className="text-xsmall14 text-neutral-45">패스 구매 가격</p>
-              <p className="text-neutral-0 md:leading[48px] flex items-end gap-0.5 text-[40px] font-bold leading-[40px] md:text-[48px]">
+              <p className="md:leading[48px] flex items-end gap-0.5 text-[40px] font-bold leading-[40px] text-neutral-0 md:text-[48px]">
                 {passPrice.toLocaleString('ko-KR')}
-                <span className="text-medium24 md:text-xlarge28 leading-6 md:leading-7">
+                <span className="text-medium24 leading-6 md:text-xlarge28 md:leading-7">
                   원
                 </span>
               </p>
               {periodDays != null && (
-                <p className="text-xsmall14 text-neutral-45 flex items-center gap-2.5">
-                  <span className="text-neutral-45 rounded-xxs bg-[#F3F4F6] px-2 py-1">
+                <p className="flex items-center gap-2.5 text-xsmall14 text-neutral-45">
+                  <span className="rounded-xxs bg-[#F3F4F6] px-2 py-1 text-neutral-45">
                     이용 기간
                   </span>
                   구매일로부터 {periodDays}일
@@ -75,14 +75,14 @@ export default function PriceSection({
                 <p className="text-xsmall14 text-neutral-45">
                   선택한 프로그램을 따로 구매하면
                 </p>
-                <p className="text-xsmall16 text-neutral-45 text-right font-bold line-through">
+                <p className="text-right text-xsmall16 font-bold text-neutral-45 line-through">
                   {won(comparedTotal)}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setCompareOpen(true)}
-                className="text-xsmall14 w-full rounded-sm border border-[#F36D32] px-3 py-2 font-semibold text-[#F36D32] transition hover:bg-[#4A76FF0f]"
+                className="w-full rounded-sm border border-[#F36D32] px-3 py-2 text-xsmall14 font-semibold text-[#F36D32] transition hover:bg-[#4A76FF0f]"
               >
                 프로그램 골라 비교하기
               </button>
@@ -90,7 +90,7 @@ export default function PriceSection({
           </div>
 
           {contentRows.length > 0 && (
-            <div className="border-neutral-80 flex flex-col gap-4 border-b p-5 md:px-[30px] md:py-6">
+            <div className="flex flex-col gap-4 border-b border-neutral-80 p-5 md:px-[30px] md:py-6">
               <p className="text-xsmall14 text-neutral-45">
                 패스에 포함된 콘텐츠
               </p>
@@ -100,7 +100,7 @@ export default function PriceSection({
                     key={row.label}
                     className="flex flex-col gap-1 md:flex-row md:items-start md:justify-between md:gap-4"
                   >
-                    <span className="text-xsmall16 flex items-center gap-2">
+                    <span className="flex items-center gap-2 text-xsmall16">
                       <img
                         src="/icons/check-circle-bg.svg"
                         alt=""
@@ -109,7 +109,7 @@ export default function PriceSection({
                       {row.extra ? `(추가 구매) ${row.label}` : row.label}
                     </span>
                     {row.note && (
-                      <span className="text-xxsmall12 text-neutral-45 pl-[26px] md:shrink-0 md:pl-0 md:text-right">
+                      <span className="pl-[26px] text-xxsmall12 text-neutral-45 md:shrink-0 md:pl-0 md:text-right">
                         {row.note}
                       </span>
                     )}
@@ -119,10 +119,10 @@ export default function PriceSection({
             </div>
           )}
 
-          <div className="border-neutral-80 flex flex-col gap-4 border-b p-5 md:px-[30px] md:py-6">
+          <div className="flex flex-col gap-4 border-b border-neutral-80 p-5 md:px-[30px] md:py-6">
             <p className="text-xsmall14 text-neutral-45">멘토링 할인 혜택</p>
             <div className="flex flex-col gap-1 md:flex-row md:items-start md:justify-between md:gap-4">
-              <span className="text-xsmall16 flex items-center gap-2">
+              <span className="flex items-center gap-2 text-xsmall16">
                 <img
                   src="/icons/check-circle-bg.svg"
                   alt=""
@@ -130,7 +130,7 @@ export default function PriceSection({
                 />
                 1:1 커피챗·멘토링 할인 쿠폰
               </span>
-              <span className="text-xxsmall12 text-neutral-45 pl-[26px] md:shrink-0 md:pl-0 md:text-right">
+              <span className="pl-[26px] text-xxsmall12 text-neutral-45 md:shrink-0 md:pl-0 md:text-right">
                 멘토링 신청 시 적용
               </span>
             </div>
@@ -140,7 +140,7 @@ export default function PriceSection({
           </div>
 
           {specialBenefitTitles.length > 0 && (
-            <div className="border-neutral-80 flex flex-col gap-4 border-b p-5 md:px-[30px] md:py-6">
+            <div className="flex flex-col gap-4 border-b border-neutral-80 p-5 md:px-[30px] md:py-6">
               <p className="text-xsmall14 text-neutral-45">
                 패스 전용 특별 혜택
               </p>
@@ -148,7 +148,7 @@ export default function PriceSection({
                 {specialBenefitTitles.map((title) => (
                   <span
                     key={title}
-                    className="text-xsmall14 text-neutral-20 rounded-full bg-[#F3F4F6] px-4 py-2 font-medium"
+                    className="rounded-full bg-[#F3F4F6] px-4 py-2 text-xsmall14 font-medium text-neutral-20"
                   >
                     {title}
                   </span>
@@ -163,7 +163,7 @@ export default function PriceSection({
               onClick={onStart}
               disabled={ctaDisabled}
               className={clsx(
-                'text-xsmall16 md:text-small18 w-full rounded-sm font-semibold',
+                'w-full rounded-sm text-xsmall16 font-semibold md:text-small18',
                 ctaDisabled
                   ? 'cursor-not-allowed bg-[#F9B68F]'
                   : 'bg-[#F36D32] hover:bg-[#E15D28]',

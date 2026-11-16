@@ -18,7 +18,7 @@ const MentorInfoCell = (
     return <span className="text-neutral-40">-</span>;
 
   return (
-    <div className="text-xxsmall12 flex flex-col py-1">
+    <div className="flex flex-col py-1 text-xxsmall12">
       <span className="text-neutral-30">{career.company ?? '-'}</span>
       <span className="text-neutral-40">{career.job ?? '-'}</span>
     </div>

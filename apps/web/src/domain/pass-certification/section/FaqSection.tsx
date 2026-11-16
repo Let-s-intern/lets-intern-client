@@ -42,14 +42,14 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="rounded-xxs border-neutral-80 overflow-hidden border">
+    <div className="overflow-hidden rounded-xxs border border-neutral-80">
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
         className="flex w-full items-center justify-between gap-4 bg-neutral-100 p-5 text-left"
         aria-expanded={open}
       >
-        <span className="text-xsmall16 md:text-medium22 text-neutral-0 font-semibold">
+        <span className="text-xsmall16 font-semibold text-neutral-0 md:text-medium22">
           {question}
         </span>
         <IoIosArrowDown
@@ -64,7 +64,7 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
         }`}
       >
         <div className="overflow-hidden">
-          <div className="border-neutral-80 text-xsmall14 md:text-small18 text-neutral-35 border-t p-5 leading-relaxed">
+          <div className="border-t border-neutral-80 p-5 text-xsmall14 leading-relaxed text-neutral-35 md:text-small18">
             {answer}
           </div>
         </div>
@@ -94,14 +94,14 @@ export default function FaqSection() {
         </div>
 
         {/* 문의 CTA */}
-        <div className="bg-neutral-95 flex w-full max-w-[800px] flex-col items-center gap-3 rounded-md px-8 py-4 md:flex-row md:justify-between">
-          <span className="text-xsmall14 text-neutral-35 md:text-small20 font-semibold">
+        <div className="flex w-full max-w-[800px] flex-col items-center gap-3 rounded-md bg-neutral-95 px-8 py-4 md:flex-row md:justify-between">
+          <span className="text-xsmall14 font-semibold text-neutral-35 md:text-small20">
             아직 궁금증이 풀리지 않았다면?
           </span>
           <button
             type="button"
             onClick={() => channelService.showMessenger()}
-            className="border-neutral-70 text-xsmall14 md:text-small18 rounded-sm border bg-white px-5 py-3 font-medium md:px-6"
+            className="rounded-sm border border-neutral-70 bg-white px-5 py-3 text-xsmall14 font-medium md:px-6 md:text-small18"
           >
             1:1 채팅 문의하기
           </button>

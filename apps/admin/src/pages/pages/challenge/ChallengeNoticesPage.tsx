@@ -75,7 +75,7 @@ const ChallengeNoticesPage = () => {
       return <EmptyContainer text="등록된 공지가 없습니다." />;
 
     return (
-      <div className="rounded-xxs overflow-x-auto border border-gray-200">
+      <div className="overflow-x-auto rounded-xxs border border-gray-200">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-200 bg-gray-50">
@@ -132,7 +132,7 @@ const ChallengeNoticesPage = () => {
                 <td className="px-4 py-4">
                   <button
                     onClick={() => setExposureNoticeId(row.id)}
-                    className="rounded-xxs border-primary text-xsmall14 text-primary hover:bg-primary-20 border bg-white px-4 py-0.5 duration-200 hover:font-semibold"
+                    className="rounded-xxs border border-primary bg-white px-4 py-0.5 text-xsmall14 text-primary duration-200 hover:bg-primary-20 hover:font-semibold"
                   >
                     노출 영역 관리
                   </button>
@@ -183,7 +183,7 @@ const ChallengeNoticesPage = () => {
               ))}
             </div>
             <button
-              className="rounded-xxs border-primary text-xsmall14 text-primary hover:bg-primary-20 border bg-white px-4 py-0.5 duration-200 hover:font-semibold"
+              className="rounded-xxs border border-primary bg-white px-4 py-0.5 text-xsmall14 text-primary duration-200 hover:bg-primary-20 hover:font-semibold"
               onClick={() => setModalMode('create')}
             >
               추가

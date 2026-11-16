@@ -28,7 +28,7 @@ const AgreementSection = ({
         onClick={onToggleAll}
       >
         <CheckBox checked={isAllAgreed} width="w-6" showCheckIcon />
-        <span className="text-xsmall14 text-neutral-0 font-semibold">
+        <span className="text-xsmall14 font-semibold text-neutral-0">
           전체 동의
         </span>
       </button>
@@ -105,7 +105,7 @@ const AgreementSection = ({
             width="w-6"
             showCheckIcon
           />
-          <span className="text-xsmall14 text-neutral-0 block break-words break-keep text-left">
+          <span className="block break-words break-keep text-left text-xsmall14 text-neutral-0">
             [선택] 렛츠커리어 프로그램 개설 소식을 가장 먼저 받아볼래요!
           </span>
         </button>

@@ -17,7 +17,7 @@ function SectionSubHeader({
   return (
     <span
       className={twMerge(
-        'text-xsmall16 md:text-small20 block whitespace-pre-line text-center font-bold',
+        'block whitespace-pre-line text-center text-xsmall16 font-bold md:text-small20',
         className,
       )}
       style={style}

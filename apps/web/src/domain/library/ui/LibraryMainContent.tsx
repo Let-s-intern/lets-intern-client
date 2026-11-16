@@ -83,13 +83,13 @@ function LibraryMainContentInner({ magnetId, isUpcoming, previewRoot }: Props) {
             <LexicalContent node={previewRoot} />
           </PreviewWithFade>
         )}
-        <div className="bg-primary-10 mt-8 flex flex-col items-center rounded-md px-5 py-10">
-          <div className="border-primary-15 mb-5 flex h-10 w-10 items-center justify-center rounded-sm border bg-white">
+        <div className="mt-8 flex flex-col items-center rounded-md bg-primary-10 px-5 py-10">
+          <div className="mb-5 flex h-10 w-10 items-center justify-center rounded-sm border border-primary-15 bg-white">
             <img src="/icons/magnet-alarm.svg" className="size-6" alt="alarm" />
           </div>
-          <div className="text-small18 text-neutral-20 mb-6 text-center font-light">
+          <div className="mb-6 text-center text-small18 font-light text-neutral-20">
             해당 콘텐츠가 발행되면{' '}
-            <span className="text-primary font-semibold">제일 먼저</span>{' '}
+            <span className="font-semibold text-primary">제일 먼저</span>{' '}
             <br className="md:hidden" />
             알려드려요!
           </div>
@@ -99,9 +99,9 @@ function LibraryMainContentInner({ magnetId, isUpcoming, previewRoot }: Props) {
             onClick={() =>
               handleApplyClick(`/library/${magnetId}/apply?type=launch-alert`)
             }
-            className={`rounded-xs text-xsmall16 w-full max-w-lg px-6 py-4 text-center text-white ${
+            className={`w-full max-w-lg rounded-xs px-6 py-4 text-center text-xsmall16 text-white ${
               appliedLaunchAlert
-                ? 'bg-neutral-70 cursor-not-allowed'
+                ? 'cursor-not-allowed bg-neutral-70'
                 : 'bg-primary'
             }`}
           >
@@ -116,11 +116,11 @@ function LibraryMainContentInner({ magnetId, isUpcoming, previewRoot }: Props) {
     return (
       <>
         {previewRoot && (
-          <div className="text-xsmall16 w-full break-all">
+          <div className="w-full break-all text-xsmall16">
             <LexicalContent node={previewRoot} />
           </div>
         )}
-        <div className="text-xsmall16 mt-8 w-full break-all">
+        <div className="mt-8 w-full break-all text-xsmall16">
           <LexicalContent node={mainRoot} />
         </div>
       </>
@@ -160,7 +160,7 @@ function PreviewWithFade({ children }: { children: React.ReactNode }) {
   }, [measure]);
 
   return (
-    <div ref={containerRef} className="text-xsmall16 relative w-full break-all">
+    <div ref={containerRef} className="relative w-full break-all text-xsmall16">
       {children}
       {fadeHeight > 0 && (
         <div

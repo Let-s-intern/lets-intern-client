@@ -25,9 +25,9 @@ const InquiryList = ({
   );
 
   return (
-    <div className="bg-static-100 flex flex-1 flex-col overflow-hidden">
+    <div className="flex flex-1 flex-col overflow-hidden bg-static-100">
       <header className="flex shrink-0 items-center px-5 pb-4 pt-6">
-        <h2 className="text-medium22 text-neutral-0 flex-1 font-bold">대화</h2>
+        <h2 className="flex-1 text-medium22 font-bold text-neutral-0">대화</h2>
         <span className="md:hidden">
           <PanelCloseButton onClose={onClose} />
         </span>
@@ -35,16 +35,16 @@ const InquiryList = ({
 
       <div className="flex flex-1 flex-col overflow-y-auto">
         {isLoading ? (
-          <p className="text-xsmall14 text-neutral-40 py-10 text-center">
+          <p className="py-10 text-center text-xsmall14 text-neutral-40">
             불러오는 중...
           </p>
         ) : sorted.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-4">
             <MessageCircle
-              className="text-neutral-80 h-24 w-24"
+              className="h-24 w-24 text-neutral-80"
               strokeWidth={1.5}
             />
-            <p className="text-small18 text-neutral-45 font-medium">
+            <p className="text-small18 font-medium text-neutral-45">
               대화를 시작해보세요
             </p>
           </div>
@@ -58,38 +58,38 @@ const InquiryList = ({
                   <button
                     type="button"
                     onClick={() => onOpenThread(item.id)}
-                    className="hover:bg-neutral-95 flex w-full items-center gap-3 px-5 py-4 text-left"
+                    className="flex w-full items-center gap-3 px-5 py-4 text-left hover:bg-neutral-95"
                   >
                     <img
                       src="/logo/logo-simple.svg"
                       alt=""
-                      className="bg-neutral-95 h-10 w-10 shrink-0 rounded-sm p-1.5"
+                      className="h-10 w-10 shrink-0 rounded-sm bg-neutral-95 p-1.5"
                     />
                     <div className="min-w-0 flex-1">
                       <p
                         className={
                           unread
-                            ? 'text-xsmall16 text-neutral-0 truncate font-bold'
-                            : 'text-xsmall16 text-neutral-0 truncate font-medium'
+                            ? 'truncate text-xsmall16 font-bold text-neutral-0'
+                            : 'truncate text-xsmall16 font-medium text-neutral-0'
                         }
                       >
                         {item.title}
                       </p>
-                      <p className="text-xsmall14 text-neutral-40 mt-0.5 truncate">
+                      <p className="mt-0.5 truncate text-xsmall14 text-neutral-40">
                         {item.content}
                       </p>
                     </div>
                     {unread && (
                       <span
                         aria-label="읽지 않은 답변"
-                        className="bg-system-error h-2 w-2 shrink-0 rounded-full"
+                        className="h-2 w-2 shrink-0 rounded-full bg-system-error"
                       />
                     )}
                     <span
                       className={
                         answered
-                          ? 'bg-primary-5 text-primary text-xxsmall12 shrink-0 rounded px-2 py-0.5 font-medium'
-                          : 'bg-neutral-90 text-neutral-40 text-xxsmall12 shrink-0 rounded px-2 py-0.5 font-medium'
+                          ? 'rounded shrink-0 bg-primary-5 px-2 py-0.5 text-xxsmall12 font-medium text-primary'
+                          : 'rounded shrink-0 bg-neutral-90 px-2 py-0.5 text-xxsmall12 font-medium text-neutral-40'
                       }
                     >
                       {answered ? '답변 완료' : '답변 대기'}
@@ -106,7 +106,7 @@ const InquiryList = ({
         <button
           type="button"
           onClick={onStart}
-          className="bg-primary hover:bg-primary-hover mx-auto flex items-center gap-2 rounded-full px-8 py-3.5 font-bold text-white"
+          className="mx-auto flex items-center gap-2 rounded-full bg-primary px-8 py-3.5 font-bold text-white hover:bg-primary-hover"
         >
           새 문의하기
           <Send className="h-5 w-5" />

@@ -10,11 +10,11 @@ export default function SolutionSection() {
             {SOLUTION.eyebrow}
           </p>
 
-          <h2 className="text-neutral-0 mt-4 text-center text-2xl font-bold leading-snug md:text-[2rem]">
+          <h2 className="mt-4 text-center text-2xl font-bold leading-snug text-neutral-0 md:text-[2rem]">
             {SOLUTION.title}
           </h2>
 
-          <div className="text-xsmall14 md:text-xsmall16 text-neutral-40 mt-4 text-center">
+          <div className="mt-4 text-center text-xsmall14 text-neutral-40 md:text-xsmall16">
             {SOLUTION.subLines.map((line) => (
               <span className="block leading-relaxed" key={line}>
                 {line}
@@ -25,14 +25,14 @@ export default function SolutionSection() {
           <div className="mt-10 grid gap-4 md:mt-14 md:grid-cols-3 md:gap-6">
             {SOLUTION.cards.map((card) => (
               <div
-                className="rounded-xxl flex flex-col bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.05)] md:p-7"
+                className="flex flex-col rounded-xxl bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.05)] md:p-7"
                 key={card.index}
               >
                 <p className="text-xs font-bold tracking-wide text-[#F6A780]">
                   {card.index} {card.label}
                 </p>
 
-                <strong className="text-small18 text-neutral-0 mt-5 block font-bold leading-snug">
+                <strong className="mt-5 block text-small18 font-bold leading-snug text-neutral-0">
                   {card.titleLines.map((line) => (
                     <span className="block" key={line}>
                       {line}
@@ -40,7 +40,7 @@ export default function SolutionSection() {
                   ))}
                 </strong>
 
-                <p className="text-xsmall14 text-neutral-40 mt-5 leading-relaxed">
+                <p className="mt-5 text-xsmall14 leading-relaxed text-neutral-40">
                   {card.body.map((line) => (
                     <span className="block" key={line}>
                       {line}
@@ -67,7 +67,7 @@ export default function SolutionSection() {
                         >
                           ✓
                         </span>
-                        <span className="text-xsmall14 text-neutral-0 font-medium">
+                        <span className="text-xsmall14 font-medium text-neutral-0">
                           {check}
                         </span>
                       </li>
@@ -82,7 +82,7 @@ export default function SolutionSection() {
 
       <div className="bg-[#232433] px-5 py-10 text-center md:py-14">
         <p className="text-xsmall14 text-neutral-70">{SOLUTION.bandLead}</p>
-        <p className="text-small18 mt-2 font-bold text-white md:text-2xl">
+        <p className="mt-2 text-small18 font-bold text-white md:text-2xl">
           {SOLUTION.bandMain}
         </p>
       </div>

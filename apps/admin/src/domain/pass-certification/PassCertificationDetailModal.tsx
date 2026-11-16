@@ -95,7 +95,7 @@ export default function PassCertificationDetailModal({ item, onClose }: Props) {
               <PassStatusBadge status={item.status} />
             </span>
             <IconButton onClick={onClose} aria-label="닫기" size="small">
-              <IoCloseOutline className="text-neutral-40 h-6 w-6" />
+              <IoCloseOutline className="h-6 w-6 text-neutral-40" />
             </IconButton>
           </DialogTitle>
 
@@ -142,7 +142,7 @@ export default function PassCertificationDetailModal({ item, onClose }: Props) {
                     {item.programTypeList.map((t) => (
                       <span
                         key={t}
-                        className="bg-neutral-95 border-neutral-75 text-neutral-30 text-xsmall14 rounded-full border px-3 py-1"
+                        className="rounded-full border border-neutral-75 bg-neutral-95 px-3 py-1 text-xsmall14 text-neutral-30"
                       >
                         {t === 'ETC' && item.programTypeEtc
                           ? `기타(${item.programTypeEtc})`
@@ -153,11 +153,11 @@ export default function PassCertificationDetailModal({ item, onClose }: Props) {
                 </Field>
                 <Field label="프로그램 후기">
                   {item.programFeedback ? (
-                    <span className="bg-neutral-95 border-neutral-90 block whitespace-pre-wrap rounded-md border p-3 leading-relaxed">
+                    <span className="block whitespace-pre-wrap rounded-md border border-neutral-90 bg-neutral-95 p-3 leading-relaxed">
                       {item.programFeedback}
                     </span>
                   ) : (
-                    <span className="text-neutral-30 text-xsmall14">
+                    <span className="text-xsmall14 text-neutral-30">
                       작성된 후기가 없습니다.
                     </span>
                   )}
@@ -173,15 +173,15 @@ export default function PassCertificationDetailModal({ item, onClose }: Props) {
                     href={item.certificationImageUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="border-neutral-90 bg-neutral-95 hover:border-primary flex items-center gap-3 rounded-md border p-4 transition-colors"
+                    className="flex items-center gap-3 rounded-md border border-neutral-90 bg-neutral-95 p-4 transition-colors hover:border-primary"
                   >
-                    <IoDocumentTextOutline className="text-primary h-8 w-8 shrink-0" />
+                    <IoDocumentTextOutline className="h-8 w-8 shrink-0 text-primary" />
                     <div className="min-w-0 flex-1">
-                      <p className="text-xsmall14 text-neutral-10 font-medium">
+                      <p className="text-xsmall14 font-medium text-neutral-10">
                         PDF 증빙 자료
                       </p>
                     </div>
-                    <span className="border-neutral-70 text-xsmall14 shrink-0 rounded-sm border bg-white px-4 py-2 font-medium">
+                    <span className="shrink-0 rounded-sm border border-neutral-70 bg-white px-4 py-2 text-xsmall14 font-medium">
                       열기
                     </span>
                   </a>
@@ -190,7 +190,7 @@ export default function PassCertificationDetailModal({ item, onClose }: Props) {
                     href={item.certificationImageUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="border-neutral-90 bg-neutral-95 block overflow-hidden rounded-md border"
+                    className="block overflow-hidden rounded-md border border-neutral-90 bg-neutral-95"
                   >
                     <img
                       src={item.certificationImageUrl}

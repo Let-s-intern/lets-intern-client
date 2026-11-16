@@ -82,7 +82,7 @@ const AddToCalendarButton = ({ title, startDate, endDate }: Props) => {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="text-small16 text-primary bg-primary-10 hover:bg-primary-15 flex min-h-[52px] w-full items-center justify-center gap-2 rounded-md px-4 py-3 font-semibold transition-colors"
+      className="text-small16 flex min-h-[52px] w-full items-center justify-center gap-2 rounded-md bg-primary-10 px-4 py-3 font-semibold text-primary transition-colors hover:bg-primary-15"
     >
       <CalendarIcon />
       구글 캘린더에 추가

@@ -55,7 +55,7 @@ export default function LandingReviewEditor({ reviews, onChange }: Props) {
           <div
             key={review.id}
             data-review-id={review.id}
-            className="border-neutral-80 flex items-start gap-3 rounded-md border p-3"
+            className="flex items-start gap-3 rounded-md border border-neutral-80 p-3"
           >
             <ThumbnailUpload
               value={review.imageUrl || null}

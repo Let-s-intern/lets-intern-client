@@ -24,17 +24,17 @@ const NoticesView = ({ applicationId }: { applicationId: number }) => {
         options={TYPE_OPTIONS}
         selected={type}
         onChange={setType}
-        className="border-neutral-80 sticky top-[84px] z-10 -mx-5 border-b bg-white px-5 py-4 md:static md:mx-0 md:border-none md:bg-transparent md:px-0 md:py-0"
+        className="sticky top-[84px] z-10 -mx-5 border-b border-neutral-80 bg-white px-5 py-4 md:static md:mx-0 md:border-none md:bg-transparent md:px-0 md:py-0"
       />
 
       {isLoading ? (
         <LoadingContainer className="py-20" />
       ) : isError ? (
-        <p className="text-xsmall14 text-neutral-40 py-20 text-center">
+        <p className="py-20 text-center text-xsmall14 text-neutral-40">
           목록을 불러오지 못했어요. 잠시 후 다시 시도해주세요.
         </p>
       ) : notices.length === 0 ? (
-        <div className="bg-neutral-95 mt-5 flex w-full items-center justify-center rounded-sm py-52 md:mt-0">
+        <div className="mt-5 flex w-full items-center justify-center rounded-sm bg-neutral-95 py-52 md:mt-0">
           <p className="text-xsmall14 text-neutral-40">등록된 글이 없어요.</p>
         </div>
       ) : (

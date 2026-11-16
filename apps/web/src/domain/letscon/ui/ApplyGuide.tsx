@@ -49,7 +49,7 @@ export function ApplyGuide({ apply }: { apply: LetsconApply }) {
       <ul className="mt-5 grid gap-3 md:grid-cols-2">
         {DAYS.map(({ date, day, title, body, sessions }) => (
           <li key={date} className="rounded-[12px] border border-[#e8e9f3] p-4">
-            <p className="text-primary text-lg font-extrabold leading-none">
+            <p className="text-lg font-extrabold leading-none text-primary">
               {date}
               <span className="ml-1 text-xs font-semibold text-[#7f8290]">
                 ({day})
@@ -60,7 +60,7 @@ export function ApplyGuide({ apply }: { apply: LetsconApply }) {
             <ul className="mt-3 grid gap-1.5 border-t border-dashed border-[#e1e3ee] pt-3">
               {sessions.map(({ id, time, title: sessionTitle, mentor }) => (
                 <li key={id} className="text-[13px] leading-5 text-[#1c1e2b]">
-                  <span className="text-primary mr-2 whitespace-nowrap font-bold">
+                  <span className="mr-2 whitespace-nowrap font-bold text-primary">
                     {time}
                   </span>
                   <span className="inline-block">
@@ -73,7 +73,7 @@ export function ApplyGuide({ apply }: { apply: LetsconApply }) {
         ))}
       </ul>
 
-      <div className="bg-primary-5 border-primary-20 mt-3 flex items-start justify-between gap-3 rounded-[12px] border p-4">
+      <div className="mt-3 flex items-start justify-between gap-3 rounded-[12px] border border-primary-20 bg-primary-5 p-4">
         <div>
           <p className="text-[15px] font-bold text-[#1c1e2b]">
             오프라인으로 오시면 특별 혜택이 있어요
@@ -83,7 +83,7 @@ export function ApplyGuide({ apply }: { apply: LetsconApply }) {
             현장 질문 우선{' '}
             <a
               href={`#${LETSCON_SECTION_IDS.offlineBenefit}`}
-              className="text-primary whitespace-nowrap font-bold underline underline-offset-2"
+              className="whitespace-nowrap font-bold text-primary underline underline-offset-2"
             >
               혜택 자세히 보기
             </a>
@@ -110,7 +110,7 @@ export function ApplyGuide({ apply }: { apply: LetsconApply }) {
         type="button"
         disabled={!isAvailable}
         onClick={apply.openSheet}
-        className="bg-primary hover:bg-primary-hover mt-5 flex h-[64px] w-full items-center justify-between rounded-[12px] px-7 text-lg font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
+        className="mt-5 flex h-[64px] w-full items-center justify-between rounded-[12px] bg-primary px-7 text-lg font-semibold text-white hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
       >
         {getApplyButtonLabel(apply.status, '렛츠콘 신청하기')}
         {isAvailable ? <ArrowUpRight aria-hidden className="h-6 w-6" /> : null}

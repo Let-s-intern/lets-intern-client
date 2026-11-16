@@ -43,13 +43,13 @@ export default function ThumbnailUpload({
   return (
     <label
       className={twMerge(
-        'border-neutral-80 bg-neutral-95 group relative flex aspect-[4/3] w-52 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-md border',
+        'group relative flex aspect-[4/3] w-52 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-md border border-neutral-80 bg-neutral-95',
         isUploading && 'cursor-progress',
         className,
       )}
     >
       {isUploading ? (
-        <span className="text-neutral-40 text-xxsmall12">업로드 중...</span>
+        <span className="text-xxsmall12 text-neutral-40">업로드 중...</span>
       ) : value ? (
         <>
           <img
@@ -62,7 +62,7 @@ export default function ThumbnailUpload({
           </div>
         </>
       ) : (
-        <div className="text-neutral-40 flex flex-col items-center gap-2">
+        <div className="flex flex-col items-center gap-2 text-neutral-40">
           <FiUpload className="text-2xl" />
           <span className="text-xxsmall12">{label} 업로드</span>
         </div>

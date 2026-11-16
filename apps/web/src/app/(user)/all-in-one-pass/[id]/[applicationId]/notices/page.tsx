@@ -15,7 +15,7 @@ export default function AllInOnePassNoticesPage() {
   return (
     <main className="flex flex-col gap-2 px-5 pb-16 pt-8 md:gap-10 md:pb-0 md:pl-12 md:pr-0 md:pt-0">
       <header>
-        <h1 className="text-neutral-0 text-medium22 font-semibold">
+        <h1 className="text-medium22 font-semibold text-neutral-0">
           공지사항 / 패스 가이드
         </h1>
       </header>

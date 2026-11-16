@@ -47,7 +47,7 @@ const SsoRedirectWhitelists = () => {
         title="SSO 리다이렉트 화이트리스트"
         headerButton={{ label: '등록', href: '/sso/redirect-whitelist/new' }}
       >
-        <p className="text-neutral-40 px-3 text-sm">
+        <p className="px-3 text-sm text-neutral-40">
           SSO 로그인 후 이동을 허용할 주소 목록입니다. 비활성화하면 해당
           서비스의 SSO 로그인이 즉시 막힙니다.
         </p>
@@ -57,15 +57,15 @@ const SsoRedirectWhitelists = () => {
         운영은 "등록된 게 없다"로 읽고 이미 있는 URL 을 다시 등록한다.
       */}
         {isLoading ? (
-          <p className="text-neutral-40 py-10 text-center text-sm">
+          <p className="py-10 text-center text-sm text-neutral-40">
             불러오는 중...
           </p>
         ) : isError ? (
-          <p className="text-neutral-40 py-10 text-center text-sm">
+          <p className="py-10 text-center text-sm text-neutral-40">
             화이트리스트를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.
           </p>
         ) : whitelists.length === 0 ? (
-          <p className="text-neutral-40 py-10 text-center text-sm">
+          <p className="py-10 text-center text-sm text-neutral-40">
             등록된 화이트리스트가 없습니다.
           </p>
         ) : (

@@ -13,7 +13,7 @@ const InfoRow = ({
   return (
     <div className="flex flex-col gap-2">
       <Label themeColor={themeColor}>{label}</Label>
-      <p className="text-xsmall16 text-neutral-0 md:text-xsmall16 whitespace-pre-line font-medium">
+      <p className="whitespace-pre-line text-xsmall16 font-medium text-neutral-0 md:text-xsmall16">
         {value}
       </p>
     </div>

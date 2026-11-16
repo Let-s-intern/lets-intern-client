@@ -13,7 +13,7 @@ export default function AllInOnePassRetrospectivesPage() {
   return (
     <main className="flex flex-col gap-6 px-5 py-8 md:gap-8 md:pb-0 md:pl-12 md:pr-0 md:pt-0">
       <header>
-        <h1 className="text-neutral-0 hidden text-[22px] font-semibold md:block">
+        <h1 className="hidden text-[22px] font-semibold text-neutral-0 md:block">
           취준 회고록
         </h1>
       </header>

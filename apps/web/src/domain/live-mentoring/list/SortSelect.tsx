@@ -13,7 +13,7 @@ const SortSelect = ({ value, onChange }: SortSelectProps) => {
       aria-label="정렬"
       value={value}
       onChange={(e) => onChange(e.target.value as LiveMentorSort)}
-      className="border-neutral-80 text-xsmall14 text-neutral-30 rounded-sm border px-3 py-1.5"
+      className="rounded-sm border border-neutral-80 px-3 py-1.5 text-xsmall14 text-neutral-30"
     >
       {SORT_OPTIONS.map((option) => (
         <option key={option.value} value={option.value}>

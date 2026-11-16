@@ -29,7 +29,7 @@ export default function ReviewMentorBar({
     <div
       role="group"
       aria-label="멘토 필터"
-      className="border-neutral-80 bg-neutral-95 text-xsmall14 mb-4 flex flex-wrap items-center gap-3 rounded-lg border px-4 py-3"
+      className="mb-4 flex flex-wrap items-center gap-3 rounded-lg border border-neutral-80 bg-neutral-95 px-4 py-3 text-xsmall14"
     >
       {userInfo?.profileImgUrl ? (
         <img
@@ -45,7 +45,7 @@ export default function ReviewMentorBar({
       <button
         type="button"
         onClick={onChangeMentor}
-        className="border-neutral-80 text-neutral-40 rounded-md border bg-white px-3 py-1"
+        className="rounded-md border border-neutral-80 bg-white px-3 py-1 text-neutral-40"
       >
         다른 멘토 고르기
       </button>

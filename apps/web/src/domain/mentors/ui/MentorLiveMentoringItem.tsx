@@ -65,7 +65,7 @@ const MentorLiveMentoringItem = ({
       data-text={title}
     >
       <div
-        className={`border-neutral-75 relative aspect-[1.3/1] w-full shrink-0 overflow-hidden rounded-sm border-[0.7px] ${
+        className={`relative aspect-[1.3/1] w-full shrink-0 overflow-hidden rounded-sm border-[0.7px] border-neutral-75 ${
           cardImage ? 'bg-white' : 'bg-primary'
         }`}
       >
@@ -77,7 +77,7 @@ const MentorLiveMentoringItem = ({
           />
         ) : (
           <p
-            className={`text-xsmall14 md:text-small18 relative line-clamp-2 px-3 font-bold text-white md:px-4 ${
+            className={`relative line-clamp-2 px-3 text-xsmall14 font-bold text-white md:px-4 md:text-small18 ${
               badge ? 'pt-9 md:pt-11' : 'pt-3 md:pt-4'
             }`}
           >
@@ -86,12 +86,12 @@ const MentorLiveMentoringItem = ({
         )}
 
         {badge && (
-          <span className="rounded-xs bg-neutral-0/80 text-xxsmall10 text-static-100 md:text-xxsmall12 absolute left-2 top-2 max-w-[calc(100%-1rem)] truncate px-2.5 py-1 font-semibold">
+          <span className="absolute left-2 top-2 max-w-[calc(100%-1rem)] truncate rounded-xs bg-neutral-0/80 px-2.5 py-1 text-xxsmall10 font-semibold text-static-100 md:text-xxsmall12">
             {badge}
           </span>
         )}
 
-        <div className="bg-neutral-0 text-xxsmall12 md:text-xsmall14 absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 px-2.5 py-1.5 text-white md:px-3 md:py-2">
+        <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 bg-neutral-0 px-2.5 py-1.5 text-xxsmall12 text-white md:px-3 md:py-2 md:text-xsmall14">
           <span className="truncate">{durationsLabel(opening.durations)}</span>
           <span className="shrink-0 font-bold">
             {priceLabel(opening.durations, opening.minimumPrice)}
@@ -99,7 +99,7 @@ const MentorLiveMentoringItem = ({
         </div>
       </div>
 
-      <h3 className="text-xsmall16 text-neutral-0 md:text-small18 md:min-h-13 mt-2 line-clamp-2 min-h-12 flex-1 shrink-0 font-semibold md:mt-3">
+      <h3 className="md:min-h-13 mt-2 line-clamp-2 min-h-12 flex-1 shrink-0 text-xsmall16 font-semibold text-neutral-0 md:mt-3 md:text-small18">
         {title}
       </h3>
 
@@ -108,7 +108,7 @@ const MentorLiveMentoringItem = ({
           {opening.categories.map((category) => (
             <div
               key={category}
-              className="text-xxsmall12 border-neutral-95 bg-neutral-95 text-neutral-40 flex items-center justify-center rounded-[3px] border px-2 py-1 text-center font-normal"
+              className="flex items-center justify-center rounded-[3px] border border-neutral-95 bg-neutral-95 px-2 py-1 text-center text-xxsmall12 font-normal text-neutral-40"
             >
               {CATEGORY_LABELS[category]}
             </div>

@@ -20,7 +20,7 @@ const LiveMentoringFilterSideBar = ({
   onToggle,
 }: LiveMentoringFilterSideBarProps) => (
   <aside className="w-full shrink-0 lg:w-auto lg:min-w-[161px]">
-    <h2 className="text-1-semibold text-neutral-0 mb-3 lg:mb-5">멘토링 유형</h2>
+    <h2 className="text-1-semibold mb-3 text-neutral-0 lg:mb-5">멘토링 유형</h2>
     <div className="flex flex-wrap gap-x-4 gap-y-3 lg:flex-col">
       {CATEGORY_FILTER_ORDER.map((category) => (
         <div
@@ -33,7 +33,7 @@ const LiveMentoringFilterSideBar = ({
             src={`/icons/${selected.includes(category) ? 'checkbox-fill.svg' : 'checkbox-fill-none.svg'}`}
             alt="체크박스"
           />
-          <span className="text-xsmall16 text-neutral-35 whitespace-nowrap">
+          <span className="whitespace-nowrap text-xsmall16 text-neutral-35">
             {CATEGORY_LABELS[category]}
           </span>
         </div>

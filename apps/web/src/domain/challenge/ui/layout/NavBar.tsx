@@ -69,10 +69,10 @@ const NavBar = () => {
 
   const linkClass = (active: boolean) =>
     clsx(
-      'rounded-xxs text-xsmall14 md:text-xsmall16 flex flex-row items-center whitespace-nowrap transition-colors md:h-[44px] md:px-3',
+      'flex flex-row items-center whitespace-nowrap rounded-xxs text-xsmall14 transition-colors md:h-[44px] md:px-3 md:text-xsmall16',
       active
-        ? 'text-primary md:bg-primary-5 font-semibold'
-        : 'text-neutral-40 font-medium',
+        ? 'font-semibold text-primary md:bg-primary-5'
+        : 'font-medium text-neutral-40',
     );
 
   return (
@@ -83,7 +83,7 @@ const NavBar = () => {
           isDetailPage && 'hidden md:flex',
         )}
       >
-        <ul className="scrollbar-hide flex h-[40px] flex-row gap-4 overflow-x-auto border-b bg-white px-5 py-2 md:sticky md:h-auto md:flex-col md:gap-0 md:overflow-x-visible md:border-b-0 md:bg-transparent md:px-0 md:py-0">
+        <ul className="flex h-[40px] flex-row gap-4 overflow-x-auto border-b bg-white px-5 py-2 scrollbar-hide md:sticky md:h-auto md:flex-col md:gap-0 md:overflow-x-visible md:border-b-0 md:bg-transparent md:px-0 md:py-0">
           {navItems.map((item) => {
             const parentActive = isParentActive(item);
             const selfActive = item.href ? isActive(item.href) : false;
@@ -119,10 +119,10 @@ const NavBar = () => {
                   >
                     {item.subItems.map((child) => {
                       const childClass = clsx(
-                        'text-xsmall14 md:rounded-xxs flex items-center whitespace-nowrap py-1 pl-6 transition-colors md:h-[36px] md:px-3',
+                        'flex items-center whitespace-nowrap py-1 pl-6 text-xsmall14 transition-colors md:h-[36px] md:rounded-xxs md:px-3',
                         isActive(child.href ?? '')
-                          ? 'text-primary font-medium'
-                          : 'text-neutral-10 font-medium',
+                          ? 'font-medium text-primary'
+                          : 'font-medium text-neutral-10',
                       );
                       return (
                         <li key={child.id}>

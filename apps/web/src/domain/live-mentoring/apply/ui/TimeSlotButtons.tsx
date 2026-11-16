@@ -29,7 +29,7 @@ const TimeSlotButtons = ({
 }: TimeSlotButtonsProps) => {
   if (options.length === 0) {
     return (
-      <p className="border-neutral-80 text-xsmall14 text-neutral-40 w-full rounded-sm border px-4 py-8 text-center">
+      <p className="w-full rounded-sm border border-neutral-80 px-4 py-8 text-center text-xsmall14 text-neutral-40">
         이 날은 예약 가능한 시간이 없습니다.
       </p>
     );
@@ -45,7 +45,7 @@ const TimeSlotButtons = ({
             key={time}
             type="button"
             onClick={() => onSelect(time)}
-            className={`text-xxsmall12 flex flex-1 items-center justify-center rounded-sm border py-2 transition-colors ${STATE_CLASSES[slotState]}`}
+            className={`flex flex-1 items-center justify-center rounded-sm border py-2 text-xxsmall12 transition-colors ${STATE_CLASSES[slotState]}`}
           >
             {label}
           </button>

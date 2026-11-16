@@ -61,7 +61,7 @@ const InquiryPanel = ({ onMarkAsRead, onClose }: InquiryPanelProps) => {
 
   return (
     <div className="fixed inset-0 z-40 md:inset-auto md:bottom-[90px] md:right-[26px]">
-      <div className="shadow-05 bg-neutral-95 relative flex h-full w-full flex-col overflow-hidden md:h-[616px] md:w-[430px] md:rounded-[30px]">
+      <div className="relative flex h-full w-full flex-col overflow-hidden bg-neutral-95 shadow-05 md:h-[616px] md:w-[430px] md:rounded-[30px]">
         {view.name === 'compose' ? (
           <InquiryComposer
             isPending={isPending}
@@ -103,7 +103,7 @@ const InquiryPanel = ({ onMarkAsRead, onClose }: InquiryPanelProps) => {
         )}
 
         {view.name === 'tab' && (
-          <nav className="border-neutral-85 bg-static-100 flex shrink-0 border-t">
+          <nav className="flex shrink-0 border-t border-neutral-85 bg-static-100">
             <TabButton
               label="홈"
               isActive={tab === 'home'}

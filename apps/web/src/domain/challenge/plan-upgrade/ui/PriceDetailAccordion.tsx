@@ -38,7 +38,7 @@ const PriceDetailAccordion = ({
         type="button"
         aria-expanded={isOpen}
         onClick={() => setIsOpen((open) => !open)}
-        className="text-xsmall16 text-neutral-20 flex h-12 w-full items-center justify-between"
+        className="flex h-12 w-full items-center justify-between text-xsmall16 text-neutral-20"
       >
         <span>결제 금액 상세 보기</span>
         <DownIcon
@@ -66,7 +66,7 @@ const PriceDetailAccordion = ({
             <span>추가 결제 금액</span>
             <span>= {additionalAmount.toLocaleString()}원</span>
           </div>
-          <ul className="text-xsmall14 text-neutral-40 mt-2 flex flex-col gap-1 px-3">
+          <ul className="mt-2 flex flex-col gap-1 px-3 text-xsmall14 text-neutral-40">
             {NOTICES.map((notice) => (
               <li key={notice}>{notice}</li>
             ))}

@@ -62,7 +62,7 @@ export default function LetterSection() {
                 aria-hidden
                 className="h-6 w-6 self-start md:self-end"
               />
-              <div className="text-neutral-20 text-xsmall14 md:text-small18 min-[400px]:text-xsmall16 min-[1000px]:text-medium24 flex flex-col gap-4 font-light leading-[1.6] tracking-tight md:font-normal md:leading-[1.5] min-[1000px]:gap-6 min-[1000px]:leading-[1.4]">
+              <div className="flex flex-col gap-4 text-xsmall14 font-light leading-[1.6] tracking-tight text-neutral-20 min-[400px]:text-xsmall16 md:text-small18 md:font-normal md:leading-[1.5] min-[1000px]:gap-6 min-[1000px]:text-medium24 min-[1000px]:leading-[1.4]">
                 <p>
                   렛츠커리어와 함께 열심히 취준하시고, 합격까지 하신 여러분!{' '}
                   <br />
@@ -81,7 +81,7 @@ export default function LetterSection() {
               </div>
             </div>
 
-            <p className="text-primary text-xsmall16 md:text-small20 min-[1000px]:text-large26 font-medium md:font-semibold">
+            <p className="text-xsmall16 font-medium text-primary md:text-small20 md:font-semibold min-[1000px]:text-large26">
               렛츠커리어 CEO 쥬디 드림.
             </p>
           </div>

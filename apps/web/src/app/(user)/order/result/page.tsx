@@ -182,7 +182,7 @@ const PaymentResultContent = () => {
   return (
     <div className="w-full px-5 py-10" data-program-text={programTitle}>
       <div className="mx-auto max-w-5xl">
-        <div className="text-small20 text-neutral-0 flex w-full items-center justify-start py-6 font-bold">
+        <div className="flex w-full items-center justify-start py-6 text-small20 font-bold text-neutral-0">
           결제 확인하기
         </div>
         <div className="flex min-h-52 w-full flex-col items-center justify-center">
@@ -192,13 +192,13 @@ const PaymentResultContent = () => {
             <>
               <DescriptionBox type={isSuccess ? 'SUCCESS' : 'FAIL'} />
               {errorMessage && (
-                <p className="text-xsmall14 text-neutral-20 mt-3 text-center">
+                <p className="mt-3 text-center text-xsmall14 text-neutral-20">
                   {errorMessage}
                 </p>
               )}
               <div className="flex w-full flex-col items-center justify-start gap-y-10 py-8">
                 <div className="flex w-full flex-col items-start justify-center gap-6">
-                  <div className="text-xsmall16 text-neutral-0 font-semibold">
+                  <div className="text-xsmall16 font-semibold text-neutral-0">
                     결제 프로그램
                   </div>
                   {params ? (
@@ -219,15 +219,15 @@ const PaymentResultContent = () => {
                   {isSuccess && (
                     <Link
                       href="/program"
-                      className="other_program border-primary text-primary-dark flex w-full flex-1 justify-center rounded-md border-2 bg-neutral-100 px-6 py-3 text-lg font-medium"
+                      className="other_program flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-neutral-100 px-6 py-3 text-lg font-medium text-primary-dark"
                     >
                       다른 프로그램 둘러보기
                     </Link>
                   )}
                 </div>
                 <div className="flex w-full flex-col justify-center gap-6">
-                  <div className="text-neutral-0 font-semibold">결제 상세</div>
-                  <div className="bg-neutral-90 flex w-full items-center justify-between gap-x-4 px-3 py-5">
+                  <div className="font-semibold text-neutral-0">결제 상세</div>
+                  <div className="flex w-full items-center justify-between gap-x-4 bg-neutral-90 px-3 py-5">
                     <div className="font-bold">총 결제금액</div>
                     <div className="font-bold">
                       {Number(searchParams.get('amount')).toLocaleString() +
@@ -299,12 +299,12 @@ const PaymentResultContent = () => {
                         />
                         <div className="flex w-full items-center justify-start gap-x-2 px-3 py-2">
                           <div className="text-neutral-40">영수증</div>
-                          <div className="text-neutral-0 flex grow items-center justify-end">
+                          <div className="flex grow items-center justify-end text-neutral-0">
                             <Link
                               href={result?.tossInfo?.receipt?.url ?? '#'}
                               target="_blank"
                               rel="noreferrer"
-                              className="border-neutral-60 flex items-center justify-center rounded-sm border bg-white px-3 py-2 text-sm font-medium"
+                              className="flex items-center justify-center rounded-sm border border-neutral-60 bg-white px-3 py-2 text-sm font-medium"
                             >
                               영수증 보기
                             </Link>
@@ -321,7 +321,7 @@ const PaymentResultContent = () => {
                   {isSuccess && (
                     <Link
                       href="/mypage/career/board"
-                      className="mypage_button border-primary bg-primary flex w-full flex-1 justify-center rounded-md border-2 px-6 py-3 text-lg font-medium text-neutral-100"
+                      className="mypage_button flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
                     >
                       마이페이지 바로가기
                     </Link>
@@ -329,7 +329,7 @@ const PaymentResultContent = () => {
                   {!isSuccess && (
                     <Link
                       href={returnLink}
-                      className="border-primary bg-primary flex w-full flex-1 justify-center rounded-md border-2 px-6 py-3 text-lg font-medium text-neutral-100"
+                      className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
                     >
                       다시 결제하기
                     </Link>

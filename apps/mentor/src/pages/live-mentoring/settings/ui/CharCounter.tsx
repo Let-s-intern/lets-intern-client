@@ -14,7 +14,7 @@ const CharCounter = ({ value, max }: CharCounterProps) => {
   const over = value.length > max;
   return (
     <span
-      className={`shrink-0 text-xs ${over ? 'text-system-error font-medium' : 'text-neutral-50'}`}
+      className={`shrink-0 text-xs ${over ? 'font-medium text-system-error' : 'text-neutral-50'}`}
       role={over ? 'alert' : undefined}
     >
       {value.length}/{max}

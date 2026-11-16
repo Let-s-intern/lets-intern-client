@@ -91,10 +91,10 @@ const EXPIRED_NOTICE = {
 };
 
 const NoticeBox = ({ title, body }: { title: string; body: string }) => (
-  <div className="bg-primary-5 rounded-xs hidden gap-2 border px-4 py-2 md:flex">
+  <div className="hidden gap-2 rounded-xs border bg-primary-5 px-4 py-2 md:flex">
     <img src="/icons/info.svg" alt="" className="size-4" />
     <div className="flex flex-col gap-0.5">
-      <p className="text-xxsmall12 text-system-positive-blue items-center">
+      <p className="items-center text-xxsmall12 text-system-positive-blue">
         {title}
       </p>
       <p className="text-xxsmall12 text-neutral-20">{body}</p>
@@ -182,7 +182,7 @@ export default function LiveFeedbackSection({
       <h1 className="text-lg font-semibold">{label}</h1>
       {missions.length === 0 ? (
         <div className="flex w-full flex-col items-center gap-4 py-14">
-          <p className="text-xsmall14 text-neutral-20 font-normal">
+          <p className="text-xsmall14 font-normal text-neutral-20">
             {emptyMessage}
           </p>
         </div>

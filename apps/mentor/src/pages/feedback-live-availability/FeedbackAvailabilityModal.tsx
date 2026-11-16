@@ -156,7 +156,7 @@ const FeedbackAvailabilityModal = ({
             <button
               type="button"
               onClick={() => slotsQuery.refetch()}
-              className="border-neutral-80 text-xsmall14 text-neutral-40 rounded-md border px-4 py-2"
+              className="rounded-md border border-neutral-80 px-4 py-2 text-xsmall14 text-neutral-40"
             >
               다시 시도
             </button>
@@ -164,12 +164,12 @@ const FeedbackAvailabilityModal = ({
         ) : (
           <>
             {saveError && (
-              <div className="text-xsmall14 border-b border-red-100 bg-red-50 px-6 py-3 text-red-600">
+              <div className="border-b border-red-100 bg-red-50 px-6 py-3 text-xsmall14 text-red-600">
                 저장 중 문제가 발생했어요: {saveError}
               </div>
             )}
             {isSaving && (
-              <div className="border-primary-90 bg-primary-5 text-xsmall14 text-primary-90 border-b px-6 py-3">
+              <div className="border-b border-primary-90 bg-primary-5 px-6 py-3 text-xsmall14 text-primary-90">
                 저장 중입니다...
               </div>
             )}

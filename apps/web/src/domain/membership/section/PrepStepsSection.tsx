@@ -72,7 +72,7 @@ export default function PrepStepsSection({ caseId }: Props) {
           {PREP_STEPS.eyebrow}
         </p>
 
-        <h2 className="text-neutral-0 mt-4 text-center text-2xl font-bold leading-snug md:text-[2rem]">
+        <h2 className="mt-4 text-center text-2xl font-bold leading-snug text-neutral-0 md:text-[2rem]">
           {PREP_STEPS.titleLines.map((line) => (
             <span className="block" key={line}>
               {line}
@@ -80,7 +80,7 @@ export default function PrepStepsSection({ caseId }: Props) {
           ))}
         </h2>
 
-        <p className="text-xsmall14 md:text-xsmall16 text-neutral-40 mt-4 text-center">
+        <p className="mt-4 text-center text-xsmall14 text-neutral-40 md:text-xsmall16">
           {PREP_STEPS.sub}
         </p>
 

@@ -10,7 +10,7 @@ interface IntroductionProps {
 export default function Introduction({ value, onChange }: IntroductionProps) {
   return (
     <section className="rounded-xl border border-gray-200 bg-white p-5 md:p-6">
-      <h2 className="text-xsmall16 md:text-small18 text-neutral-0 mb-4 font-medium">
+      <h2 className="mb-4 text-xsmall16 font-medium text-neutral-0 md:text-small18">
         한줄 소개
       </h2>
       <textarea
@@ -18,7 +18,7 @@ export default function Introduction({ value, onChange }: IntroductionProps) {
         onChange={(e) => onChange(e.target.value)}
         placeholder="한줄 소개를 입력해주세요"
         maxLength={PROFILE_TEXT_MAX_LENGTH}
-        className="focus:border-primary h-32 w-full resize-none rounded-lg border border-gray-200 px-4 py-3 text-sm outline-none transition-colors"
+        className="h-32 w-full resize-none rounded-lg border border-gray-200 px-4 py-3 text-sm outline-none transition-colors focus:border-primary"
       />
       <p className="mt-1 text-right text-xs text-neutral-50">
         {value.length}/{PROFILE_TEXT_MAX_LENGTH}

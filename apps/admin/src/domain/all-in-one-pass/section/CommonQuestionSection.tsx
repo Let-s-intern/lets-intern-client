@@ -15,9 +15,9 @@ export default function CommonQuestionSection({ passId }: Props) {
   return (
     <section className="flex flex-col gap-3">
       <div className="flex items-center gap-2">
-        <h2 className="text-small20 text-neutral-0 font-semibold">공통 질문</h2>
+        <h2 className="text-small20 font-semibold text-neutral-0">공통 질문</h2>
       </div>
-      <div className="border-neutral-80 flex flex-col gap-4 rounded-md border p-4">
+      <div className="flex flex-col gap-4 rounded-md border border-neutral-80 p-4">
         {isLoading ? (
           <span className="text-xsmall14 text-neutral-40">불러오는 중...</span>
         ) : questions.length === 0 ? (
@@ -28,14 +28,14 @@ export default function CommonQuestionSection({ passId }: Props) {
           questions.map((q, i) => (
             <div key={q.id} className="flex flex-col gap-1">
               <div className="flex gap-1.5">
-                <span className="text-xsmall16 text-neutral-0 font-semibold">
+                <span className="text-xsmall16 font-semibold text-neutral-0">
                   Q{i + 1}.
                 </span>
-                <span className="text-xsmall16 text-neutral-0 font-semibold">
+                <span className="text-xsmall16 font-semibold text-neutral-0">
                   {q.question}
                 </span>
               </div>
-              <span className="text-xsmall14 text-neutral-40 pl-6">
+              <span className="pl-6 text-xsmall14 text-neutral-40">
                 가이드 {q.answerGuide}
               </span>
             </div>

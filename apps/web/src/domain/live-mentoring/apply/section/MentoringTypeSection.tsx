@@ -36,22 +36,22 @@ const MentoringTypeSection = ({
 }: MentoringTypeSectionProps) => {
   return (
     <section className="flex flex-col gap-3">
-      <h3 className="text-xsmall16 text-neutral-0 font-semibold">
+      <h3 className="text-xsmall16 font-semibold text-neutral-0">
         멘토링 유형 <span className="text-primary">(필수)</span>
       </h3>
 
-      <div className="border-neutral-80 divide-neutral-85 flex flex-col divide-y rounded-sm border">
+      <div className="flex flex-col divide-y divide-neutral-85 rounded-sm border border-neutral-80">
         {categories.map((category) => (
           <label
             key={category}
-            className="text-xsmall14 text-neutral-0 flex cursor-pointer items-center gap-2.5 px-4 py-3.5"
+            className="flex cursor-pointer items-center gap-2.5 px-4 py-3.5 text-xsmall14 text-neutral-0"
           >
             <input
               type="radio"
               name="live-mentoring-type"
               checked={selected === category}
               onChange={() => onSelect(category)}
-              className="accent-primary h-4 w-4"
+              className="h-4 w-4 accent-primary"
             />
             {CATEGORY_LABELS[category]}
           </label>

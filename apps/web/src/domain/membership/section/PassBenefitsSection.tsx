@@ -17,27 +17,27 @@ export default function PassBenefitsSection() {
           {PASS_BENEFITS.eyebrow}
         </p>
 
-        <h2 className="text-neutral-0 mt-4 text-center text-2xl font-bold leading-snug md:text-[2rem]">
+        <h2 className="mt-4 text-center text-2xl font-bold leading-snug text-neutral-0 md:text-[2rem]">
           {PASS_BENEFITS.title}
         </h2>
 
-        <p className="text-xsmall14 md:text-xsmall16 text-neutral-40 mt-4 text-center">
+        <p className="mt-4 text-center text-xsmall14 text-neutral-40 md:text-xsmall16">
           {PASS_BENEFITS.sub}
         </p>
 
         <div className="mt-10 grid gap-4 md:mt-14 md:grid-cols-6">
           {PASS_BENEFITS.cards.map((card) => (
             <div
-              className={`rounded-xxl flex flex-col p-6 md:p-7 ${
+              className={`flex flex-col rounded-xxl p-6 md:p-7 ${
                 card.accent ? 'bg-[#FDF3EC]' : 'bg-neutral-95'
               } ${card.wide ? 'md:col-span-3' : 'md:col-span-2'}`}
               key={card.title}
             >
-              <strong className="text-small18 text-neutral-0 font-bold">
+              <strong className="text-small18 font-bold text-neutral-0">
                 {card.title}
               </strong>
 
-              <p className="text-xsmall14 text-neutral-40 mt-4 leading-relaxed">
+              <p className="mt-4 text-xsmall14 leading-relaxed text-neutral-40">
                 {card.body.map((line) => (
                   <span className="block" key={line}>
                     {line}
@@ -46,7 +46,7 @@ export default function PassBenefitsSection() {
               </p>
 
               <button
-                className={`text-xsmall14 mt-6 self-end font-medium ${
+                className={`mt-6 self-end text-xsmall14 font-medium ${
                   card.accent ? 'text-[#F1642B]' : 'text-primary'
                 }`}
                 onClick={() => scrollTo(card.anchor)}

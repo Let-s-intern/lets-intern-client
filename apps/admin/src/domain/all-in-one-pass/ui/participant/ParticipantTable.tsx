@@ -157,7 +157,7 @@ function ParticipantGroupRows({
         <TD>
           <button
             type="button"
-            className="border-primary text-primary hover:bg-primary-5 w-24 whitespace-nowrap rounded border py-1 text-xs"
+            className="rounded w-24 whitespace-nowrap border border-primary py-1 text-xs text-primary hover:bg-primary-5"
             onClick={(e) => {
               e.stopPropagation();
               onUsedProgramsClick(head);
@@ -171,10 +171,10 @@ function ParticipantGroupRows({
           <button
             type="button"
             disabled={!canRevoke}
-            className={`w-24 whitespace-nowrap rounded border py-1 text-xs ${
+            className={`rounded w-24 whitespace-nowrap border py-1 text-xs ${
               canRevoke
                 ? 'border-red-500 text-red-600 hover:bg-red-50'
-                : 'border-neutral-80 text-neutral-40 cursor-not-allowed'
+                : 'cursor-not-allowed border-neutral-80 text-neutral-40'
             }`}
             onClick={(e) => {
               e.stopPropagation();

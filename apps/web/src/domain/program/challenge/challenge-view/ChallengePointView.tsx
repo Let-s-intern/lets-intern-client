@@ -261,7 +261,7 @@ const ChallengePointView = ({
                 />
               ))}
             </ul>
-            <p className="text-xsmall14 text-neutral-40 md:text-xsmall16 font-semibold md:text-center">
+            <p className="text-xsmall14 font-semibold text-neutral-40 md:text-center md:text-xsmall16">
               {getProgramNotice(challengeType, isResumeTemplate)}
             </p>
           </div>
@@ -330,7 +330,7 @@ const ChallengePointView = ({
           <div className="flex w-full max-w-[1000px] flex-col px-5 py-[60px] md:px-10 md:py-[120px] lg:px-0">
             <div className="flex w-full flex-col md:items-center">
               <p
-                className="text-xsmall16 md:text-small20 font-bold"
+                className="text-xsmall16 font-bold md:text-small20"
                 style={{ color: styles.primaryColor }}
               >
                 진행 방식
@@ -339,13 +339,13 @@ const ChallengePointView = ({
                 {josa(challengeTitle, '은/는')}
                 <br className="md:hidden" /> {weekText}간 아래와 같이 진행돼요
               </Heading2>
-              <span className="text-xsmall14 mb-10 text-neutral-50 md:mb-20">
+              <span className="mb-10 text-xsmall14 text-neutral-50 md:mb-20">
                 {description}
               </span>
             </div>
             <div className="mb-[30px] flex w-full flex-col md:mb-[23px]">
               <div
-                className="text-xsmall14 flex w-full items-center rounded-t-md px-4 py-2.5 font-semibold text-white md:justify-center md:px-2.5"
+                className="flex w-full items-center rounded-t-md px-4 py-2.5 text-xsmall14 font-semibold text-white md:justify-center md:px-2.5"
                 style={{ backgroundColor: styles.primaryColor }}
               >
                 {weekText} 과정

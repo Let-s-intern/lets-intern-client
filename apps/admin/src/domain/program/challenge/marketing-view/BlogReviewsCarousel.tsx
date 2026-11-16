@@ -29,7 +29,7 @@ const BlogReviewCard = ({ writer, image, url }: BlogReview) => (
         className="object-cover transition-transform duration-300 ease-out group-hover:scale-105"
       />
     </button>
-    <span className="text-xsmall14 text-neutral-30 line-clamp-1 w-full text-start font-normal tracking-[-0.02px]">
+    <span className="line-clamp-1 w-full text-start text-xsmall14 font-normal tracking-[-0.02px] text-neutral-30">
       {writer}
     </span>
   </div>

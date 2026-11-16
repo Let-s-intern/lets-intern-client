@@ -46,7 +46,7 @@ function WeekCard({ item, tone }: { item: PlaybookWeekOutput; tone: Tone }) {
       className={`rounded-xxl p-5 md:p-6 ${
         isLast
           ? 'bg-[#11142B]'
-          : 'border-neutral-85 border bg-white shadow-[0_2px_16px_rgba(0,0,0,0.04)]'
+          : 'border border-neutral-85 bg-white shadow-[0_2px_16px_rgba(0,0,0,0.04)]'
       }`}
     >
       <p className="flex flex-wrap items-center gap-2">
@@ -58,14 +58,14 @@ function WeekCard({ item, tone }: { item: PlaybookWeekOutput; tone: Tone }) {
           WEEK {String(item.week).padStart(2, '0')}
         </span>
         {tone === 'challenge' && (
-          <span className="bg-primary-10 text-primary rounded-full px-2.5 py-1 text-[0.65rem] font-bold">
+          <span className="rounded-full bg-primary-10 px-2.5 py-1 text-[0.65rem] font-bold text-primary">
             {CHALLENGE_BADGE}
           </span>
         )}
       </p>
 
       <strong
-        className={`text-xsmall14 md:text-xsmall16 mt-2 block font-bold ${
+        className={`mt-2 block text-xsmall14 font-bold md:text-xsmall16 ${
           isLast ? 'text-white' : 'text-neutral-0'
         }`}
       >
@@ -73,7 +73,7 @@ function WeekCard({ item, tone }: { item: PlaybookWeekOutput; tone: Tone }) {
       </strong>
 
       <span
-        className={`text-xsmall14 mt-2 block ${
+        className={`mt-2 block text-xsmall14 ${
           isLast ? 'text-neutral-70' : 'text-neutral-45'
         }`}
       >
@@ -103,7 +103,7 @@ export default function PlaybookWeekTimeline() {
       {/* 가운데 점선. 카드 뒤에 깔린다 */}
       <span
         aria-hidden="true"
-        className="border-neutral-80 absolute left-1/2 top-0 hidden h-full -translate-x-1/2 border-l-2 border-dotted md:block"
+        className="absolute left-1/2 top-0 hidden h-full -translate-x-1/2 border-l-2 border-dotted border-neutral-80 md:block"
       />
 
       {O.weeks.map((item, i) => {

@@ -6,7 +6,7 @@ const GeneralTrendSection = ({ primaryColor }: { primaryColor: string }) => (
   <div className="flex w-full max-w-[1000px] flex-col gap-y-[50px] px-5 py-[70px] md:gap-y-20 md:px-10 md:py-[120px] lg:px-0">
     <div className="flex w-full flex-col gap-y-3 md:items-center">
       <p
-        className="text-xsmall16 md:text-small20 font-bold"
+        className="text-xsmall16 font-bold md:text-small20"
         style={{ color: primaryColor }}
       >
         취업 성공 전략

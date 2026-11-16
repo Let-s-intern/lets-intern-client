@@ -97,17 +97,17 @@ const CareerRecordBody = ({
           {category}
         </span>
         <div className="flex flex-col gap-1">
-          <span className="text-xsmall14 text-neutral-0 font-normal">
+          <span className="text-xsmall14 font-normal text-neutral-0">
             {jobTitle}
           </span>
-          <span className="text-xsmall16 text-neutral-0 truncate font-medium">
+          <span className="truncate text-xsmall16 font-medium text-neutral-0">
             {companyName}
           </span>
           <div className="flex items-center gap-2">
-            <span className="text-xsmall14 text-neutral-0 font-normal">
+            <span className="text-xsmall14 font-normal text-neutral-0">
               {employmentType}
             </span>
-            <span className="text-xsmall14 text-neutral-40 font-normal">
+            <span className="text-xsmall14 font-normal text-neutral-40">
               {workPeriod}
             </span>
           </div>

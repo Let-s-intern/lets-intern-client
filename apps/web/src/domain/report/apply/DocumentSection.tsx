@@ -71,7 +71,7 @@ export const DocumentSection = ({
               />
             )}
             {value === 'url' && !isValidUrl && (
-              <span className="text-xsmall14 text-system-error h-3">
+              <span className="h-3 text-xsmall14 text-system-error">
                 올바른 주소를 입력해주세요
               </span>
             )}

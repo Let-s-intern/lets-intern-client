@@ -226,7 +226,7 @@ const MissionSubmitRegularSection = ({
         {!currentSelectedMission?.missionInfo?.missionType ? (
           <>
             {/* 링크 섹션 */}
-            <h2 className="text-small18 text-neutral-0 mb-6 font-bold">
+            <h2 className="mb-6 text-small18 font-bold text-neutral-0">
               미션 제출하기
             </h2>
 

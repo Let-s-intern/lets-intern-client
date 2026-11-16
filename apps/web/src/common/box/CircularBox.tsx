@@ -12,7 +12,7 @@ function CircularBox({
   return (
     <div
       className={twMerge(
-        'text-small20 text-static-100 flex h-32 w-32 flex-col items-center justify-center rounded-full bg-[#4DCDFF] font-bold',
+        'flex h-32 w-32 flex-col items-center justify-center rounded-full bg-[#4DCDFF] text-small20 font-bold text-static-100',
         className,
       )}
     >

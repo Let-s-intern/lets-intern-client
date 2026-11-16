@@ -41,7 +41,7 @@ const WishIndustryPieChart = ({ applications }: WishIndustryPieChartProps) => {
   if (applications.length === 0 || buckets.length === 0) return null;
 
   return (
-    <div className="flex h-full flex-col rounded border border-gray-200 p-3">
+    <div className="rounded flex h-full flex-col border border-gray-200 p-3">
       <p className="mb-2 text-sm text-gray-700">희망 산업 분포</p>
       <PieChart
         height={150}

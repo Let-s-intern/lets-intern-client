@@ -45,7 +45,7 @@ export default function RealTalkSection() {
           {REAL_TALK.eyebrow}
         </p>
 
-        <h2 className="text-neutral-0 mt-4 text-center text-2xl font-bold leading-snug md:text-[2rem]">
+        <h2 className="mt-4 text-center text-2xl font-bold leading-snug text-neutral-0 md:text-[2rem]">
           {REAL_TALK.titleLines.map((line) => (
             <span className="block" key={line}>
               {line}
@@ -56,17 +56,17 @@ export default function RealTalkSection() {
         <div className="mx-auto mt-10 flex max-w-[880px] flex-col gap-4 md:mt-14 md:gap-6">
           {REAL_TALK.bubbles.map((bubble) => (
             <div
-              className={`w-full max-w-[520px] rounded-2xl px-6 py-5 md:w-[62%] md:max-w-none ${
+              className={`rounded-2xl w-full max-w-[520px] px-6 py-5 md:w-[62%] md:max-w-none ${
                 bubble.accent
-                  ? 'bg-primary-10 rounded-br-none md:ml-auto'
+                  ? 'rounded-br-none bg-primary-10 md:ml-auto'
                   : 'rounded-bl-none bg-white shadow-[0_2px_16px_rgba(0,0,0,0.06)] md:mr-auto'
               }`}
               key={bubble.who}
             >
-              <span className="text-neutral-45 text-xs font-bold">
+              <span className="text-xs font-bold text-neutral-45">
                 {bubble.who}
               </span>
-              <p className="text-xsmall14 md:text-xsmall16 text-neutral-20 mt-2 leading-relaxed">
+              <p className="mt-2 text-xsmall14 leading-relaxed text-neutral-20 md:text-xsmall16">
                 {bubble.lines.map((line) => (
                   <span className="block" key={line}>
                     {line}
@@ -77,7 +77,7 @@ export default function RealTalkSection() {
           ))}
         </div>
 
-        <h3 className="text-neutral-0 mt-14 text-center text-xl font-bold leading-snug md:mt-20 md:text-[1.75rem]">
+        <h3 className="mt-14 text-center text-xl font-bold leading-snug text-neutral-0 md:mt-20 md:text-[1.75rem]">
           {REAL_TALK.bridgeLines.map((line) => (
             <span className="block" key={line}>
               <HighlightedLine
@@ -98,17 +98,17 @@ export default function RealTalkSection() {
               <span className="text-sm font-bold text-[#F1642B]">
                 {area.no}
               </span>
-              <strong className="text-small18 text-neutral-0 mt-4 block font-bold">
+              <strong className="mt-4 block text-small18 font-bold text-neutral-0">
                 {area.label}
               </strong>
-              <p className="text-xsmall14 text-neutral-40 mt-3 leading-relaxed">
+              <p className="mt-3 text-xsmall14 leading-relaxed text-neutral-40">
                 {area.desc}
               </p>
             </div>
           ))}
         </div>
 
-        <p className="text-xsmall14 md:text-small18 text-neutral-20 mt-12 text-center font-bold leading-relaxed md:mt-16">
+        <p className="mt-12 text-center text-xsmall14 font-bold leading-relaxed text-neutral-20 md:mt-16 md:text-small18">
           {REAL_TALK.outroLines.map((line) => (
             <span className="block" key={line}>
               <HighlightedLine
@@ -131,7 +131,7 @@ export default function RealTalkSection() {
              * Tailwind 의 `.text-primary` (0,1,0) 를 순서와 무관하게 이긴다 —
              * `<a>` 에 직접 걸면 색이 그냥 먹지 않는다.
              */}
-            <span className="text-primary flex items-center gap-2 text-base font-bold">
+            <span className="flex items-center gap-2 text-base font-bold text-primary">
               {REAL_TALK.ctaLabel}
               <span aria-hidden="true">↓</span>
             </span>

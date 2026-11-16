@@ -35,21 +35,21 @@ export default function LiveFeedbackTab() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h2 className="text-medium20 text-neutral-0 font-semibold">
+      <h2 className="text-medium20 font-semibold text-neutral-0">
         전체 예약 목록
       </h2>
 
-      <nav className="border-neutral-80 flex gap-1 border-b">
+      <nav className="flex gap-1 border-b border-neutral-80">
         {subTabs.map((tab) => (
           <button
             type="button"
             key={tab.id}
             onClick={() => setSubTab(tab.id)}
             className={twMerge(
-              'text-xsmall14 -mb-px border-b-2 px-4 py-2',
+              '-mb-px border-b-2 px-4 py-2 text-xsmall14',
               subTab === tab.id
-                ? 'border-neutral-0 text-neutral-0 font-semibold'
-                : 'text-neutral-40 border-transparent',
+                ? 'border-neutral-0 font-semibold text-neutral-0'
+                : 'border-transparent text-neutral-40',
             )}
           >
             {tab.label}

@@ -41,13 +41,13 @@ const MentorProfileLink = ({
 }) => (
   <Link
     href={`/mentors/${mentorId}`}
-    className={`motion-safe:animate-fade-in-up group shrink-0 ${className}`}
+    className={`group shrink-0 motion-safe:animate-fade-in-up ${className}`}
   >
     <span className="mentor-profile-nudge flex flex-col gap-0.5 rounded-md border border-white/20 bg-white/5 px-4 py-3 transition-colors group-hover:border-white/40 group-hover:bg-white/10">
-      <span className="text-xxsmall12 md:text-xsmall14 text-white/70">
+      <span className="text-xxsmall12 text-white/70 md:text-xsmall14">
         이 멘토님, 어떤 분인지 궁금하다면?
       </span>
-      <span className="text-xsmall14 md:text-xsmall16 flex items-center gap-1 font-semibold">
+      <span className="flex items-center gap-1 text-xsmall14 font-semibold md:text-xsmall16">
         프로필 구경하러 가기
         <svg
           aria-hidden="true"
@@ -98,7 +98,7 @@ const DetailHero = ({
   return (
     <section
       id={LM_HERO_ID}
-      className="bg-neutral-0 text-static-100 relative overflow-hidden"
+      className="relative overflow-hidden bg-neutral-0 text-static-100"
     >
       <div className="mw-1180 relative flex flex-col gap-8 px-5 py-12 md:py-16">
         {/*
@@ -118,7 +118,7 @@ const DetailHero = ({
             <img
               src={profile.profileImage}
               alt={profile.nickname ?? '멘토 프로필'}
-              className="bg-neutral-90 h-24 w-24 shrink-0 rounded-md object-cover object-top md:h-40 md:w-40 lg:h-52 lg:w-52"
+              className="h-24 w-24 shrink-0 rounded-md bg-neutral-90 object-cover object-top md:h-40 md:w-40 lg:h-52 lg:w-52"
             />
           )}
 
@@ -128,15 +128,15 @@ const DetailHero = ({
           */}
           <div className="flex min-w-0 flex-1 flex-col gap-3 self-stretch">
             <div className="flex items-center gap-2">
-              <span className="bg-primary text-xxsmall12 rounded-sm px-2 py-1 font-bold">
+              <span className="rounded-sm bg-primary px-2 py-1 text-xxsmall12 font-bold">
                 BEST
               </span>
-              <span className="bg-primary-20 text-primary-dark text-xxsmall12 rounded-sm px-2 py-1 font-semibold">
+              <span className="rounded-sm bg-primary-20 px-2 py-1 text-xxsmall12 font-semibold text-primary-dark">
                 선착순 마감
               </span>
             </div>
 
-            <h1 className="text-medium24 md:text-xlarge30 max-w-[640px] font-bold leading-snug">
+            <h1 className="max-w-[640px] text-medium24 font-bold leading-snug md:text-xlarge30">
               {detail.title}
             </h1>
 
@@ -146,7 +146,7 @@ const DetailHero = ({
                   key={i}
                   /* 멘토 설정의 미리보기가 편집 중인 줄로 따라올 때 쓴다(LC-3268). */
                   data-preview-item={i}
-                  className="text-xsmall14 md:text-xsmall16 whitespace-pre-line text-white/85"
+                  className="whitespace-pre-line text-xsmall14 text-white/85 md:text-xsmall16"
                 >
                   - {bullet}
                 </li>
@@ -192,9 +192,9 @@ const DetailHero = ({
             라이브 클래스 상세(`LiveBasicInfo`)의 가격 카드와 같은 구성이다.
             플랜은 고른 값이 그대로 신청 시트로 이어진다.
           */}
-        <div className="bg-neutral-95 text-neutral-0 flex flex-col gap-4 rounded-md px-6 py-5">
-          <div className="border-neutral-80 flex flex-col gap-1 border-b pb-4 md:flex-row md:items-center md:justify-between">
-            <span className="text-xsmall14 md:text-xsmall16 flex items-center gap-2 font-semibold">
+        <div className="flex flex-col gap-4 rounded-md bg-neutral-95 px-6 py-5 text-neutral-0">
+          <div className="flex flex-col gap-1 border-b border-neutral-80 pb-4 md:flex-row md:items-center md:justify-between">
+            <span className="flex items-center gap-2 text-xsmall14 font-semibold md:text-xsmall16">
               <span aria-hidden="true">📢</span> 진행 기간
             </span>
             <span className="text-xsmall14 text-neutral-30">{period}</span>
@@ -204,11 +204,11 @@ const DetailHero = ({
 
           <div className="flex flex-col gap-0.5">
             {discountRate > 0 && (
-              <span className="text-neutral-45 text-xsmall14 whitespace-nowrap line-through">
+              <span className="whitespace-nowrap text-xsmall14 text-neutral-45 line-through">
                 {formatPrice(listPrice as number)}
               </span>
             )}
-            <span className="text-medium22 flex flex-wrap items-baseline gap-2 whitespace-nowrap font-bold">
+            <span className="flex flex-wrap items-baseline gap-2 whitespace-nowrap text-medium22 font-bold">
               {discountRate > 0 && (
                 <span className="text-system-error">{discountRate}%</span>
               )}
@@ -223,7 +223,7 @@ const DetailHero = ({
               return (
                 <li
                   key={option.duration}
-                  className="text-xsmall14 flex flex-wrap items-center justify-between gap-x-3 gap-y-1"
+                  className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-xsmall14"
                 >
                   <label className="flex min-w-0 cursor-pointer items-center gap-2">
                     {/*
@@ -236,15 +236,15 @@ const DetailHero = ({
                       checked={selectedDuration === option.duration}
                       onChange={() => onSelectPlan(option.duration)}
                       aria-label={`[LIVE] 1:1 멘토링 (${durationLabel(option.duration)})`}
-                      className="accent-primary h-4 w-4"
+                      className="h-4 w-4 accent-primary"
                     />
                     [LIVE] 1:1 멘토링 ({durationLabel(option.duration)})
                   </label>
-                  <span className="text-neutral-45 ml-auto flex shrink-0 items-center gap-2 whitespace-nowrap">
+                  <span className="ml-auto flex shrink-0 items-center gap-2 whitespace-nowrap text-neutral-45">
                     <span className="line-through">
                       {formatPrice(optionList)}
                     </span>
-                    <span className="text-neutral-0 font-bold">
+                    <span className="font-bold text-neutral-0">
                       {formatPrice(option.price)}
                     </span>
                   </span>

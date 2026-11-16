@@ -81,12 +81,12 @@ export default function VodPassOption({
 
   return (
     <div>
-      <span className="text-xsmall14 mb-3 block font-semibold">
+      <span className="mb-3 block text-xsmall14 font-semibold">
         VOD 이용권 추가 (선택)
       </span>
       <div
         className={twMerge(
-          'rounded-xs overflow-hidden border transition-colors',
+          'overflow-hidden rounded-xs border transition-colors',
           checked
             ? 'border-primary bg-primary-5'
             : 'border-neutral-80 hover:bg-neutral-100',
@@ -105,21 +105,21 @@ export default function VodPassOption({
                   <b className="font-bold">{product.title}</b>
                   <span
                     className={twMerge(
-                      'text-xxsmall12 text-primary rounded-full px-2 py-0.5 font-medium',
+                      'rounded-full px-2 py-0.5 text-xxsmall12 font-medium text-primary',
                       checked ? 'bg-static-100' : 'bg-primary-10',
                     )}
                   >
                     {vodPassDurationDays}일 이용권
                   </span>
                 </span>
-                <span className="text-xxsmall12 text-neutral-30 mt-1 block font-normal leading-5">
+                <span className="mt-1 block text-xxsmall12 font-normal leading-5 text-neutral-30">
                   결제 즉시 이용이 시작됩니다. 이용 중인 이용권이 있으면 종료 후
                   이어서 시작됩니다
                 </span>
               </span>
               <span
                 className={twMerge(
-                  'text-xsmall14 flex shrink-0 items-baseline font-bold',
+                  'flex shrink-0 items-baseline text-xsmall14 font-bold',
                   checked ? 'text-primary' : 'text-neutral-10',
                 )}
               >
@@ -130,15 +130,15 @@ export default function VodPassOption({
           }
         />
         {checked && supportsVodPassMonths(product) && (
-          <div className="border-primary-20 flex items-center justify-between gap-3 border-t px-3 py-3">
+          <div className="flex items-center justify-between gap-3 border-t border-primary-20 px-3 py-3">
             <span className="min-w-0">
-              <span className="text-xsmall14 block font-medium">이용 기간</span>
+              <span className="block text-xsmall14 font-medium">이용 기간</span>
               {additionalMonthPrice > 0 && (
-                <span className="text-xxsmall12 text-neutral-30 mt-0.5 block">
+                <span className="mt-0.5 block text-xxsmall12 text-neutral-30">
                   2개월부터 매월 +{additionalMonthPrice.toLocaleString()}원
                 </span>
               )}
-              <span className="text-xxsmall12 text-neutral-30 mt-0.5 block">
+              <span className="mt-0.5 block text-xxsmall12 text-neutral-30">
                 최대 {maxMonths}개월까지 선택할 수 있어요
               </span>
             </span>
@@ -155,7 +155,7 @@ export default function VodPassOption({
                 -
               </button>
               <span
-                className="text-xsmall14 min-w-[3.5rem] text-center font-semibold"
+                className="min-w-[3.5rem] text-center text-xsmall14 font-semibold"
                 aria-live="polite"
               >
                 {months}개월

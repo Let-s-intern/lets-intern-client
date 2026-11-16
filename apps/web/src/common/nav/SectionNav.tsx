@@ -55,7 +55,7 @@ export default function SectionNav({
   return (
     <nav
       className={twMerge(
-        'border-neutral-80 bg-static-100 sticky z-20 flex w-full justify-center border-b-2 px-5 transition-all',
+        'sticky z-20 flex w-full justify-center border-b-2 border-neutral-80 bg-static-100 px-5 transition-all',
         scrollStyleClassName,
         className,
       )}
@@ -69,10 +69,10 @@ export default function SectionNav({
               type="button"
               onClick={() => scrollToSection(to, scrollOffset)}
               className={twMerge(
-                'xs:text-xsmall16 border-b-[2.4px] px-1.5 py-4 text-[10px] font-semibold transition-colors md:min-w-[100px]',
+                'border-b-[2.4px] px-1.5 py-4 text-[10px] font-semibold transition-colors xs:text-xsmall16 md:min-w-[100px]',
                 isActive
                   ? 'border-primary text-primary'
-                  : 'text-neutral-45 border-transparent',
+                  : 'border-transparent text-neutral-45',
               )}
             >
               {title}

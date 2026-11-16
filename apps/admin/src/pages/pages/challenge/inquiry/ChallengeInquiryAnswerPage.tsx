@@ -48,9 +48,9 @@ const ChallengeInquiryAnswerPage = () => {
         <h1 className="text-2xl font-semibold">챌린지 1:1 문의 - 답변하기</h1>
       </header>
 
-      <section className="mb-6 rounded border border-gray-200 bg-gray-50 px-6 py-4">
+      <section className="rounded mb-6 border border-gray-200 bg-gray-50 px-6 py-4">
         <p className="mb-3 text-base font-semibold">{question.title}</p>
-        <ul className="text-xsmall14 space-y-1 text-gray-600">
+        <ul className="space-y-1 text-xsmall14 text-gray-600">
           <li>· {question.challengeTitle}</li>
           <li>· {question.userName}</li>
           {question.challengePricePlanType && (
@@ -68,10 +68,10 @@ const ChallengeInquiryAnswerPage = () => {
       </section>
 
       <section className="mb-6">
-        <p className="text-xsmall14 mb-1 font-medium text-gray-700">
+        <p className="mb-1 text-xsmall14 font-medium text-gray-700">
           문의 내용
         </p>
-        <div className="whitespace-pre-wrap rounded border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800">
+        <div className="rounded whitespace-pre-wrap border border-gray-200 bg-white px-4 py-3 text-sm text-gray-800">
           {question.content}
         </div>
 
@@ -88,7 +88,7 @@ const ChallengeInquiryAnswerPage = () => {
                   <img
                     src={url}
                     alt="첨부 이미지"
-                    className="h-28 w-28 rounded border border-gray-200 object-cover"
+                    className="rounded h-28 w-28 border border-gray-200 object-cover"
                   />
                 </a>
               </li>
@@ -98,7 +98,7 @@ const ChallengeInquiryAnswerPage = () => {
       </section>
 
       <section className="mb-8">
-        <p className="text-xsmall14 mb-1 font-medium text-gray-700">답변</p>
+        <p className="mb-1 text-xsmall14 font-medium text-gray-700">답변</p>
         <EditorApp
           initialEditorStateJsonString={question.answer ?? undefined}
           onChange={(jsonString) => {
@@ -115,7 +115,7 @@ const ChallengeInquiryAnswerPage = () => {
           리스트로 돌아가기
         </button>
         <button
-          className="bg-primary rounded px-5 py-2 text-sm text-white disabled:opacity-50"
+          className="rounded bg-primary px-5 py-2 text-sm text-white disabled:opacity-50"
           disabled={isPending}
           onClick={handleSave}
         >

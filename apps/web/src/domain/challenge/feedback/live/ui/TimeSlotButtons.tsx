@@ -48,7 +48,7 @@ const TimeSlotButtons = ({
             type="button"
             disabled={isUnavailable}
             onClick={() => onSlotSelect(date, time)}
-            className={`text-xxsmall12 flex flex-1 items-center justify-center rounded-sm border py-2 transition-colors ${STATE_CLASSES[slotState]}`}
+            className={`flex flex-1 items-center justify-center rounded-sm border py-2 text-xxsmall12 transition-colors ${STATE_CLASSES[slotState]}`}
           >
             {label}
           </button>

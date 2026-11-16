@@ -58,7 +58,7 @@ export default function ResultsField({ value, onChange }: Props) {
       {value.cases.map((item, index) => (
         <div
           key={index}
-          className="border-neutral-80 flex flex-col gap-3 rounded border p-4"
+          className="rounded flex flex-col gap-3 border border-neutral-80 p-4"
         >
           <div className="flex items-center justify-between">
             <span className="text-xsmall14 font-medium">사례 {index + 1}</span>

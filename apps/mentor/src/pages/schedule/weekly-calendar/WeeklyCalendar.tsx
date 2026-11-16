@@ -241,11 +241,11 @@ const WeeklyCalendar = ({
   const isEmpty = barLayouts.length === 0 && timeBlockBars.length === 0;
 
   return (
-    <div className="border-neutral-80 relative rounded-2xl border bg-white">
+    <div className="rounded-2xl relative border border-neutral-80 bg-white">
       {/* ── 상단 고정(sticky): 날짜 범위 라벨 + 요일·날짜 헤더 행 ──────────── */}
       {/* -top-6: 페이지 스크롤 컨테이너(py-6=24px)의 상단 패딩만큼 끌어올려, 그 패딩
           영역으로 본문이 비쳐 보이는 여백 버그를 막는다 (헤더가 패딩 구간까지 덮음). */}
-      <div className="sticky -top-6 z-20 overflow-hidden rounded-t-2xl bg-white">
+      <div className="rounded-t-2xl sticky -top-6 z-20 overflow-hidden bg-white">
         {/* 요일·날짜 헤더 — body 가로 스크롤을 미러링(자체 스크롤바 숨김) */}
         <div ref={headerScrollRef} className="overflow-x-hidden">
           <div
@@ -254,7 +254,7 @@ const WeeklyCalendar = ({
               minWidth: `${totalDays * 140}px`,
             }}
           >
-            <div className="border-neutral-80 flex border-b">
+            <div className="flex border-b border-neutral-80">
               <div
                 className="flex-1"
                 style={{ display: 'grid', gridTemplateColumns: gridCols }}
@@ -277,7 +277,7 @@ const WeeklyCalendar = ({
       </div>
 
       {/* ── 본문 가로 스크롤 컨테이너 (요일 헤더는 위 고정 헤더로 분리) ─────── */}
-      <div ref={containerRef} className="overflow-x-auto rounded-b-2xl">
+      <div ref={containerRef} className="rounded-b-2xl overflow-x-auto">
         <div
           style={{
             width: `${innerWidthPercent}%`,
@@ -337,15 +337,15 @@ const WeeklyCalendar = ({
           {timeBlockBars.length > 0 && (
             <>
               {/* 구분선 + 섹션 레이블 */}
-              <div className="border-neutral-80 bg-neutral-95 flex items-center gap-2 border-t px-3 py-0.5">
+              <div className="flex items-center gap-2 border-t border-neutral-80 bg-neutral-95 px-3 py-0.5">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-500" />
-                <span className="text-xxsmall12 text-neutral-40 font-medium">
+                <span className="text-xxsmall12 font-medium text-neutral-40">
                   시간별 일정
                 </span>
               </div>
 
               {/* 시간순 스택 — 날짜별 열에 그날 세션을 시작시각 오름차순으로 쌓는다 */}
-              <div className="border-neutral-80 flex border-t">
+              <div className="flex border-t border-neutral-80">
                 {/* 날짜별 열 */}
                 <div
                   className="relative flex-1"
@@ -366,9 +366,9 @@ const WeeklyCalendar = ({
                           isToday ? 'bg-[#fbf9fe]' : ''
                         } ${
                           isMonthStart
-                            ? 'border-primary-20 border-l-2'
+                            ? 'border-l-2 border-primary-20'
                             : i > 0
-                              ? 'border-neutral-90 border-l'
+                              ? 'border-l border-neutral-90'
                               : ''
                         }`}
                       >
@@ -414,9 +414,9 @@ const WeeklyCalendar = ({
 
       {/* ── Empty state ──────────────────────────────────────────────────── */}
       {isEmpty && (
-        <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-white/60">
-          <div className="border-neutral-80 pointer-events-auto rounded-xl border bg-white px-8 py-6 shadow-lg">
-            <p className="text-xsmall16 text-neutral-30 text-center font-medium">
+        <div className="rounded-2xl pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-white/60">
+          <div className="pointer-events-auto rounded-xl border border-neutral-80 bg-white px-8 py-6 shadow-lg">
+            <p className="text-center text-xsmall16 font-medium text-neutral-30">
               진행 예정인 피드백 일정이 없습니다.
             </p>
           </div>
