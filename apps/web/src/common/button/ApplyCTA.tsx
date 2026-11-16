@@ -31,6 +31,8 @@ interface ApplyCTAProps {
   onApplyClick: () => void;
   onNotiClick?: () => void;
   isAlreadyApplied: boolean;
+  /** 데스크톱 바에 보일 결제 금액. 넘기지 않으면 금액을 보이지 않는다 */
+  price?: number;
 }
 
 export function MobileApplyCTA({
@@ -151,6 +153,7 @@ export function DesktopApplyCTA({
   onApplyClick,
   onNotiClick,
   isAlreadyApplied,
+  price,
 }: ApplyCTAProps) {
   const isOutOfDate =
     program?.beginning && program.deadline
@@ -191,14 +194,26 @@ export function DesktopApplyCTA({
               />
               <span className="text-xxsmall12 text-neutral-80">남음</span>
             </div>
+            {price !== undefined && (
+              <span className="text-small20 font-bold text-neutral-100">
+                {price.toLocaleString()}원
+              </span>
+            )}
             <GradientButton onClick={onApplyClick} className="apply_button">
               지금 바로 신청
             </GradientButton>
           </>
         ) : (
-          <GradientButton onClick={onApplyClick} className="apply_button">
-            지금 바로 신청
-          </GradientButton>
+          <>
+            {price !== undefined && (
+              <span className="text-small20 font-bold text-neutral-100">
+                {price.toLocaleString()}원
+              </span>
+            )}
+            <GradientButton onClick={onApplyClick} className="apply_button">
+              지금 바로 신청
+            </GradientButton>
+          </>
         )}
       </div>
     </DesktopCTA>

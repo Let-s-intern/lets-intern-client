@@ -83,6 +83,8 @@ export const useChallengePlanPrice = (
     passFinalPrice,
     /** 화면에 보여줄 최종 결제 금액 */
     finalPrice: isPassApplied ? passFinalPrice : finalPrice,
+    /** 실제로 결제하는 금액 (환급은 나중에 돌려받으므로 빼지 않는다) */
+    paymentPrice: isPassApplied ? passFinalPrice : sellingPrice,
     /** 할부 표시 기준 판매가 */
     displaySellingPrice: isPassApplied ? passFinalPrice : sellingPrice,
   };

@@ -12,6 +12,7 @@ import {
 } from '../../../common/button/ApplyCTA';
 import NotiModal from '@/domain/program/program-detail/button/NotiModal';
 import PricePlanBottomSheet from '../PricePlanBottomSheet';
+import { useChallengePlanPrice } from './hooks/useChallengePlanPrice';
 import { useOpenChallengeApply } from './hooks/useOpenChallengeApply';
 import { useChallengeApplySheetStore } from './store/useChallengeApplySheetStore';
 
@@ -50,6 +51,21 @@ const ChallengeCTAButtons = ({
     [],
   );
 
+  // 상단에서 고른 플랜의 결제 금액과 시작일을 하단 바에 함께 보인다
+  const { paymentPrice } = useChallengePlanPrice(
+    challenge.priceInfo,
+    plan ?? 'BASIC',
+  );
+  const desktopTitle = [
+    challenge.title,
+    challenge.startDate
+      ? `${dayjs(challenge.startDate).format('M/D')} 시작`
+      : null,
+    plan === 'LIGHT' ? '템플릿' : '챌린지',
+  ]
+    .filter(Boolean)
+    .join(' · ');
+
   /** 이미 신청했는지 체크하는 정보 */
   const isAlreadyApplied = application?.applied ?? false;
 
@@ -60,8 +76,10 @@ const ChallengeCTAButtons = ({
       {!isOpen && (
         <>
           <DesktopApplyCTA
+            price={paymentPrice}
             program={{
               ...challenge,
+              title: desktopTitle,
               beginning: challenge.beginning
                 ? dayjs(challenge.beginning)
                 : null,

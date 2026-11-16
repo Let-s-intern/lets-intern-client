@@ -54,7 +54,7 @@ const ChallengePortfolioView: React.FC<{
     return (
       <div className="flex w-full flex-col">
         <div className="flex w-full flex-col items-center">
-          <div className="flex w-full max-w-[1000px] flex-col px-5 pb-10 pt-6 md:gap-y-5 md:px-10 md:py-[60px] lg:px-0">
+          <div className="flex w-full max-w-[1160px] flex-col px-5 pb-10 pt-6 md:gap-y-5 md:px-10 md:py-[60px] xl:px-0">
             <ChallengeBasicInfo
               challengeId={id}
               challenge={challengeTransformed}
@@ -70,7 +70,7 @@ const ChallengePortfolioView: React.FC<{
   return (
     <div className="flex w-full flex-col">
       <div className="flex w-full flex-col items-center">
-        <div className="flex w-full max-w-[1000px] flex-col px-5 pb-10 pt-6 md:gap-y-5 md:px-10 md:py-[60px] lg:px-0">
+        <div className="flex w-full max-w-[1160px] flex-col px-5 pb-10 pt-6 md:gap-y-5 md:px-10 md:py-[60px] xl:px-0">
           <ChallengeBasicInfo
             challengeId={id}
             challenge={challengeTransformed}

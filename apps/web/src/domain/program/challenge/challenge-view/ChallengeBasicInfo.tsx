@@ -12,8 +12,9 @@ import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import { getProgramPathname } from '@/utils/url';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useOpenChallengeApply } from '../hooks/useOpenChallengeApply';
+import { useChallengeApplySheetStore } from '../store/useChallengeApplySheetStore';
 import { useChallengePassBenefit } from '../useChallengePassBenefit';
 import {
   getActiveChallengePathname,
@@ -147,6 +148,11 @@ const ChallengeBasicInfo = ({
   const [livePlan, setLivePlan] = useState<ChallengePricePlan>('BASIC');
   const [isTemplateMode, setIsTemplateMode] = useState(false);
   const plan: ChallengePricePlan = isTemplateMode ? 'LIGHT' : livePlan;
+  // 하단 고정 바가 같은 플랜의 금액을 보이도록 고른 플랜을 공유한다
+  const setSheetPlan = useChallengeApplySheetStore((state) => state.setPlan);
+  useEffect(() => {
+    setSheetPlan(plan);
+  }, [plan, setSheetPlan]);
 
   /* 참여 대상 = 버전 (LC-3247). 고르면 해당 버전 URL 로 이동한다 */
   const targetOptions: TargetOption[] = [...(challenge.versionList ?? [])]
@@ -241,7 +247,7 @@ const ChallengeBasicInfo = ({
       : null;
 
   return (
-    <div className="flex w-full flex-col gap-y-6 md:gap-y-8">
+    <div className="flex w-full flex-col">
       {passHref && (
         <PassPromoStrip
           passHref={passHref}
@@ -253,9 +259,9 @@ const ChallengeBasicInfo = ({
         />
       )}
 
-      {/* 히어로 이미지 */}
+      {/* 히어로 이미지. 시안처럼 아래 모서리는 제목과 바로 이어진다 */}
       <div
-        className="relative aspect-[4/3] w-full overflow-hidden rounded-md md:aspect-[5/1]"
+        className="relative mt-6 aspect-[4/3] w-full overflow-hidden rounded-t-md md:mt-10 md:aspect-[5/1]"
         style={styles.thumbnailStyle}
       >
         {(challenge.desktopThumbnail || challenge.thumbnail) && (
@@ -269,8 +275,8 @@ const ChallengeBasicInfo = ({
         )}
       </div>
 
-      <div className="flex flex-col gap-2">
-        <h1 className="text-medium22 font-bold text-neutral-0 md:text-xlarge30">
+      <div className="mt-3 flex flex-col gap-2 md:mt-4 md:gap-3">
+        <h1 className="text-medium22 font-bold text-neutral-0 md:text-xxlarge32">
           {challenge.title}
         </h1>
         {challenge.shortDesc && (
@@ -280,8 +286,8 @@ const ChallengeBasicInfo = ({
         )}
       </div>
 
-      <div className="flex flex-col gap-4 md:flex-row md:items-start md:gap-8">
-        <div className="md:flex-1">
+      <div className="mt-6 flex flex-col gap-4 md:mt-8 md:flex-row md:items-start md:justify-between md:gap-8">
+        <div className="md:flex-1 lg:max-w-[600px]">
           <ApplyOptionCard
             showModeSelect={hasLightPlan}
             mode={isTemplateMode ? 'TEMPLATE' : 'LIVE'}
@@ -290,7 +296,7 @@ const ChallengeBasicInfo = ({
             startDateOptions={startDateOptions}
           />
         </div>
-        <div className="md:w-[380px] md:shrink-0">
+        <div className="md:w-[340px] md:shrink-0 lg:w-[450px] lg:pt-10">
           <ApplyPriceCard
             priceInfoList={challenge.priceInfo}
             plan={plan}
