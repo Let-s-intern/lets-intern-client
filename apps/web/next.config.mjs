@@ -1,3 +1,4 @@
+// vercel redeploy trigger (2026-11-16)
 import { withSentryConfig } from '@sentry/nextjs';
 
 // 빌드 시 필수 env 부재를 fail-fast 로 막아 silent self-origin 요청 사고를 방지.

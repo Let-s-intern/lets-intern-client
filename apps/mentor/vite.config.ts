@@ -1,3 +1,4 @@
+// vercel redeploy trigger (2026-11-16)
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';

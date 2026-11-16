@@ -1,3 +1,4 @@
+// vercel redeploy trigger (2026-11-16)
 import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
 import { resolve } from 'path';
