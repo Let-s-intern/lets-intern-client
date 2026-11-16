@@ -17,7 +17,7 @@ interface Props {
 export default function BasicInfoSection({ input, patch }: Props) {
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="text-small20 text-neutral-0 font-semibold">기본 정보</h2>
+      <h2 className="text-small20 font-semibold text-neutral-0">기본 정보</h2>
       <div className="flex flex-wrap items-start gap-4">
         <div className="flex min-w-[240px] flex-1 flex-col gap-4">
           <TextField

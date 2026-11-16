@@ -47,13 +47,13 @@ export default function ReviewsSection({ reviews }: Props) {
           <button
             type="button"
             onClick={() => setExpanded(true)}
-            className="text-xsmall14 mt-4 w-full rounded-sm border border-[#4A76FF] py-3 font-medium text-[#4A76FF] md:hidden"
+            className="mt-4 w-full rounded-sm border border-[#4A76FF] py-3 text-xsmall14 font-medium text-[#4A76FF] md:hidden"
           >
             더보기
           </button>
         )}
 
-        <p className="text-xsmall14 md:text-small18 text-neutral-40 mt-10 text-center md:mt-16">
+        <p className="mt-10 text-center text-xsmall14 text-neutral-40 md:mt-16 md:text-small18">
           렛츠커리어 프로그램에 참여한 취준생들의 실제 후기입니다.
         </p>
       </div>
@@ -84,12 +84,12 @@ function ReviewCard({
       )}
     >
       <div className="flex items-center justify-between gap-2">
-        <span className="text-primary text-xsmall14 flex items-center gap-1.5 font-semibold">
-          <span className="bg-primary h-1.5 w-1.5 rounded-full" />
+        <span className="flex items-center gap-1.5 text-xsmall14 font-semibold text-primary">
+          <span className="h-1.5 w-1.5 rounded-full bg-primary" />
           {review.source}
         </span>
         {review.resultTags.length > 0 && (
-          <span className="text-xsmall14 shrink-0 font-semibold text-[#4a76ff]">
+          <span className="shrink-0 text-xsmall14 font-semibold text-[#4a76ff]">
             {review.resultTags.join(' · ')}
           </span>
         )}
@@ -98,15 +98,15 @@ function ReviewCard({
       {review.imageUrl ? (
         <img
           alt=""
-          className="rounded-ms mt-3 w-full"
+          className="mt-3 w-full rounded-ms"
           loading="lazy"
           src={review.imageUrl}
         />
       ) : (
-        <div className="bg-neutral-80 mt-3 aspect-[4/3] w-full rounded-lg" />
+        <div className="mt-3 aspect-[4/3] w-full rounded-lg bg-neutral-80" />
       )}
 
-      <p className="text-xsmall14 md:text-small18 text-neutral-30 mt-4 whitespace-pre-line">
+      <p className="mt-4 whitespace-pre-line text-xsmall14 text-neutral-30 md:text-small18">
         {review.summary}
       </p>
     </button>
@@ -145,18 +145,18 @@ function ReviewLightbox({
           type="button"
           onClick={onClose}
           aria-label="닫기"
-          className="text-neutral-40 hover:text-neutral-20 absolute right-4 top-4 text-lg"
+          className="absolute right-4 top-4 text-lg text-neutral-40 hover:text-neutral-20"
         >
           ✕
         </button>
 
         <div className="flex items-center justify-between gap-2 pr-3 md:pr-5">
-          <span className="text-primary text-xxsmall12 md:text-xsmall16 flex items-center gap-1.5 font-semibold">
-            <span className="bg-primary h-1.5 w-1.5 rounded-full" />
+          <span className="flex items-center gap-1.5 text-xxsmall12 font-semibold text-primary md:text-xsmall16">
+            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
             {review.source}
           </span>
           {review.resultTags.length > 0 && (
-            <span className="text-primary text-xxsmall12 md:text-xsmall16 shrink-0 font-semibold">
+            <span className="shrink-0 text-xxsmall12 font-semibold text-primary md:text-xsmall16">
               {review.resultTags.join(' · ')}
             </span>
           )}
@@ -165,12 +165,12 @@ function ReviewLightbox({
         {review.imageUrl && (
           <img
             alt=""
-            className="rounded-ms mt-4 w-full"
+            className="mt-4 w-full rounded-ms"
             src={review.imageUrl}
           />
         )}
 
-        <p className="text-small16 md:text-small18 text-neutral-30 mt-5 whitespace-pre-line">
+        <p className="text-small16 mt-5 whitespace-pre-line text-neutral-30 md:text-small18">
           {review.summary}
         </p>
       </div>

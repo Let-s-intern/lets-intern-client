@@ -15,7 +15,7 @@ function Eyebrow({ children }: { children: string }) {
 
 function SectionTitle({ lines }: { lines: readonly string[] }) {
   return (
-    <h2 className="text-neutral-0 mt-4 text-center text-2xl font-bold leading-snug md:text-[2rem]">
+    <h2 className="mt-4 text-center text-2xl font-bold leading-snug text-neutral-0 md:text-[2rem]">
       {lines.map((line) => (
         <span className="block" key={line}>
           {line}
@@ -33,30 +33,30 @@ function PlaybookWithBlock() {
         <Eyebrow>{W.eyebrow}</Eyebrow>
         <SectionTitle lines={W.titleLines} />
 
-        <p className="text-xsmall14 md:text-xsmall16 text-neutral-40 mt-6 text-center leading-relaxed">
+        <p className="mt-6 text-center text-xsmall14 leading-relaxed text-neutral-40 md:text-xsmall16">
           <span className="block">{W.subLead}</span>
           <span className="block">
             {W.subTail}
-            <strong className="text-neutral-0 font-bold">{W.subStrong}</strong>
+            <strong className="font-bold text-neutral-0">{W.subStrong}</strong>
           </span>
         </p>
 
         <ul className="mt-10 grid gap-4 md:mt-14 md:grid-cols-4 md:gap-5">
           {W.benefits.map((benefit) => (
             <li
-              className="rounded-xxl border-neutral-85 flex flex-col border bg-white p-6"
+              className="flex flex-col rounded-xxl border border-neutral-85 bg-white p-6"
               key={benefit.title}
             >
               <span
                 aria-hidden="true"
-                className="bg-primary-10 flex h-11 w-11 items-center justify-center rounded-xl text-xl"
+                className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary-10 text-xl"
               >
                 {benefit.icon}
               </span>
-              <strong className="text-xsmall16 text-neutral-0 mt-5 block font-bold">
+              <strong className="mt-5 block text-xsmall16 font-bold text-neutral-0">
                 {benefit.title}
               </strong>
-              <span className="text-xsmall14 text-neutral-40 mt-3 block leading-relaxed">
+              <span className="mt-3 block text-xsmall14 leading-relaxed text-neutral-40">
                 {benefit.desc}
               </span>
             </li>
@@ -73,16 +73,16 @@ function PlaybookWithBlock() {
             return (
               <li key={step.no}>
                 <div
-                  className={`flex items-center gap-3 rounded-2xl px-4 py-4 md:gap-4 md:px-6 ${
+                  className={`rounded-2xl flex items-center gap-3 px-4 py-4 md:gap-4 md:px-6 ${
                     isGoal
                       ? 'bg-[#11142B]'
-                      : 'border-neutral-85 border bg-white'
+                      : 'border border-neutral-85 bg-white'
                   }`}
                 >
                   <span
                     className={`shrink-0 rounded-full px-3 py-1 text-[0.7rem] font-bold ${
                       isGoal
-                        ? 'text-neutral-0 bg-white'
+                        ? 'bg-white text-neutral-0'
                         : 'bg-primary text-white'
                     }`}
                   >
@@ -126,7 +126,7 @@ function PlaybookStructureBlock() {
         <Eyebrow>{S.eyebrow}</Eyebrow>
         <SectionTitle lines={S.titleLines} />
 
-        <p className="text-xsmall14 md:text-xsmall16 text-neutral-40 mt-6 text-center leading-relaxed">
+        <p className="mt-6 text-center text-xsmall14 leading-relaxed text-neutral-40 md:text-xsmall16">
           {S.sub}
         </p>
 
@@ -145,7 +145,7 @@ function PlaybookOutputBlock() {
       <div className="wrap rv">
         <Eyebrow>{O.eyebrow}</Eyebrow>
 
-        <h2 className="text-neutral-0 mt-4 text-center text-2xl font-bold leading-snug md:text-[2rem]">
+        <h2 className="mt-4 text-center text-2xl font-bold leading-snug text-neutral-0 md:text-[2rem]">
           <span className="block">{O.titleLead}</span>
           <span className="block">
             <span className="text-primary">{O.titleStrong}</span>

@@ -48,7 +48,7 @@ export default function UsedProgramsModal({
       </DialogTitle>
       <DialogContent dividers>
         {isLoading ? (
-          <p className="text-xsmall14 text-neutral-45 py-6 text-center">
+          <p className="py-6 text-center text-xsmall14 text-neutral-45">
             불러오는 중...
           </p>
         ) : programs.length > 0 ? (
@@ -56,7 +56,7 @@ export default function UsedProgramsModal({
             {programs.map((program) => (
               <li
                 key={program.id}
-                className="border-neutral-80 flex items-center justify-between gap-3 rounded-sm border px-4 py-3"
+                className="flex items-center justify-between gap-3 rounded-sm border border-neutral-80 px-4 py-3"
               >
                 <div className="flex min-w-0 items-center gap-2">
                   <Chip
@@ -65,7 +65,7 @@ export default function UsedProgramsModal({
                     color="primary"
                     variant="outlined"
                   />
-                  <span className="text-xsmall14 text-neutral-0 truncate">
+                  <span className="truncate text-xsmall14 text-neutral-0">
                     {program.title}
                   </span>
                 </div>
@@ -88,7 +88,7 @@ export default function UsedProgramsModal({
             ))}
           </ul>
         ) : (
-          <p className="text-xsmall14 text-neutral-45 py-6 text-center">
+          <p className="py-6 text-center text-xsmall14 text-neutral-45">
             이용한 프로그램이 없습니다.
           </p>
         )}

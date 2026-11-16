@@ -118,7 +118,7 @@ const VodPassProductForm = ({ product }: { product: VodPassProduct }) => {
         <span className="text-sm">
           {product.isActive ? '판매 중' : '판매 중지'}
         </span>
-        <span className="text-neutral-40 text-xs">
+        <span className="text-xs text-neutral-40">
           판매 상태는 여기서 바꿀 수 없습니다.
         </span>
       </div>
@@ -152,12 +152,12 @@ const VodPassProductForm = ({ product }: { product: VodPassProduct }) => {
           value={additionalMonthPrice}
           onChange={(e) => setAdditionalMonthPrice(e.target.value)}
         />
-        <span className="text-neutral-40 text-xs">
+        <span className="text-xs text-neutral-40">
           2개월째부터 매월 더해지는 금액입니다. 0원이면 개월 수와 관계없이 1개월
           가격입니다.
         </span>
         {canPreview && (
-          <span className="text-neutral-40 text-xs">
+          <span className="text-xs text-neutral-40">
             예시: {PREVIEW_MONTHS}개월 구매 시 {previewPrice.toLocaleString()}
             원, {previewDays}일
           </span>
@@ -190,7 +190,7 @@ const VodPassProductForm = ({ product }: { product: VodPassProduct }) => {
           value={maxPurchaseMonths}
           onChange={(e) => setMaxPurchaseMonths(e.target.value)}
         />
-        <span className="text-neutral-40 text-xs">
+        <span className="text-xs text-neutral-40">
           한 번 결제에서 고를 수 있는 최대 개월 수입니다.
         </span>
       </div>
@@ -207,7 +207,7 @@ const VodPassProductForm = ({ product }: { product: VodPassProduct }) => {
           value={maxTotalMonths}
           onChange={(e) => setMaxTotalMonths(e.target.value)}
         />
-        <span className="text-neutral-40 text-xs">
+        <span className="text-xs text-neutral-40">
           지금 이용 중이거나 이용 예정인 이용권의 남은 기간을 합쳐 쌓아 둘 수
           있는 최대 개월 수입니다. 이용 기간이 끝나면 다시 구매할 수 있습니다.
           1회 최대 구매 개월 수 이상이어야 합니다.
@@ -224,7 +224,7 @@ const VodPassProductForm = ({ product }: { product: VodPassProduct }) => {
         <button
           type="submit"
           disabled={isPending}
-          className="bg-neutral-0 text-xsmall14 rounded-md px-4 py-2 text-white disabled:opacity-50"
+          className="rounded-md bg-neutral-0 px-4 py-2 text-xsmall14 text-white disabled:opacity-50"
         >
           저장
         </button>

@@ -167,12 +167,12 @@ function FilterDropdown({
       <div className="relative flex shrink-0 flex-col">
         <div
           className={clsx(
-            `rounded-xxs border-neutral-90 text-xsmall14 md:text-xsmall16 flex min-w-[8.5rem] max-w-fit cursor-pointer items-center gap-2 border bg-[#FBFBFC] px-3 py-2`,
+            `flex min-w-[8.5rem] max-w-fit cursor-pointer items-center gap-2 rounded-xxs border border-neutral-90 bg-[#FBFBFC] px-3 py-2 text-xsmall14 md:text-xsmall16`,
           )}
           onClick={() => setIsOpen((prev) => !prev)}
         >
-          <span className="text-neutral-20 font-medium">{label}</span>
-          <span className="text-primary font-semibold">
+          <span className="font-medium text-neutral-20">{label}</span>
+          <span className="font-semibold text-primary">
             {multiSelect
               ? multiSelectCaption
               : selectedItem
@@ -186,7 +186,7 @@ function FilterDropdown({
         {!isDesktop && (
           <BaseBottomSheet isOpen={isOpen} onClose={() => setIsOpen(false)}>
             <div className="px-1">
-              <span className="text-small18 text-neutral-0 mb-4 block font-semibold">
+              <span className="mb-4 block text-small18 font-semibold text-neutral-0">
                 {label}
               </span>
               <ul className="max-h-[60vh] overflow-y-auto">
@@ -229,7 +229,7 @@ function FilterDropdown({
         {isOpen && isDesktop && (
           <ul
             className={twMerge(
-              'rounded-xxs absolute top-12 z-10 w-max bg-white px-3 py-2 shadow-[0_0_20px_0_rgba(164,168,179,0.25)]',
+              'absolute top-12 z-10 w-max rounded-xxs bg-white px-3 py-2 shadow-[0_0_20px_0_rgba(164,168,179,0.25)]',
               dropdownClassName,
             )}
           >
@@ -290,7 +290,7 @@ const FilterList = ({
       key={item.value}
       className={twMerge(
         'flex h-10 cursor-pointer items-center justify-between pr-2',
-        isLastItem ? '' : 'border-neutral-90 border-b',
+        isLastItem ? '' : 'border-b border-neutral-90',
         className,
       )}
       value={item.value}
@@ -317,7 +317,7 @@ const FilterCaption = memo(function FilterCaption({
   children: ReactNode;
 }) {
   return (
-    <div className="text-xsmall14 text-neutral-10 font-medium">
+    <div className="text-xsmall14 font-medium text-neutral-10">
       {multiSelect ? (
         <div className="flex items-center gap-2">
           {checked ? (

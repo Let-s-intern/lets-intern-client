@@ -143,7 +143,7 @@ const MentorFilter = () => {
 
   return (
     <form
-      className="bg-neutral-90 mb-4 flex items-center justify-between p-4"
+      className="mb-4 flex items-center justify-between bg-neutral-90 p-4"
       onSubmit={handleSubmit}
     >
       <div className="flex items-center gap-2">

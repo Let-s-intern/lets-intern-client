@@ -23,14 +23,14 @@ const AllInOnePassSection = () => {
   if (isLoading || passList.length === 0) return null;
 
   return (
-    <section className="bg-primary-5 flex w-full flex-col gap-5 rounded-lg border border-[#9499F9] p-5 pb-4 md:px-8 md:pb-5 md:pt-6">
+    <section className="flex w-full flex-col gap-5 rounded-lg border border-[#9499F9] bg-primary-5 p-5 pb-4 md:px-8 md:pb-5 md:pt-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-xsmall16 md:text-small20 font-semibold">
+        <h2 className="text-xsmall16 font-semibold md:text-small20">
           올인원패스로 모든 혜택을 한 번에
         </h2>
         <Link
           href="/program?type=MEMBERSHIP"
-          className="text-xxsmall12 text-neutral-45 md:text-xsmall16 pb-3 pl-3"
+          className="pb-3 pl-3 text-xxsmall12 text-neutral-45 md:text-xsmall16"
         >
           더보기
         </Link>
@@ -50,7 +50,7 @@ const AllInOnePassSection = () => {
                   alt={programInfo.title ?? '올인원패스'}
                 />
                 {programInfo.programStatusType === PROGRAM_STATUS_KEY.POST && (
-                  <div className="bg-neutral-0/40 absolute inset-0 rounded-sm" />
+                  <div className="absolute inset-0 rounded-sm bg-neutral-0/40" />
                 )}
                 <div className="absolute left-2 top-2">
                   <ProgramStatusTag
@@ -59,7 +59,7 @@ const AllInOnePassSection = () => {
                 </div>
               </div>
               <div className="pt-3">
-                <p className="text-xsmall16 line-clamp-2 font-semibold">
+                <p className="line-clamp-2 text-xsmall16 font-semibold">
                   {programInfo.title}
                 </p>
               </div>

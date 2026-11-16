@@ -97,7 +97,7 @@ const UserRefundTable = ({ refunds, isLoading }: Props) => {
                 </div>
               </td>
               <td className="px-3 py-2">
-                <span className="mr-1 rounded bg-neutral-200 px-1.5 py-0.5 text-xs">
+                <span className="rounded mr-1 bg-neutral-200 px-1.5 py-0.5 text-xs">
                   {programTypeLabel[refund.programType ?? ''] ??
                     refund.programType}
                 </span>
@@ -115,7 +115,7 @@ const UserRefundTable = ({ refunds, isLoading }: Props) => {
               </td>
               <td className="whitespace-nowrap px-3 py-2 text-right">
                 {(refund.refundedAmount ?? 0).toLocaleString()}원
-                <span className="ml-1 rounded bg-neutral-200 px-1.5 py-0.5 text-xs">
+                <span className="rounded ml-1 bg-neutral-200 px-1.5 py-0.5 text-xs">
                   {isFull ? '전액' : '부분'}
                 </span>
                 {refund.refundType ? (

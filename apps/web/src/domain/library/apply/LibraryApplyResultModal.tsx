@@ -37,7 +37,7 @@ const LibraryApplyResultModal = ({
           </h2>
           {message && (
             <p
-              className="text-xsmall14 text-neutral-35 whitespace-pre-line"
+              className="whitespace-pre-line text-xsmall14 text-neutral-35"
               data-testid="apply-result-message"
             >
               {message}
@@ -47,7 +47,7 @@ const LibraryApplyResultModal = ({
         <button
           type="button"
           onClick={onClose}
-          className="rounded-xs bg-primary text-xsmall16 w-full py-3 text-white"
+          className="w-full rounded-xs bg-primary py-3 text-xsmall16 text-white"
           data-testid="apply-result-confirm"
         >
           {confirmText}

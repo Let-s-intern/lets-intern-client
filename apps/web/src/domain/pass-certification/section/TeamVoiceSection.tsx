@@ -28,15 +28,15 @@ function Bubble({
         inView ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
       }`}
     >
-      <div className="bg-primary-5 flex flex-col gap-3 rounded-xl p-5 md:gap-4 md:px-10 md:py-8">
-        <p className="text-xsmall14 text-neutral-40 font-light">{label}</p>
-        <p className="text-xsmall16 md:text-small18 text-neutral-10 leading-relaxed tracking-[-0.12%]">
+      <div className="flex flex-col gap-3 rounded-xl bg-primary-5 p-5 md:gap-4 md:px-10 md:py-8">
+        <p className="text-xsmall14 font-light text-neutral-40">{label}</p>
+        <p className="text-xsmall16 leading-relaxed tracking-[-0.12%] text-neutral-10 md:text-small18">
           {children}
         </p>
       </div>
       <span
         aria-hidden
-        className={`bg-primary-5 -mt-px hidden h-6 w-6 [clip-path:polygon(0_0,100%_0,50%_100%)] md:block ${
+        className={`-mt-px hidden h-6 w-6 bg-primary-5 [clip-path:polygon(0_0,100%_0,50%_100%)] md:block ${
           tail === 'right' ? 'mr-9 self-end' : 'ml-9 self-start'
         }`}
       />
@@ -137,7 +137,7 @@ export default function TeamVoiceSection() {
           </div>
         </div>
 
-        <p className="text-primary text-xsmall14 md:text-small18 text-center font-semibold">
+        <p className="text-center text-xsmall14 font-semibold text-primary md:text-small18">
           우리, 기다려요. 합격 후기를, 많이, 오래도록, 진짜진짜.
         </p>
       </div>

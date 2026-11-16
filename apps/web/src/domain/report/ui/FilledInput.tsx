@@ -18,7 +18,7 @@ const FilledInput = ({
   return (
     <input
       id={id}
-      className="bg-neutral-95 text-xsmall14 w-full rounded-md p-3"
+      className="w-full rounded-md bg-neutral-95 p-3 text-xsmall14"
       type="text"
       placeholder={placeholder}
       name={name}

@@ -399,7 +399,7 @@ export default function MentorDetailEditor({ mentorId, headerSlot }: Props) {
 
   if (isLoading) {
     return (
-      <div className="text-xsmall14 text-neutral-40 py-16 text-center">
+      <div className="py-16 text-center text-xsmall14 text-neutral-40">
         불러오는 중...
       </div>
     );
@@ -407,7 +407,7 @@ export default function MentorDetailEditor({ mentorId, headerSlot }: Props) {
 
   if (!userDetail) {
     return (
-      <div className="text-xsmall14 text-neutral-40 py-16 text-center">
+      <div className="py-16 text-center text-xsmall14 text-neutral-40">
         멘토 정보를 찾을 수 없습니다.
       </div>
     );
@@ -416,7 +416,7 @@ export default function MentorDetailEditor({ mentorId, headerSlot }: Props) {
   return (
     <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
       {/* 기본 정보 */}
-      <div className="border-neutral-80 rounded-lg border p-6">
+      <div className="rounded-lg border border-neutral-80 p-6">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-medium18 font-semibold">기본 정보</h2>
           {headerSlot}
@@ -424,14 +424,14 @@ export default function MentorDetailEditor({ mentorId, headerSlot }: Props) {
 
         <div className="mb-10 flex items-center gap-5">
           <div className="flex w-[200px] flex-col">
-            <label className="text-xsmall14 text-neutral-30 mb-1 block w-20 font-medium">
+            <label className="mb-1 block w-20 text-xsmall14 font-medium text-neutral-30">
               프로필 이미지
             </label>
             <button
               type="button"
               onClick={() => setIsProfileUploadOpen(true)}
               aria-label="프로필 이미지 업로드"
-              className="border-neutral-80 bg-neutral-95 group relative flex h-40 w-40 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full border"
+              className="group relative flex h-40 w-40 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full border border-neutral-80 bg-neutral-95"
             >
               {form.profileImgUrl ? (
                 <img
@@ -442,7 +442,7 @@ export default function MentorDetailEditor({ mentorId, headerSlot }: Props) {
               ) : (
                 <span className="text-xsmall14 text-neutral-40">프로필</span>
               )}
-              <div className="text-xxsmall12 absolute inset-0 flex items-center justify-center bg-black/50 text-center text-white opacity-0 transition-opacity group-hover:opacity-100">
+              <div className="absolute inset-0 flex items-center justify-center bg-black/50 text-center text-xxsmall12 text-white opacity-0 transition-opacity group-hover:opacity-100">
                 이미지
                 <br />
                 업로드
@@ -457,7 +457,7 @@ export default function MentorDetailEditor({ mentorId, headerSlot }: Props) {
             />
           </div>
           <div className="item-center flex h-[184px] w-[200px] flex-col">
-            <label className="text-xsmall14 text-neutral-30 mb-1 block w-20 font-medium">
+            <label className="mb-1 block w-20 text-xsmall14 font-medium text-neutral-30">
               로고 이미지
             </label>
             {/* 대표 로고는 라이브러리에서 고르는 것이 기본이다. 라이브러리에 없는 로고만 「개별 로고 설정」 으로 올린다 */}
@@ -465,7 +465,7 @@ export default function MentorDetailEditor({ mentorId, headerSlot }: Props) {
               type="button"
               aria-label="대표 회사 로고 변경"
               onClick={() => setIsLogoPickerOpen(true)}
-              className="border-neutral-80 bg-neutral-95 group relative flex h-20 w-20 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full border"
+              className="group relative flex h-20 w-20 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full border border-neutral-80 bg-neutral-95"
             >
               {form.corpImgUrl ? (
                 <img
@@ -476,7 +476,7 @@ export default function MentorDetailEditor({ mentorId, headerSlot }: Props) {
               ) : (
                 <span className="text-xsmall14 text-neutral-40">로고</span>
               )}
-              <div className="text-xxsmall12 absolute inset-0 flex items-center justify-center bg-black/50 text-center text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+              <div className="absolute inset-0 flex items-center justify-center bg-black/50 text-center text-xxsmall12 text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
                 로고 변경
               </div>
             </button>
@@ -492,7 +492,7 @@ export default function MentorDetailEditor({ mentorId, headerSlot }: Props) {
                 />
               </Button>
               {form.corpLogoId !== null ? (
-                <div className="text-xxsmall12 text-neutral-30 flex items-center gap-2">
+                <div className="flex items-center gap-2 text-xxsmall12 text-neutral-30">
                   <span>라이브러리: {logoNameOf(form.corpLogoId)}</span>
                   <button
                     type="button"
@@ -526,7 +526,7 @@ export default function MentorDetailEditor({ mentorId, headerSlot }: Props) {
         <div className="flex flex-col gap-4">
           {BASIC_FORM_FIELDS.map(({ label, key }) => (
             <div key={key} className="flex items-center gap-3">
-              <label className="text-xsmall14 text-neutral-30 w-20 flex-shrink-0 font-medium">
+              <label className="w-20 flex-shrink-0 text-xsmall14 font-medium text-neutral-30">
                 {label}
               </label>
               <input
@@ -535,14 +535,14 @@ export default function MentorDetailEditor({ mentorId, headerSlot }: Props) {
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, [key]: e.target.value }))
                 }
-                className="border-neutral-80 text-xsmall14 focus:border-neutral-40 flex-1 rounded border px-3 py-2 outline-none"
+                className="rounded flex-1 border border-neutral-80 px-3 py-2 text-xsmall14 outline-none focus:border-neutral-40"
               />
             </div>
           ))}
 
           {/* SNS (여러 개 입력 가능) */}
           <div className="flex items-start gap-3">
-            <label className="text-xsmall14 text-neutral-30 w-20 flex-shrink-0 pt-2 font-medium">
+            <label className="w-20 flex-shrink-0 pt-2 text-xsmall14 font-medium text-neutral-30">
               SNS
             </label>
             <div className="flex min-w-0 flex-1 flex-col gap-2">
@@ -558,7 +558,7 @@ export default function MentorDetailEditor({ mentorId, headerSlot }: Props) {
                         onChange={(e) => handleSnsChange(index, e.target.value)}
                         placeholder="https://..."
                         aria-invalid={isInvalid}
-                        className="border-neutral-80 text-xsmall14 focus:border-neutral-40 min-w-0 flex-1 rounded border px-3 py-2 outline-none"
+                        className="rounded min-w-0 flex-1 border border-neutral-80 px-3 py-2 text-xsmall14 outline-none focus:border-neutral-40"
                       />
                       <button
                         type="button"
@@ -576,7 +576,7 @@ export default function MentorDetailEditor({ mentorId, headerSlot }: Props) {
                     {isInvalid ? (
                       <p
                         role="alert"
-                        className="text-system-error mt-1 text-xs"
+                        className="mt-1 text-xs text-system-error"
                       >
                         주소 형식이 아니에요. 예) instagram.com/아이디
                       </p>
@@ -587,7 +587,7 @@ export default function MentorDetailEditor({ mentorId, headerSlot }: Props) {
               <button
                 type="button"
                 onClick={handleSnsAdd}
-                className="text-primary text-xsmall14 border-neutral-80 hover:bg-neutral-95 w-full rounded border border-dashed px-3 py-2 font-medium"
+                className="rounded w-full border border-dashed border-neutral-80 px-3 py-2 text-xsmall14 font-medium text-primary hover:bg-neutral-95"
               >
                 + 추가
               </button>
@@ -596,11 +596,11 @@ export default function MentorDetailEditor({ mentorId, headerSlot }: Props) {
 
           {/* 멘토 키워드. 멘토 앱에서 멘토가 고르는 것과 같은 키워드 */}
           <div className="flex items-start gap-3">
-            <label className="text-xsmall14 text-neutral-30 w-20 flex-shrink-0 pt-1.5 font-medium">
+            <label className="w-20 flex-shrink-0 pt-1.5 text-xsmall14 font-medium text-neutral-30">
               멘토 키워드
             </label>
             {hashTagList.length === 0 ? (
-              <span className="text-xsmall14 text-neutral-40 pt-1.5">
+              <span className="pt-1.5 text-xsmall14 text-neutral-40">
                 등록된 키워드가 없습니다.
               </span>
             ) : (
@@ -613,9 +613,9 @@ export default function MentorDetailEditor({ mentorId, headerSlot }: Props) {
                       type="button"
                       aria-pressed={isSelected}
                       onClick={() => handleHashTagToggle(tag.id)}
-                      className={`text-xxsmall12 rounded-full border px-2.5 py-1.5 ${
+                      className={`rounded-full border px-2.5 py-1.5 text-xxsmall12 ${
                         isSelected
-                          ? 'border-primary text-primary font-medium'
+                          ? 'border-primary font-medium text-primary'
                           : 'border-neutral-80 text-neutral-30'
                       }`}
                     >
@@ -629,7 +629,7 @@ export default function MentorDetailEditor({ mentorId, headerSlot }: Props) {
         </div>
 
         <div className="mt-4">
-          <label className="text-xsmall14 text-neutral-30 mb-1 block font-medium">
+          <label className="mb-1 block text-xsmall14 font-medium text-neutral-30">
             한줄 소개
           </label>
           <textarea
@@ -638,7 +638,7 @@ export default function MentorDetailEditor({ mentorId, headerSlot }: Props) {
               setForm((prev) => ({ ...prev, introduction: e.target.value }))
             }
             placeholder="한줄 소개를 입력해주세요"
-            className="border-neutral-80 text-xsmall14 focus:border-neutral-40 h-24 w-full resize-none rounded border px-3 py-2 outline-none"
+            className="rounded h-24 w-full resize-none border border-neutral-80 px-3 py-2 text-xsmall14 outline-none focus:border-neutral-40"
           />
         </div>
 
@@ -662,7 +662,7 @@ export default function MentorDetailEditor({ mentorId, headerSlot }: Props) {
 
       {/* 경력 사항 */}
       <div className="flex flex-col gap-8">
-        <div className="border-neutral-80 rounded-lg border p-6">
+        <div className="rounded-lg border border-neutral-80 p-6">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-medium18 font-semibold">경력사항</h2>
             <Button
@@ -709,7 +709,7 @@ export default function MentorDetailEditor({ mentorId, headerSlot }: Props) {
           ) : null}
 
           {careers.length === 0 ? (
-            <div className="text-xsmall14 text-neutral-40 py-8 text-center">
+            <div className="py-8 text-center text-xsmall14 text-neutral-40">
               등록된 경력이 없습니다.
             </div>
           ) : (
@@ -724,7 +724,7 @@ export default function MentorDetailEditor({ mentorId, headerSlot }: Props) {
                 return (
                   <div
                     key={career.id ?? index}
-                    className="border-neutral-80 flex w-full gap-3 rounded border p-4"
+                    className="rounded flex w-full gap-3 border border-neutral-80 p-4"
                   >
                     {/* 로고 칸을 누르면 수정 다이얼로그 없이 로고만 바로 바꾼다 */}
                     <button
@@ -732,10 +732,10 @@ export default function MentorDetailEditor({ mentorId, headerSlot }: Props) {
                       aria-label={`${career.company || '경력'} 경력 로고 변경`}
                       disabled={!career.id || isLogoSaving}
                       onClick={() => setLogoPickingCareer(career)}
-                      className={`group relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded ${
+                      className={`rounded group relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden ${
                         career.logoImgUrl
-                          ? 'border-neutral-80 border'
-                          : 'border-neutral-70 border border-dashed'
+                          ? 'border border-neutral-80'
+                          : 'border border-dashed border-neutral-70'
                       }`}
                     >
                       {career.logoImgUrl ? (
@@ -750,7 +750,7 @@ export default function MentorDetailEditor({ mentorId, headerSlot }: Props) {
                         </span>
                       )}
                       <span
-                        className={`text-xxsmall10 absolute inset-0 flex items-center justify-center bg-black/50 text-center leading-tight text-white transition-opacity ${
+                        className={`absolute inset-0 flex items-center justify-center bg-black/50 text-center text-xxsmall10 leading-tight text-white transition-opacity ${
                           isLogoSaving
                             ? 'opacity-100'
                             : 'opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100'
@@ -761,7 +761,7 @@ export default function MentorDetailEditor({ mentorId, headerSlot }: Props) {
                     </button>
                     <div className="flex min-w-0 flex-1 flex-col gap-1">
                       <div className="flex items-center justify-between">
-                        <span className="text-xsmall14 text-neutral-0 flex items-center gap-2">
+                        <span className="flex items-center gap-2 text-xsmall14 text-neutral-0">
                           {career.job || '-'}
                           {career.companyLogoId !== null ? (
                             <span className="text-xxsmall12 text-neutral-40">
@@ -788,10 +788,10 @@ export default function MentorDetailEditor({ mentorId, headerSlot }: Props) {
                           </div>
                         ) : null}
                       </div>
-                      <div className="text-xsmall14 text-neutral-0 font-medium">
+                      <div className="text-xsmall14 font-medium text-neutral-0">
                         {career.company || '-'}
                       </div>
-                      <div className="text-xsmall14 text-neutral-0 flex items-center gap-2">
+                      <div className="flex items-center gap-2 text-xsmall14 text-neutral-0">
                         <span>{career.employmentType || '-'}</span>
                         <span className="text-neutral-40">
                           {career.startDate || '-'}
@@ -805,13 +805,13 @@ export default function MentorDetailEditor({ mentorId, headerSlot }: Props) {
                           type="button"
                           onClick={() => setRepresentativeTarget(career)}
                           disabled={patchRepresentative.isPending}
-                          className="text-xxsmall12 text-primary w-fit hover:underline"
+                          className="w-fit text-xxsmall12 text-primary hover:underline"
                         >
                           대표로 지정
                         </button>
                       ) : null}
                       {hasDetails ? (
-                        <div className="text-xsmall14 text-neutral-35 mt-1 flex flex-wrap gap-x-3 gap-y-0.5">
+                        <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xsmall14 text-neutral-35">
                           {career.field ? (
                             <span>업무분야: {career.field}</span>
                           ) : null}
@@ -831,7 +831,7 @@ export default function MentorDetailEditor({ mentorId, headerSlot }: Props) {
                             </span>
                           ) : null}
                           {career.isRepresentative ? (
-                            <span className="text-xxsmall12 border-neutral-70 text-neutral-40 rounded-full border px-2 py-0.5">
+                            <span className="rounded-full border border-neutral-70 px-2 py-0.5 text-xxsmall12 text-neutral-40">
                               대표 경력
                             </span>
                           ) : null}

@@ -51,7 +51,7 @@ const PrivacyContent = () => {
         <MarketingAgree />
       </div>
       <button
-        className="text-neutral-0/40 mt-[24px] flex w-full items-center justify-center"
+        className="mt-[24px] flex w-full items-center justify-center text-neutral-0/40"
         onClick={handleDeleteClick}
       >
         회원 탈퇴

@@ -56,7 +56,7 @@ const curriculumSteps = (
 
 const Badge = ({ index }: { index: number }) => (
   <div className="flex items-center justify-center rounded-md border border-[#A8EAD1] bg-[#E8F9F2] px-6 py-3">
-    <span className="text-xsmall16 md:text-medium24 font-bold text-[#1BC47D]">
+    <span className="text-xsmall16 font-bold text-[#1BC47D] md:text-medium24">
       STEP {index}
     </span>
   </div>
@@ -75,10 +75,10 @@ const CurriculumStep = ({
 }) => (
   <div className="flex flex-col items-center">
     <Badge index={index} />
-    <MainTitle className="text-small20 text-neutral-0 md:text-xlarge28 mb-3 mt-5 tracking-[-0.5px] md:mb-6">
+    <MainTitle className="mb-3 mt-5 text-small20 tracking-[-0.5px] text-neutral-0 md:mb-6 md:text-xlarge28">
       {title}
     </MainTitle>
-    <p className="text-xsmall14 text-neutral-35 md:text-medium22 mb-[84px] whitespace-pre-line text-center font-normal">
+    <p className="mb-[84px] whitespace-pre-line text-center text-xsmall14 font-normal text-neutral-35 md:text-medium22">
       {description}
     </p>
     {visualExplanation}

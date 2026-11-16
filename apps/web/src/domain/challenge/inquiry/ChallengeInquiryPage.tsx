@@ -28,12 +28,12 @@ const ChallengeInquiryPage = () => {
   return (
     <main className="px-5 pb-16 md:ml-12 md:px-0">
       <header className="mb-6 flex items-center justify-between">
-        <h2 className="text-medium22 text-neutral-0 mt-8 font-semibold md:mt-0">
+        <h2 className="mt-8 text-medium22 font-semibold text-neutral-0 md:mt-0">
           1:1 문의
         </h2>
         {!isCreating && (
           <button
-            className="bg-primary-5 text-primary rounded-xs text-md px-4 py-2 font-medium"
+            className="text-md rounded-xs bg-primary-5 px-4 py-2 font-medium text-primary"
             onClick={() => setIsCreating(true)}
           >
             + 1:1 문의하기
@@ -53,11 +53,11 @@ const ChallengeInquiryPage = () => {
         )}
 
         {isLoading ? (
-          <p className="text-neutral-40 py-10 text-center text-sm">
+          <p className="py-10 text-center text-sm text-neutral-40">
             불러오는 중...
           </p>
         ) : questions.length === 0 ? (
-          <p className="text-neutral-40 py-10 text-center text-sm">
+          <p className="py-10 text-center text-sm text-neutral-40">
             등록된 문의가 없습니다.
           </p>
         ) : (

@@ -65,7 +65,7 @@ const ChallengeOptionRenderCell = (
         <>
           {option?.code ?? '없음'}
           {typeLabel && (
-            <span className="text-primary ml-1 text-xs">({typeLabel})</span>
+            <span className="ml-1 text-xs text-primary">({typeLabel})</span>
           )}
         </>
       )}
@@ -80,7 +80,7 @@ const ChallengeOptionRenderCell = (
         >
           {item.code}
           {item.type && (
-            <span className="text-primary ml-1 text-xs">
+            <span className="ml-1 text-xs text-primary">
               ({TYPE_LABEL[item.type]})
             </span>
           )}
@@ -545,7 +545,7 @@ export const getMissionColumns = (): GridColDef<Row>[] => {
           return (
             <div className="flex items-center justify-center gap-2 px-2">
               <button
-                className="text-primary px-2 py-2"
+                className="px-2 py-2 text-primary"
                 onClick={() => {
                   params.row.onAction({ action: 'edit', row: params.row });
                 }}
@@ -567,7 +567,7 @@ export const getMissionColumns = (): GridColDef<Row>[] => {
         return (
           <div className="flex items-center justify-center gap-2 px-2">
             <button
-              className="text-primary px-2 py-2"
+              className="px-2 py-2 text-primary"
               onClick={() => {
                 params.row.onAction({ action: 'create', row: params.row });
               }}
@@ -598,7 +598,7 @@ export const getMissionColumns = (): GridColDef<Row>[] => {
         return (
           <div className="flex items-center justify-center gap-2 px-2">
             <button
-              className="text-primary px-2 py-2"
+              className="px-2 py-2 text-primary"
               onClick={() => {
                 params.row.onAction({ action: 'create', row: params.row });
               }}

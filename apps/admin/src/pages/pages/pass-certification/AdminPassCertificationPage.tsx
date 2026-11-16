@@ -147,7 +147,7 @@ export default function AdminPassCertificationPage() {
       <Heading>합격 인증 관리</Heading>
 
       {/* 필터 */}
-      <div className="border-neutral-90 flex flex-col gap-6 rounded-lg border p-5">
+      <div className="flex flex-col gap-6 rounded-lg border border-neutral-90 p-5">
         {/* 상태 탭 + 검색 */}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <Tabs
@@ -208,11 +208,11 @@ export default function AdminPassCertificationPage() {
         </div>
 
         {/* 초기화 */}
-        <div className="border-neutral-90 flex justify-end border-t pt-3">
+        <div className="flex justify-end border-t border-neutral-90 pt-3">
           <button
             type="button"
             onClick={resetFilters}
-            className="text-neutral-40 hover:text-neutral-30 flex items-center gap-1 transition-colors"
+            className="flex items-center gap-1 text-neutral-40 transition-colors hover:text-neutral-30"
           >
             <RotateCcw className="h-4 w-4" />
             <span className="text-xsmall14 underline">필터 초기화</span>

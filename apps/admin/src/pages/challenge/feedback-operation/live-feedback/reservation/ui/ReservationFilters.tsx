@@ -51,10 +51,10 @@ export default function ReservationFilters({
   const challengeDisabled = filter.type === 'LIVE_MENTORING';
 
   return (
-    <div className="border-neutral-80 grid grid-cols-1 gap-4 rounded-lg border p-4 md:grid-cols-3">
+    <div className="grid grid-cols-1 gap-4 rounded-lg border border-neutral-80 p-4 md:grid-cols-3">
       {!hideTypeFilter && (
         <label className="flex flex-col gap-1">
-          <span className="text-xsmall14 text-neutral-0 font-medium">유형</span>
+          <span className="text-xsmall14 font-medium text-neutral-0">유형</span>
           <select
             aria-label="유형"
             value={filter.type}
@@ -73,7 +73,7 @@ export default function ReservationFilters({
       )}
 
       <label className="flex flex-col gap-1">
-        <span className="text-xsmall14 text-neutral-0 font-medium">
+        <span className="text-xsmall14 font-medium text-neutral-0">
           프로그램명
         </span>
         <select
@@ -101,7 +101,7 @@ export default function ReservationFilters({
       </label>
 
       <label className="flex flex-col gap-1">
-        <span className="text-xsmall14 text-neutral-0 font-medium">멘토명</span>
+        <span className="text-xsmall14 font-medium text-neutral-0">멘토명</span>
         <select
           value={filter.mentorId}
           onChange={(e) => update('mentorId', e.target.value)}
@@ -117,7 +117,7 @@ export default function ReservationFilters({
       </label>
 
       <label className="flex flex-col gap-1">
-        <span className="text-xsmall14 text-neutral-0 font-medium">멘티명</span>
+        <span className="text-xsmall14 font-medium text-neutral-0">멘티명</span>
         {/*
           멘티 필터는 별도 검색 API 부재(PRD §7-1 기본안)로 예약 목록 결과에서
           이름 부분 일치하는 클라이언트 필터로 동작한다.
@@ -132,7 +132,7 @@ export default function ReservationFilters({
       </label>
 
       <label className="flex flex-col gap-1">
-        <span className="text-xsmall14 text-neutral-0 font-medium">
+        <span className="text-xsmall14 font-medium text-neutral-0">
           예약 날짜
         </span>
         <div className="flex items-center gap-2">
@@ -155,7 +155,7 @@ export default function ReservationFilters({
       </label>
 
       <label className="flex flex-col gap-1">
-        <span className="text-xsmall14 text-neutral-0 font-medium">
+        <span className="text-xsmall14 font-medium text-neutral-0">
           신청 날짜
         </span>
         <div className="flex items-center gap-2">

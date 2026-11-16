@@ -76,7 +76,7 @@ const UsageHistoryPage = () => {
     <div className="p-8">
       <h1 className="text-1.5-bold mb-4">이용 히스토리</h1>
 
-      <p className="text-neutral-40 mb-4 text-sm">
+      <p className="mb-4 text-sm text-neutral-40">
         결제 후 콘텐츠를 이용했는지 기록된 사실만 보여줍니다. 환불 가부는 규정에
         따라 판단해 주세요.
       </p>
@@ -96,7 +96,7 @@ const UsageHistoryPage = () => {
 
       {isError ? (
         /* 못 읽은 것을 "이력 없음"으로 보이게 하지 않는다. 둘은 다르다(PRD 7.4). */
-        <p className="text-neutral-40 py-10 text-center text-sm">
+        <p className="py-10 text-center text-sm text-neutral-40">
           이용 이력을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.
         </p>
       ) : (
@@ -112,7 +112,7 @@ const UsageHistoryPage = () => {
             걸어 둔 채 본 빈 목록이 "미이용이 없다"로 읽히는데, 정반대의 결론이다.
           */}
           {isEmpty && appliedFilters.length > 0 && (
-            <div className="text-neutral-40 mt-2 text-center text-sm">
+            <div className="mt-2 text-center text-sm text-neutral-40">
               <p>아래 조건이 걸려 있습니다. 해제하면 더 많은 건이 보입니다.</p>
               <ul className="mt-1">
                 {appliedFilters.map((chip) => (

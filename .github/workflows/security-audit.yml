@@ -1,5 +1,8 @@
 # ============================================================
-# 패키지 보안검사 — 의존성 취약점 감사(pnpm audit)
+# 보안검사 — 두 개의 잡
+#   audit   패키지 보안검사: 의존성 취약점 감사(pnpm audit)
+#   secrets 시크릿 유출 검사: 변경 커밋에 키·토큰이 들어갔는지(gitleaks)
+# 아래 설명은 audit 잡에 대한 것이고, secrets 는 잡 위에 적었다.
 # ============================================================
 # 설치한 패키지와 그 하위(전이) 의존성까지 알려진 보안 취약점이 있는지
 # 검사한다. 공유 pnpm-lock.yaml 전체를 검사하므로 path 필터 없이 모든
@@ -17,6 +20,9 @@ name: 패키지 보안검사
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
 
 jobs:
   audit:
@@ -38,3 +44,33 @@ jobs:
           echo "::group::pnpm audit (critical, prod deps)"
           pnpm audit --audit-level critical --prod --ignore-registry-errors
           echo "::endgroup::"
+
+  # ------------------------------------------------------------
+  # 시크릿 유출 검사 — 이번 PR 에 들어온 커밋만 gitleaks 로 검사
+  # ------------------------------------------------------------
+  # API 키·토큰·비밀번호 같은 값이 커밋에 들어갔는지 본다. 찾으면 실패한다.
+  # 값은 로그에 가려서(--redact) 출력한다. 오탐이면 해당 줄 끝에
+  # `# gitleaks:allow` 주석을 달거나 .gitleaksignore 에 fingerprint 를 추가한다.
+  # gitleaks-action 은 조직 계정에 유료 라이선스를 요구해서 CLI 를 직접 받는다.
+  secrets:
+    name: 시크릿 유출 검사
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: gitleaks 설치
+        env:
+          GITLEAKS_VERSION: 8.21.2
+        run: |
+          curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" \
+            | tar -xz -C /usr/local/bin gitleaks
+          gitleaks version
+
+      - name: gitleaks (이번 변경 커밋)
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: gitleaks detect --no-banner --redact --verbose --log-opts="${BASE_SHA}..${HEAD_SHA}"

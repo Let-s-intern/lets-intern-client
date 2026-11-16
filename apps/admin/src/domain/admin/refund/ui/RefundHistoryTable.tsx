@@ -67,7 +67,7 @@ const RefundHistoryTable = ({ logs, isLoading }: Props) => {
                   : '-'}
               </td>
               <td className="px-3 py-2">
-                <span className="mr-1 rounded bg-neutral-200 px-1.5 py-0.5 text-xs">
+                <span className="rounded mr-1 bg-neutral-200 px-1.5 py-0.5 text-xs">
                   {programTypeLabel[log.programType ?? ''] ?? log.programType}
                 </span>
                 {/* 이용권의 programId 는 상품 ID 라 프로그램 사용자 페이지로 갈 수 없다 */}
@@ -96,7 +96,7 @@ const RefundHistoryTable = ({ logs, isLoading }: Props) => {
               <td className="whitespace-nowrap px-3 py-2 text-right">
                 {(log.refundedAmount ?? 0).toLocaleString()}원
                 {scope && (
-                  <span className="ml-1 rounded bg-neutral-200 px-1.5 py-0.5 text-xs">
+                  <span className="rounded ml-1 bg-neutral-200 px-1.5 py-0.5 text-xs">
                     {scope}
                   </span>
                 )}

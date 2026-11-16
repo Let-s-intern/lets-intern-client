@@ -17,11 +17,11 @@ const UpgradeBottomBar = ({
   onClick,
   disabled = false,
 }: UpgradeBottomBarProps) => (
-  <div className="shadow-05 fixed bottom-0 left-0 right-0 rounded-t-lg bg-white px-5 pb-[calc(env(safe-area-inset-bottom)+10px)] pt-3 md:static md:mx-5 md:rounded-none md:bg-transparent md:px-0 md:pb-0 md:pt-0 md:shadow-none">
+  <div className="fixed bottom-0 left-0 right-0 rounded-t-lg bg-white px-5 pb-[calc(env(safe-area-inset-bottom)+10px)] pt-3 shadow-05 md:static md:mx-5 md:rounded-none md:bg-transparent md:px-0 md:pb-0 md:pt-0 md:shadow-none">
     <button
       type="button"
       className={twMerge(
-        'border-primary bg-primary disabled:border-neutral-70 disabled:bg-neutral-70 flex w-full items-center justify-center rounded-md border-2 px-6 py-3 text-lg font-medium text-neutral-100 transition',
+        'flex w-full items-center justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 transition disabled:border-neutral-70 disabled:bg-neutral-70',
         !disabled && 'hover:opacity-90',
       )}
       onClick={onClick}

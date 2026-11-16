@@ -92,11 +92,11 @@ export default function MentorReviewExposureSection({ mentorId }: Props) {
   };
 
   return (
-    <div className="border-neutral-80 rounded-lg border p-6">
+    <div className="rounded-lg border border-neutral-80 p-6">
       <div className="mb-4 flex items-center justify-between gap-4">
         <div>
           <h2 className="text-medium18 font-semibold">멘토 페이지 후기</h2>
-          <p className="text-xsmall14 text-neutral-40 mt-1">
+          <p className="mt-1 text-xsmall14 text-neutral-40">
             이 순서가 웹 멘토 프로필과 1:1 상세의 「추천순」 에 그대로 나옵니다.
           </p>
         </div>
@@ -116,19 +116,19 @@ export default function MentorReviewExposureSection({ mentorId }: Props) {
       </div>
 
       {isLoading ? (
-        <div className="text-xsmall14 text-neutral-40 py-4 text-center">
+        <div className="py-4 text-center text-xsmall14 text-neutral-40">
           불러오는 중...
         </div>
       ) : reviews.length === 0 ? (
-        <div className="text-xsmall14 text-neutral-40 py-4 text-center">
+        <div className="py-4 text-center text-xsmall14 text-neutral-40">
           이 멘토의 공개 후기가 없습니다
         </div>
       ) : (
         // 좁은 화면에서는 페이지가 아니라 이 영역만 가로로 스크롤한다
         <div className="max-h-[40rem] overflow-auto">
-          <table className="text-xsmall14 w-full min-w-[60rem]">
+          <table className="w-full min-w-[60rem] text-xsmall14">
             <thead>
-              <tr className="text-neutral-30 text-left">
+              <tr className="text-left text-neutral-30">
                 {COLUMNS.map((column) => (
                   <th
                     key={column}

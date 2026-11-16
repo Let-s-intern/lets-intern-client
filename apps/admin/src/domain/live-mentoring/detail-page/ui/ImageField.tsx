@@ -37,9 +37,9 @@ export default function ImageField({ label, value, onChange }: Props) {
 
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-xsmall14 text-neutral-30 font-medium">{label}</span>
+      <span className="text-xsmall14 font-medium text-neutral-30">{label}</span>
       <div className="flex items-center gap-2">
-        <div className="border-neutral-80 bg-neutral-95 flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded border">
+        <div className="rounded flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden border border-neutral-80 bg-neutral-95">
           {value ? (
             <img
               src={value}
@@ -77,7 +77,7 @@ export default function ImageField({ label, value, onChange }: Props) {
         ) : null}
       </div>
       {error ? (
-        <p role="alert" className="text-system-error text-xs">
+        <p role="alert" className="text-xs text-system-error">
           {error}
         </p>
       ) : null}

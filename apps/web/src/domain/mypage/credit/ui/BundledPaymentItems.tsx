@@ -30,7 +30,7 @@ export default function BundledPaymentItems({
 
   return (
     <section className="flex w-full flex-col items-start gap-y-3">
-      <div className="text-neutral-0 font-semibold">함께 결제한 항목</div>
+      <div className="font-semibold text-neutral-0">함께 결제한 항목</div>
       <ul className="flex w-full flex-col gap-y-2">
         {others.map((item) => (
           <li key={item.paymentId}>
@@ -38,20 +38,20 @@ export default function BundledPaymentItems({
               className="flex w-full items-center justify-between gap-x-3 text-sm"
               href={getCreditDetailHref(item)}
             >
-              <span className="text-neutral-0 font-medium">
+              <span className="font-medium text-neutral-0">
                 {getItemTitle(item)}
                 {item.isCanceled && (
                   <span className="text-neutral-40"> (결제취소)</span>
                 )}
               </span>
-              <span className="text-neutral-0 shrink-0 font-semibold">
+              <span className="shrink-0 font-semibold text-neutral-0">
                 {(item.paidAmount ?? 0).toLocaleString()}원
               </span>
             </Link>
           </li>
         ))}
       </ul>
-      <div className="text-neutral-40 flex w-full items-center justify-between border-t pt-2 text-xs font-medium">
+      <div className="flex w-full items-center justify-between border-t pt-2 text-xs font-medium text-neutral-40">
         <span>한 번에 결제한 합계</span>
         <span>{totalAmount.toLocaleString()}원</span>
       </div>

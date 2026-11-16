@@ -117,13 +117,13 @@ const OrderResultPage = () => {
   if (errorMessage) {
     return (
       <div className="mw-1180 flex flex-col items-center gap-5 px-5 py-16 text-center">
-        <h1 className="text-small20 text-neutral-0 font-bold">
+        <h1 className="text-small20 font-bold text-neutral-0">
           결제를 확인하지 못했습니다
         </h1>
         <p className="text-xsmall14 text-neutral-40">{errorMessage}</p>
         <Link
           href="/mypage/application"
-          className="bg-primary text-xsmall16 rounded-sm px-6 py-3 font-medium text-white"
+          className="rounded-sm bg-primary px-6 py-3 text-xsmall16 font-medium text-white"
         >
           신청 내역 확인하기
         </Link>
@@ -133,32 +133,32 @@ const OrderResultPage = () => {
 
   if (!confirmed) {
     return (
-      <p className="text-neutral-40 py-20 text-center">결제를 확인하는 중…</p>
+      <p className="py-20 text-center text-neutral-40">결제를 확인하는 중…</p>
     );
   }
 
   return (
     <div className="mw-1180 flex flex-col items-center gap-6 px-5 py-16">
-      <h1 className="text-small20 md:text-medium24 text-neutral-0 font-bold">
+      <h1 className="text-small20 font-bold text-neutral-0 md:text-medium24">
         결제가 완료되었습니다!
       </h1>
 
-      <dl className="bg-neutral-95 text-xsmall14 flex w-full max-w-[480px] flex-col gap-3 rounded-md px-5 py-5">
+      <dl className="flex w-full max-w-[480px] flex-col gap-3 rounded-md bg-neutral-95 px-5 py-5 text-xsmall14">
         <div className="flex items-center justify-between">
           <dt className="text-neutral-40">상품</dt>
-          <dd className="text-neutral-0 font-medium">
+          <dd className="font-medium text-neutral-0">
             {application?.orderName}
           </dd>
         </div>
         {reservation && (
           <div className="flex items-center justify-between">
             <dt className="text-neutral-40">예약 일시</dt>
-            <dd className="text-neutral-0 font-medium">{reservation}</dd>
+            <dd className="font-medium text-neutral-0">{reservation}</dd>
           </div>
         )}
         <div className="flex items-center justify-between">
           <dt className="text-neutral-40">결제 금액</dt>
-          <dd className="text-neutral-0 font-bold">
+          <dd className="font-bold text-neutral-0">
             {formatPrice(confirmed.amount)}
           </dd>
         </div>
@@ -171,7 +171,7 @@ const OrderResultPage = () => {
       <div className="flex w-full max-w-[480px]">
         <Link
           href="/mypage/application"
-          className="bg-primary text-xsmall16 flex-1 rounded-sm py-3 text-center font-medium text-white"
+          className="flex-1 rounded-sm bg-primary py-3 text-center text-xsmall16 font-medium text-white"
         >
           신청 내역 확인하기
         </Link>

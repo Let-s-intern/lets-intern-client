@@ -64,11 +64,11 @@ const InquiryHome = ({
         <img
           src="/logo/logo-simple.svg"
           alt=""
-          className="bg-static-100 h-14 w-14 shrink-0 rounded-md p-2"
+          className="h-14 w-14 shrink-0 rounded-md bg-static-100 p-2"
         />
         <div className="flex-1 pt-1">
-          <p className="text-medium22 text-neutral-0 font-bold">렛츠커리어</p>
-          <p className="text-xsmall14 text-neutral-40 mt-1">챌린지 1:1 문의</p>
+          <p className="text-medium22 font-bold text-neutral-0">렛츠커리어</p>
+          <p className="mt-1 text-xsmall14 text-neutral-40">챌린지 1:1 문의</p>
         </div>
         <div className="pt-2 md:hidden">
           <PanelCloseButton onClose={onClose} />
@@ -76,17 +76,17 @@ const InquiryHome = ({
       </header>
 
       <div className="flex-1 px-4 pb-6">
-        <section className="bg-static-100 rounded-lg p-5">
+        <section className="rounded-lg bg-static-100 p-5">
           <div className="mb-3 flex items-center gap-2">
             <img src="/logo/logo-simple.svg" alt="" className="h-5 w-5" />
-            <span className="text-xsmall14 text-neutral-0 font-bold">
+            <span className="text-xsmall14 font-bold text-neutral-0">
               렛츠커리어
             </span>
           </div>
-          <p className="text-xsmall16 text-neutral-0 font-medium">
+          <p className="text-xsmall16 font-medium text-neutral-0">
             안녕하세요, 렛츠커리어입니다!
           </p>
-          <p className="text-xsmall14 text-neutral-30 mt-3 leading-relaxed">
+          <p className="mt-3 text-xsmall14 leading-relaxed text-neutral-30">
             챌린지를 진행하며 궁금한 점이 있으시면 언제든 문의해 주세요.
             미션·일정·환불 무엇이든 좋습니다.
           </p>
@@ -94,27 +94,27 @@ const InquiryHome = ({
           <button
             type="button"
             onClick={onStart}
-            className="bg-primary hover:bg-primary-hover mt-5 flex w-full items-center justify-center gap-2 rounded-full py-3.5 font-bold text-white"
+            className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3.5 font-bold text-white hover:bg-primary-hover"
           >
             문의하기
             <Send className="h-5 w-5" />
           </button>
 
-          <p className="text-xsmall14 text-neutral-45 mt-3 text-center">
+          <p className="mt-3 text-center text-xsmall14 text-neutral-45">
             운영시간 내 순차적으로 답변드려요
           </p>
         </section>
 
         {highlight && (
           <section className="mt-4">
-            <p className="text-xsmall14 text-neutral-40 mb-2 px-1 font-medium">
+            <p className="mb-2 px-1 text-xsmall14 font-medium text-neutral-40">
               {unread
                 ? '새 답변이 도착했어요'
                 : answered
                   ? '최근 문의'
                   : '답변을 기다리는 문의'}
             </p>
-            <div className="bg-static-100 rounded-lg p-4">
+            <div className="rounded-lg bg-static-100 p-4">
               <button
                 type="button"
                 onClick={() => onOpenThread(highlight.id)}
@@ -125,8 +125,8 @@ const InquiryHome = ({
                     <p
                       className={
                         unread
-                          ? 'text-xsmall16 text-neutral-0 truncate font-bold'
-                          : 'text-xsmall16 text-neutral-0 truncate font-medium'
+                          ? 'truncate text-xsmall16 font-bold text-neutral-0'
+                          : 'truncate text-xsmall16 font-medium text-neutral-0'
                       }
                     >
                       {highlight.title}
@@ -134,30 +134,30 @@ const InquiryHome = ({
                     {unread && (
                       <span
                         aria-label="읽지 않은 답변"
-                        className="bg-system-error h-2 w-2 shrink-0 rounded-full"
+                        className="h-2 w-2 shrink-0 rounded-full bg-system-error"
                       />
                     )}
                   </div>
 
                   {answered && highlight.answer ? (
-                    <p className="text-xsmall14 text-neutral-30 mt-2 line-clamp-2 leading-relaxed">
+                    <p className="mt-2 line-clamp-2 text-xsmall14 leading-relaxed text-neutral-30">
                       {toPlainText(highlight.answer)}
                     </p>
                   ) : (
-                    <p className="text-xsmall14 text-neutral-40 mt-2 truncate">
+                    <p className="mt-2 truncate text-xsmall14 text-neutral-40">
                       {highlight.content}
                     </p>
                   )}
                 </div>
-                <ChevronRight className="text-neutral-45 mt-1 h-4 w-4 shrink-0" />
+                <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-neutral-45" />
               </button>
 
               <div className="mt-3 flex items-center">
                 <span
                   className={
                     answered
-                      ? 'bg-primary-5 text-primary text-xxsmall12 rounded px-2 py-0.5 font-medium'
-                      : 'bg-neutral-90 text-neutral-40 text-xxsmall12 rounded px-2 py-0.5 font-medium'
+                      ? 'rounded bg-primary-5 px-2 py-0.5 text-xxsmall12 font-medium text-primary'
+                      : 'rounded bg-neutral-90 px-2 py-0.5 text-xxsmall12 font-medium text-neutral-40'
                   }
                 >
                   {answered ? '답변 완료' : '답변 대기'}
@@ -167,7 +167,7 @@ const InquiryHome = ({
                   <button
                     type="button"
                     onClick={() => onRequestCancel(highlight)}
-                    className="text-xxsmall12 text-neutral-45 hover:text-neutral-30 ml-auto underline underline-offset-2"
+                    className="ml-auto text-xxsmall12 text-neutral-45 underline underline-offset-2 hover:text-neutral-30"
                   >
                     문의 취소하기
                   </button>

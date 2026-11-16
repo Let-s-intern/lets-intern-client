@@ -20,7 +20,7 @@ export default function CompareSection() {
           {COMPARE.eyebrow}
         </p>
 
-        <h2 className="text-neutral-0 mt-4 text-center text-2xl font-bold leading-snug md:text-[2rem]">
+        <h2 className="mt-4 text-center text-2xl font-bold leading-snug text-neutral-0 md:text-[2rem]">
           {COMPARE.titleLines.map((line) => (
             <span className="block" key={line}>
               {line}
@@ -28,20 +28,20 @@ export default function CompareSection() {
           ))}
         </h2>
 
-        <p className="text-xsmall14 md:text-xsmall16 text-neutral-40 mt-4 text-center">
+        <p className="mt-4 text-center text-xsmall14 text-neutral-40 md:text-xsmall16">
           {COMPARE.sub}
         </p>
 
-        <div className="rounded-xxl mt-10 overflow-hidden md:mt-14">
+        <div className="mt-10 overflow-hidden rounded-xxl md:mt-14">
           {COMPARE.rows.map((row) => (
             <div
-              className="border-neutral-90 flex items-center justify-between gap-4 border-b bg-white px-6 py-5 md:px-8"
+              className="flex items-center justify-between gap-4 border-b border-neutral-90 bg-white px-6 py-5 md:px-8"
               key={row.label}
             >
-              <span className="text-xsmall14 md:text-xsmall16 text-neutral-30">
+              <span className="text-xsmall14 text-neutral-30 md:text-xsmall16">
                 {row.label}
               </span>
-              <strong className="text-xsmall16 text-neutral-0 shrink-0 font-bold">
+              <strong className="shrink-0 text-xsmall16 font-bold text-neutral-0">
                 {formatKRW(row.price)}원
               </strong>
             </div>
@@ -49,7 +49,7 @@ export default function CompareSection() {
 
           {/* 패스 줄 — 이 표의 결론이라 색과 굵기로 분리한다 */}
           <div className="flex items-center justify-between gap-4 bg-[#232433] px-6 py-6 md:px-8">
-            <span className="text-xsmall14 md:text-xsmall16 font-medium text-white">
+            <span className="text-xsmall14 font-medium text-white md:text-xsmall16">
               {COMPARE.passLabel}
             </span>
             <strong className="shrink-0 text-xl font-bold text-[#F6A780] md:text-2xl">

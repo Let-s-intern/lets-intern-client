@@ -60,7 +60,7 @@ const MentoringSection = () => {
   const applications = data?.applicationList ?? [];
 
   if (isLoading) {
-    return <p className="text-neutral-40 py-20 text-center">불러오는 중…</p>;
+    return <p className="py-20 text-center text-neutral-40">불러오는 중…</p>;
   }
 
   /*
@@ -70,7 +70,7 @@ const MentoringSection = () => {
    */
   if (isError) {
     return (
-      <p className="text-neutral-40 py-20 text-center">
+      <p className="py-20 text-center text-neutral-40">
         신청 내역을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.
       </p>
     );
@@ -104,7 +104,7 @@ const MentoringSection = () => {
       <div className="flex flex-col gap-16">
         {grouped.map(({ phase, items }) => (
           <section key={phase} className="flex flex-col gap-5">
-            <h2 className="text-small18 text-neutral-0 font-bold">
+            <h2 className="text-small18 font-bold text-neutral-0">
               {SECTION_TITLE[phase]}
             </h2>
             <div className="flex flex-col gap-5">

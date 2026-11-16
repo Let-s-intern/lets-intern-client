@@ -69,7 +69,7 @@ export default function MentorPickManager() {
       <div className="flex items-end justify-between gap-4">
         <div>
           <h2 className="text-xl font-semibold">렛커 픽</h2>
-          <p className="text-xsmall14 text-neutral-40 mt-1">
+          <p className="mt-1 text-xsmall14 text-neutral-40">
             이 순서대로 웹 멘토 목록(/mentors)과 1:1 라이브 멘토링 목록 맨 위에
             노출됩니다. 「순서 저장」 을 눌러야 반영됩니다.
           </p>
@@ -88,9 +88,9 @@ export default function MentorPickManager() {
         </div>
       </div>
 
-      <div className="border-neutral-80 overflow-x-auto rounded-lg border">
+      <div className="overflow-x-auto rounded-lg border border-neutral-80">
         <table className="w-full min-w-[720px] border-collapse">
-          <thead className="border-neutral-80 bg-neutral-95 border-b">
+          <thead className="border-b border-neutral-80 bg-neutral-95">
             <tr>
               <th className={headerCellClass}>순위</th>
               <th className={headerCellClass}>멘토</th>
@@ -104,7 +104,7 @@ export default function MentorPickManager() {
               <tr>
                 <td
                   colSpan={5}
-                  className="text-xsmall14 text-neutral-40 py-16 text-center"
+                  className="py-16 text-center text-xsmall14 text-neutral-40"
                 >
                   {isLoading
                     ? '불러오는 중...'
@@ -117,7 +117,7 @@ export default function MentorPickManager() {
               picks.map((pick, index) => (
                 <tr
                   key={pick.mentorId}
-                  className="border-neutral-90 border-b last:border-b-0"
+                  className="border-b border-neutral-90 last:border-b-0"
                 >
                   <td className={bodyCellClass}>
                     <RankControl

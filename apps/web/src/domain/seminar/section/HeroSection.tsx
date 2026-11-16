@@ -14,12 +14,12 @@ const HeroSection = () => {
             className="h-7 w-7"
             aria-hidden
           />
-          <span className="text-small18 md:text-small20 text-neutral-0 font-bold">
+          <span className="text-small18 font-bold text-neutral-0 md:text-small20">
             무료 세미나
           </span>
         </div>
 
-        <h1 className="text-medium24 md:text-xxlarge36 text-neutral-0 break-keep font-bold leading-tight">
+        <h1 className="break-keep text-medium24 font-bold leading-tight text-neutral-0 md:text-xxlarge36">
           내가 <span className="text-primary">원하는 기업·직무 현직자</span>에게
           <br />
           직접 듣는 합격 전략,
@@ -27,7 +27,7 @@ const HeroSection = () => {
           <span className="text-primary">무료 세미나</span>에서
         </h1>
 
-        <p className="text-xsmall14 md:text-small18 text-neutral-40 break-keep">
+        <p className="break-keep text-xsmall14 text-neutral-40 md:text-small18">
           매월 2회 이상 진행되는 무료 세미나에서,
           <br />
           내가 원하는 기업·직무 현직자의 실무 이야기와 합격 전략을 직접

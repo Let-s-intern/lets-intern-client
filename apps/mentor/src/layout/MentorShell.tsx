@@ -19,12 +19,12 @@ export default function MentorShell() {
           onClose={() => setIsSidebarOpen(false)}
         />
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-          <header className="border-neutral-80 flex h-14 shrink-0 items-center border-b px-4 lg:hidden">
+          <header className="flex h-14 shrink-0 items-center border-b border-neutral-80 px-4 lg:hidden">
             <button
               type="button"
               onClick={() => setIsSidebarOpen(true)}
               aria-label="메뉴 열기"
-              className="text-neutral-40 p-1"
+              className="p-1 text-neutral-40"
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path

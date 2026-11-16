@@ -31,7 +31,7 @@ const CouponSection = ({
 }: CouponSectionProps) => {
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-xsmall16 text-neutral-0 font-semibold">결제 정보</h2>
+      <h2 className="text-xsmall16 font-semibold text-neutral-0">결제 정보</h2>
 
       {appliedCode === null ? (
         <>
@@ -43,13 +43,13 @@ const CouponSection = ({
               maxLength={100}
               onChange={(event) => onInputChange(event.target.value)}
               placeholder="쿠폰 번호를 입력해주세요."
-              className="bg-neutral-95 text-xsmall14 text-neutral-0 flex-1 rounded-sm px-4 py-3"
+              className="flex-1 rounded-sm bg-neutral-95 px-4 py-3 text-xsmall14 text-neutral-0"
             />
             <button
               type="button"
               onClick={onRegister}
               disabled={inputValue.trim().length === 0 || isValidating}
-              className="bg-primary text-xsmall14 disabled:bg-neutral-80 disabled:text-neutral-40 shrink-0 rounded-sm px-5 py-3 font-medium text-white"
+              className="shrink-0 rounded-sm bg-primary px-5 py-3 text-xsmall14 font-medium text-white disabled:bg-neutral-80 disabled:text-neutral-40"
             >
               {isValidating ? '확인 중...' : '쿠폰 등록'}
             </button>
@@ -61,7 +61,7 @@ const CouponSection = ({
           )}
         </>
       ) : (
-        <div className="border-neutral-80 flex items-center justify-between gap-3 rounded-sm border px-4 py-3">
+        <div className="flex items-center justify-between gap-3 rounded-sm border border-neutral-80 px-4 py-3">
           <span className="text-xsmall14 text-neutral-0">
             쿠폰 <span className="font-semibold">{appliedCode}</span> 등록됨
           </span>

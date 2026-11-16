@@ -9,7 +9,7 @@ function Badge({
 }) {
   return (
     <span
-      className="text-xsmall16 md:text-small20 absolute -top-6 left-6 z-10 -rotate-12 rounded-sm bg-[#14BCFF] px-2.5 py-1 font-bold text-white md:px-4 md:font-semibold"
+      className="absolute -top-6 left-6 z-10 -rotate-12 rounded-sm bg-[#14BCFF] px-2.5 py-1 text-xsmall16 font-bold text-white md:px-4 md:text-small20 md:font-semibold"
       style={style}
     >
       {children}

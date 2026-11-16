@@ -10,7 +10,7 @@ const FeedbackLiveReservationPage = () => {
   return (
     <div className="flex flex-col gap-6 pb-20">
       <header className="flex flex-col gap-2">
-        <h1 className="text-medium22 text-neutral-10 font-semibold leading-8">
+        <h1 className="text-medium22 font-semibold leading-8 text-neutral-10">
           예약 현황
         </h1>
         <p className="text-xsmall14 text-neutral-40">

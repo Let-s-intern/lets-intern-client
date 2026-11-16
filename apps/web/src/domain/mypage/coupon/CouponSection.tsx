@@ -34,7 +34,7 @@ const CouponSection = () => {
           onChange={setTab}
         />
         <button
-          className="text-xsmall14 border-primary-80 rounded-xxs hover:border-primary hover:text-primary text-primary-80 mr-5 flex flex-shrink-0 items-center gap-1 rounded border px-3 py-1.5 font-medium transition-colors md:mr-0"
+          className="rounded mr-5 flex flex-shrink-0 items-center gap-1 rounded-xxs border border-primary-80 px-3 py-1.5 text-xsmall14 font-medium text-primary-80 transition-colors hover:border-primary hover:text-primary md:mr-0"
           onClick={() => setIsModalOpen(true)}
         >
           <PlusIcon className="h-4 w-4" />
@@ -47,7 +47,7 @@ const CouponSection = () => {
       />
       {coupons.length === 0 ? (
         <div className="flex min-h-[60vh] w-full flex-col items-center justify-center md:min-h-[50vh]">
-          <p className="text-xsmall14 text-neutral-40 font-normal">
+          <p className="text-xsmall14 font-normal text-neutral-40">
             보유하신 쿠폰이 없습니다
           </p>
         </div>

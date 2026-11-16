@@ -20,11 +20,11 @@ const UsageFilterChips = ({ chips, onRemove }: Props) => {
 
   return (
     <div className="mb-4 flex flex-wrap items-center gap-2">
-      <span className="text-neutral-40 text-xs">적용 중인 조건</span>
+      <span className="text-xs text-neutral-40">적용 중인 조건</span>
       {chips.map((chip) => (
         <span
           key={chip.key}
-          className="border-neutral-75 bg-neutral-95 flex items-center gap-2 rounded-full border px-3 py-1 text-xs"
+          className="flex items-center gap-2 rounded-full border border-neutral-75 bg-neutral-95 px-3 py-1 text-xs"
         >
           {chip.label}
           {/* 아이콘 대신 글자로 해제한다. 엑스 표시는 뜻이 사람마다 갈린다. */}

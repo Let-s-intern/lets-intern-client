@@ -228,7 +228,7 @@ function ChallengeResult({
                       alt={content.beforeCaption}
                     />
                   </BadgedBox>
-                  <span className="text-xsmall14 md:text-small20 font-semibold text-white">
+                  <span className="text-xsmall14 font-semibold text-white md:text-small20">
                     {content.beforeCaption}
                   </span>
                 </div>
@@ -248,7 +248,7 @@ function ChallengeResult({
                       color={styles.checkIconColor}
                       size={isDesktop ? 18 : 14}
                     />
-                    <span className="text-xsmall14 md:text-small20 font-semibold text-white">
+                    <span className="text-xsmall14 font-semibold text-white md:text-small20">
                       {content.afterCaption}
                     </span>
                   </div>

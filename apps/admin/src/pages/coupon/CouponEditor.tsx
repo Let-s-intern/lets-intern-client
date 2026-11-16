@@ -332,12 +332,14 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
             <div className="flex flex-col gap-3">
               <label className="text-small20 font-bold">
                 발급 대상
-                <p className="text-xxsmall12 mt-1.5 font-normal text-gray-400">
-                  쿠폰을 사용할 수 있는 대상을 <strong>결제·수강 이력</strong>{' '}
+                <p className="mt-1.5 text-xxsmall12 font-normal text-gray-400">
+                  쿠폰을 사용할 수 있는 대상을 <strong>
+                    결제·수강 이력
+                  </strong>{' '}
                   기준으로 설정합니다. (다중 선택 가능)
                 </p>
               </label>
-              <div className="bg-neutral-90 rounded-xs border-neutral-80 flex flex-col gap-2 border p-1.5">
+              <div className="flex flex-col gap-2 rounded-xs border border-neutral-80 bg-neutral-90 p-1.5">
                 <FormControlLabel
                   sx={{ m: 0 }}
                   control={
@@ -348,7 +350,7 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
                     />
                   }
                   label={
-                    <p className="text-xsmall16 flex items-center gap-2">
+                    <p className="flex items-center gap-2 text-xsmall16">
                       <span>등록형 쿠폰 발급</span>
                       <span className="text-xxsmall12 text-gray-500">
                         유저 제한 없이 직접 쿠폰 코드를 등록해 사용하는 방식의
@@ -369,7 +371,7 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
                     />
                   }
                   label={
-                    <p className="text-xsmall16 flex items-center gap-2">
+                    <p className="flex items-center gap-2 text-xsmall16">
                       <span>참여 중인 유저에게만 발급</span>
                       <span className="text-xxsmall12 text-gray-500">
                         발급 대상 중 현재 프로그램에 참여중인 유저에게만
@@ -523,7 +525,7 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
                   {value.discount &&
                     (Number(value.discount) < 1 ||
                       Number(value.discount) > 100) && (
-                      <p className="text-xxsmall12 text-system-error pl-[133px]">
+                      <p className="pl-[133px] text-xxsmall12 text-system-error">
                         할인율은 1~100 사이 숫자로 입력해주세요.
                       </p>
                     )}
@@ -565,7 +567,7 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
                   name="startDate"
                   value={value.startDate}
                   onChange={handleChange}
-                  className="border-neutral-70 rounded-xxs flex-1 cursor-pointer border p-4"
+                  className="flex-1 cursor-pointer rounded-xxs border border-neutral-70 p-4"
                 />
               </div>
               <div className="flex">
@@ -581,7 +583,7 @@ const CouponEditor = ({ editorMode }: CouponEditorProps) => {
                   name="endDate"
                   value={value.endDate}
                   onChange={handleChange}
-                  className="border-neutral-70 rounded-xxs flex-1 cursor-pointer border p-4"
+                  className="flex-1 cursor-pointer rounded-xxs border border-neutral-70 p-4"
                 />
               </div>
             </div>

@@ -14,15 +14,15 @@ const PlusSection = () => {
               className="h-7 w-7"
               aria-hidden
             />
-            <p className="text-xsmall14 md:text-xsmall16 text-primary font-semibold">
+            <p className="text-xsmall14 font-semibold text-primary md:text-xsmall16">
               여기에 더해서!
             </p>
           </div>
-          <h2 className="text-small20 md:text-xlarge30 text-neutral-0 break-keep font-bold">
+          <h2 className="break-keep text-small20 font-bold text-neutral-0 md:text-xlarge30">
             챌린지 수강생은
             <br />
             언제든지 볼 수 있는 <br className="md:hidden" />
-            <span className="bg-primary inline-block -rotate-2 rounded-none px-2 py-1 text-neutral-100">
+            <span className="inline-block -rotate-2 rounded-none bg-primary px-2 py-1 text-neutral-100">
               무제한 다시보기
             </span>{' '}
             까지
@@ -34,19 +34,21 @@ const PlusSection = () => {
             src="/images/seminar/vod/archive.webp"
             alt="챌린지 참여자 전용 VOD 아카이브 화면"
             loading="lazy"
-            className="shadow-03 w-full rounded-lg md:w-3/5"
+            className="w-full rounded-lg shadow-03 md:w-3/5"
           />
           <div className="flex flex-col gap-3 md:w-2/5">
-            <span className="text-xxsmall12 md:text-xsmall14 bg-neutral-0 rounded-xs w-fit px-3 py-1.5 font-semibold text-neutral-100">
+            <span className="w-fit rounded-xs bg-neutral-0 px-3 py-1.5 text-xxsmall12 font-semibold text-neutral-100 md:text-xsmall14">
               챌린지 참여자 전용 VOD 아카이브
             </span>
-            <p className="text-xsmall16 md:text-small20 text-neutral-0 break-keep font-bold">
+            <p className="break-keep text-xsmall16 font-bold text-neutral-0 md:text-small20">
               챌린지 1개 이상 참여 시
               <br />
               지난 세미나를 무료로 시청할 수 있어요
             </p>
-            <p className="text-xsmall14 md:text-xsmall16 text-neutral-40">
-              + 매달 2편 이상의 새로운 <span className="font-bold">VOD</span>{' '}
+            <p className="text-xsmall14 text-neutral-40 md:text-xsmall16">
+              + 매달 2편 이상의 새로운 <span className="font-bold">
+                VOD
+              </span>{' '}
               업데이트
             </p>
           </div>

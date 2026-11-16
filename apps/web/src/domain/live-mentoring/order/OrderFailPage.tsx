@@ -26,7 +26,7 @@ const OrderFailPage = () => {
 
   return (
     <div className="mw-1180 flex flex-col items-center gap-5 px-5 py-16 text-center">
-      <h1 className="text-small20 md:text-medium24 text-neutral-0 font-bold">
+      <h1 className="text-small20 font-bold text-neutral-0 md:text-medium24">
         결제가 완료되지 않았습니다
       </h1>
 
@@ -39,21 +39,21 @@ const OrderFailPage = () => {
         {application ? (
           <Link
             href="/live-mentoring/order/payment"
-            className="bg-primary text-xsmall16 flex-1 rounded-sm py-3 font-medium text-white"
+            className="flex-1 rounded-sm bg-primary py-3 text-xsmall16 font-medium text-white"
           >
             다시 결제하기
           </Link>
         ) : (
           <Link
             href={`/live-mentoring/${draft?.mentorId ?? ''}`}
-            className="bg-primary text-xsmall16 flex-1 rounded-sm py-3 font-medium text-white"
+            className="flex-1 rounded-sm bg-primary py-3 text-xsmall16 font-medium text-white"
           >
             다시 신청하기
           </Link>
         )}
         <Link
           href="/mypage/application"
-          className="border-neutral-80 text-neutral-20 text-xsmall16 flex-1 rounded-sm border py-3 font-medium"
+          className="flex-1 rounded-sm border border-neutral-80 py-3 text-xsmall16 font-medium text-neutral-20"
         >
           신청 내역 확인하기
         </Link>

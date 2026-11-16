@@ -80,7 +80,7 @@ const MentorAlertModal = ({
         />
 
         {/* Modal */}
-        <div className="relative mx-4 w-full max-w-sm animate-[mentorModalIn_0.2s_ease-out] rounded-2xl bg-white p-6 shadow-xl">
+        <div className="rounded-2xl relative mx-4 w-full max-w-sm animate-[mentorModalIn_0.2s_ease-out] bg-white p-6 shadow-xl">
           {/* Icon */}
           <div className="mb-4 flex justify-center">
             <div
@@ -131,7 +131,7 @@ const MentorAlertModal = ({
               ref={confirmRef}
               type="button"
               onClick={isConfirmMode ? onConfirm : onClose}
-              className="bg-primary hover:bg-primary-hover flex-1 rounded-xl py-2.5 text-sm font-medium text-white transition-colors"
+              className="flex-1 rounded-xl bg-primary py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-hover"
             >
               {confirmText}
             </button>

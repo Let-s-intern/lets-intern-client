@@ -26,10 +26,10 @@ export default function WishIndustrySelectModal({
       footer={
         <button
           onClick={onClose}
-          className={`rounded-xs flex-1 py-3 text-white ${
+          className={`flex-1 rounded-xs py-3 text-white ${
             selectedIndustries.length > 0
               ? 'bg-primary'
-              : 'bg-neutral-70 cursor-not-allowed'
+              : 'cursor-not-allowed bg-neutral-70'
           }`}
         >
           선택 완료

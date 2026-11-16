@@ -110,12 +110,10 @@ const ChallengeMissionManagement = () => {
 
   const missionTemplateListRows = useMemo(() => {
     const list =
-      data?.missionTemplateAdminList?.map(
-        (item): Row => ({
-          ...item,
-          rowStatus: TABLE_STATUS.SAVE,
-        }),
-      ) ?? [];
+      data?.missionTemplateAdminList?.map((item): Row => ({
+        ...item,
+        rowStatus: TABLE_STATUS.SAVE,
+      })) ?? [];
 
     if (insertingMissionTemplate) {
       // 등록 버튼 클릭 시 입력 행을 맨 위에 추가

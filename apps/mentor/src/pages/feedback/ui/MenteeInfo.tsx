@@ -44,7 +44,7 @@ interface MenteeInfoProps {
 }
 
 const EMPTY_STATE = (
-  <div className="border-neutral-80 rounded-[4px] border p-6 text-sm text-neutral-400">
+  <div className="rounded-[4px] border border-neutral-80 p-6 text-sm text-neutral-400">
     멘티를 선택해주세요.
   </div>
 );
@@ -240,7 +240,7 @@ const MenteeInfo = ({
 
         {/* 우: 희망 정보 */}
         <div className="flex flex-1 flex-col gap-3">
-          <div className="text-xsmall14 flex flex-col gap-2 text-neutral-600">
+          <div className="flex flex-col gap-2 text-xsmall14 text-neutral-600">
             {mentee.wishJob ? (
               <div className="flex gap-2">
                 <span className="w-16 shrink-0 text-neutral-400">

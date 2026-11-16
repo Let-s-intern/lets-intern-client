@@ -21,7 +21,7 @@ export default function MentorPickStatus({ mentorId }: Props) {
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-xsmall14 text-neutral-30 font-medium">
+      <span className="text-xsmall14 font-medium text-neutral-30">
         {isPicked ? `렛커 픽 ${index + 1}위` : '렛커 픽 미등록'}
       </span>
       <Button

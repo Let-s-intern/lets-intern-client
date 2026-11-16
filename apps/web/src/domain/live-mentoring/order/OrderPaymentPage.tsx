@@ -107,12 +107,12 @@ const OrderPaymentPage = () => {
   };
 
   if (!hasHydrated || !application) {
-    return <p className="text-neutral-40 py-20 text-center">이동 중…</p>;
+    return <p className="py-20 text-center text-neutral-40">이동 중…</p>;
   }
 
   return (
     <div className="mx-auto w-full max-w-3xl px-5 pb-10 pt-6">
-      <h1 className="text-small20 text-neutral-0 mb-4 font-bold">결제</h1>
+      <h1 className="mb-4 text-small20 font-bold text-neutral-0">결제</h1>
 
       <div id="payment-method" />
       <div id="agreement" />
@@ -121,7 +121,7 @@ const OrderPaymentPage = () => {
         type="button"
         disabled={!isReady}
         onClick={handlePayClick}
-        className="bg-primary text-xsmall16 disabled:bg-neutral-80 disabled:text-neutral-40 w-full rounded-sm py-4 font-medium text-white"
+        className="w-full rounded-sm bg-primary py-4 text-xsmall16 font-medium text-white disabled:bg-neutral-80 disabled:text-neutral-40"
       >
         {formatPrice(application.finalAmount)} 결제하기
       </button>

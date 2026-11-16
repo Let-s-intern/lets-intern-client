@@ -315,7 +315,7 @@ function ChallengeResult({
                       alt={content.beforeCaption}
                     />
                   </BadgedBox>
-                  <span className="text-xsmall14 md:text-small20 font-semibold text-white">
+                  <span className="text-xsmall14 font-semibold text-white md:text-small20">
                     {content.beforeCaption}
                   </span>
                 </div>
@@ -335,7 +335,7 @@ function ChallengeResult({
                       color={styles.checkIconColor}
                       size={isDesktop ? 18 : 14}
                     />
-                    <span className="text-xsmall14 md:text-small20 font-semibold text-white">
+                    <span className="text-xsmall14 font-semibold text-white md:text-small20">
                       {content.afterCaption}
                     </span>
                   </div>
@@ -373,7 +373,7 @@ function BadgedBox({
     >
       <div
         className={twMerge(
-          'bg-neutral-75 text-xsmall16 md:text-small20 w-full px-2.5 py-1 text-center font-semibold text-white md:py-2.5',
+          'w-full bg-neutral-75 px-2.5 py-1 text-center text-xsmall16 font-semibold text-white md:py-2.5 md:text-small20',
         )}
         style={style}
       >

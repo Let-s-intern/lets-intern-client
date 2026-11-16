@@ -70,7 +70,7 @@ export default function CompanyLogoPickerDialog({
           {registerButton}
         </div>
         {isLoading ? (
-          <p className="text-xsmall14 text-neutral-40 py-8">불러오는 중...</p>
+          <p className="py-8 text-xsmall14 text-neutral-40">불러오는 중...</p>
         ) : filteredLogos.length === 0 ? (
           <div className="flex flex-col items-center gap-3 py-8">
             <p className="text-xsmall14 text-neutral-40">
@@ -96,9 +96,9 @@ export default function CompanyLogoPickerDialog({
                   <img
                     src={logo.imageUrl}
                     alt=""
-                    className="h-12 w-12 rounded object-contain"
+                    className="rounded h-12 w-12 object-contain"
                   />
-                  <span className="text-xsmall14 break-all">{logo.name}</span>
+                  <span className="break-all text-xsmall14">{logo.name}</span>
                 </button>
               </li>
             ))}

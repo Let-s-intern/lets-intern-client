@@ -168,19 +168,19 @@ const SuggestSeminarModal = ({
             type="button"
             onClick={onClose}
             aria-label="닫기"
-            className="text-neutral-40 hover:text-neutral-0 absolute right-5 top-5"
+            className="absolute right-5 top-5 text-neutral-40 hover:text-neutral-0"
           >
             <X className="h-6 w-6" />
           </button>
 
           <div className="flex flex-col gap-6 pr-6">
             <div className="flex flex-col gap-2">
-              <h2 className="text-small18 md:text-medium22 text-neutral-0 font-bold">
+              <h2 className="text-small18 font-bold text-neutral-0 md:text-medium22">
                 보고 싶은 기업·직무 현직자와
                 <br />
                 세미나 주제를 알려주세요!
               </h2>
-              <p className="text-xsmall14 md:text-xsmall16 text-neutral-40">
+              <p className="text-xsmall14 text-neutral-40 md:text-xsmall16">
                 가장 빠르게 섭외하고,
                 <br />
                 무료 세미나가 열리면 누구보다 먼저 알려드립니다.
@@ -188,11 +188,11 @@ const SuggestSeminarModal = ({
             </div>
 
             {/* 연락처 (읽기 전용) */}
-            <div className="bg-primary-5 rounded-xs flex flex-col gap-1 px-4 py-3">
-              <span className="text-xxsmall12 md:text-xsmall14 text-neutral-40">
+            <div className="flex flex-col gap-1 rounded-xs bg-primary-5 px-4 py-3">
+              <span className="text-xxsmall12 text-neutral-40 md:text-xsmall14">
                 연락처
               </span>
-              <span className="text-xsmall16 text-neutral-0 font-medium">
+              <span className="text-xsmall16 font-medium text-neutral-0">
                 {user?.phoneNum || '등록된 연락처가 없어요'}
               </span>
             </div>
@@ -201,7 +201,7 @@ const SuggestSeminarModal = ({
             <div className="flex flex-col gap-2">
               <label
                 htmlFor="seminar-suggest-email"
-                className="text-xsmall14 md:text-xsmall16 text-neutral-0 font-medium"
+                className="text-xsmall14 font-medium text-neutral-0 md:text-xsmall16"
               >
                 이메일
               </label>
@@ -234,7 +234,7 @@ const SuggestSeminarModal = ({
               type="button"
               onClick={handleSubmit}
               disabled={!canSubmit}
-              className={`rounded-xs text-xsmall16 mt-2 min-h-[48px] w-full px-5 py-3 font-semibold text-neutral-100 ${canSubmit ? 'bg-primary' : 'bg-neutral-70 cursor-not-allowed'}`}
+              className={`mt-2 min-h-[48px] w-full rounded-xs px-5 py-3 text-xsmall16 font-semibold text-neutral-100 ${canSubmit ? 'bg-primary' : 'cursor-not-allowed bg-neutral-70'}`}
             >
               {submitting ? '전송 중…' : '보내기'}
             </button>

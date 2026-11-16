@@ -11,7 +11,7 @@ function Description({
   return (
     <p
       className={twMerge(
-        'text-xsmall14 text-neutral-30 md:text-small20 whitespace-pre-line',
+        'whitespace-pre-line text-xsmall14 text-neutral-30 md:text-small20',
         className,
       )}
     >

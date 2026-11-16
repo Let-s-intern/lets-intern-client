@@ -49,10 +49,10 @@ function ChallengeOperationFeedbackPage() {
         {isAdmin && (
           <button
             type="button"
-            className={`text-xsmall14 rounded-md border px-4 py-2 font-medium transition-colors ${
+            className={`rounded-md border px-4 py-2 text-xsmall14 font-medium transition-colors ${
               activeTab === 'mentorMentee'
                 ? 'border-neutral-0 bg-neutral-0 text-white'
-                : 'border-neutral-80 text-neutral-0 hover:bg-neutral-95 bg-white'
+                : 'border-neutral-80 bg-white text-neutral-0 hover:bg-neutral-95'
             }`}
             onClick={() => handleTabChange('mentorMentee')}
           >
@@ -61,10 +61,10 @@ function ChallengeOperationFeedbackPage() {
         )}
         <button
           type="button"
-          className={`text-xsmall14 rounded-md border px-4 py-2 font-medium transition-colors ${
+          className={`rounded-md border px-4 py-2 text-xsmall14 font-medium transition-colors ${
             activeTab === 'feedbackManage'
               ? 'border-neutral-0 bg-neutral-0 text-white'
-              : 'border-neutral-80 text-neutral-0 hover:bg-neutral-95 bg-white'
+              : 'border-neutral-80 bg-white text-neutral-0 hover:bg-neutral-95'
           }`}
           onClick={() => handleTabChange('feedbackManage')}
         >

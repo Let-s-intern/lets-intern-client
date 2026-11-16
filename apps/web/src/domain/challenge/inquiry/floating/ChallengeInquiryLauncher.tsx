@@ -32,7 +32,7 @@ const ChallengeInquiryLauncher = () => {
           type="button"
           aria-label="문의 닫기"
           onClick={() => setIsOpen(false)}
-          className="shadow-05 text-neutral-30 fixed bottom-6 right-6 z-50 hidden h-14 w-14 items-center justify-center rounded-full bg-white md:flex"
+          className="fixed bottom-6 right-6 z-50 hidden h-14 w-14 items-center justify-center rounded-full bg-white text-neutral-30 shadow-05 md:flex"
         >
           <X className="h-7 w-7" strokeWidth={2} />
         </button>
@@ -46,20 +46,20 @@ const ChallengeInquiryLauncher = () => {
           }
           onClick={() => setIsOpen(true)}
           className={twMerge(
-            'shadow-05 fixed bottom-20 right-4 z-30 flex w-40 items-center rounded-full bg-neutral-100 md:right-6 md:w-44',
+            'fixed bottom-20 right-4 z-30 flex w-40 items-center rounded-full bg-neutral-100 shadow-05 md:right-6 md:w-44',
           )}
         >
-          <div className="text-xsmall14 md:text-xsmall16 flex flex-1 items-center justify-center pl-2 font-semibold">
+          <div className="flex flex-1 items-center justify-center pl-2 text-xsmall14 font-semibold md:text-xsmall16">
             챌린지 문의하기
           </div>
-          <div className="bg-primary flex h-12 w-12 translate-x-px items-center justify-center rounded-full sm:h-14 sm:w-14">
+          <div className="flex h-12 w-12 translate-x-px items-center justify-center rounded-full bg-primary sm:h-14 sm:w-14">
             <Send
               className="h-6 w-6 text-white sm:h-7 sm:w-7"
               strokeWidth={2}
             />
           </div>
           {unread > 0 && (
-            <div className="text-xxsmall12 bg-system-error text-static-100 absolute right-0 top-0 flex h-5 w-5 items-center justify-center rounded-full font-medium sm:h-6 sm:w-6">
+            <div className="absolute right-0 top-0 flex h-5 w-5 items-center justify-center rounded-full bg-system-error text-xxsmall12 font-medium text-static-100 sm:h-6 sm:w-6">
               {unread}
             </div>
           )}

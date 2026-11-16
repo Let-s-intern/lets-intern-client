@@ -559,11 +559,11 @@ const LiveAvailabilityContent = ({
     <div className="flex h-full flex-col">
       {/* 라이브 피드백이 진행되는 모든 챌린지를 한 줄에 태그로 노출 */}
       {challengeTitles && challengeTitles.length > 0 && (
-        <div className="border-neutral-80 bg-neutral-95 flex flex-wrap items-center gap-2 border-b px-6 py-3">
+        <div className="flex flex-wrap items-center gap-2 border-b border-neutral-80 bg-neutral-95 px-6 py-3">
           {challengeTitles.map((title) => (
             <span
               key={title}
-              className="text-xxsmall12 bg-neutral-30 rounded-[3px] px-2 py-1 font-medium text-white"
+              className="rounded-[3px] bg-neutral-30 px-2 py-1 text-xxsmall12 font-medium text-white"
             >
               {title}
             </span>
@@ -572,8 +572,8 @@ const LiveAvailabilityContent = ({
       )}
 
       {showHeader && (
-        <div className="border-neutral-85 flex items-center justify-between gap-4 border-b px-6 py-5">
-          <h2 className="text-medium20 text-neutral-10 font-semibold">
+        <div className="flex items-center justify-between gap-4 border-b border-neutral-85 px-6 py-5">
+          <h2 className="text-medium20 font-semibold text-neutral-10">
             LIVE 피드백 일정 오픈하기
           </h2>
           {mode === 'modal' && onClose && (
@@ -581,7 +581,7 @@ const LiveAvailabilityContent = ({
               type="button"
               onClick={onClose}
               aria-label="닫기"
-              className="text-neutral-40 hover:text-neutral-10 -mr-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-md transition-colors"
+              className="-mr-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-neutral-40 transition-colors hover:text-neutral-10"
             >
               <svg
                 width="20"
@@ -604,7 +604,7 @@ const LiveAvailabilityContent = ({
 
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-6 py-5">
         <div className="mb-3 flex items-center justify-between">
-          <p className="text-small18 text-neutral-10 font-semibold">
+          <p className="text-small18 font-semibold text-neutral-10">
             예약 가능 시간 설정
           </p>
           {showHeader && onOpenReservation && (
@@ -620,7 +620,7 @@ const LiveAvailabilityContent = ({
         </div>
 
         {/* 참고사항 배너 — 한 줄 */}
-        <div className="bg-primary-5 text-xsmall14 text-primary-90 mb-3 flex items-center gap-1.5 break-keep rounded-md px-3 py-2">
+        <div className="mb-3 flex items-center gap-1.5 break-keep rounded-md bg-primary-5 px-3 py-2 text-xsmall14 text-primary-90">
           <InfoIcon />
           <span>
             마우스로 드래그하여 여러 시간대를 선택한 후 &ldquo;저장하기&rdquo;
@@ -629,7 +629,7 @@ const LiveAvailabilityContent = ({
           </span>
         </div>
         {requiredSlotCount !== undefined && (
-          <p className="text-xxsmall12 text-neutral-40 mb-3">
+          <p className="mb-3 text-xxsmall12 text-neutral-40">
             신청 예정인 멘티가{' '}
             <span className="font-semibold">{requiredSlotCount}명</span>
             이므로 최소 {requiredSlotCount}개 이상의 시간대를 열어야 저장할 수
@@ -639,7 +639,7 @@ const LiveAvailabilityContent = ({
         {isSlotOpenClosed && slotOpenWindow && (
           <div
             role="alert"
-            className="text-xsmall14 mb-3 flex items-center gap-1.5 break-keep rounded-md bg-amber-50 px-3 py-2 text-amber-700"
+            className="mb-3 flex items-center gap-1.5 break-keep rounded-md bg-amber-50 px-3 py-2 text-xsmall14 text-amber-700"
           >
             <InfoIcon />
             <span>
@@ -666,11 +666,11 @@ const LiveAvailabilityContent = ({
               onClick={handlePrevWeek}
               disabled={!canGoPrevWeek}
               aria-label="이전 주"
-              className="text-neutral-40 hover:text-neutral-10 disabled:text-neutral-75 disabled:hover:text-neutral-75 flex h-7 w-7 items-center justify-center rounded-md transition-colors disabled:cursor-not-allowed"
+              className="flex h-7 w-7 items-center justify-center rounded-md text-neutral-40 transition-colors hover:text-neutral-10 disabled:cursor-not-allowed disabled:text-neutral-75 disabled:hover:text-neutral-75"
             >
               ‹
             </button>
-            <p className="text-xsmall14 text-neutral-10 font-semibold tabular-nums">
+            <p className="text-xsmall14 font-semibold tabular-nums text-neutral-10">
               {format(weekStart, 'MM.dd')} ~{' '}
               {format(addDays(weekStart, 6), 'MM.dd')}
             </p>
@@ -678,35 +678,35 @@ const LiveAvailabilityContent = ({
               type="button"
               onClick={handleNextWeek}
               aria-label="다음 주"
-              className="text-neutral-40 hover:text-neutral-10 flex h-7 w-7 items-center justify-center rounded-md transition-colors"
+              className="flex h-7 w-7 items-center justify-center rounded-md text-neutral-40 transition-colors hover:text-neutral-10"
             >
               ›
             </button>
           </div>
 
           {/* 레전드 — 예약 가능 / 예약 불가능 / 예약 완료(잠금) / 변경사항 (우측 한 줄) */}
-          <div className="text-xxsmall12 text-neutral-40 flex items-center gap-4">
+          <div className="flex items-center gap-4 text-xxsmall12 text-neutral-40">
             <span className="flex items-center gap-1.5">
-              <span className="bg-primary-10 border-neutral-80 h-3 w-3 rounded-[3px] border" />
+              <span className="h-3 w-3 rounded-[3px] border border-neutral-80 bg-primary-10" />
               예약 가능
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="bg-neutral-90 border-neutral-80 h-3 w-3 rounded-[3px] border" />
+              <span className="h-3 w-3 rounded-[3px] border border-neutral-80 bg-neutral-90" />
               예약 불가능
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="bg-neutral-90 text-neutral-40 flex h-3 w-3 items-center justify-center rounded-[3px]">
+              <span className="flex h-3 w-3 items-center justify-center rounded-[3px] bg-neutral-90 text-neutral-40">
                 <LockIcon />
               </span>
               예약 완료
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="bg-primary-10 border-primary h-3 w-3 rounded-[3px] border" />
+              <span className="h-3 w-3 rounded-[3px] border border-primary bg-primary-10" />
               변경사항
             </span>
             {challengePeriodKeys.size > 0 && (
               <span className="flex items-center gap-1.5">
-                <span className="bg-requirement/10 border-requirement h-3 w-3 rounded-[3px] border" />
+                <span className="h-3 w-3 rounded-[3px] border border-requirement bg-requirement/10" />
                 챌린지 기간
               </span>
             )}
@@ -716,23 +716,23 @@ const LiveAvailabilityContent = ({
         {challengePeriodKeys.size > 0 && (
           <p
             role="note"
-            className="text-xxsmall12 text-neutral-40 bg-neutral-95 mb-3 break-keep rounded-md px-3 py-2"
+            className="mb-3 break-keep rounded-md bg-neutral-95 px-3 py-2 text-xxsmall12 text-neutral-40"
           >
             {CHALLENGE_PERIOD_NOTICE} 이 시간에도 일정은 그대로 열 수 있어요.
           </p>
         )}
 
-        <div className="border-neutral-85 min-h-0 flex-1 overflow-y-auto rounded-md border">
+        <div className="min-h-0 flex-1 overflow-y-auto rounded-md border border-neutral-85">
           <div className="grid select-none grid-cols-[96px_repeat(7,minmax(88px,1fr))]">
             {/* 헤더 블록 — 요일/날짜 + 기간 바를 한 덩어리로 sticky 고정.
                 좌측 "멘토링 시작 시간" 라벨은 기간 바 행까지 세로 병합된다(시안 동일). */}
-            <div className="border-neutral-85 sticky top-0 z-10 col-span-full grid grid-cols-[96px_repeat(7,minmax(88px,1fr))] border-b bg-white">
+            <div className="sticky top-0 z-10 col-span-full grid grid-cols-[96px_repeat(7,minmax(88px,1fr))] border-b border-neutral-85 bg-white">
               <div
                 style={{
                   gridColumn: 1,
                   gridRow: `1 / ${2 + visiblePeriods.length}`,
                 }}
-                className="border-neutral-85 text-xxsmall12 text-neutral-40 flex flex-col items-center justify-center border-r px-2 py-2 text-center font-medium leading-tight"
+                className="flex flex-col items-center justify-center border-r border-neutral-85 px-2 py-2 text-center text-xxsmall12 font-medium leading-tight text-neutral-40"
               >
                 <span>멘토링</span>
                 <span>시작 시간</span>
@@ -777,7 +777,7 @@ const LiveAvailabilityContent = ({
                           className={
                             dayIndex === WEEK_DAYS.length - 1
                               ? ''
-                              : 'border-neutral-85 border-r'
+                              : 'border-r border-neutral-85'
                           }
                         />
                       ))}
@@ -796,7 +796,7 @@ const LiveAvailabilityContent = ({
                             PERIOD_COLORS[colorIdx % PERIOD_COLORS.length]
                           }`}
                         >
-                          <span className="text-xxsmall12 min-w-0 truncate font-medium">
+                          <span className="min-w-0 truncate text-xxsmall12 font-medium">
                             {period.challengeTitle}
                             {period.generation !== undefined &&
                               ` ${period.generation}기`}
@@ -804,7 +804,7 @@ const LiveAvailabilityContent = ({
                             LIVE 피드백 기간
                           </span>
                           {/* 라이브 미션 시작일 ~ 마감일 (예약 기간 = 미션 시작일~종료일) */}
-                          <span className="text-xxsmall12 shrink-0 font-medium tabular-nums opacity-90">
+                          <span className="shrink-0 text-xxsmall12 font-medium tabular-nums opacity-90">
                             {format(new Date(period.startDate), 'M.d', {
                               locale: ko,
                             })}
@@ -813,7 +813,7 @@ const LiveAvailabilityContent = ({
                               locale: ko,
                             })}
                           </span>
-                          <span className="text-xxsmall12 ml-auto flex shrink-0 items-center gap-1 font-semibold">
+                          <span className="ml-auto flex shrink-0 items-center gap-1 text-xxsmall12 font-semibold">
                             <PeopleIcon />
                             {period.reservedCount ?? 0}
                             {period.capacity !== undefined
@@ -832,7 +832,7 @@ const LiveAvailabilityContent = ({
               <div key={`row-${time}`} className="contents">
                 <div
                   data-time-label
-                  className="border-neutral-85 text-xsmall14 text-neutral-40 border-b border-r bg-white px-2 py-2 text-center"
+                  className="border-b border-r border-neutral-85 bg-white px-2 py-2 text-center text-xsmall14 text-neutral-40"
                 >
                   {time}
                 </div>
@@ -850,7 +850,7 @@ const LiveAvailabilityContent = ({
                         key={`${time}-${dayIndex}`}
                         title="예약이 완료된 시간입니다"
                         aria-disabled="true"
-                        className="border-neutral-90 text-xxsmall12 bg-neutral-90 text-neutral-30 flex items-center justify-center gap-1 border-b border-r px-2 py-2 text-center font-medium last:border-r-0"
+                        className="flex items-center justify-center gap-1 border-b border-r border-neutral-90 bg-neutral-90 px-2 py-2 text-center text-xxsmall12 font-medium text-neutral-30 last:border-r-0"
                       >
                         <LockIcon />
                         <span>예약 완료</span>
@@ -874,7 +874,7 @@ const LiveAvailabilityContent = ({
                           })
                         }
                         title={`${currentMenteeName}님 신청 완료 — 클릭해 안내 확인`}
-                        className="border-neutral-90 text-xsmall14 bg-primary-10 text-primary border-b border-r px-2 py-1.5 text-center font-medium opacity-80 transition-opacity last:border-r-0 hover:opacity-70"
+                        className="border-b border-r border-neutral-90 bg-primary-10 px-2 py-1.5 text-center text-xsmall14 font-medium text-primary opacity-80 transition-opacity last:border-r-0 hover:opacity-70"
                       >
                         <span className="flex flex-col leading-tight">
                           <span className="text-xxsmall12 font-normal opacity-70">
@@ -942,7 +942,7 @@ const LiveAvailabilityContent = ({
                                 ? `${blocker.challengeTitle}(으)로 이미 열어 둔 시간이라 선택할 수 없습니다`
                                 : '다른 일정이 점유한 시간입니다'
                         }
-                        className={`border-neutral-90 text-xsmall14 bg-neutral-90 text-neutral-30 border-b border-r px-2 py-1.5 text-center font-medium transition-opacity last:border-r-0 hover:opacity-70 ${
+                        className={`border-b border-r border-neutral-90 bg-neutral-90 px-2 py-1.5 text-center text-xsmall14 font-medium text-neutral-30 transition-opacity last:border-r-0 hover:opacity-70 ${
                           isLocked ? 'opacity-80' : ''
                         }`}
                       >
@@ -987,7 +987,7 @@ const LiveAvailabilityContent = ({
                           배경에 묻혀 회색 덩어리 하나로 보이고, 어느 칸이 어느
                           시간인지 짚을 수 없다.
                         */
-                        className="bg-neutral-90 border-b border-r border-white px-2 py-2 last:border-r-0"
+                        className="border-b border-r border-white bg-neutral-90 px-2 py-2 last:border-r-0"
                       />
                     );
                   }
@@ -1033,7 +1033,7 @@ const LiveAvailabilityContent = ({
                         handleCellMouseDown(cellDate, time);
                       }}
                       onMouseEnter={() => handleCellMouseEnter(cellDate, time)}
-                      className={`border-neutral-90 text-xxsmall12 border-b border-r px-2 py-2 text-center transition-colors last:border-r-0 ${cellClass}`}
+                      className={`border-b border-r border-neutral-90 px-2 py-2 text-center text-xxsmall12 transition-colors last:border-r-0 ${cellClass}`}
                     >
                       {isSelected ? '예약 가능' : ''}
                     </button>
@@ -1045,14 +1045,14 @@ const LiveAvailabilityContent = ({
         </div>
       </div>
 
-      <div className="border-neutral-85 flex items-center justify-between border-t px-6 py-4">
+      <div className="flex items-center justify-between border-t border-neutral-85 px-6 py-4">
         {requiredSlotCount !== undefined ? (
           (() => {
             const hasEnough = selectedCount >= requiredSlotCount;
             return (
               <p className="text-xsmall14">
                 <span className="text-neutral-40">신청 멘티 </span>
-                <span className="text-neutral-10 font-semibold">
+                <span className="font-semibold text-neutral-10">
                   {requiredSlotCount}명
                 </span>
                 <span className="text-neutral-40"> · 열어둔 시간 </span>
@@ -1081,7 +1081,7 @@ const LiveAvailabilityContent = ({
             <button
               type="button"
               onClick={handleCancel}
-              className="border-neutral-80 text-xsmall14 text-neutral-40 rounded-md border px-4 py-2 font-medium"
+              className="rounded-md border border-neutral-80 px-4 py-2 text-xsmall14 font-medium text-neutral-40"
             >
               되돌리기
             </button>
@@ -1095,7 +1095,7 @@ const LiveAvailabilityContent = ({
               (requiredSlotCount !== undefined &&
                 selectedCount < requiredSlotCount)
             }
-            className="bg-primary text-xsmall14 hover:bg-primary-hover disabled:bg-neutral-80 rounded-md px-4 py-2 font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:text-neutral-50"
+            className="rounded-md bg-primary px-4 py-2 text-xsmall14 font-semibold text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:bg-neutral-80 disabled:text-neutral-50"
           >
             {isSavingLocal
               ? '저장 중...'

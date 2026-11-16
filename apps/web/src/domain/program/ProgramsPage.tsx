@@ -221,7 +221,7 @@ const Programs = () => {
           {/* 모바일: 필터 아이콘 */}
           <button
             onClick={() => setIsOpen(true)}
-            className="border-neutral-85 relative z-10 -mr-5 flex shrink-0 items-center justify-center border-b p-1 pb-2 pr-5 lg:hidden"
+            className="relative z-10 -mr-5 flex shrink-0 items-center justify-center border-b border-neutral-85 p-1 pb-2 pr-5 lg:hidden"
           >
             <img
               className="w-5 md:w-6"

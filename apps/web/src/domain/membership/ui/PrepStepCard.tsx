@@ -33,7 +33,7 @@ function VideoPlaceholder({ title }: { title: string }) {
       <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white">
         <svg
           aria-hidden="true"
-          className="text-primary h-6 w-6"
+          className="h-6 w-6 text-primary"
           fill="none"
           stroke="currentColor"
           strokeWidth="1.8"
@@ -46,7 +46,7 @@ function VideoPlaceholder({ title }: { title: string }) {
           />
         </svg>
       </span>
-      <strong className="text-xsmall14 text-neutral-0 text-center font-bold">
+      <strong className="text-center text-xsmall14 font-bold text-neutral-0">
         {title}
       </strong>
     </div>
@@ -104,7 +104,7 @@ export default function PrepStepCard({ step, highlighted = false }: Props) {
   return (
     <div className="relative h-full">
       {highlighted ? (
-        <span className="text-xxsmall12 absolute -top-3 left-5 z-10 rounded-full bg-[#293662] px-4 py-1.5 font-bold text-white">
+        <span className="absolute -top-3 left-5 z-10 rounded-full bg-[#293662] px-4 py-1.5 text-xxsmall12 font-bold text-white">
           {PREP_STEPS.resultBadge}
         </span>
       ) : null}
@@ -115,7 +115,7 @@ export default function PrepStepCard({ step, highlighted = false }: Props) {
          * 제목 줄 수가 달라 높이가 들쭉날쭉해지므로 접힌 높이만 min-height 로 맞춘다.
          * 펼치면 이 값을 넘어 카드가 자란다.
          */
-        className={`rounded-xxl flex h-full flex-col border p-6 md:min-h-[16.75rem] ${border} ${
+        className={`flex h-full flex-col rounded-xxl border p-6 md:min-h-[16.75rem] ${border} ${
           isGoal
             ? 'border-transparent bg-gradient-to-br from-[#1B2038] to-[#3A3F75]'
             : 'bg-white'
@@ -136,7 +136,7 @@ export default function PrepStepCard({ step, highlighted = false }: Props) {
         </p>
 
         <h3
-          className={`text-small18 mt-2 font-bold ${
+          className={`mt-2 text-small18 font-bold ${
             isGoal ? 'text-white' : 'text-neutral-0'
           }`}
         >
@@ -146,7 +146,7 @@ export default function PrepStepCard({ step, highlighted = false }: Props) {
         <ul className="mt-4 flex flex-col gap-2">
           {step.todos.map((todo) => (
             <li
-              className={`text-xsmall14 flex gap-2 leading-relaxed ${
+              className={`flex gap-2 text-xsmall14 leading-relaxed ${
                 isGoal ? 'text-neutral-80' : 'text-neutral-40'
               }`}
               key={todo}
@@ -161,8 +161,8 @@ export default function PrepStepCard({ step, highlighted = false }: Props) {
           <div className="mt-auto pt-5">
             <button
               aria-expanded={expanded}
-              className={`text-xsmall14 border-neutral-85 flex w-full items-center justify-between gap-2 border-t pt-4 text-left ${
-                isCheckpoint ? 'text-neutral-0 font-bold' : 'text-neutral-30'
+              className={`flex w-full items-center justify-between gap-2 border-t border-neutral-85 pt-4 text-left text-xsmall14 ${
+                isCheckpoint ? 'font-bold text-neutral-0' : 'text-neutral-30'
               }`}
               onClick={handleToggle}
               type="button"
@@ -183,9 +183,9 @@ export default function PrepStepCard({ step, highlighted = false }: Props) {
                     {step.expand.programs.map((it, index) => (
                       <button
                         aria-pressed={index === tab}
-                        className={`text-xsmall14 flex-1 rounded-lg border px-3 py-2.5 font-bold ${
+                        className={`flex-1 rounded-lg border px-3 py-2.5 text-xsmall14 font-bold ${
                           index === tab
-                            ? 'border-primary text-primary bg-primary-5'
+                            ? 'border-primary bg-primary-5 text-primary'
                             : 'border-neutral-90 bg-neutral-90 text-neutral-45'
                         }`}
                         key={it.tabLabel}
@@ -200,7 +200,7 @@ export default function PrepStepCard({ step, highlighted = false }: Props) {
 
                 <div className="relative mt-3">
                   {step.expand.badge ? (
-                    <span className="text-xxsmall12 absolute right-3 top-3 rounded-full bg-[#FCE3D6] px-4 py-1.5 font-bold text-[#F1642B]">
+                    <span className="absolute right-3 top-3 rounded-full bg-[#FCE3D6] px-4 py-1.5 text-xxsmall12 font-bold text-[#F1642B]">
                       {step.expand.badge}
                     </span>
                   ) : null}

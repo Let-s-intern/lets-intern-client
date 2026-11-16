@@ -87,10 +87,10 @@ const ScheduleSelectSection = ({
   if (dateRange === null) {
     return (
       <section className="flex flex-col gap-3">
-        <h3 className="text-xsmall16 text-neutral-0 font-semibold">
+        <h3 className="text-xsmall16 font-semibold text-neutral-0">
           예약 일시 선택 <span className="text-primary">(필수)</span>
         </h3>
-        <p className="border-neutral-80 text-xsmall14 text-neutral-40 rounded-sm border px-4 py-8 text-center">
+        <p className="rounded-sm border border-neutral-80 px-4 py-8 text-center text-xsmall14 text-neutral-40">
           현재 예약 가능한 일정이 없습니다.
         </p>
       </section>
@@ -107,7 +107,7 @@ const ScheduleSelectSection = ({
 
   return (
     <section className="flex flex-col gap-3">
-      <h3 className="text-xsmall16 text-neutral-0 font-semibold">
+      <h3 className="text-xsmall16 font-semibold text-neutral-0">
         예약 일시 선택 <span className="text-primary">(필수)</span>
       </h3>
 

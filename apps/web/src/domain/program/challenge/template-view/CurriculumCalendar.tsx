@@ -33,7 +33,7 @@ const CalendarItem = ({ number, title, description }: CalendarItemConfig) => {
 
 const CalendarList = ({ children }: { children: ReactNode }) => {
   return (
-    <ul className="rounded-xs text-xsmall14 flex w-full min-w-0 flex-col gap-3 bg-white p-4 md:min-w-[288px] md:flex-1 md:flex-shrink-0 md:p-3">
+    <ul className="flex w-full min-w-0 flex-col gap-3 rounded-xs bg-white p-4 text-xsmall14 md:min-w-[288px] md:flex-1 md:flex-shrink-0 md:p-3">
       {children}
     </ul>
   );
@@ -54,7 +54,7 @@ const CurriculumCalendar = ({
       className="flex w-full flex-col items-center pt-[60px] md:overflow-x-hidden md:px-0 md:pb-[104px] md:pt-[100px]"
       style={{ backgroundColor: config.lightAccentColor }}
     >
-      <h2 className="md:text-medium24 mb-5 text-center text-[14px] font-bold md:mb-[60px] md:font-semibold">
+      <h2 className="mb-5 text-center text-[14px] font-bold md:mb-[60px] md:text-medium24 md:font-semibold">
         한눈에 보는 {'['} {challenge.title ?? ''} {']'} 일정
       </h2>
 
@@ -66,22 +66,22 @@ const CurriculumCalendar = ({
               alt="커리큘럼 상세 일정"
               fill
               unoptimized
-              className="rounded-xxs md:rounded-xs absolute object-cover"
+              className="absolute rounded-xxs object-cover md:rounded-xs"
             />
           </div>
         )}
-        <div className="text-neutral-0 relative flex w-full min-w-0 flex-col gap-3 md:h-full md:justify-between">
+        <div className="relative flex w-full min-w-0 flex-col gap-3 text-neutral-0 md:h-full md:justify-between">
           <CalendarList>
             {calendarItems.map((item) => (
               <CalendarItem key={item.number} {...item} />
             ))}
           </CalendarList>
           <CalendarList>
-            <li className="text-xxsmall12 md:text-xsmall14 flex flex-col">
+            <li className="flex flex-col text-xxsmall12 md:text-xsmall14">
               <div className="text-xxsmall12 md:text-xsmall14">
                 <span className="font-bold">+ </span>
                 <span
-                  className="box-border inline-block rounded rounded-[2px] px-[10px] py-[3px] text-[14px] font-semibold text-white md:text-[16px]"
+                  className="rounded box-border inline-block rounded-[2px] px-[10px] py-[3px] text-[14px] font-semibold text-white md:text-[16px]"
                   style={{ backgroundColor: config.primaryColor }}
                 >
                   렛츠커리어 24hr 커뮤니티
@@ -96,7 +96,7 @@ const CurriculumCalendar = ({
                       + {item.title}
                     </span>
                   )}
-                  <div className="text-xxsmall12 md:text-xsmall14 leading-[20px] md:leading-[22px]">
+                  <div className="text-xxsmall12 leading-[20px] md:text-xsmall14 md:leading-[22px]">
                     {item.description}
                   </div>
                 </li>

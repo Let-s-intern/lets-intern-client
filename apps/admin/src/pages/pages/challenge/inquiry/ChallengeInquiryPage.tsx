@@ -77,7 +77,7 @@ const ChallengeInquiryPage = () => {
           if (!hasVisibleAnswer)
             return <span className="text-neutral-400">-</span>;
           return row.isAnswerRead ? (
-            <span className="text-primary text-xs font-bold">O</span>
+            <span className="text-xs font-bold text-primary">O</span>
           ) : (
             <span className="text-xs font-bold text-red-500">X</span>
           );
@@ -106,7 +106,7 @@ const ChallengeInquiryPage = () => {
         headerAlign: 'center',
         renderCell: ({ row }) => (
           <button
-            className="bg-primary rounded px-3 py-1 text-xs text-white"
+            className="rounded bg-primary px-3 py-1 text-xs text-white"
             onClick={() =>
               navigate(
                 `/challenge/inquiry/${row.challengeId}/${row.id}/answer`,

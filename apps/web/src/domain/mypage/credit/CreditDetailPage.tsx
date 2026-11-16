@@ -31,7 +31,7 @@ const CreditDetailPage = () => {
           className="h-6 w-6 cursor-pointer"
           onClick={() => router.push('/mypage/credit')}
         />
-        <h1 className="text-neutral-0 text-lg font-medium">결제상세</h1>
+        <h1 className="text-lg font-medium text-neutral-0">결제상세</h1>
       </div>
 
       <section className="flex w-full flex-col gap-y-10 py-8">
@@ -112,8 +112,8 @@ export const CreditDetailContent = ({ paymentId }: { paymentId: string }) => {
       <div className="flex w-full flex-col items-start justify-center gap-y-6">
         {/* 환불 내역 */}
         {isRefunded && (
-          <section className="rounded-xxs bg-neutral-90 flex w-full gap-2 px-4 py-3">
-            <div className="text-primary-dark text-sm font-semibold">
+          <section className="flex w-full gap-2 rounded-xxs bg-neutral-90 px-4 py-3">
+            <div className="text-sm font-semibold text-primary-dark">
               페이백 완료
             </div>
             <div className="flex grow items-center justify-end">
@@ -128,8 +128,8 @@ export const CreditDetailContent = ({ paymentId }: { paymentId: string }) => {
 
         {/* 결제 취소 */}
         {!isRefunded && isCanceled && (
-          <section className="rounded-xxs bg-neutral-90 flex w-full gap-2 px-4 py-3">
-            <div className="text-system-error text-sm font-semibold">
+          <section className="flex w-full gap-2 rounded-xxs bg-neutral-90 px-4 py-3">
+            <div className="text-sm font-semibold text-system-error">
               결제 취소
             </div>
             <div className="flex grow items-center justify-end">
@@ -171,7 +171,7 @@ export const CreditDetailContent = ({ paymentId }: { paymentId: string }) => {
 
       {/* 참여자 정보 */}
       <section className="flex w-full flex-col items-start justify-center gap-y-6">
-        <div className="text-neutral-0 font-semibold">참여자 정보</div>
+        <div className="font-semibold text-neutral-0">참여자 정보</div>
         {!userData ? (
           userDataIsLoading ? (
             <p className="text-neutral-0">참여자 정보를 불러오는 중입니다.</p>
@@ -227,11 +227,11 @@ export const CreditDetailContent = ({ paymentId }: { paymentId: string }) => {
 
       {/* 환불/결제 정보 */}
       <section className="flex w-full flex-col items-start justify-center gap-y-6">
-        <div className="text-neutral-0 font-semibold">
+        <div className="font-semibold text-neutral-0">
           {isCanceled ? '환불 정보' : '결제 정보'}
         </div>
         <div className="flex w-full flex-col items-start justify-start gap-y-3">
-          <div className="border-neutral-0 text-neutral-0 flex w-full items-center justify-start gap-3 border-y-[1.5px] px-3 py-5 font-bold">
+          <div className="flex w-full items-center justify-start gap-3 border-y-[1.5px] border-neutral-0 px-3 py-5 font-bold text-neutral-0">
             <div>{isCanceled ? '총 환불금액' : '총 결제금액'}</div>
             <div className="flex grow items-center justify-end">
               {paymentDetail.tossInfo &&
@@ -313,7 +313,7 @@ export const CreditDetailContent = ({ paymentId }: { paymentId: string }) => {
 
             {/* [환불된 내역] 환불 규정 표시 */}
             {isCanceled && (
-              <div className="text-primary-dark py-2 text-xs font-medium">
+              <div className="py-2 text-xs font-medium text-primary-dark">
                 *환불 규정은{' '}
                 <a
                   className="underline underline-offset-2"
@@ -328,7 +328,7 @@ export const CreditDetailContent = ({ paymentId }: { paymentId: string }) => {
             )}
           </div>
 
-          <hr className="border-neutral-85 w-full" />
+          <hr className="w-full border-neutral-85" />
 
           <div className="flex w-full flex-col">
             <PaymentInfoRow
@@ -361,9 +361,9 @@ export const CreditDetailContent = ({ paymentId }: { paymentId: string }) => {
                 />
                 <div className="flex w-full items-center justify-start gap-x-2 px-3 py-2">
                   <div className="text-neutral-40">영수증</div>
-                  <div className="text-neutral-0 flex grow items-center justify-end">
+                  <div className="flex grow items-center justify-end text-neutral-0">
                     <button
-                      className="border-neutral-60 flex items-center justify-center rounded-sm border bg-white px-2.5 py-1.5 text-sm font-medium"
+                      className="flex items-center justify-center rounded-sm border border-neutral-60 bg-white px-2.5 py-1.5 text-sm font-medium"
                       onClick={() => {
                         if (paymentDetail.tossInfo?.receipt) {
                           window.open(
@@ -382,14 +382,14 @@ export const CreditDetailContent = ({ paymentId }: { paymentId: string }) => {
           </div>
         </div>
         {vodPassRefundBlockedReason && (
-          <p className="text-neutral-40 w-full text-sm font-medium">
+          <p className="w-full text-sm font-medium text-neutral-40">
             {vodPassRefundBlockedReason}
           </p>
         )}
         {(isMembership ? isMembershipRefundable : isCancelable) ? (
           <button
             type="button"
-            className="bg-neutral-80 text-neutral-40 flex w-full items-center justify-center rounded-sm px-5 py-2.5 font-medium"
+            className="flex w-full items-center justify-center rounded-sm bg-neutral-80 px-5 py-2.5 font-medium text-neutral-40"
             onClick={() => router.push(`/mypage/credit/${paymentId}/delete`)}
           >
             결제 취소하기

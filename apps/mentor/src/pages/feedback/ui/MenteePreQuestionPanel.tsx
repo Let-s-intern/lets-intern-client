@@ -35,7 +35,7 @@ const MenteePreQuestionPanel = ({
           type="button"
           onClick={onClose}
           aria-label={`${title} 패널 닫기`}
-          className="flex h-6 w-6 shrink-0 items-center justify-center rounded text-neutral-500 hover:bg-neutral-100"
+          className="rounded flex h-6 w-6 shrink-0 items-center justify-center text-neutral-500 hover:bg-neutral-100"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
             <path

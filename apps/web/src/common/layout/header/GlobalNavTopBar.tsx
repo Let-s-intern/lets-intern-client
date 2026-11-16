@@ -74,18 +74,18 @@ function GlobalNavTopBar({
     },
   ];
   return (
-    <nav className="mw-1180 flex h-11 items-center justify-between md:h-full md:py-4">
+    <nav className="mw-1180 flex h-11 items-center justify-between lg:h-full lg:py-4">
       <div className="flex h-full items-center">
         {/* 로고 */}
-        <LogoLink className="mr-3 md:mr-8" />
+        <LogoLink className="mr-3 lg:mr-8" />
         {/* 오늘의 공고로 오가는 토글. 데스크톱은 `NavBar` 맨 위 띠가 맡는다. */}
-        <div className="md:hidden">
+        <div className="lg:hidden">
           <ServiceToggle size="mobile" />
         </div>
         {/* 네비 메뉴 */}
         <GlobalNavItem
           className={twMerge(
-            'mr-6 hidden h-9 items-center border-b-[1.5px] border-transparent md:flex',
+            'mr-6 hidden h-9 items-center border-b-[1.5px] border-transparent lg:flex',
             pathname === '/' && 'border-neutral-0',
           )}
           href="/"
@@ -96,18 +96,21 @@ function GlobalNavTopBar({
             — 판매 중인 패스가 있으면 그 패스 랜딩으로, 없으면 프로그램 목록(올인원패스 필터)으로. */}
         <GlobalNavItem
           className={twMerge(
-            'mr-6 hidden h-9 items-center border-b-[1.5px] border-transparent md:flex',
+            'mr-6 hidden h-9 items-center border-b-[1.5px] border-transparent lg:flex',
             pathname.startsWith(membershipNav.activePath) && 'border-neutral-0',
           )}
           href={membershipNav.href}
           isNew
         >
-          <MembershipNavLabel title={membershipNav.title} />
+          <MembershipNavLabel
+            className="max-w-[200px] xl:max-w-none"
+            title={membershipNav.title}
+          />
         </GlobalNavItem>
         {/* 메뉴 정리: 멤버십 출시 메뉴 추가로 상단바가 혼잡해 잠시 숨김 (모바일 드로어에는 유지) */}
         {/* <GlobalNavItem
           className={twMerge(
-            'mr-6 hidden h-9 items-center border-b-[1.5px] border-transparent md:flex',
+            'mr-6 hidden h-9 items-center border-b-[1.5px] border-transparent lg:flex',
             pathname === '/about' && 'border-neutral-0',
           )}
           href="/about"
@@ -116,7 +119,7 @@ function GlobalNavTopBar({
         </GlobalNavItem> */}
         <GlobalNavItem
           className={twMerge(
-            'b2b_landing_click mr-6 hidden h-9 items-center border-b-[1.5px] border-transparent md:flex',
+            'b2b_landing_click mr-6 hidden h-9 items-center border-b-[1.5px] border-transparent lg:flex',
             pathname.startsWith('/b2b') && 'border-neutral-0',
           )}
           href="/b2b"
@@ -125,7 +128,7 @@ function GlobalNavTopBar({
         </GlobalNavItem>
         <GlobalNavItem
           className={twMerge(
-            'mr-6 hidden h-9 items-center border-b-[1.5px] border-transparent md:flex',
+            'mr-6 hidden h-9 items-center border-b-[1.5px] border-transparent lg:flex',
             pathname.startsWith('/mentor-join') && 'border-neutral-0',
           )}
           href="/mentor-join"
@@ -134,13 +137,13 @@ function GlobalNavTopBar({
         </GlobalNavItem>
         <GlobalNavItem
           className={twMerge(
-            'hidden items-center justify-center gap-1 border-b-[1.5px] border-transparent md:flex',
+            'hidden items-center justify-center gap-1 border-b-[1.5px] border-transparent lg:flex',
             pathname.startsWith('/community') && 'border-neutral-0',
           )}
           href="/community"
         >
           커뮤니티
-          <span className="text-xxsmall12 flex h-auto items-center font-normal">
+          <span className="hidden h-auto items-center text-xxsmall12 font-normal xl:flex">
             +현직자 멘토 참여중
           </span>
         </GlobalNavItem>
@@ -151,13 +154,13 @@ function GlobalNavTopBar({
         {/* <Promotion /> */}
         {isLoggedIn ? (
           <GlobalNavItem
-            className="hidden cursor-pointer items-center md:flex"
+            className="hidden cursor-pointer items-center lg:flex"
             subNavList={userSubNavList}
             showDropdownIcon={false}
             align="right"
           >
             <div className="flex items-center gap-2">
-              <span className="text-xsmall16 text-neutral-0 pl-2 font-medium">
+              <span className="pl-2 text-xsmall16 font-medium text-neutral-0">
                 {user?.name} 님
               </span>
               <img
@@ -169,7 +172,7 @@ function GlobalNavTopBar({
             </div>
           </GlobalNavItem>
         ) : (
-          <div className="-mr-3 hidden items-center md:flex">
+          <div className="-mr-3 hidden items-center whitespace-nowrap lg:flex">
             {/* 로그인 */}
             <LoginLink redirect={loginRedirect} />
             <SignUpLink />
@@ -177,7 +180,7 @@ function GlobalNavTopBar({
         )}
         {isLoginPage ? (
           <i
-            className="cursor-pointer md:hidden"
+            className="cursor-pointer lg:hidden"
             aria-label="홈으로 이동"
             onClick={() => router.push('/')}
           >
@@ -189,7 +192,7 @@ function GlobalNavTopBar({
           </i>
         ) : (
           <i
-            className="cursor-pointer md:hidden"
+            className="cursor-pointer lg:hidden"
             aria-label="메뉴 열기"
             onClick={toggleMenu}
           >

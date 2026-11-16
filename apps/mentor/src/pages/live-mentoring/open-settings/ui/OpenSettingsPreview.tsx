@@ -55,7 +55,7 @@ const OpenSettingsPreview = ({ settings }: OpenSettingsPreviewProps) => {
       <div className="flex w-full flex-col gap-3 overflow-hidden">
         {/* 썸네일 — 썸네일(없으면 프로필 이미지)이 있으면 흰 배경 위 이미지, 없으면 브랜드 컬러 배경 + 제목 텍스트 */}
         <div
-          className={`md:rounded-xs relative aspect-[540/421] overflow-hidden rounded-sm ${
+          className={`relative aspect-[540/421] overflow-hidden rounded-sm md:rounded-xs ${
             cardImage ? 'bg-white' : 'bg-primary'
           }`}
         >
@@ -69,14 +69,14 @@ const OpenSettingsPreview = ({ settings }: OpenSettingsPreviewProps) => {
 
           {/* 대표 직무 배지 */}
           {badge && (
-            <span className="rounded-xs bg-neutral-0/80 text-xxsmall10 text-static-100 md:text-xxsmall12 absolute left-2 top-2 px-2.5 py-1 font-semibold">
+            <span className="absolute left-2 top-2 rounded-xs bg-neutral-0/80 px-2.5 py-1 text-xxsmall10 font-semibold text-static-100 md:text-xxsmall12">
               {badge}
             </span>
           )}
 
           {!cardImage && (
             <p
-              className={`text-small18 relative line-clamp-3 px-4 pb-4 font-bold text-white ${
+              className={`relative line-clamp-3 px-4 pb-4 text-small18 font-bold text-white ${
                 badge ? 'pt-11' : 'pt-4'
               }`}
             >
@@ -85,7 +85,7 @@ const OpenSettingsPreview = ({ settings }: OpenSettingsPreviewProps) => {
           )}
 
           {/* 진행시간 / 가격 바 — 썸네일 위에 겹쳐 카드 높이를 비율에 고정한다 */}
-          <div className="bg-neutral-0 text-xsmall14 absolute inset-x-0 bottom-0 flex items-center justify-between px-4 py-2.5 text-white">
+          <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-neutral-0 px-4 py-2.5 text-xsmall14 text-white">
             <span>{durationsLabel(durations)}</span>
             <span className="font-bold">
               {cardPriceLabel(durations, price)}
@@ -93,7 +93,7 @@ const OpenSettingsPreview = ({ settings }: OpenSettingsPreviewProps) => {
           </div>
         </div>
 
-        <h3 className="text-1-semibold text-xsmall14 md:text-xsmall16 line-clamp-2">
+        <h3 className="text-1-semibold line-clamp-2 text-xsmall14 md:text-xsmall16">
           {cardTitle ?? `${displayNickname}의 1:1 멘토링`}
         </h3>
 
@@ -107,7 +107,7 @@ const OpenSettingsPreview = ({ settings }: OpenSettingsPreviewProps) => {
               {categories.map((category) => (
                 <div
                   key={category}
-                  className="text-xxsmall12 border-neutral-95 bg-neutral-95 text-neutral-40 flex items-center justify-center rounded-[3px] border px-2 py-1 text-center font-normal"
+                  className="flex items-center justify-center rounded-[3px] border border-neutral-95 bg-neutral-95 px-2 py-1 text-center text-xxsmall12 font-normal text-neutral-40"
                 >
                   {CATEGORY_LABELS[category]}
                 </div>

@@ -36,11 +36,11 @@ export default function ExtensionSheet({
         >
           <header className="flex items-start justify-between gap-4">
             <div className="flex flex-col gap-1.5">
-              <h2 className="text-small18 text-neutral-0 font-semibold">
+              <h2 className="text-small18 font-semibold text-neutral-0">
                 {title}
               </h2>
               {description && (
-                <p className="text-xsmall14 text-neutral-35 font-normal">
+                <p className="text-xsmall14 font-normal text-neutral-35">
                   {description}
                 </p>
               )}
@@ -48,7 +48,7 @@ export default function ExtensionSheet({
             <button
               type="button"
               onClick={onClose}
-              className="text-neutral-40 shrink-0"
+              className="shrink-0 text-neutral-40"
               aria-label="닫기"
             >
               <X size={24} />

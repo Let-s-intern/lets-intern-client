@@ -18,10 +18,10 @@ const PlanBenefits = ({
     !isBasic && line.startsWith('✓') ? line.slice(1).trimStart() : line;
 
   return (
-    <ul className="text-xsmall16 mt-3 space-y-1.5 text-left text-[#606060]">
+    <ul className="mt-3 space-y-1.5 text-left text-xsmall16 text-[#606060]">
       {lines.map((line) => (
         <li key={line} className="flex items-start gap-1.5">
-          <span className={twMerge('md:text-xsmall16 text-[#606060]')}>
+          <span className={twMerge('text-[#606060] md:text-xsmall16')}>
             {isBasic ? '' : '+'}
           </span>
           <span className="whitespace-pre-line">{displayLine(line)}</span>
@@ -29,7 +29,7 @@ const PlanBenefits = ({
       ))}
       {!isBasic && showBasicIncluded !== false && (
         <li className="flex items-start gap-1.5">
-          <span className="md:text-xsmall16 text-[#606060]">✓</span>
+          <span className="text-[#606060] md:text-xsmall16">✓</span>
           <span className="whitespace-pre-line">
             베이직에서 제공되는 모든 사항 포함
           </span>

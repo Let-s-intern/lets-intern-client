@@ -41,7 +41,7 @@ export default function MentorApplicationDialog({
 
   return (
     <Dialog open onClose={handleClose} maxWidth="sm" fullWidth>
-      <DialogTitle className="border-neutral-80 border-b">
+      <DialogTitle className="border-b border-neutral-80">
         {application ? `${application.name}님 신청서` : '신청서'}
       </DialogTitle>
       <IconButton
@@ -53,7 +53,7 @@ export default function MentorApplicationDialog({
       </IconButton>
       <DialogContent>
         {isLoading ? (
-          <p className="text-xsmall14 text-neutral-40 py-10 text-center">
+          <p className="py-10 text-center text-xsmall14 text-neutral-40">
             불러오는 중...
           </p>
         ) : application ? (
@@ -70,7 +70,7 @@ export default function MentorApplicationDialog({
             }
           />
         ) : (
-          <p className="text-xsmall14 text-neutral-40 py-10 text-center">
+          <p className="py-10 text-center text-xsmall14 text-neutral-40">
             신청서를 불러오지 못했습니다.
           </p>
         )}
@@ -89,7 +89,7 @@ function ApplicationDetail({
   return (
     <div className="flex flex-col gap-5 pt-4">
       <div className="flex flex-col gap-1">
-        <p className="text-small18 text-neutral-0 font-semibold">
+        <p className="text-small18 font-semibold text-neutral-0">
           {application.name}
         </p>
         <p className="text-xsmall14 text-neutral-30">
@@ -184,7 +184,7 @@ function ApplicationDetail({
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div className="flex flex-col gap-2">
-      <h3 className="text-xsmall14 text-neutral-0 font-semibold">{title}</h3>
+      <h3 className="text-xsmall14 font-semibold text-neutral-0">{title}</h3>
       <div className="text-xsmall14 text-neutral-30">{children}</div>
     </div>
   );
@@ -196,7 +196,7 @@ function Chips({ labels }: { labels: string[] }) {
       {labels.map((label) => (
         <span
           key={label}
-          className="border-neutral-80 text-xsmall14 text-neutral-30 rounded-full border px-3 py-1.5"
+          className="rounded-full border border-neutral-80 px-3 py-1.5 text-xsmall14 text-neutral-30"
         >
           {label}
         </span>

@@ -93,14 +93,14 @@ const ProgramBlogReviewEditor: React.FC<{
           {blogReview.list.map((item) => (
             <div
               key={item.id}
-              className="rounded-xs h-28 w-32 flex-none border"
+              className="h-28 w-32 flex-none rounded-xs border"
               style={{
                 backgroundImage: `url(${item.thumbnail})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
               }}
             >
-              <div className="text-xxsmall12 flex h-full items-center justify-center bg-black bg-opacity-30 p-2">
+              <div className="flex h-full items-center justify-center bg-black bg-opacity-30 p-2 text-xxsmall12">
                 <span className="text-white">{item.title}</span>
               </div>
             </div>
@@ -119,7 +119,7 @@ const ProgramBlogReviewEditor: React.FC<{
               fontWeight="bold"
             >
               블로그 리뷰 선택 (노출 순서대로 체크하세요)
-              <span className="text-xsmall14 text-neutral-40 block font-normal">
+              <span className="block text-xsmall14 font-normal text-neutral-40">
                 노출한 블로그만 표시됩니다.
               </span>
             </Typography>
@@ -187,21 +187,21 @@ const ProgramBlogReviewEditor: React.FC<{
                         </td>
                         <td className="px-2 py-1">
                           <div className="flex items-center justify-center">
-                            <span className="text-xsmall14 whitespace-nowrap">
+                            <span className="whitespace-nowrap text-xsmall14">
                               {order}
                             </span>
                           </div>
                         </td>
                         <td className="px-2 py-1">
                           <div className="flex items-center justify-center">
-                            <span className="text-xsmall14 whitespace-nowrap">
+                            <span className="whitespace-nowrap text-xsmall14">
                               {item.blogThumbnailInfo.category
                                 ? blogCategory[item.blogThumbnailInfo.category]
                                 : ''}
                             </span>
                           </div>
                         </td>
-                        <td className="text-xsmall14 whitespace-nowrap p-1">
+                        <td className="whitespace-nowrap p-1 text-xsmall14">
                           {item.blogThumbnailInfo.createDate
                             ? dayjs(item.blogThumbnailInfo.createDate).format(
                                 'YYYY.MM.DD',

@@ -9,7 +9,7 @@ export default function LockedTab({
   return (
     <div className="flex flex-col items-center justify-center gap-4 py-40 md:py-56">
       <img src="/icons/lock-keyhole-neutral.svg" alt="" className="h-12 w-12" />
-      <p className="text-xsmall14 md:text-xsmall16 text-neutral-40 text-center">
+      <p className="text-center text-xsmall14 text-neutral-40 md:text-xsmall16">
         {message}
       </p>
     </div>

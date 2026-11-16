@@ -52,7 +52,7 @@ const ConfirmActionDialog = ({
         합니다.
       </p>
       {action.row.currentOpening && (
-        <p className="text-neutral-40 mt-2 text-xs">
+        <p className="mt-2 text-xs text-neutral-40">
           {durationPricesLabel(action.row.currentOpening.durationPrices)}
         </p>
       )}

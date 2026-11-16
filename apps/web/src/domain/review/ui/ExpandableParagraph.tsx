@@ -59,7 +59,7 @@ const ExpandableParagraph = ({
           {!isOverflown ? null : !expanding ? (
             <button
               className={twMerge(
-                'review_more z-1 text-primary absolute bottom-0 right-0 block bg-gradient-to-r from-transparent via-white via-40% to-white pl-8 hover:underline',
+                'review_more z-1 absolute bottom-0 right-0 block bg-gradient-to-r from-transparent via-white via-40% to-white pl-8 text-primary hover:underline',
                 buttonClassName,
               )}
               onClick={(e) => {
@@ -73,7 +73,7 @@ const ExpandableParagraph = ({
           ) : (
             <button
               className={twMerge(
-                'text-primary ml-0.5 hover:underline',
+                'ml-0.5 text-primary hover:underline',
                 buttonClassName,
               )}
               onClick={(e) => {

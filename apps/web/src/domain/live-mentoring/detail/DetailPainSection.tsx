@@ -67,7 +67,7 @@ const DetailPainSection = ({ careers }: DetailPainSectionProps) => {
   return (
     <section className="w-full scroll-mt-16 bg-gradient-to-b from-[#fefeff] to-[#abc2ff]">
       <div className="mw-1180 flex flex-col items-center px-5 pb-3 pt-12 md:pt-16">
-        <h2 className="text-small20 md:text-xlarge30 whitespace-pre-line text-center font-bold">
+        <h2 className="whitespace-pre-line text-center text-small20 font-bold md:text-xlarge30">
           {'취업 준비,\n혼자 하기 막막하셨나요?'}
         </h2>
 
@@ -76,7 +76,7 @@ const DetailPainSection = ({ careers }: DetailPainSectionProps) => {
             <div
               key={i}
               className={twMerge(
-                'text-xsmall14 md:text-small18 relative w-full rounded-[20px] px-6 py-5 text-center leading-[1.6] md:w-[79%]',
+                'relative w-full rounded-[20px] px-6 py-5 text-center text-xsmall14 leading-[1.6] md:w-[79%] md:text-small18',
                 bubble.tone,
                 bubble.align,
               )}
@@ -88,7 +88,7 @@ const DetailPainSection = ({ careers }: DetailPainSectionProps) => {
               {i === BUBBLES.length - 1 && (
                 <span
                   aria-hidden="true"
-                  className="border-t-primary-5 absolute left-1/2 top-full h-0 w-0 -translate-x-1/2 border-x-[12px] border-t-[14px] border-x-transparent"
+                  className="absolute left-1/2 top-full h-0 w-0 -translate-x-1/2 border-x-[12px] border-t-[14px] border-x-transparent border-t-primary-5"
                 />
               )}
             </div>

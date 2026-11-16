@@ -28,7 +28,7 @@ export default function CalendarDesktopHeader({
 }: Props) {
   return (
     <div className="flex flex-col gap-6">
-      <div className="text-neutral-0 flex items-center gap-3">
+      <div className="flex items-center gap-3 text-neutral-0">
         <button
           type="button"
           aria-label="<"
@@ -40,7 +40,7 @@ export default function CalendarDesktopHeader({
             className={canPrev ? 'text-neutral-40' : 'text-neutral-80'}
           />
         </button>
-        <span className="text-small20 min-w-[190.3px] font-bold">
+        <span className="min-w-[190.3px] text-small20 font-bold">
           {windowStart.format('YYYY.MM.DD')} ~ {windowEnd.format('MM.DD')}
         </span>
         <button type="button" aria-label="오늘로 가기" onClick={onToday}>

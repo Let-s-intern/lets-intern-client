@@ -1,4 +1,8 @@
-import { fetchOpenPassPath, withQuery } from './openPassPath';
+import {
+  fetchLatestPassId,
+  fetchOpenPassPath,
+  withQuery,
+} from './openPassPath';
 
 const mockFetch = (body: unknown, ok = true) => {
   global.fetch = jest.fn().mockResolvedValue({
@@ -47,5 +51,29 @@ describe('withQuery', () => {
 
   it('쿼리가 없으면 경로 그대로', () => {
     expect(withQuery('/all-in-one-pass/1', {})).toBe('/all-in-one-pass/1');
+  });
+});
+
+describe('fetchLatestPassId', () => {
+  const list = (...ids: number[]) => ({
+    data: { programList: ids.map((id) => ({ programInfo: { id } })) },
+  });
+
+  it('상태와 상관없이 가장 큰 ID 를 고른다', async () => {
+    mockFetch(list(1, 7, 3));
+    await expect(fetchLatestPassId()).resolves.toBe(7);
+  });
+
+  it('목록이 비면 null', async () => {
+    mockFetch(list());
+    await expect(fetchLatestPassId()).resolves.toBeNull();
+  });
+
+  it('API 가 실패하면 null', async () => {
+    mockFetch({}, false);
+    await expect(fetchLatestPassId()).resolves.toBeNull();
+
+    global.fetch = jest.fn().mockRejectedValue(new Error('down')) as jest.Mock;
+    await expect(fetchLatestPassId()).resolves.toBeNull();
   });
 });

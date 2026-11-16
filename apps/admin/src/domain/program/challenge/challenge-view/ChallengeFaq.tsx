@@ -96,7 +96,7 @@ function ChallengeFaq({
       className="challenge_faq flex w-full max-w-[1000px] flex-col px-5 py-20 pt-20 md:items-center md:px-10 md:py-40 lg:px-0"
     >
       <SuperTitle
-        className="text-neutral-45 mb-6 md:mb-12"
+        className="mb-6 text-neutral-45 md:mb-12"
         style={{ color: headerColor }}
       >
         FAQ
@@ -149,7 +149,7 @@ function FaqCategory({
   return (
     <div
       className={twMerge(
-        'border-neutral-70 text-xxsmall12 text-neutral-45 md:text-medium22 min-w-16 cursor-pointer rounded-full border px-5 py-2 text-center font-semibold md:min-w-36 md:py-4',
+        'min-w-16 cursor-pointer rounded-full border border-neutral-70 px-5 py-2 text-center text-xxsmall12 font-semibold text-neutral-45 md:min-w-36 md:py-4 md:text-medium22',
       )}
       style={selected ? selectedStyle : undefined}
       onClick={onClick}

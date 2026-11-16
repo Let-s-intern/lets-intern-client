@@ -72,11 +72,11 @@ export default function ExtensionPopup({
       }
     >
       <div className="flex flex-col gap-3">
-        <div className="bg-primary-5 flex flex-col gap-2 rounded-sm p-3">
-          <span className="text-xsmall14 text-neutral-35 font-normal">
+        <div className="flex flex-col gap-2 rounded-sm bg-primary-5 p-3">
+          <span className="text-xsmall14 font-normal text-neutral-35">
             현재 이용 종료일
           </span>
-          <span className="text-xsmall16 text-neutral-0 font-normal">
+          <span className="text-xsmall16 font-normal text-neutral-0">
             {formatDate(base.endDate)}
           </span>
         </div>
@@ -98,7 +98,7 @@ export default function ExtensionPopup({
           기간 연장하기
         </SolidButton>
 
-        <div className="border-neutral-85 -mx-6 flex items-center justify-between border-t px-6 pt-3">
+        <div className="-mx-6 flex items-center justify-between border-t border-neutral-85 px-6 pt-3">
           <button
             type="button"
             onClick={() => setDontShowToday((v) => !v)}

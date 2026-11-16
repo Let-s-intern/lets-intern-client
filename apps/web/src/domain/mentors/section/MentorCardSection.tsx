@@ -57,7 +57,7 @@ const MentorCardSection = ({
 
   if (isError) {
     return (
-      <div className="text-xsmall14 text-neutral-40 py-16 text-center">
+      <div className="py-16 text-center text-xsmall14 text-neutral-40">
         멘토 목록을 불러오지 못했습니다.
       </div>
     );
@@ -71,7 +71,7 @@ const MentorCardSection = ({
       <div className="flex min-h-[60vh] w-full flex-col items-center justify-center gap-8 py-20">
         <div className="flex w-full flex-col items-center gap-6">
           <Logo width={34} height={34} />
-          <div className="text-neutral-20 text-xsmall16 flex flex-col items-center gap-1 text-center">
+          <div className="flex flex-col items-center gap-1 text-center text-xsmall16 text-neutral-20">
             <p>선택한 조건에 맞는 멘토가 없어요.</p>
             <p>관심 직무나 취업 고민을 변경해 보세요!</p>
           </div>

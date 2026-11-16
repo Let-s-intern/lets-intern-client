@@ -48,14 +48,14 @@ function ServiceToggle({ size }: Props) {
       <div className="flex items-center gap-3 text-xs font-medium">
         <span
           className={twMerge(
-            'text-primary flex items-center gap-1.5 font-semibold transition-colors',
+            'flex items-center gap-1.5 font-semibold text-primary transition-colors',
             leaving && 'text-primary-40',
           )}
         >
           <LetsCareerMark className="h-3.5 w-3.5" />
           LETS CAREER
         </span>
-        <span className="bg-neutral-70 h-3 w-px" aria-hidden="true" />
+        <span className="h-3 w-px bg-neutral-70" aria-hidden="true" />
         <a
           href={OGONGGO_WEB_HOME}
           aria-label="오늘의 공고로 이동"
@@ -74,7 +74,7 @@ function ServiceToggle({ size }: Props) {
 
   return (
     <div className="flex items-center gap-3">
-      <span className="bg-neutral-70 h-[22px] w-px" aria-hidden="true" />
+      <span className="h-[22px] w-px bg-neutral-70" aria-hidden="true" />
       <a
         href={OGONGGO_WEB_HOME}
         aria-label="오늘의 공고로 이동"

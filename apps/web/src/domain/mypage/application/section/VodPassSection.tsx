@@ -43,7 +43,7 @@ const VodPassSection = () => {
 
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-xsmall16 text-neutral-0 font-semibold">VOD 이용권</h2>
+      <h2 className="text-xsmall16 font-semibold text-neutral-0">VOD 이용권</h2>
       <div
         className={twMerge(
           'overflow-hidden rounded-md border',
@@ -59,14 +59,14 @@ const VodPassSection = () => {
                 status={summary.isWatchable ? 'ACTIVE' : 'SCHEDULED'}
               />
               {summary.isWatchable ? (
-                <p className="text-small20 text-neutral-0 font-bold">
+                <p className="text-small20 font-bold text-neutral-0">
                   남은 기간{' '}
                   <span className="text-primary">
                     {summary.remainingDays}일
                   </span>
                 </p>
               ) : (
-                <p className="text-small20 text-neutral-0 font-bold">
+                <p className="text-small20 font-bold text-neutral-0">
                   {formatDate(summary.startsAt)}부터 이용할 수 있어요
                 </p>
               )}
@@ -78,7 +78,7 @@ const VodPassSection = () => {
           ) : (
             <div className="flex flex-col gap-2">
               <StatusBadge status="EXPIRED" />
-              <p className="text-small20 text-neutral-30 font-bold">
+              <p className="text-small20 font-bold text-neutral-30">
                 VOD 이용 기간이 끝났어요
               </p>
               {lastEnded && (
@@ -94,7 +94,7 @@ const VodPassSection = () => {
               href={VOD_SITE_LOGIN_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-primary text-xsmall14 flex min-h-11 shrink-0 items-center justify-center rounded-sm px-5 font-semibold text-white"
+              className="flex min-h-11 shrink-0 items-center justify-center rounded-sm bg-primary px-5 text-xsmall14 font-semibold text-white"
             >
               VOD 보러가기
             </a>
@@ -105,11 +105,11 @@ const VodPassSection = () => {
           type="button"
           aria-expanded={isHistoryOpen}
           onClick={() => setIsHistoryOpen((open) => !open)}
-          className="border-neutral-80 text-xsmall14 text-neutral-30 flex min-h-11 w-full items-center justify-between border-t bg-white px-5 md:px-6"
+          className="flex min-h-11 w-full items-center justify-between border-t border-neutral-80 bg-white px-5 text-xsmall14 text-neutral-30 md:px-6"
         >
           <span>
             구매 내역{' '}
-            <span className="text-primary font-semibold">{passes.length}</span>
+            <span className="font-semibold text-primary">{passes.length}</span>
           </span>
           <ChevronDown
             size={16}
@@ -141,12 +141,12 @@ const VodPassSection = () => {
       >
         <div className="flex flex-col gap-6 px-5 py-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-neutral-0 text-lg font-medium">결제상세</h2>
+            <h2 className="text-lg font-medium text-neutral-0">결제상세</h2>
             <button
               type="button"
               aria-label="닫기"
               onClick={() => setDetailPaymentId(null)}
-              className="text-neutral-30 flex h-11 w-11 items-center justify-center"
+              className="flex h-11 w-11 items-center justify-center text-neutral-30"
             >
               <img src="/icons/close.svg" alt="" className="h-6 w-6" />
             </button>
@@ -174,7 +174,7 @@ const StatusBadge = ({ status }: { status: VodPassStatus }) => {
   return (
     <span
       className={twMerge(
-        'text-xxsmall12 rounded-xxs w-fit px-2 py-0.5 font-medium',
+        'w-fit rounded-xxs px-2 py-0.5 text-xxsmall12 font-medium',
         badge.className,
       )}
     >
@@ -212,17 +212,17 @@ const VodPassHistoryRow = ({ pass, onOpenDetail }: VodPassHistoryRowProps) => {
     .join(' · ');
 
   return (
-    <li className="border-neutral-90 flex items-center justify-between gap-4 border-b py-3.5 last:border-b-0">
+    <li className="flex items-center justify-between gap-4 border-b border-neutral-90 py-3.5 last:border-b-0">
       <div className="flex min-w-0 items-center gap-3">
         <span className="w-16 shrink-0">
           <StatusBadge status={pass.status} />
         </span>
         <div className="flex min-w-0 flex-col gap-0.5">
-          <span className="text-xsmall14 text-neutral-0 font-medium">
+          <span className="text-xsmall14 font-medium text-neutral-0">
             {[length, period].filter(Boolean).join(' · ')}
           </span>
           {subText && (
-            <span className="text-xxsmall12 text-neutral-40 truncate">
+            <span className="truncate text-xxsmall12 text-neutral-40">
               {subText}
             </span>
           )}
@@ -232,7 +232,7 @@ const VodPassHistoryRow = ({ pass, onOpenDetail }: VodPassHistoryRowProps) => {
         <button
           type="button"
           onClick={() => onOpenDetail(pass.paymentId as number)}
-          className="text-xxsmall12 text-neutral-30 min-h-11 shrink-0 underline"
+          className="min-h-11 shrink-0 text-xxsmall12 text-neutral-30 underline"
         >
           결제 상세
         </button>

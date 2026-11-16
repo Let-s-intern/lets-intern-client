@@ -15,13 +15,13 @@ const DifferentiatorHead = ({
   desc,
 }: DifferentiatorHeadProps) => (
   <div className="flex flex-col items-center gap-3 break-keep text-center">
-    <span className="text-xxsmall12 md:text-xsmall14 text-primary-light border-primary-light/40 rounded-full border px-4 py-1.5 font-semibold">
+    <span className="rounded-full border border-primary-light/40 px-4 py-1.5 text-xxsmall12 font-semibold text-primary-light md:text-xsmall14">
       {badge}
     </span>
-    <h3 className="text-small20 md:text-large26 font-bold text-neutral-100">
+    <h3 className="text-small20 font-bold text-neutral-100 md:text-large26">
       {title}
     </h3>
-    <p className="text-xsmall14 md:text-xsmall16 text-neutral-80">{desc}</p>
+    <p className="text-xsmall14 text-neutral-80 md:text-xsmall16">{desc}</p>
   </div>
 );
 

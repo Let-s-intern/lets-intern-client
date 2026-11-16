@@ -87,7 +87,7 @@ const MissionSubmitRegularSection = ({
       <section className={className}>
         {!currentSelectedMission?.missionInfo?.missionType ? (
           <>
-            <h2 className="text-small18 text-neutral-0 mb-6 font-bold">
+            <h2 className="mb-6 text-small18 font-bold text-neutral-0">
               미션 제출하기
             </h2>
 
@@ -140,7 +140,7 @@ const MissionSubmitRegularSection = ({
             link={chatLink}
             password={chatPassword}
             label="미션 공유하기"
-            className="rounded-xs border-neutral-70 text-xsmall16 text-neutral-40 mt-3 flex w-full justify-center p-4"
+            className="mt-3 flex w-full justify-center rounded-xs border-neutral-70 p-4 text-xsmall16 text-neutral-40"
           />
         )}
         <MissionToast

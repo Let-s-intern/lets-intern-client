@@ -28,14 +28,14 @@ export default function MentorList({ mentors, matchCounts }: MentorListProps) {
                     [{m.userId}] {m.name}
                   </p>
                   <span
-                    className={`text-xxsmall12 inline-flex items-center rounded-full px-2 py-0.5 font-medium ${color.text} opacity-80`}
+                    className={`inline-flex items-center rounded-full px-2 py-0.5 text-xxsmall12 font-medium ${color.text} opacity-80`}
                   >
                     {count}명 배정
                   </span>
                 </div>
                 {career?.company && career?.job && (
                   <p
-                    className={`text-xxsmall12 mt-0.5 ${color.text} opacity-70`}
+                    className={`mt-0.5 text-xxsmall12 ${color.text} opacity-70`}
                   >
                     {career.company} / {career.job}
                   </p>

@@ -146,7 +146,7 @@ const MeetingServerEditor = ({ server }: MeetingServerEditorProps) => {
           placeholder="https://jitsi-meet.letscareer.co.kr/"
           onChange={(e) => change('baseUrl', e.target.value)}
         />
-        <span className="text-neutral-40 text-xs">
+        <span className="text-xs text-neutral-40">
           https 로 시작하고 / 로 끝나는 주소입니다. 뒤에 방 이름이 붙습니다.
         </span>
       </div>
@@ -163,12 +163,12 @@ const MeetingServerEditor = ({ server }: MeetingServerEditorProps) => {
           value={values.priority}
           onChange={(e) => change('priority', e.target.value)}
         />
-        <span className="text-neutral-40 text-xs">
+        <span className="text-xs text-neutral-40">
           숫자가 작을수록 앞입니다. 0 이 주 서버입니다.
         </span>
       </div>
 
-      <label className="text-xsmall14 flex items-center gap-2">
+      <label className="flex items-center gap-2 text-xsmall14">
         <input
           type="checkbox"
           checked={values.isActive}
@@ -192,14 +192,14 @@ const MeetingServerEditRoute = ({ id }: { id: number }) => {
 
   if (isLoading) {
     return (
-      <p className="text-neutral-40 py-10 text-center text-sm">
+      <p className="py-10 text-center text-sm text-neutral-40">
         불러오는 중...
       </p>
     );
   }
   if (isError || !server) {
     return (
-      <p className="text-neutral-40 py-10 text-center text-sm">
+      <p className="py-10 text-center text-sm text-neutral-40">
         회의 서버를 찾을 수 없습니다.
       </p>
     );

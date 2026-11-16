@@ -68,9 +68,9 @@ export default function PassCaseSection() {
           {PASS_CASES.map((c) => (
             <li
               key={c.name}
-              className="border-neutral-80 bg-static-100 flex items-center gap-4 rounded-lg border p-4 md:flex-col md:items-stretch md:gap-0 md:rounded-xl md:p-0"
+              className="flex items-center gap-4 rounded-lg border border-neutral-80 bg-static-100 p-4 md:flex-col md:items-stretch md:gap-0 md:rounded-xl md:p-0"
             >
-              <div className="bg-primary-5 flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-sm md:h-[92px] md:w-full md:rounded-none">
+              <div className="flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-sm bg-primary-5 md:h-[92px] md:w-full md:rounded-none">
                 <img
                   src={`/images/pass-certification/${c.logo}-logo.png`}
                   alt={c.name}
@@ -79,13 +79,13 @@ export default function PassCaseSection() {
               </div>
 
               <div className="flex flex-1 flex-col justify-center gap-1 md:justify-start md:gap-2 md:p-[22px]">
-                <span className="bg-primary-10 text-primary text-xxsmall12 self-start rounded-full px-2 py-1 font-semibold md:px-2.5">
+                <span className="self-start rounded-full bg-primary-10 px-2 py-1 text-xxsmall12 font-semibold text-primary md:px-2.5">
                   {c.category}
                 </span>
-                <h4 className="text-xsmall16 text-neutral-0 font-semibold">
+                <h4 className="text-xsmall16 font-semibold text-neutral-0">
                   {c.title}
                 </h4>
-                <p className="text-xsmall14 text-neutral-40 font-light">
+                <p className="text-xsmall14 font-light text-neutral-40">
                   {c.desc}
                 </p>
               </div>

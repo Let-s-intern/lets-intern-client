@@ -40,7 +40,7 @@ const PortfolioWorriesSection: React.FC = () => {
               className="flex items-center gap-5 rounded-md bg-white px-6 py-4 text-left md:flex-col md:px-8 md:py-5 md:text-center"
             >
               <p className="text-xxlarge36">{item.icon}</p>
-              <p className="text-xsmall16 break-keep font-medium">
+              <p className="break-keep text-xsmall16 font-medium">
                 {item.content}
               </p>
             </div>

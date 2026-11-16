@@ -15,11 +15,11 @@ function SummaryCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="border-neutral-80 flex rounded-xl border bg-white p-4 md:p-6">
+    <div className="flex rounded-xl border border-neutral-80 bg-white p-4 md:p-6">
       <div className="flex flex-1 flex-col gap-3">
         <p
           className={
-            labelClassName ?? 'text-xsmall14 text-neutral-30 font-semibold'
+            labelClassName ?? 'text-xsmall14 font-semibold text-neutral-30'
           }
         >
           {label}
@@ -42,7 +42,7 @@ const WeeklySummary = ({
   return (
     <div className="grid grid-cols-2 gap-4 md:gap-6 lg:grid-cols-4">
       <SummaryCard label="전체">
-        <p className="text-medium24 text-neutral-30 font-semibold">
+        <p className="text-medium24 font-semibold text-neutral-30">
           {totalCount}
         </p>
       </SummaryCard>
@@ -50,7 +50,7 @@ const WeeklySummary = ({
         label="오늘마감"
         labelClassName="text-[13px] font-semibold leading-4 text-primary"
       >
-        <p className="text-medium24 text-neutral-30 font-semibold">
+        <p className="text-medium24 font-semibold text-neutral-30">
           {todayDueCount}
         </p>
       </SummaryCard>
@@ -58,7 +58,7 @@ const WeeklySummary = ({
         label="미완료"
         labelClassName="text-[13px] font-semibold leading-4 text-[#f64e39]"
       >
-        <p className="text-medium24 text-neutral-30 font-semibold">
+        <p className="text-medium24 font-semibold text-neutral-30">
           {incompleteCount}
         </p>
       </SummaryCard>
@@ -67,12 +67,12 @@ const WeeklySummary = ({
         labelClassName="text-[13px] font-semibold leading-4 text-neutral-30"
       >
         <div className="flex flex-col items-start justify-center gap-1">
-          <p className="text-medium24 text-neutral-30 font-semibold">
+          <p className="text-medium24 font-semibold text-neutral-30">
             {progressRate}%
           </p>
-          <div className="bg-neutral-95 h-3 w-full max-w-[180px] overflow-hidden rounded-full">
+          <div className="h-3 w-full max-w-[180px] overflow-hidden rounded-full bg-neutral-95">
             <div
-              className="bg-primary-light h-full min-w-[34px] max-w-full rounded-full transition-all"
+              className="h-full min-w-[34px] max-w-full rounded-full bg-primary-light transition-all"
               style={{ width: `${progressRate}%` }}
             />
           </div>

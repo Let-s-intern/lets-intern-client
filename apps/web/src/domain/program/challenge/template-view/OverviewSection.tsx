@@ -92,7 +92,7 @@ const StepCard = ({
     <div className="flex min-w-[424px] flex-col gap-3 md:gap-4">
       <div className="flex items-center justify-start gap-3">
         <span
-          className="text-xsmall16 rounded-full px-4 py-2 font-semibold text-[#212121]"
+          className="rounded-full px-4 py-2 text-xsmall16 font-semibold text-[#212121]"
           style={{ backgroundColor: stepBadgeBackgroundColor }}
         >
           {step}
@@ -107,7 +107,7 @@ const StepCard = ({
         unoptimized
         className="h-auto w-full rounded-md"
       />
-      <div className="text-xsmall16 break-keep px-2 pt-4 text-neutral-100 md:px-4">
+      <div className="break-keep px-2 pt-4 text-xsmall16 text-neutral-100 md:px-4">
         {description}
       </div>
     </div>
@@ -130,7 +130,7 @@ function OverviewSection({ config, content }: Props) {
     >
       <div className="mb-8 flex w-full max-w-[1000px] flex-col md:mb-16">
         <p
-          className="md:text-medium24 mx-auto flex w-fit items-center gap-3 rounded-md px-3.5 py-2.5 font-bold text-white"
+          className="mx-auto flex w-fit items-center gap-3 rounded-md px-3.5 py-2.5 font-bold text-white md:text-medium24"
           style={{ backgroundColor: primaryColor }}
         >
           <CalendarBadge className="h-[30px] w-[30px]" aria-hidden="true" />

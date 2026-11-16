@@ -138,11 +138,11 @@ const PlanUpgradePaymentContent = ({
         결제하기
       </BackHeader>
 
-      <section className="bg-neutral-95 mx-5 flex flex-col gap-1 rounded-md px-5 py-4">
+      <section className="mx-5 flex flex-col gap-1 rounded-md bg-neutral-95 px-5 py-4">
         <p className="text-xsmall14 text-neutral-40">
           {upgrade.challengeTitle}
         </p>
-        <p className="text-xsmall16 text-neutral-0 font-semibold">
+        <p className="text-xsmall16 font-semibold text-neutral-0">
           {upgrade.currentPlan.planType} → {option.planType}
         </p>
         <p className="text-xsmall14 text-neutral-20">
@@ -153,15 +153,15 @@ const PlanUpgradePaymentContent = ({
       <div id="payment-method" />
       <div id="agreement" />
 
-      <div className="shadow-05 fixed bottom-0 left-0 right-0 rounded-t-lg bg-white px-5 pb-[calc(env(safe-area-inset-bottom)+10px)] pt-3 md:static md:mx-5 md:rounded-none md:bg-transparent md:px-0 md:pb-0 md:pt-0 md:shadow-none">
+      <div className="fixed bottom-0 left-0 right-0 rounded-t-lg bg-white px-5 pb-[calc(env(safe-area-inset-bottom)+10px)] pt-3 shadow-05 md:static md:mx-5 md:rounded-none md:bg-transparent md:px-0 md:pb-0 md:pt-0 md:shadow-none">
         {errorMessage && (
-          <p role="alert" className="text-xsmall14 text-primary mb-2">
+          <p role="alert" className="mb-2 text-xsmall14 text-primary">
             {errorMessage}
           </p>
         )}
         <button
           type="button"
-          className="border-primary bg-primary disabled:border-neutral-70 disabled:bg-neutral-70 flex w-full items-center justify-center rounded-md border-2 px-6 py-3 text-lg font-medium text-neutral-100 transition hover:opacity-90"
+          className="flex w-full items-center justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100 transition hover:opacity-90 disabled:border-neutral-70 disabled:bg-neutral-70"
           disabled={!widgets || isRequesting}
           onClick={handlePayClick}
         >

@@ -17,7 +17,7 @@ const InterviewSection = () => {
 
   return (
     <>
-      <section className="md:mt-22.5 mt-16 w-full max-w-[1120px] px-5 xl:px-0">
+      <section className="mt-16 w-full max-w-[1120px] px-5 md:mt-22.5 xl:px-0">
         {data.blogInfos.length === 0 ? null : (
           <BlogContainer
             gaItem="home_blogreview"

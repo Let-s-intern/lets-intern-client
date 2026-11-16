@@ -31,7 +31,7 @@ function DesktopStepper({ current }: { current: number }) {
               <Line filled={filled} />
               <div
                 className={twMerge(
-                  'text-xsmall14 text-static-100 flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-semibold',
+                  'flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xsmall14 font-semibold text-static-100',
                   filled ? 'bg-primary' : 'bg-neutral-85',
                 )}
               >
@@ -42,8 +42,8 @@ function DesktopStepper({ current }: { current: number }) {
             </div>
             <span
               className={twMerge(
-                'text-xxsmall12 mt-2',
-                filled ? 'text-primary font-bold' : 'text-neutral-45',
+                'mt-2 text-xxsmall12',
+                filled ? 'font-bold text-primary' : 'text-neutral-45',
               )}
             >
               {label}
@@ -59,10 +59,10 @@ function DesktopStepper({ current }: { current: number }) {
 function MobileStepper({ current }: { current: number }) {
   return (
     <div className="mb-4 flex items-center gap-2 md:mb-6 md:hidden">
-      <span className="bg-primary text-xxsmall12 text-static-100 flex h-6 w-6 items-center justify-center rounded-full font-semibold">
+      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xxsmall12 font-semibold text-static-100">
         {current + 1}
       </span>
-      <span className="text-xsmall14 text-primary font-semibold">
+      <span className="text-xsmall14 font-semibold text-primary">
         {MOBILE_STEP_LABELS[current]}
       </span>
     </div>

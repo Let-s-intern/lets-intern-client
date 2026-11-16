@@ -50,8 +50,8 @@ const MobileInfoRow = ({
 
 const MobileCompareView = ({ programIds, onClose }: MobileCompareViewProps) => {
   const programs = programIds.map((id) => PROGRAMS[id]);
-  const comparisons = programIds.map(
-    (id) => CHALLENGE_COMPARISON.find((c) => c.programId === id)!,
+  const comparisons = programIds.map((id) =>
+    CHALLENGE_COMPARISON.find((c) => c.programId === id)!,
   );
 
   const compareTitle = programs.map((p) => p.shortTitle).join(' vs ');

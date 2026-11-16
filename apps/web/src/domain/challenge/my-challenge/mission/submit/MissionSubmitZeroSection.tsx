@@ -146,16 +146,16 @@ const MissionSubmitZeroSection = ({
 
   return (
     <section className={clsx('', className)}>
-      <h2 className="text-small18 text-neutral-0 mb-6 font-bold">
+      <h2 className="mb-6 text-small18 font-bold text-neutral-0">
         미션 제출하기
       </h2>
       <div className="mb-1.5">
         <div className="mb-1.5 flex items-center gap-2">
-          <span className="text-xsmall16 text-neutral-0 font-semibold">
+          <span className="text-xsmall16 font-semibold text-neutral-0">
             챌린지 참여 목표
           </span>
         </div>
-        <div className="bg-neutral-95 text-xsmall14 text-neutral-10 flex items-start justify-between gap-3 rounded px-3 py-3">
+        <div className="rounded flex items-start justify-between gap-3 bg-neutral-95 px-3 py-3 text-xsmall14 text-neutral-10">
           <span>
             미션 제출 후, 작성한 챌린지 목표를 {placeName}에 공유해주세요.
           </span>
@@ -174,9 +174,9 @@ const MissionSubmitZeroSection = ({
       </div>
       <textarea
         className={clsx(
-          'rounded-xxs border-neutral-80 w-full resize-none border bg-white',
-          'text-xsmall14 text-neutral-0 p-3 placeholder:text-neutral-50 md:text-base',
-          'focus:border-primary min-h-[120px] outline-none',
+          'w-full resize-none rounded-xxs border border-neutral-80 bg-white',
+          'p-3 text-xsmall14 text-neutral-0 placeholder:text-neutral-50 md:text-base',
+          'min-h-[120px] outline-none focus:border-primary',
           'disabled:bg-neutral-100 disabled:text-neutral-50',
         )}
         placeholder={
@@ -202,7 +202,7 @@ const MissionSubmitZeroSection = ({
           link={chatLink}
           password={chatPassword}
           label="미션 공유하기"
-          className="rounded-xs border-neutral-70 text-xsmall16 text-neutral-40 mt-3 flex w-full justify-center p-4"
+          className="mt-3 flex w-full justify-center rounded-xs border-neutral-70 p-4 text-xsmall16 text-neutral-40"
         />
       )}
 

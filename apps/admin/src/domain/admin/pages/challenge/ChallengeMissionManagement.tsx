@@ -56,12 +56,10 @@ const ChallengeMissionManagement = () => {
 
   const missionTemplateListRows = useMemo(() => {
     const list =
-      data?.missionTemplateAdminList?.map(
-        (item): Row => ({
-          ...item,
-          rowStatus: TABLE_STATUS.SAVE,
-        }),
-      ) ?? [];
+      data?.missionTemplateAdminList?.map((item): Row => ({
+        ...item,
+        rowStatus: TABLE_STATUS.SAVE,
+      })) ?? [];
 
     if (insertingMissionTemplate) {
       list?.push(insertingMissionTemplate);

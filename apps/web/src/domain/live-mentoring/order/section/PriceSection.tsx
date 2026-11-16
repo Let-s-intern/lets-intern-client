@@ -61,7 +61,7 @@ const PriceSection = ({
 
   return (
     <section className="flex flex-col gap-3">
-      <dl className="text-xsmall14 flex flex-col gap-3">
+      <dl className="flex flex-col gap-3 text-xsmall14">
         <div className="flex items-center justify-between">
           <dt className="text-neutral-20">결제 상품</dt>
           <dd className="text-neutral-0">{formatPrice(price)}</dd>
@@ -69,22 +69,22 @@ const PriceSection = ({
 
         {productDiscount > 0 && (
           <div className="flex items-center justify-between">
-            <dt className="text-primary font-medium">할인</dt>
+            <dt className="font-medium text-primary">할인</dt>
             <dd className="text-neutral-0">-{formatPrice(productDiscount)}</dd>
           </div>
         )}
 
         {appliedCouponCode !== null && (
           <div className="flex items-center justify-between">
-            <dt className="text-primary font-medium">쿠폰할인</dt>
+            <dt className="font-medium text-primary">쿠폰할인</dt>
             <dd className="text-neutral-0">-{formatPrice(couponAmount)}</dd>
           </div>
         )}
       </dl>
 
-      <div className="border-neutral-85 flex items-center justify-between border-t pt-4">
-        <span className="text-xsmall16 text-neutral-0 font-bold">결제금액</span>
-        <span className="text-small18 text-neutral-0 font-bold">
+      <div className="flex items-center justify-between border-t border-neutral-85 pt-4">
+        <span className="text-xsmall16 font-bold text-neutral-0">결제금액</span>
+        <span className="text-small18 font-bold text-neutral-0">
           {formatPrice(total)}
         </span>
       </div>

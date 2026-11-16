@@ -86,8 +86,9 @@ export const mentorApplyFormSchema = z.object({
     (v) => /^\d{10,11}$/.test(toPhoneDigits(v)),
     '숫자 10~11자리로 입력해 주세요.',
   ),
-  email:
-    required('이메일을 입력해 주세요.').email('올바른 이메일 형식이 아닙니다.'),
+  email: required('이메일을 입력해 주세요.').email(
+    '올바른 이메일 형식이 아닙니다.',
+  ),
   preferredContactMethods: z
     .array(z.enum(values(CONTACT_METHOD_OPTIONS)))
     .min(1, '선호 연락 수단을 선택해 주세요.'),

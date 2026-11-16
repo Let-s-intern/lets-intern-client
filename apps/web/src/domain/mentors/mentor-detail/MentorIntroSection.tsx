@@ -37,7 +37,7 @@ const MentorIntroSection = ({ mentor }: MentorIntroSectionProps) => {
   return (
     <section className="w-full">
       <div className="flex flex-col gap-6">
-        <h2 className="text-medium22 text-neutral-0 font-bold">멘토 소개</h2>
+        <h2 className="text-medium22 font-bold text-neutral-0">멘토 소개</h2>
         <div className="flex flex-col gap-6">
           {!hasIntroduction && !hasDescription ? (
             <EmptyContainer text="아직 등록된 소개가 없습니다." />
@@ -45,11 +45,11 @@ const MentorIntroSection = ({ mentor }: MentorIntroSectionProps) => {
             <>
               {hasIntroduction && (
                 <div className="flex flex-col gap-2">
-                  <p className="text-xsmall16 flex items-center gap-1 font-semibold">
+                  <p className="flex items-center gap-1 text-xsmall16 font-semibold">
                     <img src="/icons/message-dots.svg" alt="" />
                     <span>멘토님의 한마디</span>
                   </p>
-                  <p className="text-xsmall16 whitespace-pre-line leading-relaxed">
+                  <p className="whitespace-pre-line text-xsmall16 leading-relaxed">
                     {introduction}
                   </p>
                 </div>

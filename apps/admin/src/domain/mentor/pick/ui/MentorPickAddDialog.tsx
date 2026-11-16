@@ -78,9 +78,9 @@ export default function MentorPickAddDialog({
           onChange={(e) => setKeyword(e.target.value)}
         />
         {isLoading ? (
-          <p className="text-xsmall14 text-neutral-40 py-6">불러오는 중...</p>
+          <p className="py-6 text-xsmall14 text-neutral-40">불러오는 중...</p>
         ) : candidates.length === 0 ? (
-          <p className="text-xsmall14 text-neutral-40 py-6">
+          <p className="py-6 text-xsmall14 text-neutral-40">
             추가할 멘토가 없습니다.
           </p>
         ) : (
@@ -104,7 +104,7 @@ export default function MentorPickAddDialog({
             ))}
           </ul>
         )}
-        <p className="text-xxsmall12 text-neutral-40 mt-2">
+        <p className="mt-2 text-xxsmall12 text-neutral-40">
           이미 픽인 멘토는 목록에서 빠집니다. 추가하면 맨 뒤에 붙습니다.
         </p>
       </DialogContent>

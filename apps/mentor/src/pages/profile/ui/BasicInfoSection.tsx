@@ -64,7 +64,7 @@ export default function BasicInfoSection({
 
   return (
     <section className="rounded-xl border border-gray-200 bg-white p-5 md:p-6">
-      <h2 className="text-small18 mb-5 font-medium text-gray-900">기본 정보</h2>
+      <h2 className="mb-5 text-small18 font-medium text-gray-900">기본 정보</h2>
       <div className="flex flex-col gap-6 md:flex-row md:gap-8">
         {/* Profile Image */}
         <div className="mx-auto flex flex-shrink-0 flex-col items-center gap-2 md:mx-0">
@@ -114,7 +114,7 @@ export default function BasicInfoSection({
         <div className="flex min-w-0 flex-1 flex-col justify-center gap-4">
           {FIELDS.map(({ key, label }) => (
             <div key={key} className="flex items-center gap-3">
-              <label className="text-xsmall14 w-16 flex-shrink-0 text-left font-medium text-gray-700 md:w-20 md:text-right">
+              <label className="w-16 flex-shrink-0 text-left text-xsmall14 font-medium text-gray-700 md:w-20 md:text-right">
                 {label}
               </label>
               <input
@@ -124,14 +124,14 @@ export default function BasicInfoSection({
                   key === 'nickname' ? PROFILE_TEXT_MAX_LENGTH : undefined
                 }
                 onChange={(e) => handleChange(key, e.target.value)}
-                className="focus:border-primary min-w-0 flex-1 rounded-md border border-gray-200 px-3 py-2 text-sm outline-none transition-colors"
+                className="min-w-0 flex-1 rounded-md border border-gray-200 px-3 py-2 text-sm outline-none transition-colors focus:border-primary"
               />
             </div>
           ))}
 
           {/* SNS (여러 개 입력 가능) */}
           <div className="flex items-start gap-3">
-            <label className="text-xsmall14 text-neutral-20 w-16 flex-shrink-0 pt-2 text-left font-medium md:w-20 md:text-right">
+            <label className="w-16 flex-shrink-0 pt-2 text-left text-xsmall14 font-medium text-neutral-20 md:w-20 md:text-right">
               SNS
             </label>
             <div className="flex min-w-0 flex-1 flex-col gap-2">
@@ -147,7 +147,7 @@ export default function BasicInfoSection({
                         onChange={(e) => handleSnsChange(index, e.target.value)}
                         placeholder="https://..."
                         aria-invalid={isInvalid}
-                        className="focus:border-primary text-xsmall14 border-neutral-80 min-w-0 flex-1 rounded-md border px-3 py-2 outline-none transition-colors"
+                        className="min-w-0 flex-1 rounded-md border border-neutral-80 px-3 py-2 text-xsmall14 outline-none transition-colors focus:border-primary"
                       />
                       <button
                         type="button"
@@ -165,7 +165,7 @@ export default function BasicInfoSection({
                     {isInvalid ? (
                       <p
                         role="alert"
-                        className="text-system-error mt-1 text-xs"
+                        className="mt-1 text-xs text-system-error"
                       >
                         주소 형식이 아니에요. 예) instagram.com/아이디
                       </p>
@@ -176,7 +176,7 @@ export default function BasicInfoSection({
               <button
                 type="button"
                 onClick={handleSnsAdd}
-                className="text-primary text-xsmall14 border-neutral-80 hover:bg-neutral-95 w-full rounded-md border border-dashed px-3 py-2 font-medium transition-colors"
+                className="w-full rounded-md border border-dashed border-neutral-80 px-3 py-2 text-xsmall14 font-medium text-primary transition-colors hover:bg-neutral-95"
               >
                 + 추가
               </button>

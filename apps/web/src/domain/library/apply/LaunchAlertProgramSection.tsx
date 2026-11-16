@@ -44,7 +44,7 @@ const LaunchAlertProgramSectionContent = ({
     <div className="flex flex-col gap-10">
       {/* 프로그램 선택 (중복 선택 가능) */}
       <div className="flex flex-col gap-3">
-        <span className="text-xsmall14 md:text-xsmall16 mt-4">
+        <span className="mt-4 text-xsmall14 md:text-xsmall16">
           현재 취준을 준비하며 가장 필요하다고 느끼는 프로그램은 무엇인가요?
         </span>
         <div className="flex flex-col gap-2">
@@ -60,7 +60,7 @@ const LaunchAlertProgramSectionContent = ({
                     : [...selectedMagnetIds, magnet.magnetId];
                   onSelectedMagnetIdsChange(newIds);
                 }}
-                className="text-xsmall14 flex w-full items-center gap-1"
+                className="flex w-full items-center gap-1 text-xsmall14"
               >
                 <CheckBox checked={isSelected} width="w-6" showCheckIcon />
                 <span className="text-xsmall14 md:text-xsmall16">

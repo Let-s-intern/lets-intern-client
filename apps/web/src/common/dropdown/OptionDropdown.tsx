@@ -22,12 +22,12 @@ function OptionDropdown({
   return (
     <div
       className={twMerge(
-        'rounded-xs border-neutral-80 overflow-hidden border',
+        'overflow-hidden rounded-xs border border-neutral-80',
         wrapperClassName,
       )}
     >
       <div
-        className="text-xsmall14 text-static-0 flex shrink-0 cursor-pointer items-center justify-between bg-neutral-100 p-3 font-semibold"
+        className="flex shrink-0 cursor-pointer items-center justify-between bg-neutral-100 p-3 text-xsmall14 font-semibold text-static-0"
         onClick={() => setIsOpen(!isOpen)}
       >
         <label id={labelId}>{label}</label>

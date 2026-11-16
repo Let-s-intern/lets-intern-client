@@ -19,7 +19,7 @@ export default function AllInOnePassUsagePage() {
   return (
     <main className="flex flex-col px-5 pb-16 md:gap-10 md:pb-0 md:pl-12 md:pr-0 md:pt-0">
       <header>
-        <h1 className="text-medium22 hidden font-semibold md:block">
+        <h1 className="hidden text-medium22 font-semibold md:block">
           {base?.title ? `${base.title}로 이용 가능한 혜택` : '나의 패스 이용'}
         </h1>
       </header>

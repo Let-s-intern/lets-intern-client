@@ -71,7 +71,7 @@ const PreOpenCheckModal = ({
           role="dialog"
           aria-modal="true"
           aria-label="오픈 전 상세 페이지 확인"
-          className="relative mx-4 w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
+          className="rounded-2xl relative mx-4 w-full max-w-md bg-white p-6 shadow-xl"
         >
           <h3 className="text-base font-semibold text-neutral-900">
             오픈 전에 상세 페이지를 확인해주세요
@@ -89,7 +89,7 @@ const PreOpenCheckModal = ({
               <button
                 type="button"
                 onClick={handleCopy}
-                className="shrink-0 rounded border border-neutral-300 bg-white px-2 py-1 text-xs text-neutral-600"
+                className="rounded shrink-0 border border-neutral-300 bg-white px-2 py-1 text-xs text-neutral-600"
               >
                 {copied ? '복사됨' : '복사'}
               </button>
@@ -98,7 +98,7 @@ const PreOpenCheckModal = ({
               href={publicUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="border-primary text-primary hover:bg-primary rounded-lg border py-2.5 text-center text-sm font-medium transition-colors hover:text-white"
+              className="rounded-lg border border-primary py-2.5 text-center text-sm font-medium text-primary transition-colors hover:bg-primary hover:text-white"
             >
               상세 페이지 열어보기
             </a>
@@ -120,7 +120,7 @@ const PreOpenCheckModal = ({
               type="checkbox"
               checked={checked}
               onChange={(e) => setChecked(e.target.checked)}
-              className="accent-primary mt-0.5 h-4 w-4"
+              className="mt-0.5 h-4 w-4 accent-primary"
             />
             <span className="text-sm text-neutral-700">
               상세 페이지를 직접 확인했고, 이대로 공개해도 괜찮습니다.
@@ -140,7 +140,7 @@ const PreOpenCheckModal = ({
               type="button"
               onClick={onConfirm}
               disabled={!checked || isPending}
-              className="bg-primary hover:bg-primary-hover flex-1 rounded-xl py-2.5 text-sm font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex-1 rounded-xl bg-primary py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isPending ? '처리 중...' : confirmLabel}
             </button>

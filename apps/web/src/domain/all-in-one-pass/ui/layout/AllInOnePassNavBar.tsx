@@ -27,13 +27,13 @@ const AllInOnePassNavBar = () => {
 
   const linkClass = (active: boolean) =>
     clsx(
-      'rounded-xxs text-xsmall14 md:text-xsmall16 flex flex-row items-center whitespace-nowrap font-medium transition-colors md:h-[44px] md:px-3',
+      'flex flex-row items-center whitespace-nowrap rounded-xxs text-xsmall14 font-medium transition-colors md:h-[44px] md:px-3 md:text-xsmall16',
       active ? 'text-primary md:bg-primary-5' : 'md:text-neutral-40',
     );
 
   return (
     <nav className="sticky top-[44px] z-20 flex w-full flex-col md:static md:z-auto md:w-[220px]">
-      <ul className="scrollbar-hide flex h-[40px] flex-row gap-4 overflow-x-auto border-b bg-white px-5 py-2 md:h-auto md:flex-col md:gap-0 md:overflow-x-visible md:border-b-0 md:bg-transparent md:px-0 md:py-0">
+      <ul className="flex h-[40px] flex-row gap-4 overflow-x-auto border-b bg-white px-5 py-2 scrollbar-hide md:h-auto md:flex-col md:gap-0 md:overflow-x-visible md:border-b-0 md:bg-transparent md:px-0 md:py-0">
         {navItems.map((item) => (
           <li key={item.id} className="flex-shrink-0 md:flex-shrink">
             <Link href={item.href} className={linkClass(isActive(item.href))}>

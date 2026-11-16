@@ -107,7 +107,7 @@ const CouponTargetSection = ({ value, onChange }: Props) => {
       <div
         role="button"
         onClick={toggleAllPayers}
-        className={`rounded-xxs mb-2 cursor-pointer border px-4 py-1 transition-colors hover:bg-gray-50 ${allPayers ? 'border-blue-200 bg-blue-50' : 'border-gray-200'}`}
+        className={`mb-2 cursor-pointer rounded-xxs border px-4 py-1 transition-colors hover:bg-gray-50 ${allPayers ? 'border-blue-200 bg-blue-50' : 'border-gray-200'}`}
       >
         <FormControlLabel
           onClick={(e) => e.stopPropagation()}
@@ -134,7 +134,7 @@ const CouponTargetSection = ({ value, onChange }: Props) => {
       >
         {/* 챌린지 */}
         <div
-          className={`rounded-xxs overflow-hidden border transition-colors ${challenge.mode !== 'none' ? 'border-blue-200' : 'border-gray-200'}`}
+          className={`overflow-hidden rounded-xxs border transition-colors ${challenge.mode !== 'none' ? 'border-blue-200' : 'border-gray-200'}`}
         >
           <ExpandableRow
             mode={challenge.mode}
@@ -150,7 +150,7 @@ const CouponTargetSection = ({ value, onChange }: Props) => {
                   return (
                     <div
                       key={t.challengeType}
-                      className={`rounded-xxs overflow-hidden border transition-colors ${typeMode !== 'none' ? 'border-blue-200' : 'border-gray-200'}`}
+                      className={`overflow-hidden rounded-xxs border transition-colors ${typeMode !== 'none' ? 'border-blue-200' : 'border-gray-200'}`}
                     >
                       <ExpandableRow
                         mode={typeMode}
@@ -183,7 +183,7 @@ const CouponTargetSection = ({ value, onChange }: Props) => {
                             return (
                               <div
                                 key={p.id}
-                                className={`rounded-xxs overflow-hidden border transition-colors ${programMode !== 'none' ? 'border-blue-200' : 'border-gray-200'}`}
+                                className={`overflow-hidden rounded-xxs border transition-colors ${programMode !== 'none' ? 'border-blue-200' : 'border-gray-200'}`}
                               >
                                 <ExpandableRow
                                   mode={programMode}
@@ -230,7 +230,7 @@ const CouponTargetSection = ({ value, onChange }: Props) => {
 
         {/* LIVE 클래스 */}
         <div
-          className={`rounded-xxs overflow-hidden border transition-colors ${live.mode !== 'none' ? 'border-blue-200' : 'border-gray-200'}`}
+          className={`overflow-hidden rounded-xxs border transition-colors ${live.mode !== 'none' ? 'border-blue-200' : 'border-gray-200'}`}
         >
           <ExpandableRow
             mode={live.mode}
@@ -251,7 +251,7 @@ const CouponTargetSection = ({ value, onChange }: Props) => {
 
         {/* 올인원패스 */}
         <div
-          className={`rounded-xxs overflow-hidden border transition-colors ${membership.mode !== 'none' ? 'border-blue-200' : 'border-gray-200'}`}
+          className={`overflow-hidden rounded-xxs border transition-colors ${membership.mode !== 'none' ? 'border-blue-200' : 'border-gray-200'}`}
         >
           <ExpandableRow
             mode={membership.mode}

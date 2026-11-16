@@ -68,25 +68,25 @@ export default function CalendarDayList({ date, events, stickyTop }: Props) {
   return (
     <div
       ref={rootRef}
-      className="border-neutral-80 rounded-xs flex min-h-[260px] w-full flex-col md:min-h-0 md:w-[312px] md:border"
+      className="flex min-h-[260px] w-full flex-col rounded-xs border-neutral-80 md:min-h-0 md:w-[312px] md:border"
     >
       <div
         className={clsx(
-          'border-neutral-80 flex items-center justify-between px-0 py-2 md:border-b md:px-4 md:pb-3 md:pt-4',
+          'flex items-center justify-between border-neutral-80 px-0 py-2 md:border-b md:px-4 md:pb-3 md:pt-4',
           stickyTop != null && 'sticky z-10 bg-white',
         )}
         style={stickyTop != null ? { top: stickyTop } : undefined}
       >
-        <span className="text-small18 text-neutral-0 font-bold">
+        <span className="text-small18 font-bold text-neutral-0">
           {date.format('M월 D일')} 프로그램
         </span>
-        <span className="text-small18 text-primary font-medium">
+        <span className="text-small18 font-medium text-primary">
           {events.length}개
         </span>
       </div>
 
       {events.length === 0 ? (
-        <p className="text-xsmall14 text-neutral-40 py-16 text-center">
+        <p className="py-16 text-center text-xsmall14 text-neutral-40">
           해당 일자에 일정이 없습니다.
         </p>
       ) : (
@@ -135,13 +135,13 @@ export default function CalendarDayList({ date, events, stickyTop }: Props) {
             return (
               <li
                 key={ev.id}
-                className="border-neutral-80 flex flex-col gap-3 border-b px-4 py-5 last:border-b-0"
+                className="flex flex-col gap-3 border-b border-neutral-80 px-4 py-5 last:border-b-0"
               >
                 <div className="flex items-center gap-2">
                   {ev.status && (
                     <span
                       className={clsx(
-                        'text-xxsmall12 rounded-[3px] px-2 py-1 font-medium',
+                        'rounded-[3px] px-2 py-1 text-xxsmall12 font-medium',
                         STATUS_BADGE[ev.status],
                       )}
                     >
@@ -154,7 +154,7 @@ export default function CalendarDayList({ date, events, stickyTop }: Props) {
                 </div>
 
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-xsmall16 text-neutral-0 truncate font-bold">
+                  <span className="truncate text-xsmall16 font-bold text-neutral-0">
                     {ev.title}
                   </span>
                   {showChevron && (
@@ -170,12 +170,12 @@ export default function CalendarDayList({ date, events, stickyTop }: Props) {
                 </div>
                 <div className="flex flex-col gap-1">
                   {ev.description && (
-                    <p className="text-xxsmall12 text-neutral-30 line-clamp-2 font-normal">
+                    <p className="line-clamp-2 text-xxsmall12 font-normal text-neutral-30">
                       {ev.description}
                     </p>
                   )}
 
-                  <p className="text-xxsmall12 text-neutral-40 flex flex-wrap items-center justify-between gap-y-1 tracking-tight md:justify-normal md:gap-x-8">
+                  <p className="flex flex-wrap items-center justify-between gap-y-1 text-xxsmall12 tracking-tight text-neutral-40 md:justify-normal md:gap-x-8">
                     <span className="flex gap-1 whitespace-nowrap">
                       {ev.type !== 'CHALLENGE' ? (
                         <>
@@ -204,8 +204,8 @@ export default function CalendarDayList({ date, events, stickyTop }: Props) {
                       )}
                     </span>
                     {liveNow && (
-                      <span className="text-system-error flex shrink-0 items-center gap-1 whitespace-nowrap font-semibold">
-                        <span className="bg-system-error size-1.5 shrink-0 rounded-full" />
+                      <span className="flex shrink-0 items-center gap-1 whitespace-nowrap font-semibold text-system-error">
+                        <span className="size-1.5 shrink-0 rounded-full bg-system-error" />
                         LIVE 진행 중
                       </span>
                     )}
@@ -215,7 +215,7 @@ export default function CalendarDayList({ date, events, stickyTop }: Props) {
                 {ev.type === 'CHALLENGE' && (
                   <SolidButton
                     size="sm"
-                    className="text-xsmall14 w-full"
+                    className="w-full text-xsmall14"
                     // 참여 중인데 아직 시작 전이면 입장 불가 → 비활성화
                     disabled={participating && !started}
                     onClick={() => {
@@ -251,7 +251,7 @@ export default function CalendarDayList({ date, events, stickyTop }: Props) {
                     onClick={() =>
                       window.open(ev.url!, '_blank', 'noopener,noreferrer')
                     }
-                    className="text-xsmall14 w-full"
+                    className="w-full text-xsmall14"
                   >
                     참여하기
                   </SolidButton>
@@ -261,7 +261,7 @@ export default function CalendarDayList({ date, events, stickyTop }: Props) {
                   ev.programId != null && (
                     <SolidButton
                       size="sm"
-                      className="text-xsmall14 w-full"
+                      className="w-full text-xsmall14"
                       onClick={() => {
                         // 모집예정 라이브는 신청 불가 → 랜딩, 모집중은 0원 신청 모달
                         if (recruitUpcoming) {

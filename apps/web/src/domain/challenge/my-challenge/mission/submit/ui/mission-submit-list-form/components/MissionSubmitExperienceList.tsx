@@ -77,14 +77,14 @@ export const MissionSubmitExperienceList = ({
   return (
     <section>
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-small18 text-neutral-0 font-semibold">
+        <h3 className="text-small18 font-semibold text-neutral-0">
           제출할 경험 목록
         </h3>
         <button
           type="button"
           onClick={onOpenModal}
           disabled={isButtonDisabled}
-          className={`rounded-xxs border-neutral-80 text-xsmall14 border bg-white px-3 py-2 font-medium hover:bg-neutral-100 disabled:cursor-not-allowed ${
+          className={`rounded-xxs border border-neutral-80 bg-white px-3 py-2 text-xsmall14 font-medium hover:bg-neutral-100 disabled:cursor-not-allowed ${
             isButtonDisabled ? 'text-neutral-50' : 'text-primary'
           }`}
         >
@@ -93,7 +93,7 @@ export const MissionSubmitExperienceList = ({
       </div>
 
       {/* 작성된 경험 불러오는 컴포넌트 */}
-      <div className="rounded-xxs border-neutral-80 flex min-h-[200px] items-center justify-center border bg-white">
+      <div className="flex min-h-[200px] items-center justify-center rounded-xxs border border-neutral-80 bg-white">
         <div className="flex w-full flex-col items-center justify-center space-y-4">
           {emptyStateText && (
             <EmptyState

@@ -77,9 +77,9 @@ const MissionCalendarItem = ({
     <div className={className} onClick={handleMissionClick}>
       <div
         className={clsx(
-          'rounded-xxs hover:bg-primary-5 h-[104px] w-[74.8px] border px-2 py-2.5',
+          'h-[104px] w-[74.8px] rounded-xxs border px-2 py-2.5 hover:bg-primary-5',
           isCardActive()
-            ? 'bg-primary-5 border-[#A6AAFA]'
+            ? 'border-[#A6AAFA] bg-primary-5'
             : 'border-neutral-80',
         )}
       >
@@ -101,7 +101,7 @@ const MissionCalendarItem = ({
           )
         )}
         <span
-          className={clsx('text-xxsmall10 block w-full leading-3', {
+          className={clsx('block w-full text-xxsmall10 leading-3', {
             'text-primary': mission.th === todayTh,
           })}
         >

@@ -19,12 +19,12 @@ const Row = ({
 }) => (
   <div className="flex w-full items-center justify-between gap-4 text-sm">
     <span
-      className={strong ? 'text-neutral-0 font-semibold' : 'text-neutral-30'}
+      className={strong ? 'font-semibold text-neutral-0' : 'text-neutral-30'}
     >
       {label}
     </span>
     <span
-      className={strong ? 'text-neutral-0 font-semibold' : 'text-neutral-0'}
+      className={strong ? 'font-semibold text-neutral-0' : 'text-neutral-0'}
     >
       {value}
     </span>
@@ -62,18 +62,18 @@ const LiveMentoringCreditDetailPage = ({
           className="h-6 w-6 cursor-pointer"
           onClick={() => router.push('/mypage/credit')}
         />
-        <h1 className="text-neutral-0 text-lg font-medium">결제상세</h1>
+        <h1 className="text-lg font-medium text-neutral-0">결제상세</h1>
       </div>
 
       {isLoading ? (
-        <p className="text-neutral-0 py-8">결제내역을 불러오는 중입니다.</p>
+        <p className="py-8 text-neutral-0">결제내역을 불러오는 중입니다.</p>
       ) : error ? (
-        <p className="text-neutral-0 py-8">{error.message}</p>
+        <p className="py-8 text-neutral-0">{error.message}</p>
       ) : (
         <section className="flex w-full flex-col gap-y-10 py-8">
           {/* 프로그램 정보 */}
           <div className="flex w-full flex-col items-start gap-y-6">
-            <div className="text-neutral-0 font-semibold">프로그램 정보</div>
+            <div className="font-semibold text-neutral-0">프로그램 정보</div>
             <div className="flex w-full items-start gap-x-4">
               {application?.thumbnail ? (
                 <img
@@ -85,7 +85,7 @@ const LiveMentoringCreditDetailPage = ({
               ) : (
                 <div
                   aria-hidden="true"
-                  className="bg-neutral-90 h-[97px] w-[137px] rounded-sm"
+                  className="h-[97px] w-[137px] rounded-sm bg-neutral-90"
                 />
               )}
               <div className="flex grow flex-col gap-y-3">
@@ -94,7 +94,7 @@ const LiveMentoringCreditDetailPage = ({
                 </div>
                 <div className="flex w-full flex-col gap-y-1 text-xs font-medium">
                   <div className="flex items-center gap-x-4">
-                    <div className="text-neutral-30 shrink-0">예약 일시</div>
+                    <div className="shrink-0 text-neutral-30">예약 일시</div>
                     <div className="text-primary-dark">
                       {application
                         ? formatReservationPeriod(
@@ -105,7 +105,7 @@ const LiveMentoringCreditDetailPage = ({
                     </div>
                   </div>
                   <div className="flex items-center gap-x-4">
-                    <div className="text-neutral-30 shrink-0">구매 플랜</div>
+                    <div className="shrink-0 text-neutral-30">구매 플랜</div>
                     <div className="text-primary-dark">
                       {application ? `${application.durationMinutes}분` : '-'}
                     </div>
@@ -117,7 +117,7 @@ const LiveMentoringCreditDetailPage = ({
 
           {/* 참여자 정보 */}
           <div className="flex w-full flex-col items-start gap-y-6">
-            <div className="text-neutral-0 font-semibold">참여자 정보</div>
+            <div className="font-semibold text-neutral-0">참여자 정보</div>
             <div className="flex w-full flex-col gap-y-3">
               <Row label="이름" value={user?.name ?? '-'} />
               <Row label="휴대폰 번호" value={user?.phoneNum ?? '-'} />
@@ -131,7 +131,7 @@ const LiveMentoringCreditDetailPage = ({
           {/* 결제 정보 — 서버가 준 결제 시점 스냅샷 */}
           {refundPreview && (
             <div className="flex w-full flex-col items-start gap-y-6">
-              <div className="text-neutral-0 font-semibold">결제 정보</div>
+              <div className="font-semibold text-neutral-0">결제 정보</div>
               <div className="flex w-full flex-col gap-y-3">
                 <Row
                   label="결제 상품"
@@ -149,7 +149,7 @@ const LiveMentoringCreditDetailPage = ({
                     value={`-${formatPrice(refundPreview.couponDiscount)}`}
                   />
                 )}
-                <div className="border-neutral-85 w-full border-t pt-3">
+                <div className="w-full border-t border-neutral-85 pt-3">
                   <Row
                     label="총 결제금액"
                     value={formatPrice(refundPreview.paidAmount)}
@@ -168,12 +168,12 @@ const LiveMentoringCreditDetailPage = ({
           {refundPreview?.cancelable ? (
             <Link
               href={`/mypage/credit/live-mentoring/${applicationId}/delete`}
-              className="border-neutral-80 text-neutral-20 w-full rounded-sm border py-3 text-center text-sm font-medium"
+              className="w-full rounded-sm border border-neutral-80 py-3 text-center text-sm font-medium text-neutral-20"
             >
               결제 취소하기
             </Link>
           ) : (
-            <p className="text-neutral-45 text-xs">
+            <p className="text-xs text-neutral-45">
               예약 시간이 가까워 결제를 취소할 수 없습니다.
             </p>
           )}

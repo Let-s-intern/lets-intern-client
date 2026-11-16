@@ -154,12 +154,10 @@ const AdminReportListPage = () => {
 
   const rows = useMemo(() => {
     return (
-      reportsData?.reportForAdminInfos?.map(
-        (report): Row => ({
-          id: report.reportId ?? -1,
-          ...report,
-        }),
-      ) ?? []
+      reportsData?.reportForAdminInfos?.map((report): Row => ({
+        id: report.reportId ?? -1,
+        ...report,
+      })) ?? []
     );
   }, [reportsData?.reportForAdminInfos]);
 

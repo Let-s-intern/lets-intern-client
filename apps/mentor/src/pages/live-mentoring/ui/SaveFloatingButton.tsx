@@ -36,7 +36,7 @@ const SaveFloatingButton = ({
     <div className={FLOATING_BAR_WRAP}>
       <div className={FLOATING_BAR_BODY}>
         {message && (
-          <p className="text-system-error truncate text-sm font-medium">
+          <p className="truncate text-sm font-medium text-system-error">
             {message}
           </p>
         )}
@@ -45,7 +45,7 @@ const SaveFloatingButton = ({
           type="button"
           onClick={onSave}
           disabled={Boolean(blockedReason) || isSaving}
-          className="bg-primary hover:bg-primary-hover w-full rounded-lg px-10 py-3.5 text-base font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+          className="w-full rounded-lg bg-primary px-10 py-3.5 text-base font-semibold text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isSaving ? '저장 중…' : '저장하기'}
         </button>

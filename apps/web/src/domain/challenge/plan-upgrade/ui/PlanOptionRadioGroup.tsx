@@ -56,29 +56,29 @@ const PlanOptionRadioGroup = ({
               <span
                 aria-hidden="true"
                 className={twMerge(
-                  'border-neutral-80 peer-focus-visible:ring-primary mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2',
+                  'mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 border-neutral-80 peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2',
                   isSelected && 'border-primary',
                 )}
               >
                 {isSelected && (
-                  <span className="bg-primary h-2.5 w-2.5 rounded-full" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-primary" />
                 )}
               </span>
               <span className="flex min-w-0 flex-1 flex-col gap-1">
                 <span className="flex items-center justify-between gap-2">
                   <span className="flex items-center gap-2">
-                    <span className="text-small18 text-neutral-0 font-semibold">
+                    <span className="text-small18 font-semibold text-neutral-0">
                       {option.planType}
                     </span>
                     {index === options.length - 1 && (
-                      <span className="rounded-xxs text-xxsmall12 bg-primary-10 text-primary px-2 py-1">
+                      <span className="rounded-xxs bg-primary-10 px-2 py-1 text-xxsmall12 text-primary">
                         추천
                       </span>
                     )}
                   </span>
                   <span
                     className={twMerge(
-                      'text-xsmall16 text-neutral-0 font-semibold',
+                      'text-xsmall16 font-semibold text-neutral-0',
                       isSelected && 'text-primary',
                     )}
                   >

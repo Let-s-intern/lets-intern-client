@@ -32,7 +32,7 @@ const CouponRewardPopup = ({
   return (
     <BaseModal isOpen={isOpen} onClose={onClose} className="mx-4 max-w-[560px]">
       <div className="flex flex-col items-center gap-4 px-5 pb-4 pt-12 md:pt-16">
-        <p className="text-small20 md:text-medium24 break-keep text-center font-bold">
+        <p className="break-keep text-center text-small20 font-bold md:text-medium24">
           <span className="text-primary">재구매 할인 쿠폰</span>
           으로
           <br />
@@ -49,24 +49,24 @@ const CouponRewardPopup = ({
             />
             <p className="absolute inset-0 flex items-center justify-center text-neutral-100">
               <span className="flex items-end gap-1">
-                <span className="text-xlarge28 md:text-xxlarge36 font-semibold">
+                <span className="text-xlarge28 font-semibold md:text-xxlarge36">
                   {amount.toLocaleString()}
                 </span>
-                <span className="text-xxsmall12 md:text-xsmall16 mb-1 font-bold">
+                <span className="mb-1 text-xxsmall12 font-bold md:text-xsmall16">
                   원
                 </span>
               </span>
             </p>
           </div>
-          <div className="bg-primary-15 mt-[-13px] h-[32px] w-[267px] rounded-[50%] md:h-[40px] md:w-[334px]" />
+          <div className="mt-[-13px] h-[32px] w-[267px] rounded-[50%] bg-primary-15 md:h-[40px] md:w-[334px]" />
         </div>
-        <div className="text-neutral-40 text-xxsmall12 md:text-xsmall16 flex flex-col pb-1 text-center font-normal">
+        <div className="flex flex-col pb-1 text-center text-xxsmall12 font-normal text-neutral-40 md:text-xsmall16">
           <p>
             *{' '}
             <Link
               href="/mypage/coupon"
               onClick={onClose}
-              className="hover:text-primary-80 underline underline-offset-2 transition-colors"
+              className="underline underline-offset-2 transition-colors hover:text-primary-80"
             >
               쿠폰함
             </Link>
@@ -76,7 +76,7 @@ const CouponRewardPopup = ({
             <p>* 유효기간 : ~ {endDate.format('YYYY년 MM월 DD일 HH시 mm분')}</p>
           )}
         </div>
-        <hr className="border-neutral-85 -mx-5 w-[calc(100%+2.5rem)]" />
+        <hr className="-mx-5 w-[calc(100%+2.5rem)] border-neutral-85" />
         <div className="flex w-full gap-2">
           <OutlinedButton
             variant="secondary"

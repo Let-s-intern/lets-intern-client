@@ -62,7 +62,7 @@ export default function WeekRow({
           return (
             <div
               key={d.toString()}
-              className="border-neutral-80 h-[236px] border-b py-6 text-center"
+              className="h-[236px] border-b border-neutral-80 py-6 text-center"
             >
               <span
                 className={clsx(
@@ -96,7 +96,7 @@ export default function WeekRow({
                     gridColumn: `${colOf(segStart)} / ${colOf(segEnd) + 1}`,
                   }}
                   className={clsx(
-                    'text-xxsmall12 mx-0.5 flex h-6 items-center truncate rounded px-2',
+                    'rounded mx-0.5 flex h-6 items-center truncate px-2 text-xxsmall12',
                     barClass(it.kind, it.challengeType),
                   )}
                 >

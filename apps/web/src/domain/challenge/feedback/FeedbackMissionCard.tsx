@@ -68,7 +68,7 @@ const MobilePrimaryButton = ({ action }: { action: MobilePrimaryAction }) => {
         className={clsx(
           baseBtnCls,
           action.disabled
-            ? 'bg-neutral-70 pointer-events-none text-neutral-100'
+            ? 'pointer-events-none bg-neutral-70 text-neutral-100'
             : 'bg-gradient-to-r from-[#4B53FF] to-[#763CFF] text-white',
         )}
       >
@@ -154,7 +154,7 @@ const FeedbackMissionCard = ({
       : null;
 
   return (
-    <div className="rounded-xs md:border-neutral-85 flex h-full flex-col md:border">
+    <div className="flex h-full flex-col rounded-xs md:border md:border-neutral-85">
       <div className="flex flex-1 flex-col gap-4 p-0 md:flex-row md:items-start md:justify-start md:gap-12 md:p-4">
         <div className="flex w-full flex-col gap-4 md:flex-row md:gap-4">
           {/* 썸네일 */}
@@ -163,10 +163,10 @@ const FeedbackMissionCard = ({
               <img
                 src={thumbnail}
                 alt={title}
-                className="rounded-xs h-full w-full object-cover"
+                className="h-full w-full rounded-xs object-cover"
               />
             ) : (
-              <div className="rounded-xs bg-neutral-80 h-full w-full" />
+              <div className="h-full w-full rounded-xs bg-neutral-80" />
             )}
           </div>
 
@@ -177,7 +177,7 @@ const FeedbackMissionCard = ({
               <div className="flex w-full flex-wrap items-center gap-2">
                 <span
                   className={clsx(
-                    'rounded-xxs text-xxsmall12 border px-2 py-1 font-normal',
+                    'rounded-xxs border px-2 py-1 text-xxsmall12 font-normal',
                     badge.variant === 'neutral' &&
                       'border-neutral-80 text-primary',
                     badge.variant === 'active' &&
@@ -185,7 +185,7 @@ const FeedbackMissionCard = ({
                     badge.variant === 'muted' &&
                       'border-neutral-95 bg-neutral-95 text-neutral-40',
                     badge.variant === 'error' &&
-                      'bg-system-error/10 text-system-error border-[#FEEDEB]',
+                      'border-[#FEEDEB] bg-system-error/10 text-system-error',
                   )}
                 >
                   {badge.label}
@@ -195,7 +195,7 @@ const FeedbackMissionCard = ({
                 >
                   {challengeType} 챌린지 • {missionNumber}회차
                 </span>
-                <div className="bg-neutral-80 hidden h-4 w-px md:block" />
+                <div className="hidden h-4 w-px bg-neutral-80 md:block" />
                 <DateField
                   label="피드백 진행일정"
                   start={feedbackStartDay}
@@ -206,11 +206,11 @@ const FeedbackMissionCard = ({
 
               {/* 제목 + 설명 */}
               <div className="mb-5 flex flex-col gap-1 md:mb-0">
-                <h3 className="text-xsmall16 text-neutral-0 line-clamp-2 font-semibold leading-tight">
+                <h3 className="line-clamp-2 text-xsmall16 font-semibold leading-tight text-neutral-0">
                   {title}
                 </h3>
                 {description && (
-                  <p className="text-xsmall14 text-neutral-20 line-clamp-2 hidden leading-tight md:inline">
+                  <p className="line-clamp-2 hidden text-xsmall14 leading-tight text-neutral-20 md:inline">
                     {description}
                   </p>
                 )}
@@ -288,7 +288,7 @@ const FeedbackMissionCard = ({
             isOpen ? 'bg-white' : 'bg-primary-5',
           )}
         >
-          <span className="text-xsmall14 text-primary font-medium">
+          <span className="text-xsmall14 font-medium text-primary">
             {isOpen ? openLabel : accordionLabel}
           </span>
           <img

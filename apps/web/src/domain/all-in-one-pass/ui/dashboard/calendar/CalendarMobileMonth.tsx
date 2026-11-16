@@ -22,7 +22,7 @@ export default function CalendarMobileMonth({
 
   return (
     <div
-      className="bg-neutral-95 rounded-md py-3"
+      className="rounded-md bg-neutral-95 py-3"
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
@@ -30,7 +30,7 @@ export default function CalendarMobileMonth({
         {WEEKDAYS.map((d) => (
           <span
             key={d}
-            className="text-xxsmall10 text-neutral-40 text-center font-medium"
+            className="text-center text-xxsmall10 font-medium text-neutral-40"
           >
             {d}
           </span>

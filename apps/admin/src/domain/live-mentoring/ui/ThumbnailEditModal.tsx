@@ -77,7 +77,7 @@ const ThumbnailEditModal = ({
         {mentorLabel} · 썸네일 수정
       </DialogTitle>
       <DialogContent className="flex flex-col gap-3 text-sm">
-        <div className="bg-neutral-95 relative aspect-[540/421] w-full overflow-hidden rounded">
+        <div className="rounded relative aspect-[540/421] w-full overflow-hidden bg-neutral-95">
           {draft ? (
             <img
               src={draft}
@@ -93,7 +93,7 @@ const ThumbnailEditModal = ({
                   className="h-full w-full object-cover opacity-40"
                 />
               )}
-              <span className="text-neutral-40 absolute inset-0 flex items-center justify-center text-xs font-medium">
+              <span className="absolute inset-0 flex items-center justify-center text-xs font-medium text-neutral-40">
                 없음(프로필 사진 사용)
               </span>
             </>
@@ -131,7 +131,7 @@ const ThumbnailEditModal = ({
           )}
         </div>
 
-        <ul className="text-neutral-40 flex flex-col gap-0.5 text-xs">
+        <ul className="flex flex-col gap-0.5 text-xs text-neutral-40">
           <li>썸네일이 없으면 공개 화면에 프로필 사진이 표시됩니다.</li>
           <li>권장 1080 x 842 px · JPG, PNG, WEBP · 최대 {MAX_IMAGE_MB}MB</li>
           <li>

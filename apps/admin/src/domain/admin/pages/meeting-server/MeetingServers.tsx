@@ -36,7 +36,7 @@ const MeetingServers = () => {
         title="회의 서버 관리"
         headerButton={{ label: '등록', href: '/meeting-servers/new' }}
       >
-        <p className="text-neutral-40 px-3 text-sm">
+        <p className="px-3 text-sm text-neutral-40">
           라이브 피드백과 1대1 라이브 멘토링이 쓰는 Jitsi 서버 목록입니다.
           우선순위 숫자가 작을수록 앞이고(0 이 주 서버), 앞 서버가 죽으면 다음
           순위 서버로 넘어갑니다. 사용 중이 아닌 서버의 주소로는 회의실에 들어갈
@@ -50,15 +50,15 @@ const MeetingServers = () => {
         )}
 
         {isLoading ? (
-          <p className="text-neutral-40 py-10 text-center text-sm">
+          <p className="py-10 text-center text-sm text-neutral-40">
             불러오는 중...
           </p>
         ) : isError ? (
-          <p className="text-neutral-40 py-10 text-center text-sm">
+          <p className="py-10 text-center text-sm text-neutral-40">
             회의 서버 목록을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.
           </p>
         ) : servers.length === 0 ? (
-          <p className="text-neutral-40 py-10 text-center text-sm">
+          <p className="py-10 text-center text-sm text-neutral-40">
             등록된 회의 서버가 없습니다.
           </p>
         ) : (

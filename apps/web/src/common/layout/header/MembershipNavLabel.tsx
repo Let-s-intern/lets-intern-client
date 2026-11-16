@@ -36,7 +36,7 @@ function MembershipNavLabel({
       <Sparkle className="-left-3 -top-2.5 h-3 w-3" delay="0s" />
       <Sparkle className="-left-0.5 -top-2 h-2 w-2" delay="0.5s" />
       <Sparkle className="-top-2.5 left-1 h-1.5 w-1.5" delay="1s" />
-      <span className="membership-shine">{title}</span>
+      <span className="membership-shine truncate">{title}</span>
     </span>
   );
 }

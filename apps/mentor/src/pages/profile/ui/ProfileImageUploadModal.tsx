@@ -238,7 +238,7 @@ const ProfileImageUploadModal = ({
         >
           {!hasImage && (
             <div className="px-6 text-center">
-              <span className="text-xsmall14 block text-neutral-500">
+              <span className="block text-xsmall14 text-neutral-500">
                 드래그해서 이미지를 올리거나 클릭하여 이미지를 올려 주세요
               </span>
               {/* 한도는 거절당한 뒤가 아니라 고르기 전에 보여야 한다. */}
@@ -328,7 +328,7 @@ const ProfileImageUploadModal = ({
           type="button"
           onClick={handleSave}
           disabled={!hasImage || isSaving}
-          className="bg-primary hover:bg-primary-hover text-xsmall14 mt-5 w-full rounded-lg py-3 font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-5 w-full rounded-lg bg-primary py-3 text-xsmall14 font-medium text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isSaving ? '저장 중...' : '저장하기'}
         </button>

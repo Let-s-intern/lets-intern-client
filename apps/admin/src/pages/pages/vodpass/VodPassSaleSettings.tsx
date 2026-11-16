@@ -123,7 +123,7 @@ const VodPassSaleSettings = () => {
 
     return (
       <>
-        <section className="rounded-xxs mb-6 flex items-center justify-between gap-4 border border-neutral-300 p-4">
+        <section className="mb-6 flex items-center justify-between gap-4 rounded-xxs border border-neutral-300 p-4">
           <div className="min-w-0">
             <h2 className="text-xsmall14 font-semibold">단독 구매</h2>
             <p className="mt-1 text-sm text-neutral-500">
@@ -131,7 +131,7 @@ const VodPassSaleSettings = () => {
             </p>
             <div className="mt-2 flex items-center gap-2">
               <a
-                className="text-primary break-all text-sm underline"
+                className="break-all text-sm text-primary underline"
                 href={STANDALONE_PURCHASE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -140,7 +140,7 @@ const VodPassSaleSettings = () => {
               </a>
               <button
                 type="button"
-                className="shrink-0 rounded border border-neutral-300 px-2 py-1 text-xs"
+                className="rounded shrink-0 border border-neutral-300 px-2 py-1 text-xs"
                 onClick={async () => {
                   await navigator.clipboard.writeText(STANDALONE_PURCHASE_URL);
                   snackbar('링크를 복사했습니다.');

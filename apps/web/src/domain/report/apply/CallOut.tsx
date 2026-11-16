@@ -15,10 +15,10 @@ export const CallOut = memo(function Callout({
 }) {
   return (
     <div className={twMerge('rounded-md bg-neutral-100 px-6 py-6', className)}>
-      <span className="text-xsmall16 text-primary -ml-1 font-semibold">
+      <span className="-ml-1 text-xsmall16 font-semibold text-primary">
         {header}
       </span>
-      <p className="text-xsmall14 text-neutral-20 mt-1">{body}</p>
+      <p className="mt-1 text-xsmall14 text-neutral-20">{body}</p>
     </div>
   );
 });

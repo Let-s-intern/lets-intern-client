@@ -19,7 +19,7 @@ const DescriptionBox = ({
 }) => (
   <p
     className={twMerge(
-      'rounded-xxs bg-neutral-95 text-xsmall14 text-neutral-10 p-3',
+      'rounded-xxs bg-neutral-95 p-3 text-xsmall14 text-neutral-10',
       className,
     )}
   >
@@ -71,7 +71,7 @@ const MissionSubmitBonusSection = ({
   return (
     <>
       <section className={clsx('', className)}>
-        <h2 className="text-small18 text-neutral-0 mb-6 font-bold">
+        <h2 className="mb-6 text-small18 font-bold text-neutral-0">
           미션 제출하기
         </h2>
 
@@ -86,7 +86,7 @@ const MissionSubmitBonusSection = ({
         </div>
 
         <div className="mt-7 flex flex-col">
-          <span className="text-xsmall16 text-neutral-0 font-semibold">
+          <span className="text-xsmall16 font-semibold text-neutral-0">
             리워드 받을 계좌번호
           </span>
           <DescriptionBox className="mt-1">
@@ -102,9 +102,9 @@ const MissionSubmitBonusSection = ({
             <input
               type="number"
               className={clsx(
-                'rounded-xxs border-neutral-80 w-full resize-none border bg-white',
-                'text-neutral-0 px-3 py-2 text-base placeholder:text-neutral-50',
-                'focus:border-primary h-[44px] outline-none',
+                'w-full resize-none rounded-xxs border border-neutral-80 bg-white',
+                'px-3 py-2 text-base text-neutral-0 placeholder:text-neutral-50',
+                'h-[44px] outline-none focus:border-primary',
                 'disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-50',
               )}
               placeholder={'계좌번호를 입력해주세요.'}
@@ -121,11 +121,10 @@ const MissionSubmitBonusSection = ({
             <>
               [개인정보 보호법] 제15조 및 제17조에 따라 아래의 내용으로
               개인정보를 수집, 이용 및 제공하는데 동의합니다.
-              <br /> □ 개인정보의 수집 및 이용에 관한 사항 <br />
-              ✓ 수집 항목 : 성명, 전화번호, 계좌번호 <br />
-              ✓ 수집 및 이용 목적 : 후기 이벤트 리워드 지급 및 지급 내역 확인
-              <br />
-              ✓ 보유 및 이용 기간 : 리워드 지급일로부터 1년
+              <br /> □ 개인정보의 수집 및 이용에 관한 사항 <br />✓ 수집 항목 :
+              성명, 전화번호, 계좌번호 <br />✓ 수집 및 이용 목적 : 후기 이벤트
+              리워드 지급 및 지급 내역 확인
+              <br />✓ 보유 및 이용 기간 : 리워드 지급일로부터 1년
               <br />
             </>
           }
@@ -138,19 +137,16 @@ const MissionSubmitBonusSection = ({
           title="마케팅 활용 동의"
           description={
             <>
-              □ 개인정보 및 저작물 활용에 관한 사항 <br />
-              ✓ 활용 개인정보 : 블로그에 공개적으로 표시된 닉네임, 프로필
-              이미지, URL 주소 등 공개된 계정 정보 <br />
-              ✓ 활용 저작물 : 링크 입력을 통해 제출한 블로그 후기(텍스트,
-              이미지, 영상, 초상 등 일체)
-              <br />
-              ✓ 활용 목적 : 렛츠커리어 서비스 및 프로그램 홍보 및 광고, 마케팅
-              <br />
-              ✓ 활용 방법 및 범위 : <br /> - 2차 저작물 제작
+              □ 개인정보 및 저작물 활용에 관한 사항 <br />✓ 활용 개인정보 :
+              블로그에 공개적으로 표시된 닉네임, 프로필 이미지, URL 주소 등
+              공개된 계정 정보 <br />✓ 활용 저작물 : 링크 입력을 통해 제출한
+              블로그 후기(텍스트, 이미지, 영상, 초상 등 일체)
+              <br />✓ 활용 목적 : 렛츠커리어 서비스 및 프로그램 홍보 및 광고,
+              마케팅
+              <br />✓ 활용 방법 및 범위 : <br /> - 2차 저작물 제작
               <br />- 렛츠커리어 웹사이트, 홍보물·광고, SNS 등 마케팅 채널에
               노출
-              <br />
-              ✓ 활용 기간 : 영구적 활용
+              <br />✓ 활용 기간 : 영구적 활용
               <br />
             </>
           }

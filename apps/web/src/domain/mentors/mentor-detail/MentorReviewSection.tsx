@@ -84,24 +84,24 @@ const StarRating = ({
 };
 
 const ReviewCard = ({ review }: { review: MentorReviewItem }) => (
-  <li className="border-neutral-80 flex flex-col gap-4 border-b py-4">
+  <li className="flex flex-col gap-4 border-b border-neutral-80 py-4">
     <span className="text-xsmall16 text-neutral-45">
       {dayjs(review.createDate).format('YYYY.MM.DD. HH:mm')}
     </span>
     <div className="flex flex-col gap-1.5">
       <div className="flex items-center gap-1">
         <StarRating score={review.score} starClassName="h-[18px] w-[18px]" />
-        <span className="text-xsmall16 text-neutral-20 font-semibold">
+        <span className="text-xsmall16 font-semibold text-neutral-20">
           {review.score.toFixed(1)}
         </span>
       </div>
-      <div className="text-xsmall16 text-neutral-40 flex items-center gap-2">
+      <div className="flex items-center gap-2 text-xsmall16 text-neutral-40">
         <span>참여 프로그램</span>
         <span className="h-5 w-[2px] bg-neutral-50" />
         <span>{review.programTitle || '-'}</span>
       </div>
       {review.review && (
-        <p className="text-small18 text-neutral-0 whitespace-pre-line">
+        <p className="whitespace-pre-line text-small18 text-neutral-0">
           {review.review}
         </p>
       )}
@@ -139,7 +139,7 @@ const MentorReviewSection = ({
       className="flex w-full scroll-mt-[84px] flex-col gap-6 md:scroll-mt-[155px]"
     >
       <div className="flex items-baseline justify-between">
-        <h2 className="text-medium22 text-neutral-0 font-bold">후기</h2>
+        <h2 className="text-medium22 font-bold text-neutral-0">후기</h2>
         <span className="text-xsmall16 text-neutral-45">
           {reviewCount}개의 후기
         </span>
@@ -147,8 +147,8 @@ const MentorReviewSection = ({
       <div className="flex flex-col gap-2.5">
         {hasReviews ? (
           <>
-            <div className="border-neutral-80 flex flex-col items-center gap-1 rounded-md border px-3 py-5">
-              <span className="text-xlarge28 text-neutral-20 font-bold">
+            <div className="flex flex-col items-center gap-1 rounded-md border border-neutral-80 px-3 py-5">
+              <span className="text-xlarge28 font-bold text-neutral-20">
                 {averageScore.toFixed(1)}
               </span>
               <StarRating score={averageScore} starClassName="h-6 w-6" />

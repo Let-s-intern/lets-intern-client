@@ -38,16 +38,16 @@ const InstructorCard = ({ lecture }: { lecture: LectureData }) => (
 
     <div className="relative z-10 mt-auto flex flex-col gap-2 rounded-b-md bg-gradient-to-b from-[rgba(232,249,242,0.0)] to-[#E8F9F2] px-4 pb-4 tracking-tight blur-[0px] backdrop-blur-[1.5px]">
       <div
-        className="rounded-xxs flex w-fit items-center justify-center px-[6px] py-[3px]"
+        className="flex w-fit items-center justify-center rounded-xxs px-[6px] py-[3px]"
         style={{ backgroundColor: PM_PRIMARY }}
       >
-        <span className="text-xsmall12 md:text-xsmall14 font-medium text-neutral-100">
+        <span className="text-xsmall12 font-medium text-neutral-100 md:text-xsmall14">
           {lecture.schedule}
         </span>
       </div>
 
       <div className="flex flex-1 flex-col gap-1">
-        <h4 className="text-xsmall18 text-neutral-0 md:text-small20 font-bold">
+        <h4 className="text-xsmall18 font-bold text-neutral-0 md:text-small20">
           {lecture.mentorName}
         </h4>
         <p className="text-xxsmall14 text-neutral-30 md:text-small18">
@@ -148,7 +148,7 @@ const SessionCard = ({
   >
     <img src={image} alt={title} className="w-full rounded-md" />
     <div>
-      <h3 className="text-small18 text-neutral-0 md:text-medium24 mb-2.5 font-semibold">
+      <h3 className="mb-2.5 text-small18 font-semibold text-neutral-0 md:text-medium24">
         {title}
       </h3>
       <div className="flex flex-col gap-1.5">
@@ -209,9 +209,9 @@ export const PmMentoring = () => (
     {PM_MENTORING_BENEFITS.map((benefit, index) => (
       <div
         key={index}
-        className="bg-neutral-95 flex flex-1 flex-col gap-4 rounded-md px-5 py-10 md:min-h-[186px] md:min-w-[532px] md:gap-6 md:px-[30px] md:py-10"
+        className="flex flex-1 flex-col gap-4 rounded-md bg-neutral-95 px-5 py-10 md:min-h-[186px] md:min-w-[532px] md:gap-6 md:px-[30px] md:py-10"
       >
-        <h4 className="text-small18 text-neutral-0 md:text-medium22 font-bold">
+        <h4 className="text-small18 font-bold text-neutral-0 md:text-medium22">
           {benefit.title}
         </h4>
         <div className="flex items-start">

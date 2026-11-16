@@ -11,7 +11,7 @@ const Box = ({
   return (
     <div
       className={twMerge(
-        'bg-neutral-95 flex flex-col items-stretch rounded-sm px-4 py-7 md:flex-1',
+        'flex flex-col items-stretch rounded-sm bg-neutral-95 px-4 py-7 md:flex-1',
         className,
       )}
     >

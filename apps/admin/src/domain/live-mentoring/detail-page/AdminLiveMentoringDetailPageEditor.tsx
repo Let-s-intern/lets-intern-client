@@ -103,13 +103,13 @@ export default function AdminLiveMentoringDetailPageEditor({
 
   if (isLoading) {
     return (
-      <p className="text-xsmall14 text-neutral-40 py-16">불러오는 중...</p>
+      <p className="py-16 text-xsmall14 text-neutral-40">불러오는 중...</p>
     );
   }
 
   if (isError || !form) {
     return (
-      <p className="text-xsmall14 text-neutral-40 py-16">
+      <p className="py-16 text-xsmall14 text-neutral-40">
         상세페이지를 불러오지 못했습니다. 멘토가 맞는지 확인해 주세요.
       </p>
     );
@@ -178,7 +178,7 @@ export default function AdminLiveMentoringDetailPageEditor({
             aria-pressed={activeTab === tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={twMerge(
-              'text-xxsmall12 rounded-full border px-3 py-1.5',
+              'rounded-full border px-3 py-1.5 text-xxsmall12',
               activeTab === tab.id
                 ? 'border-neutral-0 bg-neutral-0 font-semibold text-white'
                 : 'border-neutral-80 text-neutral-40',
@@ -189,7 +189,7 @@ export default function AdminLiveMentoringDetailPageEditor({
         ))}
       </nav>
 
-      <div className="border-neutral-80 max-w-3xl rounded-lg border p-6">
+      <div className="max-w-3xl rounded-lg border border-neutral-80 p-6">
         {activeTab === 'hero' ? (
           <HeroField value={form.hero} onChange={(hero) => patch({ hero })} />
         ) : activeTab === 'mentoringTypes' ? (
@@ -226,7 +226,7 @@ export default function AdminLiveMentoringDetailPageEditor({
         )}
       </div>
 
-      <div className="border-neutral-80 fixed bottom-0 left-0 right-0 z-10 flex items-center justify-between gap-4 border-t bg-white px-8 py-3">
+      <div className="fixed bottom-0 left-0 right-0 z-10 flex items-center justify-between gap-4 border-t border-neutral-80 bg-white px-8 py-3">
         <p
           role={message?.type === 'error' ? 'alert' : 'status'}
           className={twMerge(

@@ -31,7 +31,7 @@ const ReservationFilterCard = ({
   menteeNameOptions,
 }: ReservationFilterCardProps) => {
   return (
-    <section className="border-neutral-85 flex flex-col gap-4 rounded-lg border bg-white p-5 md:p-6">
+    <section className="flex flex-col gap-4 rounded-lg border border-neutral-85 bg-white p-5 md:p-6">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <label className="flex flex-col gap-1.5">
           <span className={fieldLabelClass}>프로그램명</span>

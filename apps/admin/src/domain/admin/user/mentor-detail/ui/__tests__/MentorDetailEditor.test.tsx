@@ -167,8 +167,9 @@ describe('MentorDetailEditor 프로필 소개·키워드', () => {
 
   it('한줄소개를 고치면 introduction 을 보내고, 비우면 빈 문자열로 보낸다', async () => {
     renderEditor();
-    const textarea =
-      await screen.findByPlaceholderText('한줄 소개를 입력해주세요');
+    const textarea = await screen.findByPlaceholderText(
+      '한줄 소개를 입력해주세요',
+    );
 
     fireEvent.change(textarea, { target: { value: '새 한줄소개' } });
     fireEvent.click(screen.getByRole('button', { name: '저장' }));

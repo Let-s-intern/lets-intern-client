@@ -55,12 +55,12 @@ export default function OAuthCallbackPage() {
   if (errorMessage) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-        <div className="w-full max-w-sm rounded-2xl bg-white p-8 text-center shadow-lg">
+        <div className="rounded-2xl w-full max-w-sm bg-white p-8 text-center shadow-lg">
           <p className="text-sm text-red-500">{errorMessage}</p>
           <button
             type="button"
             onClick={() => navigate('/', { replace: true })}
-            className="bg-primary hover:bg-primary-hover mt-6 w-full rounded-xl py-3 text-sm font-medium text-white transition-colors"
+            className="mt-6 w-full rounded-xl bg-primary py-3 text-sm font-medium text-white transition-colors hover:bg-primary-hover"
           >
             홈으로 돌아가기
           </button>
@@ -71,7 +71,7 @@ export default function OAuthCallbackPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-      <div className="text-neutral-40 text-sm">로그인 처리 중...</div>
+      <div className="text-sm text-neutral-40">로그인 처리 중...</div>
     </div>
   );
 }

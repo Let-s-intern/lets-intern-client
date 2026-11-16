@@ -14,14 +14,14 @@ export default function ExternalLinks({ applicationId, variant }: Props) {
 
   if (variant === 'box') {
     return (
-      <div className="border-neutral-80 rounded-xs scrollbar-hide flex gap-2 overflow-x-auto border p-3 md:hidden">
+      <div className="flex gap-2 overflow-x-auto rounded-xs border border-neutral-80 p-3 scrollbar-hide md:hidden">
         {externalLinks.map((link) => (
           <a
             key={link.id}
             href={link.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xsmall14 text-neutral-40 border-neutral-80 flex shrink-0 items-center gap-1 rounded-full border px-3 py-1 font-medium"
+            className="flex shrink-0 items-center gap-1 rounded-full border border-neutral-80 px-3 py-1 text-xsmall14 font-medium text-neutral-40"
           >
             {link.name}
             <SquareArrowOutUpRight size={12} />
@@ -39,7 +39,7 @@ export default function ExternalLinks({ applicationId, variant }: Props) {
             href={link.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xsmall16 text-neutral-40 hover:text-neutral-0 flex items-center gap-1.5 font-medium transition-colors"
+            className="flex items-center gap-1.5 text-xsmall16 font-medium text-neutral-40 transition-colors hover:text-neutral-0"
           >
             {link.name}
             <SquareArrowOutUpRight size={14} />

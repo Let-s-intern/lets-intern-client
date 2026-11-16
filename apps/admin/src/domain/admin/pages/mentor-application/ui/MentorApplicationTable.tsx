@@ -73,23 +73,23 @@ export default function MentorApplicationTable() {
   };
 
   return (
-    <div className="border-neutral-80 overflow-x-auto rounded-lg border">
+    <div className="overflow-x-auto rounded-lg border border-neutral-80">
       {isLoading ? (
-        <div className="text-xsmall14 text-neutral-40 py-16 text-center">
+        <div className="py-16 text-center text-xsmall14 text-neutral-40">
           불러오는 중...
         </div>
       ) : applications.length === 0 ? (
-        <div className="text-xsmall14 text-neutral-40 py-16 text-center">
+        <div className="py-16 text-center text-xsmall14 text-neutral-40">
           접수된 신청서가 없습니다.
         </div>
       ) : (
         <table className="w-full border-collapse whitespace-nowrap">
           <thead>
-            <tr className="border-neutral-60 bg-neutral-95 border-b-2">
+            <tr className="border-b-2 border-neutral-60 bg-neutral-95">
               {HEADERS.map((header) => (
                 <th
                   key={header}
-                  className="text-xsmall14 text-neutral-0 px-4 py-3 text-left font-semibold"
+                  className="px-4 py-3 text-left text-xsmall14 font-semibold text-neutral-0"
                 >
                   {header}
                 </th>
@@ -100,28 +100,28 @@ export default function MentorApplicationTable() {
             {applications.map((application) => (
               <tr
                 key={application.id}
-                className="border-neutral-80 hover:bg-neutral-95 border-b transition-colors last:border-b-0"
+                className="border-b border-neutral-80 transition-colors last:border-b-0 hover:bg-neutral-95"
               >
-                <td className="text-xsmall14 px-4 py-4">
+                <td className="px-4 py-4 text-xsmall14">
                   {dayjs(application.submittedAt).format('YYYY.MM.DD HH:mm')}
                 </td>
-                <td className="text-xsmall14 px-4 py-4">{application.name}</td>
-                <td className="text-xsmall14 whitespace-normal break-keep px-4 py-4">
+                <td className="px-4 py-4 text-xsmall14">{application.name}</td>
+                <td className="whitespace-normal break-keep px-4 py-4 text-xsmall14">
                   {application.company}
                 </td>
-                <td className="text-xsmall14 whitespace-normal break-keep px-4 py-4">
+                <td className="whitespace-normal break-keep px-4 py-4 text-xsmall14">
                   {application.jobTitle}
                 </td>
-                <td className="text-xsmall14 px-4 py-4">
+                <td className="px-4 py-4 text-xsmall14">
                   {formatPhoneNum(application.phoneNum)}
                 </td>
-                <td className="text-xsmall14 px-4 py-4">{application.email}</td>
-                <td className="text-xsmall14 px-4 py-4">
+                <td className="px-4 py-4 text-xsmall14">{application.email}</td>
+                <td className="px-4 py-4 text-xsmall14">
                   {application.preferredContactMethods
                     .map((method) => CONTACT_METHOD_LABEL[method])
                     .join(', ')}
                 </td>
-                <td className="text-xsmall14 px-4 py-4">
+                <td className="px-4 py-4 text-xsmall14">
                   <button
                     type="button"
                     className="text-blue-500 underline transition hover:text-blue-300"

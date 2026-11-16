@@ -85,7 +85,7 @@ const QuestionSection = ({
 
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-xsmall16 text-neutral-0 font-semibold">
+      <h2 className="text-xsmall16 font-semibold text-neutral-0">
         멘토에게 궁금한 점을 작성해 주세요
       </h2>
 
@@ -95,10 +95,10 @@ const QuestionSection = ({
       */}
       <div className="flex flex-col gap-1">
         <label
-          className={`text-xsmall14 flex items-center gap-2 ${
+          className={`flex items-center gap-2 text-xsmall14 ${
             deferralAllowed
-              ? 'text-neutral-30 cursor-pointer'
-              : 'text-neutral-60 cursor-not-allowed'
+              ? 'cursor-pointer text-neutral-30'
+              : 'cursor-not-allowed text-neutral-60'
           }`}
         >
           <input
@@ -106,12 +106,12 @@ const QuestionSection = ({
             checked={value.deferred}
             disabled={!deferralAllowed}
             onChange={(event) => handleDeferredChange(event.target.checked)}
-            className="accent-primary h-4 w-4"
+            className="h-4 w-4 accent-primary"
           />
           나중에 작성하기
         </label>
         {!deferralAllowed && (
-          <p className="text-xxsmall12 text-neutral-45 pl-6">
+          <p className="pl-6 text-xxsmall12 text-neutral-45">
             멘토링 시작까지 48시간이 남지 않아 지금 작성해야 해요. 결제 후 3시간
             동안 수정할 수 있어요.
           </p>
@@ -121,7 +121,7 @@ const QuestionSection = ({
       {!value.deferred && (
         <div className="flex flex-col gap-5 pt-2">
           <div className="flex flex-col gap-1.5">
-            <span className="text-xsmall14 text-neutral-0 font-medium">
+            <span className="text-xsmall14 font-medium text-neutral-0">
               멘토링 질문 작성
             </span>
             <p className="text-xxsmall12 text-neutral-45">
@@ -136,25 +136,25 @@ const QuestionSection = ({
               onChange={(event) => patch({ content: event.target.value })}
               placeholder="멘토링에서 꼭 물어보고 싶은 점을 작성해 주세요."
               rows={5}
-              className="bg-neutral-95 text-xsmall14 text-neutral-0 resize-none rounded-sm px-4 py-3"
+              className="resize-none rounded-sm bg-neutral-95 px-4 py-3 text-xsmall14 text-neutral-0"
             />
-            <span className="text-xxsmall12 text-neutral-45 self-end">
+            <span className="self-end text-xxsmall12 text-neutral-45">
               {value.content.length}/{QUESTION_CONTENT_MAX}
             </span>
           </div>
 
           <fieldset className="flex flex-col gap-3">
-            <legend className="text-xsmall14 text-neutral-0 mb-2 font-medium">
+            <legend className="mb-2 text-xsmall14 font-medium text-neutral-0">
               전달 파일
             </legend>
 
-            <label className="text-xsmall14 text-neutral-0 flex cursor-pointer items-center gap-2">
+            <label className="flex cursor-pointer items-center gap-2 text-xsmall14 text-neutral-0">
               <input
                 type="radio"
                 name="live-mentoring-attachment"
                 checked={value.attachmentType === 'FILE'}
                 onChange={() => patch({ attachmentType: 'FILE', url: '' })}
-                className="accent-primary h-4 w-4"
+                className="h-4 w-4 accent-primary"
               />
               파일 첨부{' '}
               <span className="text-neutral-45">
@@ -174,7 +174,7 @@ const QuestionSection = ({
                 type="button"
                 disabled={value.attachmentType !== 'FILE' || isUploading}
                 onClick={() => fileInputRef.current?.click()}
-                className="border-neutral-80 text-xsmall14 text-neutral-20 disabled:text-neutral-60 rounded-sm border px-3 py-2 disabled:cursor-default"
+                className="rounded-sm border border-neutral-80 px-3 py-2 text-xsmall14 text-neutral-20 disabled:cursor-default disabled:text-neutral-60"
               >
                 {isUploading ? '업로드 중…' : '파일 업로드'}
               </button>
@@ -190,7 +190,7 @@ const QuestionSection = ({
               )}
             </div>
 
-            <label className="text-xsmall14 text-neutral-0 flex cursor-pointer items-center gap-2">
+            <label className="flex cursor-pointer items-center gap-2 text-xsmall14 text-neutral-0">
               <input
                 type="radio"
                 name="live-mentoring-attachment"
@@ -199,7 +199,7 @@ const QuestionSection = ({
                   setFileName(null);
                   patch({ attachmentType: 'URL', fileId: null });
                 }}
-                className="accent-primary h-4 w-4"
+                className="h-4 w-4 accent-primary"
               />
               URL
             </label>
@@ -212,18 +212,18 @@ const QuestionSection = ({
               disabled={value.attachmentType !== 'URL'}
               onChange={(event) => patch({ url: event.target.value })}
               placeholder="https://"
-              className="border-neutral-80 text-xsmall14 text-neutral-0 disabled:bg-neutral-95 ml-6 rounded-sm border px-4 py-2.5 disabled:cursor-default"
+              className="ml-6 rounded-sm border border-neutral-80 px-4 py-2.5 text-xsmall14 text-neutral-0 disabled:cursor-default disabled:bg-neutral-95"
             />
           </fieldset>
 
-          <label className="text-xsmall14 text-neutral-30 flex cursor-pointer items-center gap-2">
+          <label className="flex cursor-pointer items-center gap-2 text-xsmall14 text-neutral-30">
             <input
               type="checkbox"
               checked={value.mentorShareAgreed}
               onChange={(event) =>
                 patch({ mentorShareAgreed: event.target.checked })
               }
-              className="accent-primary h-4 w-4"
+              className="h-4 w-4 accent-primary"
             />
             첨부한 파일이 멘토링 진행을 위해 멘토에게 전달되는 데 동의합니다.
           </label>

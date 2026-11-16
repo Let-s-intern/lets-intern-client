@@ -35,7 +35,7 @@ export default function AllInOnePassUsers() {
       <div className="flex flex-col gap-2">
         <Link
           to="/all-in-one-pass"
-          className="text-xsmall14 text-neutral-40 hover:text-neutral-0 flex w-fit items-center gap-1"
+          className="flex w-fit items-center gap-1 text-xsmall14 text-neutral-40 hover:text-neutral-0"
         >
           <IoArrowBack />
           올인원패스 개설

@@ -24,7 +24,7 @@ export default function PassStatusBadge({ status }: { status: string }) {
   return (
     <span
       className={twMerge(
-        'text-xxsmall12 rounded-full border px-2.5 py-1 font-semibold',
+        'rounded-full border px-2.5 py-1 text-xxsmall12 font-semibold',
         badge.className,
       )}
     >

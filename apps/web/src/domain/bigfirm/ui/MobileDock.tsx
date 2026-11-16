@@ -16,7 +16,7 @@ export function MobileDock() {
             data-track-location="floating_bar"
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-xs text-primary flex-1 bg-white px-5 py-3 text-center text-base font-medium hover:bg-[#eef0ff] md:flex-none"
+            className="flex-1 rounded-xs bg-white px-5 py-3 text-center text-base font-medium text-primary hover:bg-[#eef0ff] md:flex-none"
           >
             문의하기
           </a>
@@ -26,7 +26,7 @@ export function MobileDock() {
             data-track-location="floating_bar"
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-xs bg-primary flex-[2] whitespace-nowrap px-5 py-3 text-center text-base font-medium text-white hover:bg-[#3a41d6] md:flex-none"
+            className="flex-[2] whitespace-nowrap rounded-xs bg-primary px-5 py-3 text-center text-base font-medium text-white hover:bg-[#3a41d6] md:flex-none"
           >
             더 다양한 멘토 구경하기
           </Link>

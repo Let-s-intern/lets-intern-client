@@ -64,14 +64,14 @@ const UsageApplyModals = ({ programType, passTitle, apply }: Props) => {
                   →{' '}
                 </>
               )}
-              <span className="bg-primary-10 text-primary py-0.5 pl-1 pr-0.5 font-semibold">
+              <span className="bg-primary-10 py-0.5 pl-1 pr-0.5 font-semibold text-primary">
                 무료 신청 가능
               </span>
               합니다.
             </p>
             <Link
               href={copy.detailPath(target.programId)}
-              className="text-xxsmall12 text-neutral-40 w-fit underline underline-offset-2"
+              className="w-fit text-xxsmall12 text-neutral-40 underline underline-offset-2"
             >
               {copy.label} 상세 내용 보기
             </Link>

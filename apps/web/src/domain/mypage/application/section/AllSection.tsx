@@ -97,7 +97,7 @@ const AllSection = ({
     // 조회에 실패한 소스가 있으면 섣불리 "없음" 으로 단정하지 않는다.
     if (hasError) {
       return (
-        <p className="text-neutral-40 py-20 text-center">
+        <p className="py-20 text-center text-neutral-40">
           신청 내역을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.
         </p>
       );
@@ -114,7 +114,7 @@ const AllSection = ({
   return (
     <>
       {hasError && (
-        <p className="text-xsmall14 text-neutral-40 bg-neutral-95 rounded-sm px-4 py-3 text-center">
+        <p className="rounded-sm bg-neutral-95 px-4 py-3 text-center text-xsmall14 text-neutral-40">
           일부 내역을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.
         </p>
       )}

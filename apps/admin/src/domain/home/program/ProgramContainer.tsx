@@ -53,11 +53,11 @@ const ProgramContainer = (props: ProgramContainerProps) => {
           )}
         </MoreHeader>
         {props.navigation && (
-          <div className="scrollbar-hide flex w-fit items-center gap-x-2 overflow-auto">
+          <div className="flex w-fit items-center gap-x-2 overflow-auto scrollbar-hide">
             {props.navigation.map((nav, index) => (
               <button
                 key={index}
-                className={`rounded-xs text-xsmall14 shrink-0 px-3 py-2 font-medium ${
+                className={`shrink-0 rounded-xs px-3 py-2 text-xsmall14 font-medium ${
                   nav.active
                     ? 'bg-neutral-10 text-white'
                     : 'bg-neutral-90 text-neutral-35'

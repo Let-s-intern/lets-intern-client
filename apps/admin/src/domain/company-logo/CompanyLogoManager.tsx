@@ -55,7 +55,7 @@ export default function CompanyLogoManager() {
       <div className="flex items-end justify-between gap-4">
         <div>
           <h2 className="text-xl font-semibold">회사 로고</h2>
-          <p className="text-xsmall14 text-neutral-40 mt-1">
+          <p className="mt-1 text-xsmall14 text-neutral-40">
             여기 저장한 로고를 멘토 대표 로고·경력 로고에 연결해 씁니다. 이
             로고를 바꾸면 연결된 멘토 로고도 함께 바뀝니다.
           </p>
@@ -75,9 +75,9 @@ export default function CompanyLogoManager() {
       />
 
       {isLoading ? (
-        <p className="text-xsmall14 text-neutral-40 py-10">불러오는 중...</p>
+        <p className="py-10 text-xsmall14 text-neutral-40">불러오는 중...</p>
       ) : isError ? (
-        <p className="text-xsmall14 text-neutral-40 py-10">
+        <p className="py-10 text-xsmall14 text-neutral-40">
           로고 목록을 불러오지 못했습니다.
         </p>
       ) : (
@@ -85,14 +85,14 @@ export default function CompanyLogoManager() {
           {filteredLogos.map((logo) => (
             <li
               key={logo.id}
-              className="border-neutral-80 flex flex-col items-center gap-3 rounded-lg border bg-white p-4"
+              className="flex flex-col items-center gap-3 rounded-lg border border-neutral-80 bg-white p-4"
             >
               <img
                 src={logo.imageUrl}
                 alt={logo.name}
-                className="h-16 w-16 rounded object-contain"
+                className="rounded h-16 w-16 object-contain"
               />
-              <span className="text-xsmall14 break-all text-center font-semibold">
+              <span className="break-all text-center text-xsmall14 font-semibold">
                 {logo.name}
               </span>
               <div className="flex gap-2">
@@ -119,7 +119,7 @@ export default function CompanyLogoManager() {
             <button
               type="button"
               onClick={() => setDialog({ logo: null })}
-              className="border-neutral-70 text-xsmall14 text-neutral-40 flex h-full min-h-[160px] w-full items-center justify-center rounded-lg border border-dashed"
+              className="flex h-full min-h-[160px] w-full items-center justify-center rounded-lg border border-dashed border-neutral-70 text-xsmall14 text-neutral-40"
             >
               새 로고 등록
             </button>

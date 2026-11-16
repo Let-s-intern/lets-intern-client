@@ -9,11 +9,11 @@ const BUTTON =
 
 export function NextStep() {
   return (
-    <section className="bg-primary-10 break-keep py-16 md:py-[88px]">
+    <section className="break-keep bg-primary-10 py-16 md:py-[88px]">
       <div className="mx-auto max-w-[880px] px-5">
         <p
           data-reveal
-          className="text-primary text-[11px] font-semibold tracking-[0.2em] md:tracking-normal"
+          className="text-[11px] font-semibold tracking-[0.2em] text-primary md:tracking-normal"
         >
           AFTER LETSCON
         </p>
@@ -45,9 +45,9 @@ export function NextStep() {
               data-reveal
               data-lift
               style={revealDelay(index)}
-              className="border-primary-15 rounded-[16px] border bg-white px-[17px] py-[22px] md:px-[21px] md:pb-5 md:pt-7"
+              className="rounded-[16px] border border-primary-15 bg-white px-[17px] py-[22px] md:px-[21px] md:pb-5 md:pt-7"
             >
-              <p className="text-primary text-[11px] font-semibold md:text-xs">
+              <p className="text-[11px] font-semibold text-primary md:text-xs">
                 {tag}
               </p>
               <h3 className="mt-1.5 text-base font-bold text-[#1c1e2b] md:mt-3 md:text-lg">
@@ -62,7 +62,7 @@ export function NextStep() {
 
         <div
           data-reveal
-          className="border-primary-20 mt-5 flex flex-col gap-3 border-t pt-5 md:mt-8 md:flex-row md:items-center md:justify-between md:pt-6"
+          className="mt-5 flex flex-col gap-3 border-t border-primary-20 pt-5 md:mt-8 md:flex-row md:items-center md:justify-between md:pt-6"
         >
           <div>
             <p className="text-base font-bold text-[#1c1e2b]">

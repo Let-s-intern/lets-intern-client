@@ -42,7 +42,7 @@ const ChallengeVersionTag = ({
   return (
     <span
       // 날짜가 우선이라 좁은 칸에서는 태그가 먼저 줄어들고 말줄임된다.
-      className="rounded-xxs text-xxsmall12 min-w-0 shrink truncate px-1.5 py-0.5 font-medium"
+      className="min-w-0 shrink truncate rounded-xxs px-1.5 py-0.5 text-xxsmall12 font-medium"
       // 테마 색을 글자에 쓰고 같은 색을 옅게 깔아 배경을 만든다.
       style={{ color, backgroundColor: `${color}1A` }}
       title={label}

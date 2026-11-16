@@ -135,8 +135,8 @@ const LastMissionSubmitModal = ({
           <GoalOrConcernsBox className="mb-3">
             <div className="max-h-64 overflow-y-auto px-5 py-3 md:max-h-[9.5rem]">
               <span className="text-xsmall14">
-                {/* TODO: 사용자 이름 넣어야 함 */}
-                🎯 <b>{user?.name}</b>님이 작성하신 챌린지 시작 전 목표
+                {/* TODO: 사용자 이름 넣어야 함 */}🎯 <b>{user?.name}</b>님이
+                작성하신 챌린지 시작 전 목표
               </span>
               <br />
               {/* TODO: 사용자가 설정한 목표가 들어가야 함 */}

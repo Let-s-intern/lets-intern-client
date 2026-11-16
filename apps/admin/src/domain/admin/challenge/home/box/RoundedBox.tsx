@@ -8,7 +8,7 @@ interface Props {
 
 const RoundedBox = ({ children, className, as }: Props) => {
   const boxStyle = clsx(
-    'overflow-hidden rounded-2xl border border-neutral-200',
+    'rounded-2xl overflow-hidden border border-neutral-200',
     className,
   );
 

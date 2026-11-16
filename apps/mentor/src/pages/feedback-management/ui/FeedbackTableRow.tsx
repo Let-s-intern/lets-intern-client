@@ -85,9 +85,9 @@ const RowKindIcon = ({ type }: { type: FeedbackRow['type'] }) => {
       <span
         aria-label="1:1 LIVE 멘토링"
         role="img"
-        className="inline-flex h-6 w-6 items-center justify-center rounded border border-gray-200 bg-white"
+        className="rounded inline-flex h-6 w-6 items-center justify-center border border-gray-200 bg-white"
       >
-        <span className="bg-primary h-2 w-2 rounded-full" />
+        <span className="h-2 w-2 rounded-full bg-primary" />
       </span>
     );
   }
@@ -96,7 +96,7 @@ const RowKindIcon = ({ type }: { type: FeedbackRow['type'] }) => {
       <span
         aria-label="서면 피드백"
         role="img"
-        className="inline-flex h-6 w-6 items-center justify-center rounded border border-gray-200 bg-white text-gray-500"
+        className="rounded inline-flex h-6 w-6 items-center justify-center border border-gray-200 bg-white text-gray-500"
       >
         <WrittenFeedbackIcon size={14} />
       </span>
@@ -106,7 +106,7 @@ const RowKindIcon = ({ type }: { type: FeedbackRow['type'] }) => {
     <span
       aria-label="라이브 피드백"
       role="img"
-      className="inline-flex h-6 w-6 items-center justify-center rounded border border-gray-200 bg-white text-gray-500"
+      className="rounded inline-flex h-6 w-6 items-center justify-center border border-gray-200 bg-white text-gray-500"
     >
       <LiveFeedbackIcon size={14} />
     </span>
@@ -190,7 +190,7 @@ const DetailCell = ({
       <button
         type="button"
         onClick={() => onClickDetail(row)}
-        className="text-primary text-sm font-medium underline-offset-2 hover:underline"
+        className="text-sm font-medium text-primary underline-offset-2 hover:underline"
       >
         보기
       </button>

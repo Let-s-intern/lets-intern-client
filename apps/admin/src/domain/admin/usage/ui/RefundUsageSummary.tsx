@@ -111,7 +111,7 @@ const RefundUsageSummary = ({ applicationId }: Props) => {
       `neutral-100` 이 가장 밝다(#FAFAFA). `bg-neutral-50` 은 거의 흰색이 아니라
       중간 회색(#ACAFB6)이라 글자가 묻힌다.
     */
-    <section className="border-neutral-80 bg-neutral-95 mb-3 rounded border p-3 text-sm">
+    <section className="rounded mb-3 border border-neutral-80 bg-neutral-95 p-3 text-sm">
       <h3 className="mb-2 font-medium">이용 내역</h3>
       {body}
       {/*

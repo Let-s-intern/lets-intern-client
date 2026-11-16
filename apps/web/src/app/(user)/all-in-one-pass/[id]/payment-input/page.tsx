@@ -132,7 +132,7 @@ export default function MembershipPaymentInputPage() {
           endDate={data.deadline ?? undefined}
         />
         {data.orderType !== 'EXTENSION' && data.deadline ? (
-          <div className="bg-primary-10 text-xsmall14 -mx-5 mb-10 mt-8 flex items-center justify-center gap-2 px-2.5 py-5 lg:mx-0 lg:rounded-sm">
+          <div className="-mx-5 mb-10 mt-8 flex items-center justify-center gap-2 bg-primary-10 px-2.5 py-5 text-xsmall14 lg:mx-0 lg:rounded-sm">
             <span>마감까지</span>
             <Duration
               deadline={dayjs(data.deadline)}
@@ -143,7 +143,7 @@ export default function MembershipPaymentInputPage() {
         ) : (
           <div className="mt-10" />
         )}
-        <p className="text-xsmall16 text-neutral-0 my-3 font-semibold">
+        <p className="my-3 text-xsmall16 font-semibold text-neutral-0">
           신청 폼을 모두 입력해주세요.
         </p>
         <div className="flex flex-col gap-2.5">
@@ -155,11 +155,11 @@ export default function MembershipPaymentInputPage() {
         </div>
       </div>
 
-      <hr className="bg-neutral-95 my-10 block h-2 border-none" />
+      <hr className="my-10 block h-2 border-none bg-neutral-95" />
 
       {(originalTotal > 0 || vodPassPrice > 0) && (
         <div className="mx-5 mb-10 flex flex-col gap-y-6">
-          <div className="text-neutral-0 font-semibold">결제 정보</div>
+          <div className="font-semibold text-neutral-0">결제 정보</div>
           {originalTotal > 0 && (
             <CouponSection
               setCoupon={handleCoupon}
@@ -178,7 +178,7 @@ export default function MembershipPaymentInputPage() {
               vodPassMonths={data.vodPassMonths ?? 0}
             />
             <hr className="bg-neutral-85" />
-            <div className="text-neutral-0 flex h-10 items-center justify-between px-3 font-semibold">
+            <div className="flex h-10 items-center justify-between px-3 font-semibold text-neutral-0">
               <span>결제금액</span>
               <span>{totalPrice.toLocaleString()}원</span>
             </div>

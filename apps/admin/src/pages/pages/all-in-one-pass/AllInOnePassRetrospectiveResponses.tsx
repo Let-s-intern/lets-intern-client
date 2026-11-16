@@ -108,7 +108,7 @@ export default function AllInOnePassRetrospectiveResponses() {
       <header className="flex flex-col gap-3">
         <Link
           to="/all-in-one-pass/retrospectives"
-          className="text-xsmall14 text-neutral-40 hover:text-neutral-0 flex w-fit items-center gap-1"
+          className="flex w-fit items-center gap-1 text-xsmall14 text-neutral-40 hover:text-neutral-0"
         >
           <IoArrowBack />
           회고 관리
@@ -117,11 +117,11 @@ export default function AllInOnePassRetrospectiveResponses() {
         <div className="flex items-center justify-between gap-3">
           <div className="flex flex-col gap-0.5">
             {passName && (
-              <span className="text-xsmall16 text-neutral-30 font-semibold">
+              <span className="text-xsmall16 font-semibold text-neutral-30">
                 {passName}
               </span>
             )}
-            <h1 className="text-medium24 text-neutral-0 font-bold">
+            <h1 className="text-medium24 font-bold text-neutral-0">
               {round?.round ?? '-'}회차 회고 응답 조회
             </h1>
           </div>
@@ -150,7 +150,7 @@ export default function AllInOnePassRetrospectiveResponses() {
                 type="button"
                 onClick={() => setSelectedId(tab.questionId)}
                 className={clsx(
-                  'text-xsmall14 rounded-full border px-4 py-1.5 font-medium transition-colors',
+                  'rounded-full border px-4 py-1.5 text-xsmall14 font-medium transition-colors',
                   tab.questionId === activeId
                     ? 'border-neutral-0 bg-neutral-0 text-white'
                     : 'border-neutral-80 text-neutral-40 hover:bg-neutral-95',
@@ -162,8 +162,8 @@ export default function AllInOnePassRetrospectiveResponses() {
           </div>
 
           {/* 선택 질문 전문 */}
-          <div className="border-neutral-80 bg-neutral-95 flex items-center gap-2 rounded-md border px-4 py-3">
-            <span className="text-xsmall16 text-neutral-0 font-semibold">
+          <div className="flex items-center gap-2 rounded-md border border-neutral-80 bg-neutral-95 px-4 py-3">
+            <span className="text-xsmall16 font-semibold text-neutral-0">
               Q. {activeLabel ?? '-'}
             </span>
           </div>

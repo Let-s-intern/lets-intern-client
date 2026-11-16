@@ -149,7 +149,7 @@ const ChallengeDuplicateModal = ({
   return (
     <Modal open={isOpen} onClose={handleClose}>
       <Paper className="absolute left-1/2 top-1/2 w-[600px] max-w-[95vw] -translate-x-1/2 -translate-y-1/2 p-8">
-        <h2 className="text-small18 mb-5 font-semibold">
+        <h2 className="mb-5 text-small18 font-semibold">
           [{sourceChallenge.title}] 복제하기
         </h2>
 

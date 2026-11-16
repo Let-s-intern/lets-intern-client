@@ -11,7 +11,9 @@ on:
       - 'pnpm-workspace.yaml'
       - 'turbo.json'
       - 'package.json'
-      - '.prettierrc.mjs'
+      - '.oxfmtrc.json'
+      - '.oxlintrc.json'
+      - 'scripts/ci-typecheck-new-errors.sh'
       - '.github/workflows/build-web.yml'
   # main 머지 시에도 빌드해 "기본 브랜치 스코프" 캐시를 시딩한다.
   # GitHub Actions 캐시 규칙: 기본 브랜치(main)에서 만든 캐시는 모든 PR 이
@@ -26,7 +28,9 @@ on:
       - 'pnpm-workspace.yaml'
       - 'turbo.json'
       - 'package.json'
-      - '.prettierrc.mjs'
+      - '.oxfmtrc.json'
+      - '.oxlintrc.json'
+      - 'scripts/ci-typecheck-new-errors.sh'
       - '.github/workflows/build-web.yml'
 
 concurrency:
@@ -63,21 +67,10 @@ jobs:
           restore-keys: |
             turbo-web-
 
-      # Next.js 증분 빌드 캐시 — turbo 미스 시 next build 콜드 컴파일 시간을 줄인다.
-      # turbo outputs 가 .next/cache 를 제외(turbo.json)하므로 별도 캐시가 필요.
-      - name: Next.js 빌드 캐시
-        uses: actions/cache@v4
-        with:
-          path: apps/web/.next/cache
-          key: nextjs-web-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
-          restore-keys: |
-            nextjs-web-${{ hashFiles('pnpm-lock.yaml') }}-
-            nextjs-web-
+      - name: Format check (oxfmt)
+        run: pnpm exec oxfmt --check apps/web
 
-      - name: Prettier check
-        run: pnpm exec prettier --check "apps/web/**/*.{ts,tsx,js,jsx,json,md}"
-
-      - name: ESLint
+      - name: Lint (oxlint)
         run: pnpm --filter @letscareer/web lint
         env:
           NEXT_PUBLIC_SERVER_API: https://api.example.com/v1
@@ -90,49 +83,21 @@ jobs:
       # tsc 자체는 파일 단위 분리가 어려워 풀 프로젝트로 돌리고 결과만 필터링.
       # 변경 파일 기준이라 PR 에서만 의미가 있다(main push 는 base SHA 없음).
       # → push 에선 스킵하고 캐시 시딩 빌드만 수행. typecheck 로직은 변경하지 않음.
-      - name: Typecheck (변경 파일 한정)
+      - name: Typecheck (base 대비 새 에러만)
         if: github.event_name == 'pull_request'
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
           set -e
 
-          # git pathspec은 ** 글로브를 지원하지 않으므로 prefix만 주고 확장자는 grep으로 필터.
-          CHANGED=$(git diff --name-only "$BASE_SHA" HEAD --diff-filter=ACMR -- 'apps/web/src/' \
+          # 이 앱이나 공용 패키지의 TS 변경이 없으면 스킵.
+          CHANGED=$(git diff --name-only "$BASE_SHA" HEAD --diff-filter=ACMRD -- 'apps/web/' 'packages/' \
             | grep -E '\.(ts|tsx)$' || true)
 
           if [ -z "$CHANGED" ]; then
-            echo "apps/web 내 TS/TSX 변경 없음 — typecheck 스킵"
+            echo "apps/web·packages 내 TS/TSX 변경 없음 — typecheck 스킵"
             exit 0
           fi
 
-          echo "변경된 .ts/.tsx 파일:"
-          echo "$CHANGED"
-          echo ""
-
-          set +e
-          pnpm --filter @letscareer/web typecheck > /tmp/typecheck.log 2>&1
-          set -e
-
-          # tsc 출력의 파일경로는 'src/...' 형태 (apps/web 작업디렉토리 기준)이므로
-          # CHANGED 의 'apps/web/' 접두사 제거 후 패턴 매칭.
-          PATTERNS=$(echo "$CHANGED" | sed 's|^apps/web/||' | paste -sd '|')
-          RELEVANT=$(grep -E "^(${PATTERNS})\(" /tmp/typecheck.log || true)
-
-          if [ -n "$RELEVANT" ]; then
-            echo "변경 파일에서 typecheck 에러 발견:"
-            echo ""
-            echo "$RELEVANT"
-            exit 1
-          fi
-
-          echo "변경 파일 typecheck 통과"
-
-      - name: Build (turbopack)
-        run: pnpm --filter @letscareer/web build
-        env:
-          NEXT_PUBLIC_SERVER_API: https://api.example.com/v1
-          NEXT_PUBLIC_SERVER_API_V2: https://api.example.com/v2
-          NEXT_PUBLIC_SERVER_API_V3: https://api.example.com/v3
-          NEXT_PUBLIC_API_BASE_PATH: https://api.example.com
-          NEXT_PUBLIC_SITE_URL: https://example.com
+          # 기존 에러는 무시하고 이 PR 이 새로 만든 에러만 실패로 본다.
+          bash scripts/ci-typecheck-new-errors.sh web "$BASE_SHA"

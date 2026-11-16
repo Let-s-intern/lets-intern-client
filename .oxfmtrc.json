@@ -1,0 +1,39 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "singleQuote": true,
+  "semi": true,
+  "useTabs": false,
+  "tabWidth": 2,
+  "trailingComma": "all",
+  "printWidth": 80,
+  "ignorePatterns": ["**/public/mockServiceWorker.js"],
+  "overrides": [
+    {
+      "files": ["apps/web/**"],
+      "options": {
+        "sortTailwindcss": {
+          "config": "./apps/web/tailwind.config.js",
+          "functions": ["clsx", "twMerge"]
+        }
+      }
+    },
+    {
+      "files": ["apps/admin/**"],
+      "options": {
+        "sortTailwindcss": {
+          "config": "./apps/admin/tailwind.config.js",
+          "functions": ["clsx", "twMerge"]
+        }
+      }
+    },
+    {
+      "files": ["apps/mentor/**"],
+      "options": {
+        "sortTailwindcss": {
+          "config": "./apps/mentor/tailwind.config.js",
+          "functions": ["clsx", "twMerge"]
+        }
+      }
+    }
+  ]
+}

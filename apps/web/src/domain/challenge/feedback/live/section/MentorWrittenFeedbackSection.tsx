@@ -34,13 +34,13 @@ const MentorWrittenFeedbackSection = ({ challengeId, missionId }: Props) => {
   })();
 
   return (
-    <section className="border-neutral-80 flex flex-col gap-2 border-t px-4 py-5 md:px-0">
-      <h3 className="text-xsmall14 md:text-xsmall16 text-neutral-0 font-semibold">
+    <section className="flex flex-col gap-2 border-t border-neutral-80 px-4 py-5 md:px-0">
+      <h3 className="text-xsmall14 font-semibold text-neutral-0 md:text-xsmall16">
         멘토 피드백
       </h3>
       {root ? (
-        <div className="rounded-xxs border-neutral-80 border bg-white p-3">
-          <div className="text-xsmall14 md:text-xsmall16 text-neutral-0 leading-relaxed">
+        <div className="rounded-xxs border border-neutral-80 bg-white p-3">
+          <div className="text-xsmall14 leading-relaxed text-neutral-0 md:text-xsmall16">
             <LexicalContent node={root} />
           </div>
         </div>

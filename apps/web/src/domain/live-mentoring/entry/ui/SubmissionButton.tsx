@@ -54,7 +54,7 @@ const SubmissionButton = ({
       type="button"
       disabled={isLoading}
       onClick={onOpen}
-      className="text-small16 border-primary text-primary disabled:border-neutral-85 disabled:text-neutral-45 disabled:bg-neutral-95 flex min-h-[52px] w-full items-center justify-center rounded-md border bg-white px-4 py-3 font-semibold disabled:cursor-not-allowed"
+      className="text-small16 flex min-h-[52px] w-full items-center justify-center rounded-md border border-primary bg-white px-4 py-3 font-semibold text-primary disabled:cursor-not-allowed disabled:border-neutral-85 disabled:bg-neutral-95 disabled:text-neutral-45"
     >
       {isLoading ? '불러오는 중...' : label}
     </button>

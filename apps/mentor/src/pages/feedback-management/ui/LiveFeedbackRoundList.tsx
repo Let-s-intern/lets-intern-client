@@ -74,7 +74,7 @@ export const LiveRoundRow = ({
         <button
           type="button"
           onClick={() => onClick?.(round)}
-          className="bg-primary hover:bg-primary-hover min-h-[44px] w-full rounded-lg px-4 py-2 text-sm font-medium text-white transition-colors md:min-h-0 md:w-auto"
+          className="min-h-[44px] w-full rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-hover md:min-h-0 md:w-auto"
         >
           피드백 확인
         </button>

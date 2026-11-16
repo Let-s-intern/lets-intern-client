@@ -94,7 +94,7 @@ export default function ParticipationHistoryModal({
             </TableBody>
           </Table>
         ) : (
-          <p className="text-xsmall14 text-neutral-45 py-6 text-center">
+          <p className="py-6 text-center text-xsmall14 text-neutral-45">
             {isLoading ? '불러오는 중...' : '참여 기간 내역이 없습니다.'}
           </p>
         )}

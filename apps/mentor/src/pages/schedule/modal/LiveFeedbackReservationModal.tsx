@@ -881,7 +881,7 @@ const LiveFeedbackReservationModal = ({
                     <div className={feedbackModalDesign.dividerVertical} />
 
                     <div className="flex flex-1 flex-col gap-3">
-                      <div className="text-xsmall14 grid gap-2 text-neutral-600">
+                      <div className="grid gap-2 text-xsmall14 text-neutral-600">
                         <div className="flex gap-2">
                           <span className="w-16 shrink-0 text-neutral-400">
                             희망 직군
@@ -988,7 +988,7 @@ const LiveFeedbackReservationModal = ({
                       </span>
                     ) : (
                       countdown.label && (
-                        <span className="text-primary text-xs font-medium">
+                        <span className="text-xs font-medium text-primary">
                           {countdown.label}
                         </span>
                       )
@@ -1045,7 +1045,7 @@ const LiveFeedbackReservationModal = ({
                     href={googleCalendarUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-primary bg-primary-10 hover:bg-primary-15 rounded-[4px] px-4 py-2 text-sm font-semibold transition-colors"
+                    className="rounded-[4px] bg-primary-10 px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary-15"
                   >
                     구글 캘린더에 추가
                   </a>

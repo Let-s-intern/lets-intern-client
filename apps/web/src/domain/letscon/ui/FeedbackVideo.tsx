@@ -16,7 +16,7 @@ export function FeedbackVideo({ videoId }: { videoId: string }) {
           href={`https://youtu.be/${videoId}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-primary flex shrink-0 items-center gap-0.5 text-xs font-semibold"
+          className="flex shrink-0 items-center gap-0.5 text-xs font-semibold text-primary"
         >
           YouTube에서 보기
           <ArrowUpRight aria-hidden className="h-3.5 w-3.5" />

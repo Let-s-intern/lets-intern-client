@@ -23,10 +23,10 @@ const FaqSection = () => {
     <section className="w-full px-5 py-16 md:py-24">
       <div className="mx-auto flex w-full max-w-[720px] flex-col gap-10">
         <div className="flex flex-col items-center gap-2 text-center">
-          <p className="text-xsmall14 md:text-xsmall16 text-primary font-semibold">
+          <p className="text-xsmall14 font-semibold text-primary md:text-xsmall16">
             {SEMINAR_FAQ_HEAD.eyebrow}
           </p>
-          <h2 className="text-small20 md:text-large26 text-neutral-0 font-bold">
+          <h2 className="text-small20 font-bold text-neutral-0 md:text-large26">
             {SEMINAR_FAQ_HEAD.title}
           </h2>
         </div>
@@ -42,14 +42,14 @@ const FaqSection = () => {
           ))}
         </div>
 
-        <div className="bg-neutral-95 flex flex-col items-center gap-3 rounded-md px-6 py-5 md:flex-row md:justify-between">
-          <span className="text-xsmall14 md:text-small18 text-neutral-35 font-semibold">
+        <div className="flex flex-col items-center gap-3 rounded-md bg-neutral-95 px-6 py-5 md:flex-row md:justify-between">
+          <span className="text-xsmall14 font-semibold text-neutral-35 md:text-small18">
             아직 궁금증이 풀리지 않았다면?
           </span>
           <button
             type="button"
             onClick={() => channelService.showMessenger()}
-            className="border-neutral-70 text-xsmall14 md:text-xsmall16 text-neutral-0 rounded-sm border bg-neutral-100 px-5 py-3 font-medium"
+            className="rounded-sm border border-neutral-70 bg-neutral-100 px-5 py-3 text-xsmall14 font-medium text-neutral-0 md:text-xsmall16"
           >
             1:1 채팅 문의하기
           </button>

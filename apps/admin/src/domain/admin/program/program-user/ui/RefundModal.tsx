@@ -180,7 +180,7 @@ const RefundModal = ({
           직접 돌려준 뒤 기록하는 곳을 여기서 알려주지 않으면 환불이 끝난 줄 안다.
         */}
         {!!target.pendingManualRefundAmount && (
-          <div className="mb-3 rounded bg-neutral-100 p-3 text-sm">
+          <div className="rounded mb-3 bg-neutral-100 p-3 text-sm">
             토스로 취소되지 않는 추가 수납{' '}
             {target.pendingManualRefundAmount.toLocaleString()}원이 있습니다.
             환불 후 플랜 변경 이력에서 환불 완료를 기록하세요.
@@ -188,7 +188,7 @@ const RefundModal = ({
         )}
 
         {target.notice && (
-          <div className="mb-3 rounded bg-neutral-100 p-3 text-sm">
+          <div className="rounded mb-3 bg-neutral-100 p-3 text-sm">
             {target.notice}
           </div>
         )}
@@ -206,7 +206,7 @@ const RefundModal = ({
         )}
 
         {isFull ? (
-          <div className="mb-3 rounded bg-neutral-100 p-3 text-sm">
+          <div className="rounded mb-3 bg-neutral-100 p-3 text-sm">
             {/*
               전액 환불은 플랜 변경 차액까지 합쳐 돌려준다 (설계안 D11).
               실결제액만 적으면 운영이 돌려줄 총액을 덜 읽는다.
@@ -231,7 +231,7 @@ const RefundModal = ({
             </span>
             <div className="flex items-center gap-2">
               <input
-                className="w-40 rounded border border-neutral-300 px-3 py-2 text-right text-sm"
+                className="rounded w-40 border border-neutral-300 px-3 py-2 text-right text-sm"
                 inputMode="numeric"
                 aria-label="환불 금액"
                 value={amountInput === '' ? '' : refundAmount.toLocaleString()}
@@ -255,7 +255,7 @@ const RefundModal = ({
         <label className="mb-3 block">
           <span className="mb-1 block text-sm text-neutral-500">담당자</span>
           <input
-            className="w-full rounded border border-neutral-300 px-3 py-2 text-sm"
+            className="rounded w-full border border-neutral-300 px-3 py-2 text-sm"
             value={managerName}
             onChange={(e) => setManagerName(e.target.value)}
             placeholder="환불을 진행하는 담당자 이름"
@@ -265,7 +265,7 @@ const RefundModal = ({
         <label className="mb-3 block">
           <span className="mb-1 block text-sm text-neutral-500">환불 사유</span>
           <input
-            className="w-full rounded border border-neutral-300 px-3 py-2 text-sm"
+            className="rounded w-full border border-neutral-300 px-3 py-2 text-sm"
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             placeholder="예) 프로그램 오결제 — 경력자Ver 재결제 예정"
@@ -281,7 +281,7 @@ const RefundModal = ({
           환불 안내 알림톡 발송
         </label>
 
-        <div className="mb-5 rounded bg-neutral-100 p-3">
+        <div className="rounded mb-5 bg-neutral-100 p-3">
           <p className="mb-2 text-sm text-neutral-600">
             아래 문장을 그대로 입력해야 실행됩니다.
           </p>
@@ -297,7 +297,7 @@ const RefundModal = ({
             </p>
           )}
           <input
-            className="w-full rounded border border-neutral-300 px-3 py-2 text-sm"
+            className="rounded w-full border border-neutral-300 px-3 py-2 text-sm"
             aria-label="확인 문장"
             value={confirmText}
             onChange={(e) => setConfirmText(e.target.value)}

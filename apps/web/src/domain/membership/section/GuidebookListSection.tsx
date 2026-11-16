@@ -29,18 +29,18 @@ export default function GuidebookListSection() {
           </span>
         </div>
 
-        <h2 className="text-neutral-0 mt-4 text-center text-2xl font-bold leading-snug md:text-[2rem]">
+        <h2 className="mt-4 text-center text-2xl font-bold leading-snug text-neutral-0 md:text-[2rem]">
           취준 필수 가이드북 7종
         </h2>
 
-        <p className="text-xsmall14 md:text-xsmall16 text-neutral-40 mt-4 text-center">
+        <p className="mt-4 text-center text-xsmall14 text-neutral-40 md:text-xsmall16">
           패스 이용기간 동안 자유롭게 이용할 수 있어요.
         </p>
 
         <div className="mt-10 grid gap-6 md:mt-14 md:grid-cols-3">
           {GUIDEBOOK_ITEMS.map((item) => (
             <a
-              className="rounded-xxl flex flex-col bg-white p-4 shadow-[0_2px_16px_rgba(0,0,0,0.06)] transition-shadow hover:shadow-[0_4px_24px_rgba(0,0,0,0.1)]"
+              className="flex flex-col rounded-xxl bg-white p-4 shadow-[0_2px_16px_rgba(0,0,0,0.06)] transition-shadow hover:shadow-[0_4px_24px_rgba(0,0,0,0.1)]"
               href={guidebookUrl(item.id)}
               key={item.label}
               rel="noreferrer"
@@ -53,10 +53,10 @@ export default function GuidebookListSection() {
                 src={thumbnails[item.id] || `/images/membership/${item.src}`}
               />
               <div className="flex flex-1 flex-col justify-between pt-4">
-                <strong className="text-xsmall16 text-neutral-0 font-bold">
+                <strong className="text-xsmall16 font-bold text-neutral-0">
                   {item.label}
                 </strong>
-                <span className="text-primary text-xsmall14 mt-6 self-end font-medium">
+                <span className="mt-6 self-end text-xsmall14 font-medium text-primary">
                   가이드북 자세히 보기 →
                 </span>
               </div>

@@ -136,7 +136,7 @@ const MembershipPlanBottomSheet = ({
               }
               wrapperClassName={clsx(
                 'py-3 pl-2 pr-3',
-                i < plans.length - 1 && 'border-neutral-80 border-b',
+                i < plans.length - 1 && 'border-b border-neutral-80',
               )}
               right={<PriceView price={plan.price} discount={plan.discount} />}
             />
@@ -156,11 +156,11 @@ const MembershipPlanBottomSheet = ({
         </div>
       )}
 
-      <span className="text-xsmall14 mt-6 block font-semibold">
+      <span className="mt-6 block text-xsmall14 font-semibold">
         총 결제 금액
       </span>
       <hr className="my-3" />
-      <span className="text-small18 text-neutral-10 block text-right font-bold">
+      <span className="block text-right text-small18 font-bold text-neutral-10">
         {finalAmount.toLocaleString()}원
       </span>
 

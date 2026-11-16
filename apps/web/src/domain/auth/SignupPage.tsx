@@ -36,11 +36,11 @@ const SignUp = () => {
         <div className="w-full pt-9 md:mx-auto md:w-[448px] md:py-16">
           <section className="mx-5 mb-[80px] md:mx-0 md:mb-[60px]">
             <div className="mb-9">
-              <span className="text-xsmall16 text-neutral-30 leading-[1.625rem]">
+              <span className="text-xsmall16 leading-[1.625rem] text-neutral-30">
                 회원가입
               </span>
               {!isSocial && (
-                <h1 className="text-medium24 text-neutral-0 mt-6 font-semibold">
+                <h1 className="mt-6 text-medium24 font-semibold text-neutral-0">
                   기본 정보를 입력해 주세요.
                 </h1>
               )}
@@ -53,7 +53,7 @@ const SignUp = () => {
                     <label className="text-xsmall14 text-neutral-0">
                       렛츠커리어 정보 수신용 이메일
                     </label>
-                    <p className="text-xsmall14 text-neutral-40 mb-1">
+                    <p className="mb-1 text-xsmall14 text-neutral-40">
                       * 결제정보 및 프로그램 신청 관련 알림 수신을 위해, 자주
                       사용하는 이메일 주소를 입력해주세요!
                     </p>
@@ -167,7 +167,7 @@ const SignUp = () => {
               />
 
               {error ? (
-                <p className="text-xsmall14 text-system-error mt-4 text-center">
+                <p className="mt-4 text-center text-xsmall14 text-system-error">
                   {errorMessage}
                 </p>
               ) : null}

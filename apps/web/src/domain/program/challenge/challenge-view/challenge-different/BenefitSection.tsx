@@ -19,7 +19,7 @@ const BenefitSection = ({
 }: BenefitSectionProps) => {
   return (
     <div className="flex w-full flex-col gap-y-8 md:items-center md:gap-y-16">
-      <p className="text-small20 md:text-xlarge28 whitespace-pre-line font-bold md:text-center">
+      <p className="whitespace-pre-line text-small20 font-bold md:text-center md:text-xlarge28">
         여기서 끝이 아니죠
         <br />
         {challengeTitle}

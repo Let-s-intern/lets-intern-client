@@ -41,7 +41,7 @@ const ReportPaymentPage = () => {
 
         {/* 데스크탑 결제 버튼 */}
         <BaseButton
-          className="complete_button_click text-small18 hidden w-full md:block"
+          className="complete_button_click hidden w-full text-small18 md:block"
           onClick={() => {
             if (reportApplication.contactEmail === '') {
               alert('정보 수신용 이메일을 입력해주세요.');
@@ -66,7 +66,7 @@ const ReportPaymentPage = () => {
       {/* 모바일 바텀시트 */}
       <BottomSheet variant="footer" className="mx-auto md:hidden">
         <BaseButton
-          className="complete_button_click text-small18 w-full"
+          className="complete_button_click w-full text-small18"
           onClick={() => {
             if (reportApplication.contactEmail === '') {
               alert('정보 수신용 이메일을 입력해주세요.');
@@ -170,7 +170,7 @@ const UsereInfoSection = () => {
           />
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-xsmall14 ml-3 font-semibold">
+          <label className="ml-3 text-xsmall14 font-semibold">
             가입한 이메일
           </label>
           <Input
@@ -183,7 +183,7 @@ const UsereInfoSection = () => {
         </div>
         <div className="flex flex-col gap-1">
           <Label htmlFor="contactEmail">렛츠커리어 정보 수신용 이메일</Label>
-          <p className="text-neutral-0 text-[0.5625rem] font-light text-opacity-[52%]">
+          <p className="text-[0.5625rem] font-light text-neutral-0 text-opacity-[52%]">
             * 결제정보 및 프로그램 신청 관련 알림 수신을 위해,
             <br />
             &nbsp;&nbsp; 자주 사용하는 이메일 주소를 입력해주세요!
@@ -201,7 +201,7 @@ const UsereInfoSection = () => {
                 });
               }
             }}
-            className="text-xxsmall12 flex cursor-pointer items-center gap-1 font-medium"
+            className="flex cursor-pointer items-center gap-1 text-xxsmall12 font-medium"
           >
             <img
               className="h-auto w-5"
@@ -296,8 +296,8 @@ const ReportPaymentSection = () => {
             className={twMerge(
               reportApplication.couponId === null
                 ? 'bg-primary text-neutral-100'
-                : 'border-primary text-primary border-2 bg-neutral-100',
-              'text-xsmall14 shrink-0 rounded-sm px-4 py-1.5 font-medium',
+                : 'border-2 border-primary bg-neutral-100 text-primary',
+              'shrink-0 rounded-sm px-4 py-1.5 text-xsmall14 font-medium',
             )}
             onClick={async () => {
               if (reportApplication.couponCode === '') return;
@@ -327,7 +327,7 @@ const ReportPaymentSection = () => {
             reportApplication.couponId === null
               ? 'text-system-error'
               : 'text-system-positive-blue',
-            'text-xsmall14 h-3',
+            'h-3 text-xsmall14',
           )}
         >
           {message}
@@ -424,7 +424,7 @@ const PaymentRowMain = ({
   return (
     <div
       className={twMerge(
-        'text-neutral-0 flex h-10 items-center justify-between px-3',
+        'flex h-10 items-center justify-between px-3 text-neutral-0',
         className,
       )}
     >
@@ -443,7 +443,7 @@ const PaymentRowSub = ({
   return (
     <div
       className={twMerge(
-        'text-xsmall14 flex h-10 items-center justify-between gap-1 pl-6 pr-3 text-neutral-50',
+        'flex h-10 items-center justify-between gap-1 pl-6 pr-3 text-xsmall14 text-neutral-50',
         className,
       )}
     >

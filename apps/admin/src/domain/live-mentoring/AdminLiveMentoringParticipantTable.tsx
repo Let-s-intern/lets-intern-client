@@ -154,7 +154,7 @@ const AdminLiveMentoringParticipantTable = ({
         <div
           role="group"
           aria-label="멘토 필터"
-          className="border-neutral-80 bg-neutral-95 text-xsmall14 flex flex-wrap items-center gap-3 rounded-lg border px-4 py-3"
+          className="flex flex-wrap items-center gap-3 rounded-lg border border-neutral-80 bg-neutral-95 px-4 py-3 text-xsmall14"
         >
           <span className="text-neutral-10">
             {mentorLabel} 의 참여자만 보고 있습니다.
@@ -163,7 +163,7 @@ const AdminLiveMentoringParticipantTable = ({
             <button
               type="button"
               onClick={onClearMentor}
-              className="border-neutral-80 text-neutral-40 rounded-md border bg-white px-3 py-1"
+              className="rounded-md border border-neutral-80 bg-white px-3 py-1 text-neutral-40"
             >
               전체 보기
             </button>
@@ -171,9 +171,9 @@ const AdminLiveMentoringParticipantTable = ({
         </div>
       )}
 
-      <div className="border-neutral-80 overflow-x-auto rounded-lg border">
+      <div className="overflow-x-auto rounded-lg border border-neutral-80">
         <table className="w-full min-w-[1080px] border-collapse">
-          <thead className="border-neutral-80 bg-neutral-95 border-b">
+          <thead className="border-b border-neutral-80 bg-neutral-95">
             <tr>
               <th className={headerCellClass}>신청자</th>
               <th className={headerCellClass}>멘토</th>
@@ -192,7 +192,7 @@ const AdminLiveMentoringParticipantTable = ({
               <tr>
                 <td
                   colSpan={COLUMN_COUNT}
-                  className="text-xsmall14 text-neutral-40 py-16 text-center"
+                  className="py-16 text-center text-xsmall14 text-neutral-40"
                 >
                   참여자 목록을 불러오지 못했습니다.
                 </td>
@@ -201,7 +201,7 @@ const AdminLiveMentoringParticipantTable = ({
               <tr>
                 <td
                   colSpan={COLUMN_COUNT}
-                  className="text-xsmall14 text-neutral-40 py-16 text-center"
+                  className="py-16 text-center text-xsmall14 text-neutral-40"
                 >
                   불러오는 중...
                 </td>
@@ -210,7 +210,7 @@ const AdminLiveMentoringParticipantTable = ({
               <tr>
                 <td
                   colSpan={COLUMN_COUNT}
-                  className="text-xsmall14 text-neutral-40 py-16 text-center"
+                  className="py-16 text-center text-xsmall14 text-neutral-40"
                 >
                   {emptyMessage}
                 </td>
@@ -219,17 +219,17 @@ const AdminLiveMentoringParticipantTable = ({
               rows.map((row) => (
                 <tr
                   key={row.applicationId}
-                  className="border-neutral-90 border-b last:border-b-0"
+                  className="border-b border-neutral-90 last:border-b-0"
                 >
                   <td className={bodyCellClass}>
                     <div className="flex flex-col gap-0.5">
                       <span className="whitespace-nowrap">
                         {row.menteeName ?? `멘티 #${row.menteeId}`}
                       </span>
-                      <span className="text-neutral-40 text-xs">
+                      <span className="text-xs text-neutral-40">
                         {row.menteeEmail ?? '이메일 없음'}
                       </span>
-                      <span className="text-neutral-40 text-xs">
+                      <span className="text-xs text-neutral-40">
                         {row.menteePhoneNum ?? '연락처 없음'}
                       </span>
                     </div>
@@ -255,7 +255,7 @@ const AdminLiveMentoringParticipantTable = ({
                           : '금액 없음'}
                       </span>
                       {row.originalPrice != null && (
-                        <span className="text-neutral-40 text-xs">
+                        <span className="text-xs text-neutral-40">
                           정가 {formatPrice(row.originalPrice)}
                         </span>
                       )}

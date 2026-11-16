@@ -32,8 +32,8 @@ const ReservationBar = ({
     <>
       {/* 모바일 레이아웃 */}
       <div className="mt-3 flex flex-col gap-6 md:hidden">
-        <div className="bg-primary-5 flex flex-col gap-0.5 rounded-sm px-5 py-4">
-          <span className="text-xsmall16 text-primary-90 font-bold">
+        <div className="flex flex-col gap-0.5 rounded-sm bg-primary-5 px-5 py-4">
+          <span className="text-xsmall16 font-bold text-primary-90">
             선택된 피드백 시간
           </span>
           <span className="text-xsmall14 text-primary-90">{timeText}</span>
@@ -64,7 +64,7 @@ const ReservationBar = ({
                 `/challenge/${applicationId}/${programId}/feedback/live`,
               )
             }
-            className="border-primary text-xsmall16 text-primary flex-1 rounded-sm border bg-neutral-100 py-4 font-semibold"
+            className="flex-1 rounded-sm border border-primary bg-neutral-100 py-4 text-xsmall16 font-semibold text-primary"
           >
             취소하기
           </button>
@@ -72,7 +72,7 @@ const ReservationBar = ({
             type="button"
             onClick={onConfirm}
             disabled={!selectedSlot || !isChecked}
-            className="bg-primary border-primary text-xsmall16 flex-1 rounded-sm border py-4 font-semibold text-neutral-100 disabled:opacity-50"
+            className="flex-1 rounded-sm border border-primary bg-primary py-4 text-xsmall16 font-semibold text-neutral-100 disabled:opacity-50"
           >
             예약 확정하기
           </button>
@@ -99,10 +99,10 @@ const ReservationBar = ({
             예약 확정 후에는 예약 시간을 변경할 수 없습니다.
           </span>
         </div>
-        <div className="bg-primary-5 flex items-center justify-between rounded-sm px-5 py-4">
+        <div className="flex items-center justify-between rounded-sm bg-primary-5 px-5 py-4">
           <div className="flex gap-12">
             <div className="flex flex-col gap-1">
-              <span className="text-xsmall16 text-primary-90 font-bold">
+              <span className="text-xsmall16 font-bold text-primary-90">
                 멘토
               </span>
               <span className="text-xsmall14 text-primary-90">
@@ -110,7 +110,7 @@ const ReservationBar = ({
               </span>
             </div>
             <div className="flex flex-col gap-1">
-              <span className="text-xsmall16 text-primary-90 font-bold">
+              <span className="text-xsmall16 font-bold text-primary-90">
                 선택된 피드백 시간
               </span>
               <span className="text-xsmall14 text-primary-90">{timeText}</span>
@@ -120,7 +120,7 @@ const ReservationBar = ({
             <button
               type="button"
               onClick={onCancel}
-              className="border-primary text-xsmall14 text-primary rounded-sm border bg-neutral-100 px-[30px] py-3 font-semibold"
+              className="rounded-sm border border-primary bg-neutral-100 px-[30px] py-3 text-xsmall14 font-semibold text-primary"
             >
               취소
             </button>
@@ -128,7 +128,7 @@ const ReservationBar = ({
               type="button"
               onClick={onConfirm}
               disabled={!selectedSlot || !isChecked}
-              className="bg-primary border-primary text-xsmall14 rounded-sm border px-[30px] py-3 font-semibold text-neutral-100 disabled:opacity-50"
+              className="rounded-sm border border-primary bg-primary px-[30px] py-3 text-xsmall14 font-semibold text-neutral-100 disabled:opacity-50"
             >
               예약 확정
             </button>

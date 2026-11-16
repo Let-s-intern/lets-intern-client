@@ -7,7 +7,7 @@ const PanelCloseButton = ({ onClose }: { onClose: () => void }) => (
     type="button"
     aria-label="닫기"
     onClick={onClose}
-    className="text-neutral-40 hover:text-neutral-0 shrink-0"
+    className="shrink-0 text-neutral-40 hover:text-neutral-0"
   >
     <X className="h-5 w-5" />
   </button>

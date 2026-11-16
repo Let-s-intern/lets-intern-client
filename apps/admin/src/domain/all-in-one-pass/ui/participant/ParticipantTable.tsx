@@ -152,7 +152,7 @@ function ParticipantGroupRows({
         <TD>
           <button
             type="button"
-            className="border-primary text-primary hover:bg-primary-5 w-24 whitespace-nowrap rounded border py-1 text-xs"
+            className="rounded w-24 whitespace-nowrap border border-primary py-1 text-xs text-primary hover:bg-primary-5"
             onClick={(e) => {
               e.stopPropagation();
               onUsedProgramsClick(head);

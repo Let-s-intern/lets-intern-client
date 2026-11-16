@@ -103,15 +103,15 @@ export default function BenefitDetailSection({
                 type="button"
                 onClick={() => selectTab(tab.key)}
                 className={clsx(
-                  'text-xsmall14 md:text-small18 rounded-xs border px-3 py-3 text-left transition md:px-5 md:text-center',
+                  'rounded-xs border px-3 py-3 text-left text-xsmall14 transition md:px-5 md:text-center md:text-small18',
                   isActive
                     ? 'border-neutral-0 bg-neutral-0 text-white'
-                    : 'text-neutral-35 border-neutral-70 hover:border-neutral-60 bg-white',
+                    : 'border-neutral-70 bg-white text-neutral-35 hover:border-neutral-60',
                 )}
               >
                 {tab.label}
                 {!tab.hideBadgeCount && (
-                  <span className="text-neutral-70 font-semibold">
+                  <span className="font-semibold text-neutral-70">
                     {' '}
                     {countFor(tab.key)}
                   </span>
@@ -123,10 +123,10 @@ export default function BenefitDetailSection({
 
         {/* 활성 탭 콘텐츠 */}
         <div className="md:mt-15 mt-8">
-          <h3 className="text-small20 md:text-xlarge28 text-neutral-0 block font-bold">
+          <h3 className="block text-small20 font-bold text-neutral-0 md:text-xlarge28">
             {title}
           </h3>
-          <p className="text-xsmall14 md:text-small20 text-neutral-40 mt-4 whitespace-pre-line font-light">
+          <p className="mt-4 whitespace-pre-line text-xsmall14 font-light text-neutral-40 md:text-small20">
             {activeTab.description}
           </p>
 
@@ -144,7 +144,7 @@ export default function BenefitDetailSection({
               {activeTab.ctaHref && activeTab.ctaLabel && (
                 <a
                   href={activeTab.ctaHref}
-                  className="text-primary-dark text-xsmall14 md:text-small18 mt-8 self-end md:mt-2.5"
+                  className="mt-8 self-end text-xsmall14 text-primary-dark md:mt-2.5 md:text-small18"
                 >
                   {activeTab.ctaLabel} →
                 </a>
@@ -161,7 +161,7 @@ export default function BenefitDetailSection({
                   ))}
                 </div>
                 {vodOptionOnSale && (
-                  <p className="text-xsmall14 md:text-small18 text-neutral-40 mt-8 font-light">
+                  <p className="mt-8 text-xsmall14 font-light text-neutral-40 md:text-small18">
                     *VOD 옵션을 추가하면 이용권 기간 동안 시청할 수 있어요
                   </p>
                 )}
@@ -191,7 +191,7 @@ export default function BenefitDetailSection({
                 <button
                   type="button"
                   onClick={() => setExpanded(true)}
-                  className="text-xsmall14 mt-4 w-full rounded-sm border border-[#4A76FF] py-3 font-medium text-[#4A76FF] md:hidden"
+                  className="mt-4 w-full rounded-sm border border-[#4A76FF] py-3 text-xsmall14 font-medium text-[#4A76FF] md:hidden"
                 >
                   더보기
                 </button>

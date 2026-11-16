@@ -52,14 +52,14 @@ export default function StickyApplyBox({ magnetId, onApplyClick }: Props) {
       <div ref={boxRef}>
         {/* 데스크탑: 해당 위치 도달 시 snap */}
         <div
-          className={`bg-primary-10/80 hidden items-center justify-between rounded-md px-5 py-4 backdrop-blur-sm md:flex ${
+          className={`hidden items-center justify-between rounded-md bg-primary-10/80 px-5 py-4 backdrop-blur-sm md:flex ${
             isFixed
               ? 'fixed bottom-4 left-0 right-0 z-50 mx-auto max-w-[1100px] px-5'
               : ''
           }`}
         >
           <div className="flex items-center gap-3">
-            <div className="border-primary-15 flex h-10 w-10 shrink-0 items-center justify-center rounded-sm border bg-white">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-sm border border-primary-15 bg-white">
               <img
                 src="/icons/magnet-folder.svg"
                 className="size-6"
@@ -67,17 +67,17 @@ export default function StickyApplyBox({ magnetId, onApplyClick }: Props) {
               />
             </div>
             <div>
-              <p className="text-primary text-xsmall16 font-bold">
+              <p className="text-xsmall16 font-bold text-primary">
                 여기부터가 놓치면 안 될 핵심 내용이에요!
               </p>
-              <p className="text-xsmall14 text-neutral-35 font-medium">
+              <p className="text-xsmall14 font-medium text-neutral-35">
                 다음 내용이 궁금하다면?
               </p>
             </div>
           </div>
           <GradientButton
             onClick={() => onApplyClick(`/library/${magnetId}/apply`)}
-            className="text-xsmall16 min-w-80 max-w-[60rem] shrink-0 px-6 py-3 font-semibold text-white"
+            className="min-w-80 max-w-[60rem] shrink-0 px-6 py-3 text-xsmall16 font-semibold text-white"
           >
             자료집 신청하기
           </GradientButton>
@@ -85,7 +85,7 @@ export default function StickyApplyBox({ magnetId, onApplyClick }: Props) {
 
         {/* 모바일: 항상 하단 고정 */}
         <div className="safe-area-bottom fixed bottom-0 left-0 right-0 z-50 flex flex-col overflow-hidden lg:hidden">
-          <div className="bg-primary-dark text-xxsmall12 py-1.5 text-center font-semibold text-white">
+          <div className="bg-primary-dark py-1.5 text-center text-xxsmall12 font-semibold text-white">
             여기서부터가 핵심내용이에요!
           </div>
           <div className="bg-primary-10/60 px-5 pb-5 pt-3 backdrop-blur-sm">

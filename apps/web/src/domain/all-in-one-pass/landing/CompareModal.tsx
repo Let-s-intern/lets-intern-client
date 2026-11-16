@@ -105,18 +105,18 @@ export default function CompareModal({
     >
       <div className="flex max-h-[90vh] w-full max-w-[1024px] flex-col overflow-hidden rounded-[20px] bg-white p-5 md:rounded-[28px] md:p-[30px]">
         {/* 헤더 — 상단 full-width */}
-        <div className="border-neutral-80 relative shrink-0 gap-2 border-b pb-3 md:gap-4 md:pb-5">
-          <h3 className="text-xsmall16 md:text-medium24 text-neutral-0 font-bold">
+        <div className="relative shrink-0 gap-2 border-b border-neutral-80 pb-3 md:gap-4 md:pb-5">
+          <h3 className="text-xsmall16 font-bold text-neutral-0 md:text-medium24">
             어떤 프로그램 이용을 고민하고 계신가요?
           </h3>
-          <p className="text-xxsmall12 md:text-small18 text-neutral-40 mt-1 md:mt-2">
+          <p className="mt-1 text-xxsmall12 text-neutral-40 md:mt-2 md:text-small18">
             필요한 프로그램들을 골라 개별 구매와 패스 가격을 비교해 보세요.
           </p>
           <button
             type="button"
             onClick={onClose}
             aria-label="닫기"
-            className="text-neutral-40 hover:text-neutral-20 absolute right-1 top-1 md:right-7 md:top-6"
+            className="absolute right-1 top-1 text-neutral-40 hover:text-neutral-20 md:right-7 md:top-6"
           >
             <X className="h-4 w-4 md:h-6 md:w-6" />
           </button>
@@ -136,10 +136,10 @@ export default function CompareModal({
                     type="button"
                     onClick={() => setActive(t)}
                     className={clsx(
-                      'text-xxsmall12 md:text-small18 md:rounded-xs rounded-sm border px-3 py-1.5 font-medium transition md:px-5 md:py-2.5',
+                      'rounded-sm border px-3 py-1.5 text-xxsmall12 font-medium transition md:rounded-xs md:px-5 md:py-2.5 md:text-small18',
                       isActive
                         ? 'border-neutral-0 bg-neutral-0 text-white'
-                        : 'text-neutral-35 border-neutral-80 hover:border-neutral-60 bg-white',
+                        : 'border-neutral-80 bg-white text-neutral-35 hover:border-neutral-60',
                     )}
                   >
                     {TAB_LABEL[t]}{' '}
@@ -166,7 +166,7 @@ export default function CompareModal({
                       'flex h-full flex-col gap-2.5 rounded-md border p-2.5 text-left transition md:gap-3 md:rounded-lg md:p-4',
                       checked
                         ? 'border-[#4A76FF] bg-[#F4F7FF]'
-                        : 'border-neutral-80 hover:border-neutral-70 bg-white',
+                        : 'border-neutral-80 bg-white hover:border-neutral-70',
                     )}
                   >
                     <div className="relative">
@@ -175,10 +175,10 @@ export default function CompareModal({
                           src={p.thumbnail}
                           alt=""
                           loading="lazy"
-                          className="rounded-ms w-full"
+                          className="w-full rounded-ms"
                         />
                       ) : (
-                        <div className="rounded-ms bg-neutral-95 aspect-[4/3] w-full" />
+                        <div className="aspect-[4/3] w-full rounded-ms bg-neutral-95" />
                       )}
                       <span
                         className={clsx(
@@ -192,12 +192,12 @@ export default function CompareModal({
                       </span>
                     </div>
                     <div className="flex flex-1 flex-col justify-between gap-2.5 md:gap-3">
-                      <p className="text-xsmall14 md:text-xsmall16 text-neutral-0 line-clamp-2 font-semibold">
+                      <p className="line-clamp-2 text-xsmall14 font-semibold text-neutral-0 md:text-xsmall16">
                         {p.title}
                       </p>
-                      <p className="text-xsmall14 text-neutral-40 text-right font-medium">
+                      <p className="text-right text-xsmall14 font-medium text-neutral-40">
                         현재 할인가{' '}
-                        <b className="text-neutral-0 font-semibold">
+                        <b className="font-semibold text-neutral-0">
                           {won(p.price)}
                         </b>
                       </p>
@@ -211,14 +211,14 @@ export default function CompareModal({
           {/* 우: 합계·비교 */}
           <aside className="-mb-5 -ml-5 flex w-[calc(100%+2.5rem)] shrink-0 flex-col gap-4 bg-[#F8F9FD] px-5 pb-5 pt-4 md:mb-0 md:ml-0 md:w-[308px] md:gap-5 md:overflow-y-auto md:rounded-none md:px-5 md:py-6">
             <div className="flex flex-col gap-3 md:gap-4">
-              <p className="text-xsmall16 md:text-small18 text-neutral-0 font-bold">
+              <p className="text-xsmall16 font-bold text-neutral-0 md:text-small18">
                 선택한 프로그램 {selected.length}개
               </p>
 
               {/* 선택 목록 — 높이 고정(모바일 3칸 / 데스크탑 5칸), 비어 있어도 유지, 초과 시 스크롤 */}
-              <ul className="custom-scrollbar divide-neutral-90 flex h-[84px] flex-col divide-y overflow-y-auto pr-0.5 md:h-[204px]">
+              <ul className="custom-scrollbar flex h-[84px] flex-col divide-y divide-neutral-90 overflow-y-auto pr-0.5 md:h-[204px]">
                 {selected.length === 0 ? (
-                  <li className="text-xsmall14 text-neutral-40 py-1.5 md:py-3">
+                  <li className="py-1.5 text-xsmall14 text-neutral-40 md:py-3">
                     프로그램을 선택해 주세요.
                   </li>
                 ) : (
@@ -227,14 +227,14 @@ export default function CompareModal({
                       key={p.key}
                       className="flex items-center justify-between py-1.5 md:py-2"
                     >
-                      <span className="text-xsmall14 md:text-xsmall16 line-clamp-1 text-[#909CB0]">
+                      <span className="line-clamp-1 text-xsmall14 text-[#909CB0] md:text-xsmall16">
                         {p.title}
                       </span>
                       <button
                         type="button"
                         onClick={() => toggle(p.key)}
                         aria-label="제거"
-                        className="hover:text-neutral-40 shrink-0 text-[#909CB0]"
+                        className="shrink-0 text-[#909CB0] hover:text-neutral-40"
                       >
                         <X size={16} />
                       </button>
@@ -245,19 +245,19 @@ export default function CompareModal({
             </div>
             {/* 합계·결과 — 모바일은 높이 부족으로 숨김(비교는 버튼으로 가격 섹션에 반영) */}
             <div className="hidden flex-col gap-4 md:flex md:gap-5">
-              <div className="border-neutral-80 flex items-center justify-between border-t pt-5">
-                <span className="text-xsmall14 md:text-xsmall16 text-[#909CB0]">
+              <div className="flex items-center justify-between border-t border-neutral-80 pt-5">
+                <span className="text-xsmall14 text-[#909CB0] md:text-xsmall16">
                   개별 구매 합계
                 </span>
-                <span className="text-small18 text-neutral-0 font-bold">
+                <span className="text-small18 font-bold text-neutral-0">
                   {won(individualTotal)}
                 </span>
               </div>
               <div className="flex items-center justify-between border-t border-[#E5EAF7] pt-5">
-                <span className="text-xsmall14 md:text-xsmall16 text-[#909CB0]">
+                <span className="text-xsmall14 text-[#909CB0] md:text-xsmall16">
                   패스 구매 가격
                 </span>
-                <strong className="text-small18 text-primary font-bold">
+                <strong className="text-small18 font-bold text-primary">
                   {won(passPrice)}
                 </strong>
               </div>
@@ -265,7 +265,7 @@ export default function CompareModal({
               {/* 결과 안내 — 선택할 때마다 실시간 갱신 */}
               {selected.length > 0 && (
                 <div>
-                  <div className="rounded-ms mt-5 flex flex-col gap-2 bg-white px-5 pb-4 pt-6">
+                  <div className="mt-5 flex flex-col gap-2 rounded-ms bg-white px-5 pb-4 pt-6">
                     <p className="text-small18 font-semibold text-[#5965EF]">
                       {diff > 0
                         ? `패스 구매가 ${won(diff)} 더 저렴해요`
@@ -288,11 +288,11 @@ export default function CompareModal({
               disabled={selected.length === 0}
               onClick={() => onCompare(individualTotal)}
               size="lg"
-              className="rounded-ms text-small16 mt-auto bg-[#FF7541] font-semibold text-white transition hover:bg-[#F36D32] disabled:bg-[#FF7541] disabled:opacity-40 md:py-3.5"
+              className="text-small16 mt-auto rounded-ms bg-[#FF7541] font-semibold text-white transition hover:bg-[#F36D32] disabled:bg-[#FF7541] disabled:opacity-40 md:py-3.5"
             >
               선택한 구성으로 비교하기
             </SolidButton>
-            <p className="text-xxsmall12 text-neutral-45 font-light">
+            <p className="text-xxsmall12 font-light text-neutral-45">
               *선택은 가격 비교에만 사용됩니다. 이 화면에서 개별 프로그램 구매나
               신청이 진행되지는 않아요.
             </p>

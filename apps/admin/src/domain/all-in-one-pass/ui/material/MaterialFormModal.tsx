@@ -159,8 +159,8 @@ export default function MaterialFormModal({
           minRows={2}
         />
 
-        <fieldset className="border-neutral-60 rounded-[4px] border px-3 pb-3 pt-2">
-          <legend className="text-xxsmall12 text-neutral-40 px-1">
+        <fieldset className="rounded-[4px] border border-neutral-60 px-3 pb-3 pt-2">
+          <legend className="px-1 text-xxsmall12 text-neutral-40">
             불릿 설명 (선택)
           </legend>
           <div className="flex flex-col gap-2">

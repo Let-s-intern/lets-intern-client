@@ -14,7 +14,7 @@ function PaymentErrorNotification(props: IPaymentErrorNotificationProps) {
       )}
     >
       <img src="/icons/warning.svg" alt="warning" className="h-6 w-6" />
-      <div className="text-xsmall14 text-neutral-0 flex w-full flex-col">
+      <div className="flex w-full flex-col text-xsmall14 text-neutral-0">
         <p className="font-bold">
           [결제오류 방지] 외부 브라우저로 접속해주세요
         </p>

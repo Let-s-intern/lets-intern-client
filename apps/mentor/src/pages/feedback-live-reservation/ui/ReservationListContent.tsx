@@ -79,7 +79,7 @@ const ReservationListContent = () => {
 
   if (isLoading) {
     return (
-      <div className="border-neutral-85 text-small18 text-neutral-30 flex items-center justify-center rounded-lg border bg-white py-16 font-medium">
+      <div className="flex items-center justify-center rounded-lg border border-neutral-85 bg-white py-16 text-small18 font-medium text-neutral-30">
         불러오는 중...
       </div>
     );
@@ -87,8 +87,8 @@ const ReservationListContent = () => {
 
   if (isError) {
     return (
-      <div className="border-neutral-85 flex flex-col items-center justify-center gap-2 rounded-lg border bg-white py-16">
-        <p className="text-small18 text-neutral-30 font-medium">
+      <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-neutral-85 bg-white py-16">
+        <p className="text-small18 font-medium text-neutral-30">
           예약 내역을 불러오지 못했습니다.
         </p>
         <p className="text-xsmall14 text-neutral-40">
@@ -173,7 +173,7 @@ const ReservationListContent = () => {
                         <td className="px-3 py-3 text-center align-middle">
                           <button
                             type="button"
-                            className="text-primary text-sm font-medium underline-offset-2 hover:underline"
+                            className="text-sm font-medium text-primary underline-offset-2 hover:underline"
                             onClick={() => setDetailFeedbackId(row.feedbackId)}
                           >
                             보기
@@ -192,7 +192,7 @@ const ReservationListContent = () => {
                               className="inline-flex items-center gap-1 text-neutral-500 hover:text-neutral-800"
                             >
                               예약 변경 내역
-                              <span className="text-primary font-semibold">
+                              <span className="font-semibold text-primary">
                                 {changeCount}건
                               </span>
                               <span className="text-xs">

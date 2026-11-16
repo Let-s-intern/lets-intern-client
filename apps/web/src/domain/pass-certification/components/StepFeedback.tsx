@@ -104,10 +104,10 @@ export default function StepFeedback() {
             <div>
               <CheckboxRow checked={field.value} onChange={field.onChange}>
                 리워드 지급과 인증 확인을 위한 개인정보 수집·이용에 동의합니다.
-                <span className="text-primary-90 ml-1">*</span>
+                <span className="ml-1 text-primary-90">*</span>
               </CheckboxRow>
               {errors.privacyAgree && (
-                <p className="text-xxsmall12 text-requirement mt-1 pl-6">
+                <p className="mt-1 pl-6 text-xxsmall12 text-requirement">
                   {errors.privacyAgree.message}
                 </p>
               )}

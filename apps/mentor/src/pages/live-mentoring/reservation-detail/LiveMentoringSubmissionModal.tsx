@@ -257,27 +257,28 @@ const AttachmentSection = ({
             <button
               type="button"
               onClick={() => setIsEmbedOpen((open) => !open)}
-              className="inline-flex items-center rounded px-2 py-1.5 text-sm font-medium text-neutral-500 hover:bg-neutral-50"
+              className="rounded inline-flex items-center px-2 py-1.5 text-sm font-medium text-neutral-500 hover:bg-neutral-50"
             >
               {isEmbedOpen ? '미리보기 접기' : '미리보기 펼치기'}
             </button>
           )}
         </div>
-        {showEmbed && isEmbedOpen && (
-          // 좁은 폭에서는 낮게 잡는다. 폭은 항상 컨테이너에 맞추고 넘치지 않는다.
-          <div
-            className="mt-3 h-[280px] w-full md:h-[420px]"
-            data-testid="attachment-embed"
-          >
-            <MenteeLinkPanel
-              link={attachmentUrl}
-              menteeName={menteeName}
-              onClose={() => setIsEmbedOpen(false)}
-              hideHeader
-              fit="native"
-            />
-          </div>
-        )}
+        {showEmbed &&
+          isEmbedOpen && (
+            // 좁은 폭에서는 낮게 잡는다. 폭은 항상 컨테이너에 맞추고 넘치지 않는다.
+            <div
+              className="mt-3 h-[280px] w-full md:h-[420px]"
+              data-testid="attachment-embed"
+            >
+              <MenteeLinkPanel
+                link={attachmentUrl}
+                menteeName={menteeName}
+                onClose={() => setIsEmbedOpen(false)}
+                hideHeader
+                fit="native"
+              />
+            </div>
+          )}
       </>
     );
   };

@@ -63,7 +63,7 @@ const ChallengePeriodBar = ({
                 </clipPath>
               </defs>
             </svg>
-            <span className="text-xsmall14 whitespace-nowrap font-semibold tracking-[-0.3px]">
+            <span className="whitespace-nowrap text-xsmall14 font-semibold tracking-[-0.3px]">
               [ {bar.th}회차 서면 ]
             </span>
           </>

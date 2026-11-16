@@ -175,14 +175,14 @@ export default function WeeklyGrid({ weekStart, blocks }: WeeklyGridProps) {
   const weekTotal = sessionCounts.reduce((a, b) => a + b, 0);
 
   return (
-    <div className="border-neutral-90 overflow-x-auto rounded-lg border">
+    <div className="overflow-x-auto rounded-lg border border-neutral-90">
       <div className="min-w-[920px]">
         {/* 현재 날짜·시각 + 이번 주 총 진행 건수 */}
-        <div className="border-neutral-90 flex items-center justify-between gap-2 border-b bg-white px-3 py-2">
+        <div className="flex items-center justify-between gap-2 border-b border-neutral-90 bg-white px-3 py-2">
           <div className="flex items-center gap-2">
             <span className="h-2 w-2 rounded-full bg-red-500" />
             <span className="text-xxsmall12 text-neutral-40">현재</span>
-            <span className="text-xsmall14 text-neutral-0 font-semibold">
+            <span className="text-xsmall14 font-semibold text-neutral-0">
               {formatNowLabel(now)}
             </span>
           </div>
@@ -194,7 +194,7 @@ export default function WeeklyGrid({ weekStart, blocks }: WeeklyGridProps) {
 
         {/* 요일 헤더 */}
         <div
-          className="border-neutral-85 bg-neutral-95 grid border-b"
+          className="grid border-b border-neutral-85 bg-neutral-95"
           style={{ gridTemplateColumns: `${TIME_COL_WIDTH}px repeat(7, 1fr)` }}
         >
           <div />
@@ -202,7 +202,7 @@ export default function WeeklyGrid({ weekStart, blocks }: WeeklyGridProps) {
             <div
               key={day}
               className={twMerge(
-                'text-xsmall14 py-2 text-center font-semibold',
+                'py-2 text-center text-xsmall14 font-semibold',
                 dayIndex === 5
                   ? 'text-blue-600'
                   : dayIndex === 6
@@ -212,7 +212,7 @@ export default function WeeklyGrid({ weekStart, blocks }: WeeklyGridProps) {
             >
               <div>{formatDayHeader(day)}</div>
               {sessionCounts[dayIndex] > 0 && (
-                <div className="text-xxsmall12 mt-0.5 font-medium text-indigo-600">
+                <div className="mt-0.5 text-xxsmall12 font-medium text-indigo-600">
                   진행 {sessionCounts[dayIndex]}
                 </div>
               )}
@@ -231,7 +231,7 @@ export default function WeeklyGrid({ weekStart, blocks }: WeeklyGridProps) {
               i % 2 === 0 ? (
                 <div
                   key={label}
-                  className="text-xxsmall12 text-neutral-40 absolute right-2 -translate-y-1/2 font-medium"
+                  className="absolute right-2 -translate-y-1/2 text-xxsmall12 font-medium text-neutral-40"
                   style={{ top: i * slotHeight }}
                 >
                   {label}
@@ -248,7 +248,7 @@ export default function WeeklyGrid({ weekStart, blocks }: WeeklyGridProps) {
               <div
                 key={day}
                 className={twMerge(
-                  'border-neutral-90 relative border-l',
+                  'relative border-l border-neutral-90',
                   isWeekend && 'bg-neutral-95',
                 )}
                 style={{ height: gridHeight }}

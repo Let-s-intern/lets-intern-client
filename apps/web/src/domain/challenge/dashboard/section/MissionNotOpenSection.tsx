@@ -65,10 +65,10 @@ const MissionNotOpenSection = ({ nextSchedule }: Props) => {
   const description = missionDetail?.missionInfo?.description;
 
   return (
-    <section className="rounded-xs border-neutral-80 flex h-[338px] min-h-[180px] flex-col border md:h-[360px] md:w-[488px]">
+    <section className="flex h-[338px] min-h-[180px] flex-col rounded-xs border border-neutral-80 md:h-[360px] md:w-[488px]">
       <div className="flex flex-col border-b px-4 py-3 md:flex-row md:items-center md:gap-2 md:py-4">
         <h2 className="flex flex-row font-semibold text-[#4A495C]">
-          <span className="text-neutral-10 after:border-neutral-60 relative inline-block font-semibold after:mx-[6px] after:h-[18px] after:border-r after:content-['']">
+          <span className="relative inline-block font-semibold text-neutral-10 after:mx-[6px] after:h-[18px] after:border-r after:border-neutral-60 after:content-['']">
             {missionTitleOf(mission.th)}
           </span>
           <span>{mission.title}</span>
@@ -79,12 +79,12 @@ const MissionNotOpenSection = ({ nextSchedule }: Props) => {
       </div>
 
       <div className="flex-1 overflow-hidden p-4">
-        <p className="text-xsmall14 text-neutral-0 md:text-xsmall16 mb-4 line-clamp-[8] whitespace-pre-line md:mb-0 md:h-48">
+        <p className="mb-4 line-clamp-[8] whitespace-pre-line text-xsmall14 text-neutral-0 md:mb-0 md:h-48 md:text-xsmall16">
           {description ?? '미션이 열리면 내용을 확인할 수 있어요.'}
         </p>
       </div>
 
-      <span className="rounded-xs bg-neutral-70 m-4 cursor-not-allowed py-3 text-center text-white">
+      <span className="m-4 cursor-not-allowed rounded-xs bg-neutral-70 py-3 text-center text-white">
         미션 수행하기
       </span>
     </section>

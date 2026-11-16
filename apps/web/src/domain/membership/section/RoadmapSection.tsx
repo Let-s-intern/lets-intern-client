@@ -18,7 +18,7 @@ export default function RoadmapSection() {
           {ROADMAP.title}
         </h2>
 
-        <div className="text-xsmall14 md:text-xsmall16 text-neutral-70 mt-4 text-center">
+        <div className="mt-4 text-center text-xsmall14 text-neutral-70 md:text-xsmall16">
           {ROADMAP.subLines.map((line) => (
             <span className="block leading-relaxed" key={line}>
               {line}
@@ -34,14 +34,14 @@ export default function RoadmapSection() {
               }`}
               key={step.label}
             >
-              <span className="text-xsmall14 w-24 shrink-0 font-bold text-[#F1642B]">
+              <span className="w-24 shrink-0 text-xsmall14 font-bold text-[#F1642B]">
                 {step.label}
               </span>
               <span className="min-w-0">
-                <strong className="text-xsmall16 block font-bold text-white">
+                <strong className="block text-xsmall16 font-bold text-white">
                   {step.title}
                 </strong>
-                <span className="text-xsmall14 text-neutral-70 mt-2 block leading-relaxed">
+                <span className="mt-2 block text-xsmall14 leading-relaxed text-neutral-70">
                   {step.body}
                 </span>
               </span>

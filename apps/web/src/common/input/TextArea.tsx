@@ -36,7 +36,7 @@ const TextArea = ({
       <textarea
         {...props}
         className={twMerge(
-          'p bg-neutral-95 text-xsmall14 h-full w-full resize-none rounded-md p-3 font-normal outline-none placeholder:font-normal placeholder:text-black/35',
+          'p h-full w-full resize-none rounded-md bg-neutral-95 p-3 text-xsmall14 font-normal outline-none placeholder:font-normal placeholder:text-black/35',
           props.className,
         )}
         maxLength={maxLength}
@@ -44,7 +44,7 @@ const TextArea = ({
       />
       {maxLength && (
         <div className="text-right">
-          <span className="text-xxsmall12 float-right block text-black/35">
+          <span className="float-right block text-xxsmall12 text-black/35">
             {textLength}/{maxLength}
           </span>
         </div>

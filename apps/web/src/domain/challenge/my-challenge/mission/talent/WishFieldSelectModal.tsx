@@ -26,7 +26,7 @@ export default function WishFieldSelectModal({
           <button
             key={item.id}
             onClick={() => onFieldSelect(item.id)}
-            className={`rounded-xxs flex w-full items-center justify-between px-3 py-1.5 leading-[26px] ${
+            className={`flex w-full items-center justify-between rounded-xxs px-3 py-1.5 leading-[26px] ${
               isSelected
                 ? 'text-primary'
                 : 'text-neutral-20 hover:bg-neutral-95'

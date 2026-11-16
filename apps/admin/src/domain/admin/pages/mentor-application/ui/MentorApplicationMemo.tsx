@@ -33,13 +33,13 @@ export default function MentorApplicationMemo({
   };
 
   return (
-    <div className="bg-neutral-95 flex flex-col gap-2 rounded-md p-4">
+    <div className="flex flex-col gap-2 rounded-md bg-neutral-95 p-4">
       <label
         htmlFor="mentor-application-memo"
-        className="text-xsmall14 text-neutral-0 font-semibold"
+        className="text-xsmall14 font-semibold text-neutral-0"
       >
         운영 메모
-        <span className="text-neutral-40 font-normal">
+        <span className="font-normal text-neutral-40">
           {' '}
           · 지원자에게는 보이지 않습니다
         </span>

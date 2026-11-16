@@ -32,13 +32,13 @@ const Dropdown = ({
   const [isOpen, setIsOpen] = useState(index === 0 || index === 1);
 
   return (
-    <div className="rounded-xs flex w-full flex-col overflow-hidden bg-white md:hidden">
+    <div className="flex w-full flex-col overflow-hidden rounded-xs bg-white md:hidden">
       <button
         className="flex w-full items-center justify-between p-4"
         onClick={() => setIsOpen(!isOpen)}
       >
         <div
-          className="text-small18 flex items-center gap-2.5 font-semibold"
+          className="flex items-center gap-2.5 text-small18 font-semibold"
           style={{ color: primaryColor }}
         >
           <span>WEEK {index + 1}</span>
@@ -53,7 +53,7 @@ const Dropdown = ({
       {isOpen && (
         <div
           className={twMerge(
-            'border-neutral-80 h-full min-w-0 overflow-x-hidden',
+            'h-full min-w-0 overflow-x-hidden border-neutral-80',
             isOpen && 'border-t p-4 pt-5',
           )}
         >
@@ -84,7 +84,7 @@ const SidebarButton = ({
   return (
     <button
       type="button"
-      className="rounded-xs flex flex-col items-start gap-1 px-[30px] py-5"
+      className="flex flex-col items-start gap-1 rounded-xs px-[30px] py-5"
       style={
         active
           ? { backgroundColor: lightAccentColor, color: primaryColor }
@@ -92,7 +92,7 @@ const SidebarButton = ({
       }
       onClick={onClick}
     >
-      <div className="text-small18 md:text-small20 flex items-center gap-2.5 font-semibold">
+      <div className="flex items-center gap-2.5 text-small18 font-semibold md:text-small20">
         <span>WEEK {index + 1}</span>
         <span>{date}</span>
       </div>
@@ -129,7 +129,7 @@ function DesktopCurriculums({
 
   return (
     <div className="hidden w-full max-w-[1262px] items-stretch overflow-hidden rounded-sm bg-white md:flex">
-      <div className="border-neutral-80 flex min-w-fit max-w-[413px] flex-1 shrink-0 flex-col gap-[10px] border-r px-8 py-[30px]">
+      <div className="flex min-w-fit max-w-[413px] flex-1 shrink-0 flex-col gap-[10px] border-r border-neutral-80 px-8 py-[30px]">
         {sidebarList.map((item, index) => (
           <SidebarButton
             key={index}

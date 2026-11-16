@@ -38,7 +38,7 @@ const OpenChatLink = ({ link, password, className }: OpenChatLinkProps) => {
         type="button"
         onClick={handleClick}
         className={twMerge(
-          'text-xxsmall12 text-neutral-20 hover:text-neutral-0 flex items-center gap-1 font-medium underline underline-offset-2 transition-colors',
+          'flex items-center gap-1 text-xxsmall12 font-medium text-neutral-20 underline underline-offset-2 transition-colors hover:text-neutral-0',
           className,
         )}
       >

@@ -118,7 +118,7 @@ const PortfolioOneOnOne = ({
             혼자 만들면서 겪었던 어려움과 고민
           </SuperTitle>
           <div className="flex flex-col gap-y-3 md:items-center">
-            <div className="md:text-xlarge28 break-keep text-[22px] font-bold text-black md:text-center">
+            <div className="break-keep text-[22px] font-bold text-black md:text-center md:text-xlarge28">
               1:1 실시간 첨삭으로 <Break />
               나에게 <span className="text-[#4A76FF]">딱 맞춘 피드백</span>{' '}
               받고, 포폴 완성도 높이자!

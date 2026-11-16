@@ -47,7 +47,7 @@ const ProgramCatalogTabs = ({ active }: ProgramCatalogTabsProps) => (
         key={tab.key}
         href={tab.href}
         className={clsx(
-          'text-medium24 md:text-xlarge28 font-bold transition-colors',
+          'text-medium24 font-bold transition-colors md:text-xlarge28',
           tab.key === active ? 'text-neutral-0' : 'text-neutral-70',
         )}
       >

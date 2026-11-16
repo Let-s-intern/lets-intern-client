@@ -104,7 +104,7 @@ export default function VodPassPurchaseResult() {
         <p className="text-xsmall14 text-neutral-30">{message}</p>
         <Link
           href="/vod-pass/purchase"
-          className="bg-primary rounded-md px-6 py-3 text-center font-medium text-neutral-100"
+          className="rounded-md bg-primary px-6 py-3 text-center font-medium text-neutral-100"
         >
           다시 시도하기
         </Link>
@@ -119,7 +119,7 @@ export default function VodPassPurchaseResult() {
       )}
       <a
         href="https://seminar-vod.letscareer.co.kr/login"
-        className="bg-primary rounded-md px-6 py-3 text-center font-medium text-neutral-100"
+        className="rounded-md bg-primary px-6 py-3 text-center font-medium text-neutral-100"
       >
         VOD 보러가기
       </a>

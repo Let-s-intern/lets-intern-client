@@ -16,7 +16,7 @@ export default function SpecialLiveSection() {
           </span>
         </div>
 
-        <h2 className="text-neutral-0 mt-4 text-center text-2xl font-bold leading-snug md:text-[2rem]">
+        <h2 className="mt-4 text-center text-2xl font-bold leading-snug text-neutral-0 md:text-[2rem]">
           {SPECIAL_LIVE.titleLines.map((line) => (
             <span className="block" key={line}>
               {line}
@@ -24,19 +24,19 @@ export default function SpecialLiveSection() {
           ))}
         </h2>
 
-        <p className="text-xsmall14 md:text-xsmall16 text-neutral-40 mt-4 text-center">
+        <p className="mt-4 text-center text-xsmall14 text-neutral-40 md:text-xsmall16">
           {SPECIAL_LIVE.sub}
         </p>
 
         {/* 쥬디 클리닉 — 어두운 강조 카드 */}
-        <div className="rounded-xxl mt-10 bg-[#232433] p-6 md:mt-14 md:p-8">
+        <div className="mt-10 rounded-xxl bg-[#232433] p-6 md:mt-14 md:p-8">
           <span className="inline-block rounded-lg bg-[#F1642B] px-3 py-1.5 text-xs font-bold text-white">
             {clinic.tag}
           </span>
-          <strong className="text-small18 mt-5 block font-bold text-white md:text-xl">
+          <strong className="mt-5 block text-small18 font-bold text-white md:text-xl">
             {clinic.title}
           </strong>
-          <p className="text-xsmall14 text-neutral-70 mt-4 leading-relaxed">
+          <p className="mt-4 text-xsmall14 leading-relaxed text-neutral-70">
             {clinic.bodyLead}
             <strong className="font-bold text-white">{clinic.bodyCount}</strong>
             {clinic.bodyMid}
@@ -48,11 +48,11 @@ export default function SpecialLiveSection() {
         </div>
 
         {/* 특별 세미나 — 흰 카드 */}
-        <div className="border-neutral-90 rounded-xxl mt-4 border p-6 md:p-8">
-          <strong className="text-xsmall16 text-neutral-0 block font-bold">
+        <div className="mt-4 rounded-xxl border border-neutral-90 p-6 md:p-8">
+          <strong className="block text-xsmall16 font-bold text-neutral-0">
             {seminar.title}
           </strong>
-          <p className="text-xsmall14 text-neutral-40 mt-4 leading-relaxed">
+          <p className="mt-4 text-xsmall14 leading-relaxed text-neutral-40">
             {seminar.body.map((line) => (
               <span className="block" key={line}>
                 {line}

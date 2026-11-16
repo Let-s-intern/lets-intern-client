@@ -23,7 +23,7 @@ const SideViewButton = ({
     onClick={onClick}
     title="옆에 두고 보기"
     aria-label="제출물을 옆에 두고 보기"
-    className={`inline-flex shrink-0 items-center justify-center rounded border border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50 ${className}`}
+    className={`rounded inline-flex shrink-0 items-center justify-center border border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50 ${className}`}
   >
     <SidePanelIcon size={size} />
   </button>

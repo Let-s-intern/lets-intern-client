@@ -38,14 +38,14 @@ const Card = ({ order, title, description, imageUrl, styles }: CardProps) => {
       <div className="flex w-full flex-col gap-y-3">
         {order && (
           <p
-            className="text-xsmall14 lg:text-small18 flex w-fit rounded-md px-[14px] py-1.5 font-semibold text-white"
+            className="flex w-fit rounded-md px-[14px] py-1.5 text-xsmall14 font-semibold text-white lg:text-small18"
             style={{
               backgroundColor: styles.primaryColor,
             }}
           >{`Point ${order}`}</p>
         )}
         <div className="flex w-full flex-col gap-y-4">
-          <h4 className="text-small18 lg:text-medium22 whitespace-pre-line font-bold">
+          <h4 className="whitespace-pre-line text-small18 font-bold lg:text-medium22">
             {title}
           </h4>
           <div className="flex w-full flex-col md:gap-y-1">{description}</div>

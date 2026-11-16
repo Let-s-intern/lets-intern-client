@@ -9,7 +9,7 @@ const Label = ({
 }) => {
   return (
     <span
-      className="text-xsmall16 md:text-xsmall16 font-semibold"
+      className="text-xsmall16 font-semibold md:text-xsmall16"
       style={{ color: themeColor }}
     >
       {children}

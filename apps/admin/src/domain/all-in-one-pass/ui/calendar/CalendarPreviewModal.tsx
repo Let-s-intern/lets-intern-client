@@ -13,8 +13,8 @@ const WEEKDAYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
 const arrowClass = (enabled: boolean) =>
   clsx(
     enabled
-      ? 'text-neutral-0 cursor-pointer'
-      : 'text-neutral-70 cursor-not-allowed',
+      ? 'cursor-pointer text-neutral-0'
+      : 'cursor-not-allowed text-neutral-70',
   );
 
 interface Props {
@@ -73,7 +73,7 @@ export default function CalendarPreviewModal({
             className={arrowClass(canPrev)}
           />
           <div className="flex items-center gap-2">
-            <span className="text-medium24 text-neutral-0 w-[224px] font-bold">
+            <span className="w-[224px] text-medium24 font-bold text-neutral-0">
               {windowStart.format('YYYY.MM.DD')} ~ {windowEnd.format('MM.DD')}
             </span>
             <img src="/icons/calendar.svg" />
@@ -94,11 +94,11 @@ export default function CalendarPreviewModal({
         </div>
 
         {/* 요일 헤더 */}
-        <div className="border-neutral-80 grid grid-cols-7 gap-1 border-b pb-3">
+        <div className="grid grid-cols-7 gap-1 border-b border-neutral-80 pb-3">
           {WEEKDAYS.map((w) => (
             <div
               key={w}
-              className="text-xsmall16 text-neutral-40 py-2 text-center font-medium"
+              className="py-2 text-center text-xsmall16 font-medium text-neutral-40"
             >
               {w}
             </div>

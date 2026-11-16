@@ -33,12 +33,10 @@ const ChallengeContents = () => {
 
   const contentsListRows = useMemo(() => {
     const list =
-      data?.contentsAdminList?.map(
-        (item): Row => ({
-          ...item,
-          rowStatus: TABLE_STATUS.SAVE,
-        }),
-      ) ?? [];
+      data?.contentsAdminList?.map((item): Row => ({
+        ...item,
+        rowStatus: TABLE_STATUS.SAVE,
+      })) ?? [];
 
     if (insertingContents) {
       list?.push(insertingContents);

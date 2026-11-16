@@ -62,13 +62,13 @@ export default function CalendarDesktopWeek({ week, wi }: Props) {
               disabled={disabled}
               style={{ height: CELL_HEIGHT }}
               className={clsx(
-                'border-neutral-80 flex border-b py-3',
+                'flex border-b border-neutral-80 py-3',
                 disabled && 'cursor-not-allowed',
               )}
             >
               <div
                 className={clsx(
-                  'rounded-xs w-full transition-colors',
+                  'w-full rounded-xs transition-colors',
                   !disabled &&
                     !d.isSame(selected, 'day') &&
                     'hover:bg-neutral-90',
@@ -106,7 +106,7 @@ export default function CalendarDesktopWeek({ week, wi }: Props) {
                       gridColumn: `${colOf(segStart)} / ${colOf(segEnd) + 1}`,
                       backgroundColor: eventColor(e),
                     }}
-                    className="text-xxsmall10 rounded-xxs row-start-1 mx-0.5 flex items-center truncate px-1 tracking-tighter"
+                    className="row-start-1 mx-0.5 flex items-center truncate rounded-xxs px-1 text-xxsmall10 tracking-tighter"
                     title={e.title}
                   >
                     {showLabel && <span className="truncate">{e.title}</span>}
@@ -125,7 +125,7 @@ export default function CalendarDesktopWeek({ week, wi }: Props) {
                       gridColumn: di + 1,
                       backgroundColor: eventColor(p.event),
                     }}
-                    className="text-xxsmall10 text-neutral-10 rounded-xxs row-start-1 mx-0.5 flex items-center truncate px-1 tracking-tighter"
+                    className="row-start-1 mx-0.5 flex items-center truncate rounded-xxs px-1 text-xxsmall10 tracking-tighter text-neutral-10"
                     title={p.event.title}
                   >
                     <span className="truncate">{p.event.title}</span>
@@ -140,7 +140,7 @@ export default function CalendarDesktopWeek({ week, wi }: Props) {
                     <div
                       key={`badge-${d.toString()}`}
                       style={{ gridColumn: di + 1 }}
-                      className="text-xxsmall10 rounded-xxs row-start-1 mx-0.5 flex items-center bg-[#EFEFEF] px-1 tracking-tighter"
+                      className="row-start-1 mx-0.5 flex items-center rounded-xxs bg-[#EFEFEF] px-1 text-xxsmall10 tracking-tighter"
                     >
                       + {n}개
                     </div>
@@ -164,7 +164,7 @@ export default function CalendarDesktopWeek({ week, wi }: Props) {
             >
               <div
                 className={clsx(
-                  'rounded-xs flex w-full flex-col items-center border-[1.5px] pt-3',
+                  'flex w-full flex-col items-center rounded-xs border-[1.5px] pt-3',
                   isSelected && !disabled
                     ? 'border-primary'
                     : 'border-transparent',
@@ -172,7 +172,7 @@ export default function CalendarDesktopWeek({ week, wi }: Props) {
               >
                 <span
                   className={clsx(
-                    'text-xsmall16 w-full px-2 text-center',
+                    'w-full px-2 text-center text-xsmall16',
                     disabled
                       ? 'text-neutral-80'
                       : isToday

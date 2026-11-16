@@ -32,7 +32,7 @@ const SeminarCarouselDots = ({
             aria-label={itemLabel(i)}
             aria-current={active}
             onClick={() => onSelect(i)}
-            className={`h-2 rounded-full transition-all ${active ? 'bg-primary w-5' : 'bg-neutral-80 w-2'}`}
+            className={`h-2 rounded-full transition-all ${active ? 'w-5 bg-primary' : 'w-2 bg-neutral-80'}`}
           />
         );
       })}

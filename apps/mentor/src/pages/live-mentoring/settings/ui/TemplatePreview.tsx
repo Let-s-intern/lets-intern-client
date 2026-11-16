@@ -199,7 +199,7 @@ const TemplatePreview = ({
       */}
       <p
         role="status"
-        className="text-system-error mt-1.5 h-4 shrink-0 break-keep text-center text-xs font-medium leading-4"
+        className="mt-1.5 h-4 shrink-0 break-keep text-center text-xs font-medium leading-4 text-system-error"
       >
         {/*
           한 줄에 들어가는 길이로 줄인다. 두 줄이 되면 자리를 두 배로 잡아야 하고,

@@ -45,13 +45,13 @@ const ChevronIcon = ({ open }: { open: boolean }) => (
 );
 
 const ExampleRow = ({ label, value, chips }: GuideExample) => (
-  <li className="text-xsmall14 text-neutral-10 flex flex-wrap items-center gap-x-2 gap-y-1.5 font-semibold">
-    <span className="text-neutral-40 font-normal">{label} :</span>
+  <li className="flex flex-wrap items-center gap-x-2 gap-y-1.5 text-xsmall14 font-semibold text-neutral-10">
+    <span className="font-normal text-neutral-40">{label} :</span>
     {chips
       ? chips.map((chip) => (
           <span
             key={chip}
-            className="bg-neutral-95 text-neutral-30 rounded px-2 py-0.5 text-xs font-normal"
+            className="rounded bg-neutral-95 px-2 py-0.5 text-xs font-normal text-neutral-30"
           >
             #{chip}
           </span>
@@ -79,7 +79,7 @@ const WritingGuide = ({ advice, examples, groups }: WritingGuideProps) => {
         type="button"
         onClick={() => setOpen((prev) => !prev)}
         aria-expanded={open}
-        className="bg-primary-10 text-primary flex w-full items-center gap-2 px-4 py-3 text-sm font-semibold"
+        className="flex w-full items-center gap-2 bg-primary-10 px-4 py-3 text-sm font-semibold text-primary"
       >
         <BulbIcon />
         작성 예시 보기
@@ -90,14 +90,14 @@ const WritingGuide = ({ advice, examples, groups }: WritingGuideProps) => {
 
       {open ? (
         <div className="bg-primary-5 px-4 py-4">
-          <p className="text-primary mb-1.5 text-sm font-semibold">
+          <p className="mb-1.5 text-sm font-semibold text-primary">
             이렇게 작성해 보세요
           </p>
-          <p className="text-xsmall14 text-neutral-20 whitespace-pre-line">
+          <p className="whitespace-pre-line text-xsmall14 text-neutral-20">
             {advice}
           </p>
 
-          <span className="bg-primary-10 text-primary mt-4 inline-block rounded px-2 py-0.5 text-[11px] font-medium">
+          <span className="rounded mt-4 inline-block bg-primary-10 px-2 py-0.5 text-[11px] font-medium text-primary">
             예시
           </span>
 
@@ -106,9 +106,9 @@ const WritingGuide = ({ advice, examples, groups }: WritingGuideProps) => {
               {examples.map((example, index) => (
                 <li
                   key={example}
-                  className="text-xsmall14 text-neutral-10 flex gap-2 font-semibold"
+                  className="flex gap-2 text-xsmall14 font-semibold text-neutral-10"
                 >
-                  <span className="text-neutral-40 font-normal">
+                  <span className="font-normal text-neutral-40">
                     {index + 1} :
                   </span>
                   {example}
@@ -120,7 +120,7 @@ const WritingGuide = ({ advice, examples, groups }: WritingGuideProps) => {
           {groups?.map((group, index) => (
             <div key={group.heading ?? index} className="mt-3">
               {group.heading ? (
-                <p className="text-xsmall14 text-neutral-10 mb-2 font-semibold">
+                <p className="mb-2 text-xsmall14 font-semibold text-neutral-10">
                   {group.heading}
                 </p>
               ) : null}

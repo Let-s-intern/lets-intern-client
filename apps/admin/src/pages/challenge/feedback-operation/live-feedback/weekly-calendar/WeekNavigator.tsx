@@ -21,25 +21,25 @@ export default function WeekNavigator({
         type="button"
         onClick={onPrev}
         aria-label="이전 주"
-        className="border-neutral-80 text-neutral-0 rounded border px-2 py-1 text-sm"
+        className="rounded border border-neutral-80 px-2 py-1 text-sm text-neutral-0"
       >
         ‹
       </button>
-      <span className="text-xsmall14 text-neutral-0 min-w-[160px] text-center font-medium">
+      <span className="min-w-[160px] text-center text-xsmall14 font-medium text-neutral-0">
         {formatWeekLabel(weekStart)}
       </span>
       <button
         type="button"
         onClick={onNext}
         aria-label="다음 주"
-        className="border-neutral-80 text-neutral-0 rounded border px-2 py-1 text-sm"
+        className="rounded border border-neutral-80 px-2 py-1 text-sm text-neutral-0"
       >
         ›
       </button>
       <button
         type="button"
         onClick={onToday}
-        className="border-neutral-80 text-neutral-40 ml-1 rounded border px-3 py-1 text-xs"
+        className="rounded ml-1 border border-neutral-80 px-3 py-1 text-xs text-neutral-40"
       >
         오늘
       </button>

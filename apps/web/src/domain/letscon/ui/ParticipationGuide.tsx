@@ -37,7 +37,7 @@ export function ParticipationGuide() {
                       href={LETSCON_MAP_URL}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-primary w-fit md:underline md:underline-offset-4"
+                      className="w-fit text-primary md:underline md:underline-offset-4"
                     >
                       지도 보기
                     </a>
@@ -51,12 +51,12 @@ export function ParticipationGuide() {
         <div
           data-reveal
           data-lift
-          className="bg-primary-10 mt-4 flex items-center gap-3 rounded-[16px] p-4 md:mt-8 md:gap-4 md:p-6"
+          className="mt-4 flex items-center gap-3 rounded-[16px] bg-primary-10 p-4 md:mt-8 md:gap-4 md:p-6"
         >
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-white md:h-12 md:w-12 md:rounded-[12px]">
             <ShieldCheck
               aria-hidden
-              className="text-primary h-6 w-6"
+              className="h-6 w-6 text-primary"
               strokeWidth={2}
             />
           </span>

@@ -10,10 +10,10 @@ const PastSeminarShowcaseSection = () => {
     <section className="w-full bg-[#EFEFEF] px-5 py-16 md:py-24">
       <div className="mx-auto flex w-full max-w-[1120px] flex-col gap-10">
         <div className="flex flex-col items-center gap-3 text-center">
-          <p className="text-xsmall14 md:text-xsmall16 text-neutral-45 font-semibold">
+          <p className="text-xsmall14 font-semibold text-neutral-45 md:text-xsmall16">
             지난 인기 세미나
           </p>
-          <h2 className="text-small20 md:text-large26 text-neutral-0 font-bold">
+          <h2 className="text-small20 font-bold text-neutral-0 md:text-large26">
             지난 인기 무료 세미나 둘러보기
           </h2>
         </div>

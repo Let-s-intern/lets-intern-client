@@ -12,7 +12,7 @@ export function TabPlaceholder({
   children?: string;
 }) {
   return (
-    <p className="text-xsmall14 text-neutral-40 py-16 text-center">
+    <p className="py-16 text-center text-xsmall14 text-neutral-40">
       {children}
     </p>
   );
@@ -36,14 +36,14 @@ export function BenefitCard({
           src={card.thumbnail}
         />
       ) : (
-        <div className="bg-neutral-95 aspect-[4/3] w-full rounded-lg" />
+        <div className="aspect-[4/3] w-full rounded-lg bg-neutral-95" />
       )}
       <div className="flex flex-1 flex-col justify-between gap-7 pt-7">
-        <strong className="text-small18 text-neutral-0 font-bold">
+        <strong className="text-small18 font-bold text-neutral-0">
           {card.title}
         </strong>
         {card.href && card.ctaLabel && (
-          <span className="text-primary text-xsmall14 self-end font-medium">
+          <span className="self-end text-xsmall14 font-medium text-primary">
             {card.ctaLabel} →
           </span>
         )}
@@ -77,12 +77,12 @@ export function VodCard({ vod }: { vod: LandingVod }) {
           src={vod.thumbnail}
         />
       ) : (
-        <div className="bg-neutral-95 aspect-video w-full rounded-lg" />
+        <div className="aspect-video w-full rounded-lg bg-neutral-95" />
       )}
-      <strong className="text-small18 text-neutral-0 mt-4 line-clamp-2 font-bold">
+      <strong className="mt-4 line-clamp-2 text-small18 font-bold text-neutral-0">
         {vod.title}
       </strong>
-      <p className="text-xsmall14 text-neutral-40 mt-2 line-clamp-3">
+      <p className="mt-2 line-clamp-3 text-xsmall14 text-neutral-40">
         {vod.description}
       </p>
     </div>

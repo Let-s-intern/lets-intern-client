@@ -19,7 +19,7 @@ interface CurriculumContentProps {
 function Description({ children }: { children: ReactNode }) {
   return (
     <div className="flex items-center">
-      <p className="text-xxsmall12 text-neutral-0 md:text-xsmall16 whitespace-pre-line break-words">
+      <p className="whitespace-pre-line break-words text-xxsmall12 text-neutral-0 md:text-xsmall16">
         {children}
       </p>
     </div>
@@ -59,7 +59,7 @@ function Highlight({
   return (
     <div
       className={twMerge(
-        'rounded-xs text-neutral-0 flex w-full max-w-full flex-col gap-2.5 md:mt-2',
+        'flex w-full max-w-full flex-col gap-2.5 rounded-xs text-neutral-0 md:mt-2',
         bgColorClass,
         paddingClass,
         className,
@@ -110,7 +110,7 @@ const CurriculumContent = ({
 
         return (
           <li key={item.id} className="flex w-full min-w-0 flex-col gap-1">
-            <div className="text-xsmall14 text-neutral-0 md:text-small18 flex min-w-0 items-center gap-2 font-semibold">
+            <div className="flex min-w-0 items-center gap-2 text-xsmall14 font-semibold text-neutral-0 md:text-small18">
               {dateRange && <span className="flex-shrink-0">{dateRange}</span>}
               <h4 className="min-w-0 break-words">
                 {item.session && `${item.session}회차 `}
@@ -128,7 +128,7 @@ const CurriculumContent = ({
               <Description>{item.content}</Description>
             )}
             {!isLastItem(index) && (
-              <hr className="border-neutral-80 my-2 border-t md:my-[14px]" />
+              <hr className="my-2 border-t border-neutral-80 md:my-[14px]" />
             )}
           </li>
         );

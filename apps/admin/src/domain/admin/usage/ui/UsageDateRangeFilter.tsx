@@ -59,12 +59,12 @@ const UsageDateRangeFilter = ({
 
   return (
     <div className="text-sm">
-      <span className="text-neutral-40 mb-1 block">{label}</span>
+      <span className="mb-1 block text-neutral-40">{label}</span>
       <div className="flex items-center gap-1">
         <input
           type="date"
           aria-label={`${label} 시작`}
-          className="border-neutral-75 rounded border px-2 py-1"
+          className="rounded border border-neutral-75 px-2 py-1"
           value={draft.from}
           /* 달력에서는 아예 고를 수 없게 한다. 직접 입력은 아래에서 잡는다. */
           max={draft.to || undefined}
@@ -74,7 +74,7 @@ const UsageDateRangeFilter = ({
         <input
           type="date"
           aria-label={`${label} 종료`}
-          className="border-neutral-75 rounded border px-2 py-1"
+          className="rounded border border-neutral-75 px-2 py-1"
           value={draft.to}
           min={draft.from || undefined}
           onChange={(e) => change({ to: e.target.value })}
@@ -82,7 +82,7 @@ const UsageDateRangeFilter = ({
         {trailing}
       </div>
       {invalid && (
-        <p className="text-system-error mt-1 text-xs">
+        <p className="mt-1 text-xs text-system-error">
           {DATE_RANGE_INVALID_NOTICE}
         </p>
       )}

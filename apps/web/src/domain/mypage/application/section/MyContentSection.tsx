@@ -55,7 +55,7 @@ const MyContentSection = ({
       </div>
       {cards.length > visibleCount && !showMore && (
         <MoreButton
-          className="border-neutral-80 text-primary hover:!bg-primary/5 !bg-transparent px-3 py-2 transition-colors md:flex md:p-3"
+          className="border-neutral-80 !bg-transparent px-3 py-2 text-primary transition-colors hover:!bg-primary/5 md:flex md:p-3"
           onClick={() => setShowMore(true)}
         >
           더보기

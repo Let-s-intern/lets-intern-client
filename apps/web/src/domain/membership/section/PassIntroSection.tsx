@@ -34,7 +34,7 @@ export default function PassIntroSection() {
   return (
     <section className="bg-[#EEF0FB] py-16 md:py-24" id={PASS_INTRO.anchorId}>
       <div className="wrap rv">
-        <h2 className="text-neutral-0 text-center text-xl font-bold leading-snug md:text-[1.75rem]">
+        <h2 className="text-center text-xl font-bold leading-snug text-neutral-0 md:text-[1.75rem]">
           {PASS_INTRO.leadLines.map((line) => (
             <span className="block" key={line}>
               {line}
@@ -42,25 +42,25 @@ export default function PassIntroSection() {
           ))}
         </h2>
 
-        <p className="text-xsmall14 md:text-xsmall16 text-neutral-40 mt-4 text-center">
+        <p className="mt-4 text-center text-xsmall14 text-neutral-40 md:text-xsmall16">
           {PASS_INTRO.leadSub}
         </p>
 
-        <p className="text-primary mt-16 text-center text-sm font-bold tracking-[0.2em] md:mt-24">
+        <p className="mt-16 text-center text-sm font-bold tracking-[0.2em] text-primary md:mt-24">
           {PASS_INTRO.bridge}
         </p>
 
-        <strong className="text-neutral-0 mt-4 block text-center text-3xl font-bold leading-snug md:text-[3rem]">
+        <strong className="mt-4 block text-center text-3xl font-bold leading-snug text-neutral-0 md:text-[3rem]">
           {PASS_INTRO.title}
         </strong>
 
-        <p className="text-xsmall14 md:text-xsmall16 text-neutral-40 mt-6 text-center leading-relaxed">
+        <p className="mt-6 text-center text-xsmall14 leading-relaxed text-neutral-40 md:text-xsmall16">
           {PASS_INTRO.bodyLines.map((line) => (
             <span className="block" key={line}>
               {line}
             </span>
           ))}
-          <span className="text-neutral-0 mt-1 block font-bold">
+          <span className="mt-1 block font-bold text-neutral-0">
             {PASS_INTRO.bodyStrong}
           </span>
         </p>
@@ -68,26 +68,26 @@ export default function PassIntroSection() {
         <div className="mt-10 grid gap-4 md:mt-14 md:grid-cols-4 md:gap-5">
           {PASS_BENEFITS_MODALS.map((entry) => (
             <div
-              className="rounded-xxl flex flex-col bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.05)] md:p-7"
+              className="flex flex-col rounded-xxl bg-white p-6 shadow-[0_2px_16px_rgba(0,0,0,0.05)] md:p-7"
               key={entry.id}
             >
               <span
                 aria-hidden="true"
-                className="bg-primary-10 flex h-11 w-11 items-center justify-center rounded-xl text-xl"
+                className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary-10 text-xl"
               >
                 {entry.icon}
               </span>
 
-              <strong className="text-xsmall16 text-neutral-0 mt-5 block font-bold">
+              <strong className="mt-5 block text-xsmall16 font-bold text-neutral-0">
                 {entry.cardTitle}
               </strong>
 
-              <p className="text-xsmall14 text-neutral-40 mt-3 flex-1 leading-relaxed">
+              <p className="mt-3 flex-1 text-xsmall14 leading-relaxed text-neutral-40">
                 {entry.cardBody}
               </p>
 
               <button
-                className="text-primary text-xsmall14 mt-6 self-end font-bold"
+                className="mt-6 self-end text-xsmall14 font-bold text-primary"
                 onClick={() => handleOpen(entry.id)}
                 type="button"
               >
@@ -99,7 +99,7 @@ export default function PassIntroSection() {
 
         <div className="mt-10 text-center md:mt-14">
           <a
-            className="bg-primary inline-flex rounded-full px-10 py-4"
+            className="inline-flex rounded-full bg-primary px-10 py-4"
             href={`#${PASS_INTRO.ctaAnchor}`}
           >
             {/*

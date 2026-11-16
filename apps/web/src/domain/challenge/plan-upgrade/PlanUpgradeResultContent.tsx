@@ -171,25 +171,25 @@ const PlanUpgradeSuccess = ({
 }: PlanUpgradeSuccessProps) => (
   <div className="w-full px-5 py-10">
     <div className="mx-auto max-w-5xl">
-      <h1 className="text-small20 text-neutral-0 flex w-full items-center justify-start py-6 font-bold">
+      <h1 className="flex w-full items-center justify-start py-6 text-small20 font-bold text-neutral-0">
         플랜 업그레이드 완료
       </h1>
       <div className="flex w-full flex-col gap-y-10 py-8">
         <div className="flex flex-col gap-2">
           {challengeTitle && (
-            <p className="text-xsmall16 text-neutral-0 font-semibold">
+            <p className="text-xsmall16 font-semibold text-neutral-0">
               {challengeTitle}
             </p>
           )}
           <p className="text-xsmall16 text-neutral-20">
             {result.fromPlan} →{' '}
-            <span className="text-primary font-semibold">{result.toPlan}</span>
+            <span className="font-semibold text-primary">{result.toPlan}</span>
           </p>
         </div>
 
         <div className="flex w-full flex-col justify-center gap-6">
-          <div className="text-neutral-0 font-semibold">결제 상세</div>
-          <div className="bg-neutral-90 flex w-full items-center justify-between gap-x-4 px-3 py-5">
+          <div className="font-semibold text-neutral-0">결제 상세</div>
+          <div className="flex w-full items-center justify-between gap-x-4 bg-neutral-90 px-3 py-5">
             <div className="font-bold">추가 결제 금액</div>
             <div className="font-bold">
               {result.additionalAmount.toLocaleString()}원
@@ -211,7 +211,7 @@ const PlanUpgradeSuccess = ({
                   href={result.receiptUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="border-neutral-60 flex items-center justify-center rounded-sm border bg-white px-3 py-2 text-sm font-medium"
+                  className="flex items-center justify-center rounded-sm border border-neutral-60 bg-white px-3 py-2 text-sm font-medium"
                 >
                   영수증 보기
                 </a>
@@ -254,7 +254,7 @@ const PaymentInfoRow = ({
 }) => (
   <div className="flex w-full items-center justify-start gap-x-2 px-3 py-2">
     <div className="text-neutral-40">{title}</div>
-    <div className="text-neutral-0 flex grow items-center justify-end">
+    <div className="flex grow items-center justify-end text-neutral-0">
       {children ?? content}
     </div>
   </div>

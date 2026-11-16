@@ -77,7 +77,7 @@ export function NoticeFormModal({
             <label className="mb-1 block text-sm font-medium">제목</label>
             <input
               type="text"
-              className="border-neutral-80 w-full rounded border px-3 py-2 text-sm"
+              className="rounded w-full border border-neutral-80 px-3 py-2 text-sm"
               placeholder="공지 제목"
               value={form.title}
               onChange={(e) =>
@@ -242,7 +242,7 @@ export function NoticeFormModal({
                 <label className="mb-1 block text-sm font-medium">시작일</label>
                 <input
                   type="datetime-local"
-                  className="border-neutral-80 w-full rounded border px-3 py-2 text-sm"
+                  className="rounded w-full border border-neutral-80 px-3 py-2 text-sm"
                   value={form.startDate}
                   onChange={(e) =>
                     setForm((prev) => ({ ...prev, startDate: e.target.value }))
@@ -253,7 +253,7 @@ export function NoticeFormModal({
                 <label className="mb-1 block text-sm font-medium">종료일</label>
                 <input
                   type="datetime-local"
-                  className="border-neutral-80 w-full rounded border px-3 py-2 text-sm"
+                  className="rounded w-full border border-neutral-80 px-3 py-2 text-sm"
                   value={form.endDate}
                   onChange={(e) =>
                     setForm((prev) => ({ ...prev, endDate: e.target.value }))
@@ -282,7 +282,7 @@ export function NoticeFormModal({
               <label className="mb-1 block text-sm font-medium">링크</label>
               <input
                 type="text"
-                className="border-neutral-80 w-full rounded border px-3 py-2 text-sm"
+                className="rounded w-full border border-neutral-80 px-3 py-2 text-sm"
                 placeholder="https://"
                 value={form.link}
                 onChange={(e) =>
@@ -316,7 +316,7 @@ export function NoticeFormModal({
                 내용 (마크다운)
               </label>
               <textarea
-                className="border-neutral-80 w-full rounded border px-3 py-2 font-mono text-sm"
+                className="rounded w-full border border-neutral-80 px-3 py-2 font-mono text-sm"
                 rows={10}
                 placeholder="마크다운 형식으로 입력하세요"
                 value={form.contents}

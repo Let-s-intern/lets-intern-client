@@ -67,7 +67,7 @@ export default function IntroSection() {
                 title={title}
                 lineWidthClassName={lineWidthClassName}
               />
-              <p className="text-0.875 xl:text-1 text-neutral-30 mt-3 flex flex-col md:items-center">
+              <p className="text-0.875 xl:text-1 mt-3 flex flex-col text-neutral-30 md:items-center">
                 {description.map((item) => (
                   <span key={item}>{item}</span>
                 ))}
@@ -112,7 +112,7 @@ interface IntroCardProps {
 }
 
 const IntroCard = ({ title, subTitle, description }: IntroCardProps) => (
-  <div className="bg-primary flex flex-col rounded-md p-5 sm:py-8 md:justify-between md:text-center lg:min-w-max">
+  <div className="flex flex-col rounded-md bg-primary p-5 sm:py-8 md:justify-between md:text-center lg:min-w-max">
     <div className="mb-3">
       <h3 className="text-1-semibold text-static-100">{title}</h3>
       <h4 className="text-0.875-bold text-[#8288F8]">{subTitle}</h4>

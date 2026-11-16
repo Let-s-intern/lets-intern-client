@@ -28,7 +28,7 @@ const MenteeInfoCompactRow = ({
   badgeSuffix,
   actions,
 }: MenteeInfoCompactRowProps) => (
-  <div className="border-neutral-80 flex items-center gap-x-4 gap-y-1 rounded-[4px] border px-4 py-2.5">
+  <div className="flex items-center gap-x-4 gap-y-1 rounded-[4px] border border-neutral-80 px-4 py-2.5">
     <div className="flex flex-1 flex-wrap items-center gap-x-4 gap-y-1">
       <span className="text-sm font-semibold text-neutral-900">{name}</span>
       {wishJob && (

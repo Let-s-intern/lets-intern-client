@@ -178,15 +178,15 @@ export const useGetUsedProgramsQuery = (
       const res = await axios.get(
         `/admin/membership/${passId}/application/${applicationId}/program`,
       );
-      return programListResponseSchema.parse(res.data.data).programList.map(
-        (p, i): UsedProgram => ({
+      return programListResponseSchema
+        .parse(res.data.data)
+        .programList.map((p, i): UsedProgram => ({
           id: i,
           type: toUsedProgramType(p.programType),
           title: p.programTitle ?? '',
           usedAt: p.usedDate ?? null,
           isRefunded: p.isRefunded ?? false,
-        }),
-      );
+        }));
     },
   });
 
