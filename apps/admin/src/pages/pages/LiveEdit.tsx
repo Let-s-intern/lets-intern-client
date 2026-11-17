@@ -30,6 +30,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import ProgramSchedule from './program/ProgramSchedule';
+import ProgramCategoryField from '@/domain/admin/program/category/ProgramCategoryField';
 
 const LiveEdit: React.FC = () => {
   const { liveId: liveIdString } = useParams<{ liveId: string }>();
@@ -199,6 +200,13 @@ const LiveEdit: React.FC = () => {
           />
         </section>
       </div>
+
+      <section className="mb-6 max-w-[1120px]">
+        <ProgramCategoryField
+          targetType="LIVE"
+          targetId={Number(liveIdString)}
+        />
+      </section>
 
       {/* 썸네일 */}
       <section className="mb-6 max-w-[1120px]">

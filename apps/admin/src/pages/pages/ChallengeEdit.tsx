@@ -35,6 +35,7 @@ import ImageUpload from '@/domain/admin/program/ui/form/ImageUpload';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
+import ProgramCategoryField from '@/domain/admin/program/category/ProgramCategoryField';
 import Heading3 from '@/domain/admin/ui/heading/Heading3';
 import FaqSection from '@/domain/faq/FaqSection';
 import CurationCardPreview from '@/domain/program-recommend/ui/CurationCardPreview';
@@ -508,6 +509,13 @@ const ChallengeEdit: React.FC = () => {
             name="desktopThumbnail"
             image={input.desktopThumbnail ?? challenge.desktopThumbnail}
             onChange={onChangeImage}
+          />
+        </div>
+
+        <div className="mb-6">
+          <ProgramCategoryField
+            targetType="CHALLENGE"
+            targetId={Number(challengeIdString)}
           />
         </div>
 

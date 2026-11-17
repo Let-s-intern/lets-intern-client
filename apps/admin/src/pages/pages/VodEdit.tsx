@@ -5,6 +5,7 @@ import ProgramContentPriceSection from '@/domain/admin/program/ProgramContentPri
 import ProgramContentThumbnailSection from '@/domain/admin/program/ProgramContentThumbnailSection';
 import ProgramContentUrlFileSection from '@/domain/admin/program/ProgramContentUrlFileSection';
 import FormSection from '@/domain/admin/program/ui/FormSection';
+import ProgramCategoryField from '@/domain/admin/program/category/ProgramCategoryField';
 import VodMentorSelect from '@/domain/admin/program/vod/VodMentorSelect';
 import { useVodForm } from '@/domain/admin/program/vod/hooks/useVodForm';
 import { buildUpdateVodReq } from '@/domain/admin/program/vod/utils/vodMapping';
@@ -107,6 +108,10 @@ const VodEdit: React.FC = () => {
             />
           </FormSection>
         </div>
+      </div>
+
+      <div className="mb-6">
+        <ProgramCategoryField targetType="VOD" targetId={Number(vodIdString)} />
       </div>
 
       <div className="mb-6">

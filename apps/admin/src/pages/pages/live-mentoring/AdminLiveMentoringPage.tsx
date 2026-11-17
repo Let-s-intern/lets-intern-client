@@ -18,6 +18,7 @@ import AdminLiveMentoringDetailPageEditor from '@/domain/live-mentoring/detail-p
 import ReviewMentorBar from '@/domain/live-mentoring/ui/ReviewMentorBar';
 import MentorPickStatus from '@/domain/mentor/pick/ui/MentorPickStatus';
 import MentorReviewExposureSection from '@/domain/mentor/review-exposure/ui/MentorReviewExposureSection';
+import LiveMentoringCategoryField from '@/domain/admin/program/category/LiveMentoringCategoryField';
 import { twMerge } from '@/lib/twMerge';
 
 type Tab = 'products' | 'participants' | 'reviews' | 'detailPage';
@@ -156,6 +157,9 @@ export default function AdminLiveMentoringPage() {
               description="상세페이지를 수정하고 있습니다."
               onChangeMentor={() => setActiveTab('products')}
             />
+            <div className="mb-4">
+              <LiveMentoringCategoryField mentorId={mentorId} />
+            </div>
             <AdminLiveMentoringDetailPageEditor
               key={mentorId}
               mentorId={mentorId}

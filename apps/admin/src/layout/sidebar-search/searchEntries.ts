@@ -18,6 +18,7 @@ export interface SearchNavSection {
 
 /** 사이드바 메뉴에 붙이는 별칭. 메뉴 자체는 navData 에서 자동으로 들어온다 */
 const MENU_KEYWORDS: Record<string, string[]> = {
+  '/program-category': ['카테고리', '필터', '노출 목록', '분류'],
   '/mentors': ['멘토'],
   '/mentors/register': ['멘토 추가'],
   '/mentors/keywords': ['키워드', '해시태그', '태그'],

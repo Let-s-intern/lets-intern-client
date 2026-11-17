@@ -499,7 +499,7 @@ export const useCreateMagnetMutation = ({
   successCallback,
   errorCallback,
 }: {
-  successCallback?: () => void;
+  successCallback?: (magnetId?: number) => void | Promise<void>;
   errorCallback?: () => void;
 } = {}) => {
   const queryClient = useQueryClient();
@@ -528,9 +528,10 @@ export const useCreateMagnetMutation = ({
       });
       return res.data;
     },
-    onSuccess: async () => {
+    onSuccess: async (data) => {
       await queryClient.invalidateQueries({ queryKey: [magnetListQueryKey] });
-      successCallback?.();
+      // 생성 응답의 새 마그넷 id. 노출 분류를 이어서 저장할 때 쓴다
+      await successCallback?.(data?.data?.magnetId as number | undefined);
     },
     onError: (error) => {
       console.error(error);
