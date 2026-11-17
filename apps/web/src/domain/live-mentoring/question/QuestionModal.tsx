@@ -190,10 +190,17 @@ const QuestionModal = ({
               <span className="text-xsmall14 font-medium text-neutral-0">
                 멘토링 질문
               </span>
+              {/*
+                마감을 "24시간 전"으로 못박지 않는다. 48시간 안에 결제했다면 안내 마감이
+                결제 후 3시간이라, 고정 문구를 믿은 고객이 버튼이 사라졌다고 문의했다.
+                서버가 준 안내 마감을 그대로 적는다.
+              */}
               <p className="text-xxsmall12 text-neutral-45">
                 * 멘토에게 미리 전달할 질문을 작성해 주세요. 함께 보면 좋을
-                파일이 있다면 첨부해주세요. 멘토링 예약 시간 24시간 전까지
-                수정할 수 있어요.
+                파일이 있다면 첨부해주세요.{' '}
+                {question?.editDeadline
+                  ? `${formatEditDeadline(question.editDeadline)}까지 수정할 수 있어요.`
+                  : '멘토링 예약 시간 24시간 전까지 수정할 수 있어요.'}
               </p>
               <textarea
                 aria-label="멘토링 질문"
