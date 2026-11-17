@@ -27,6 +27,10 @@ export const navData = [
         name: '후기 관리',
         url: '/review/challenge',
       },
+      {
+        name: '노출 분류',
+        url: '/program-category',
+      },
     ],
   },
   {

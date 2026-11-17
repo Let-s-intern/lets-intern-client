@@ -47,7 +47,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Pencil } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import ChallengeDuplicateModal from '@/domain/admin/program/challenge/ChallengeDuplicateModal';
-import ProgramCategorySettingDialog from '@/domain/admin/program/category/ProgramCategorySettingDialog';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FaCopy, FaList, FaPlus, FaTrashCan } from 'react-icons/fa6';
 import { usePersistedGridState } from './hooks/usePersistedGridState';
@@ -129,7 +128,6 @@ const Programs = () => {
     },
   });
   const [visibleLoading, setVisibleLoading] = useState(false);
-  const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
   const [duplicateModalChallenge, setDuplicateModalChallenge] = useState<{
     id: number;
     title: string;
@@ -439,19 +437,8 @@ const Programs = () => {
           >
             가이드북 등록
           </Button>
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={() => setCategoryDialogOpen(true)}
-          >
-            노출 분류 설정
-          </Button>
         </div>
       </Header>
-      <ProgramCategorySettingDialog
-        open={categoryDialogOpen}
-        onClose={() => setCategoryDialogOpen(false)}
-      />
       <main>
         <TextField
           size="small"

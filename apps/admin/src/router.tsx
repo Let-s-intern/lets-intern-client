@@ -7,6 +7,9 @@ import NotFound from './pages/NotFound';
 const AdminHome = lazy(() => import('./pages/pages/AdminHome'));
 const Stats = lazy(() => import('./pages/pages/Stats'));
 const Programs = lazy(() => import('./pages/pages/program/Programs'));
+const ProgramCategoryPage = lazy(
+  () => import('./domain/admin/program/category/ProgramCategoryPage'),
+);
 const ChallengeCreate = lazy(() => import('./pages/pages/ChallengeCreate'));
 const ChallengeEdit = lazy(() => import('./pages/pages/ChallengeEdit'));
 const AllInOnePassList = lazy(
@@ -336,6 +339,10 @@ export const router = createBrowserRouter([
       { path: '/stats', element: withSuspense(<Stats />) },
       { path: '/stats/:tab', element: withSuspense(<Stats />) },
       { path: '/programs', element: withSuspense(<Programs />) },
+      {
+        path: '/program-category',
+        element: withSuspense(<ProgramCategoryPage />),
+      },
       { path: '/challenge/create', element: withSuspense(<ChallengeCreate />) },
       {
         path: '/challenge/:challengeId/edit',
