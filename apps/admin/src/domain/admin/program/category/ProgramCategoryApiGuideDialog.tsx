@@ -52,7 +52,7 @@ const API_GUIDES: ApiGuide[] = [
   {
     path: 'GET /api/v1/program-category/targets?categoryIds=1,2,3',
     summary:
-      '여러 카테고리의 상품을 한 번에. 같은 상품은 한 번만 오고, 걸린 카테고리 id 가 categoryIds 로 붙습니다. categoryIds 를 비우면 보이는 카테고리 전체입니다. 필터에서 여러 개를 고르거나 "전체" 를 그릴 때는 카테고리마다 부르지 말고 이것을 씁니다. groupChallenges=true 를 붙이면 챌린지를 기수와 관계없이 구분별 대표 기수 하나로 합치고, 합친 원래 id 를 mergedTargetIds 로 줍니다.',
+      '여러 카테고리의 상품을 한 번에. 같은 상품은 한 번만 오고, 걸린 카테고리 id 가 categoryIds 로 붙습니다. categoryIds 를 비우면 보이는 카테고리 전체입니다. 필터에서 여러 개를 고르거나 "전체" 를 그릴 때는 카테고리마다 부르지 말고 이것을 씁니다. groupChallenges=true 를 붙이면 챌린지를 기수와 관계없이 구분별 대표 기수 하나로 합치고, 합친 원래 id 를 mergedTargetIds 로 줍니다. 여러 개를 고를 때 match=GROUP 이면 같은 노출 목록 안은 하나라도, 목록끼리는 전부 걸린 상품만 줍니다(필터). ALL 은 전부, ANY(기본)는 하나라도입니다.',
     response: `{
   "targetList": [
     { "targetType": "CHALLENGE", "targetId": 442, "title": "이력서 1주 완성 챌린지", "thumbnail": "https://...", "categoryIds": [3, 7] }

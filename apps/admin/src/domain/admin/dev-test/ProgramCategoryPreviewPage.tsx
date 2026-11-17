@@ -63,6 +63,8 @@ const ProgramCategoryPreviewPage = ({
   const [groupId, setGroupId] = useState<string>(ALL);
   const [checkedIds, setCheckedIds] = useState<number[]>([]);
   const [showRaw, setShowRaw] = useState(false);
+  // 여러 개 골랐을 때 고르는 방식. 한 번 호출 탭에서만 쓴다
+  const [match, setMatch] = useState<'ANY' | 'ALL' | 'GROUP'>('GROUP');
 
   const groupPath =
     groupId === ALL
@@ -101,6 +103,7 @@ const ProgramCategoryPreviewPage = ({
   const bundleParams = [
     checkedIds.length > 0 ? `categoryIds=${checkedIds.join(',')}` : null,
     groupChallenges ? 'groupChallenges=true' : null,
+    checkedIds.length > 0 && match !== 'ANY' ? `match=${match}` : null,
   ].filter(Boolean);
   const bundlePath = `/program-category/targets${
     bundleParams.length > 0 ? `?${bundleParams.join('&')}` : ''
@@ -197,6 +200,25 @@ const ProgramCategoryPreviewPage = ({
             </MenuItem>
           ))}
         </Select>
+        {bundle && (
+          <>
+            <span className="text-xsmall14 font-semibold">고르는 방식</span>
+            <Select
+              size="small"
+              value={match}
+              onChange={(e) =>
+                setMatch(e.target.value as 'ANY' | 'ALL' | 'GROUP')
+              }
+              sx={{ minWidth: 300 }}
+            >
+              <MenuItem value="GROUP">
+                GROUP · 목록 안은 하나라도, 목록끼리는 전부
+              </MenuItem>
+              <MenuItem value="ALL">ALL · 고른 카테고리에 전부</MenuItem>
+              <MenuItem value="ANY">ANY · 하나라도 (고를수록 늘어남)</MenuItem>
+            </Select>
+          </>
+        )}
         <FormControlLabel
           control={
             <Switch
