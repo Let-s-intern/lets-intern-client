@@ -30,12 +30,18 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import ProgramSchedule from './program/ProgramSchedule';
+import ProgramCategorySection from '@/domain/admin/program/category/ProgramCategorySection';
+import { useProgramCategoryAssign } from '@/domain/admin/program/category/useProgramCategoryAssign';
 
 const LiveEdit: React.FC = () => {
   const { liveId: liveIdString } = useParams<{ liveId: string }>();
   const navigate = useNavigate();
   const client = useQueryClient();
   const { snackbar } = useAdminSnackbar();
+  const programCategory = useProgramCategoryAssign(
+    'LIVE',
+    Number(liveIdString),
+  );
 
   const [loading, setLoading] = useState(false);
   const [input, setInput] = useState<Omit<UpdateLiveReq, 'desc'>>({});
@@ -96,6 +102,7 @@ const LiveEdit: React.FC = () => {
     console.log('req:', req);
 
     const res = await patchLive(req);
+    await programCategory.save();
     client.invalidateQueries({
       queryKey: [useGetLiveQueryKey, Number(liveIdString)],
     });
@@ -103,7 +110,15 @@ const LiveEdit: React.FC = () => {
 
     setLoading(false);
     snackbar('저장되었습니다.');
-  }, [input, liveIdString, content, patchLive, client, snackbar]);
+  }, [
+    input,
+    liveIdString,
+    content,
+    patchLive,
+    programCategory,
+    client,
+    snackbar,
+  ]);
 
   useEffect(() => {
     // 구 버전인지 판단
@@ -199,6 +214,14 @@ const LiveEdit: React.FC = () => {
           />
         </section>
       </div>
+
+      <section className="mb-6 max-w-[1120px]">
+        <Heading2 className="mb-3">카테고리</Heading2>
+        <ProgramCategorySection
+          selectedIds={programCategory.selectedIds}
+          onToggle={programCategory.toggle}
+        />
+      </section>
 
       {/* 썸네일 */}
       <section className="mb-6 max-w-[1120px]">
