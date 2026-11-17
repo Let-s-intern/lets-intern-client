@@ -122,12 +122,10 @@ const VodEdit: React.FC = () => {
       </div>
 
       <div className="mb-6">
-        <FormSection title="노출 분류">
-          <ProgramCategorySection
-            selectedIds={programCategory.selectedIds}
-            onToggle={programCategory.toggle}
-          />
-        </FormSection>
+        <ProgramCategorySection
+          selectedIds={programCategory.selectedIds}
+          onToggle={programCategory.toggle}
+        />
       </div>
 
       <div className="mb-6">

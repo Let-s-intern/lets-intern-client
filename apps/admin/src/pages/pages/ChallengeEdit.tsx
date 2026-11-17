@@ -519,8 +519,7 @@ const ChallengeEdit: React.FC = () => {
           />
         </div>
 
-        <Heading2>노출 분류</Heading2>
-        <div className="mb-6 mt-3">
+        <div className="mb-6">
           <ProgramCategorySection
             selectedIds={programCategory.selectedIds}
             onToggle={programCategory.toggle}
