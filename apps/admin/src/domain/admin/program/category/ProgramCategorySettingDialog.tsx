@@ -10,19 +10,23 @@ import {
   TextField,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { FaArrowDown, FaArrowUp } from 'react-icons/fa';
+import { FaArrowDown, FaArrowUp, FaTrash } from 'react-icons/fa';
 import {
   useAdminProgramCategoryGroupsQuery,
   useCreateProgramCategory,
   useCreateProgramCategoryGroup,
+  useDeleteProgramCategory,
+  useDeleteProgramCategoryGroup,
   useReorderProgramCategories,
   useReorderProgramCategoryGroups,
   useUpdateProgramCategory,
   useUpdateProgramCategoryGroup,
+  type ProgramCategory,
 } from './programCategoryApi';
 
 interface ItemRowProps {
   title: string;
+  caption?: string;
   isVisible: boolean;
   selected?: boolean;
   isFirst: boolean;
@@ -31,11 +35,13 @@ interface ItemRowProps {
   onRename: (title: string) => void;
   onToggleVisible: (isVisible: boolean) => void;
   onMove: (direction: -1 | 1) => void;
+  onDelete: () => void;
 }
 
 /** 이름은 포커스를 벗어나거나 Enter 를 누를 때 저장한다 */
 const ItemRow = ({
   title,
+  caption,
   isVisible,
   selected,
   isFirst,
@@ -44,6 +50,7 @@ const ItemRow = ({
   onRename,
   onToggleVisible,
   onMove,
+  onDelete,
 }: ItemRowProps) => {
   const [value, setValue] = useState(title);
 
@@ -74,9 +81,14 @@ const ItemRow = ({
         onKeyDown={(e) => {
           if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
         }}
-        onClick={(e) => e.stopPropagation()}
+        onFocus={onSelect}
         sx={{ flex: 1, opacity: isVisible ? 1 : 0.5 }}
       />
+      {caption && (
+        <span className="shrink-0 text-xsmall14 text-neutral-40">
+          {caption}
+        </span>
+      )}
       <IconButton
         size="small"
         disabled={isFirst}
@@ -106,6 +118,16 @@ const ItemRow = ({
         onChange={(e) => onToggleVisible(e.target.checked)}
         inputProps={{ 'aria-label': '노출' }}
       />
+      <IconButton
+        size="small"
+        onClick={(e) => {
+          e.stopPropagation();
+          onDelete();
+        }}
+        aria-label="삭제"
+      >
+        <FaTrash size={12} />
+      </IconButton>
     </li>
   );
 };
@@ -175,6 +197,8 @@ const ProgramCategorySettingDialog = ({
   const createCategory = useCreateProgramCategory();
   const updateCategory = useUpdateProgramCategory();
   const reorderCategories = useReorderProgramCategories();
+  const deleteGroup = useDeleteProgramCategoryGroup();
+  const deleteCategory = useDeleteProgramCategory();
 
   const selectedGroup =
     groups.find((group) => group.id === selectedGroupId) ?? groups[0];
@@ -187,6 +211,34 @@ const ProgramCategorySettingDialog = ({
     }
   };
 
+  // 연결된 프로그램이 있거나 안에 카테고리가 있을 때만 한 번 더 묻는다
+  const handleDeleteGroup = (group: (typeof groups)[number]) => {
+    const linked = group.categoryList.reduce(
+      (sum, c) => sum + c.programCount,
+      0,
+    );
+    if (
+      group.categoryList.length > 0 &&
+      !window.confirm(
+        `"${group.title}" 목록을 지우면 안의 카테고리 ${group.categoryList.length}개와 프로그램 연결 ${linked}건도 함께 지워집니다. 삭제할까요?`,
+      )
+    )
+      return;
+    if (selectedGroupId === group.id) setSelectedGroupId(null);
+    run(deleteGroup.mutateAsync(group.id));
+  };
+
+  const handleDeleteCategory = (category: ProgramCategory) => {
+    if (
+      category.programCount > 0 &&
+      !window.confirm(
+        `"${category.title}" 은 프로그램 ${category.programCount}개에 연결돼 있습니다. 연결도 함께 지워집니다. 삭제할까요?`,
+      )
+    )
+      return;
+    run(deleteCategory.mutateAsync(category.id));
+  };
+
   const groupIds = groups.map((group) => group.id);
   const categoryIds = selectedGroup?.categoryList.map((c) => c.id) ?? [];
 
@@ -196,7 +248,7 @@ const ProgramCategorySettingDialog = ({
       <DialogContent>
         <p className="mb-4 text-xsmall14 text-neutral-40">
           목록은 프로그램 목록 필터의 제목 줄, 카테고리는 그 아래 체크박스가
-          됩니다. 프로그램에 연결이 남도록 삭제 대신 숨김을 씁니다.
+          됩니다. 잠시 빼 두려면 숨김, 아예 없애려면 삭제를 씁니다.
         </p>
         <div className="grid grid-cols-2 gap-6">
           <section>
@@ -224,6 +276,7 @@ const ProgramCategorySettingDialog = ({
                       ),
                     )
                   }
+                  onDelete={() => handleDeleteGroup(group)}
                 />
               ))}
             </ul>
@@ -244,6 +297,7 @@ const ProgramCategorySettingDialog = ({
                     <ItemRow
                       key={category.id}
                       title={category.title}
+                      caption={`연결 ${category.programCount}`}
                       isVisible={category.isVisible}
                       isFirst={index === 0}
                       isLast={index === selectedGroup.categoryList.length - 1}
@@ -275,6 +329,7 @@ const ProgramCategorySettingDialog = ({
                           }),
                         )
                       }
+                      onDelete={() => handleDeleteCategory(category)}
                     />
                   ))}
                 </ul>

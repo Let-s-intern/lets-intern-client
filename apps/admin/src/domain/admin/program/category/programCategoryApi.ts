@@ -11,15 +11,19 @@ const programCategorySchema = z.object({
   isVisible: z.boolean(),
 });
 
+const programCategoryItemSchema = programCategorySchema.extend({
+  programCount: z.number(),
+});
+
 const programCategoryGroupSchema = programCategorySchema.extend({
-  categoryList: z.array(programCategorySchema),
+  categoryList: z.array(programCategoryItemSchema),
 });
 
 const programCategoryGroupListSchema = z.object({
   programCategoryGroupList: z.array(programCategoryGroupSchema),
 });
 
-export type ProgramCategory = z.infer<typeof programCategorySchema>;
+export type ProgramCategory = z.infer<typeof programCategoryItemSchema>;
 export type ProgramCategoryGroup = z.infer<typeof programCategoryGroupSchema>;
 
 export const AdminProgramCategoryQueryKey = 'adminProgramCategoryGroupList';
@@ -60,6 +64,18 @@ export const useUpdateProgramCategoryGroup = () =>
   useInvalidatingMutation(
     ({ id, ...body }: { id: number; title?: string; isVisible?: boolean }) =>
       axios.patch(`/admin/program-category/group/${id}`, body),
+  );
+
+/** DELETE 목록 삭제 (안의 카테고리·연결 포함) /api/v1/admin/program-category/group/{id} */
+export const useDeleteProgramCategoryGroup = () =>
+  useInvalidatingMutation((id: number) =>
+    axios.delete(`/admin/program-category/group/${id}`),
+  );
+
+/** DELETE 카테고리 삭제 (연결 포함) /api/v1/admin/program-category/{id} */
+export const useDeleteProgramCategory = () =>
+  useInvalidatingMutation((id: number) =>
+    axios.delete(`/admin/program-category/${id}`),
   );
 
 /** PUT 목록 순서 /api/v1/admin/program-category/group/order */
