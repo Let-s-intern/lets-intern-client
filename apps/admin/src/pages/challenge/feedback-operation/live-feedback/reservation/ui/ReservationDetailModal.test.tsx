@@ -287,6 +287,26 @@ describe('ReservationDetailModal', () => {
       ).toBeInTheDocument();
     });
 
+    // LC-3638 — 첨부와 멘토 공유 동의도 상세에서 본다.
+    it('파일 첨부는 열기 링크로, 공유 동의 여부와 함께 보여준다', () => {
+      render(
+        <ReservationDetailModal
+          row={makeLiveMentoringRow({
+            attachmentType: 'FILE',
+            attachmentUrl: 'https://files.example.com/resume.pdf?sig=abc',
+            mentorShareAgreed: false,
+          })}
+          onClose={vi.fn()}
+        />,
+      );
+      expect(
+        screen.getByRole('link', { name: '첨부 파일 열기' }),
+      ).toHaveAttribute('href', 'https://files.example.com/resume.pdf?sig=abc');
+      expect(
+        screen.getByText('동의 안 함 (멘토에게 첨부가 보이지 않습니다)'),
+      ).toBeInTheDocument();
+    });
+
     it('슬롯을 잡지 못한 신청은 예약 일시 자리에 그 사실을 적는다', () => {
       render(
         <ReservationDetailModal
