@@ -9,8 +9,9 @@ import {
   Switch,
   TextField,
 } from '@mui/material';
+import type React from 'react';
 import { useEffect, useState } from 'react';
-import { FaArrowDown, FaArrowUp, FaTrash } from 'react-icons/fa';
+import { FaArrowDown, FaArrowUp, FaPen, FaTrash } from 'react-icons/fa';
 import {
   useAdminProgramCategoryGroupsQuery,
   useCreateProgramCategory,
@@ -38,7 +39,7 @@ interface ItemRowProps {
   onDelete: () => void;
 }
 
-/** 이름은 포커스를 벗어나거나 Enter 를 누를 때 저장한다 */
+/** 평소에는 글자로 보이고, 연필을 누르면 이름 칸이 된다. Enter·포커스 이탈로 저장, Esc 로 취소 */
 const ItemRow = ({
   title,
   caption,
@@ -52,11 +53,13 @@ const ItemRow = ({
   onMove,
   onDelete,
 }: ItemRowProps) => {
+  const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(title);
 
   useEffect(() => setValue(title), [title]);
 
   const commit = () => {
+    setEditing(false);
     const next = value.trim();
     if (!next) {
       setValue(title);
@@ -65,25 +68,66 @@ const ItemRow = ({
     if (next !== title) onRename(next);
   };
 
+  const stop = (e: React.SyntheticEvent) => e.stopPropagation();
+
   return (
     <li
-      className={`flex items-center gap-1 rounded-xs px-2 py-1 ${
-        selected ? 'bg-primary-10' : ''
+      className={`flex min-h-12 items-center gap-1 rounded-xs border-l-4 py-1 pl-3 pr-1 ${
+        selected
+          ? 'border-primary bg-primary-10'
+          : 'border-transparent hover:bg-neutral-95'
       } ${onSelect ? 'cursor-pointer' : ''}`}
       onClick={onSelect}
+      aria-selected={onSelect ? selected : undefined}
     >
-      <TextField
-        size="small"
-        value={value}
-        inputProps={{ maxLength: 30 }}
-        onChange={(e) => setValue(e.target.value)}
-        onBlur={commit}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
-        }}
-        onFocus={onSelect}
-        sx={{ flex: 1, opacity: isVisible ? 1 : 0.5 }}
-      />
+      <div className="flex min-w-0 flex-1 items-center gap-2">
+        {editing ? (
+          <TextField
+            size="small"
+            autoFocus
+            onFocus={(e) => e.target.select()}
+            value={value}
+            inputProps={{ maxLength: 30 }}
+            onClick={stop}
+            onChange={(e) => setValue(e.target.value)}
+            onBlur={commit}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
+              if (e.key === 'Escape') {
+                e.stopPropagation();
+                setValue(title);
+                setEditing(false);
+              }
+            }}
+            sx={{ flex: 1 }}
+          />
+        ) : (
+          <>
+            <span
+              className={`truncate ${selected ? 'font-semibold text-neutral-0' : 'text-neutral-10'} ${
+                isVisible ? '' : 'text-neutral-50 line-through'
+              }`}
+            >
+              {title}
+            </span>
+            {!isVisible && (
+              <span className="shrink-0 rounded-xs bg-neutral-90 px-1.5 text-xsmall14 text-neutral-40">
+                숨김
+              </span>
+            )}
+            <IconButton
+              size="small"
+              onClick={(e) => {
+                stop(e);
+                setEditing(true);
+              }}
+              aria-label="이름 변경"
+            >
+              <FaPen size={11} />
+            </IconButton>
+          </>
+        )}
+      </div>
       {caption && (
         <span className="shrink-0 text-xsmall14 text-neutral-40">
           {caption}
@@ -93,7 +137,7 @@ const ItemRow = ({
         size="small"
         disabled={isFirst}
         onClick={(e) => {
-          e.stopPropagation();
+          stop(e);
           onMove(-1);
         }}
         aria-label="위로"
@@ -104,7 +148,7 @@ const ItemRow = ({
         size="small"
         disabled={isLast}
         onClick={(e) => {
-          e.stopPropagation();
+          stop(e);
           onMove(1);
         }}
         aria-label="아래로"
@@ -114,14 +158,14 @@ const ItemRow = ({
       <Switch
         size="small"
         checked={isVisible}
-        onClick={(e) => e.stopPropagation()}
+        onClick={stop}
         onChange={(e) => onToggleVisible(e.target.checked)}
         inputProps={{ 'aria-label': '노출' }}
       />
       <IconButton
         size="small"
         onClick={(e) => {
-          e.stopPropagation();
+          stop(e);
           onDelete();
         }}
         aria-label="삭제"
@@ -260,6 +304,7 @@ const ProgramCategorySettingDialog = ({
                   title={group.title}
                   isVisible={group.isVisible}
                   selected={group.id === selectedGroup?.id}
+                  caption={`분류 ${group.categoryList.length}개`}
                   isFirst={index === 0}
                   isLast={index === groups.length - 1}
                   onSelect={() => setSelectedGroupId(group.id)}
