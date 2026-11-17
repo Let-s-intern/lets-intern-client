@@ -35,8 +35,7 @@ import ImageUpload from '@/domain/admin/program/ui/form/ImageUpload';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
-import ProgramCategorySection from '@/domain/admin/program/category/ProgramCategorySection';
-import { useProgramCategoryAssign } from '@/domain/admin/program/category/useProgramCategoryAssign';
+import ProgramCategoryField from '@/domain/admin/program/category/ProgramCategoryField';
 import Heading3 from '@/domain/admin/ui/heading/Heading3';
 import FaqSection from '@/domain/faq/FaqSection';
 import CurationCardPreview from '@/domain/program-recommend/ui/CurationCardPreview';
@@ -126,10 +125,6 @@ const ChallengeEdit: React.FC = () => {
   const { data: challengeMentorData } =
     useAdminChallengeMentorListQuery(challengeIdString);
   const postMentorMutation = usePostAdminChallengeMentor();
-  const programCategory = useProgramCategoryAssign(
-    'CHALLENGE',
-    Number(challengeIdString),
-  );
 
   // 멘토 리스트
   const mentorRef = useRef<number[]>([]);
@@ -367,7 +362,6 @@ const ChallengeEdit: React.FC = () => {
           challengeMentorData?.mentorList ?? [],
           mentorRef.current,
         ),
-        programCategory.save(),
       ]);
       console.log('res', res);
     } catch (error) {
@@ -405,7 +399,6 @@ const ChallengeEdit: React.FC = () => {
     pricePlan,
     defaultBasicPriceInfo,
     challengeMentorData,
-    programCategory,
     versionDrafts,
   ]);
 
@@ -520,9 +513,9 @@ const ChallengeEdit: React.FC = () => {
         </div>
 
         <div className="mb-6">
-          <ProgramCategorySection
-            selectedIds={programCategory.selectedIds}
-            onToggle={programCategory.toggle}
+          <ProgramCategoryField
+            targetType="CHALLENGE"
+            targetId={Number(challengeIdString)}
           />
         </div>
 

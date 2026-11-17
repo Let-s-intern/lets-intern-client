@@ -15,6 +15,9 @@ interface ItemRowProps {
   onToggleVisible: (isVisible: boolean) => void;
   onMove: (direction: -1 | 1) => void;
   onDelete: () => void;
+  /** 줄을 눌렀을 때. 카테고리 줄은 연결 목록을 펼친다 */
+  onClick?: () => void;
+  active?: boolean;
 }
 
 /** 평소에는 글자로 보이고, 연필을 누르면 이름 칸이 된다. Enter·포커스 이탈로 저장, Esc 로 취소 */
@@ -29,6 +32,8 @@ export const ItemRow = ({
   onToggleVisible,
   onMove,
   onDelete,
+  onClick,
+  active,
 }: ItemRowProps) => {
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(title);
@@ -48,7 +53,12 @@ export const ItemRow = ({
   const stop = (e: React.SyntheticEvent) => e.stopPropagation();
 
   return (
-    <li className="flex min-h-11 items-center gap-1 rounded-xs py-1 pl-3 pr-1 hover:bg-neutral-95">
+    <li
+      className={`flex min-h-11 items-center gap-1 rounded-xs py-1 pl-3 pr-1 ${
+        active ? 'bg-primary-10' : 'hover:bg-neutral-95'
+      } ${onClick ? 'cursor-pointer' : ''}`}
+      onClick={onClick}
+    >
       <div className="flex min-w-0 flex-1 items-center gap-2">
         {editing ? (
           <TextField
@@ -153,12 +163,19 @@ export const AddRow = ({
   onAdd: (title: string) => Promise<unknown>;
 }) => {
   const [value, setValue] = useState('');
+  // Enter 연타로 같은 이름이 두 번 만들어지지 않게 보내는 동안은 막는다
+  const [submitting, setSubmitting] = useState(false);
 
   const submit = async () => {
     const title = value.trim();
-    if (!title) return;
-    await onAdd(title);
-    setValue('');
+    if (!title || submitting) return;
+    setSubmitting(true);
+    try {
+      await onAdd(title);
+      setValue('');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -174,7 +191,7 @@ export const AddRow = ({
         }}
         sx={{ flex: 1 }}
       />
-      <Button variant="outlined" onClick={submit}>
+      <Button variant="outlined" onClick={submit} disabled={submitting}>
         추가
       </Button>
     </div>

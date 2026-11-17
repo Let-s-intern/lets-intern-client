@@ -2,7 +2,28 @@ import axios from '@/utils/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 
-export type ProgramCategoryProgramType = 'CHALLENGE' | 'LIVE' | 'VOD';
+/** 노출 분류를 달 수 있는 대상. 서버 ProgramCategoryTargetType 과 같다 */
+export type ProgramCategoryTargetType =
+  | 'CHALLENGE'
+  | 'LIVE'
+  | 'VOD'
+  | 'GUIDEBOOK'
+  | 'LIVE_MENTORING'
+  | 'MEMBERSHIP'
+  | 'BLOG';
+
+export const programCategoryTargetTypeLabel: Record<
+  ProgramCategoryTargetType,
+  string
+> = {
+  CHALLENGE: '챌린지',
+  LIVE: 'LIVE 클래스',
+  VOD: 'VOD 클래스',
+  GUIDEBOOK: '가이드북',
+  LIVE_MENTORING: '1:1 LIVE 멘토링',
+  MEMBERSHIP: '올인원 패스',
+  BLOG: '블로그',
+};
 
 const programCategorySchema = z.object({
   id: z.number(),
@@ -117,7 +138,7 @@ const programCategoryIdsQueryKey = 'adminProgramCategoryIdsOfProgram';
 
 /** GET 프로그램에 지정된 카테고리 id /api/v1/admin/program-category/program */
 export const useProgramCategoryIdsQuery = (
-  programType: ProgramCategoryProgramType,
+  programType: ProgramCategoryTargetType,
   programId: number,
 ) =>
   useQuery({
@@ -133,9 +154,85 @@ export const useProgramCategoryIdsQuery = (
     refetchOnWindowFocus: false,
   });
 
-/** PUT 프로그램 카테고리 지정 (전체 교체) /api/v1/admin/program-category/program */
-export const putProgramCategoriesOfProgram = (body: {
-  programType: ProgramCategoryProgramType;
-  programId: number;
-  programCategoryIdList: number[];
-}) => axios.put('/admin/program-category/program', body);
+/** PUT 대상의 카테고리 지정 (전체 교체) /api/v1/admin/program-category/program */
+export const usePutProgramCategoriesOfTarget = (
+  programType: ProgramCategoryTargetType,
+  programId: number,
+) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (programCategoryIdList: number[]) =>
+      axios.put('/admin/program-category/program', {
+        programType,
+        programId,
+        programCategoryIdList,
+      }),
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: [programCategoryIdsQueryKey, programType, programId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [AdminProgramCategoryQueryKey],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [programCategoryTargetsQueryKey],
+      });
+    },
+  });
+};
+
+const programCategoryTargetSchema = z.object({
+  mappingId: z.number(),
+  targetType: z.enum([
+    'CHALLENGE',
+    'LIVE',
+    'VOD',
+    'GUIDEBOOK',
+    'LIVE_MENTORING',
+    'MEMBERSHIP',
+    'BLOG',
+  ]),
+  targetId: z.number(),
+  title: z.string().nullable(),
+});
+
+export type ProgramCategoryTarget = z.infer<typeof programCategoryTargetSchema>;
+
+const programCategoryTargetsQueryKey = 'adminProgramCategoryTargets';
+
+/** GET 카테고리에 연결된 대상 /api/v1/admin/program-category/{id}/targets */
+export const useProgramCategoryTargetsQuery = (
+  programCategoryId: number,
+  enabled: boolean,
+) =>
+  useQuery({
+    queryKey: [programCategoryTargetsQueryKey, programCategoryId],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/admin/program-category/${programCategoryId}/targets`,
+      );
+      return z
+        .object({ targetList: z.array(programCategoryTargetSchema) })
+        .parse(res.data.data).targetList;
+    },
+    enabled,
+    refetchOnWindowFocus: false,
+  });
+
+/** DELETE 연결 하나 해제 /api/v1/admin/program-category/mapping/{mappingId} */
+export const useDeleteProgramCategoryMapping = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (mappingId: number) =>
+      axios.delete(`/admin/program-category/mapping/${mappingId}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [programCategoryTargetsQueryKey],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [AdminProgramCategoryQueryKey],
+      });
+      queryClient.invalidateQueries({ queryKey: [programCategoryIdsQueryKey] });
+    },
+  });
+};

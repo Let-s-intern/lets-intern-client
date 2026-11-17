@@ -5,8 +5,7 @@ import ProgramContentPriceSection from '@/domain/admin/program/ProgramContentPri
 import ProgramContentThumbnailSection from '@/domain/admin/program/ProgramContentThumbnailSection';
 import ProgramContentUrlFileSection from '@/domain/admin/program/ProgramContentUrlFileSection';
 import FormSection from '@/domain/admin/program/ui/FormSection';
-import ProgramCategorySection from '@/domain/admin/program/category/ProgramCategorySection';
-import { useProgramCategoryAssign } from '@/domain/admin/program/category/useProgramCategoryAssign';
+import ProgramCategoryField from '@/domain/admin/program/category/ProgramCategoryField';
 import VodMentorSelect from '@/domain/admin/program/vod/VodMentorSelect';
 import { useVodForm } from '@/domain/admin/program/vod/hooks/useVodForm';
 import { buildUpdateVodReq } from '@/domain/admin/program/vod/utils/vodMapping';
@@ -25,7 +24,6 @@ const VodEdit: React.FC = () => {
   const vodIdString = params.vodId;
   const client = useQueryClient();
   const { snackbar } = useAdminSnackbar();
-  const programCategory = useProgramCategoryAssign('VOD', Number(vodIdString));
 
   const { data: vod } = useGetVodQuery({
     vodId: Number(vodIdString),
@@ -60,7 +58,6 @@ const VodEdit: React.FC = () => {
       const req = buildUpdateVodReq(Number(vodIdString), input);
 
       await patchVod(req);
-      await programCategory.save();
       await client.invalidateQueries();
 
       snackbar('저장되었습니다.');
@@ -68,15 +65,7 @@ const VodEdit: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [
-    client,
-    vodIdString,
-    input,
-    patchVod,
-    programCategory,
-    navigate,
-    snackbar,
-  ]);
+  }, [client, vodIdString, input, patchVod, navigate, snackbar]);
 
   if (!vod || !isReady) {
     return <div>loading...</div>;
@@ -122,10 +111,7 @@ const VodEdit: React.FC = () => {
       </div>
 
       <div className="mb-6">
-        <ProgramCategorySection
-          selectedIds={programCategory.selectedIds}
-          onToggle={programCategory.toggle}
-        />
+        <ProgramCategoryField targetType="VOD" targetId={Number(vodIdString)} />
       </div>
 
       <div className="mb-6">
