@@ -209,6 +209,7 @@ const programCategoryTargetSchema = z.object({
   ]),
   targetId: z.number(),
   title: z.string().nullable(),
+  thumbnail: z.string().nullish(),
 });
 
 export type ProgramCategoryTarget = z.infer<typeof programCategoryTargetSchema>;

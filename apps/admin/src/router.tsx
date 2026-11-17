@@ -7,6 +7,10 @@ import NotFound from './pages/NotFound';
 const AdminHome = lazy(() => import('./pages/pages/AdminHome'));
 const Stats = lazy(() => import('./pages/pages/Stats'));
 const Programs = lazy(() => import('./pages/pages/program/Programs'));
+const TestHomePage = lazy(() => import('./domain/admin/dev-test/TestHomePage'));
+const ProgramCategoryPreviewPage = lazy(
+  () => import('./domain/admin/dev-test/ProgramCategoryPreviewPage'),
+);
 const ProgramCategoryPage = lazy(
   () => import('./domain/admin/program/category/ProgramCategoryPage'),
 );
@@ -339,6 +343,12 @@ export const router = createBrowserRouter([
       { path: '/stats', element: withSuspense(<Stats />) },
       { path: '/stats/:tab', element: withSuspense(<Stats />) },
       { path: '/programs', element: withSuspense(<Programs />) },
+      // 개발자 테스트. 주소로만 들어온다 (domain/admin/dev-test/testNavData.ts)
+      { path: '/test', element: withSuspense(<TestHomePage />) },
+      {
+        path: '/test/program-category',
+        element: withSuspense(<ProgramCategoryPreviewPage />),
+      },
       {
         path: '/program-category',
         element: withSuspense(<ProgramCategoryPage />),
