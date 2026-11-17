@@ -10,4 +10,10 @@ export const testNavData = [
     description:
       '어드민에서 설정한 노출 분류가 공개 API 로 그대로 내려오는지, 프론트 필터처럼 그려 확인합니다.',
   },
+  {
+    name: '노출 분류 미리보기 (한 번 호출)',
+    url: '/test/program-category-bundle',
+    description:
+      '여러 카테고리 조회 API 를 한 번만 불러 같은 화면을 그립니다. 카테고리마다 따로 부르는 방식과 결과가 같은지 비교합니다.',
+  },
 ] as const;

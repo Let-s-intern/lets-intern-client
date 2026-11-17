@@ -350,6 +350,10 @@ export const router = createBrowserRouter([
         element: withSuspense(<ProgramCategoryPreviewPage />),
       },
       {
+        path: '/test/program-category-bundle',
+        element: withSuspense(<ProgramCategoryPreviewPage bundle />),
+      },
+      {
         path: '/program-category',
         element: withSuspense(<ProgramCategoryPage />),
       },

@@ -33,11 +33,29 @@ const getData = async <T,>(path: string): Promise<T> => {
   return res.data.data as T;
 };
 
+interface BundleTarget {
+  targetType: ProgramCategoryTarget['targetType'];
+  targetId: number;
+  title: string;
+  thumbnail?: string | null;
+  categoryIds: number[];
+}
+
+interface ProgramCategoryPreviewPageProps {
+  /**
+   * true 면 여러 카테고리 조회 API(/program-category/targets?categoryIds=) 를 한 번만 부른다.
+   * false 면 카테고리마다 /{id}/targets 를 따로 부르고 화면에서 합친다
+   */
+  bundle?: boolean;
+}
+
 /**
  * 노출 분류 미리보기. 어드민 설정이 공개 API 로 그대로 내려오는지,
  * 실제 프론트 필터처럼 그려서 확인한다. GET 만 부른다
  */
-const ProgramCategoryPreviewPage = () => {
+const ProgramCategoryPreviewPage = ({
+  bundle = false,
+}: ProgramCategoryPreviewPageProps) => {
   const [groupId, setGroupId] = useState<string>(ALL);
   const [checkedIds, setCheckedIds] = useState<number[]>([]);
   const [showRaw, setShowRaw] = useState(false);
@@ -75,8 +93,20 @@ const ProgramCategoryPreviewPage = () => {
   const allCategoryIds = groups.flatMap((g) => g.categoryList.map((c) => c.id));
   const queriedIds = checkedIds.length > 0 ? checkedIds : allCategoryIds;
 
+  // 한 번 호출: 고른 것이 없으면 categoryIds 를 비워 서버가 전체를 주게 한다
+  const bundlePath =
+    checkedIds.length > 0
+      ? `/program-category/targets?categoryIds=${checkedIds.join(',')}`
+      : '/program-category/targets';
+  const bundleQuery = useQuery({
+    queryKey: ['devTestProgramCategoryBundle', bundlePath],
+    queryFn: async () =>
+      (await getData<{ targetList: BundleTarget[] }>(bundlePath)).targetList,
+    enabled: bundle,
+  });
+
   const targetQueries = useQueries({
-    queries: queriedIds.map((id) => ({
+    queries: (bundle ? [] : queriedIds).map((id) => ({
       queryKey: ['devTestProgramCategoryTargets', id],
       queryFn: async () =>
         (
@@ -95,6 +125,12 @@ const ProgramCategoryPreviewPage = () => {
     string,
     { target: ProgramCategoryTarget; categoryIds: number[] }
   >();
+  bundleQuery.data?.forEach(({ categoryIds, ...target }) => {
+    merged.set(`${target.targetType}-${target.targetId}`, {
+      target: { ...target, mappingId: 0 },
+      categoryIds,
+    });
+  });
   targetQueries.forEach((query, index) => {
     query.data?.forEach((target) => {
       const key = `${target.targetType}-${target.targetId}`;
@@ -111,13 +147,20 @@ const ProgramCategoryPreviewPage = () => {
 
   const calledPaths = [
     `GET /api/v1${groupPath}`,
-    ...queriedIds.map((id) => `GET /api/v1/program-category/${id}/targets`),
+    ...(bundle
+      ? [`GET /api/v1${bundlePath}`]
+      : queriedIds.map((id) => `GET /api/v1/program-category/${id}/targets`)),
   ];
+  const isTargetLoading = bundle
+    ? bundleQuery.isLoading
+    : targetQueries.some((q) => q.isLoading);
 
   return (
     <div className="mx-3 mb-40 mt-3">
       <Header>
-        <Heading>노출 분류 미리보기</Heading>
+        <Heading>
+          {bundle ? '노출 분류 미리보기 (한 번 호출)' : '노출 분류 미리보기'}
+        </Heading>
       </Header>
       <p className="mt-2 text-xsmall14 text-neutral-40">
         공개 API 만 불러 실제 프론트 필터처럼 그립니다. 숨긴 목록·카테고리와
@@ -210,7 +253,7 @@ const ProgramCategoryPreviewPage = () => {
           </p>
           {merged.size === 0 ? (
             <p className="py-16 text-center text-xsmall14 text-neutral-40">
-              {targetQueries.some((q) => q.isLoading)
+              {isTargetLoading
                 ? '불러오는 중…'
                 : '연결된 상품이 없습니다. 각 상품 수정 화면의 노출 분류에서 체크하세요.'}
             </p>
@@ -256,6 +299,7 @@ const ProgramCategoryPreviewPage = () => {
           {JSON.stringify(
             {
               [groupPath]: groupQuery.data,
+              ...(bundle ? { [bundlePath]: bundleQuery.data } : {}),
               ...Object.fromEntries(
                 queriedIds.map((id, index) => [
                   `/program-category/${id}/targets`,
