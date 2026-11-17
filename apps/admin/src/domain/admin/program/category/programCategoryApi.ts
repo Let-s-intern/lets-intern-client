@@ -10,7 +10,8 @@ export type ProgramCategoryTargetType =
   | 'GUIDEBOOK'
   | 'LIVE_MENTORING'
   | 'MEMBERSHIP'
-  | 'BLOG';
+  | 'BLOG'
+  | 'MAGNET';
 
 export const programCategoryTargetTypeLabel: Record<
   ProgramCategoryTargetType,
@@ -23,6 +24,7 @@ export const programCategoryTargetTypeLabel: Record<
   LIVE_MENTORING: '1:1 LIVE 멘토링',
   MEMBERSHIP: '올인원 패스',
   BLOG: '블로그',
+  MAGNET: '마그넷',
 };
 
 const programCategorySchema = z.object({
@@ -154,6 +156,18 @@ export const useProgramCategoryIdsQuery = (
     refetchOnWindowFocus: false,
   });
 
+/** PUT 대상의 카테고리 지정 (전체 교체). 생성 직후 새 id 로 저장할 때 쓴다 */
+export const putProgramCategoriesOfTarget = (
+  programType: ProgramCategoryTargetType,
+  programId: number,
+  programCategoryIdList: number[],
+) =>
+  axios.put('/admin/program-category/program', {
+    programType,
+    programId,
+    programCategoryIdList,
+  });
+
 /** PUT 대상의 카테고리 지정 (전체 교체) /api/v1/admin/program-category/program */
 export const usePutProgramCategoriesOfTarget = (
   programType: ProgramCategoryTargetType,
@@ -191,6 +205,7 @@ const programCategoryTargetSchema = z.object({
     'LIVE_MENTORING',
     'MEMBERSHIP',
     'BLOG',
+    'MAGNET',
   ]),
   targetId: z.number(),
   title: z.string().nullable(),

@@ -1,4 +1,5 @@
 import { usePostBlogMutation } from '@/api/blog/blog';
+import { putProgramCategoriesOfTarget } from '@/domain/admin/program/category/programCategoryApi';
 import {
   BlogContent,
   ProgramRecommendItem,
@@ -43,6 +44,8 @@ export const useBlogCreateForm = () => {
   const [editingValue, setEditingValue] = useState<CreateBlog>(initialBlog);
   const [dateTime, setDateTime] = useState<Dayjs | null>(null);
   const [content, setContent] = useState<BlogContent>(initialContent);
+  // 생성 화면에서 고른 노출 분류. 블로그가 만들어진 뒤 새 id 로 저장한다
+  const [programCategoryIds, setProgramCategoryIds] = useState<number[]>([]);
 
   const onChangeField = (event: ChangeEvent<HTMLInputElement>) => {
     setEditingValue((prev) => ({
@@ -81,13 +84,27 @@ export const useBlogCreateForm = () => {
         ? dayjs().format('YYYY-MM-DDTHH:mm')
         : (dateTime?.format('YYYY-MM-DDTHH:mm') ?? '');
 
-    await createBlogMutation.mutateAsync({
+    const res = await createBlogMutation.mutateAsync({
       ...editingValue,
       content: JSON.stringify(content),
       isDisplayed: isPublish,
       tagList: editingValue.tagList.map((tag) => tag.id),
       displayDate,
     });
+
+    const newBlogId: number | undefined = res?.data?.data?.blogId;
+    if (newBlogId && programCategoryIds.length > 0) {
+      try {
+        await putProgramCategoriesOfTarget(
+          'BLOG',
+          newBlogId,
+          programCategoryIds,
+        );
+      } catch {
+        setSnackbar('블로그는 생성됐지만 노출 분류 저장에 실패했습니다.');
+        return;
+      }
+    }
 
     setSnackbar('블로그가 생성되었습니다.');
   };
@@ -105,5 +122,7 @@ export const useBlogCreateForm = () => {
     onChangeEditor,
     setDateTime,
     postBlog,
+    programCategoryIds,
+    setProgramCategoryIds,
   };
 };

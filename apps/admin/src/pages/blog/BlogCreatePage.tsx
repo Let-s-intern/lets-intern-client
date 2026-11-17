@@ -1,4 +1,5 @@
 import { useBlogCreateForm } from '@/domain/admin/blog/hooks/useBlogCreateForm';
+import ProgramCategoryDraftField from '@/domain/admin/program/category/ProgramCategoryDraftField';
 import BlogActionButtons from '@/domain/admin/blog/section/BlogActionButtons';
 import BlogBasicInfoSection from '@/domain/admin/blog/section/BlogBasicInfoSection';
 import BlogProgramRecommendSection from '@/domain/admin/blog/section/BlogProgramRecommendSection';
@@ -25,6 +26,8 @@ const BlogCreatePage = () => {
     onChangeEditor,
     setDateTime,
     postBlog,
+    programCategoryIds,
+    setProgramCategoryIds,
   } = useBlogCreateForm();
 
   return (
@@ -47,6 +50,11 @@ const BlogCreatePage = () => {
           <BlogTagSection
             tagList={editingValue.tagList}
             onChangeTagList={onChangeTagList}
+          />
+
+          <ProgramCategoryDraftField
+            value={programCategoryIds}
+            onChange={setProgramCategoryIds}
           />
 
           <div className="flex gap-5">

@@ -23,6 +23,8 @@ const editPath = ({ targetType, targetId }: ProgramCategoryTarget) => {
       return `/all-in-one-pass/${targetId}/edit`;
     case 'BLOG':
       return `/blog/edit/${targetId}`;
+    case 'MAGNET':
+      return `/magnet/${targetId}/post`;
     case 'LIVE_MENTORING':
       return '/live-mentoring';
   }

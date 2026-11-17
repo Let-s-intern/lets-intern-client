@@ -19,6 +19,8 @@ import {
   TextField,
 } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import ProgramCategoryDraftField from '@/domain/admin/program/category/ProgramCategoryDraftField';
+import ProgramCategoryField from '@/domain/admin/program/category/ProgramCategoryField';
 import { lazy, Suspense } from 'react';
 
 const EditorApp = lazy(() => import('@/common/lexical/EditorApp'));
@@ -71,6 +73,8 @@ const MagnetPostPage = ({ magnetId }: MagnetPostPageProps) => {
     setEndDate,
     savePost,
     navigateToList,
+    programCategoryIds,
+    setProgramCategoryIds,
   } = useMagnetPostForm(magnetId);
 
   const currentType: MagnetTypeKey | undefined = isCreateMode
@@ -172,6 +176,18 @@ const MagnetPostPage = ({ magnetId }: MagnetPostPageProps) => {
                 />
               ) : (
                 <p className="text-lg font-medium">제목: &nbsp;{title}</p>
+              )}
+
+              {isCreateMode ? (
+                <ProgramCategoryDraftField
+                  value={programCategoryIds}
+                  onChange={setProgramCategoryIds}
+                />
+              ) : (
+                <ProgramCategoryField
+                  targetType="MAGNET"
+                  targetId={Number(magnetId)}
+                />
               )}
 
               {/* 출시알림: 노출 기간만 노출 */}
