@@ -354,6 +354,12 @@ export const router = createBrowserRouter([
         element: withSuspense(<ProgramCategoryPreviewPage bundle />),
       },
       {
+        path: '/test/program-category-grouped',
+        element: withSuspense(
+          <ProgramCategoryPreviewPage bundle groupChallenges />,
+        ),
+      },
+      {
         path: '/program-category',
         element: withSuspense(<ProgramCategoryPage />),
       },

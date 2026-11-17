@@ -39,6 +39,7 @@ interface BundleTarget {
   title: string;
   thumbnail?: string | null;
   categoryIds: number[];
+  mergedTargetIds?: number[];
 }
 
 interface ProgramCategoryPreviewPageProps {
@@ -47,6 +48,8 @@ interface ProgramCategoryPreviewPageProps {
    * false 면 카테고리마다 /{id}/targets 를 따로 부르고 화면에서 합친다
    */
   bundle?: boolean;
+  /** bundle 일 때 챌린지를 기수와 관계없이 구분별 하나로 합친다 (groupChallenges=true) */
+  groupChallenges?: boolean;
 }
 
 /**
@@ -55,6 +58,7 @@ interface ProgramCategoryPreviewPageProps {
  */
 const ProgramCategoryPreviewPage = ({
   bundle = false,
+  groupChallenges = false,
 }: ProgramCategoryPreviewPageProps) => {
   const [groupId, setGroupId] = useState<string>(ALL);
   const [checkedIds, setCheckedIds] = useState<number[]>([]);
@@ -94,10 +98,13 @@ const ProgramCategoryPreviewPage = ({
   const queriedIds = checkedIds.length > 0 ? checkedIds : allCategoryIds;
 
   // 한 번 호출: 고른 것이 없으면 categoryIds 를 비워 서버가 전체를 주게 한다
-  const bundlePath =
-    checkedIds.length > 0
-      ? `/program-category/targets?categoryIds=${checkedIds.join(',')}`
-      : '/program-category/targets';
+  const bundleParams = [
+    checkedIds.length > 0 ? `categoryIds=${checkedIds.join(',')}` : null,
+    groupChallenges ? 'groupChallenges=true' : null,
+  ].filter(Boolean);
+  const bundlePath = `/program-category/targets${
+    bundleParams.length > 0 ? `?${bundleParams.join('&')}` : ''
+  }`;
   const bundleQuery = useQuery({
     queryKey: ['devTestProgramCategoryBundle', bundlePath],
     queryFn: async () =>
@@ -125,11 +132,12 @@ const ProgramCategoryPreviewPage = ({
     string,
     { target: ProgramCategoryTarget; categoryIds: number[] }
   >();
-  bundleQuery.data?.forEach(({ categoryIds, ...target }) => {
-    merged.set(`${target.targetType}-${target.targetId}`, {
-      target: { ...target, mappingId: 0 },
-      categoryIds,
-    });
+  // 기수를 합친 챌린지가 무엇을 합쳤는지 카드에 보여 준다
+  const mergedIdsByKey = new Map<string, number[]>();
+  bundleQuery.data?.forEach(({ categoryIds, mergedTargetIds, ...target }) => {
+    const key = `${target.targetType}-${target.targetId}`;
+    merged.set(key, { target: { ...target, mappingId: 0 }, categoryIds });
+    if (mergedTargetIds) mergedIdsByKey.set(key, mergedTargetIds);
   });
   targetQueries.forEach((query, index) => {
     query.data?.forEach((target) => {
@@ -159,7 +167,11 @@ const ProgramCategoryPreviewPage = ({
     <div className="mx-3 mb-40 mt-3">
       <Header>
         <Heading>
-          {bundle ? '노출 분류 미리보기 (한 번 호출)' : '노출 분류 미리보기'}
+          {groupChallenges
+            ? '노출 분류 미리보기 (챌린지 기수 합치기)'
+            : bundle
+              ? '노출 분류 미리보기 (한 번 호출)'
+              : '노출 분류 미리보기'}
         </Heading>
       </Header>
       <p className="mt-2 text-xsmall14 text-neutral-40">
@@ -287,6 +299,23 @@ const ProgramCategoryPreviewPage = ({
                     {categoryIds.map(categoryTitle).join(' · ')} · #
                     {target.targetId}
                   </p>
+                  {(mergedIdsByKey.get(
+                    `${target.targetType}-${target.targetId}`,
+                  )?.length ?? 0) > 1 && (
+                    <p className="text-xs font-semibold text-primary">
+                      기수{' '}
+                      {
+                        mergedIdsByKey.get(
+                          `${target.targetType}-${target.targetId}`,
+                        )?.length
+                      }
+                      개 합침 (#
+                      {mergedIdsByKey
+                        .get(`${target.targetType}-${target.targetId}`)
+                        ?.join(', #')}
+                      ) → 대표 #{target.targetId}
+                    </p>
+                  )}
                 </li>
               ))}
             </ul>

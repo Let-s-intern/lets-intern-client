@@ -16,4 +16,10 @@ export const testNavData = [
     description:
       '여러 카테고리 조회 API 를 한 번만 불러 같은 화면을 그립니다. 카테고리마다 따로 부르는 방식과 결과가 같은지 비교합니다.',
   },
+  {
+    name: '노출 분류 미리보기 (챌린지 기수 합치기)',
+    url: '/test/program-category-grouped',
+    description:
+      '한 번 호출에 groupChallenges=true 를 붙여, 같은 챌린지의 여러 기수가 대표 기수 카드 하나로 합쳐지는지 확인합니다.',
+  },
 ] as const;
