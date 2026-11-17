@@ -444,7 +444,7 @@ const Programs = () => {
             color="primary"
             onClick={() => setCategoryDialogOpen(true)}
           >
-            카테고리 설정
+            노출 분류 설정
           </Button>
         </div>
       </Header>

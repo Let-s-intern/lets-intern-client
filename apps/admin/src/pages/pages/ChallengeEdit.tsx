@@ -519,7 +519,7 @@ const ChallengeEdit: React.FC = () => {
           />
         </div>
 
-        <Heading2>카테고리</Heading2>
+        <Heading2>노출 분류</Heading2>
         <div className="mb-6 mt-3">
           <ProgramCategorySection
             selectedIds={programCategory.selectedIds}

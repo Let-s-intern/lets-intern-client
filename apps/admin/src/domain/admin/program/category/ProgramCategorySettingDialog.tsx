@@ -182,7 +182,7 @@ interface ProgramCategorySettingDialogProps {
   onClose: () => void;
 }
 
-/** 목록(왼쪽)과 고른 목록의 카테고리(오른쪽)를 추가·이름 변경·순서·숨김한다. 삭제는 없다 */
+/** 노출 분류 설정. 분류 그룹(왼쪽)과 고른 그룹의 분류(오른쪽)를 추가·이름 변경·순서·숨김·삭제한다 */
 const ProgramCategorySettingDialog = ({
   open,
   onClose,
@@ -220,7 +220,7 @@ const ProgramCategorySettingDialog = ({
     if (
       group.categoryList.length > 0 &&
       !window.confirm(
-        `"${group.title}" 목록을 지우면 안의 카테고리 ${group.categoryList.length}개와 프로그램 연결 ${linked}건도 함께 지워집니다. 삭제할까요?`,
+        `"${group.title}" 분류 그룹을 지우면 안의 분류 ${group.categoryList.length}개와 프로그램 연결 ${linked}건도 함께 지워집니다. 삭제할까요?`,
       )
     )
       return;
@@ -232,7 +232,7 @@ const ProgramCategorySettingDialog = ({
     if (
       category.programCount > 0 &&
       !window.confirm(
-        `"${category.title}" 은 프로그램 ${category.programCount}개에 연결돼 있습니다. 연결도 함께 지워집니다. 삭제할까요?`,
+        `"${category.title}" 분류는 프로그램 ${category.programCount}개에 연결돼 있습니다. 연결도 함께 지워집니다. 삭제할까요?`,
       )
     )
       return;
@@ -244,15 +244,15 @@ const ProgramCategorySettingDialog = ({
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle>카테고리 설정</DialogTitle>
+      <DialogTitle>노출 분류 설정</DialogTitle>
       <DialogContent>
         <p className="mb-4 text-xsmall14 text-neutral-40">
-          목록은 프로그램 목록 필터의 제목 줄, 카테고리는 그 아래 체크박스가
+          분류 그룹은 프로그램 목록 필터의 제목 줄, 분류는 그 아래 체크박스가
           됩니다. 잠시 빼 두려면 숨김, 아예 없애려면 삭제를 씁니다.
         </p>
         <div className="grid grid-cols-2 gap-6">
           <section>
-            <h3 className="mb-2 font-semibold">목록</h3>
+            <h3 className="mb-2 font-semibold">분류 그룹</h3>
             <ul className="flex flex-col gap-1">
               {groups.map((group, index) => (
                 <ItemRow
@@ -281,14 +281,14 @@ const ProgramCategorySettingDialog = ({
               ))}
             </ul>
             <AddRow
-              placeholder="새 목록 이름 (예: 관심 직무)"
+              placeholder="새 분류 그룹 이름 (예: 관심 직무)"
               onAdd={(title) => run(createGroup.mutateAsync({ title }))}
             />
           </section>
 
           <section>
             <h3 className="mb-2 font-semibold">
-              {selectedGroup ? `${selectedGroup.title} 카테고리` : '카테고리'}
+              {selectedGroup ? `${selectedGroup.title} 분류` : '분류'}
             </h3>
             {selectedGroup ? (
               <>
@@ -334,7 +334,7 @@ const ProgramCategorySettingDialog = ({
                   ))}
                 </ul>
                 <AddRow
-                  placeholder="새 카테고리 이름 (예: 마케팅)"
+                  placeholder="새 분류 이름 (예: 마케팅)"
                   onAdd={(title) =>
                     run(
                       createCategory.mutateAsync({
@@ -347,7 +347,7 @@ const ProgramCategorySettingDialog = ({
               </>
             ) : (
               <p className="text-xsmall14 text-neutral-40">
-                먼저 왼쪽에서 목록을 추가하세요.
+                먼저 왼쪽에서 분류 그룹을 추가하세요.
               </p>
             )}
           </section>

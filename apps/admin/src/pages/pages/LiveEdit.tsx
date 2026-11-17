@@ -216,7 +216,7 @@ const LiveEdit: React.FC = () => {
       </div>
 
       <section className="mb-6 max-w-[1120px]">
-        <Heading2 className="mb-3">카테고리</Heading2>
+        <Heading2 className="mb-3">노출 분류</Heading2>
         <ProgramCategorySection
           selectedIds={programCategory.selectedIds}
           onToggle={programCategory.toggle}

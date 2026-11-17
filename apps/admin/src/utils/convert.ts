@@ -74,15 +74,15 @@ export const programClassificationToText: Record<
 };
 
 export const challengeTypeToText: Record<ChallengeType, string> = {
-  CAREER_START: '커리어 시작',
+  CAREER_START: '이력서',
   DOCUMENT_PREPARATION: '서류 준비',
-  MEETING_PREPARATION: '면접 준비',
+  MEETING_PREPARATION: '면접',
   ETC: '기타',
   PERSONAL_STATEMENT: '자기소개서',
   PORTFOLIO: '포트폴리오',
-  PERSONAL_STATEMENT_LARGE_CORP: '대기업 자소서',
+  PERSONAL_STATEMENT_LARGE_CORP: '대기업 자기소개서',
   MARKETING: '마케팅',
-  EXPERIENCE_SUMMARY: '경험 정리',
+  EXPERIENCE_SUMMARY: '경험정리',
   HR: 'HR',
   PM: 'PM',
 };

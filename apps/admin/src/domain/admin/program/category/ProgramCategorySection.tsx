@@ -16,7 +16,7 @@ const ProgramCategorySection = ({
   if (groups.length === 0) {
     return (
       <p className="text-xsmall14 text-neutral-40">
-        카테고리가 없습니다. 프로그램 관리의 "카테고리 설정"에서 먼저
+        노출 분류가 없습니다. 프로그램 관리의 "노출 분류 설정"에서 먼저
         추가하세요.
       </p>
     );
@@ -45,9 +45,7 @@ const ProgramCategorySection = ({
               />
             ))}
             {group.categoryList.length === 0 && (
-              <span className="text-xsmall14 text-neutral-40">
-                카테고리 없음
-              </span>
+              <span className="text-xsmall14 text-neutral-40">분류 없음</span>
             )}
           </div>
         </div>
