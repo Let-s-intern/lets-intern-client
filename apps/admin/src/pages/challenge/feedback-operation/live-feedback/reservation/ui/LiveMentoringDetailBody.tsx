@@ -6,6 +6,7 @@ import type {
   LiveMentoringAttendanceStatus,
 } from '@/api/live-mentoring/liveMentoringSchema';
 import { APPLICATION_STATUS_LABELS } from '@/domain/live-mentoring/constants';
+import { MenteeSubmissionContent } from '@/domain/live-mentoring/ui/MenteeSubmission';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import {
   formatApplyDateTime,
@@ -44,15 +45,6 @@ function InfoRow({ label, value }: { label: string; value?: string | null }) {
       <span className="break-words">{value || '-'}</span>
     </div>
   );
-}
-
-/** 사전 질문 문구. 미룬 신청과 아직 안 쓴 신청은 다른 상태라 다르게 적는다. */
-function preQuestionText(reservation: AdminLiveMentoringReservation): string {
-  if (reservation.questionContent) return reservation.questionContent;
-  if (reservation.questionDeferred) {
-    return '멘티가 사전 질문을 나중에 보내겠다고 선택했습니다.';
-  }
-  return '작성한 사전 질문이 없습니다.';
 }
 
 const LIMITATIONS: { label: string; reason: string }[] = [
@@ -267,11 +259,11 @@ export default function LiveMentoringDetailBody({
 
       <section className="rounded-xl border border-neutral-80 p-4">
         <p className="text-xxsmall12 font-medium text-neutral-40">
-          사전 Q&amp;A
+          멘티 제출 내역
         </p>
-        <p className="mt-3 whitespace-pre-wrap text-xsmall14 leading-6 text-neutral-20">
-          {preQuestionText(reservation)}
-        </p>
+        <div className="mt-3">
+          <MenteeSubmissionContent value={reservation} />
+        </div>
       </section>
 
       <section
