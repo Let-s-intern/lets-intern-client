@@ -5,7 +5,6 @@ import {
   useProgramCategoryTargetsQuery,
 } from '@/api/program-category/programCategory';
 import CouponBanner from '@/common/banner/CouponBanner';
-import { useMembershipNavEntry } from '@/common/layout/header/useMembershipNavEntry';
 import AiChat from '@/domain/ai-chat/AiChat';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
@@ -13,13 +12,13 @@ import clsx from 'clsx';
 import {
   CATALOG_STATUSES,
   CatalogQuery,
+  DEFAULT_CATALOG_TYPE,
   filterCatalogTargets,
   parseCatalogQuery,
   toCatalogSearch,
 } from './catalogFilter';
 import CatalogCard from './ui/CatalogCard';
 import CatalogFilter from './ui/CatalogFilter';
-import CatalogPassBanner from './ui/CatalogPassBanner';
 import LoadMoreSentinel from './ui/LoadMoreSentinel';
 
 /** 처음 보이는 카드 수와 스크롤로 한 번에 늘어나는 수 */
@@ -34,7 +33,6 @@ const ProgramCatalogPage = () => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { href: passHref } = useMembershipNavEntry();
   const { data: groups = [] } = useFilterProgramCategoryGroupsQuery();
 
   const query = useMemo(
@@ -76,8 +74,6 @@ const ProgramCatalogPage = () => {
         <AiChat />
       </section>
 
-      <CatalogPassBanner href={passHref} />
-
       <CatalogFilter groups={groups} query={query} onChange={handleChange} />
 
       <section>
@@ -114,7 +110,11 @@ const ProgramCatalogPage = () => {
             <button
               type="button"
               onClick={() =>
-                handleChange({ categoryIds: [], type: null, status: null })
+                handleChange({
+                  categoryIds: [],
+                  type: DEFAULT_CATALOG_TYPE,
+                  status: null,
+                })
               }
               className="text-xsmall14 text-primary underline"
             >

@@ -56,21 +56,25 @@ describe('전체 프로그램 주소 필터', () => {
       ),
       groups,
     );
-    expect(q).toEqual({ categoryIds: [3, 17], type: null, status: null });
+    expect(q).toEqual({
+      categoryIds: [3, 17],
+      type: 'CHALLENGE',
+      status: null,
+    });
   });
 
   it('주소로 되돌린다', () => {
-    expect(toCatalogSearch({ categoryIds: [3, 4], type: 'CHALLENGE' })).toBe(
-      'categoryId=3&categoryId=4&type=CHALLENGE',
+    expect(toCatalogSearch({ categoryIds: [3, 4], type: 'LIVE' })).toBe(
+      'categoryId=3&categoryId=4&type=LIVE',
     );
   });
 });
 
 describe('전체 프로그램 목록', () => {
-  it('가이드북·블로그는 빼고 모집 중 → 예정 → 상시 → 마감 순', () => {
+  it('고른 유형만, 모집 중 → 예정 → 상시 → 마감 순', () => {
     const closed = target('CHALLENGE', { targetId: 1, deadline: '2026-11-01' });
-    const always = target('VOD', { targetId: 2 });
-    const open = target('LIVE', {
+    const always = target('CHALLENGE', { targetId: 2 });
+    const open = target('CHALLENGE', {
       targetId: 3,
       beginning: '2026-11-10',
       deadline: '2026-11-30',
@@ -81,36 +85,41 @@ describe('전체 프로그램 목록', () => {
       deadline: '2026-12-10',
     });
     const result = filterCatalogTargets(
-      [closed, target('GUIDEBOOK'), always, target('BLOG'), open, upcoming],
-      null,
+      [closed, target('VOD', { targetId: 9 }), always, open, upcoming],
+      'CHALLENGE',
       now,
     );
     expect(result.map((t) => t.targetId)).toEqual([3, 4, 2, 1]);
     expect(getRecruitStatus(upcoming, now)).toBe('UPCOMING');
   });
 
-  it('올인원 패스는 모집 중이어도 맨 뒤', () => {
-    const pass = target('MEMBERSHIP', {
-      targetId: 9,
-      beginning: '2026-11-01',
-      deadline: '2026-12-01',
-    });
-    const closed = target('CHALLENGE', { targetId: 1, deadline: '2026-11-01' });
+  it('가이드북·블로그·무료 자료집은 어떤 유형을 골라도 안 나온다', () => {
+    for (const hidden of ['GUIDEBOOK', 'BLOG', 'MAGNET'] as const) {
+      expect(filterCatalogTargets([target(hidden)], hidden, now)).toEqual([]);
+    }
+  });
+
+  it('유형을 안 고르면 챌린지, 기본값은 주소에 안 남는다', () => {
+    expect(parseCatalogQuery(new URLSearchParams(''), groups).type).toBe(
+      'CHALLENGE',
+    );
     expect(
-      filterCatalogTargets([pass, closed], null, now).map((t) => t.targetId),
-    ).toEqual([1, 9]);
+      parseCatalogQuery(new URLSearchParams('type=MAGNET'), groups).type,
+    ).toBe('CHALLENGE');
+    expect(toCatalogSearch({ categoryIds: [], type: 'CHALLENGE' })).toBe('');
+    expect(toCatalogSearch({ categoryIds: [], type: 'VOD' })).toBe('type=VOD');
   });
 
   it('모집 상태: 모집 중은 상시 상품 포함, 예전 주소 값을 받는다', () => {
-    const open = target('LIVE', {
+    const open = target('VOD', {
       targetId: 1,
       beginning: '2026-11-10',
       deadline: '2026-11-30',
     });
     const always = target('VOD', { targetId: 2 });
-    const closed = target('CHALLENGE', { targetId: 3, deadline: '2026-11-01' });
+    const closed = target('VOD', { targetId: 3, deadline: '2026-11-01' });
     const ids = (status: 'PROCEEDING' | 'PREV' | 'POST') =>
-      filterCatalogTargets([open, always, closed], null, now, status).map(
+      filterCatalogTargets([open, always, closed], 'VOD', now, status).map(
         (t) => t.targetId,
       );
     expect(ids('PROCEEDING')).toEqual([1, 2]);
@@ -119,15 +128,8 @@ describe('전체 프로그램 목록', () => {
       parseCatalogQuery(new URLSearchParams('status=PREV'), groups).status,
     ).toBe('PREV');
     expect(
-      toCatalogSearch({ categoryIds: [], type: null, status: 'POST' }),
+      toCatalogSearch({ categoryIds: [], type: 'CHALLENGE', status: 'POST' }),
     ).toBe('status=POST');
-  });
-
-  it('유형을 고르면 그 유형만', () => {
-    expect(
-      filterCatalogTargets([target('VOD'), target('MAGNET')], 'MAGNET', now)
-        .length,
-    ).toBe(1);
   });
 
   it('챌린지 제목에서 버전·기수를 뗀다', () => {

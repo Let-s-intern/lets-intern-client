@@ -3,7 +3,11 @@ import type {
   PublicProgramCategoryGroup,
 } from '@/api/program-category/programCategory';
 import clsx from 'clsx';
-import { CATALOG_TYPES, CatalogQuery } from '../catalogFilter';
+import {
+  CATALOG_TYPES,
+  CatalogQuery,
+  DEFAULT_CATALOG_TYPE,
+} from '../catalogFilter';
 
 const Chip = ({
   selected,
@@ -65,40 +69,46 @@ const CatalogFilter = ({ groups, query, onChange }: CatalogFilterProps) => {
         ? query.categoryIds.filter((c) => c !== id)
         : [...query.categoryIds, id],
     });
-  const selectType = (type: ProgramCategoryTargetType | null) =>
+  const selectType = (type: ProgramCategoryTargetType) =>
     onChange({ ...query, type });
-  const hasFilter = query.categoryIds.length > 0 || query.type !== null;
+  const hasFilter =
+    query.categoryIds.length > 0 || query.type !== DEFAULT_CATALOG_TYPE;
+  const rows = groups
+    .filter((group) => group.categoryList.length > 0)
+    .map((group) => (
+      <Row key={group.id} label={group.title}>
+        {group.categoryList.map((category) => (
+          <Chip
+            key={category.id}
+            label={category.title}
+            selected={query.categoryIds.includes(category.id)}
+            onClick={() => toggleCategory(category.id)}
+          />
+        ))}
+      </Row>
+    ));
 
   return (
     <div className="flex flex-col gap-4 rounded-md border border-neutral-85 px-5 py-5 md:px-6">
-      {groups
-        .filter((group) => group.categoryList.length > 0)
-        .map((group) => (
-          <Row key={group.id} label={group.title}>
-            {group.categoryList.map((category) => (
-              <Chip
-                key={category.id}
-                label={category.title}
-                selected={query.categoryIds.includes(category.id)}
-                onClick={() => toggleCategory(category.id)}
-              />
-            ))}
-          </Row>
-        ))}
+      {/* 순서: 첫 노출 목록(서류) → 프로그램 유형 → 나머지(관심 직무). 노출 목록 순서는 어드민을 따른다 */}
+      {rows.slice(0, 1)}
       <Row label="프로그램 유형">
         {CATALOG_TYPES.map((type) => (
           <Chip
-            key={type.label}
+            key={type.key}
             label={type.label}
             selected={query.type === type.key}
             onClick={() => selectType(type.key)}
           />
         ))}
       </Row>
+      {rows.slice(1)}
       {hasFilter && (
         <button
           type="button"
-          onClick={() => onChange({ ...query, categoryIds: [], type: null })}
+          onClick={() =>
+            onChange({ ...query, categoryIds: [], type: DEFAULT_CATALOG_TYPE })
+          }
           className="self-end text-xsmall14 text-neutral-40 underline"
         >
           필터 초기화
