@@ -127,6 +127,29 @@ export type LiveMentoringAttendanceStatus = z.infer<
   typeof liveMentoringAttendanceStatusSchema
 >;
 
+/** 멘티가 낸 첨부의 종류 — 서버 `LiveMentoringAttachmentType`. */
+export const liveMentoringAttachmentTypeSchema = z.enum([
+  'NONE',
+  'FILE',
+  'URL',
+]);
+export type LiveMentoringAttachmentType = z.infer<
+  typeof liveMentoringAttachmentTypeSchema
+>;
+
+/**
+ * 멘티 제출 내역 중 첨부 부분 (LC-3638).
+ *
+ * `attachmentUrl` 은 URL 첨부면 멘티가 적은 주소, 파일 첨부면 서버가 만든 만료 있는
+ * 내려받기 주소다. 어드민은 멘토 공유 동의와 상관없이 첨부를 본다.
+ * 서버 배포 전 응답에는 키가 없어 nullish 로 연다. 막으면 목록 전체가 파싱에 실패한다.
+ */
+const submissionAttachmentShape = {
+  attachmentType: liveMentoringAttachmentTypeSchema.nullish(),
+  attachmentUrl: z.string().nullish(),
+  mentorShareAgreed: z.boolean().nullish(),
+};
+
 export const adminLiveMentoringReservationSchema = z.object({
   applicationId: z.number(),
   liveMentoringId: z.number(),
@@ -150,6 +173,7 @@ export const adminLiveMentoringReservationSchema = z.object({
   questionContent: z.string().nullable(),
   mentorStatus: liveMentoringAttendanceStatusSchema,
   menteeStatus: liveMentoringAttendanceStatusSchema,
+  ...submissionAttachmentShape,
 });
 export type AdminLiveMentoringReservation = z.infer<
   typeof adminLiveMentoringReservationSchema
@@ -200,6 +224,10 @@ export const adminLiveMentoringParticipantSchema = z.object({
    * 이 필드를 싣기 전 서버 응답에는 키가 없어 nullish 로 연다. 막으면 목록 전체가 파싱에 실패한다.
    */
   paidAt: z.string().nullish(),
+  /** 멘티 제출 내역 (LC-3638). 서버 배포 전 응답에는 키가 없어 nullish 로 연다. */
+  questionDeferred: z.boolean().nullish(),
+  questionContent: z.string().nullish(),
+  ...submissionAttachmentShape,
 });
 export type AdminLiveMentoringParticipant = z.infer<
   typeof adminLiveMentoringParticipantSchema

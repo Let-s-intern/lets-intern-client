@@ -19,6 +19,10 @@ import {
   formatDateTime,
   formatPrice,
 } from './constants';
+import {
+  MenteeSubmissionDialog,
+  submissionSummary,
+} from './ui/MenteeSubmission';
 
 const PAGE_SIZE = 20;
 
@@ -26,7 +30,7 @@ const headerCellClass =
   'whitespace-nowrap px-4 py-3 text-left text-xs font-medium text-neutral-40';
 const bodyCellClass = 'px-4 py-3 text-sm text-neutral-10 align-top';
 
-const COLUMN_COUNT = 10;
+const COLUMN_COUNT = 11;
 
 /** 예약 일시. 60분 플랜은 연속한 두 슬롯을 한 구간으로 합쳐 내려온다. */
 const reservationLabel = (row: AdminLiveMentoringParticipant): string => {
@@ -114,6 +118,8 @@ const AdminLiveMentoringParticipantTable = ({
     target: RefundTarget;
     mode: RefundMode;
   } | null>(null);
+  const [submissionRow, setSubmissionRow] =
+    useState<AdminLiveMentoringParticipant | null>(null);
 
   const queryClient = useQueryClient();
   const { snackbar } = useAdminSnackbar();
@@ -179,6 +185,7 @@ const AdminLiveMentoringParticipantTable = ({
               <th className={headerCellClass}>멘토</th>
               <th className={headerCellClass}>예약 일시</th>
               <th className={headerCellClass}>플랜</th>
+              <th className={headerCellClass}>제출 내역</th>
               <th className={headerCellClass}>결제 금액</th>
               <th className={headerCellClass}>쿠폰</th>
               <th className={headerCellClass}>결제 상태</th>
@@ -246,6 +253,20 @@ const AdminLiveMentoringParticipantTable = ({
                     {row.durationMinutes != null
                       ? `${row.durationMinutes}분`
                       : '없음'}
+                  </td>
+                  <td className={bodyCellClass}>
+                    <div className="flex flex-col items-start gap-1">
+                      <span className="whitespace-nowrap text-xs text-neutral-40">
+                        {submissionSummary(row)}
+                      </span>
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        onClick={() => setSubmissionRow(row)}
+                      >
+                        보기
+                      </Button>
+                    </div>
                   </td>
                   <td className={`${bodyCellClass} whitespace-nowrap`}>
                     <div className="flex flex-col gap-0.5">
@@ -326,6 +347,16 @@ const AdminLiveMentoringParticipantTable = ({
           pageInfo={{ totalPages: data.pageInfo.totalPages }}
           page={page}
           onChange={(_, next) => setPage(next)}
+        />
+      )}
+
+      {submissionRow && (
+        <MenteeSubmissionDialog
+          menteeName={
+            submissionRow.menteeName ?? `멘티 #${submissionRow.menteeId}`
+          }
+          value={submissionRow}
+          onClose={() => setSubmissionRow(null)}
         />
       )}
 

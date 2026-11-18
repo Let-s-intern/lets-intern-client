@@ -1,0 +1,185 @@
+# origin 의 브랜치를 배포용 포크(lets-intern/lets-intern-client)의 같은 이름 브랜치로 보낸다.
+#
+# 수동 실행 전용이다. Actions 탭 → "포크 동기화" → Run workflow.
+#
+# 무엇을 하나
+#   origin/<branch> 를 fork/<branch> 로 push 한다. 포크에 연결된 Vercel 이 그 push 를
+#   감지해 평소처럼 자동 배포한다. 포크 계정으로 로그인을 바꿀 필요가 없다.
+#   - main          → 운영 배포
+#   - test-260424 등 → 테스트 배포
+#
+# 대상 브랜치
+#   main 또는 test 로 시작하는 브랜치만 허용한다.
+#
+# 덮어쓰기 규칙
+#   main 은 force push 하지 않는다. 포크 main 에만 있는 커밋이 있으면 실패한다.
+#   test 브랜치는 origin 을 그대로 따라가도록 강제로 맞춘다. reset-test-branch 로
+#   origin 쪽이 되감기면 포크 쪽도 되감겨야 하기 때문이다. 사라지는 커밋은 요약에 남긴다.
+#
+# dry_run 을 켜면 들어갈 커밋·사라질 커밋만 요약에 남기고 push 하지 않는다.
+#
+# 입력값은 반드시 env 를 거쳐 셸 변수로 읽는다. `${{ inputs.branch }}` 를 run 본문에
+# 직접 박으면 입력값이 셸 코드로 합쳐진다. 이 잡은 포크 쓰기 토큰을 들고 있다.
+#
+# 필요한 secret
+#   FORK_PUSH_TOKEN — 포크 계정의 fine-grained PAT.
+#   대상 레포 lets-intern/lets-intern-client 하나, 권한 Contents: Read and write.
+#   만료되면 재발급해 이 secret 을 교체한다.
+
+name: 포크 동기화
+
+on:
+  workflow_dispatch:
+    inputs:
+      # 목록에 없는 테스트 브랜치는 '직접 입력' 을 고르고 아래 칸에 적는다.
+      # 자주 쓰는 브랜치가 생기면 여기 options 에 한 줄 추가한다.
+      branch:
+        description: '보낼 브랜치 (origin → fork)'
+        required: true
+        type: choice
+        default: 'main → main (운영)'
+        options:
+          - 'main → main (운영)'
+          - 'test-260424 → test-260424 (테스트)'
+          - 'test-251221 → test-251221 (테스트)'
+          - '직접 입력'
+      custom_branch:
+        description: '직접 입력일 때만. test 로 시작하는 브랜치 이름'
+        required: false
+        type: string
+      dry_run:
+        description: 'push 하지 않고 바뀔 내용만 확인'
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: sync-fork-${{ inputs.branch }}-${{ inputs.custom_branch }}
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: origin → fork
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    env:
+      FORK_REPO: lets-intern/lets-intern-client
+      FORK_PUSH_TOKEN: ${{ secrets.FORK_PUSH_TOKEN }}
+      BRANCH_CHOICE: ${{ inputs.branch }}
+      CUSTOM_BRANCH: ${{ inputs.custom_branch }}
+      DRY_RUN: ${{ inputs.dry_run }}
+
+    steps:
+      - name: 입력 검증
+        run: |
+          if [ "$BRANCH_CHOICE" = "직접 입력" ]; then
+            BRANCH="$(echo "$CUSTOM_BRANCH" | xargs)"
+          else
+            BRANCH="${BRANCH_CHOICE%% →*}"
+          fi
+          if [ "$BRANCH" != "main" ] && [[ "$BRANCH" != test* ]]; then
+            echo "::error::main 또는 test 로 시작하는 브랜치만 허용합니다. 받은 값: $BRANCH"
+            exit 1
+          fi
+          if ! [[ "$BRANCH" =~ ^[A-Za-z0-9._/-]+$ ]] || [[ "$BRANCH" == *..* ]]; then
+            echo "::error::브랜치 이름에 쓸 수 없는 문자가 있습니다: $BRANCH"
+            exit 1
+          fi
+          if [ -z "$FORK_PUSH_TOKEN" ]; then
+            echo "::error::FORK_PUSH_TOKEN secret 이 없습니다."
+            exit 1
+          fi
+          echo "BRANCH=$BRANCH" >> "$GITHUB_ENV"
+
+      - name: origin 브랜치 체크아웃
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.BRANCH }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: 포크 브랜치와 비교
+        id: compare
+        run: |
+          FORK_URL="https://x-access-token:${FORK_PUSH_TOKEN}@github.com/${FORK_REPO}.git"
+          ORIGIN_SHA=$(git rev-parse HEAD)
+
+          FORK_SHA=""
+          if git ls-remote --exit-code --heads "$FORK_URL" "$BRANCH" > /dev/null; then
+            git fetch --quiet "$FORK_URL" "refs/heads/$BRANCH:refs/remotes/fork/$BRANCH"
+            FORK_SHA=$(git rev-parse "fork/$BRANCH")
+          fi
+
+          {
+            echo "## 포크 동기화: \`$BRANCH\`"
+            echo ""
+            echo "- origin: \`${ORIGIN_SHA:0:9}\`"
+            if [ -n "$FORK_SHA" ]; then
+              echo "- fork: \`${FORK_SHA:0:9}\`"
+            else
+              echo "- fork: 없음, 새로 만든다"
+            fi
+            echo "- 모드: $([ "$DRY_RUN" = "true" ] && echo '확인만 (dry run)' || echo '실제 push')"
+            echo ""
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "$ORIGIN_SHA" = "$FORK_SHA" ]; then
+            echo "이미 같습니다. 보낼 커밋이 없습니다." >> "$GITHUB_STEP_SUMMARY"
+            echo "needed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          FORCE=false
+          if [ -n "$FORK_SHA" ] && ! git merge-base --is-ancestor "$FORK_SHA" "$ORIGIN_SHA"; then
+            if [ "$BRANCH" = "main" ]; then
+              {
+                echo "포크 main 에 origin 에 없는 커밋이 있어 멈췄습니다. 덮어쓰지 않습니다."
+                echo ""
+                git log --format='- `%h` %s (%an)' "$ORIGIN_SHA..$FORK_SHA"
+              } >> "$GITHUB_STEP_SUMMARY"
+              echo "::error::포크 main 이 origin main 의 조상이 아닙니다. 포크에서 직접 정리하세요."
+              exit 1
+            fi
+            FORCE=true
+            {
+              echo "### 포크에서 사라지는 커밋"
+              echo ""
+              git log --format='- `%h` %s (%an)' "$ORIGIN_SHA..$FORK_SHA"
+              echo ""
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+          {
+            echo "### 포크에 들어가는 커밋"
+            echo ""
+            if [ -n "$FORK_SHA" ]; then
+              git log --format='- `%h` %s (%an)' "$FORK_SHA..$ORIGIN_SHA"
+            else
+              git log -20 --format='- `%h` %s (%an)' "$ORIGIN_SHA"
+              echo ""
+              echo "(새 브랜치라 최근 20개만 표시)"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          echo "needed=true" >> "$GITHUB_OUTPUT"
+          echo "force=$FORCE" >> "$GITHUB_OUTPUT"
+
+      - name: 포크로 push
+        if: ${{ steps.compare.outputs.needed == 'true' && !inputs.dry_run }}
+        env:
+          FORCE: ${{ steps.compare.outputs.force }}
+        run: |
+          FORK_URL="https://x-access-token:${FORK_PUSH_TOKEN}@github.com/${FORK_REPO}.git"
+          if [ "$FORCE" = "true" ]; then
+            git push --force "$FORK_URL" "HEAD:refs/heads/$BRANCH"
+          else
+            git push "$FORK_URL" "HEAD:refs/heads/$BRANCH"
+          fi
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "push 완료. 포크에 연결된 Vercel 이 배포를 시작합니다." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: dry run 안내
+        if: ${{ steps.compare.outputs.needed == 'true' && inputs.dry_run }}
+        run: echo "dry run 이라 push 하지 않았습니다." >> "$GITHUB_STEP_SUMMARY"

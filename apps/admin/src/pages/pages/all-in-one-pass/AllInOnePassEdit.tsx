@@ -26,6 +26,7 @@ import { Button } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { IoArrowBack } from 'react-icons/io5';
+import ProgramCategoryField from '@/domain/admin/program/category/ProgramCategoryField';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 export default function AllInOnePassEdit() {
@@ -136,6 +137,14 @@ export default function AllInOnePassEdit() {
         </div>
       ) : (
         <>
+          {numericPassId != null && (
+            <div className="mb-4">
+              <ProgramCategoryField
+                targetType="MEMBERSHIP"
+                targetId={numericPassId}
+              />
+            </div>
+          )}
           <PassForm input={input} patch={patch} view={view} />
           <div className="sticky bottom-0 z-10 -mx-6 -mb-6 flex justify-end gap-2 border-t border-neutral-80 bg-neutral-100 px-6 py-4">
             <Button

@@ -179,8 +179,16 @@ describe('QuestionModal — 시안 3-2 (작성됨)', () => {
 });
 
 describe('QuestionModal — 안내 문구', () => {
-  it('24시간 안내가 있다', () => {
+  it('서버가 준 마감 시각을 안내한다', () => {
     renderModal(makeQuestion());
+
+    expect(
+      screen.getByText(/9월 12일 10:00까지 수정할 수 있어요/),
+    ).toBeInTheDocument();
+  });
+
+  it('마감 시각을 받지 못하면 24시간 안내를 쓴다', () => {
+    renderModal(makeQuestion({ editDeadline: null }));
 
     expect(
       screen.getByText(/멘토링 예약 시간 24시간 전까지 수정할 수 있어요/),
