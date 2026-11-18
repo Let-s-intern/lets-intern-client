@@ -174,8 +174,12 @@ const TableRow = ({
             ChallengePricePlanEnum.enum.BASIC}
         </TD>
       )}
-      {/* 결제금액 */}
-      <TD>{amount.toLocaleString()}원</TD>
+      {/* 결제금액. 멤버십은 0원이 기본이고 프리미엄 등 추가금이 있으면 그 금액이 괄호에 들어간다 (LC-3643) */}
+      <TD>
+        {applicationInfo.isMembershipApplied
+          ? `멤버십(${amount.toLocaleString()}원)`
+          : `${amount.toLocaleString()}원`}
+      </TD>
       <TD whiteSpace="wrap">
         {refundLabel.isAdmin ? (
           <span className="font-bold text-red-600">{refundLabel.text}</span>
