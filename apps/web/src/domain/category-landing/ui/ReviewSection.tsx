@@ -99,7 +99,7 @@ interface ReviewSectionProps {
 }
 
 /**
- * 카테고리 랜딩 수강생 후기. 평점 높은 후기를 왼쪽에서 오른쪽으로 끝없이 흘린다.
+ * 카테고리 랜딩 수강생 후기. 평점 높은 후기를 오른쪽에서 왼쪽으로 끝없이 흘린다.
  * 평점 순 API 가 없는 서버(이전 버전)에서는 공개 후기 목록(최신순)으로 대신한다
  */
 const ReviewSection = ({
@@ -154,8 +154,8 @@ const ReviewSection = ({
           더보기
         </Link>
       </div>
-      {/* 같은 줄을 두 번 이어 붙여 왼쪽에서 오른쪽으로 -50% → 0 으로 흘린다. 올리면 멈춘다 */}
-      <style>{`@keyframes landingReviewFlow{from{transform:translateX(-50%)}to{transform:translateX(0)}}`}</style>
+      {/* 같은 줄을 두 번 이어 붙여 오른쪽에서 왼쪽으로 0 → -50% 로 흘린다. 올리면 멈춘다 */}
+      <style>{`@keyframes landingReviewFlow{from{transform:translateX(0)}to{transform:translateX(-50%)}}`}</style>
       <div className="-mx-5 mt-6 overflow-hidden md:mx-0">
         <ul
           className="flex w-max gap-4 px-5 hover:[animation-play-state:paused] motion-reduce:!animate-none md:px-0"
