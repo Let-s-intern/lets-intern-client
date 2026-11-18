@@ -9,10 +9,13 @@ import { JOURNEY_GROUPS } from '@/domain/career-journey/journeyNav';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { Fragment, useMemo, useState } from 'react';
-import { getSectionEyebrow } from './landingCard';
+import { getSectionEyebrow, getSectionKind } from './landingCard';
 import { LANDING_CONTENT } from './landingContent';
 import LandingSection from './ui/LandingSection';
 import PassBanner from './ui/PassBanner';
+import ReviewSection from './ui/ReviewSection';
+
+const REVIEW_ANCHOR = 'section-review';
 
 /** 메뉴 slug → [브레드크럼 묶음, 이름] */
 const findMenuItem = (slug: string) => {
@@ -40,7 +43,7 @@ const CategoryLanding = ({ slug }: { slug: string }) => {
   const { data: targets = [] } = useProgramCategoryTargetsQuery(categoryIds);
   const { href: passHref } = useMembershipNavEntry();
   // 누른 탭을 선택 표시한다. 누르기 전에는 첫 탭
-  const [activeTabId, setActiveTabId] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState<string | null>(null);
 
   const menu = findMenuItem(slug);
   const content = LANDING_CONTENT[slug];
@@ -52,6 +55,21 @@ const CategoryLanding = ({ slug }: { slug: string }) => {
       targets: targets.filter((t) => t.categoryIds.includes(category.id)),
     }))
     .filter((section) => section.targets.length > 0);
+
+  // 수강생 후기는 블로그 섹션 바로 앞, 블로그가 없으면 맨 끝 (시안)
+  const blogIndex = sections.findIndex(
+    (section) => getSectionKind(section.targets) === 'blog',
+  );
+  const reviewIndex = blogIndex === -1 ? sections.length : blogIndex;
+  const reviewSection = content?.review && (
+    <ReviewSection anchorId={REVIEW_ANCHOR} {...content.review} />
+  );
+  const tabs = sections.map(({ category, targets: sectionTargets }) => ({
+    key: `section-${category.id}`,
+    label: getSectionEyebrow(sectionTargets),
+  }));
+  if (content?.review && tabs.length > 0)
+    tabs.splice(reviewIndex, 0, { key: REVIEW_ANCHOR, label: '수강생 후기' });
 
   if (isError || (!isLoading && !group)) {
     return (
@@ -93,21 +111,21 @@ const CategoryLanding = ({ slug }: { slug: string }) => {
 
       {sections.length > 0 && (
         <nav className="sticky top-0 z-10 -mx-5 mt-10 flex overflow-x-auto border-b border-neutral-80 bg-white px-5 scrollbar-hide md:mx-0 md:px-0">
-          {/* 탭은 짧게 상품 유형으로 쓴다 (시안: 챌린지 / LIVE · VOD 클래스 / 무료 자료집 …) */}
-          {sections.map(({ category, targets: sectionTargets }) => (
+          {/* 탭은 짧게 상품 유형으로 쓴다 (시안: 챌린지 / LIVE · VOD 클래스 / 무료 자료집 / … / 수강생 후기 / 블로그) */}
+          {tabs.map((tab) => (
             <a
-              key={category.id}
-              href={`#section-${category.id}`}
-              onClick={() => setActiveTabId(category.id)}
+              key={tab.key}
+              href={`#${tab.key}`}
+              onClick={() => setActiveTab(tab.key)}
               className={clsx(
                 'category_landing_tab -mb-px shrink-0 whitespace-nowrap border-b-2 px-4 py-3 text-xsmall14 hover:text-neutral-0 md:flex-1 md:text-center md:text-xsmall16',
-                (activeTabId ?? sections[0].category.id) === category.id
+                (activeTab ?? tabs[0].key) === tab.key
                   ? 'border-neutral-0 font-semibold text-neutral-0'
                   : 'border-transparent text-neutral-30',
               )}
-              data-text={category.title}
+              data-text={tab.label}
             >
-              {getSectionEyebrow(sectionTargets)}
+              {tab.label}
             </a>
           ))}
         </nav>
@@ -124,6 +142,7 @@ const CategoryLanding = ({ slug }: { slug: string }) => {
       ) : (
         sections.map(({ category, targets: sectionTargets }, index) => (
           <Fragment key={category.id}>
+            {index === reviewIndex && reviewSection}
             <LandingSection
               anchorId={`section-${category.id}`}
               title={category.title}
@@ -137,6 +156,9 @@ const CategoryLanding = ({ slug }: { slug: string }) => {
             />
             {/* 첫 섹션 다음에 패스 배너 (시안) */}
             {index === 0 && <PassBanner href={passHref} />}
+            {index === sections.length - 1 &&
+              reviewIndex === sections.length &&
+              reviewSection}
           </Fragment>
         ))
       )}
