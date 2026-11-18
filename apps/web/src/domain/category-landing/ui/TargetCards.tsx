@@ -2,7 +2,12 @@ import { ProgramCategoryTarget } from '@/api/program-category/programCategory';
 import { getTargetHref } from '@/domain/career-journey/journeyNav';
 import dayjs from '@/lib/dayjs';
 import Link from 'next/link';
-import { getPeriodText, TARGET_TYPE_LABEL } from '../landingCard';
+import {
+  getChallengeDisplayTitle,
+  getPeriodText,
+  TARGET_TYPE_LABEL,
+} from '../landingCard';
+import ChallengeThumbnail from './ChallengeThumbnail';
 
 const hrefOf = (target: ProgramCategoryTarget) =>
   getTargetHref(target.targetType, target.targetId, {
@@ -42,7 +47,17 @@ export const ProgramTargetCard = ({
       data-type={target.targetType}
       data-id={target.targetId}
     >
-      <Thumbnail src={target.thumbnail} />
+      {target.targetType === 'CHALLENGE' ? (
+        <div className="aspect-[4/3] w-full overflow-hidden rounded-xs bg-neutral-95">
+          <ChallengeThumbnail
+            title={target.title}
+            displayTitle={getChallengeDisplayTitle(target.title)}
+            fallbackSrc={target.thumbnail}
+          />
+        </div>
+      ) : (
+        <Thumbnail src={target.thumbnail} />
+      )}
       <span className="w-fit rounded-xs bg-primary-10 px-1.5 py-0.5 text-xxsmall12 font-semibold text-primary">
         {TARGET_TYPE_LABEL[target.targetType]}
       </span>

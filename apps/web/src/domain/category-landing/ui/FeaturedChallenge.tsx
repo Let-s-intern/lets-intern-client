@@ -1,5 +1,6 @@
 import { ProgramCategoryTarget } from '@/api/program-category/programCategory';
 import Link from 'next/link';
+import ChallengeThumbnail from './ChallengeThumbnail';
 import {
   getChallengeDisplayTitle,
   getDeadlineText,
@@ -20,14 +21,11 @@ const FeaturedChallenge = ({ target }: { target: ProgramCategoryTarget }) => {
     <div className="flex flex-col gap-4 md:flex-row md:gap-6">
       <Link href={href} className="w-full shrink-0 md:w-[288px]">
         <div className="aspect-[4/3] w-full overflow-hidden rounded-sm bg-neutral-95">
-          {target.thumbnail && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={target.thumbnail}
-              alt=""
-              className="h-full w-full object-cover"
-            />
-          )}
+          <ChallengeThumbnail
+            title={target.title}
+            displayTitle={getChallengeDisplayTitle(target.title)}
+            fallbackSrc={target.thumbnail}
+          />
         </div>
       </Link>
       <div className="flex flex-1 flex-col md:py-3">

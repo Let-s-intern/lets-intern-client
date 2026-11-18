@@ -3,6 +3,7 @@ import { getTargetHref } from '@/domain/career-journey/journeyNav';
 import dayjs from '@/lib/dayjs';
 import clsx from 'clsx';
 import Link from 'next/link';
+import ChallengeThumbnail from './ChallengeThumbnail';
 import {
   CATALOG_TYPES,
   getCatalogTitle,
@@ -48,14 +49,22 @@ const CatalogCard = ({ target }: { target: ProgramCategoryTarget }) => {
       data-id={target.targetId}
     >
       <div className="aspect-[4/3] w-full overflow-hidden rounded-xs bg-neutral-95">
-        {target.thumbnail && (
-          // 썸네일 출처가 여러 버킷이라 next/image 도메인 설정에 묶지 않는다
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={target.thumbnail}
-            alt=""
-            className="h-full w-full object-cover transition-transform group-hover:scale-[1.02]"
+        {target.targetType === 'CHALLENGE' ? (
+          <ChallengeThumbnail
+            title={target.title}
+            displayTitle={getCatalogTitle(target)}
+            fallbackSrc={target.thumbnail}
           />
+        ) : (
+          target.thumbnail && (
+            // 썸네일 출처가 여러 버킷이라 next/image 도메인 설정에 묶지 않는다
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={target.thumbnail}
+              alt=""
+              className="h-full w-full object-cover transition-transform group-hover:scale-[1.02]"
+            />
+          )
         )}
       </div>
       <span className="text-xxsmall12 font-semibold text-primary">
