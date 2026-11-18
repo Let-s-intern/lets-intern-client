@@ -68,7 +68,7 @@ const FeaturedChallenge = ({ target }: { target: ProgramCategoryTarget }) => {
             className="category_landing_challenge_cta shrink-0 rounded-xs bg-primary px-5 py-2.5 text-xsmall14 font-semibold text-white md:text-xsmall16"
             data-id={target.targetId}
           >
-            {TARGET_TYPE_LABEL[target.targetType]} 자세히 보기
+            신청하기
           </Link>
         </div>
       </div>
