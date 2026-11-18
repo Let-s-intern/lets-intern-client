@@ -78,11 +78,18 @@ export const CONCERNS: Concern[] = [
     panelDescription: '공채 시즌에 맞춰 서류부터 차근차근',
     actions: [
       {
-        title: '대기업',
-        quote: '"자소서 문항도, 인적성도 막막해요"',
-        meta: '대기업 자소서 챌린지 · 인적성 · 현직자 멘토링',
-        cta: '대기업 준비 시작하기',
+        title: '대기업 자기소개서',
+        quote: '"기업마다 다른 자소서 문항이 막막해요"',
+        meta: '대기업 자소서 챌린지 · 현직자 멘토링',
+        cta: '대기업 자소서 준비하기',
         slug: 'large-corp',
+      },
+      {
+        title: '인적성',
+        quote: '"서류 붙고 나니 인적성이 걱정돼요"',
+        meta: '인적성 챌린지 · 기출 자료 · 현직자 멘토링',
+        cta: '인적성 준비하기',
+        slug: 'aptitude',
       },
     ],
   },
