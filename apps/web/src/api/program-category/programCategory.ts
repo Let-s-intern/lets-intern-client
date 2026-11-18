@@ -79,12 +79,20 @@ export const useProgramCategoryGroupBySlugQuery = (slug: string) =>
  * 같은 상품은 한 번만 오고 categoryIds 로 어느 카테고리에 걸렸는지 알 수 있다.
  * 챌린지는 기수와 관계없이 대표 기수 하나로 합쳐 받는다
  */
-export const useProgramCategoryTargetsQuery = (categoryIds: number[]) =>
+export const useProgramCategoryTargetsQuery = (
+  categoryIds: number[],
+  /** ANY: 하나라도 / GROUP: 같은 노출 목록 안은 하나라도, 목록끼리는 전부 */
+  match: 'ANY' | 'GROUP' = 'ANY',
+) =>
   useQuery({
-    queryKey: ['programCategoryTargets', categoryIds],
+    queryKey: ['programCategoryTargets', categoryIds, match],
     queryFn: async () => {
       const res = await axios.get('/program-category/targets', {
-        params: { categoryIds: categoryIds.join(','), groupChallenges: true },
+        params: {
+          categoryIds: categoryIds.join(','),
+          groupChallenges: true,
+          match,
+        },
       });
       return z
         .object({ targetList: z.array(targetSchema) })

@@ -6,7 +6,7 @@ import ProgramCatalogTabs, {
   CATALOG_QUERY_KEY,
   MENTORING_CATALOG,
 } from '@/domain/program/section/ProgramCatalogTabs';
-import ProgramsPage from '@/domain/program/ProgramsPage';
+import ProgramCatalogPage from '@/domain/program/catalog/ProgramCatalogPage';
 import type { Metadata } from 'next';
 
 const title = '프로그램 목록 | 렛츠커리어';
@@ -53,7 +53,7 @@ const ProgramPage = async ({
     <div className="mw-1180 mx-auto w-full pb-[120px] pt-8 md:px-0 md:pt-12">
       <ProgramCatalogTabs active={isMentoring ? 'mentoring' : 'program'} />
       <Suspense fallback={null}>
-        {isMentoring ? <LiveMentoringListPage /> : <ProgramsPage />}
+        {isMentoring ? <LiveMentoringListPage /> : <ProgramCatalogPage />}
       </Suspense>
     </div>
   );

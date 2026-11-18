@@ -1,0 +1,128 @@
+'use client';
+
+import {
+  useFilterProgramCategoryGroupsQuery,
+  useProgramCategoryTargetsQuery,
+} from '@/api/program-category/programCategory';
+import { useMembershipNavEntry } from '@/common/layout/header/useMembershipNavEntry';
+import AiChat from '@/domain/ai-chat/AiChat';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useMemo, useState } from 'react';
+import {
+  CatalogQuery,
+  filterCatalogTargets,
+  parseCatalogQuery,
+  toCatalogSearch,
+} from './catalogFilter';
+import CatalogCard from './ui/CatalogCard';
+import CatalogFilter from './ui/CatalogFilter';
+import CatalogPassBanner from './ui/CatalogPassBanner';
+
+/** 처음 보이는 카드 수와 더보기 한 번에 늘어나는 수 */
+const PAGE_SIZE = 12;
+
+/**
+ * 전체 프로그램 목록. 어드민 노출 분류(필터용)에 걸린 상품을 한 번에 받아 그린다.
+ * 필터를 안 고르면 모든 필터용 카테고리의 상품, 고르면 match=GROUP 으로 좁힌다.
+ * 챌린지는 기수·버전과 관계없이 한 장이다
+ */
+const ProgramCatalogPage = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const { href: passHref } = useMembershipNavEntry();
+  const { data: groups = [] } = useFilterProgramCategoryGroupsQuery();
+
+  const query = useMemo(
+    () => parseCatalogQuery(new URLSearchParams(searchParams), groups),
+    [searchParams, groups],
+  );
+  const allCategoryIds = useMemo(
+    () => groups.flatMap((g) => g.categoryList.map((c) => c.id)),
+    [groups],
+  );
+  const hasCategory = query.categoryIds.length > 0;
+  const { data: targets = [], isLoading } = useProgramCategoryTargetsQuery(
+    hasCategory ? query.categoryIds : allCategoryIds,
+    hasCategory ? 'GROUP' : 'ANY',
+  );
+  const list = useMemo(
+    () => filterCatalogTargets(targets, query.type),
+    [targets, query.type],
+  );
+
+  const search = toCatalogSearch(query);
+  // 필터가 바뀌면 처음 개수로 돌아간다
+  const [paging, setPaging] = useState({ search, count: PAGE_SIZE });
+  const visibleCount = paging.search === search ? paging.count : PAGE_SIZE;
+
+  const handleChange = (next: CatalogQuery) => {
+    const nextSearch = toCatalogSearch(next);
+    router.replace(nextSearch ? `${pathname}?${nextSearch}` : pathname, {
+      scroll: false,
+    });
+  };
+
+  return (
+    <div className="flex flex-col gap-8 px-5 md:gap-10 md:px-0">
+      <section className="flex flex-col items-center">
+        <h2 className="text-center text-small20 font-bold text-neutral-0 md:text-medium24">
+          어떤 프로그램을 찾고 있나요?
+        </h2>
+        <AiChat />
+      </section>
+
+      <CatalogPassBanner href={passHref} />
+
+      <CatalogFilter groups={groups} query={query} onChange={handleChange} />
+
+      <section>
+        <p className="text-xsmall14 text-neutral-30">
+          프로그램{' '}
+          <span className="font-semibold text-primary">{list.length}</span>개
+        </p>
+        {isLoading ? (
+          <p className="py-20 text-center text-xsmall14 text-neutral-40">
+            불러오는 중…
+          </p>
+        ) : list.length === 0 ? (
+          <div className="flex flex-col items-center gap-3 py-20">
+            <p className="text-xsmall14 text-neutral-40">
+              조건에 맞는 프로그램이 없어요.
+            </p>
+            <button
+              type="button"
+              onClick={() => handleChange({ categoryIds: [], type: null })}
+              className="text-xsmall14 text-primary underline"
+            >
+              필터 초기화
+            </button>
+          </div>
+        ) : (
+          <>
+            <ul className="mt-4 grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-4 md:gap-x-5">
+              {list.slice(0, visibleCount).map((target) => (
+                <li key={`${target.targetType}-${target.targetId}`}>
+                  <CatalogCard target={target} />
+                </li>
+              ))}
+            </ul>
+            {visibleCount < list.length && (
+              <button
+                type="button"
+                onClick={() =>
+                  setPaging({ search, count: visibleCount + PAGE_SIZE })
+                }
+                className="mx-auto mt-10 block rounded-xs border border-neutral-80 px-8 py-3 text-xsmall14 text-neutral-20"
+              >
+                더보기 ({visibleCount}/{list.length})
+              </button>
+            )}
+          </>
+        )}
+      </section>
+    </div>
+  );
+};
+
+export default ProgramCatalogPage;
