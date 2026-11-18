@@ -24,7 +24,13 @@ const WEB_MENU: { group: string; items: { slug: string; label: string }[] }[] =
         { slug: 'portfolio', label: '포트폴리오' },
       ],
     },
-    { group: '대기업', items: [{ slug: 'large-corp', label: '대기업' }] },
+    {
+      group: '대기업',
+      items: [
+        { slug: 'large-corp', label: '대기업 자기소개서' },
+        { slug: 'aptitude', label: '인적성' },
+      ],
+    },
     { group: '면접', items: [{ slug: 'interview', label: '면접' }] },
     {
       group: '직무특화',
