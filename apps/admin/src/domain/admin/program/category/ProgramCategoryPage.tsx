@@ -12,11 +12,16 @@ import {
   useReorderProgramCategoryGroups,
   useUpdateProgramCategory,
   useUpdateProgramCategoryGroup,
+  programCategoryTargetTypeLabel,
   type ProgramCategory,
   type ProgramCategoryGroup,
 } from './programCategoryApi';
 import { AddRow, ItemRow } from './ProgramCategoryRows';
 import ProgramCategoryApiGuideDialog from './ProgramCategoryApiGuideDialog';
+import {
+  CategorySettingsPanel,
+  GroupSettingsPanel,
+} from './ProgramCategorySettingsPanels';
 import ProgramCategoryTargetList from './ProgramCategoryTargetList';
 
 const moveId = (ids: number[], index: number, direction: -1 | 1) => {
@@ -33,6 +38,10 @@ const ProgramCategoryPage = () => {
   const { snackbar } = useAdminSnackbar();
   // 연결 목록을 펼친 카테고리. 한 번에 하나만 연다
   const [openCategoryId, setOpenCategoryId] = useState<number | null>(null);
+  // 설정을 연 행. 'g-1'(노출 목록) / 'c-3'(카테고리)
+  const [settingsKey, setSettingsKey] = useState<string | null>(null);
+  const toggleSettings = (key: string) =>
+    setSettingsKey((prev) => (prev === key ? null : key));
   const [apiGuideOpen, setApiGuideOpen] = useState(false);
   const { data: groups = [], isLoading } = useAdminProgramCategoryGroupsQuery();
 
@@ -128,7 +137,11 @@ const ProgramCategoryPage = () => {
                   <ItemRow
                     strong
                     title={group.title}
-                    caption={`카테고리 ${group.categoryList.length}개`}
+                    caption={[
+                      group.purpose === 'LANDING' ? '랜딩용' : '필터용',
+                      group.slug ? `키 ${group.slug}` : '키 없음',
+                      `카테고리 ${group.categoryList.length}개`,
+                    ].join(' · ')}
                     isVisible={group.isVisible}
                     isFirst={groupIndex === 0}
                     isLast={groupIndex === groups.length - 1}
@@ -146,14 +159,31 @@ const ProgramCategoryPage = () => {
                       )
                     }
                     onDelete={() => handleDeleteGroup(group)}
+                    onSettings={() => toggleSettings(`g-${group.id}`)}
                   />
+                  {settingsKey === `g-${group.id}` && (
+                    <li>
+                      <GroupSettingsPanel
+                        group={group}
+                        onDone={() => setSettingsKey(null)}
+                      />
+                    </li>
+                  )}
                 </ul>
                 <ul className="mt-2 flex flex-col gap-0.5 pl-4">
                   {group.categoryList.map((category, index) => (
                     <Fragment key={category.id}>
                       <ItemRow
                         title={category.title}
-                        caption={`연결 ${category.programCount} ${openCategoryId === category.id ? '▲' : '▼'}`}
+                        caption={[
+                          category.slug ? `키 ${category.slug}` : null,
+                          category.directTargetType && category.directTargetId
+                            ? `바로 → ${programCategoryTargetTypeLabel[category.directTargetType]} #${category.directTargetId}`
+                            : null,
+                          `연결 ${category.programCount} ${openCategoryId === category.id ? '▲' : '▼'}`,
+                        ]
+                          .filter(Boolean)
+                          .join(' · ')}
                         active={openCategoryId === category.id}
                         onClick={() =>
                           setOpenCategoryId((prev) =>
@@ -192,7 +222,16 @@ const ProgramCategoryPage = () => {
                           )
                         }
                         onDelete={() => handleDeleteCategory(category)}
+                        onSettings={() => toggleSettings(`c-${category.id}`)}
                       />
+                      {settingsKey === `c-${category.id}` && (
+                        <li>
+                          <CategorySettingsPanel
+                            category={category}
+                            onDone={() => setSettingsKey(null)}
+                          />
+                        </li>
+                      )}
                       {openCategoryId === category.id && (
                         <li>
                           <ProgramCategoryTargetList categoryId={category.id} />
