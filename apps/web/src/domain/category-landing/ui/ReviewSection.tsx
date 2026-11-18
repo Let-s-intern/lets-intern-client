@@ -13,8 +13,6 @@ const REVIEW_COUNT = 12;
 
 interface ReviewCardData {
   key: number;
-  /** 10점 만점. 없으면 별을 안 그린다 */
-  score?: number | null;
   programTitle?: string | null;
   name?: string | null;
   items: { questionType?: string | null; answer?: string | null }[];
@@ -48,20 +46,6 @@ const pickQuote = (items: ReviewCardData['items']) => {
   ).trim();
 };
 
-/** 10점 만점 → 별 5개 */
-const Stars = ({ score }: { score: number }) => {
-  const filled = Math.round(Math.min(Math.max(score, 0), 10) / 2);
-  return (
-    <span
-      className="text-xsmall14 tracking-tight text-neutral-10"
-      aria-label={`평점 ${score}점`}
-    >
-      {'★'.repeat(filled)}
-      <span className="text-neutral-70">{'★'.repeat(5 - filled)}</span>
-    </span>
-  );
-};
-
 const ReviewCard = ({ review }: { review: ReviewCardData }) => {
   const { version, cohort, name } = parseProgramTitle(review.programTitle);
   const meta = [maskName(review.name), version, cohort]
@@ -69,12 +53,9 @@ const ReviewCard = ({ review }: { review: ReviewCardData }) => {
     .join(' · ');
   return (
     <div className="flex h-full w-[280px] flex-col gap-3 rounded-sm border border-primary-20 bg-white px-5 py-5">
-      <div className="flex items-center justify-between gap-2">
-        <span className="line-clamp-1 w-fit rounded-xxs bg-neutral-10 px-2 py-1 text-xxsmall12 font-semibold text-white">
-          {name || '챌린지'}
-        </span>
-        {review.score != null && <Stars score={review.score} />}
-      </div>
+      <span className="line-clamp-1 w-fit rounded-xxs bg-neutral-10 px-2 py-1 text-xxsmall12 font-semibold text-white">
+        {name || '챌린지'}
+      </span>
       <p className="line-clamp-4 flex-1 whitespace-pre-line text-xsmall14 text-neutral-10">
         &ldquo;{pickQuote(review.items)}&rdquo;
       </p>
@@ -85,7 +66,6 @@ const ReviewCard = ({ review }: { review: ReviewCardData }) => {
 
 const fromLanding = (r: LandingReview): ReviewCardData => ({
   key: r.reviewId,
-  score: r.score,
   programTitle: r.programTitle,
   name: r.name,
   items: r.itemList,
@@ -120,7 +100,6 @@ const ReviewSection = ({
       ? top.data.reviewList.map(fromLanding)
       : (fallback.data?.reviewList ?? []).map((r) => ({
           key: r.reviewInfo.reviewId,
-          score: r.reviewInfo.score,
           programTitle: r.reviewInfo.programTitle,
           name: r.reviewInfo.name,
           items: r.reviewItemList ?? [],
