@@ -46,7 +46,7 @@ describe('전체 프로그램 주소 필터', () => {
       new URLSearchParams('categoryId=3&categoryId=999&type=VOD'),
       groups,
     );
-    expect(q).toEqual({ categoryIds: [3], type: 'VOD' });
+    expect(q).toEqual({ categoryIds: [3], type: 'VOD', status: null });
   });
 
   it('예전 jobCategory 링크를 노출 분류로 옮기고, 가이드북 유형은 무시한다', () => {
@@ -56,7 +56,7 @@ describe('전체 프로그램 주소 필터', () => {
       ),
       groups,
     );
-    expect(q).toEqual({ categoryIds: [3, 17], type: null });
+    expect(q).toEqual({ categoryIds: [3, 17], type: null, status: null });
   });
 
   it('주소로 되돌린다', () => {
@@ -99,6 +99,28 @@ describe('전체 프로그램 목록', () => {
     expect(
       filterCatalogTargets([pass, closed], null, now).map((t) => t.targetId),
     ).toEqual([1, 9]);
+  });
+
+  it('모집 상태: 모집 중은 상시 상품 포함, 예전 주소 값을 받는다', () => {
+    const open = target('LIVE', {
+      targetId: 1,
+      beginning: '2026-11-10',
+      deadline: '2026-11-30',
+    });
+    const always = target('VOD', { targetId: 2 });
+    const closed = target('CHALLENGE', { targetId: 3, deadline: '2026-11-01' });
+    const ids = (status: 'PROCEEDING' | 'PREV' | 'POST') =>
+      filterCatalogTargets([open, always, closed], null, now, status).map(
+        (t) => t.targetId,
+      );
+    expect(ids('PROCEEDING')).toEqual([1, 2]);
+    expect(ids('POST')).toEqual([3]);
+    expect(
+      parseCatalogQuery(new URLSearchParams('status=PREV'), groups).status,
+    ).toBe('PREV');
+    expect(
+      toCatalogSearch({ categoryIds: [], type: null, status: 'POST' }),
+    ).toBe('status=POST');
   });
 
   it('유형을 고르면 그 유형만', () => {

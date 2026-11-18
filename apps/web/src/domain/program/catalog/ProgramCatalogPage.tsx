@@ -4,11 +4,14 @@ import {
   useFilterProgramCategoryGroupsQuery,
   useProgramCategoryTargetsQuery,
 } from '@/api/program-category/programCategory';
+import CouponBanner from '@/common/banner/CouponBanner';
 import { useMembershipNavEntry } from '@/common/layout/header/useMembershipNavEntry';
 import AiChat from '@/domain/ai-chat/AiChat';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
+import clsx from 'clsx';
 import {
+  CATALOG_STATUSES,
   CatalogQuery,
   filterCatalogTargets,
   parseCatalogQuery,
@@ -17,8 +20,9 @@ import {
 import CatalogCard from './ui/CatalogCard';
 import CatalogFilter from './ui/CatalogFilter';
 import CatalogPassBanner from './ui/CatalogPassBanner';
+import LoadMoreSentinel from './ui/LoadMoreSentinel';
 
-/** 처음 보이는 카드 수와 더보기 한 번에 늘어나는 수 */
+/** 처음 보이는 카드 수와 스크롤로 한 번에 늘어나는 수 */
 const PAGE_SIZE = 12;
 
 /**
@@ -47,8 +51,8 @@ const ProgramCatalogPage = () => {
     hasCategory ? 'GROUP' : 'ANY',
   );
   const list = useMemo(
-    () => filterCatalogTargets(targets, query.type),
-    [targets, query.type],
+    () => filterCatalogTargets(targets, query.type, undefined, query.status),
+    [targets, query.type, query.status],
   );
 
   const search = toCatalogSearch(query);
@@ -77,6 +81,23 @@ const ProgramCatalogPage = () => {
       <CatalogFilter groups={groups} query={query} onChange={handleChange} />
 
       <section>
+        <nav className="mb-5 flex gap-5 border-b border-neutral-85">
+          {CATALOG_STATUSES.map((tab) => (
+            <button
+              key={tab.label}
+              type="button"
+              onClick={() => handleChange({ ...query, status: tab.key })}
+              className={clsx(
+                'program_catalog_status -mb-px border-b-2 pb-2 text-small18 font-semibold',
+                (query.status ?? null) === tab.key
+                  ? 'border-neutral-0 text-neutral-0'
+                  : 'border-transparent text-neutral-50',
+              )}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </nav>
         <p className="text-xsmall14 text-neutral-30">
           프로그램{' '}
           <span className="font-semibold text-primary">{list.length}</span>개
@@ -92,7 +113,9 @@ const ProgramCatalogPage = () => {
             </p>
             <button
               type="button"
-              onClick={() => handleChange({ categoryIds: [], type: null })}
+              onClick={() =>
+                handleChange({ categoryIds: [], type: null, status: null })
+              }
               className="text-xsmall14 text-primary underline"
             >
               필터 초기화
@@ -108,19 +131,18 @@ const ProgramCatalogPage = () => {
               ))}
             </ul>
             {visibleCount < list.length && (
-              <button
-                type="button"
-                onClick={() =>
+              <LoadMoreSentinel
+                key={visibleCount}
+                onVisible={() =>
                   setPaging({ search, count: visibleCount + PAGE_SIZE })
                 }
-                className="mx-auto mt-10 block rounded-xs border border-neutral-80 px-8 py-3 text-xsmall14 text-neutral-20"
-              >
-                더보기 ({visibleCount}/{list.length})
-              </button>
+              />
             )}
           </>
         )}
       </section>
+
+      <CouponBanner />
     </div>
   );
 };

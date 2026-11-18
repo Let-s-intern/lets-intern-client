@@ -98,7 +98,7 @@ const CatalogFilter = ({ groups, query, onChange }: CatalogFilterProps) => {
       {hasFilter && (
         <button
           type="button"
-          onClick={() => onChange({ categoryIds: [], type: null })}
+          onClick={() => onChange({ ...query, categoryIds: [], type: null })}
           className="self-end text-xsmall14 text-neutral-40 underline"
         >
           필터 초기화
