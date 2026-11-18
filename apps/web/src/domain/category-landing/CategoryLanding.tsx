@@ -6,8 +6,9 @@ import {
 } from '@/api/program-category/programCategory';
 import { useMembershipNavEntry } from '@/common/layout/header/useMembershipNavEntry';
 import { JOURNEY_GROUPS } from '@/domain/career-journey/journeyNav';
+import clsx from 'clsx';
 import Link from 'next/link';
-import { Fragment, useMemo } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import { getSectionEyebrow } from './landingCard';
 import { LANDING_CONTENT } from './landingContent';
 import LandingSection from './ui/LandingSection';
@@ -38,6 +39,8 @@ const CategoryLanding = ({ slug }: { slug: string }) => {
   );
   const { data: targets = [] } = useProgramCategoryTargetsQuery(categoryIds);
   const { href: passHref } = useMembershipNavEntry();
+  // 누른 탭을 선택 표시한다. 누르기 전에는 첫 탭
+  const [activeTabId, setActiveTabId] = useState<number | null>(null);
 
   const menu = findMenuItem(slug);
   const content = LANDING_CONTENT[slug];
@@ -95,7 +98,13 @@ const CategoryLanding = ({ slug }: { slug: string }) => {
             <a
               key={category.id}
               href={`#section-${category.id}`}
-              className="category_landing_tab shrink-0 whitespace-nowrap px-4 py-3 text-xsmall14 text-neutral-30 hover:text-neutral-0 md:flex-1 md:text-center md:text-xsmall16"
+              onClick={() => setActiveTabId(category.id)}
+              className={clsx(
+                'category_landing_tab -mb-px shrink-0 whitespace-nowrap border-b-2 px-4 py-3 text-xsmall14 hover:text-neutral-0 md:flex-1 md:text-center md:text-xsmall16',
+                (activeTabId ?? sections[0].category.id) === category.id
+                  ? 'border-neutral-0 font-semibold text-neutral-0'
+                  : 'border-transparent text-neutral-30',
+              )}
               data-text={category.title}
             >
               {getSectionEyebrow(sectionTargets)}

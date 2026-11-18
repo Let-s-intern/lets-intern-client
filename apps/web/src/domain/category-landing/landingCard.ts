@@ -33,6 +33,20 @@ export const isClosingSoon = (target: ProgramCategoryTarget) => {
   return hours >= 0 && hours <= 72;
 };
 
+/**
+ * 챌린지 카드 제목. 기수와 버전 구분 없이 하나로 보이므로
+ * 앞의 `[버전]` 과 뒤의 `N기 …` 를 뗀다 (예: "[인턴 Ver.] 포트폴리오 챌린지 58기" → "포트폴리오 챌린지")
+ */
+export const getChallengeDisplayTitle = (title: string) =>
+  title
+    .replace(/^(\s*\[[^\]]*\]\s*)+/, '')
+    .replace(/\s*\d+기(\s.*)?$/, '')
+    .trim() || title;
+
+/** "11/17 마감 임박" 의 날짜 */
+export const getDeadlineText = (target: ProgramCategoryTarget) =>
+  target.deadline ? dayjs(target.deadline).format('M/D') : null;
+
 /** 섹션의 대표 모양. 섹션 상품이 전부 한 유형일 때만 그 유형 전용 카드를 쓴다 */
 export type SectionKind = 'challenge' | 'mentoring' | 'blog' | 'program';
 

@@ -1,18 +1,24 @@
 import { ProgramCategoryTarget } from '@/api/program-category/programCategory';
 import Link from 'next/link';
-import { getPeriodText, isClosingSoon } from '../landingCard';
+import {
+  getChallengeDisplayTitle,
+  getDeadlineText,
+  getPeriodText,
+  isClosingSoon,
+} from '../landingCard';
 import { getLandingTargetHref } from './TargetCards';
 
 /**
- * 챌린지 섹션의 큰 카드. 챌린지는 기수와 관계없이 대표 기수 하나로 받는다.
+ * 챌린지 섹션의 큰 카드. 챌린지는 기수·버전과 관계없이 대표 하나만 보인다.
  * 가격은 다중 조회에 없어 상세에서 본다
  */
 const FeaturedChallenge = ({ target }: { target: ProgramCategoryTarget }) => {
   const period = getPeriodText(target);
+  const deadline = getDeadlineText(target);
   const href = getLandingTargetHref(target);
   return (
-    <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-6">
-      <Link href={href} className="w-full shrink-0 md:w-[300px]">
+    <div className="flex flex-col gap-4 md:flex-row md:gap-6">
+      <Link href={href} className="w-full shrink-0 md:w-[288px]">
         <div className="aspect-[4/3] w-full overflow-hidden rounded-sm bg-neutral-95">
           {target.thumbnail && (
             // eslint-disable-next-line @next/next/no-img-element
@@ -24,30 +30,37 @@ const FeaturedChallenge = ({ target }: { target: ProgramCategoryTarget }) => {
           )}
         </div>
       </Link>
-      <div className="flex flex-1 flex-col gap-2">
+      <div className="flex flex-1 flex-col md:py-3">
         {isClosingSoon(target) && (
-          <span className="w-fit rounded-xs bg-system-error/10 px-1.5 py-0.5 text-xxsmall12 font-semibold text-system-error">
-            마감 임박
+          <span className="mb-2 w-fit rounded-xxs bg-system-error/10 px-1.5 py-0.5 text-xxsmall12 font-semibold text-system-error">
+            {deadline ? `${deadline} 마감 임박` : '마감 임박'}
           </span>
         )}
         <h3 className="text-small20 font-bold text-neutral-0 md:text-medium22">
-          {target.title}
+          {getChallengeDisplayTitle(target.title)}
         </h3>
         {target.shortDesc && (
-          <p className="text-xsmall14 text-neutral-30">{target.shortDesc}</p>
-        )}
-        {period && (
-          <p className="text-xsmall14 text-neutral-30">
-            진행기간 <span className="text-primary">{period}</span>
+          <p className="mt-1.5 text-xsmall14 text-neutral-30 md:text-xsmall16">
+            {target.shortDesc}
           </p>
         )}
-        <Link
-          href={href}
-          className="category_landing_challenge_cta mt-2 w-fit rounded-xs bg-primary px-5 py-2.5 text-xsmall14 font-semibold text-white"
-          data-id={target.targetId}
-        >
-          챌린지 자세히 보기
-        </Link>
+        <div className="mt-4 flex items-center justify-between gap-4 border-t border-neutral-85 pt-4 md:mt-auto">
+          <p className="text-xsmall14 text-neutral-30">
+            {period && (
+              <>
+                진행기간{' '}
+                <span className="font-semibold text-primary">{period}</span>
+              </>
+            )}
+          </p>
+          <Link
+            href={href}
+            className="category_landing_challenge_cta shrink-0 rounded-xs bg-primary px-5 py-2.5 text-xsmall14 font-semibold text-white md:text-xsmall16"
+            data-id={target.targetId}
+          >
+            챌린지 자세히 보기
+          </Link>
+        </div>
       </div>
     </div>
   );

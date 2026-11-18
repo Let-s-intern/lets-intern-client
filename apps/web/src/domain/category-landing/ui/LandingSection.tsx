@@ -63,10 +63,9 @@ const LandingSection = ({
 
       <div className="mt-6">
         {kind === 'challenge' ? (
-          <div className="flex flex-col gap-8">
-            {targets.map((target) => (
-              <FeaturedChallenge key={target.targetId} target={target} />
-            ))}
+          <div className="flex flex-col gap-4">
+            {/* 챌린지는 기수·버전 구분 없이 하나만 (시안). 첫 번째가 대표다 */}
+            <FeaturedChallenge target={targets[0]} />
             <PassFreeNotice passHref={passHref} />
           </div>
         ) : (
