@@ -1,11 +1,24 @@
 'use client';
 
-import { GetReview, useGetProgramReview } from '@/api/review/review';
+import {
+  type LandingReview,
+  useLandingReviewsQuery,
+} from '@/api/program-category/programCategory';
+import { useGetProgramReview } from '@/api/review/review';
 import type { ChallengeType } from '@/schema';
 import Link from 'next/link';
 
-/** 시안처럼 4장. 더 보려면 후기 페이지로 간다 */
-const REVIEW_COUNT = 4;
+/** 평점 높은 후기 몇 장을 받아 끝없이 흘린다 */
+const REVIEW_COUNT = 12;
+
+interface ReviewCardData {
+  key: number;
+  /** 10점 만점. 없으면 별을 안 그린다 */
+  score?: number | null;
+  programTitle?: string | null;
+  name?: string | null;
+  items: { questionType?: string | null; answer?: string | null }[];
+}
 
 const maskName = (name?: string | null) =>
   name
@@ -24,8 +37,7 @@ const parseProgramTitle = (title?: string | null) => {
 };
 
 /** 좋았던 점 → 목표 달성 → 아무 답변 순으로 한 줄 */
-const pickQuote = (review: GetReview) => {
-  const items = review.reviewItemList ?? [];
+const pickQuote = (items: ReviewCardData['items']) => {
   const by = (type: string) =>
     items.find((i) => i.questionType === type && i.answer?.trim())?.answer;
   return (
@@ -36,25 +48,48 @@ const pickQuote = (review: GetReview) => {
   ).trim();
 };
 
-const ReviewCard = ({ review }: { review: GetReview }) => {
-  const { version, cohort, name } = parseProgramTitle(
-    review.reviewInfo.programTitle,
+/** 10점 만점 → 별 5개 */
+const Stars = ({ score }: { score: number }) => {
+  const filled = Math.round(Math.min(Math.max(score, 0), 10) / 2);
+  return (
+    <span
+      className="text-xsmall14 tracking-tight text-neutral-10"
+      aria-label={`평점 ${score}점`}
+    >
+      {'★'.repeat(filled)}
+      <span className="text-neutral-70">{'★'.repeat(5 - filled)}</span>
+    </span>
   );
-  const meta = [maskName(review.reviewInfo.name), version, cohort]
+};
+
+const ReviewCard = ({ review }: { review: ReviewCardData }) => {
+  const { version, cohort, name } = parseProgramTitle(review.programTitle);
+  const meta = [maskName(review.name), version, cohort]
     .filter(Boolean)
     .join(' · ');
   return (
-    <div className="flex h-full flex-col gap-3 rounded-sm border border-primary-20 bg-white px-5 py-5">
-      <span className="line-clamp-1 w-fit rounded-xxs bg-neutral-10 px-2 py-1 text-xxsmall12 font-semibold text-white">
-        {name || '챌린지'}
-      </span>
+    <div className="flex h-full w-[280px] flex-col gap-3 rounded-sm border border-primary-20 bg-white px-5 py-5">
+      <div className="flex items-center justify-between gap-2">
+        <span className="line-clamp-1 w-fit rounded-xxs bg-neutral-10 px-2 py-1 text-xxsmall12 font-semibold text-white">
+          {name || '챌린지'}
+        </span>
+        {review.score != null && <Stars score={review.score} />}
+      </div>
       <p className="line-clamp-4 flex-1 whitespace-pre-line text-xsmall14 text-neutral-10">
-        &ldquo;{pickQuote(review)}&rdquo;
+        &ldquo;{pickQuote(review.items)}&rdquo;
       </p>
       <p className="text-xxsmall12 text-neutral-40">{meta}</p>
     </div>
   );
 };
+
+const fromLanding = (r: LandingReview): ReviewCardData => ({
+  key: r.reviewId,
+  score: r.score,
+  programTitle: r.programTitle,
+  name: r.name,
+  items: r.itemList,
+});
 
 interface ReviewSectionProps {
   anchorId: string;
@@ -63,20 +98,43 @@ interface ReviewSectionProps {
   challengeTypes: ChallengeType[];
 }
 
-/** 카테고리 랜딩 수강생 후기. 기존 후기 API 를 챌린지 구분으로 거른다 */
+/**
+ * 카테고리 랜딩 수강생 후기. 평점 높은 후기를 왼쪽에서 오른쪽으로 끝없이 흘린다.
+ * 평점 순 API 가 없는 서버(이전 버전)에서는 공개 후기 목록(최신순)으로 대신한다
+ */
 const ReviewSection = ({
   anchorId,
   title,
   label,
   challengeTypes,
 }: ReviewSectionProps) => {
-  const { data } = useGetProgramReview({
+  const top = useLandingReviewsQuery(challengeTypes, REVIEW_COUNT);
+  const fallback = useGetProgramReview({
     types: ['CHALLENGE_REVIEW'],
     challengeTypes,
     size: REVIEW_COUNT,
   });
-  const reviews = (data?.reviewList ?? []).filter((r) => pickQuote(r));
+  const useTop = top.isSuccess && top.data.reviewList.length > 0;
+  const reviews: ReviewCardData[] = (
+    useTop
+      ? top.data.reviewList.map(fromLanding)
+      : (fallback.data?.reviewList ?? []).map((r) => ({
+          key: r.reviewInfo.reviewId,
+          score: r.reviewInfo.score,
+          programTitle: r.reviewInfo.programTitle,
+          name: r.reviewInfo.name,
+          items: r.reviewItemList ?? [],
+        }))
+  ).filter((r) => pickQuote(r.items));
+  const total = useTop
+    ? top.data.totalCount
+    : fallback.data?.pageInfo.totalElements;
   if (reviews.length === 0) return null;
+  // 후기가 적어도 화면을 채우도록 반쪽이 8장 이상이 될 때까지 되풀이한다
+  const half = Array.from(
+    { length: Math.ceil(8 / reviews.length) },
+    () => reviews,
+  ).flat();
 
   return (
     <section id={anchorId} className="scroll-mt-28 py-10 md:py-14">
@@ -86,8 +144,7 @@ const ReviewSection = ({
             {title}
           </h2>
           <p className="mt-1 text-xsmall14 text-neutral-30 md:text-xsmall16">
-            {label} 관련 프로그램 수강생 후기{' '}
-            {data?.pageInfo.totalElements.toLocaleString()}개
+            {label} 관련 프로그램 수강생 후기 {total?.toLocaleString()}개
           </p>
         </div>
         <Link
@@ -97,16 +154,25 @@ const ReviewSection = ({
           더보기
         </Link>
       </div>
-      <ul className="-mx-5 mt-6 flex gap-4 overflow-x-auto px-5 scrollbar-hide md:mx-0 md:grid md:grid-cols-4 md:overflow-visible md:px-0">
-        {reviews.map((review) => (
-          <li
-            key={review.reviewInfo.reviewId}
-            className="w-[260px] shrink-0 md:w-auto"
-          >
-            <ReviewCard review={review} />
-          </li>
-        ))}
-      </ul>
+      {/* 같은 줄을 두 번 이어 붙여 왼쪽에서 오른쪽으로 -50% → 0 으로 흘린다. 올리면 멈춘다 */}
+      <style>{`@keyframes landingReviewFlow{from{transform:translateX(-50%)}to{transform:translateX(0)}}`}</style>
+      <div className="-mx-5 mt-6 overflow-hidden md:mx-0">
+        <ul
+          className="flex w-max gap-4 px-5 hover:[animation-play-state:paused] motion-reduce:!animate-none md:px-0"
+          style={{
+            animation: `landingReviewFlow ${half.length * 5}s linear infinite`,
+          }}
+        >
+          {[...half, ...half].map((review, index) => (
+            <li
+              key={`${review.key}-${index}`}
+              aria-hidden={index >= reviews.length}
+            >
+              <ReviewCard review={review} />
+            </li>
+          ))}
+        </ul>
+      </div>
     </section>
   );
 };

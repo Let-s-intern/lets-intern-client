@@ -76,7 +76,10 @@ const CategoryLanding = ({ slug }: { slug: string }) => {
   );
   const tabs = sections.map(({ category, targets: sectionTargets }) => ({
     key: `section-${category.id}`,
-    label: getSectionEyebrow(sectionTargets),
+    label: getSectionEyebrow(
+      sectionTargets,
+      getSectionKind(sectionTargets, category.displayType),
+    ),
   }));
   if (content?.review && tabs.length > 0)
     tabs.splice(reviewIndex, 0, { key: REVIEW_ANCHOR, label: '수강생 후기' });

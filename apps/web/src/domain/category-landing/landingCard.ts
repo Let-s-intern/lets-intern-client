@@ -80,10 +80,19 @@ export const getSectionKind = (
   return 'program';
 };
 
-/** 섹션 위 작은 라벨. 섹션에 담긴 유형을 이어 쓴다 (예: "LIVE · VOD 클래스") */
-export const getSectionEyebrow = (targets: ProgramCategoryTarget[]) => {
+/**
+ * 섹션 위 작은 라벨(탭 이름도 같다). 섹션에 담긴 유형을 이어 쓴다 (예: "LIVE · VOD 클래스").
+ * 큰 카드 섹션은 대표 상품 유형만, 유형이 셋 이상 섞이면 "추천 프로그램"
+ */
+export const getSectionEyebrow = (
+  targets: ProgramCategoryTarget[],
+  kind?: SectionKind,
+) => {
+  if (kind === 'challenge' && targets[0])
+    return TARGET_TYPE_LABEL[targets[0].targetType];
   const types = [...new Set(targets.map((t) => t.targetType))];
   if (types.length === 2 && types.includes('LIVE') && types.includes('VOD'))
     return 'LIVE · VOD 클래스';
+  if (types.length > 2) return '추천 프로그램';
   return types.map((type) => TARGET_TYPE_LABEL[type]).join(' · ');
 };

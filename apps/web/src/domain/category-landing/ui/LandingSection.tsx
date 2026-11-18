@@ -42,7 +42,7 @@ const LandingSection = ({
   return (
     <section id={anchorId} className="scroll-mt-28 py-10 md:py-14">
       <p className="text-xsmall14 font-semibold text-primary">
-        {getSectionEyebrow(targets)}
+        {getSectionEyebrow(targets, kind)}
       </p>
       <div className="mt-1 flex items-end justify-between gap-4">
         <div>

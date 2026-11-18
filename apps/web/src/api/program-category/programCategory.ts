@@ -129,3 +129,41 @@ export const useProgramCategoryTargetsQuery = (
     },
     enabled: categoryIds.length > 0,
   });
+
+const landingReviewSchema = z.object({
+  reviewId: z.number(),
+  score: z.number().nullish(),
+  programTitle: z.string().nullish(),
+  name: z.string().nullish(),
+  challengeType: z.string().nullish(),
+  itemList: z.array(
+    z.object({
+      questionType: z.string().nullish(),
+      answer: z.string().nullish(),
+    }),
+  ),
+});
+export type LandingReview = z.infer<typeof landingReviewSchema>;
+
+/**
+ * GET /program-category/reviews — 랜딩 수강생 후기. 챌린지 구분의 참여 후기를 평점 높은 순으로.
+ * 서버 LC-3644 부터 있다. 없으면(404) 실패로 두고 화면이 예전 후기 목록으로 대신한다
+ */
+export const useLandingReviewsQuery = (challengeTypes: string[], size = 12) =>
+  useQuery({
+    queryKey: ['landingReviews', challengeTypes, size],
+    queryFn: async () => {
+      const res = await axios.get('/program-category/reviews', {
+        params: { challengeType: challengeTypes, size },
+        paramsSerializer: { indexes: null },
+      });
+      return z
+        .object({
+          totalCount: z.number(),
+          reviewList: z.array(landingReviewSchema),
+        })
+        .parse(res.data.data);
+    },
+    enabled: challengeTypes.length > 0,
+    retry: false,
+  });

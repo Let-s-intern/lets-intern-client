@@ -35,6 +35,12 @@ describe('랜딩 섹션 모양', () => {
       'LIVE · VOD 클래스',
     );
     expect(getSectionEyebrow([target('MAGNET')])).toBe('무료 자료집');
+    expect(
+      getSectionEyebrow([target('VOD'), target('MAGNET'), target('BLOG')]),
+    ).toBe('추천 프로그램');
+    expect(
+      getSectionEyebrow([target('CHALLENGE'), target('VOD')], 'challenge'),
+    ).toBe('챌린지');
   });
 });
 
