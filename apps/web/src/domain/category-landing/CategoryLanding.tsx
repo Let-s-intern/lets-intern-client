@@ -40,7 +40,16 @@ const CategoryLanding = ({ slug }: { slug: string }) => {
     () => group?.categoryList.map((c) => c.id) ?? [],
     [group],
   );
-  const { data: targets = [] } = useProgramCategoryTargetsQuery(categoryIds);
+  // 이 랜딩 노출 위치의 "챌린지 기수·버전 합치기" 설정
+  const mergeChallenges =
+    group?.placements?.find(
+      (p) => p.placementType === 'LANDING' && p.slug === slug,
+    )?.mergeChallenges ?? true;
+  const { data: targets = [] } = useProgramCategoryTargetsQuery(
+    categoryIds,
+    'ANY',
+    mergeChallenges,
+  );
   const { href: passHref } = useMembershipNavEntry();
   // 누른 탭을 선택 표시한다. 누르기 전에는 첫 탭
   const [activeTab, setActiveTab] = useState<string | null>(null);
@@ -58,7 +67,8 @@ const CategoryLanding = ({ slug }: { slug: string }) => {
 
   // 수강생 후기는 블로그 섹션 바로 앞, 블로그가 없으면 맨 끝 (시안)
   const blogIndex = sections.findIndex(
-    (section) => getSectionKind(section.targets) === 'blog',
+    (section) =>
+      getSectionKind(section.targets, section.category.displayType) === 'blog',
   );
   const reviewIndex = blogIndex === -1 ? sections.length : blogIndex;
   const reviewSection = content?.review && (
@@ -147,12 +157,14 @@ const CategoryLanding = ({ slug }: { slug: string }) => {
               anchorId={`section-${category.id}`}
               title={category.title}
               description={
-                category.slug
+                category.description ??
+                (category.slug
                   ? content?.sectionDescriptions?.[category.slug]
-                  : undefined
+                  : undefined)
               }
               targets={sectionTargets}
               passHref={passHref}
+              displayType={category.displayType}
             />
             {/* 첫 섹션 다음에 패스 배너 (시안) */}
             {index === 0 && <PassBanner href={passHref} />}

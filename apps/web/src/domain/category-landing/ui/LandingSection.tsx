@@ -1,6 +1,9 @@
 'use client';
 
-import { ProgramCategoryTarget } from '@/api/program-category/programCategory';
+import type {
+  ProgramCategoryTarget,
+  SectionDisplayType,
+} from '@/api/program-category/programCategory';
 import { useState } from 'react';
 import { getSectionEyebrow, getSectionKind } from '../landingCard';
 import FeaturedChallenge, { PassFreeNotice } from './FeaturedChallenge';
@@ -20,6 +23,7 @@ interface LandingSectionProps {
   description?: string;
   targets: ProgramCategoryTarget[];
   passHref: string;
+  displayType?: SectionDisplayType | null;
 }
 
 /** 랜딩 섹션 하나 = 어드민 랜딩용 노출 목록의 카테고리 하나 */
@@ -29,9 +33,10 @@ const LandingSection = ({
   description,
   targets,
   passHref,
+  displayType,
 }: LandingSectionProps) => {
   const [expanded, setExpanded] = useState(false);
-  const kind = getSectionKind(targets);
+  const kind = getSectionKind(targets, displayType);
   const visible = expanded ? targets : targets.slice(0, PREVIEW_COUNT);
 
   return (

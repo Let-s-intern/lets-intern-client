@@ -17,13 +17,33 @@ export type ProgramCategoryTargetType = z.infer<
   typeof programCategoryTargetTypeSchema
 >;
 
+/** 랜딩 섹션 표시 방식. AUTO 는 상품 유형대로 */
+export const sectionDisplayTypeSchema = z.enum([
+  'AUTO',
+  'FEATURED',
+  'CARDS',
+  'MENTOR',
+  'BLOG',
+]);
+export type SectionDisplayType = z.infer<typeof sectionDisplayTypeSchema>;
+
 const categorySchema = z.object({
   id: z.number(),
   title: z.string(),
   slug: z.string().nullish(),
   directTargetType: programCategoryTargetTypeSchema.nullish(),
   directTargetId: z.number().nullish(),
+  displayType: sectionDisplayTypeSchema.nullish(),
+  description: z.string().nullish(),
 });
+
+const placementSchema = z.object({
+  placementType: z.enum(['LANDING', 'PROGRAM_FILTER']),
+  slug: z.string().nullish(),
+  mergeChallenges: z.boolean().nullish(),
+  matchMode: z.enum(['ANY', 'ALL', 'GROUP']).nullish(),
+});
+export type ProgramCategoryPlacement = z.infer<typeof placementSchema>;
 export type PublicProgramCategory = z.infer<typeof categorySchema>;
 
 const groupSchema = z.object({
@@ -31,6 +51,7 @@ const groupSchema = z.object({
   title: z.string(),
   slug: z.string().nullish(),
   purpose: z.enum(['FILTER', 'LANDING']).nullish(),
+  placements: z.array(placementSchema).nullish(),
   categoryList: z.array(categorySchema),
 });
 export type PublicProgramCategoryGroup = z.infer<typeof groupSchema>;
@@ -46,6 +67,12 @@ const targetSchema = z.object({
   beginning: z.string().nullish(),
   deadline: z.string().nullish(),
   mentorId: z.number().nullish(),
+  // 카드 부가 정보 (서버 LC-3644 부터). 챌린지: 구분·최저 신청가 / 멘토링: 최저가·시간·멘토 회사·직무
+  challengeType: z.string().nullish(),
+  price: z.number().nullish(),
+  durations: z.array(z.number()).nullish(),
+  mentorCompany: z.string().nullish(),
+  mentorJob: z.string().nullish(),
   categoryIds: z.array(z.number()),
 });
 export type ProgramCategoryTarget = z.infer<typeof targetSchema>;
@@ -81,16 +108,18 @@ export const useProgramCategoryGroupBySlugQuery = (slug: string) =>
  */
 export const useProgramCategoryTargetsQuery = (
   categoryIds: number[],
-  /** ANY: 하나라도 / GROUP: 같은 노출 목록 안은 하나라도, 목록끼리는 전부 */
+  /** ANY: 하나라도 / GROUP: 노출 목록끼리는 전부, 목록 안은 그 목록 필터 설정대로 */
   match: 'ANY' | 'GROUP' = 'ANY',
+  /** 챌린지를 기수·버전과 관계없이 한 장으로 */
+  groupChallenges = true,
 ) =>
   useQuery({
-    queryKey: ['programCategoryTargets', categoryIds, match],
+    queryKey: ['programCategoryTargets', categoryIds, match, groupChallenges],
     queryFn: async () => {
       const res = await axios.get('/program-category/targets', {
         params: {
           categoryIds: categoryIds.join(','),
-          groupChallenges: true,
+          groupChallenges,
           match,
         },
       });

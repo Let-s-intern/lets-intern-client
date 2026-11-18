@@ -3,6 +3,7 @@ import { getTargetHref } from '@/domain/career-journey/journeyNav';
 import dayjs from '@/lib/dayjs';
 import Link from 'next/link';
 import {
+  formatPrice,
   getChallengeDisplayTitle,
   getPeriodText,
   TARGET_TYPE_LABEL,
@@ -50,6 +51,7 @@ export const ProgramTargetCard = ({
       {target.targetType === 'CHALLENGE' ? (
         <div className="aspect-[4/3] w-full overflow-hidden rounded-xs bg-neutral-95">
           <ChallengeThumbnail
+            challengeType={target.challengeType}
             title={target.title}
             displayTitle={getChallengeDisplayTitle(target.title)}
             fallbackSrc={target.thumbnail}
@@ -89,7 +91,29 @@ export const MentorTargetCard = ({
     data-type={target.targetType}
     data-id={target.targetId}
   >
-    <Thumbnail src={target.thumbnail} className="aspect-[5/4]" />
+    <div className="relative aspect-[5/4] w-full overflow-hidden rounded-xs bg-neutral-95">
+      {target.thumbnail && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={target.thumbnail}
+          alt=""
+          className="h-full w-full object-cover"
+        />
+      )}
+      {(target.mentorCompany || target.mentorJob) && (
+        <span className="absolute left-2 top-2 max-w-[90%] truncate rounded-xxs bg-neutral-0/80 px-1.5 py-0.5 text-xxsmall12 font-semibold text-white">
+          {[target.mentorCompany, target.mentorJob].filter(Boolean).join(' · ')}
+        </span>
+      )}
+      {(target.durations?.length || target.price != null) && (
+        <span className="absolute inset-x-0 bottom-0 flex justify-between bg-gradient-to-t from-black/70 to-transparent px-2 pb-1.5 pt-4 text-xxsmall12 font-semibold text-white">
+          <span>
+            {(target.durations ?? []).map((d) => `${d}분`).join(' / ')}
+          </span>
+          {target.price != null && <span>{formatPrice(target.price)}~</span>}
+        </span>
+      )}
+    </div>
     <p className="line-clamp-2 text-xsmall16 font-semibold text-neutral-0">
       {target.title}
     </p>

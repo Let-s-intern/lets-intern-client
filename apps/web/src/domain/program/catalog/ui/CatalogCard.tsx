@@ -51,6 +51,7 @@ const CatalogCard = ({ target }: { target: ProgramCategoryTarget }) => {
       <div className="aspect-[4/3] w-full overflow-hidden rounded-xs bg-neutral-95">
         {target.targetType === 'CHALLENGE' ? (
           <ChallengeThumbnail
+            challengeType={target.challengeType}
             title={target.title}
             displayTitle={getCatalogTitle(target)}
             fallbackSrc={target.thumbnail}

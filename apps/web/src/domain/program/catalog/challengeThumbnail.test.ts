@@ -21,6 +21,16 @@ describe('챌린지 기본 썸네일', () => {
     ).toContain('large-corp');
   });
 
+  it('서버가 준 챌린지 구분이 있으면 제목보다 우선', () => {
+    expect(
+      resolveChallengeThumbnail('PM 포트폴리오 챌린지 1기', 'x', 'PM'),
+    ).toBeNull();
+    expect(
+      resolveChallengeThumbnail('기필코 챌린지 36기', 'x', 'EXPERIENCE_SUMMARY')
+        ?.src,
+    ).toContain('experience-summary');
+  });
+
   it('직무·면접처럼 기본 이미지가 없으면 null', () => {
     expect(
       resolveChallengeThumbnail('마케팅 서류 완성 올인원 챌린지 11기', 'x'),

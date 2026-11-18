@@ -13,6 +13,15 @@ interface DefaultThumbnail {
   shadowColor?: string;
 }
 
+/** 서버가 주는 챌린지 구분 → 규칙 순서. 없으면 제목으로 가린다 */
+const TYPE_RULE: Record<string, number> = {
+  PERSONAL_STATEMENT_LARGE_CORP: 0,
+  EXPERIENCE_SUMMARY: 1,
+  CAREER_START: 2,
+  PERSONAL_STATEMENT: 3,
+  PORTFOLIO: 4,
+};
+
 const RULES: {
   match: RegExp;
   src: string;
@@ -37,10 +46,16 @@ const RULES: {
 export const resolveChallengeThumbnail = (
   title: string,
   displayTitle: string,
+  challengeType?: string | null,
 ): DefaultThumbnail | null => {
-  // 직무 챌린지는 제목에 "서류"·"포트폴리오" 같은 말이 들어가도 직무 썸네일을 쓴다
-  if (/마케팅|HR|PM|서비스기획/.test(title)) return null;
-  const rule = RULES.find((r) => r.match.test(title));
+  let rule: (typeof RULES)[number] | undefined;
+  if (challengeType) {
+    rule = RULES[TYPE_RULE[challengeType] ?? -1];
+  } else {
+    // 구분을 모르면 제목으로. 직무 챌린지는 "서류"·"포트폴리오" 가 들어가도 직무 썸네일을 쓴다
+    if (/마케팅|HR|PM|서비스기획/.test(title)) return null;
+    rule = RULES.find((r) => r.match.test(title));
+  }
   if (!rule) return null;
   return rule.overlay
     ? {

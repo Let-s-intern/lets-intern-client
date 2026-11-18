@@ -1,4 +1,7 @@
-import { ProgramCategoryTarget } from '@/api/program-category/programCategory';
+import type {
+  ProgramCategoryTarget,
+  SectionDisplayType,
+} from '@/api/program-category/programCategory';
 import dayjs from '@/lib/dayjs';
 
 export const TARGET_TYPE_LABEL: Record<
@@ -43,6 +46,10 @@ export const getChallengeDisplayTitle = (title: string) =>
     .replace(/\s*\d+기(\s.*)?$/, '')
     .trim() || title;
 
+/** 49000 → "49,000원" */
+export const formatPrice = (price?: number | null) =>
+  price == null ? null : `${price.toLocaleString('ko-KR')}원`;
+
 /** "11/17 마감 임박" 의 날짜 */
 export const getDeadlineText = (target: ProgramCategoryTarget) =>
   target.deadline ? dayjs(target.deadline).format('M/D') : null;
@@ -50,9 +57,20 @@ export const getDeadlineText = (target: ProgramCategoryTarget) =>
 /** 섹션의 대표 모양. 섹션 상품이 전부 한 유형일 때만 그 유형 전용 카드를 쓴다 */
 export type SectionKind = 'challenge' | 'mentoring' | 'blog' | 'program';
 
+const KIND_OF_DISPLAY: Partial<Record<SectionDisplayType, SectionKind>> = {
+  FEATURED: 'challenge',
+  CARDS: 'program',
+  MENTOR: 'mentoring',
+  BLOG: 'blog',
+};
+
+/** 어드민에서 표시 방식을 정했으면 그대로, 자동이면 상품 유형으로 */
 export const getSectionKind = (
   targets: ProgramCategoryTarget[],
+  displayType?: SectionDisplayType | null,
 ): SectionKind => {
+  const fixed = displayType ? KIND_OF_DISPLAY[displayType] : undefined;
+  if (fixed) return fixed;
   const types = new Set(targets.map((t) => t.targetType));
   if (types.size === 1) {
     if (types.has('CHALLENGE')) return 'challenge';

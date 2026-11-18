@@ -24,6 +24,12 @@ describe('랜딩 섹션 모양', () => {
     );
   });
 
+  it('어드민에서 정한 표시 방식이 상품 유형보다 우선', () => {
+    expect(getSectionKind([target('VOD')], 'FEATURED')).toBe('challenge');
+    expect(getSectionKind([target('CHALLENGE')], 'CARDS')).toBe('program');
+    expect(getSectionKind([target('CHALLENGE')], 'AUTO')).toBe('challenge');
+  });
+
   it('LIVE 와 VOD 가 섞이면 "LIVE · VOD 클래스"', () => {
     expect(getSectionEyebrow([target('LIVE'), target('VOD')])).toBe(
       'LIVE · VOD 클래스',

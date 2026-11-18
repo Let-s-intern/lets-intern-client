@@ -2,10 +2,12 @@ import { ProgramCategoryTarget } from '@/api/program-category/programCategory';
 import Link from 'next/link';
 import ChallengeThumbnail from './ChallengeThumbnail';
 import {
+  formatPrice,
   getChallengeDisplayTitle,
   getDeadlineText,
   getPeriodText,
   isClosingSoon,
+  TARGET_TYPE_LABEL,
 } from '../landingCard';
 import { getLandingTargetHref } from './TargetCards';
 
@@ -17,11 +19,13 @@ const FeaturedChallenge = ({ target }: { target: ProgramCategoryTarget }) => {
   const period = getPeriodText(target);
   const deadline = getDeadlineText(target);
   const href = getLandingTargetHref(target);
+  const price = formatPrice(target.price);
   return (
     <div className="flex flex-col gap-4 md:flex-row md:gap-6">
       <Link href={href} className="w-full shrink-0 md:w-[288px]">
         <div className="aspect-[4/3] w-full overflow-hidden rounded-sm bg-neutral-95">
           <ChallengeThumbnail
+            challengeType={target.challengeType}
             title={target.title}
             displayTitle={getChallengeDisplayTitle(target.title)}
             fallbackSrc={target.thumbnail}
@@ -43,20 +47,28 @@ const FeaturedChallenge = ({ target }: { target: ProgramCategoryTarget }) => {
           </p>
         )}
         <div className="mt-4 flex items-center justify-between gap-4 border-t border-neutral-85 pt-4 md:mt-auto">
-          <p className="text-xsmall14 text-neutral-30">
+          <div className="flex flex-col gap-0.5">
+            {price && (
+              <p className="flex items-baseline gap-3 text-xsmall14 text-neutral-30">
+                {TARGET_TYPE_LABEL[target.targetType]} 신청가
+                <span className="text-small20 font-bold text-neutral-0">
+                  {price}
+                </span>
+              </p>
+            )}
             {period && (
-              <>
+              <p className="text-xsmall14 text-neutral-30">
                 진행기간{' '}
                 <span className="font-semibold text-primary">{period}</span>
-              </>
+              </p>
             )}
-          </p>
+          </div>
           <Link
             href={href}
             className="category_landing_challenge_cta shrink-0 rounded-xs bg-primary px-5 py-2.5 text-xsmall14 font-semibold text-white md:text-xsmall16"
             data-id={target.targetId}
           >
-            챌린지 자세히 보기
+            {TARGET_TYPE_LABEL[target.targetType]} 자세히 보기
           </Link>
         </div>
       </div>

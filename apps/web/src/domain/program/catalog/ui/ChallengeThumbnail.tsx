@@ -1,6 +1,8 @@
 import { resolveChallengeThumbnail } from '../challengeThumbnail';
 
 interface ChallengeThumbnailProps {
+  /** 서버가 주는 챌린지 구분. 없으면 제목으로 가린다 */
+  challengeType?: string | null;
   title: string;
   displayTitle: string;
   /** 기본 썸네일이 없는 유형에 쓰는 등록 썸네일 */
@@ -12,11 +14,16 @@ interface ChallengeThumbnailProps {
  * 얹는 위치·크기는 어드민 생성기(1146×860 캔버스, x 80, 기준선 746.5, 84px)를 비율로 옮겼다
  */
 const ChallengeThumbnail = ({
+  challengeType,
   title,
   displayTitle,
   fallbackSrc,
 }: ChallengeThumbnailProps) => {
-  const resolved = resolveChallengeThumbnail(title, displayTitle);
+  const resolved = resolveChallengeThumbnail(
+    title,
+    displayTitle,
+    challengeType,
+  );
   const src = resolved?.src ?? fallbackSrc;
   if (!src) return null;
   return (
