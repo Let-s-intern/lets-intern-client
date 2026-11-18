@@ -1,8 +1,7 @@
 'use client';
 
-import { useFirstB2CChallenge } from '@/hooks/useFirstB2CChallenge';
+import { useJourneyHrefMap } from '@/domain/career-journey/useJourneyHref';
 import { twMerge } from '@/lib/twMerge';
-import { ChallengeType } from '@/schema';
 import {
   Briefcase,
   Building2,
@@ -26,9 +25,6 @@ const TAB_STYLE: Record<string, { icon: LucideIcon; color: string }> = {
   job: { icon: Briefcase, color: 'text-neutral-20' },
 };
 
-/** 모집 중인 챌린지가 없으면 프로그램 목록으로 보낸다 */
-const FALLBACK_HREF = '/program';
-
 const ActionLink = ({
   href,
   action,
@@ -47,28 +43,19 @@ const ActionLink = ({
   </Link>
 );
 
-const ChallengeActionLink = ({
-  type,
+const ActionCard = ({
   action,
+  href,
 }: {
-  type: ChallengeType;
   action: ConcernAction;
-}) => {
-  const challenge = useFirstB2CChallenge(type);
-  return <ActionLink href={challenge?.href ?? FALLBACK_HREF} action={action} />;
-};
-
-const ActionCard = ({ action }: { action: ConcernAction }) => (
+  href: string;
+}) => (
   <li className="flex flex-1 flex-col rounded-sm bg-white/70 p-4 md:p-5">
     <h4 className="text-small18 font-bold text-neutral-0">{action.title}</h4>
     <p className="mt-2 text-xsmall14 text-neutral-20">{action.quote}</p>
     <p className="mt-1 text-xxsmall12 text-neutral-45">{action.meta}</p>
     <div className="mt-auto">
-      {action.challengeType ? (
-        <ChallengeActionLink type={action.challengeType} action={action} />
-      ) : (
-        <ActionLink href={action.href ?? FALLBACK_HREF} action={action} />
-      )}
+      <ActionLink href={href} action={action} />
     </div>
   </li>
 );
@@ -80,6 +67,8 @@ const ConcernSection = () => {
   const [selectedId, setSelectedId] = useState(CONCERNS[0].id);
   // 사용자가 탭을 한 번이라도 누르면 자동 넘김을 멈춘다
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  // 카드 이동처: 어드민이 지정한 바로 갈 상품이 있으면 상세, 없으면 카테고리 랜딩
+  const hrefMap = useJourneyHrefMap();
   const selectedIndex = CONCERNS.findIndex((c) => c.id === selectedId);
   const selected = CONCERNS[selectedIndex];
 
@@ -185,7 +174,11 @@ const ConcernSection = () => {
           className={`mt-5 flex flex-col gap-3 md:flex-row md:gap-4 ${styles.panelIn}`}
         >
           {selected.actions.map((action) => (
-            <ActionCard key={action.title} action={action} />
+            <ActionCard
+              key={action.slug}
+              action={action}
+              href={hrefMap[action.slug]}
+            />
           ))}
         </ul>
       </div>

@@ -39,6 +39,10 @@ jest.mock('@/hooks/useProgramCategoryNav', () => ({
   __esModule: true,
   default: () => [],
 }));
+// 사이드 메뉴의 취준 여정 링크. 노출 분류 API 를 부르지 않게 랜딩 주소로 고정한다
+jest.mock('@/domain/career-journey/useJourneyHref', () => ({
+  useJourneyHrefMap: () => ({}),
+}));
 jest.mock('@/hooks/useScrollDirection', () => ({
   __esModule: true,
   default: () => 'UP',

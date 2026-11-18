@@ -34,11 +34,31 @@ const programCategorySchema = z.object({
   isVisible: z.boolean(),
 });
 
+const targetTypeSchema = z.enum([
+  'CHALLENGE',
+  'LIVE',
+  'VOD',
+  'GUIDEBOOK',
+  'LIVE_MENTORING',
+  'MEMBERSHIP',
+  'BLOG',
+  'MAGNET',
+]);
+
 const programCategoryItemSchema = programCategorySchema.extend({
   programCount: z.number(),
+  // 이전 서버 응답에는 없어서 nullish
+  slug: z.string().nullish(),
+  directTargetType: targetTypeSchema.nullish(),
+  directTargetId: z.number().nullish(),
 });
 
+/** 노출 목록 용도. FILTER 는 필터·메뉴, LANDING 은 카테고리 랜딩 한 페이지 */
+export type ProgramCategoryGroupPurpose = 'FILTER' | 'LANDING';
+
 const programCategoryGroupSchema = programCategorySchema.extend({
+  slug: z.string().nullish(),
+  purpose: z.enum(['FILTER', 'LANDING']).nullish(),
   categoryList: z.array(programCategoryItemSchema),
 });
 
@@ -85,8 +105,17 @@ export const useCreateProgramCategoryGroup = () =>
 /** PATCH 목록 이름·숨김 /api/v1/admin/program-category/group/{id} */
 export const useUpdateProgramCategoryGroup = () =>
   useInvalidatingMutation(
-    ({ id, ...body }: { id: number; title?: string; isVisible?: boolean }) =>
-      axios.patch(`/admin/program-category/group/${id}`, body),
+    ({
+      id,
+      ...body
+    }: {
+      id: number;
+      title?: string;
+      isVisible?: boolean;
+      /** 빈 문자열이면 지운다 */
+      slug?: string;
+      purpose?: ProgramCategoryGroupPurpose;
+    }) => axios.patch(`/admin/program-category/group/${id}`, body),
   );
 
 /** DELETE 목록 삭제 (안의 카테고리·연결 포함) /api/v1/admin/program-category/group/{id} */
@@ -119,8 +148,29 @@ export const useCreateProgramCategory = () =>
 /** PATCH 카테고리 이름·숨김 /api/v1/admin/program-category/{id} */
 export const useUpdateProgramCategory = () =>
   useInvalidatingMutation(
-    ({ id, ...body }: { id: number; title?: string; isVisible?: boolean }) =>
-      axios.patch(`/admin/program-category/${id}`, body),
+    ({
+      id,
+      ...body
+    }: {
+      id: number;
+      title?: string;
+      isVisible?: boolean;
+      /** 빈 문자열이면 지운다 */
+      slug?: string;
+    }) => axios.patch(`/admin/program-category/${id}`, body),
+  );
+
+/** PUT 카테고리 바로 갈 상품 (둘 다 null 이면 해제) /api/v1/admin/program-category/{id}/direct-target */
+export const useUpdateProgramCategoryDirectTarget = () =>
+  useInvalidatingMutation(
+    ({
+      id,
+      ...body
+    }: {
+      id: number;
+      targetType: ProgramCategoryTargetType | null;
+      targetId: number | null;
+    }) => axios.put(`/admin/program-category/${id}/direct-target`, body),
   );
 
 /** PUT 목록 안 카테고리 순서 /api/v1/admin/program-category/order */
@@ -197,16 +247,7 @@ export const usePutProgramCategoriesOfTarget = (
 
 const programCategoryTargetSchema = z.object({
   mappingId: z.number(),
-  targetType: z.enum([
-    'CHALLENGE',
-    'LIVE',
-    'VOD',
-    'GUIDEBOOK',
-    'LIVE_MENTORING',
-    'MEMBERSHIP',
-    'BLOG',
-    'MAGNET',
-  ]),
+  targetType: targetTypeSchema,
   targetId: z.number(),
   title: z.string().nullable(),
   thumbnail: z.string().nullish(),

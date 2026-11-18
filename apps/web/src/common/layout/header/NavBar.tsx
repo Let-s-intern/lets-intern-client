@@ -15,7 +15,7 @@ import useAuthStore from '@/store/useAuthStore';
 import { buildCrossAppUrl } from '@/common/utils/crossAppUrl';
 import { useMediaQuery } from '@mui/material';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import 'swiper/css';
 import 'swiper/css/free-mode';
 import { FreeMode } from 'swiper/modules';
@@ -29,6 +29,8 @@ import NavOverlay from './NavOverlay';
 import ServiceToggle from './ServiceToggle';
 import SideNavContainer from './SideNavContainer';
 import SideNavItem from './SideNavItem';
+import { JOURNEY_GROUPS } from '@/domain/career-journey/journeyNav';
+import { useJourneyHrefMap } from '@/domain/career-journey/useJourneyHref';
 import Spacer from './Spacer';
 import {
   SHOW_LIVE_MENTORING_HEADER_NAV,
@@ -117,9 +119,10 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
   ];
 
   const programCategoryLists = useProgramCategoryNav();
+  const journeyHrefMap = useJourneyHrefMap();
   // href가 있는 프로그램만 필터링
   const programCategoryWithHref = programCategoryLists.filter(
-    (item) => !!item.href,
+    (item) => !!item.href || item.isHeader,
   );
 
   // 사이드바 열리면 스크롤 제한
@@ -383,6 +386,25 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
         </SideNavItem>
         <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />
         <SideNavItem href="/program">전체 프로그램</SideNavItem>
+        {/* 취준 여정 카테고리. 드롭다운과 같은 구조로, 회색 제목은 누르지 않는다 */}
+        {JOURNEY_GROUPS.map((group, index) => (
+          <Fragment key={group.label ?? `journey-${index}`}>
+            {group.label && (
+              <span className="px-5 pt-2 text-xxsmall12 font-medium text-neutral-50">
+                {group.label}
+              </span>
+            )}
+            {group.items.map((item) => (
+              <SideNavItem
+                key={item.slug}
+                href={journeyHrefMap[item.slug]}
+                className="pl-3"
+              >
+                {item.label}
+              </SideNavItem>
+            ))}
+          </Fragment>
+        ))}
         {/* 1:1 LIVE 멘토링과 멘토 소개는 한 벌로 켜고 끈다(LC-3281). */}
         {SHOW_LIVE_MENTORING_NAV && (
           <>
