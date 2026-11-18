@@ -1,7 +1,7 @@
 import { Button, IconButton, Switch, TextField } from '@mui/material';
 import type React from 'react';
 import { useEffect, useState } from 'react';
-import { FaArrowDown, FaArrowUp, FaPen, FaTrash } from 'react-icons/fa';
+import { FaArrowDown, FaArrowUp, FaCog, FaPen, FaTrash } from 'react-icons/fa';
 
 interface ItemRowProps {
   title: string;
@@ -18,6 +18,8 @@ interface ItemRowProps {
   /** 줄을 눌렀을 때. 카테고리 줄은 연결 목록을 펼친다 */
   onClick?: () => void;
   active?: boolean;
+  /** 톱니 버튼. 키·용도·바로 갈 상품 설정을 연다 */
+  onSettings?: () => void;
 }
 
 /** 평소에는 글자로 보이고, 연필을 누르면 이름 칸이 된다. Enter·포커스 이탈로 저장, Esc 로 취소 */
@@ -34,6 +36,7 @@ export const ItemRow = ({
   onDelete,
   onClick,
   active,
+  onSettings,
 }: ItemRowProps) => {
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(title);
@@ -141,6 +144,18 @@ export const ItemRow = ({
         onChange={(e) => onToggleVisible(e.target.checked)}
         inputProps={{ 'aria-label': '노출' }}
       />
+      {onSettings && (
+        <IconButton
+          size="small"
+          onClick={(e) => {
+            stop(e);
+            onSettings();
+          }}
+          aria-label="설정"
+        >
+          <FaCog size={12} />
+        </IconButton>
+      )}
       <IconButton
         size="small"
         onClick={(e) => {
