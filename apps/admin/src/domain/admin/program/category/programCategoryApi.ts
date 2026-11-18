@@ -45,20 +45,50 @@ const targetTypeSchema = z.enum([
   'MAGNET',
 ]);
 
+/** 랜딩 섹션 표시 방식. 서버 ProgramCategoryDisplayType 과 같다 */
+export const displayTypeLabel = {
+  AUTO: '자동 (상품 유형대로)',
+  FEATURED: '큰 카드 하나',
+  CARDS: '카드 줄',
+  MENTOR: '멘토 카드 줄',
+  BLOG: '블로그 카드 줄',
+} as const;
+export type ProgramCategoryDisplayType = keyof typeof displayTypeLabel;
+
 const programCategoryItemSchema = programCategorySchema.extend({
   programCount: z.number(),
   // 이전 서버 응답에는 없어서 nullish
   slug: z.string().nullish(),
   directTargetType: targetTypeSchema.nullish(),
   directTargetId: z.number().nullish(),
+  displayType: z
+    .enum(['AUTO', 'FEATURED', 'CARDS', 'MENTOR', 'BLOG'])
+    .nullish(),
+  description: z.string().nullish(),
+  sourceCategoryIds: z.array(z.number()).nullish(),
 });
 
-/** 노출 목록 용도. FILTER 는 필터·메뉴, LANDING 은 카테고리 랜딩 한 페이지 */
-export type ProgramCategoryGroupPurpose = 'FILTER' | 'LANDING';
+/** 노출 위치. LANDING 은 /category/{키} 랜딩, PROGRAM_FILTER 는 전체 프로그램 필터 한 줄 */
+export const placementTypeLabel = {
+  LANDING: '카테고리 랜딩 페이지',
+  PROGRAM_FILTER: '전체 프로그램 필터',
+} as const;
+export type ProgramCategoryPlacementType = keyof typeof placementTypeLabel;
+export type ProgramCategoryMatchMode = 'ANY' | 'ALL';
+
+const placementSchema = z.object({
+  id: z.number().nullish(),
+  placementType: z.enum(['LANDING', 'PROGRAM_FILTER']),
+  slug: z.string().nullish(),
+  mergeChallenges: z.boolean().nullish(),
+  matchMode: z.enum(['ANY', 'ALL', 'GROUP']).nullish(),
+});
+export type ProgramCategoryPlacement = z.infer<typeof placementSchema>;
 
 const programCategoryGroupSchema = programCategorySchema.extend({
   slug: z.string().nullish(),
   purpose: z.enum(['FILTER', 'LANDING']).nullish(),
+  placements: z.array(placementSchema).nullish(),
   categoryList: z.array(programCategoryItemSchema),
 });
 
@@ -105,17 +135,28 @@ export const useCreateProgramCategoryGroup = () =>
 /** PATCH 목록 이름·숨김 /api/v1/admin/program-category/group/{id} */
 export const useUpdateProgramCategoryGroup = () =>
   useInvalidatingMutation(
+    ({ id, ...body }: { id: number; title?: string; isVisible?: boolean }) =>
+      axios.patch(`/admin/program-category/group/${id}`, body),
+  );
+
+/** PUT 노출 위치 통째로 /api/v1/admin/program-category/group/{id}/placements */
+export const useUpdateProgramCategoryPlacements = () =>
+  useInvalidatingMutation(
     ({
       id,
-      ...body
+      placementList,
     }: {
       id: number;
-      title?: string;
-      isVisible?: boolean;
-      /** 빈 문자열이면 지운다 */
-      slug?: string;
-      purpose?: ProgramCategoryGroupPurpose;
-    }) => axios.patch(`/admin/program-category/group/${id}`, body),
+      placementList: {
+        placementType: ProgramCategoryPlacementType;
+        slug?: string;
+        mergeChallenges: boolean;
+        matchMode?: ProgramCategoryMatchMode;
+      }[];
+    }) =>
+      axios.put(`/admin/program-category/group/${id}/placements`, {
+        placementList,
+      }),
   );
 
 /** DELETE 목록 삭제 (안의 카테고리·연결 포함) /api/v1/admin/program-category/group/{id} */
@@ -157,6 +198,11 @@ export const useUpdateProgramCategory = () =>
       isVisible?: boolean;
       /** 빈 문자열이면 지운다 */
       slug?: string;
+      displayType?: ProgramCategoryDisplayType;
+      /** 빈 문자열이면 지운다 */
+      description?: string;
+      /** 빈 배열이면 해제 */
+      sourceCategoryIdList?: number[];
     }) => axios.patch(`/admin/program-category/${id}`, body),
   );
 
