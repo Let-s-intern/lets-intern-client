@@ -6,6 +6,10 @@ import type {
 } from '@/api/program-category/programCategory';
 import { useState } from 'react';
 import { getSectionEyebrow, getSectionKind } from '../landingCard';
+import {
+  appendOtherMentorings,
+  useAllMentoringTargets,
+} from '../useOtherMentorings';
 import FeaturedChallenge, { PassFreeNotice } from './FeaturedChallenge';
 import {
   BlogTargetCard,
@@ -31,12 +35,20 @@ const LandingSection = ({
   anchorId,
   title,
   description,
-  targets,
+  targets: sectionTargets,
   passHref,
   displayType,
 }: LandingSectionProps) => {
   const [expanded, setExpanded] = useState(false);
-  const kind = getSectionKind(targets, displayType);
+  const kind = getSectionKind(sectionTargets, displayType);
+  // 멘토링 섹션은 이 카테고리 멘토링을 앞에, 나머지 멘토링 전체를 뒤에 둔다
+  const { data: allMentorings = [] } = useAllMentoringTargets(
+    kind === 'mentoring',
+  );
+  const targets =
+    kind === 'mentoring'
+      ? appendOtherMentorings(sectionTargets, allMentorings)
+      : sectionTargets;
   const visible = expanded ? targets : targets.slice(0, PREVIEW_COUNT);
 
   return (

@@ -26,8 +26,13 @@ export const JOURNEY_GROUPS: JourneyGroup[] = [
       { label: '포트폴리오', slug: 'portfolio' },
     ],
   },
-  // 대기업은 세부 카테고리로 나누지 않고 랜딩 하나로 간다
-  { label: null, items: [{ label: '대기업', slug: 'large-corp' }] },
+  {
+    label: '대기업',
+    items: [
+      { label: '대기업 자기소개서', slug: 'large-corp' },
+      { label: '인적성', slug: 'aptitude' },
+    ],
+  },
   { label: '면접', items: [{ label: '면접', slug: 'interview' }] },
   {
     label: '직무특화',
