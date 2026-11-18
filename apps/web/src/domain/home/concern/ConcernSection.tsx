@@ -86,19 +86,14 @@ const ConcernSection = () => {
   };
 
   return (
-    <section className="mt-16 flex w-full max-w-[1120px] flex-col px-5 md:mt-28 xl:px-0">
-      <div className="text-center">
-        <h2 className="text-medium24 font-bold text-neutral-0 md:text-xlarge28">
-          취업 준비, 지금 <span className="text-primary">어디서</span> 막혔나요?
-        </h2>
-        <p className="mt-2 text-xsmall14 text-neutral-30 md:text-xsmall16">
-          고민을 선택하면 지금 필요한 프로그램을 바로 찾아드릴게요.
-        </p>
-      </div>
-
+    // 제목은 히어로로 올렸다 (검색과 고민 선택을 한 문구로 안내). 검색창 바로 아래에 붙인다
+    <section
+      aria-label="취업 준비 고민 선택"
+      className="mt-2 flex w-full max-w-[1120px] flex-col px-5 md:mt-4 xl:px-0"
+    >
       <div
         role="tablist"
-        className="-mx-5 mt-8 flex gap-2 overflow-x-auto px-5 scrollbar-hide md:mx-0 md:mt-10 md:grid md:grid-cols-5 md:gap-3 md:overflow-visible md:px-0"
+        className="-mx-5 flex gap-2 overflow-x-auto px-5 scrollbar-hide md:mx-0 md:grid md:grid-cols-5 md:gap-3 md:overflow-visible md:px-0"
       >
         {CONCERNS.map((concern) => {
           const { icon: Icon, color } = TAB_STYLE[concern.id];

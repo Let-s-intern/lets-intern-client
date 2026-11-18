@@ -32,7 +32,7 @@ const HomeHero = () => {
     // scroll-mt: 고정 네비바 높이(84px / 155px) + 여백
     <section
       ref={sectionRef}
-      className="flex w-full max-w-[1120px] scroll-mt-[96px] flex-col items-center px-5 pb-6 md:scroll-mt-[171px] md:pb-14 xl:px-0"
+      className="flex w-full max-w-[1120px] scroll-mt-[96px] flex-col items-center px-5 pb-4 md:scroll-mt-[171px] md:pb-6 xl:px-0"
     >
       {!isChatting && (
         <>
@@ -44,10 +44,15 @@ const HomeHero = () => {
           <h1
             className={`break-keep text-center text-medium24 font-bold text-neutral-0 md:text-xxlarge36 ${styles.fadeUp} ${styles.delay1}`}
           >
-            막막한 취업 준비,
-            <br className="md:hidden" />{' '}
-            <span className={styles.shimmer}>렛츠커리어</span>와 함께 해결해요.
+            취업 준비, 지금 <span className={styles.shimmer}>어디서</span>{' '}
+            막혔나요?
           </h1>
+          <p
+            className={`mt-2 break-keep text-center text-xsmall14 text-neutral-30 md:mt-3 md:text-small18 ${styles.fadeUp} ${styles.delay1}`}
+          >
+            고민을 바로 물어보거나 아래에서 골라 보세요.
+            <br className="md:hidden" /> 딱 맞는 프로그램을 찾아드릴게요.
+          </p>
         </>
       )}
 
