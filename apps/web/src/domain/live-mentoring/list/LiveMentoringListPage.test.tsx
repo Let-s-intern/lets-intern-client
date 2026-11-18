@@ -59,9 +59,22 @@ function renderPage() {
   );
 }
 
+/** jsdom 에 없는 IntersectionObserver. 목록 끝 표시가 붙으면 바로 보인 것으로 친다 */
+beforeAll(() => {
+  (
+    window as unknown as { IntersectionObserver: unknown }
+  ).IntersectionObserver = class {
+    constructor(private cb: (entries: { isIntersecting: boolean }[]) => void) {}
+    observe() {
+      this.cb([{ isIntersecting: true }]);
+    }
+    disconnect() {}
+  };
+});
+
 beforeEach(() => {
   axiosGet.mockReset();
-  axiosGet.mockResolvedValue(listResponse(12));
+  axiosGet.mockResolvedValue(listResponse(12, 1));
 });
 
 describe('LiveMentoringListPage', () => {
@@ -186,15 +199,21 @@ describe('LiveMentoringListPage', () => {
     ).toBe(true);
   });
 
-  it('페이지를 넘기면 1-based page 를 그대로 전달한다', async () => {
+  it('목록 끝에 닿으면 다음 page 를 이어서 불러와 붙인다', async () => {
+    axiosGet.mockResolvedValueOnce(listResponse(12, 2)).mockResolvedValueOnce({
+      data: {
+        data: {
+          openingList: [makeOpening(13)],
+          pageInfo: {
+            pageNum: 2,
+            pageSize: 12,
+            totalElements: 13,
+            totalPages: 2,
+          },
+        },
+      },
+    });
     renderPage();
-    await waitFor(() =>
-      expect(
-        screen.getByText('멘토1 멘토의 1:1 LIVE 멘토링'),
-      ).toBeInTheDocument(),
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: 'Go to page 2' }));
 
     await waitFor(() =>
       expect(axiosGet).toHaveBeenLastCalledWith('/live-mentoring', {
@@ -207,5 +226,11 @@ describe('LiveMentoringListPage', () => {
         paramsSerializer: PARAMS_SERIALIZER,
       }),
     );
+    await waitFor(() =>
+      expect(
+        screen.getByText('멘토13 멘토의 1:1 LIVE 멘토링'),
+      ).toBeInTheDocument(),
+    );
+    expect(screen.getAllByRole('link')).toHaveLength(13);
   });
 });

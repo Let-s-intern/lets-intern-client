@@ -7,6 +7,7 @@ import BlogPublishDateSection from '@/domain/admin/blog/section/BlogPublishDateS
 import BlogRecommendSection from '@/domain/admin/blog/section/BlogRecommendSection';
 import BlogTagSection from '@/domain/admin/blog/section/BlogTagSection';
 import EditorApp from '@/common/lexical/EditorApp';
+import ProgramCategoryField from '@/domain/admin/program/category/ProgramCategoryField';
 import { useNavigate } from 'react-router-dom';
 
 interface BlogEditPageProps {
@@ -53,6 +54,8 @@ const BlogEditPage = ({ blogId, initialBlogData }: BlogEditPageProps) => {
             tagList={editingValue.tagList}
             onChangeTagList={onChangeTagList}
           />
+
+          <ProgramCategoryField targetType="BLOG" targetId={Number(blogId)} />
 
           <div className="flex gap-5">
             <BlogProgramRecommendSection

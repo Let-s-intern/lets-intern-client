@@ -163,6 +163,7 @@ describe('AdminLiveMentoringParticipantTable', () => {
       '멘토',
       '예약 일시',
       '플랜',
+      '제출 내역',
       '결제 금액',
       '쿠폰',
       '결제 상태',
@@ -175,6 +176,43 @@ describe('AdminLiveMentoringParticipantTable', () => {
     expect(cells[headers.indexOf('결제 시각')]).toHaveTextContent(
       /^2026-08-15 10:03$/,
     );
+  });
+
+  // LC-3638 — 운영이 멘티가 낸 질문과 첨부를 어드민에서 확인한다.
+  it('제출 내역 요약을 보여주고, 보기를 누르면 질문과 첨부 링크를 연다', () => {
+    mockList([
+      {
+        ...participant,
+        questionDeferred: false,
+        questionContent: '면접 꼬리질문을 봐 주세요',
+        attachmentType: 'URL',
+        attachmentUrl: 'https://drive.google.com/drive/folders/sample',
+        mentorShareAgreed: true,
+      },
+    ]);
+    render(<AdminLiveMentoringParticipantTable />);
+
+    expect(screen.getByText('질문 있음 · 링크 첨부')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: '보기' }));
+
+    expect(screen.getByText('홍길동 님 제출 내역')).toBeInTheDocument();
+    expect(screen.getByText('면접 꼬리질문을 봐 주세요')).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', {
+        name: 'https://drive.google.com/drive/folders/sample',
+      }),
+    ).toHaveAttribute('href', 'https://drive.google.com/drive/folders/sample');
+    expect(
+      screen.getByText('동의함 (멘토에게 첨부가 보입니다)'),
+    ).toBeInTheDocument();
+  });
+
+  it('서버가 제출 내역을 아직 내려주지 않으면 질문 없음으로 보인다', () => {
+    mockList([participant]);
+    render(<AdminLiveMentoringParticipantTable />);
+
+    expect(screen.getByText('질문 없음')).toBeInTheDocument();
   });
 
   it('결제 시각이 없으면 - 로 표시한다', () => {

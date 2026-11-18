@@ -15,6 +15,7 @@ import dayjs from '@/lib/dayjs';
 import { Dayjs } from 'dayjs';
 import { useNavigate } from 'react-router-dom';
 import { ChangeEvent, useMemo, useState } from 'react';
+import { putProgramCategoriesOfTarget } from '@/domain/admin/program/category/programCategoryApi';
 
 const RECOMMEND_SLOT_COUNT = 4;
 
@@ -80,8 +81,23 @@ export const useMagnetPostForm = (magnetId: string) => {
       setSnackbar('마그넷 글이 저장되었습니다.');
     },
   });
+  // 생성 화면에서 고른 노출 분류. 마그넷이 만들어진 뒤 새 id 로 저장한다
+  const [programCategoryIds, setProgramCategoryIds] = useState<number[]>([]);
   const { mutate: createMagnet } = useCreateMagnetMutation({
-    successCallback: () => {
+    successCallback: async (newMagnetId) => {
+      if (newMagnetId && programCategoryIds.length > 0) {
+        try {
+          await putProgramCategoriesOfTarget(
+            'MAGNET',
+            newMagnetId,
+            programCategoryIds,
+          );
+        } catch {
+          setSnackbar('마그넷은 등록됐지만 노출 분류 저장에 실패했습니다.');
+          navigate('/magnet/list');
+          return;
+        }
+      }
       setSnackbar('마그넷이 등록되었습니다.');
       navigate('/magnet/list');
     },
@@ -248,5 +264,7 @@ export const useMagnetPostForm = (magnetId: string) => {
     setEndDate,
     savePost,
     navigateToList,
+    programCategoryIds,
+    setProgramCategoryIds,
   };
 };

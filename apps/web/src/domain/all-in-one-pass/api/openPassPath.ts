@@ -38,3 +38,28 @@ export function withQuery(path: string, params: SearchParams): string {
   const qs = query.toString();
   return qs ? `${pathname}?${qs}` : pathname;
 }
+
+/**
+ * 가장 최근에 등록된 올인원 패스 ID. 판매 중이든 마감됐든 상관없다.
+ *
+ * 지난 패스 랜딩(`/all-in-one-pass/{id}`)으로 들어온 사람을 최신 패스로 보낼 때 쓴다 (LC-3624).
+ * 마감된 패스만 남아 있으면 그 패스가 최신이라 이동하지 않는다.
+ * 목록이 비었거나 API 가 실패하면 null — 보내지 말고 들어온 페이지를 그대로 보여준다.
+ */
+export async function fetchLatestPassId(): Promise<number | null> {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_API}/program?type=MEMBERSHIP&page=1&size=100`,
+      { next: { revalidate: 300 } },
+    );
+    if (!res.ok) return null;
+
+    const { data } = await res.json();
+    const ids: number[] = (data?.programList ?? [])
+      .map((p: { programInfo?: { id?: number } }) => Number(p.programInfo?.id))
+      .filter((id: number) => id > 0);
+    return ids.length > 0 ? Math.max(...ids) : null;
+  } catch {
+    return null;
+  }
+}

@@ -1,6 +1,11 @@
 import axios from '@/utils/axios';
 import type { CouponDiscountType } from '@/api/coupon/coupon';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  useInfiniteQuery,
+} from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
 
 import {
@@ -78,6 +83,33 @@ export const useLiveMentorListQuery = (
       });
       return liveMentoringOpeningListSchema.parse(res.data.data);
     },
+  });
+};
+
+/**
+ * 멘토 목록 무한 스크롤용. 정렬·카테고리가 같으면 page 를 1부터 이어 붙인다
+ */
+export const useLiveMentorInfiniteListQuery = (
+  params: Omit<UseLiveMentorListQueryParams, 'page'> = {},
+) => {
+  const { categories = [], sort } = params;
+  return useInfiniteQuery({
+    queryKey: [...LIVE_MENTOR_LIST_QUERY_KEY, 'infinite', { categories, sort }],
+    initialPageParam: 1,
+    queryFn: async ({ pageParam }) => {
+      const res = await axios.get('/live-mentoring', {
+        params: {
+          page: pageParam,
+          size: LIVE_MENTOR_LIST_SIZE,
+          categories: categories.length > 0 ? categories : undefined,
+          sortType: sort,
+        },
+        paramsSerializer: { indexes: null },
+      });
+      return liveMentoringOpeningListSchema.parse(res.data.data);
+    },
+    getNextPageParam: (last, _all, lastPageParam) =>
+      lastPageParam < last.pageInfo.totalPages ? lastPageParam + 1 : undefined,
   });
 };
 

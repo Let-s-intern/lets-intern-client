@@ -7,6 +7,7 @@ import ProgramContentUrlFileSection from '@/domain/admin/program/ProgramContentU
 import { useGuidebookForm } from '@/domain/admin/program/guidebook/hooks/useGuidebookForm';
 import { buildUpdateGuidebookReq } from '@/domain/admin/program/guidebook/utils/guidebookMapping';
 import FormSection from '@/domain/admin/program/ui/FormSection';
+import ProgramCategoryField from '@/domain/admin/program/category/ProgramCategoryField';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
@@ -100,6 +101,13 @@ const GuidebookEdit: React.FC = () => {
             />
           </FormSection>
         </div>
+      </div>
+
+      <div className="mb-6">
+        <ProgramCategoryField
+          targetType="GUIDEBOOK"
+          targetId={Number(guidebookIdString)}
+        />
       </div>
 
       <div className="mb-6">
