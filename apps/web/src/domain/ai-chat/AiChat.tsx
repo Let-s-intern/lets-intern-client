@@ -86,11 +86,7 @@ const AiChat = ({
           isChatting && 'mt-0 md:mt-0',
         )}
       >
-        <span className="flex shrink-0 items-center gap-1 text-xsmall14 font-semibold text-primary md:text-xsmall16">
-          <Sparkles size={18} />
-          AI
-        </span>
-        <span className="h-5 w-px shrink-0 bg-neutral-80" />
+        <Sparkles size={18} className="shrink-0 text-primary" aria-hidden />
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
