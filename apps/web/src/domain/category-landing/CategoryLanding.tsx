@@ -8,6 +8,7 @@ import { useMembershipNavEntry } from '@/common/layout/header/useMembershipNavEn
 import { JOURNEY_GROUPS } from '@/domain/career-journey/journeyNav';
 import Link from 'next/link';
 import { Fragment, useMemo } from 'react';
+import { getSectionEyebrow } from './landingCard';
 import { LANDING_CONTENT } from './landingContent';
 import LandingSection from './ui/LandingSection';
 import PassBanner from './ui/PassBanner';
@@ -89,14 +90,15 @@ const CategoryLanding = ({ slug }: { slug: string }) => {
 
       {sections.length > 0 && (
         <nav className="sticky top-0 z-10 -mx-5 mt-10 flex overflow-x-auto border-b border-neutral-80 bg-white px-5 scrollbar-hide md:mx-0 md:px-0">
-          {sections.map(({ category }) => (
+          {/* 탭은 짧게 상품 유형으로 쓴다 (시안: 챌린지 / LIVE · VOD 클래스 / 무료 자료집 …) */}
+          {sections.map(({ category, targets: sectionTargets }) => (
             <a
               key={category.id}
               href={`#section-${category.id}`}
-              className="category_landing_tab shrink-0 px-4 py-3 text-xsmall14 text-neutral-30 hover:text-neutral-0 md:flex-1 md:text-center md:text-xsmall16"
+              className="category_landing_tab shrink-0 whitespace-nowrap px-4 py-3 text-xsmall14 text-neutral-30 hover:text-neutral-0 md:flex-1 md:text-center md:text-xsmall16"
               data-text={category.title}
             >
-              {category.title}
+              {getSectionEyebrow(sectionTargets)}
             </a>
           ))}
         </nav>

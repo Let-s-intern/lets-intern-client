@@ -3,7 +3,7 @@
 import { ProgramCategoryTarget } from '@/api/program-category/programCategory';
 import { useState } from 'react';
 import { getSectionEyebrow, getSectionKind } from '../landingCard';
-import FeaturedChallenge from './FeaturedChallenge';
+import FeaturedChallenge, { PassFreeNotice } from './FeaturedChallenge';
 import {
   BlogTargetCard,
   MentorTargetCard,
@@ -65,12 +65,9 @@ const LandingSection = ({
         {kind === 'challenge' ? (
           <div className="flex flex-col gap-8">
             {targets.map((target) => (
-              <FeaturedChallenge
-                key={target.targetId}
-                target={target}
-                passHref={passHref}
-              />
+              <FeaturedChallenge key={target.targetId} target={target} />
             ))}
+            <PassFreeNotice passHref={passHref} />
           </div>
         ) : (
           <ul className="-mx-5 flex gap-4 overflow-x-auto px-5 scrollbar-hide md:mx-0 md:grid md:grid-cols-5 md:overflow-visible md:px-0">
