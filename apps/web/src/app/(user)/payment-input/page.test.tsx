@@ -23,7 +23,15 @@ jest.mock('@/api/program', () => ({
         challengeType: 'PORTFOLIO',
         priceInfo: [
           {
+            priceId: 1,
             challengePricePlanType: 'BASIC',
+            price: 100000,
+            refund: 0,
+            discount: 10000,
+          },
+          {
+            priceId: 2,
+            challengePricePlanType: 'PREMIUM',
             price: 100000,
             refund: 0,
             discount: 10000,
@@ -221,6 +229,21 @@ describe('payment-input 합계 (LC-3438)', () => {
 
     // 상한 = 베이직 정가 + 보증금 - 할인, 기준 금액 = 정가 - 할인
     expect(screen.getByTestId('coupon-max')).toHaveTextContent('90000');
+    expect(screen.getByTestId('coupon-sale')).toHaveTextContent('90000');
+  });
+
+  it('옵션이 붙은 플랜도 쿠폰 적용 기준 금액은 옵션을 뺀 이용료 판매가다', () => {
+    // 스토어의 price·discount 는 옵션까지 합친 플랜 금액이다 (정가 100,000 + 옵션 95,000, 할인 10,000 + 15,000)
+    setProgramApplicationForm({
+      ...BASE_FORM,
+      priceId: 2,
+      price: 195000,
+      discount: 25000,
+      totalPrice: 170000,
+    });
+    render(<PaymentInputPage />);
+
+    // 서버는 고른 플랜의 정가 - 할인에만 정률 쿠폰을 곱한다
     expect(screen.getByTestId('coupon-sale')).toHaveTextContent('90000');
   });
 
