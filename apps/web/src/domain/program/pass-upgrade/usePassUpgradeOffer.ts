@@ -45,5 +45,7 @@ export const usePassUpgradeOffer = (challengeId: number, enabled: boolean) => {
     passPrice: landing ? passPrice : null,
     /** 패스 구성 요약 (예: "취준 필수 챌린지 - 베이직 플랜 3종") */
     contentLabels: contentRows.map((row) => row.label),
+    /** 패스 구성 행 (라벨 + 설명) */
+    contentRows,
   };
 };

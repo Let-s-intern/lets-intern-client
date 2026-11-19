@@ -10,18 +10,18 @@ import {
   getPaymentMethodLabel,
   paymentResultSearchParamsSchema,
 } from '@/data/getPaymentSearchParams';
+import ApplicationSummaryCard from '@/domain/program/paymentSuccess/ApplicationSummaryCard';
 import DescriptionBox from '@/domain/program/paymentSuccess/DescriptionBox';
 import {
   getOrderErrorMessage,
   getVodPassResultNotice,
   isVodPassProductChangedError,
 } from '@/domain/program/paymentSuccess/orderResult';
-import PaymentInfoRow from '@/domain/program/paymentSuccess/PaymentInfoRow';
 import PassUpsellCard from '@/domain/program/pass-upgrade/PassUpsellCard';
-import ProgramCard from '@/domain/program/ProgramCard';
+import { getAppliedVersionTitle } from '@/domain/program/program-detail/apply/utils/challengeVersion';
 import { buildPostApplicationBody } from '@/domain/program/program-detail/apply/utils/postApplicationBody';
 import { isVodPassSelected } from '@/domain/program/vodPassPurchase';
-import dayjs from '@/lib/dayjs';
+import { ChallengePriceInfo } from '@/schema';
 import useProgramStore from '@/store/useProgramStore';
 import axios from '@/utils/axios';
 import { searchParamsToObject } from '@/utils/network';
@@ -29,6 +29,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { LuCheck } from 'react-icons/lu';
 
 const PaymentResultContent = () => {
   const { data: programApplicationData, _hasHydrated } = useProgramStore();
@@ -139,6 +140,7 @@ const PaymentResultContent = () => {
   let programEndDate: import('dayjs').Dayjs | null = null;
   let programProgressType = programApplicationData.progressType ?? 'none';
   let programAccessMethod = '';
+  let challengeVersionTitle: string | null = null;
 
   if (programQuery.type === 'live') {
     const data = programQuery.query.data;
@@ -153,6 +155,17 @@ const PaymentResultContent = () => {
     programThumbnail = data?.thumbnail ?? '';
     programStartDate = data?.startDate ?? null;
     programEndDate = data?.endDate ?? null;
+    // 진행 방식 줄에 쓴다. 버전이 없는 신청(LIGHT 등)이면 null 이다
+    const priceInfo =
+      data && 'priceInfo' in data && Array.isArray(data.priceInfo)
+        ? (data.priceInfo as ChallengePriceInfo[])
+        : [];
+    challengeVersionTitle = getAppliedVersionTitle(
+      data && 'versionList' in data ? (data.versionList ?? []) : [],
+      priceInfo.find((info) => info.priceId === programApplicationData.priceId)
+        ?.challengePricePlanType,
+      programApplicationData.challengeVersionId ?? null,
+    );
   } else if (programQuery.type === 'guidebook') {
     const data = programQuery.query.data;
     programTitle = data?.title ?? '';
@@ -180,175 +193,194 @@ const PaymentResultContent = () => {
     return `${base}?${searchParams.toString()}`;
   }, [params, searchParams]);
 
+  const isChallenge = programApplicationData.programType === 'challenge';
+  const paidAmount = Number(searchParams.get('amount'));
+
+  // 신청 내역 카드의 행. 데이터가 있는 것만 그린다
+  const summaryRows: { label: string; value: string }[] = [];
+  if (isChallenge) {
+    if (challengeVersionTitle) {
+      summaryRows.push({ label: '진행 방식', value: challengeVersionTitle });
+    }
+    if (programStartDate) {
+      summaryRows.push({
+        label: '챌린지 시작일',
+        value: programStartDate.format('YYYY.MM.DD (dd)'),
+      });
+    }
+  } else if (programQuery.type === 'live') {
+    if (programStartDate && programEndDate) {
+      summaryRows.push({
+        label: '진행 일정',
+        value: `${programStartDate.format('YYYY.MM.DD')} - ${programEndDate.format('YYYY.MM.DD')}`,
+      });
+    }
+    if (programProgressType !== 'none') {
+      summaryRows.push({
+        label: '진행 방식',
+        value:
+          programProgressType === 'ALL'
+            ? '온라인/오프라인'
+            : programProgressType === 'ONLINE'
+              ? '온라인'
+              : '오프라인',
+      });
+    }
+  } else if (programAccessMethod) {
+    summaryRows.push({ label: '열람 방식', value: programAccessMethod });
+  }
+  if (hasVodPass && (programApplicationData.vodPassMonths ?? 0) > 0) {
+    summaryRows.push({
+      label: '추가 상품',
+      value: `VOD 이용권 ${programApplicationData.vodPassMonths}개월`,
+    });
+  }
+  if (result && !isSuccess && params) {
+    summaryRows.push({
+      label: '결제수단',
+      value: getPaymentMethodLabel(params.paymentMethodKey),
+    });
+  }
+
+  // 대시보드 입장·결제 내역 링크. 응답에 신청·결제 ID 가 없으면 목록으로 보낸다
+  const challengePayment =
+    typeof result === 'object' && result !== null
+      ? result.payments?.find((payment) => payment.type === 'CHALLENGE')
+      : undefined;
+  const dashboardHref =
+    isChallenge && challengePayment
+      ? `/challenge/${challengePayment.applicationId}/${programApplicationData.programId}`
+      : null;
+  const creditHref = challengePayment
+    ? `/mypage/credit/${challengePayment.paymentId}`
+    : '/mypage/credit';
+
   return (
-    <div className="w-full px-5 py-10" data-program-text={programTitle}>
+    <div
+      className="w-full px-5 py-10 md:py-16"
+      data-program-text={programTitle}
+    >
       <div className="mx-auto max-w-5xl">
-        <div className="flex w-full items-center justify-start py-6 text-small20 font-bold text-neutral-0">
-          결제 확인하기
-        </div>
         <div className="flex min-h-52 w-full flex-col items-center justify-center">
           {!result ? (
             <div>결제 확인 중입니다.</div>
           ) : (
             <>
-              <DescriptionBox type={isSuccess ? 'SUCCESS' : 'FAIL'} />
+              {isSuccess ? (
+                <div className="flex flex-col items-center gap-3 text-center">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-[16px] bg-primary-10 md:h-16 md:w-16">
+                    <LuCheck
+                      className="h-7 w-7 text-primary md:h-8 md:w-8"
+                      aria-hidden="true"
+                    />
+                  </div>
+                  <h1 className="mt-2 text-medium24 font-bold text-neutral-0 md:text-xlarge28">
+                    {isChallenge
+                      ? '챌린지 신청이 완료됐어요'
+                      : '신청이 완료됐어요'}
+                  </h1>
+                  <p className="text-xsmall14 text-neutral-30 md:text-xsmall16">
+                    신청이 정상적으로 접수됐어요.
+                    {isChallenge && (
+                      <>
+                        <br />
+                        시작 안내는 카카오톡으로 보내드릴게요.
+                      </>
+                    )}
+                  </p>
+                </div>
+              ) : (
+                <DescriptionBox type="FAIL" />
+              )}
               {errorMessage && (
                 <p className="mt-3 text-center text-xsmall14 text-neutral-20">
                   {errorMessage}
                 </p>
               )}
-              <div className="flex w-full flex-col gap-x-10 md:flex-row md:items-start">
-                <div className="flex w-full flex-col items-center justify-start gap-y-10 py-8 md:flex-1">
-                  <div className="flex w-full flex-col items-start justify-center gap-6">
-                    <div className="text-xsmall16 font-semibold text-neutral-0">
-                      결제 프로그램
-                    </div>
-                    {params ? (
-                      <ProgramCard
-                        type={programApplicationData.programType || 'live'}
-                        id={programApplicationData.programId || 0}
-                        title={programTitle}
-                        thumbnail={programThumbnail}
-                        startDate={programStartDate}
-                        endDate={programEndDate}
-                        thumbnailLinkClassName="max-w-32"
-                        progressType={programProgressType}
-                        accessMethod={programAccessMethod}
-                        showType={programApplicationData.programType === 'live'}
-                      />
-                    ) : null}
-
-                    {isSuccess && (
-                      <Link
-                        href="/program"
-                        className="other_program flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-neutral-100 px-6 py-3 text-lg font-medium text-primary-dark"
-                      >
-                        다른 프로그램 둘러보기
-                      </Link>
-                    )}
-                  </div>
-                  <div className="flex w-full flex-col justify-center gap-6">
-                    <div className="font-semibold text-neutral-0">
-                      결제 상세
-                    </div>
-                    <div className="flex w-full items-center justify-between gap-x-4 bg-neutral-90 px-3 py-5">
-                      <div className="font-bold">총 결제금액</div>
-                      <div className="font-bold">
-                        {Number(searchParams.get('amount')).toLocaleString() +
-                          '원'}
-                      </div>
-                    </div>
-                    <div className="flex w-full flex-col items-center justify-center">
-                      <PaymentInfoRow
-                        title="참여비용"
-                        content={
-                          programApplicationData.price?.toLocaleString() + '원'
-                        }
-                      />
-                      <PaymentInfoRow
-                        title={`할인 (${programApplicationData.price === 0 ? 0 : Math.floor(((programApplicationData.discount ?? 0) / (programApplicationData.price ?? 1)) * 100)}%)`}
-                        content={
-                          '-' +
-                          (
-                            programApplicationData.discount ?? 0
-                          ).toLocaleString() +
-                          '원'
-                        }
-                      />
-                      <PaymentInfoRow
-                        title={`쿠폰할인`}
-                        content={`-${(programApplicationData.couponPrice === -1 ? (programApplicationData.price || 0) - (programApplicationData.discount || 0) : programApplicationData.couponPrice)?.toLocaleString()}원`}
-                      />
-                      {(programApplicationData.membershipDiscount ?? 0) > 0 && (
-                        <PaymentInfoRow
-                          title="패스 혜택 할인"
-                          content={`-${programApplicationData.membershipDiscount.toLocaleString()}원`}
-                        />
-                      )}
-                    </div>
-                    <hr className="border-neutral-85" />
-                    <div className="flex w-full flex-col items-center justify-center">
-                      {programApplicationData.isFree === true ? (
-                        <PaymentInfoRow
-                          title="결제일자"
-                          content={dayjs(new Date()).format(
-                            'YYYY.MM.DD(ddd) HH:mm',
-                          )}
-                        />
-                      ) : !isSuccess ? (
-                        <PaymentInfoRow
-                          title="결제수단"
-                          content={
-                            params
-                              ? getPaymentMethodLabel(params.paymentMethodKey)
-                              : ''
-                          }
-                        />
+              <div className="mt-10 flex w-full flex-col gap-10 md:mt-14 md:flex-row md:items-start md:justify-center md:gap-8">
+                <div className="flex w-full flex-col gap-4 md:max-w-[484px] md:flex-1">
+                  <p className="text-small18 font-bold text-neutral-0 md:text-small20">
+                    신청 내역
+                  </p>
+                  <ApplicationSummaryCard
+                    thumbnail={programThumbnail}
+                    title={programTitle}
+                    rows={summaryRows}
+                    amountLabel={isSuccess ? '결제 완료 금액' : '결제 금액'}
+                    amount={paidAmount.toLocaleString() + '원'}
+                  />
+                  {isSuccess && hasVodPass && (
+                    <p className="text-xsmall14 text-neutral-40">
+                      {getVodPassResultNotice(vodPassResult)}
+                    </p>
+                  )}
+                  {isSuccess ? (
+                    <div className="flex w-full gap-3">
+                      {dashboardHref ? (
+                        <Link
+                          href={dashboardHref}
+                          className="challenge_dashboard_button flex flex-[1.5] items-center justify-center rounded-[8px] bg-primary px-4 py-3.5 text-xsmall16 font-semibold text-white"
+                        >
+                          챌린지 대시보드 입장하기
+                        </Link>
                       ) : (
-                        <>
-                          <PaymentInfoRow
-                            title="결제일자"
-                            content={dayjs(result?.tossInfo?.approvedAt).format(
-                              'YYYY.MM.DD(ddd) HH:mm',
-                            )}
-                          />
-                          <PaymentInfoRow
-                            title="결제수단"
-                            content={
-                              result?.tossInfo?.method ??
-                              (params
-                                ? getPaymentMethodLabel(params.paymentMethodKey)
-                                : '')
-                            }
-                          />
-                          <div className="flex w-full items-center justify-start gap-x-2 px-3 py-2">
-                            <div className="text-neutral-40">영수증</div>
-                            <div className="flex grow items-center justify-end text-neutral-0">
-                              <Link
-                                href={result?.tossInfo?.receipt?.url ?? '#'}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="flex items-center justify-center rounded-sm border border-neutral-60 bg-white px-3 py-2 text-sm font-medium"
-                              >
-                                영수증 보기
-                              </Link>
-                            </div>
-                          </div>
-                        </>
+                        <Link
+                          href="/mypage/career/board"
+                          className="mypage_button flex flex-[1.5] items-center justify-center rounded-[8px] bg-primary px-4 py-3.5 text-xsmall16 font-semibold text-white"
+                        >
+                          마이페이지 바로가기
+                        </Link>
                       )}
+                      <Link
+                        href={creditHref}
+                        className="credit_detail_button flex flex-1 items-center justify-center rounded-[8px] border border-neutral-80 bg-white px-4 py-3.5 text-xsmall16 font-medium text-neutral-0"
+                      >
+                        결제 내역 확인하기
+                      </Link>
                     </div>
-                    {isSuccess && hasVodPass && (
-                      <p className="text-xsmall14 text-neutral-40">
-                        {getVodPassResultNotice(vodPassResult)}
+                  ) : (
+                    <Link
+                      href={returnLink}
+                      className="flex w-full justify-center rounded-[8px] bg-primary px-6 py-3.5 text-xsmall16 font-semibold text-white"
+                    >
+                      다시 결제하기
+                    </Link>
+                  )}
+                  {isSuccess && isChallenge && programStartDate && (
+                    <div className="flex flex-col gap-2 rounded-[16px] border border-neutral-90 bg-neutral-95 px-5 py-6 md:px-7">
+                      <p className="flex items-center gap-1.5 text-xsmall16 font-bold text-neutral-0">
+                        <LuCheck
+                          className="h-5 w-5 text-primary"
+                          aria-hidden="true"
+                        />
+                        이렇게 시작해요!
                       </p>
-                    )}
-                    {isSuccess && (
-                      <Link
-                        href="/mypage/career/board"
-                        className="mypage_button flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
-                      >
-                        마이페이지 바로가기
-                      </Link>
-                    )}
-                    {!isSuccess && (
-                      <Link
-                        href={returnLink}
-                        className="flex w-full flex-1 justify-center rounded-md border-2 border-primary bg-primary px-6 py-3 text-lg font-medium text-neutral-100"
-                      >
-                        다시 결제하기
-                      </Link>
-                    )}
-                  </div>
-                </div>
-                {/* 챌린지 결제 성공 시 오른쪽에 올인원 패스 업셀. 대상이 아니면 카드가 비어 칸이 사라진다 */}
-                {isSuccess &&
-                  programApplicationData.programType === 'challenge' && (
-                    <div className="w-full py-8 empty:hidden md:w-[44%] md:shrink-0">
-                      <PassUpsellCard
-                        challengeId={programApplicationData.programId ?? 0}
-                      />
+                      <p className="text-xsmall14 text-neutral-30 md:text-xsmall16">
+                        {programStartDate.format('M/D(dd)')} 시작 안내를
+                        카톡으로 보내드려요.
+                        <br />
+                        상세 일정과 미션은 챌린지 대시보드에서 볼 수 있어요.
+                      </p>
                     </div>
                   )}
+                  {isSuccess && (
+                    <Link
+                      href="/program"
+                      className="other_program self-center text-xsmall14 text-neutral-40 underline"
+                    >
+                      다른 프로그램 둘러보기
+                    </Link>
+                  )}
+                </div>
+                {/* 챌린지 결제 성공 시 오른쪽에 올인원 패스 업셀. 대상이 아니면 카드가 비어 칸이 사라진다 */}
+                {isSuccess && isChallenge && (
+                  <div className="w-full empty:hidden md:max-w-[484px] md:flex-1">
+                    <PassUpsellCard
+                      challengeId={programApplicationData.programId ?? 0}
+                      paidAmount={paidAmount}
+                    />
+                  </div>
+                )}
               </div>
             </>
           )}

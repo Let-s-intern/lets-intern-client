@@ -399,15 +399,6 @@ const PaymentInputContent = () => {
         ) : (
           <div className="mt-10"></div>
         )}
-        {programApplicationData.programType === 'challenge' &&
-          !programApplicationData.isFree &&
-          !isMembership &&
-          !programApplicationData.membershipDiscount && (
-            <PassUpgradeSection
-              challengeId={programApplicationData.programId ?? 0}
-              paymentAmount={totalPrice}
-            />
-          )}
         <p className="my-3 text-xsmall16 font-semibold text-neutral-0">
           신청 폼을 모두 입력해주세요.
         </p>
@@ -491,6 +482,14 @@ const PaymentInputContent = () => {
               <span>{totalPrice.toLocaleString()}원</span>
             </div>
           </div>
+          {programApplicationData.programType === 'challenge' &&
+            !isMembership &&
+            !programApplicationData.membershipDiscount && (
+              <PassUpgradeSection
+                challengeId={programApplicationData.programId ?? 0}
+                paymentAmount={totalPrice}
+              />
+            )}
           {/* [TODO] 제목 포함 조건 지워야 함 */}
           {!isLoading &&
             programApplicationData.programType === 'challenge' &&
