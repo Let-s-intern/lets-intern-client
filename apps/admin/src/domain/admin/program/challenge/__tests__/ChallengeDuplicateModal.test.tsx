@@ -11,6 +11,9 @@ vi.mock('@/api/file', () => ({
 }));
 
 vi.mock('@/api/program', () => ({ getChallenge }));
+vi.mock('@/domain/admin/program/category/ui/CopiedTagsNote', () => ({
+  default: () => null,
+}));
 vi.mock('@/api/challenge/challenge', () => ({ duplicateChallenge: vi.fn() }));
 
 const renderModal = () =>

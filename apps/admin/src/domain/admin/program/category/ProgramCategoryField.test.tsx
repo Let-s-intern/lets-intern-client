@@ -8,6 +8,10 @@ const { calls, resolvers, savedIds } = vi.hoisted(() => ({
   savedIds: [] as number[],
 }));
 
+vi.mock('./hooks/useProductSearch', () => ({
+  useProductSearch: () => ({ data: undefined }),
+}));
+
 vi.mock('@/hooks/useAdminSnackbar', () => ({
   useAdminSnackbar: () => ({ snackbar: vi.fn() }),
 }));
