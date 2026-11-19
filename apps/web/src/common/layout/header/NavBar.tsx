@@ -29,7 +29,7 @@ import NavOverlay from './NavOverlay';
 import ServiceToggle from './ServiceToggle';
 import SideNavContainer from './SideNavContainer';
 import SideNavItem from './SideNavItem';
-import { JOURNEY_GROUPS } from '@/domain/career-journey/journeyNav';
+import { useJourneyGroups } from '@/domain/career-journey/useJourneyGroups';
 import { useJourneyHrefMap } from '@/domain/career-journey/useJourneyHref';
 import Spacer from './Spacer';
 import {
@@ -120,6 +120,7 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
 
   const programCategoryLists = useProgramCategoryNav();
   const journeyHrefMap = useJourneyHrefMap();
+  const journeyGroups = useJourneyGroups();
   // href가 있는 프로그램만 필터링
   const programCategoryWithHref = programCategoryLists.filter(
     (item) => !!item.href || item.isHeader,
@@ -387,7 +388,7 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
         <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />
         <SideNavItem href="/program">전체 프로그램</SideNavItem>
         {/* 취준 여정 카테고리. 드롭다운과 같은 구조로, 회색 제목은 누르지 않는다 */}
-        {JOURNEY_GROUPS.map((group, index) => (
+        {journeyGroups.map((group, index) => (
           <Fragment key={group.label ?? `journey-${index}`}>
             {group.label && (
               <span className="px-5 pt-2 text-xxsmall12 font-medium text-neutral-50">

@@ -1,8 +1,10 @@
 import { renderHook } from '@testing-library/react';
 
 const mockGroups = jest.fn();
+const mockMenu = jest.fn();
 jest.mock('@/api/program-category/programCategory', () => ({
   useFilterProgramCategoryGroupsQuery: () => ({ data: mockGroups() }),
+  useLandingMenuQuery: () => ({ data: mockMenu() }),
 }));
 
 import { getTargetHref } from './journeyNav';
@@ -60,5 +62,21 @@ describe('getTargetHref', () => {
     expect(getTargetHref('LIVE_MENTORING', 4)).toBe(
       '/program?catalog=mentoring',
     );
+  });
+
+  it('어드민 메뉴에만 있는 새 랜딩도 주소를 갖고, 고정 메뉴 slug 도 남는다', () => {
+    mockGroups.mockReturnValue([]);
+    mockMenu.mockReturnValue([
+      {
+        slug: 'new-landing',
+        menuGroup: '신규',
+        menuLabel: '새 랜딩',
+        menuOrder: 1,
+      },
+    ]);
+    const { result } = renderHook(() => useJourneyHrefMap());
+    expect(result.current['new-landing']).toBe('/category/new-landing');
+    expect(result.current.resume).toBe('/category/resume');
+    mockMenu.mockReset();
   });
 });

@@ -27,6 +27,10 @@ describe('랜딩 섹션 모양', () => {
   it('어드민에서 정한 표시 방식이 상품 유형보다 우선', () => {
     expect(getSectionKind([target('VOD')], 'FEATURED')).toBe('challenge');
     expect(getSectionKind([target('CHALLENGE')], 'CARDS')).toBe('program');
+    expect(getSectionKind([target('LIVE_MENTORING')], 'CARDS')).toBe(
+      'mentoring',
+    );
+    expect(getSectionKind([target('BLOG')], 'CARDS')).toBe('blog');
     expect(getSectionKind([target('CHALLENGE')], 'AUTO')).toBe('challenge');
   });
 
