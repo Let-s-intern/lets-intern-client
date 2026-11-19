@@ -9,6 +9,9 @@ vi.mock('@/hooks/useAdminSnackbar', () => ({
   useAdminSnackbar: () => ({ snackbar: vi.fn() }),
 }));
 vi.mock('@/utils/axios', () => ({ default: {} }));
+vi.mock('../hooks/usePublicCategoryTargets', () => ({
+  usePublicCategoryTargets: () => ({ data: [], isLoading: false }),
+}));
 vi.mock('../ProgramCategoryTargetList', () => ({ default: () => null }));
 vi.mock('../programCategoryApi', async (importOriginal) => ({
   ...(await importOriginal<object>()),
@@ -58,6 +61,20 @@ describe('SectionEditor 카드 모양', () => {
     expect(mutateAsync.mock.calls[0][0]).toMatchObject({
       displayType: 'FEATURED',
     });
+  });
+
+  it('대표 상품에서 카드 목록으로 바꾸면 AUTO 를 보낸다', async () => {
+    render(
+      <SectionEditor
+        category={section('FEATURED')}
+        groups={[]}
+        onDone={vi.fn()}
+      />,
+    );
+    fireEvent.click(screen.getByRole('radio', { name: /카드 목록/ }));
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
+    await waitFor(() => expect(mutateAsync).toHaveBeenCalled());
+    expect(mutateAsync.mock.calls[0][0]).toMatchObject({ displayType: 'AUTO' });
   });
 
   it('선택지는 둘뿐이다', () => {

@@ -17,6 +17,30 @@ import LandingSettingsDialog from './LandingSettingsDialog';
 
 const pageKey = (p: LandingPage) => `${p.group.id}:${p.placementIndex}`;
 
+const STEPS = ['페이지 고르기', '섹션 만들기', '상품 넣기'] as const;
+
+/** ① 페이지 고르기 → ② 섹션 만들기 → ③ 상품 넣기. 지금 할 단계를 굵게 */
+const StepIndicator = ({ current }: { current: 0 | 1 | 2 }) => (
+  <ol className="flex flex-wrap items-center gap-2 text-xsmall14">
+    {STEPS.map((label, i) => (
+      <li key={label} className="flex items-center gap-2">
+        {i > 0 && <span className="text-neutral-60">→</span>}
+        <span
+          className={
+            i === current
+              ? 'font-semibold text-neutral-0'
+              : i < current
+                ? 'text-neutral-40'
+                : 'text-neutral-50'
+          }
+        >
+          {'①②③'[i]} {label}
+        </span>
+      </li>
+    ))}
+  </ol>
+);
+
 const VIEWS = [
   { key: 'edit', label: '편집' },
   { key: 'preview', label: '미리보기' },
@@ -99,7 +123,7 @@ const LandingPageEditor = ({
               onDone={onDone}
             />
           )}
-          emptyText="섹션이 없습니다."
+          emptyText="아직 섹션이 없어요. '+ 섹션 추가'로 첫 섹션을 만들면 페이지 위에서부터 차례로 보여요."
           addPlaceholder="섹션 이름 (예: 이력서 챌린지)"
         />
       ) : (
@@ -125,56 +149,63 @@ const LandingPagesTab = ({
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
   const page = pages.find((p) => pageKey(p) === selectedKey) ?? pages[0];
+  const step = !page ? 0 : page.group.categoryList.length === 0 ? 1 : 2;
 
   return (
-    <div className="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-[200px_minmax(0,1fr)]">
-      <aside className="flex flex-col gap-1">
-        <nav aria-label="랜딩 페이지 목록" className="flex flex-col">
-          {pages.map((p) => (
-            <button
-              key={pageKey(p)}
-              type="button"
-              onClick={() => setSelectedKey(pageKey(p))}
-              className={`rounded-xs px-3 py-1.5 text-left ${
-                page && pageKey(p) === pageKey(page)
-                  ? 'bg-neutral-95 font-semibold text-neutral-0'
-                  : 'text-neutral-20 hover:bg-neutral-95'
-              }`}
-            >
-              <span className="block truncate text-xsmall14">
-                /category/{p.slug}
-              </span>
-              <span className="block truncate text-xxsmall12 font-normal text-neutral-40">
-                {p.group.title}
-                {p.group.isVisible ? '' : ' · 숨김'}
-              </span>
-            </button>
-          ))}
-        </nav>
-        <Button
-          size="small"
-          onClick={() => setAdding(true)}
-          sx={{ justifyContent: 'flex-start' }}
-        >
-          + 랜딩 페이지 추가
-        </Button>
-        {adding && (
-          <AddLandingDialog groups={groups} onClose={() => setAdding(false)} />
-        )}
-      </aside>
+    <div className="mt-4 flex flex-col gap-4">
+      <StepIndicator current={step} />
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[200px_minmax(0,1fr)]">
+        <aside className="flex flex-col gap-1">
+          <nav aria-label="랜딩 페이지 목록" className="flex flex-col">
+            {pages.map((p) => (
+              <button
+                key={pageKey(p)}
+                type="button"
+                onClick={() => setSelectedKey(pageKey(p))}
+                className={`rounded-xs px-3 py-1.5 text-left ${
+                  page && pageKey(p) === pageKey(page)
+                    ? 'bg-neutral-95 font-semibold text-neutral-0'
+                    : 'text-neutral-20 hover:bg-neutral-95'
+                }`}
+              >
+                <span className="block truncate text-xsmall14">
+                  /category/{p.slug}
+                </span>
+                <span className="block truncate text-xxsmall12 font-normal text-neutral-40">
+                  {p.group.title}
+                  {p.group.isVisible ? '' : ' · 숨김'}
+                </span>
+              </button>
+            ))}
+          </nav>
+          <Button
+            size="small"
+            onClick={() => setAdding(true)}
+            sx={{ justifyContent: 'flex-start' }}
+          >
+            + 랜딩 페이지 추가
+          </Button>
+          {adding && (
+            <AddLandingDialog
+              groups={groups}
+              onClose={() => setAdding(false)}
+            />
+          )}
+        </aside>
 
-      {page ? (
-        <LandingPageEditor
-          key={pageKey(page)}
-          page={page}
-          groups={groups}
-          actions={actions}
-        />
-      ) : (
-        <p className="text-xsmall14 text-neutral-40">
-          아직 랜딩 페이지가 없습니다. 왼쪽에서 추가하세요.
-        </p>
-      )}
+        {page ? (
+          <LandingPageEditor
+            key={pageKey(page)}
+            page={page}
+            groups={groups}
+            actions={actions}
+          />
+        ) : (
+          <p className="text-xsmall14 text-neutral-40">
+            아직 랜딩 페이지가 없습니다. 왼쪽에서 추가하세요.
+          </p>
+        )}
+      </div>
     </div>
   );
 };

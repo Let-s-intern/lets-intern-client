@@ -19,9 +19,10 @@ export const MATCH_MODE_HELP: Record<ProgramCategoryMatchMode, string> = {
 };
 
 /** sourceCategoryIds */
-export const SOURCES_LABEL = '다른 섹션 상품도 함께 보여주기';
+export const SOURCES_LABEL = '필터 버튼에서 가져오기';
 export const SOURCES_HELP =
-  '고른 카테고리에 연결된 상품을 이 섹션에도 함께 보여줍니다. 같은 상품을 이 섹션에 다시 연결하지 않아도 됩니다.';
+  '고른 버튼에 연결된 상품이 이 섹션에도 자동으로 보여요. 버튼 쪽 상품을 바꾸면 여기도 같이 바뀌어요.';
+export const SOURCES_TAG = '필터에서 가져옴';
 
 /** directTargetType / directTargetId */
 export const DIRECT_TARGET_LABEL = '메뉴를 누르면 이 상품으로 바로 이동';

@@ -1,34 +1,26 @@
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import {
-  Button,
-  Checkbox,
-  ListSubheader,
-  MenuItem,
-  Select,
-  TextField,
-} from '@mui/material';
+import { Button, TextField } from '@mui/material';
 import { useState } from 'react';
-import {
-  CATEGORY_SAVE_FAILED,
-  SOURCES_HELP,
-  SOURCES_LABEL,
-} from '../constants/wording';
-import ProgramCategoryTargetList from '../ProgramCategoryTargetList';
+import { CATEGORY_SAVE_FAILED } from '../constants/wording';
 import {
   displayTypeLabel,
   useUpdateProgramCategory,
   type ProgramCategory,
   type ProgramCategoryGroup,
 } from '../programCategoryApi';
-import { cardStyleOf, type CardStyle } from '../constants/cardStyle';
-import AdvancedArea from './AdvancedArea';
+import {
+  cardStyleOf,
+  displayTypeToSend,
+  isLegacyFixedStyle,
+  type CardStyle,
+} from '../constants/cardStyle';
 import DisplayTypePicker from './DisplayTypePicker';
+import SectionProducts from './SectionProducts';
 
 const fieldLabel = 'text-xsmall14 font-semibold text-neutral-10';
 
 /**
- * 랜딩 섹션 하나를 한 곳에서 고친다. 제목·설명·카드 모양·연결된 상품.
- * 다른 섹션 상품 함께 보여주기는 고급 설정에 접어 둔다
+ * 랜딩 섹션 하나를 한 곳에서 고친다. 제목·설명·카드 모양·상품(직접 고르기, 필터 버튼에서 가져오기)
  */
 const SectionEditor = ({
   category,
@@ -42,17 +34,12 @@ const SectionEditor = ({
   const { snackbar } = useAdminSnackbar();
   const update = useUpdateProgramCategory();
   const [title, setTitle] = useState(category.title);
-  // 저장 값(AUTO·MENTOR·BLOG 포함)은 둘 중 하나로 보인다. 고른 것이 처음과 다를 때만 보낸다
+  // 저장 값은 둘 중 하나로 보인다. 고른 것이 처음과 다를 때만 보낸다 (카드 목록 = AUTO)
   const initialStyle = cardStyleOf(category.displayType);
   const [cardStyle, setCardStyle] = useState<CardStyle>(initialStyle);
   const [description, setDescription] = useState(category.description ?? '');
   const [sources, setSources] = useState<number[]>(
     category.sourceCategoryIds ?? [],
-  );
-  const titleOf = new Map(
-    groups.flatMap((g) =>
-      g.categoryList.map((c) => [c.id, `${g.title} › ${c.title}`] as const),
-    ),
   );
   const trimmedTitle = title.trim();
 
@@ -61,7 +48,7 @@ const SectionEditor = ({
       await update.mutateAsync({
         id: category.id,
         title: trimmedTitle !== category.title ? trimmedTitle : undefined,
-        displayType: cardStyle !== initialStyle ? cardStyle : undefined,
+        displayType: displayTypeToSend(category.displayType, cardStyle),
         description,
         sourceCategoryIdList: sources,
       });
@@ -98,10 +85,9 @@ const SectionEditor = ({
       <div className="flex flex-col gap-2">
         <span className={fieldLabel}>카드 모양</span>
         <DisplayTypePicker value={cardStyle} onChange={setCardStyle} />
-        {category.displayType &&
-          category.displayType !== 'FEATURED' &&
-          category.displayType !== 'CARDS' &&
-          cardStyle === initialStyle && (
+        {isLegacyFixedStyle(category.displayType) &&
+          cardStyle === initialStyle &&
+          category.displayType && (
             <p className="text-xxsmall12 text-neutral-40">
               예전에 &quot;{displayTypeLabel[category.displayType]}&quot;(으)로
               저장된 섹션입니다. 바꾸지 않으면 그대로 둡니다.
@@ -109,45 +95,12 @@ const SectionEditor = ({
           )}
       </div>
 
-      <div className="flex flex-col gap-1">
-        <span className={fieldLabel}>이 섹션의 상품</span>
-        <p className="text-xxsmall12 text-neutral-40">
-          상품은 각 상품 수정 화면의 &quot;노출 분류&quot;에서 넣습니다.
-        </p>
-        <div className="rounded-xs bg-white py-1">
-          <ProgramCategoryTargetList categoryId={category.id} />
-        </div>
-      </div>
-
-      <AdvancedArea>
-        <span className={fieldLabel}>{SOURCES_LABEL}</span>
-        <p className="text-xxsmall12 text-neutral-40">{SOURCES_HELP}</p>
-        <Select
-          size="small"
-          multiple
-          displayEmpty
-          value={sources}
-          onChange={(e) => setSources(e.target.value as number[])}
-          renderValue={(ids) =>
-            ids.length === 0
-              ? '없음'
-              : ids.map((id) => titleOf.get(id) ?? `#${id}`).join(', ')
-          }
-          sx={{ minWidth: 280 }}
-        >
-          {groups.flatMap((g) => [
-            <ListSubheader key={`g-${g.id}`}>{g.title}</ListSubheader>,
-            ...g.categoryList
-              .filter((c) => c.id !== category.id)
-              .map((c) => (
-                <MenuItem key={c.id} value={c.id}>
-                  <Checkbox size="small" checked={sources.includes(c.id)} />
-                  {c.title}
-                </MenuItem>
-              )),
-          ])}
-        </Select>
-      </AdvancedArea>
+      <SectionProducts
+        category={category}
+        groups={groups}
+        sources={sources}
+        onSourcesChange={setSources}
+      />
 
       <div className="flex gap-2">
         <Button

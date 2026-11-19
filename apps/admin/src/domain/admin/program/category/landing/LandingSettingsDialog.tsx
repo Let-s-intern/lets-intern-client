@@ -13,7 +13,6 @@ import {
   MERGE_CHALLENGES_LABEL,
 } from '../constants/wording';
 import { useSavePlacements } from '../hooks/useSavePlacements';
-import AdvancedArea from '../ui/AdvancedArea';
 import PageAddressField from '../ui/PageAddressField';
 import {
   draftsWith,
@@ -93,7 +92,7 @@ const LandingSettingsDialog = ({
             {MERGE_CHALLENGES_HELP}
           </p>
         </div>
-        <AdvancedArea>
+        <div className="flex flex-col gap-2 border-t border-neutral-90 pt-3">
           <p className="text-xxsmall12 text-neutral-40">
             섹션은 &quot;{page.group.title}&quot; 노출 목록의 카테고리입니다.
             {otherPlacements > 0 &&
@@ -109,7 +108,7 @@ const LandingSettingsDialog = ({
               이 랜딩 페이지 내리기
             </Button>
           </div>
-        </AdvancedArea>
+        </div>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>취소</Button>

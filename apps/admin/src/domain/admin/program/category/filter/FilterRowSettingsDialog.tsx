@@ -18,14 +18,13 @@ import {
 } from '../constants/wording';
 import { useSavePlacements } from '../hooks/useSavePlacements';
 import type { ProgramCategoryMatchMode } from '../programCategoryApi';
-import AdvancedArea from '../ui/AdvancedArea';
 import {
   draftsWith,
   draftsWithout,
   type FilterRow,
 } from '../utils/placementUtils';
 
-/** 필터 줄 하나의 설정. 챌린지 묶기, 고급 설정에 여러 개 고를 때 조건과 줄 내리기 */
+/** 필터 줄 하나의 설정. 챌린지 묶기, 여러 개 고를 때 조건, 줄 내리기 */
 const FilterRowSettingsDialog = ({
   row,
   onClose,
@@ -77,7 +76,7 @@ const FilterRowSettingsDialog = ({
             {MERGE_CHALLENGES_HELP}
           </p>
         </div>
-        <AdvancedArea>
+        <div className="flex flex-col gap-2 border-t border-neutral-90 pt-3">
           <span className="text-xsmall14 font-semibold text-neutral-10">
             버튼을 여러 개 골랐을 때
           </span>
@@ -113,7 +112,7 @@ const FilterRowSettingsDialog = ({
               이 필터 줄 내리기
             </Button>
           </div>
-        </AdvancedArea>
+        </div>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>취소</Button>

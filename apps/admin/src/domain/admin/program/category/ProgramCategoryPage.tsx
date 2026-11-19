@@ -8,6 +8,8 @@ import LandingPagesTab from './landing/LandingPagesTab';
 import CheckTab from './overview/CheckTab';
 import { useAdminProgramCategoryGroupsQuery } from './programCategoryApi';
 import ProgramCategoryApiGuideDialog from './ProgramCategoryApiGuideDialog';
+import GuideDialog from './ui/GuideDialog';
+import { hasSeenGuide, markGuideSeen } from './utils/guideSeen';
 
 const PAGE_TABS = [
   { key: 'landing', label: '카테고리 랜딩 페이지' },
@@ -24,6 +26,12 @@ type PageTab = (typeof PAGE_TABS)[number]['key'];
  */
 const ProgramCategoryPage = () => {
   const [apiGuideOpen, setApiGuideOpen] = useState(false);
+  // 처음 들어왔을 때 한 번 저절로 뜬다
+  const [guideOpen, setGuideOpen] = useState(() => !hasSeenGuide());
+  const closeGuide = () => {
+    markGuideSeen();
+    setGuideOpen(false);
+  };
   const [tab, setTab] = useState<PageTab>('landing');
   const { data: groups = [], isLoading } = useAdminProgramCategoryGroupsQuery();
   const actions = useCategoryActions();
@@ -50,8 +58,15 @@ const ProgramCategoryPage = () => {
         ))}
         <button
           type="button"
+          onClick={() => setGuideOpen(true)}
+          className="mb-2 ml-auto rounded-xs border border-neutral-80 px-2.5 py-0.5 text-xsmall14 font-semibold text-neutral-10 hover:bg-neutral-95"
+        >
+          사용법
+        </button>
+        <button
+          type="button"
           onClick={() => setApiGuideOpen(true)}
-          className="mb-2 ml-auto flex items-center gap-1 text-xsmall14 text-primary hover:underline"
+          className="mb-2 flex items-center gap-1 text-xsmall14 text-primary hover:underline"
         >
           <span
             aria-hidden
@@ -62,6 +77,7 @@ const ProgramCategoryPage = () => {
           프론트에서 노출 분류를 불러오는 API
         </button>
       </nav>
+      {guideOpen && <GuideDialog onClose={closeGuide} />}
       <ProgramCategoryApiGuideDialog
         open={apiGuideOpen}
         onClose={() => setApiGuideOpen(false)}

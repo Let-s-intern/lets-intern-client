@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { CARD_STYLE_LABEL } from '../constants/cardStyle';
-import { SOURCES_LABEL } from '../constants/wording';
+import { SOURCES_TAG } from '../constants/wording';
 import type { CategoryActions } from '../hooks/useCategoryActions';
 import {
   programCategoryTargetTypeLabel,
@@ -46,7 +46,7 @@ const AdvancedGroupsTab = ({
       category.slug ? `/category/${category.slug}` : null,
       category.displayType === 'FEATURED' ? CARD_STYLE_LABEL.FEATURED : null,
       (category.sourceCategoryIds ?? []).length > 0
-        ? `${SOURCES_LABEL}: ${(category.sourceCategoryIds ?? [])
+        ? `${SOURCES_TAG}: ${(category.sourceCategoryIds ?? [])
             .map((id) => categoryTitleOf.get(id) ?? `#${id}`)
             .join(', ')}`
         : null,
@@ -61,8 +61,9 @@ const AdvancedGroupsTab = ({
   return (
     <>
       <p className="mb-4 mt-3 text-xsmall14 text-neutral-40">
-        노출 목록 전체입니다. 목록의 &quot;⋯ › 노출 위치 설정&quot;에서 어디에
-        보일지를 여러 개 붙입니다. 평소에는 앞의 두 탭을 쓰면 됩니다.
+        노출 목록 하나를 랜딩과 필터에 동시에 쓸 때 여기서 합니다. 목록의
+        &quot;⋯ › 노출 위치 설정&quot;에서 위치를 여러 개 붙이고, 새 목록도
+        여기서 만듭니다. 평소에는 앞의 두 탭을 쓰면 됩니다.
       </p>
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         {groups.map((group, groupIndex) => (
