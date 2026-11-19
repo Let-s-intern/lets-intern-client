@@ -11,7 +11,7 @@ const KeywordsField = ({
   onChange: (next: string[]) => void;
 }) => {
   const { data, isLoading } = useAllProducts();
-  const matched = data ? matchByKeywords(data.products, value) : [];
+  const matched = data ? matchByKeywords(data, value) : [];
   return (
     <div className="flex flex-col gap-2">
       <span className="text-xsmall14 font-semibold text-neutral-10">

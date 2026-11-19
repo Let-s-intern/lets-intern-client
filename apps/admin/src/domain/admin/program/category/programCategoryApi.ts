@@ -657,15 +657,3 @@ export const fetchProgramCategoryIds = async (
   });
   return programCategoryIdsSchema.parse(res.data.data).programCategoryIdList;
 };
-
-/** 태그 하나에 연결된 상품 (어드민) */
-export const tagTargetsQueryOptions = (tagId: number) => ({
-  queryKey: [programCategoryTargetsQueryKey, tagId],
-  queryFn: async () => {
-    const res = await axios.get(`/admin/program-category/${tagId}/targets`);
-    return z
-      .object({ targetList: z.array(programCategoryTargetSchema) })
-      .parse(res.data.data).targetList;
-  },
-  refetchOnWindowFocus: false,
-});

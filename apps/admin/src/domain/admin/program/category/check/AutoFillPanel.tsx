@@ -7,18 +7,17 @@ import {
   DialogContent,
   DialogTitle,
 } from '@mui/material';
-import { useQueries, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { useAllProducts, type AutoTagProduct } from '../hooks/useAllProducts';
 import {
   fetchProgramCategoryIds,
   programCategoryTargetTypeLabel,
   putProgramCategoriesOfTarget,
-  tagTargetsQueryOptions,
   type ProgramCategoryGroup,
 } from '../programCategoryApi';
 import { planAutoFill } from '../utils/autoTag';
-import { autoTagRulesOf, tagsOf } from '../utils/tagUtils';
+import { autoTagRulesOf } from '../utils/tagUtils';
 
 const keyOf = (p: { targetType?: string; targetId?: number }) =>
   `${p.targetType}-${p.targetId}`;
@@ -37,31 +36,10 @@ const AutoFillDialog = ({
   const { snackbar } = useAdminSnackbar();
   const queryClient = useQueryClient();
   const { data, isLoading } = useAllProducts();
-  const tags = tagsOf(groups);
-  const mappings = useQueries({
-    queries: tags.map(({ tag }) => tagTargetsQueryOptions(tag.id)),
-  });
-  const mappingsLoading = mappings.some((m) => m.isLoading);
-  const currentByKey = useMemo(() => {
-    const map = new Map<string, number[]>();
-    mappings.forEach((m, i) =>
-      (m.data ?? []).forEach((t) => {
-        const k = keyOf(t);
-        map.set(k, [...(map.get(k) ?? []), tags[i].tag.id]);
-      }),
-    );
-    return map;
-  }, [mappings, tags]);
   const plan = useMemo(
     () =>
-      data && !mappingsLoading
-        ? planAutoFill(
-            data.products,
-            autoTagRulesOf(groups),
-            (p) => currentByKey.get(keyOf(p)) ?? [],
-          )
-        : [],
-    [data, mappingsLoading, groups, currentByKey],
+      data ? planAutoFill(data, autoTagRulesOf(groups), (p) => p.tagIds) : [],
+    [data, groups],
   );
   // 기본은 모두 고름. 고른 것을 "상품키:태그id" 로 둔다
   const [unchecked, setUnchecked] = useState<Set<string>>(new Set());
@@ -132,14 +110,11 @@ const AutoFillDialog = ({
       <DialogTitle>자동 태그 채우기</DialogTitle>
       <DialogContent className="flex flex-col gap-3">
         <p className="text-xxsmall12 text-neutral-40">
-          태그 키워드·챌린지 구분(자료집)·블로그 태그·멘토링 분류로 더할 태그만
-          골랐어요. 있는 태그는 빼지 않아요. 챌린지 구분은 목록에 없어 챌린지는
-          제목으로만 봐요.
-          {data?.failed.length
-            ? ` 불러오지 못한 목록: ${data.failed.join(', ')}`
-            : ''}
+          태그 키워드·챌린지 구분·블로그 해시태그·멘토링 분류로 더할 태그만
+          골랐어요. 이미 있는 태그는 빼고 보여 주고, 있는 태그를 지우지는
+          않아요.
         </p>
-        {isLoading || mappingsLoading ? (
+        {isLoading ? (
           <p className="text-xsmall14 text-neutral-40">상품을 불러오는 중…</p>
         ) : plan.length === 0 ? (
           <p className="text-xsmall14 text-neutral-40">더할 태그가 없어요.</p>
