@@ -7,100 +7,179 @@ import {
 import { twMerge } from '@/lib/twMerge';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { ReactNode, useState } from 'react';
+import { maskName, pickReviewExcerpt } from './reviewExcerpt';
 
-/** 대표 이미지 뒤에 넘겨 볼 후기 수 */
-const REVIEW_SLIDE_COUNT = 4;
+/** 후기 카드에 쌓을 후기 수 */
+const REVIEW_ROW_COUNT = 3;
+/** 답변이 빈 후기를 걸러도 3개가 남도록 조금 더 받는다 */
+const REVIEW_FETCH_SIZE = 6;
+/** 후기 섹션 id. 기본·포트폴리오 화면은 challenge-review, 마케팅·HR·PM 화면은 reviews */
+const REVIEW_SECTION_IDS = ['challenge-review', 'reviews'];
 
-const maskName = (name?: string | null) =>
-  name
-    ? `${name.slice(0, 1)}${'*'.repeat(Math.max(name.length - 1, 2))}`
-    : '수강생';
-
-/** 좋았던 점 → 목표 달성 → 아무 답변 순으로 한 줄 */
-const pickQuote = (items: LandingReview['itemList']) => {
-  const by = (type: string) =>
-    items.find((i) => i.questionType === type && i.answer?.trim())?.answer;
-  return (
-    by('GOOD_POINT') ??
-    by('GOAL_RESULT') ??
-    items.find((i) => i.answer?.trim())?.answer ??
-    ''
-  ).trim();
+const scrollToReviews = () => {
+  const target = REVIEW_SECTION_IDS.map((id) =>
+    document.getElementById(id),
+  ).find(Boolean);
+  target?.scrollIntoView({ behavior: 'smooth' });
 };
 
-/** 후기 한 장. 기수·버전은 보이지 않는다 */
-const ReviewSlide = ({
-  review,
+/** 대표 이미지를 흐리게 깔아 정사각형 빈 곳을 채운다 */
+const BlurredFill = ({
+  src,
   compact = false,
 }: {
-  review: LandingReview;
+  src?: string | null;
+  compact?: boolean;
+}) =>
+  src ? (
+    <img
+      src={src}
+      alt=""
+      aria-hidden
+      className={twMerge(
+        'absolute inset-0 h-full w-full scale-125 object-cover',
+        compact ? 'blur-sm' : 'blur-2xl',
+      )}
+    />
+  ) : null;
+
+/** 4:3 대표 이미지를 정사각형 가운데에 두고 위아래는 흐린 같은 이미지로 채운다 */
+const MainSlide = ({
+  main,
+  imageSrc,
+  compact,
+}: {
+  main: ReactNode;
+  imageSrc?: string | null;
   compact?: boolean;
 }) => (
-  <div
-    className={twMerge(
-      'flex h-full w-full flex-col bg-[#F3F4FF]',
-      compact ? 'gap-1 p-1.5' : 'gap-4 p-8 md:p-10',
-    )}
-  >
-    <span
-      className={twMerge(
-        'w-fit rounded-xxs bg-primary font-semibold text-white',
-        compact ? 'px-1 text-[8px]' : 'px-2 py-1 text-xsmall14',
-      )}
-    >
-      수강생 후기
+  <div className="relative h-full w-full overflow-hidden">
+    <BlurredFill src={imageSrc} compact={compact} />
+    <div className="absolute inset-x-0 top-1/2 aspect-[4/3] -translate-y-1/2">
+      {main}
+    </div>
+  </div>
+);
+
+/** 어둡게 깐 대표 이미지 위에 후기 3개를 쌓은 카드. 기수·버전은 보이지 않는다 */
+const ReviewCardSlide = ({
+  reviews,
+  totalCount,
+  imageSrc,
+}: {
+  reviews: LandingReview[];
+  totalCount: number;
+  imageSrc?: string | null;
+}) => (
+  <div className="relative h-full w-full overflow-hidden bg-neutral-10">
+    <BlurredFill src={imageSrc} />
+    <div className="absolute inset-0 bg-neutral-0/55" />
+    <div className="relative flex h-full flex-col justify-center gap-3 px-11 py-5 md:gap-4 md:px-14 md:py-8">
+      <p className="flex items-baseline justify-center gap-2 text-white">
+        <span className="text-xsmall16 font-bold md:text-small20">
+          수강생들의 솔직 후기
+        </span>
+        <span className="text-xxsmall12 text-white/70 md:text-xsmall14">
+          누적 {totalCount.toLocaleString()}건
+        </span>
+      </p>
+      <ul className="flex flex-col gap-2 md:gap-3">
+        {reviews.map((review) => (
+          <li
+            key={review.reviewId}
+            className="flex items-center gap-2.5 rounded-[12px] bg-white p-2.5 md:gap-3 md:rounded-[16px] md:p-3.5"
+          >
+            <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-[8px] bg-neutral-90 md:h-16 md:w-16 md:rounded-[10px]">
+              {imageSrc && (
+                <img
+                  src={imageSrc}
+                  alt=""
+                  className="h-full w-full object-cover"
+                />
+              )}
+            </div>
+            <div className="flex min-w-0 flex-col gap-0.5 md:gap-1">
+              <span className="text-xxsmall12 text-neutral-40">
+                {maskName(review.name)}
+              </span>
+              <p className="line-clamp-2 whitespace-pre-line text-xxsmall12 leading-snug text-neutral-0 md:text-xsmall14">
+                {pickReviewExcerpt(review.itemList)}
+              </p>
+            </div>
+          </li>
+        ))}
+      </ul>
+      <button
+        type="button"
+        onClick={scrollToReviews}
+        className="detail_gallery_review_more mx-auto text-xxsmall12 text-white underline underline-offset-4 md:text-xsmall14"
+      >
+        {totalCount.toLocaleString()}건 후기 더보기
+      </button>
+    </div>
+  </div>
+);
+
+/** 미리보기 줄의 후기 카드 칸 */
+const ReviewCardThumb = ({ imageSrc }: { imageSrc?: string | null }) => (
+  <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-neutral-10">
+    <BlurredFill src={imageSrc} compact />
+    <div className="absolute inset-0 bg-neutral-0/55" />
+    <span className="relative text-xxsmall12 font-semibold text-white">
+      후기
     </span>
-    <p
-      className={twMerge(
-        'flex-1 whitespace-pre-line text-neutral-0',
-        compact
-          ? 'line-clamp-3 text-[8px] leading-tight'
-          : 'line-clamp-[7] text-small18 font-semibold leading-relaxed md:text-small20',
-      )}
-    >
-      &ldquo;{pickQuote(review.itemList)}&rdquo;
-    </p>
-    {!compact && (
-      <p className="text-xsmall14 text-neutral-40">{maskName(review.name)}</p>
-    )}
   </div>
 );
 
 /**
- * 상세 상단 이미지. 대표 이미지 뒤로 평점 높은 후기 몇 장을 넘겨 본다.
- * 아래 미리보기 줄로 모두 몇 장인지 보이고 눌러서 바로 간다
+ * 상세 상단 이미지. 정사각형 두 장 — 대표 이미지와 후기 카드.
+ * 후기가 없으면 대표 이미지만 두고 화살표·미리보기 줄을 숨긴다
  */
 const DetailGallery = ({
   main,
+  imageSrc,
   challengeType,
   className,
   style,
 }: {
   main: ReactNode;
+  /** 흐린 채움·후기 카드 배경·후기 사진 칸에 쓰는 대표 이미지 주소 */
+  imageSrc?: string | null;
   challengeType?: string | null;
   className?: string;
   style?: React.CSSProperties;
 }) => {
   const { data } = useLandingReviewsQuery(
     challengeType ? [challengeType] : [],
-    REVIEW_SLIDE_COUNT,
+    REVIEW_FETCH_SIZE,
   );
   const reviews = (data?.reviewList ?? [])
-    .filter((r) => pickQuote(r.itemList))
-    .slice(0, REVIEW_SLIDE_COUNT);
-  const total = 1 + reviews.length;
+    .filter((r) => pickReviewExcerpt(r.itemList))
+    .slice(0, REVIEW_ROW_COUNT);
+  const total = reviews.length > 0 ? 2 : 1;
   const [index, setIndex] = useState(0);
   const current = Math.min(index, total - 1);
   const go = (next: number) => setIndex((next + total) % total);
 
-  const slide = (i: number, compact = false) =>
-    i === 0 ? main : <ReviewSlide review={reviews[i - 1]} compact={compact} />;
+  const slide = (i: number, compact = false) => {
+    if (i === 0)
+      return <MainSlide main={main} imageSrc={imageSrc} compact={compact} />;
+    return compact ? (
+      <ReviewCardThumb imageSrc={imageSrc} />
+    ) : (
+      <ReviewCardSlide
+        reviews={reviews}
+        totalCount={data?.totalCount ?? reviews.length}
+        imageSrc={imageSrc}
+      />
+    );
+  };
 
   return (
     <div className="flex flex-col gap-3">
       <div
         className={twMerge(
-          'group relative aspect-[4/3] w-full overflow-hidden rounded-xs',
+          'group relative aspect-square w-full overflow-hidden rounded-xs',
           className,
         )}
         style={current === 0 ? style : undefined}
@@ -112,7 +191,7 @@ const DetailGallery = ({
               type="button"
               aria-label="이전 이미지"
               onClick={() => go(current - 1)}
-              className="detail_gallery_prev absolute left-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/70 text-neutral-10 shadow-01"
+              className="detail_gallery_prev absolute left-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-white/70 text-neutral-10 shadow-01 md:left-3 md:h-9 md:w-9"
             >
               <ChevronLeft size={20} />
             </button>
@@ -120,7 +199,7 @@ const DetailGallery = ({
               type="button"
               aria-label="다음 이미지"
               onClick={() => go(current + 1)}
-              className="detail_gallery_next absolute right-3 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/70 text-neutral-10 shadow-01"
+              className="detail_gallery_next absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-white/70 text-neutral-10 shadow-01 md:right-3 md:h-9 md:w-9"
             >
               <ChevronRight size={20} />
             </button>
@@ -140,7 +219,7 @@ const DetailGallery = ({
                 aria-label={`${i + 1}번째 이미지 보기`}
                 onClick={() => setIndex(i)}
                 className={twMerge(
-                  'detail_gallery_thumb relative block aspect-[4/3] w-full overflow-hidden rounded-xxs border-2 border-transparent',
+                  'detail_gallery_thumb relative block aspect-square w-full overflow-hidden rounded-xxs border-2 border-transparent',
                   i === current ? 'border-primary' : 'opacity-70',
                 )}
                 style={i === 0 ? style : undefined}
