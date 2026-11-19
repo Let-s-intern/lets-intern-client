@@ -7,7 +7,6 @@ describe('resolveLandingHero', () => {
     expect(
       resolveLandingHero(
         {
-          placementType: 'LANDING',
           heroTitle: '어드민 제목',
           heroDescription: '어드민 설명',
         },
@@ -18,13 +17,10 @@ describe('resolveLandingHero', () => {
   });
 
   it('어드민 값이 비면 고정 문구, 그것도 없으면 목록 이름', () => {
-    expect(
-      resolveLandingHero(
-        { placementType: 'LANDING', heroTitle: '' },
-        content,
-        '목록',
-      ),
-    ).toEqual({ title: '고정 제목', description: '고정 설명' });
+    expect(resolveLandingHero({ heroTitle: '' }, content, '목록')).toEqual({
+      title: '고정 제목',
+      description: '고정 설명',
+    });
     expect(resolveLandingHero(undefined, undefined, '목록')).toEqual({
       title: '목록',
       description: undefined,
@@ -33,11 +29,17 @@ describe('resolveLandingHero', () => {
 
   it('제목만 어드민 값이면 설명은 고정 문구를 쓴다', () => {
     expect(
-      resolveLandingHero(
-        { placementType: 'LANDING', heroTitle: '새 제목' },
-        content,
-        '목록',
-      ),
+      resolveLandingHero({ heroTitle: '새 제목' }, content, '목록'),
     ).toEqual({ title: '새 제목', description: '고정 설명' });
+  });
+
+  it('새 분류 랜딩의 페이지 값도 같은 규칙으로 쓴다', () => {
+    expect(
+      resolveLandingHero(
+        { heroTitle: '분류 제목', heroDescription: null },
+        content,
+        '이력서',
+      ),
+    ).toEqual({ title: '분류 제목', description: '고정 설명' });
   });
 });
