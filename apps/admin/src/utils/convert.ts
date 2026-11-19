@@ -86,6 +86,7 @@ export const challengeTypeToText: Record<ChallengeType, string> = {
   HR: 'HR',
   PM: 'PM',
   APTITUDE: '인적성',
+  SNS_CONTENT: 'SNS 콘텐츠',
 };
 
 export const challengeTypeToDisplay: Record<ChallengeType, string> = {
@@ -101,6 +102,7 @@ export const challengeTypeToDisplay: Record<ChallengeType, string> = {
   HR: 'HR',
   PM: 'PM',
   APTITUDE: '인적성 챌린지',
+  SNS_CONTENT: 'SNS 콘텐츠 챌린지',
 };
 
 export const challengeTypes: ChallengeType[] = [
@@ -114,6 +116,7 @@ export const challengeTypes: ChallengeType[] = [
   'HR',
   'PM',
   'APTITUDE',
+  'SNS_CONTENT',
   // 지금도 쓰는 값이라 남기고 선택 목록 끝에 둔다
   'DOCUMENT_PREPARATION',
   'ETC',
