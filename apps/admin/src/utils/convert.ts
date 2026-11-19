@@ -105,9 +105,7 @@ export const challengeTypeToDisplay: Record<ChallengeType, string> = {
 
 export const challengeTypes: ChallengeType[] = [
   'CAREER_START',
-  'DOCUMENT_PREPARATION',
   'MEETING_PREPARATION',
-  'ETC',
   'PERSONAL_STATEMENT',
   'PORTFOLIO',
   'PERSONAL_STATEMENT_LARGE_CORP',
@@ -116,6 +114,9 @@ export const challengeTypes: ChallengeType[] = [
   'HR',
   'PM',
   'APTITUDE',
+  // 지금도 쓰는 값이라 남기고 선택 목록 끝에 둔다
+  'DOCUMENT_PREPARATION',
+  'ETC',
 ];
 
 export const programStatusToText: Record<string, string> = {
