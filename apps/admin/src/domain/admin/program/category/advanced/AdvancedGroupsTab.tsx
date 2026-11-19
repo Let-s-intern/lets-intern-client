@@ -8,7 +8,8 @@ import {
   type ProgramCategoryGroup,
   type ProgramCategoryPlacement,
 } from '../programCategoryApi';
-import { AddRow, ItemRow } from '../ProgramCategoryRows';
+import { AddRow } from '../ProgramCategoryRows';
+import CompactRow from '../ui/CompactRow';
 import CategoryRowList from '../ui/CategoryRowList';
 import MenuButtonEditor from '../ui/MenuButtonEditor';
 import SectionEditor from '../ui/SectionEditor';
@@ -62,19 +63,17 @@ const AdvancedGroupsTab = ({
   return (
     <>
       <p className="mb-4 mt-3 text-xsmall14 text-neutral-40">
-        노출 목록 = 상품 묶음, 카테고리 = 그 안의 항목입니다. 노출 목록 톱니에서
-        어디에 보일지(랜딩 페이지·전체 프로그램 필터)를 여러 개 붙이고, 카테고리
-        톱니에서 섹션 설정과 메뉴 버튼 설정을 고칩니다. 평소에는 &quot;카테고리
-        랜딩 페이지&quot;·&quot;전체 프로그램 필터&quot; 탭을 쓰면 됩니다.
+        노출 목록 전체입니다. 목록의 &quot;⋯ › 노출 위치 설정&quot;에서 어디에
+        보일지를 여러 개 붙입니다. 평소에는 앞의 두 탭을 쓰면 됩니다.
       </p>
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         {groups.map((group, groupIndex) => (
           <section
             key={group.id}
-            className="rounded-sm border border-neutral-80 bg-white p-3"
+            className="rounded-sm border border-neutral-90 bg-white p-3"
           >
-            <ul className="border-b border-neutral-80 pb-2">
-              <ItemRow
+            <div className="border-b border-neutral-90 pb-2">
+              <CompactRow
                 strong
                 title={group.title}
                 caption={[
@@ -86,6 +85,7 @@ const AdvancedGroupsTab = ({
                 isVisible={group.isVisible}
                 isFirst={groupIndex === 0}
                 isLast={groupIndex === groups.length - 1}
+                renameLabel="목록 이름"
                 onRename={(title) => actions.renameGroup(group.id, title)}
                 onToggleVisible={(isVisible) =>
                   actions.toggleGroup(group.id, isVisible)
@@ -93,27 +93,36 @@ const AdvancedGroupsTab = ({
                 onMove={(direction) =>
                   actions.moveGroup(groupIds, groupIndex, direction)
                 }
-                onDelete={() => actions.deleteGroup(group)}
-                onSettings={() =>
-                  setPlacementsGroupId((prev) =>
-                    prev === group.id ? null : group.id,
-                  )
-                }
+                menuItems={[
+                  {
+                    label: '노출 위치 설정',
+                    onClick: () =>
+                      setPlacementsGroupId((prev) =>
+                        prev === group.id ? null : group.id,
+                      ),
+                  },
+                  {
+                    label: '노출 목록 삭제',
+                    danger: true,
+                    onClick: () => actions.deleteGroup(group),
+                  },
+                ]}
               />
               {placementsGroupId === group.id && (
-                <li>
+                <div>
                   <GroupPlacementsEditor
                     group={group}
                     onDone={() => setPlacementsGroupId(null)}
                   />
-                </li>
+                </div>
               )}
-            </ul>
+            </div>
             <div className="mt-2 pl-4">
               <CategoryRowList
                 group={group}
                 actions={actions}
                 caption={categoryCaption}
+                itemLabel="카테고리"
                 renderEditor={(category, onDone) => (
                   <div className="flex flex-col gap-1">
                     <p className="ml-3 mt-1 text-xsmall14 font-semibold text-neutral-10">
@@ -127,7 +136,9 @@ const AdvancedGroupsTab = ({
                     <p className="ml-3 text-xsmall14 font-semibold text-neutral-10">
                       필터 버튼·메뉴로 쓸 때
                     </p>
-                    <MenuButtonEditor category={category} onDone={onDone} />
+                    <div className="mb-3 ml-3">
+                      <MenuButtonEditor category={category} onDone={onDone} />
+                    </div>
                   </div>
                 )}
                 emptyText="카테고리가 없습니다."

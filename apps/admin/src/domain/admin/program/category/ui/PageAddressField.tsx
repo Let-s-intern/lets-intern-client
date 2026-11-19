@@ -1,22 +1,31 @@
 import { InputAdornment, TextField } from '@mui/material';
+import { useState } from 'react';
 import { slugError } from '../utils/placementUtils';
 
-/** 키(slug) 입력. 운영자에게는 사이트 주소 /category/{키} 로 보인다 */
+/** 주소 칸의 오류 문구. required 면 빈 값도 오류다 */
+export const pageAddressError = (value: string, required: boolean) =>
+  required && value === '' ? '페이지 주소가 필요합니다' : slugError(value);
+
+/**
+ * 키(slug) 입력. 운영자에게는 사이트 주소 /category/{키} 로 보인다.
+ * 오류는 칸을 한 번 건드렸거나(포커스 이탈) 저장을 눌렀을 때(showErrors)만 보인다
+ */
 const PageAddressField = ({
   value,
   onChange,
   required = false,
+  showErrors = false,
   helperText,
 }: {
   value: string;
   onChange: (value: string) => void;
-  /** 랜딩 페이지 주소처럼 비우면 안 되는 칸 */
   required?: boolean;
-  /** 오류가 없을 때 아래에 보이는 안내 */
-  helperText: string;
+  showErrors?: boolean;
+  helperText?: string;
 }) => {
+  const [touched, setTouched] = useState(false);
   const error =
-    required && value === '' ? '페이지 주소가 필요합니다' : slugError(value);
+    touched || showErrors ? pageAddressError(value, required) : undefined;
   return (
     <TextField
       size="small"
@@ -24,6 +33,7 @@ const PageAddressField = ({
       placeholder="resume"
       value={value}
       onChange={(e) => onChange(e.target.value.trim())}
+      onBlur={() => setTouched(true)}
       error={Boolean(error)}
       helperText={error ?? helperText}
       InputProps={{

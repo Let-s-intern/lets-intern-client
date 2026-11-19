@@ -9,7 +9,7 @@ import { productExposuresOf } from '../utils/placementUtils';
 
 /**
  * 상품마다 어디에 보이는지. 노출 위치가 붙은 목록의 보이는 카테고리를 한 번에 조회한다.
- * 펼칠 때만 부른다
+ * 펼쳤을 때만 그려지므로 그때 부른다
  */
 const ExposureTable = ({ groups }: { groups: ProgramCategoryGroup[] }) => {
   const placed = groups.filter(
@@ -59,28 +59,4 @@ const ExposureTable = ({ groups }: { groups: ProgramCategoryGroup[] }) => {
   );
 };
 
-const ProductExposureList = ({
-  groups,
-}: {
-  groups: ProgramCategoryGroup[];
-}) => {
-  const [open, setOpen] = useState(false);
-  return (
-    <details
-      className="rounded-sm border border-neutral-80 bg-white"
-      onToggle={(e) => setOpen((e.target as HTMLDetailsElement).open)}
-    >
-      <summary className="cursor-pointer px-3 py-2 font-semibold">
-        상품별 노출 위치
-        <span className="ml-2 text-xsmall14 font-normal text-neutral-40">
-          상품 하나가 어느 페이지·섹션·필터 버튼에 나오는지
-        </span>
-      </summary>
-      <div className="border-t border-neutral-80 p-3">
-        {open && <ExposureTable groups={groups} />}
-      </div>
-    </details>
-  );
-};
-
-export default ProductExposureList;
+export default ExposureTable;

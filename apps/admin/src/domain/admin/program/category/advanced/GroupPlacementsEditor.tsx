@@ -35,6 +35,7 @@ const GroupPlacementsEditor = ({
 }) => {
   const { save, isPending } = useSavePlacements();
   const [drafts, setDrafts] = useState<PlacementDraft[]>(draftsOf(group));
+  const [submitted, setSubmitted] = useState(false);
   const patch = (index: number, next: Partial<PlacementDraft>) =>
     setDrafts((prev) =>
       prev.map((d, i) => (i === index ? { ...d, ...next } : d)),
@@ -74,7 +75,7 @@ const GroupPlacementsEditor = ({
               value={d.slug}
               onChange={(slug) => patch(index, { slug })}
               required
-              helperText="사이트에서 이 주소로 열립니다."
+              showErrors={submitted}
             />
           ) : (
             <Select
@@ -139,8 +140,10 @@ const GroupPlacementsEditor = ({
         <Button
           variant="contained"
           size="small"
-          disabled={drafts.some(isDraftInvalid) || isPending}
+          disabled={isPending}
           onClick={async () => {
+            setSubmitted(true);
+            if (drafts.some(isDraftInvalid)) return;
             if (await save(group.id, drafts)) onDone();
           }}
         >

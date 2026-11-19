@@ -72,7 +72,7 @@ const SectionEditor = ({
   };
 
   return (
-    <div className="mb-2 ml-3 mt-1 flex flex-col gap-4 rounded-xs bg-neutral-95 p-3">
+    <div className="mb-3 ml-3 mt-1 flex flex-col gap-4 rounded-xs bg-neutral-95 p-4">
       <div className="flex flex-wrap gap-2">
         <TextField
           size="small"
@@ -102,8 +102,7 @@ const SectionEditor = ({
       <div className="flex flex-col gap-1">
         <span className={fieldLabel}>이 섹션의 상품</span>
         <p className="text-xxsmall12 text-neutral-40">
-          상품은 각 상품 수정 화면의 &quot;노출 분류&quot;에서 이 카테고리를
-          체크해 넣습니다. 여기서는 확인하고 해제만 합니다.
+          상품은 각 상품 수정 화면의 &quot;노출 분류&quot;에서 넣습니다.
         </p>
         <div className="rounded-xs bg-white py-1">
           <ProgramCategoryTargetList categoryId={category.id} />

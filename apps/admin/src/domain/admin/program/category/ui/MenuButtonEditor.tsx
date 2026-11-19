@@ -38,8 +38,12 @@ const MenuButtonEditor = ({
     category.directTargetId ? String(category.directTargetId) : '',
   );
   const directIncomplete = direct && (targetType === '' || targetId === '');
+  // 오류는 저장을 누른 뒤에 보인다
+  const [submitted, setSubmitted] = useState(false);
 
   const save = async () => {
+    setSubmitted(true);
+    if (slugError(slug) || directIncomplete) return;
     try {
       await update.mutateAsync({ id: category.id, slug });
       await updateDirect.mutateAsync({
@@ -55,14 +59,15 @@ const MenuButtonEditor = ({
   };
 
   return (
-    <div className="mb-2 ml-3 mt-1 flex flex-col gap-3 rounded-xs bg-neutral-95 p-3">
+    <div className="flex flex-col gap-3 rounded-xs bg-neutral-95 p-4">
       <PageAddressField
         value={slug}
         onChange={setSlug}
+        showErrors={submitted}
         helperText={
           slug
-            ? `메뉴에서 이 항목을 누르면 /category/${slug} 페이지로 갑니다.`
-            : '메뉴에서 누르면 갈 페이지 주소입니다. 필터 버튼으로만 쓰면 비워 두세요.'
+            ? `메뉴에서 누르면 /category/${slug} 로 갑니다.`
+            : '필터 버튼으로만 쓰면 비워 두세요.'
         }
       />
       <div className="flex flex-col gap-2">
@@ -86,7 +91,7 @@ const MenuButtonEditor = ({
                 setTargetId(next.targetId);
               }}
             />
-            {directIncomplete && (
+            {submitted && directIncomplete && (
               <span className="text-xs text-red-500">
                 상품을 고르거나 바로 이동을 끄세요.
               </span>
@@ -100,12 +105,7 @@ const MenuButtonEditor = ({
         <Button
           variant="contained"
           size="small"
-          disabled={
-            Boolean(slugError(slug)) ||
-            directIncomplete ||
-            update.isPending ||
-            updateDirect.isPending
-          }
+          disabled={update.isPending || updateDirect.isPending}
           onClick={save}
         >
           저장

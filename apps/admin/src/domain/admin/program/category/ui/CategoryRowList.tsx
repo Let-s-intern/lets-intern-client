@@ -1,15 +1,16 @@
-import { Fragment, useState, type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import type { CategoryActions } from '../hooks/useCategoryActions';
-import { AddRow, ItemRow } from '../ProgramCategoryRows';
 import ProgramCategoryTargetList from '../ProgramCategoryTargetList';
 import type {
   ProgramCategory,
   ProgramCategoryGroup,
 } from '../programCategoryApi';
+import AddInline from './AddInline';
+import CompactRow from './CompactRow';
 
 /**
- * 노출 목록 안 카테고리 줄들. 이름·숨김·순서·삭제는 줄에서 바로 하고,
- * 톱니를 누르면 renderEditor 가 펼쳐진다. 편집기가 상품 목록을 품으면 줄을 눌러도 편집기를 연다
+ * 노출 목록 안 카테고리 줄들. 줄에는 순서·노출만, 이름 바꾸기·삭제는 "⋯" 안에 둔다.
+ * editorHasProducts 면 줄을 눌러 편집기(상품 포함)를, 아니면 상품 목록을 펼치고 편집기는 "⋯" 에서 연다
  */
 const CategoryRowList = ({
   group,
@@ -17,6 +18,7 @@ const CategoryRowList = ({
   caption,
   renderEditor,
   editorHasProducts = false,
+  itemLabel,
   emptyText,
   addPlaceholder,
 }: {
@@ -25,6 +27,8 @@ const CategoryRowList = ({
   caption: (category: ProgramCategory) => string;
   renderEditor: (category: ProgramCategory, onDone: () => void) => ReactNode;
   editorHasProducts?: boolean;
+  /** "섹션", "카테고리" 처럼 메뉴 문구에 들어갈 이름 */
+  itemLabel: string;
   emptyText: string;
   addPlaceholder: string;
 }) => {
@@ -34,17 +38,14 @@ const CategoryRowList = ({
     setter((prev) => (prev === id ? null : id));
 
   return (
-    <>
-      <ul className="flex flex-col gap-0.5">
+    <div>
+      <ul className="flex flex-col">
         {group.categoryList.map((category, index) => (
-          <Fragment key={category.id}>
-            <ItemRow
+          <li key={category.id}>
+            <CompactRow
               title={category.title}
               caption={caption(category)}
-              active={
-                editingId === category.id ||
-                (!editorHasProducts && productsId === category.id)
-              }
+              active={editingId === category.id || productsId === category.id}
               onClick={() =>
                 toggle(
                   editorHasProducts ? setEditingId : setProductsId,
@@ -54,6 +55,7 @@ const CategoryRowList = ({
               isVisible={category.isVisible}
               isFirst={index === 0}
               isLast={index === group.categoryList.length - 1}
+              renameLabel={`${itemLabel} 이름`}
               onRename={(title) => actions.renameCategory(category.id, title)}
               onToggleVisible={(isVisible) =>
                 actions.toggleCategory(category.id, isVisible)
@@ -61,18 +63,28 @@ const CategoryRowList = ({
               onMove={(direction) =>
                 actions.moveCategory(group, index, direction)
               }
-              onDelete={() => actions.deleteCategory(category)}
-              onSettings={() => toggle(setEditingId, category.id)}
+              menuItems={[
+                ...(editorHasProducts
+                  ? []
+                  : [
+                      {
+                        label: '설정',
+                        onClick: () => toggle(setEditingId, category.id),
+                      },
+                    ]),
+                {
+                  label: `${itemLabel} 삭제`,
+                  danger: true,
+                  onClick: () => actions.deleteCategory(category),
+                },
+              ]}
             />
-            {editingId === category.id && (
-              <li>{renderEditor(category, () => setEditingId(null))}</li>
-            )}
+            {editingId === category.id &&
+              renderEditor(category, () => setEditingId(null))}
             {!editorHasProducts && productsId === category.id && (
-              <li>
-                <ProgramCategoryTargetList categoryId={category.id} />
-              </li>
+              <ProgramCategoryTargetList categoryId={category.id} />
             )}
-          </Fragment>
+          </li>
         ))}
         {group.categoryList.length === 0 && (
           <li className="py-2 pl-3 text-xsmall14 text-neutral-40">
@@ -80,11 +92,14 @@ const CategoryRowList = ({
           </li>
         )}
       </ul>
-      <AddRow
-        placeholder={addPlaceholder}
-        onAdd={(title) => actions.createCategory(group.id, title)}
-      />
-    </>
+      <div className="mt-1">
+        <AddInline
+          label={`${itemLabel} 추가`}
+          placeholder={addPlaceholder}
+          onAdd={(title) => actions.createCategory(group.id, title)}
+        />
+      </div>
+    </div>
   );
 };
 

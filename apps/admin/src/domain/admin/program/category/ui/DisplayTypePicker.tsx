@@ -69,38 +69,39 @@ const DisplayTypePicker = ({
   value: ProgramCategoryDisplayType;
   onChange: (value: ProgramCategoryDisplayType) => void;
 }) => (
-  <div
-    role="radiogroup"
-    aria-label="카드 모양"
-    className="grid grid-cols-2 gap-2 md:grid-cols-3 xl:grid-cols-5"
-  >
-    {(Object.keys(displayTypeLabel) as ProgramCategoryDisplayType[]).map(
-      (type) => {
-        const selected = value === type;
-        return (
-          <button
-            key={type}
-            type="button"
-            role="radio"
-            aria-checked={selected}
-            onClick={() => onChange(type)}
-            className={`flex flex-col gap-2 rounded-xs border bg-white p-2 text-left ${
-              selected
-                ? 'border-primary ring-1 ring-primary'
-                : 'border-neutral-80 hover:border-neutral-50'
-            }`}
-          >
-            <Sketch type={type} />
-            <span className="text-xsmall14 font-semibold text-neutral-0">
-              {displayTypeLabel[type]}
-            </span>
-            <span className="text-xxsmall12 text-neutral-40">
-              {DESCRIPTION[type]}
-            </span>
-          </button>
-        );
-      },
-    )}
+  <div className="flex flex-col gap-1.5">
+    <div
+      role="radiogroup"
+      aria-label="카드 모양"
+      className="grid grid-cols-5 gap-2"
+    >
+      {(Object.keys(displayTypeLabel) as ProgramCategoryDisplayType[]).map(
+        (type) => {
+          const selected = value === type;
+          return (
+            <button
+              key={type}
+              type="button"
+              role="radio"
+              aria-checked={selected}
+              title={DESCRIPTION[type]}
+              onClick={() => onChange(type)}
+              className={`flex flex-col gap-1.5 rounded-xs border bg-white p-2 text-left ${
+                selected
+                  ? 'border-primary ring-1 ring-primary'
+                  : 'border-neutral-90 hover:border-neutral-60'
+              }`}
+            >
+              <Sketch type={type} />
+              <span className="text-xxsmall12 font-semibold text-neutral-10">
+                {displayTypeLabel[type]}
+              </span>
+            </button>
+          );
+        },
+      )}
+    </div>
+    <p className="text-xxsmall12 text-neutral-40">{DESCRIPTION[value]}</p>
   </div>
 );
 

@@ -6,6 +6,7 @@ const targetSchema = z.object({
   targetType: z.string(),
   targetId: z.number(),
   title: z.string(),
+  thumbnail: z.string().nullish(),
   categoryIds: z.array(z.number()),
 });
 
