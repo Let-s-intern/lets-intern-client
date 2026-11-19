@@ -1,9 +1,14 @@
+import OrderChallengeThumbnail from '../OrderChallengeThumbnail';
+
 interface Props {
   thumbnail: string;
   title: string;
   rows: { label: string; value: string }[];
   amountLabel: string;
   amount: string;
+  /** 챌린지면 등록 썸네일 대신 유형별 기본 썸네일을 쓴다 */
+  isChallenge?: boolean;
+  challengeType?: string | null;
 }
 
 /** 결제 결과 화면의 신청 내역 카드. 썸네일·제목, 신청 정보 행, 금액을 그린다 */
@@ -13,11 +18,21 @@ const ApplicationSummaryCard = ({
   rows,
   amountLabel,
   amount,
+  isChallenge = false,
+  challengeType,
 }: Props) => {
   return (
     <div className="flex w-full flex-col rounded-[16px] border border-neutral-90 bg-white px-5 py-6 md:px-7">
       <div className="flex items-center gap-4 border-b border-neutral-90 pb-5">
-        {thumbnail ? (
+        {isChallenge ? (
+          <div className="h-[76px] w-[108px] shrink-0 overflow-hidden rounded-[8px] bg-neutral-90 md:h-[97px] md:w-[137px]">
+            <OrderChallengeThumbnail
+              title={title}
+              challengeType={challengeType}
+              fallbackSrc={thumbnail}
+            />
+          </div>
+        ) : thumbnail ? (
           <img
             className="h-[76px] w-[108px] shrink-0 rounded-[8px] object-cover md:h-[97px] md:w-[137px]"
             src={thumbnail}

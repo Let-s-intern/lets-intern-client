@@ -141,6 +141,7 @@ const PaymentResultContent = () => {
   let programProgressType = programApplicationData.progressType ?? 'none';
   let programAccessMethod = '';
   let challengeVersionTitle: string | null = null;
+  let programChallengeType: string | null = null;
 
   if (programQuery.type === 'live') {
     const data = programQuery.query.data;
@@ -155,6 +156,8 @@ const PaymentResultContent = () => {
     programThumbnail = data?.thumbnail ?? '';
     programStartDate = data?.startDate ?? null;
     programEndDate = data?.endDate ?? null;
+    programChallengeType =
+      data && 'challengeType' in data ? (data.challengeType ?? null) : null;
     // 진행 방식 줄에 쓴다. 버전이 없는 신청(LIGHT 등)이면 null 이다
     const priceInfo =
       data && 'priceInfo' in data && Array.isArray(data.priceInfo)
@@ -308,6 +311,8 @@ const PaymentResultContent = () => {
                     rows={summaryRows}
                     amountLabel={isSuccess ? '결제 완료 금액' : '결제 금액'}
                     amount={paidAmount.toLocaleString() + '원'}
+                    isChallenge={isChallenge}
+                    challengeType={programChallengeType}
                   />
                   {isSuccess && hasVodPass && (
                     <p className="text-xsmall14 text-neutral-40">

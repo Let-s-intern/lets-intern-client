@@ -386,6 +386,11 @@ const PaymentInputContent = () => {
               ? program.accessMethod
               : undefined
           }
+          challengeType={
+            programApplicationData.programType === 'challenge'
+              ? challengeType || null
+              : undefined
+          }
         />
         {program && 'deadline' in program && program.deadline ? (
           <div className="-mx-5 mb-10 mt-8 flex items-center justify-center gap-2 bg-primary-10 px-2.5 py-5 text-xsmall14 lg:mx-0 lg:rounded-sm">
