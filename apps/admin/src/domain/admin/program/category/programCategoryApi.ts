@@ -82,6 +82,14 @@ const placementSchema = z.object({
   slug: z.string().nullish(),
   mergeChallenges: z.boolean().nullish(),
   matchMode: z.enum(['ANY', 'ALL', 'GROUP']).nullish(),
+  // 랜딩에만 있다. GNB 메뉴와 랜딩 상단 문구 (서버 LC-3626 부터)
+  menuGroup: z.string().nullish(),
+  /** 저장값이 없으면 서버가 노출 목록 이름을 준다 */
+  menuLabel: z.string().nullish(),
+  menuOrder: z.number().nullish(),
+  showInMenu: z.boolean().nullish(),
+  heroTitle: z.string().nullish(),
+  heroDescription: z.string().nullish(),
 });
 export type ProgramCategoryPlacement = z.infer<typeof placementSchema>;
 
@@ -152,6 +160,12 @@ export const useUpdateProgramCategoryPlacements = () =>
         slug?: string;
         mergeChallenges: boolean;
         matchMode?: ProgramCategoryMatchMode;
+        menuGroup?: string;
+        menuLabel?: string;
+        menuOrder?: number;
+        showInMenu?: boolean;
+        heroTitle?: string;
+        heroDescription?: string;
       }[];
     }) =>
       axios.put(`/admin/program-category/group/${id}/placements`, {

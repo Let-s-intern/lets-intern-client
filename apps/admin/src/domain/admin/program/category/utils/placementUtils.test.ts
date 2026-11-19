@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type {
   ProgramCategory,
   ProgramCategoryGroup,
+  ProgramCategoryPlacement,
 } from '../programCategoryApi';
 import {
   draftsAppended,
@@ -10,6 +11,7 @@ import {
   filterRowsOf,
   findCreatedGroup,
   isDraftInvalid,
+  siteMenuOf,
   landingPagesOf,
   menuDestinationOf,
   menuEntriesTo,
@@ -88,6 +90,12 @@ describe('노출 위치 저장 요청', () => {
         slug: 'cv',
         mergeChallenges: true,
         matchMode: undefined,
+        showInMenu: false,
+        menuGroup: '',
+        menuLabel: '',
+        menuOrder: undefined,
+        heroTitle: '',
+        heroDescription: '',
       },
       {
         placementType: 'PROGRAM_FILTER',
@@ -239,5 +247,106 @@ describe('findCreatedGroup', () => {
   });
   it('못 찾으면 undefined', () => {
     expect(findCreatedGroup([g(1, 'a')], [g(1, 'a')], 'a')).toBeUndefined();
+  });
+});
+
+describe('메뉴·상단 문구', () => {
+  const landing = (
+    id: number,
+    title: string,
+    slug: string,
+    menu: Partial<ProgramCategoryPlacement> = {},
+    isVisible = true,
+  ): ProgramCategoryGroup => ({
+    id,
+    title,
+    sortOrder: 0,
+    isVisible,
+    categoryList: [],
+    placements: [{ placementType: 'LANDING', slug, ...menu }],
+  });
+
+  it('다른 위치를 고쳐도 랜딩의 메뉴 값은 그대로 다시 보낸다', () => {
+    const g: ProgramCategoryGroup = {
+      ...landing(1, '이력서', 'resume', {
+        showInMenu: true,
+        menuGroup: '서류 작성',
+        menuLabel: '이력서 쓰기',
+        menuOrder: 2,
+        heroTitle: '제목',
+        heroDescription: '설명',
+      }),
+    };
+    g.placements = [
+      ...(g.placements ?? []),
+      { placementType: 'PROGRAM_FILTER', matchMode: 'ANY' },
+    ];
+    const [sent] = draftsWith(g, 1, { matchMode: 'ALL' }).map(toPlacementInput);
+    expect(sent).toMatchObject({
+      showInMenu: true,
+      menuGroup: '서류 작성',
+      menuLabel: '이력서 쓰기',
+      menuOrder: 2,
+      heroTitle: '제목',
+      heroDescription: '설명',
+    });
+  });
+
+  it('서버가 채워 준 목록 이름은 메뉴 이름으로 다시 저장하지 않는다', () => {
+    const g = landing(1, '이력서', 'resume', { menuLabel: '이력서' });
+    expect(draftsWith(g, -1, {})[0].menuLabel).toBe('');
+  });
+
+  it('메뉴는 보이는 목록의 메뉴에 보이기만, 묶음별로 순서대로', () => {
+    const menu = siteMenuOf([
+      landing(1, '이력서', 'resume', {
+        showInMenu: true,
+        menuGroup: '서류 작성',
+        menuOrder: 2,
+      }),
+      landing(2, '경험', 'experience', {
+        showInMenu: true,
+        menuGroup: '경험정리',
+        menuLabel: '경험정리',
+        menuOrder: 1,
+      }),
+      landing(3, '자소서', 'personal-statement', {
+        showInMenu: true,
+        menuGroup: '서류 작성',
+        menuOrder: 3,
+      }),
+      landing(4, '숨김', 'secret', {
+        showInMenu: false,
+        menuGroup: '서류 작성',
+        menuOrder: 0,
+      }),
+      landing(
+        5,
+        '숨긴 목록',
+        'gone',
+        { showInMenu: true, menuGroup: '면접', menuOrder: 0 },
+        false,
+      ),
+    ]);
+    expect(menu.source).toBe('admin');
+    expect(menu.groups).toEqual([
+      { label: '경험정리', items: [{ slug: 'experience', label: '경험정리' }] },
+      {
+        label: '서류 작성',
+        items: [
+          { slug: 'resume', label: '이력서' },
+          { slug: 'personal-statement', label: '자소서' },
+        ],
+      },
+    ]);
+  });
+
+  it('메뉴에 올린 랜딩이 없으면 웹 고정 메뉴', () => {
+    const menu = siteMenuOf([landing(1, '이력서', 'resume')]);
+    expect(menu.source).toBe('fallback');
+    expect(menu.groups[1].items[0]).toEqual({
+      slug: 'resume',
+      label: '이력서',
+    });
   });
 });

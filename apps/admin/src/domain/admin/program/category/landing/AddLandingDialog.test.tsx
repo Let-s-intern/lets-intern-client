@@ -106,6 +106,12 @@ describe('AddLandingDialog', () => {
         slug: 'interview',
         mergeChallenges: true,
         matchMode: 'ANY',
+        showInMenu: false,
+        menuGroup: '',
+        menuLabel: '',
+        menuOrder: null,
+        heroTitle: '',
+        heroDescription: '',
       },
     ]);
     expect(onClose).toHaveBeenCalled();

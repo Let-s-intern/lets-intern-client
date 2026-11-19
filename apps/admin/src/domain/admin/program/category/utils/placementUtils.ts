@@ -16,33 +16,92 @@ export const slugError = (slug: string) =>
     : undefined;
 
 /** 화면에서 고치는 노출 위치 한 개. 저장할 때 toPlacementInput 으로 요청 모양이 된다 */
-export interface PlacementDraft {
+/** 랜딩 위치의 GNB 메뉴·상단 문구. 빈 문자열은 서버에서 비운다 */
+export interface LandingMenuDraft {
+  showInMenu: boolean;
+  menuGroup: string;
+  /** 비우면 노출 목록 이름 */
+  menuLabel: string;
+  menuOrder: number | null;
+  heroTitle: string;
+  heroDescription: string;
+}
+
+export const EMPTY_LANDING_MENU: LandingMenuDraft = {
+  showInMenu: false,
+  menuGroup: '',
+  menuLabel: '',
+  menuOrder: null,
+  heroTitle: '',
+  heroDescription: '',
+};
+
+/** 초안에서 메뉴·상단 문구만 꺼낸다. 없으면 빈 값 */
+export const landingMenuOf = (
+  d?: Partial<LandingMenuDraft>,
+): LandingMenuDraft => ({
+  showInMenu: d?.showInMenu ?? EMPTY_LANDING_MENU.showInMenu,
+  menuGroup: d?.menuGroup ?? EMPTY_LANDING_MENU.menuGroup,
+  menuLabel: d?.menuLabel ?? EMPTY_LANDING_MENU.menuLabel,
+  menuOrder: d?.menuOrder ?? EMPTY_LANDING_MENU.menuOrder,
+  heroTitle: d?.heroTitle ?? EMPTY_LANDING_MENU.heroTitle,
+  heroDescription: d?.heroDescription ?? EMPTY_LANDING_MENU.heroDescription,
+});
+
+export interface PlacementDraft extends Partial<LandingMenuDraft> {
   placementType: ProgramCategoryPlacementType;
   slug: string;
   mergeChallenges: boolean;
   matchMode: ProgramCategoryMatchMode;
 }
 
-export const toDraft = (p: ProgramCategoryPlacement): PlacementDraft => ({
+/**
+ * 받은 노출 위치를 고칠 수 있는 모양으로. 서버는 메뉴 이름이 비면 목록 이름을 채워 주므로,
+ * 목록 이름과 같으면 비운 것으로 둔다 (그대로 다시 보내 목록 이름이 저장되지 않게)
+ */
+export const toDraft = (
+  p: ProgramCategoryPlacement,
+  groupTitle?: string,
+): PlacementDraft => ({
   placementType: p.placementType,
   slug: p.slug ?? '',
   mergeChallenges: p.mergeChallenges ?? true,
   matchMode: p.matchMode === 'ALL' ? 'ALL' : 'ANY',
+  showInMenu: p.showInMenu ?? false,
+  menuGroup: p.menuGroup ?? '',
+  menuLabel: p.menuLabel && p.menuLabel !== groupTitle ? p.menuLabel : '',
+  menuOrder: p.menuOrder ?? null,
+  heroTitle: p.heroTitle ?? '',
+  heroDescription: p.heroDescription ?? '',
 });
 
-export const toPlacementInput = (d: PlacementDraft) => ({
-  placementType: d.placementType,
-  slug: d.placementType === 'LANDING' ? d.slug : undefined,
-  mergeChallenges: d.mergeChallenges,
-  matchMode: d.placementType === 'PROGRAM_FILTER' ? d.matchMode : undefined,
-});
+/** 요청 모양. 메뉴·상단 문구는 랜딩에만 싣는다. 저장은 통째 교체라 안 바꾼 값도 그대로 다시 보낸다 */
+export const toPlacementInput = (d: PlacementDraft) => {
+  const landing = d.placementType === 'LANDING';
+  return {
+    placementType: d.placementType,
+    slug: landing ? d.slug : undefined,
+    mergeChallenges: d.mergeChallenges,
+    matchMode: d.placementType === 'PROGRAM_FILTER' ? d.matchMode : undefined,
+    ...(landing
+      ? {
+          showInMenu: d.showInMenu ?? false,
+          menuGroup: d.menuGroup ?? '',
+          menuLabel: d.menuLabel ?? '',
+          menuOrder: d.menuOrder ?? undefined,
+          heroTitle: d.heroTitle ?? '',
+          heroDescription: d.heroDescription ?? '',
+        }
+      : {}),
+  };
+};
 
 export const isDraftInvalid = (d: PlacementDraft) =>
   d.placementType === 'LANDING' &&
   (d.slug === '' || Boolean(slugError(d.slug)));
 
 export const draftsOf = (group: ProgramCategoryGroup) =>
-  (group.placements ?? []).map(toDraft);
+  (group.placements ?? []).map((p) => toDraft(p, group.title));
 
 /** 노출 위치 저장은 통째로 교체다. 하나만 고칠 때도 나머지를 그대로 다시 보낸다 */
 export const draftsWith = (
@@ -181,17 +240,65 @@ export const menuDestinationOf = (
   return { kind: hasLanding ? 'landing' : 'missing', slug };
 };
 
+export interface SiteMenuGroup {
+  /** 묶음 이름. 비워 두면 null */
+  label: string | null;
+  items: { slug: string; label: string }[];
+}
+
+export interface SiteMenu {
+  /** admin = 어드민에서 정한 메뉴, fallback = 아직 아무 랜딩도 메뉴에 안 올려 웹 고정 메뉴가 보인다 */
+  source: 'admin' | 'fallback';
+  groups: SiteMenuGroup[];
+}
+
+/**
+ * 사이트 GNB "프로그램 카테고리" 메뉴. 웹과 같은 규칙으로 만든다.
+ * 보이는 목록의 랜딩 중 메뉴에 보이기만, 묶음 이름으로 묶고 순서대로. 묶음 자리는 그 안의 가장 작은 순서.
+ * 하나도 없으면 웹은 고정 메뉴(journeyNav)를 쓴다
+ */
+export const siteMenuOf = (groups: ProgramCategoryGroup[]): SiteMenu => {
+  const items = groups
+    .filter((g) => g.isVisible)
+    .flatMap((g) =>
+      (g.placements ?? [])
+        .filter((p) => p.placementType === 'LANDING' && p.slug && p.showInMenu)
+        .map((p) => ({
+          slug: p.slug as string,
+          label: p.menuLabel || g.title,
+          group: p.menuGroup?.trim() || null,
+          order: p.menuOrder ?? Number.MAX_SAFE_INTEGER,
+        })),
+    )
+    .sort((a, b) => a.order - b.order);
+  if (items.length === 0)
+    return {
+      source: 'fallback',
+      groups: WEB_MENU.map((m) => ({ label: m.group, items: m.items })),
+    };
+  const byLabel = new Map<string | null, SiteMenuGroup>();
+  items.forEach(({ slug, label, group }) => {
+    const entry = byLabel.get(group) ?? { label: group, items: [] };
+    entry.items.push({ slug, label });
+    byLabel.set(group, entry);
+  });
+  return { source: 'admin', groups: [...byLabel.values()] };
+};
+
 /** 이 주소의 랜딩으로 들어오는 GNB·홈 항목. 예: "서류 작성 › 이력서" */
-export const menuEntriesTo = (groups: ProgramCategoryGroup[], slug: string) =>
-  WEB_MENU.flatMap((menu) =>
-    menu.items
+export const menuEntriesTo = (groups: ProgramCategoryGroup[], slug: string) => {
+  const menu = siteMenuOf(groups);
+  return menu.groups.flatMap((g) =>
+    g.items
       .filter(
         (item) =>
           item.slug === slug &&
-          menuDestinationOf(groups, item.slug).kind === 'landing',
+          (menu.source === 'admin' ||
+            menuDestinationOf(groups, item.slug).kind === 'landing'),
       )
-      .map((item) => `${menu.group} › ${item.label}`),
+      .map((item) => (g.label ? `${g.label} › ${item.label}` : item.label)),
   );
+};
 
 /** 랜딩에 실제로 보이는 섹션. 숨긴 카테고리는 빠진다 */
 export const visibleSections = (group: ProgramCategoryGroup) =>

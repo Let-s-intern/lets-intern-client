@@ -24,10 +24,13 @@ import {
 import PageAddressField from '../ui/PageAddressField';
 import {
   draftsAppended,
+  EMPTY_LANDING_MENU,
   findCreatedGroup,
   isDraftInvalid,
   landingPagesOf,
+  type LandingMenuDraft,
 } from '../utils/placementUtils';
+import LandingMenuFields from './LandingMenuFields';
 
 type Source = 'new' | 'existing';
 
@@ -50,6 +53,7 @@ const AddLandingDialog = ({
   const [title, setTitle] = useState('');
   const [groupId, setGroupId] = useState<number | ''>('');
   const [slug, setSlug] = useState('');
+  const [menu, setMenu] = useState<LandingMenuDraft>(EMPTY_LANDING_MENU);
   // 오류는 추가를 누른 뒤에 보인다
   const [submitted, setSubmitted] = useState(false);
   const group = groups.find((g) => g.id === groupId);
@@ -58,6 +62,7 @@ const AddLandingDialog = ({
     slug,
     mergeChallenges: true,
     matchMode: 'ANY' as const,
+    ...menu,
   };
   // 이미 쓰는 주소면 목록을 만들기 전에 막는다. 빈 목록만 남는 것을 피한다
   const slugTaken = landingPagesOf(groups).some((p) => p.slug === slug);
@@ -98,7 +103,7 @@ const AddLandingDialog = ({
   };
 
   return (
-    <Dialog open onClose={onClose} maxWidth="xs" fullWidth>
+    <Dialog open onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>랜딩 페이지 추가</DialogTitle>
       <DialogContent className="flex flex-col gap-3 !pt-1">
         <RadioGroup
@@ -162,6 +167,16 @@ const AddLandingDialog = ({
           showErrors={submitted}
           externalError={slugTaken ? '이미 쓰고 있는 주소예요' : undefined}
         />
+        <div className="border-t border-neutral-90 pt-3">
+          <LandingMenuFields
+            value={menu}
+            onChange={setMenu}
+            groups={groups}
+            defaultLabel={
+              source === 'new' ? trimmedTitle : (group?.title ?? '')
+            }
+          />
+        </div>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>취소</Button>

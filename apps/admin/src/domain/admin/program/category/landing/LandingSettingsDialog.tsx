@@ -13,22 +13,33 @@ import {
   MERGE_CHALLENGES_LABEL,
 } from '../constants/wording';
 import { useSavePlacements } from '../hooks/useSavePlacements';
+import type { ProgramCategoryGroup } from '../programCategoryApi';
 import PageAddressField from '../ui/PageAddressField';
+import LandingMenuFields from './LandingMenuFields';
 import {
+  draftsOf,
   draftsWith,
+  landingMenuOf,
   draftsWithout,
   isDraftInvalid,
+  type LandingMenuDraft,
   type LandingPage,
 } from '../utils/placementUtils';
 
-/** 랜딩 페이지 주소·챌린지 묶기·내리기. 노출 위치 저장 API 로 이 자리만 바꿔 보낸다 */
+/** 랜딩 페이지 주소·챌린지 묶기·메뉴·상단 문구·내리기. 노출 위치 저장 API 로 이 자리만 바꿔 보낸다 */
 const LandingSettingsDialog = ({
   page,
+  groups,
   onClose,
 }: {
   page: LandingPage;
+  groups: ProgramCategoryGroup[];
   onClose: () => void;
 }) => {
+  const initial = draftsOf(page.group)[page.placementIndex];
+  const [menu, setMenu] = useState<LandingMenuDraft>(() =>
+    landingMenuOf(initial),
+  );
   const { save, isPending } = useSavePlacements();
   const [slug, setSlug] = useState(page.slug);
   const [mergeChallenges, setMergeChallenges] = useState(page.mergeChallenges);
@@ -46,7 +57,11 @@ const LandingSettingsDialog = ({
     if (invalid) return;
     const ok = await save(
       page.group.id,
-      draftsWith(page.group, page.placementIndex, { slug, mergeChallenges }),
+      draftsWith(page.group, page.placementIndex, {
+        slug,
+        mergeChallenges,
+        ...menu,
+      }),
     );
     if (ok) onClose();
   };
@@ -91,6 +106,17 @@ const LandingSettingsDialog = ({
           <p className="ml-8 text-xxsmall12 text-neutral-40">
             {MERGE_CHALLENGES_HELP}
           </p>
+        </div>
+        <div className="flex flex-col gap-2 border-t border-neutral-90 pt-3">
+          <span className="text-xsmall14 font-semibold text-neutral-10">
+            메뉴·상단 문구
+          </span>
+          <LandingMenuFields
+            value={menu}
+            onChange={setMenu}
+            groups={groups}
+            defaultLabel={page.group.title}
+          />
         </div>
         <div className="flex flex-col gap-2 border-t border-neutral-90 pt-3">
           <p className="text-xxsmall12 text-neutral-40">

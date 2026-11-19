@@ -86,6 +86,7 @@ const LandingPageEditor = ({
       {settingsOpen && (
         <LandingSettingsDialog
           page={page}
+          groups={groups}
           onClose={() => setSettingsOpen(false)}
         />
       )}
@@ -129,6 +130,7 @@ const LandingPageEditor = ({
       ) : (
         <LandingPreview
           group={page.group}
+          groups={groups}
           slug={page.slug}
           mergeChallenges={page.mergeChallenges}
         />
