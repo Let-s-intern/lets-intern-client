@@ -154,8 +154,13 @@ const PaymentInputContent = () => {
   const isLetsconOfflineLive =
     programApplicationData.programType === 'live' &&
     programApplicationData.programId === LETSCON_OFFLINE_LIVE_ID;
+  // 패스 혜택 할인을 받으면 쿠폰은 쓸 수 없다. 서버는 패스 권한이 있으면 쿠폰을 빼고 금액을 계산해,
+  // 화면에서 쿠폰까지 빼면 결제 금액이 어긋나 INVALID_PRICE 로 거절된다
+  const hasPassDiscount = (programApplicationData.membershipDiscount ?? 0) > 0;
   const showCouponSection =
-    (!isCouponDisabledType || hasB2BParam) && !isLetsconOfflineLive;
+    (!isCouponDisabledType || hasB2BParam) &&
+    !isLetsconOfflineLive &&
+    !hasPassDiscount;
   // 협찬 전용 코드(YAIREWARD 등)는 묶인 챌린지 타입 결제에서만 보인다 (LC-3611).
   // 챌린지가 아니면 challengeType 이 '' 라 묶인 코드가 전부 빠진다
   const blockedCouponCodes = getBlockedCouponCodes(challengeType);
