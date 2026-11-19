@@ -16,6 +16,11 @@ import {
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import { getProgramPathname } from '@/utils/url';
 import Image from 'next/image';
+import ChallengeThumbnail from './thumbnail/ChallengeThumbnail';
+import {
+  getChallengeDisplayTitle,
+  resolveChallengeThumbnail,
+} from './thumbnail/resolveThumbnail';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 import { useChallengePlanPrice } from '../hooks/useChallengePlanPrice';
@@ -164,6 +169,12 @@ const ChallengeBasicInfo = ({
   const livePrice = useChallengePlanPrice(challenge.priceInfo, cheapestPlan);
 
   const { guidebook } = useTemplateGuidebook(challenge.challengeType);
+  const defaultThumbnail = resolveChallengeThumbnail(
+    challenge.title ?? '',
+    getChallengeDisplayTitle(challenge.title ?? ''),
+    challenge.challengeType,
+  );
+
   const isTemplateMode = useChallengeApplySheetStore(
     (state) => state.isTemplateMode,
   );
@@ -326,17 +337,27 @@ const ChallengeBasicInfo = ({
             className="relative aspect-[4/3] w-full overflow-hidden rounded-xs"
             style={styles.thumbnailStyle}
           >
-            {(challenge.thumbnail || challenge.desktopThumbnail) && (
-              <Image
-                className="object-contain"
-                src={
-                  (challenge.thumbnail || challenge.desktopThumbnail) as string
-                }
-                alt={`${challenge.title} 썸네일`}
-                fill={true}
-                sizes="(min-width: 1024px) 550px, 100vw"
-                priority
+            {/* 기수·버전이 박힌 등록 썸네일 대신 유형별 기본 썸네일. 기본 이미지가 없는 유형만 등록 썸네일 */}
+            {defaultThumbnail ? (
+              <ChallengeThumbnail
+                challengeType={challenge.challengeType}
+                title={challenge.title ?? ''}
+                displayTitle={getChallengeDisplayTitle(challenge.title ?? '')}
               />
+            ) : (
+              (challenge.thumbnail || challenge.desktopThumbnail) && (
+                <Image
+                  className="object-contain"
+                  src={
+                    (challenge.thumbnail ||
+                      challenge.desktopThumbnail) as string
+                  }
+                  alt={`${challenge.title} 썸네일`}
+                  fill={true}
+                  sizes="(min-width: 1024px) 550px, 100vw"
+                  priority
+                />
+              )
             )}
           </div>
 
