@@ -59,12 +59,11 @@ export type SectionKind = 'challenge' | 'mentoring' | 'blog' | 'program';
 
 const KIND_OF_DISPLAY: Partial<Record<SectionDisplayType, SectionKind>> = {
   FEATURED: 'challenge',
-  CARDS: 'program',
   MENTOR: 'mentoring',
   BLOG: 'blog',
 };
 
-/** 어드민에서 표시 방식을 정했으면 그대로, 자동이면 상품 유형으로 */
+/** 어드민에서 표시 방식을 정했으면 그대로, 자동·카드 목록이면 상품 유형으로 (카드 목록은 대표 카드 제외) */
 export const getSectionKind = (
   targets: ProgramCategoryTarget[],
   displayType?: SectionDisplayType | null,
@@ -73,7 +72,8 @@ export const getSectionKind = (
   if (fixed) return fixed;
   const types = new Set(targets.map((t) => t.targetType));
   if (types.size === 1) {
-    if (types.has('CHALLENGE')) return 'challenge';
+    // 카드 목록은 대표 카드로 바꾸지 않는다. 멘토링·블로그만 있으면 전용 카드는 쓴다
+    if (types.has('CHALLENGE') && displayType !== 'CARDS') return 'challenge';
     if (types.has('LIVE_MENTORING')) return 'mentoring';
     if (types.has('BLOG')) return 'blog';
   }
