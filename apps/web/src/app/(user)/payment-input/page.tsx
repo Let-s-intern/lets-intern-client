@@ -386,6 +386,11 @@ const PaymentInputContent = () => {
               ? program.accessMethod
               : undefined
           }
+          challengeType={
+            programApplicationData.programType === 'challenge'
+              ? challengeType || null
+              : undefined
+          }
         />
         {program && 'deadline' in program && program.deadline ? (
           <div className="-mx-5 mb-10 mt-8 flex items-center justify-center gap-2 bg-primary-10 px-2.5 py-5 text-xsmall14 lg:mx-0 lg:rounded-sm">
@@ -399,15 +404,6 @@ const PaymentInputContent = () => {
         ) : (
           <div className="mt-10"></div>
         )}
-        {programApplicationData.programType === 'challenge' &&
-          !programApplicationData.isFree &&
-          !isMembership &&
-          !programApplicationData.membershipDiscount && (
-            <PassUpgradeSection
-              challengeId={programApplicationData.programId ?? 0}
-              paymentAmount={totalPrice}
-            />
-          )}
         <p className="my-3 text-xsmall16 font-semibold text-neutral-0">
           신청 폼을 모두 입력해주세요.
         </p>
@@ -491,6 +487,14 @@ const PaymentInputContent = () => {
               <span>{totalPrice.toLocaleString()}원</span>
             </div>
           </div>
+          {programApplicationData.programType === 'challenge' &&
+            !isMembership &&
+            !programApplicationData.membershipDiscount && (
+              <PassUpgradeSection
+                challengeId={programApplicationData.programId ?? 0}
+                paymentAmount={totalPrice}
+              />
+            )}
           {/* [TODO] 제목 포함 조건 지워야 함 */}
           {!isLoading &&
             programApplicationData.programType === 'challenge' &&
