@@ -58,8 +58,8 @@ interface CatalogFilterProps {
 }
 
 /**
- * 노출 목록마다 한 줄(어드민 노출 분류의 필터용 목록), 마지막 줄은 상품 유형.
- * 같은 줄 안은 하나라도, 줄끼리는 전부 맞아야 한다 (match=GROUP)
+ * 분류 태그 한 줄, 그 아래 프로그램 유형 한 줄.
+ * 태그는 여러 개 고르면 하나라도 맞는 상품을 보인다 (match=ANY)
  */
 const CatalogFilter = ({ groups, query, onChange }: CatalogFilterProps) => {
   const toggleCategory = (id: number) =>
@@ -73,25 +73,23 @@ const CatalogFilter = ({ groups, query, onChange }: CatalogFilterProps) => {
     onChange({ ...query, type });
   const hasFilter =
     query.categoryIds.length > 0 || query.type !== DEFAULT_CATALOG_TYPE;
-  const rows = groups
-    .filter((group) => group.categoryList.length > 0)
-    .map((group) => (
-      <Row key={group.id} label={group.title}>
-        {group.categoryList.map((category) => (
-          <Chip
-            key={category.id}
-            label={category.title}
-            selected={query.categoryIds.includes(category.id)}
-            onClick={() => toggleCategory(category.id)}
-          />
-        ))}
-      </Row>
-    ));
+  // 분류 줄은 나누지 않고 태그만 한 줄로. 줄 순서·줄 안 순서는 어드민을 따른다
+  const tags = groups.flatMap((group) => group.categoryList);
 
   return (
     <div className="flex flex-col gap-4 rounded-md border border-neutral-85 px-5 py-5 md:px-6">
-      {/* 순서: 첫 노출 목록(서류) → 프로그램 유형 → 나머지(관심 직무). 노출 목록 순서는 어드민을 따른다 */}
-      {rows.slice(0, 1)}
+      {tags.length > 0 && (
+        <Row label="분류">
+          {tags.map((category) => (
+            <Chip
+              key={category.id}
+              label={category.title}
+              selected={query.categoryIds.includes(category.id)}
+              onClick={() => toggleCategory(category.id)}
+            />
+          ))}
+        </Row>
+      )}
       <Row label="프로그램 유형">
         {CATALOG_TYPES.map((type) => (
           <Chip
@@ -102,7 +100,6 @@ const CatalogFilter = ({ groups, query, onChange }: CatalogFilterProps) => {
           />
         ))}
       </Row>
-      {rows.slice(1)}
       {hasFilter && (
         <button
           type="button"
