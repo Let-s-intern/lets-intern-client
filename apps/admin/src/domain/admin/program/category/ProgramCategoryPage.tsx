@@ -1,28 +1,24 @@
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { useState } from 'react';
-import AdvancedGroupsTab from './advanced/AdvancedGroupsTab';
-import ProgramFilterTab from './filter/ProgramFilterTab';
+import CheckTab from './check/CheckTab';
 import { useCategoryActions } from './hooks/useCategoryActions';
-import LandingPagesTab from './landing/LandingPagesTab';
-import CheckTab from './overview/CheckTab';
 import { useAdminProgramCategoryGroupsQuery } from './programCategoryApi';
 import ProgramCategoryApiGuideDialog from './ProgramCategoryApiGuideDialog';
+import TagTab from './tag/TagTab';
 import GuideDialog from './ui/GuideDialog';
 import { hasSeenGuide, markGuideSeen } from './utils/guideSeen';
 
 const PAGE_TABS = [
-  { key: 'landing', label: '카테고리 랜딩 페이지' },
-  { key: 'filter', label: '전체 프로그램 필터' },
+  { key: 'tags', label: '프로그램 분류' },
   { key: 'check', label: '점검' },
-  { key: 'advanced', label: '고급 설정' },
 ] as const;
 
 type PageTab = (typeof PAGE_TABS)[number]['key'];
 
 /**
- * 노출 분류. 쓰임새별로 탭을 나눈다. 랜딩 페이지와 전체 프로그램 필터는 각자 탭에서 고치고,
- * 노출 목록 전체와 노출 위치 여러 개 붙이기는 고급 설정에 둔다
+ * 프로그램 분류. 분류 하나 = 사이트 페이지 하나(/category/주소).
+ * 분류 탭에서 페이지 섹션을 조건으로 꾸미고, 점검 탭에서 손볼 곳을 사이트 모습으로 확인한다
  */
 const ProgramCategoryPage = () => {
   const [apiGuideOpen, setApiGuideOpen] = useState(false);
@@ -32,14 +28,14 @@ const ProgramCategoryPage = () => {
     markGuideSeen();
     setGuideOpen(false);
   };
-  const [tab, setTab] = useState<PageTab>('landing');
+  const [tab, setTab] = useState<PageTab>('tags');
   const { data: groups = [], isLoading } = useAdminProgramCategoryGroupsQuery();
   const actions = useCategoryActions();
 
   return (
     <div className="mx-3 mb-40 mt-3">
       <Header>
-        <Heading>노출 분류</Heading>
+        <Heading>프로그램 분류</Heading>
       </Header>
       <nav className="mt-3 flex flex-wrap items-end gap-4 border-b border-neutral-80">
         {PAGE_TABS.map((t) => (
@@ -74,7 +70,7 @@ const ProgramCategoryPage = () => {
           >
             i
           </span>
-          프론트에서 노출 분류를 불러오는 API
+          프론트에서 불러오는 API
         </button>
       </nav>
       {guideOpen && <GuideDialog onClose={closeGuide} />}
@@ -85,19 +81,10 @@ const ProgramCategoryPage = () => {
       />
       {isLoading ? (
         <p className="mt-4">loading...</p>
+      ) : tab === 'tags' ? (
+        <TagTab groups={groups} actions={actions} />
       ) : (
-        <>
-          {tab === 'landing' && (
-            <LandingPagesTab groups={groups} actions={actions} />
-          )}
-          {tab === 'filter' && (
-            <ProgramFilterTab groups={groups} actions={actions} />
-          )}
-          {tab === 'check' && <CheckTab groups={groups} />}
-          {tab === 'advanced' && (
-            <AdvancedGroupsTab groups={groups} actions={actions} />
-          )}
-        </>
+        <CheckTab groups={groups} />
       )}
     </div>
   );

@@ -1,6 +1,5 @@
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import {
-  useCreateProgramCategory,
   useCreateProgramCategoryGroup,
   useDeleteProgramCategory,
   useDeleteProgramCategoryGroup,
@@ -11,7 +10,7 @@ import {
   type ProgramCategory,
   type ProgramCategoryGroup,
 } from '../programCategoryApi';
-import { moveAmong, moveId } from '../utils/placementUtils';
+import { moveAmong, moveId } from '../utils/tagUtils';
 
 /** 노출 목록·카테고리 줄의 이름 변경·숨김·순서·삭제·추가. 어느 탭에서 하든 같은 요청을 보낸다 */
 export const useCategoryActions = () => {
@@ -20,7 +19,6 @@ export const useCategoryActions = () => {
   const updateGroup = useUpdateProgramCategoryGroup();
   const reorderGroups = useReorderProgramCategoryGroups();
   const deleteGroup = useDeleteProgramCategoryGroup();
-  const createCategory = useCreateProgramCategory();
   const updateCategory = useUpdateProgramCategory();
   const reorderCategories = useReorderProgramCategories();
   const deleteCategory = useDeleteProgramCategory();
@@ -39,9 +37,6 @@ export const useCategoryActions = () => {
       run(updateGroup.mutateAsync({ id, title })),
     toggleGroup: (id: number, isVisible: boolean) =>
       run(updateGroup.mutateAsync({ id, isVisible })),
-    moveGroup: (groupIds: number[], index: number, direction: -1 | 1) =>
-      run(reorderGroups.mutateAsync(moveId(groupIds, index, direction))),
-    /** 보이는 목록(visibleIds) 안에서만 위·아래로 움직인다 */
     moveGroupAmong: (
       groupIds: number[],
       visibleIds: number[],
@@ -53,23 +48,17 @@ export const useCategoryActions = () => {
           moveAmong(groupIds, visibleIds, id, direction),
         ),
       ),
-    // 안에 카테고리가 있을 때만 한 번 더 묻는다
+    // 필터 줄 안에 분류가 있으면 서버가 막는다(분류·상품 연결 보호). 먼저 알려 준다
     deleteGroup: (group: ProgramCategoryGroup) => {
-      const linked = group.categoryList.reduce(
-        (sum, c) => sum + c.programCount,
-        0,
-      );
-      if (
-        group.categoryList.length > 0 &&
-        !window.confirm(
-          `"${group.title}" 노출 목록을 지우면 안의 카테고리 ${group.categoryList.length}개와 프로그램 연결 ${linked}건도 함께 지워집니다. 삭제할까요?`,
-        )
-      )
+      if (group.categoryList.length > 0) {
+        snackbar(
+          `"${group.title}" 줄에 분류가 ${group.categoryList.length}개 있어요. 다른 줄로 옮긴 뒤 지우세요.`,
+        );
         return;
+      }
+      if (!window.confirm(`"${group.title}" 줄을 지울까요?`)) return;
       run(deleteGroup.mutateAsync(group.id));
     },
-    createCategory: (programCategoryGroupId: number, title: string) =>
-      run(createCategory.mutateAsync({ programCategoryGroupId, title })),
     renameCategory: (id: number, title: string) =>
       run(updateCategory.mutateAsync({ id, title })),
     toggleCategory: (id: number, isVisible: boolean) =>
@@ -89,12 +78,11 @@ export const useCategoryActions = () => {
           ),
         }),
       ),
-    // 연결된 프로그램이 있을 때만 한 번 더 묻는다
+    // 분류를 지우면 상품 연결과 그 페이지 섹션도 지워진다. 늘 한 번 더 묻는다
     deleteCategory: (category: ProgramCategory) => {
       if (
-        category.programCount > 0 &&
         !window.confirm(
-          `"${category.title}" 카테고리는 프로그램 ${category.programCount}개에 연결돼 있습니다. 연결도 함께 지워집니다. 삭제할까요?`,
+          `"${category.title}" 분류를 지우면 상품 연결 ${category.programCount}건과 이 분류 페이지의 섹션도 함께 지워집니다. 삭제할까요?`,
         )
       )
         return;

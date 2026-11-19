@@ -6,25 +6,33 @@ import {
 } from '@mui/material';
 import { WEB_MENU } from '../constants/webMenu';
 import type { ProgramCategoryGroup } from '../programCategoryApi';
-import type { LandingMenuDraft } from '../utils/placementUtils';
+import { tagsOf } from '../utils/tagUtils';
+
+/** 분류 랜딩의 메뉴·상단 문구 입력값 */
+export interface LandingMenuDraft {
+  showInMenu: boolean;
+  menuGroup: string;
+  /** 비우면 분류 이름 */
+  menuLabel: string;
+  menuOrder: number | null;
+  heroTitle: string;
+  heroDescription: string;
+}
 
 /** 메뉴 묶음 고르기 후보. 이미 쓰는 묶음 이름과 지금 웹 메뉴의 묶음 이름 */
 export const menuGroupOptions = (groups: ProgramCategoryGroup[]) => [
   ...new Set([
-    ...groups.flatMap((g) =>
-      (g.placements ?? [])
-        .map((p) => p.menuGroup?.trim())
-        .filter((v): v is string => Boolean(v)),
-    ),
+    ...tagsOf(groups)
+      .map(({ tag }) => tag.menuGroup?.trim())
+      .filter((v): v is string => Boolean(v)),
     ...WEB_MENU.map((m) => m.group),
   ]),
 ];
 
 /**
- * 랜딩 페이지의 GNB 메뉴와 상단 문구. 페이지 설정과 랜딩 추가 창에서 같이 쓴다.
- * 메뉴 이름을 비우면 노출 목록 이름, 상단 문구를 비우면 사이트 기본 문구가 보인다
+ * 분류 랜딩의 GNB 메뉴와 상단 문구. 메뉴 이름을 비우면 분류 이름, 상단 문구를 비우면 사이트 기본 문구가 보인다
  */
-const LandingMenuFields = ({
+const PageMenuFields = ({
   value,
   onChange,
   groups,
@@ -33,7 +41,7 @@ const LandingMenuFields = ({
   value: LandingMenuDraft;
   onChange: (next: LandingMenuDraft) => void;
   groups: ProgramCategoryGroup[];
-  /** 메뉴 이름을 비웠을 때 보일 이름 (노출 목록 이름) */
+  /** 메뉴 이름을 비웠을 때 보일 이름 (분류 이름) */
   defaultLabel: string;
 }) => {
   const set = (patch: Partial<LandingMenuDraft>) =>
@@ -70,7 +78,7 @@ const LandingMenuFields = ({
             <TextField
               size="small"
               label="메뉴 이름"
-              placeholder={defaultLabel || '노출 목록 이름'}
+              placeholder={defaultLabel || '분류 이름'}
               value={value.menuLabel}
               inputProps={{ maxLength: 30 }}
               onChange={(e) => set({ menuLabel: e.target.value })}
@@ -88,7 +96,7 @@ const LandingMenuFields = ({
         )}
         <p className="text-xxsmall12 text-neutral-40">
           {value.showInMenu
-            ? '사이트 GNB "프로그램 카테고리"에 그룹별로, 순서가 작은 것부터 보여요. 메뉴 이름을 비우면 노출 목록 이름이 보여요.'
+            ? '사이트 GNB "프로그램 카테고리"에 그룹별로, 순서가 작은 것부터 보여요. 메뉴 이름을 비우면 분류 이름이 보여요.'
             : '끄면 메뉴에는 안 보이고 주소로만 열려요.'}
         </p>
       </div>
@@ -116,4 +124,4 @@ const LandingMenuFields = ({
   );
 };
 
-export default LandingMenuFields;
+export default PageMenuFields;

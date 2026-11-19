@@ -1,5 +1,10 @@
 import axios from '@/utils/axios';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQueries,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { z } from 'zod';
 
 /** 노출 분류를 달 수 있는 대상. 서버 ProgramCategoryTargetType 과 같다 */
@@ -66,6 +71,13 @@ const programCategoryItemSchema = programCategorySchema.extend({
     .nullish(),
   description: z.string().nullish(),
   sourceCategoryIds: z.array(z.number()).nullish(),
+  // 프로그램 분류 = 랜딩 페이지의 메뉴·상단 문구 (서버 LC-3626 부터)
+  showInMenu: z.boolean().nullish(),
+  menuGroup: z.string().nullish(),
+  menuLabel: z.string().nullish(),
+  menuOrder: z.number().nullish(),
+  heroTitle: z.string().nullish(),
+  heroDescription: z.string().nullish(),
 });
 
 /** 노출 위치. LANDING 은 /category/{키} 랜딩, PROGRAM_FILTER 는 전체 프로그램 필터 한 줄 */
@@ -121,8 +133,8 @@ export const useAdminProgramCategoryGroupsQuery = () =>
     refetchOnWindowFocus: false,
   });
 
-const useInvalidatingMutation = <T>(
-  mutationFn: (body: T) => Promise<unknown>,
+const useInvalidatingMutation = <T, R = unknown>(
+  mutationFn: (body: T) => Promise<R>,
 ) => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -350,6 +362,265 @@ export const useDeleteProgramCategoryMapping = () => {
         queryKey: [AdminProgramCategoryQueryKey],
       });
       queryClient.invalidateQueries({ queryKey: [programCategoryIdsQueryKey] });
+    },
+  });
+};
+
+// ---------------------------------------------------------------------------
+// 프로그램 분류(태그) = 랜딩 페이지 (서버 LC-3626)
+// ---------------------------------------------------------------------------
+
+/** POST 분류 추가. 필터 줄에 넣고 기본 섹션 5개를 만든다 /api/v1/admin/program-category/tag */
+export const useCreateProgramCategoryTag = () =>
+  useInvalidatingMutation(
+    async (body: {
+      programCategoryGroupId: number;
+      title: string;
+      slug?: string;
+    }) => {
+      const res = await axios.post('/admin/program-category/tag', body);
+      return z.object({ programCategoryId: z.number() }).parse(res.data.data)
+        .programCategoryId;
+    },
+  );
+
+export interface ProgramCategoryPageInput {
+  showInMenu: boolean;
+  menuGroup: string;
+  menuLabel: string;
+  menuOrder?: number;
+  heroTitle: string;
+  heroDescription: string;
+}
+
+/** PATCH 분류 랜딩의 메뉴·상단 문구 (통째로) /api/v1/admin/program-category/{id}/page */
+export const useUpdateProgramCategoryPage = () =>
+  useInvalidatingMutation(
+    ({ id, ...body }: { id: number } & ProgramCategoryPageInput) =>
+      axios.patch(`/admin/program-category/${id}/page`, body),
+  );
+
+/** PATCH 분류를 다른 필터 줄로 옮기기 /api/v1/admin/program-category/{id}/group */
+export const useMoveProgramCategory = () =>
+  useInvalidatingMutation(
+    ({
+      id,
+      programCategoryGroupId,
+    }: {
+      id: number;
+      programCategoryGroupId: number;
+    }) =>
+      axios.patch(`/admin/program-category/${id}/group`, {
+        programCategoryGroupId,
+      }),
+  );
+
+export const sectionTargetTypes = [
+  'CHALLENGE',
+  'LIVE',
+  'VOD',
+  'GUIDEBOOK',
+  'MAGNET',
+  'LIVE_MENTORING',
+  'MEMBERSHIP',
+  'BLOG',
+] as const satisfies readonly ProgramCategoryTargetType[];
+
+const sectionSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  description: z.string().nullish(),
+  displayType: z
+    .enum(['AUTO', 'FEATURED', 'CARDS', 'MENTOR', 'BLOG'])
+    .nullish(),
+  matchMode: z.enum(['ANY', 'ALL', 'GROUP']).nullish(),
+  tagIds: z.array(z.number()),
+  targetTypes: z.array(targetTypeSchema),
+  pinnedTargetType: targetTypeSchema.nullish(),
+  pinnedTargetId: z.number().nullish(),
+  sortOrder: z.number(),
+  isVisible: z.boolean(),
+});
+export type ProgramCategorySection = z.infer<typeof sectionSchema>;
+
+export interface ProgramCategorySectionInput {
+  title: string;
+  description: string;
+  displayType: ProgramCategoryDisplayType;
+  matchMode: ProgramCategoryMatchMode;
+  tagIds: number[];
+  targetTypes: ProgramCategoryTargetType[];
+  pinnedTargetType: ProgramCategoryTargetType | null;
+  pinnedTargetId: number | null;
+  isVisible: boolean;
+}
+
+const sectionsQueryKey = 'adminProgramCategorySections';
+
+/** GET 분류 랜딩 섹션 /api/v1/admin/program-category/{id}/sections */
+export const useProgramCategorySectionsQuery = (programCategoryId: number) =>
+  useQuery({
+    queryKey: [sectionsQueryKey, programCategoryId],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/admin/program-category/${programCategoryId}/sections`,
+      );
+      return z
+        .object({ sectionList: z.array(sectionSchema) })
+        .parse(res.data.data).sectionList;
+    },
+    refetchOnWindowFocus: false,
+  });
+
+const useSectionsMutation = <T>(mutationFn: (body: T) => Promise<unknown>) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [sectionsQueryKey] });
+      queryClient.invalidateQueries({ queryKey: [landingQueryKey] });
+    },
+  });
+};
+
+/** PUT 섹션 통째로 (순서 = 목록 순서) /api/v1/admin/program-category/{id}/sections */
+export const useReplaceProgramCategorySections = () =>
+  useSectionsMutation(
+    ({
+      id,
+      sectionList,
+    }: {
+      id: number;
+      sectionList: ProgramCategorySectionInput[];
+    }) => axios.put(`/admin/program-category/${id}/sections`, { sectionList }),
+  );
+
+/** POST 섹션이 없을 때 기본 섹션 5개 /api/v1/admin/program-category/{id}/sections/default */
+export const useCreateDefaultSections = () =>
+  useSectionsMutation((id: number) =>
+    axios.post(`/admin/program-category/${id}/sections/default`),
+  );
+
+export const landingTargetSchema = z.object({
+  targetType: targetTypeSchema,
+  targetId: z.number(),
+  title: z.string(),
+  thumbnail: z.string().nullish(),
+  shortDesc: z.string().nullish(),
+  startDate: z.string().nullish(),
+  endDate: z.string().nullish(),
+  deadline: z.string().nullish(),
+  challengeType: z.string().nullish(),
+  price: z.number().nullish(),
+  durations: z.array(z.number()).nullish(),
+  mentorCompany: z.string().nullish(),
+  mentorJob: z.string().nullish(),
+  categoryIds: z.array(z.number()),
+  mergedTargetIds: z.array(z.number()).nullish(),
+});
+export type LandingTarget = z.infer<typeof landingTargetSchema>;
+
+const landingSchema = z.object({
+  page: z.object({
+    id: z.number(),
+    title: z.string(),
+    slug: z.string().nullish(),
+    heroTitle: z.string().nullish(),
+    heroDescription: z.string().nullish(),
+  }),
+  sectionList: z.array(
+    z.object({
+      id: z.number(),
+      title: z.string(),
+      description: z.string().nullish(),
+      displayType: z
+        .enum(['AUTO', 'FEATURED', 'CARDS', 'MENTOR', 'BLOG'])
+        .nullish(),
+      targetList: z.array(landingTargetSchema),
+    }),
+  ),
+});
+export type ProgramCategoryLanding = z.infer<typeof landingSchema>;
+
+const landingQueryKey = 'adminProgramCategoryLanding';
+
+/** 공개 분류 랜딩 조회 옵션. 섹션이 없으면 서버가 404 를 주므로 null 로 둔다 */
+export const landingQueryOptions = (slug: string | null | undefined) => ({
+  queryKey: [landingQueryKey, slug],
+  queryFn: async (): Promise<ProgramCategoryLanding | null> => {
+    try {
+      const res = await axios.get(`/program-category/landing/${slug}`);
+      return landingSchema.parse(res.data.data);
+    } catch {
+      return null;
+    }
+  },
+  enabled: Boolean(slug),
+  refetchOnWindowFocus: false,
+});
+
+/** GET 공개 분류 랜딩 /api/v1/program-category/landing/{slug}. 사이트와 같은 결과다 */
+export const useProgramCategoryLandingQuery = (
+  slug: string | null | undefined,
+) => useQuery(landingQueryOptions(slug));
+
+/** 주소가 있는 모든 분류의 랜딩. 점검·상품별 노출 위치가 쓴다 */
+export const useAllLandingsQuery = (slugs: string[]) =>
+  useQueries({
+    queries: slugs.map((slug) => landingQueryOptions(slug)),
+    combine: (results) => ({
+      bySlug: new Map(slugs.map((slug, i) => [slug, results[i]?.data ?? null])),
+      isLoading: results.some((r) => r.isLoading),
+    }),
+  });
+
+const migrationSchema = z.object({
+  dryRun: z.boolean(),
+  pageList: z.array(
+    z.object({
+      slug: z.string(),
+      landingGroupTitle: z.string().nullish(),
+      tagId: z.number().nullish(),
+      tagTitle: z.string().nullish(),
+      status: z.enum(['MIGRATED', 'SKIPPED_NO_TAG', 'SKIPPED_HAS_SECTIONS']),
+      sectionList: z.array(
+        z.object({
+          title: z.string(),
+          tagIds: z.array(z.number()),
+          targetTypes: z.array(targetTypeSchema),
+          visible: z.boolean(),
+          note: z.string().nullish(),
+        }),
+      ),
+      addedMappingCount: z.number(),
+      newlyInFilterList: z.array(z.string()),
+    }),
+  ),
+  duplicateTagTitleList: z.array(z.string()),
+});
+export type LandingMigrationReport = z.infer<typeof migrationSchema>;
+
+/** POST 일회성: 예전 랜딩을 분류 섹션으로 옮기기 (dryRun 이면 보고서만) */
+export const useMigrateLandings = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (dryRun: boolean) => {
+      const res = await axios.post(
+        '/admin/program-category/migration/landing',
+        null,
+        {
+          params: { dryRun },
+        },
+      );
+      return migrationSchema.parse(res.data.data);
+    },
+    onSuccess: (_, dryRun) => {
+      if (dryRun) return;
+      queryClient.invalidateQueries({
+        queryKey: [AdminProgramCategoryQueryKey],
+      });
+      queryClient.invalidateQueries({ queryKey: [sectionsQueryKey] });
+      queryClient.invalidateQueries({ queryKey: [landingQueryKey] });
     },
   });
 };

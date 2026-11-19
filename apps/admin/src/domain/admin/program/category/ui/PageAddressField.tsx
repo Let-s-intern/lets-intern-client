@@ -1,6 +1,6 @@
 import { InputAdornment, TextField } from '@mui/material';
 import { useState } from 'react';
-import { slugError } from '../utils/placementUtils';
+import { slugError } from '../utils/tagUtils';
 
 /** 주소 칸의 오류 문구. required 면 빈 값도 오류다 */
 export const pageAddressError = (value: string, required: boolean) =>

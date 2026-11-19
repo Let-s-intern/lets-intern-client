@@ -1,4 +1,4 @@
-import type { SiteMenu } from '../../utils/placementUtils';
+import type { SiteMenu } from '../../utils/tagUtils';
 
 /** 사이트 GNB "프로그램 카테고리" 드롭다운을 펼친 모습. 지금 페이지를 칠한다 */
 const MiniGnb = ({ menu, slug }: { menu: SiteMenu; slug: string }) => {
