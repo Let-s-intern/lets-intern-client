@@ -55,7 +55,16 @@ const BlogEditPage = ({ blogId, initialBlogData }: BlogEditPageProps) => {
             onChangeTagList={onChangeTagList}
           />
 
-          <ProgramCategoryField targetType="BLOG" targetId={Number(blogId)} />
+          <ProgramCategoryField
+            targetType="BLOG"
+            targetId={Number(blogId)}
+            autoTagInput={{
+              title: editingValue.title ?? '',
+              blogTagNames: editingValue.tagList.flatMap((t) =>
+                t.title ? [t.title] : [],
+              ),
+            }}
+          />
 
           <div className="flex gap-5">
             <BlogProgramRecommendSection

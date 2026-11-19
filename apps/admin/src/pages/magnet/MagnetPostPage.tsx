@@ -182,11 +182,16 @@ const MagnetPostPage = ({ magnetId }: MagnetPostPageProps) => {
                 <ProgramCategoryDraftField
                   value={programCategoryIds}
                   onChange={setProgramCategoryIds}
+                  autoTagInput={{
+                    title: createTitle,
+                    challengeType: createChallengeType || undefined,
+                  }}
                 />
               ) : (
                 <ProgramCategoryField
                   targetType="MAGNET"
                   targetId={Number(magnetId)}
+                  autoTagInput={{ title: title ?? '' }}
                 />
               )}
 

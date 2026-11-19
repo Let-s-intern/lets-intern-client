@@ -13,6 +13,7 @@ import {
   siteMenuOf,
   tagsOf,
 } from '../utils/tagUtils';
+import AutoFillPanel from './AutoFillPanel';
 import MigrationPanel from './MigrationPanel';
 import { productPlacesOf } from './productPlaces';
 import VisualDialog, { type Visual } from './VisualDialog';
@@ -233,6 +234,7 @@ const CheckTab = ({ groups }: { groups: ProgramCategoryGroup[] }) => {
   return (
     <div className="mt-4 flex max-w-[960px] flex-col gap-6">
       {legacy.length > 0 && <MigrationPanel legacyCount={legacy.length} />}
+      <AutoFillPanel groups={groups} />
       <div className="divide-y divide-neutral-90">
         <Problem
           title="섹션이 없는 분류 페이지"

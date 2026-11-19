@@ -14,12 +14,14 @@ import {
   useUpdateProgramCategory,
   useUpdateProgramCategoryDirectTarget,
   useUpdateProgramCategoryPage,
+  useUpdateTagKeywords,
   type ProgramCategory,
   type ProgramCategoryGroup,
   type ProgramCategoryTargetType,
 } from '../programCategoryApi';
 import DirectTargetPicker from '../ui/DirectTargetPicker';
 import PageAddressField, { pageAddressError } from '../ui/PageAddressField';
+import KeywordsField from './KeywordsField';
 import PageMenuFields, { type LandingMenuDraft } from './PageMenuFields';
 
 const pageOf = (tag: ProgramCategory): LandingMenuDraft => ({
@@ -45,6 +47,8 @@ const PageSettingsDialog = ({
   const updateCategory = useUpdateProgramCategory();
   const updatePage = useUpdateProgramCategoryPage();
   const updateDirect = useUpdateProgramCategoryDirectTarget();
+  const updateKeywords = useUpdateTagKeywords();
+  const [keywords, setKeywords] = useState<string[]>(tag.autoKeywords ?? []);
   const [slug, setSlug] = useState(tag.slug ?? '');
   const [page, setPage] = useState<LandingMenuDraft>(() => pageOf(tag));
   const [direct, setDirect] = useState(
@@ -59,7 +63,10 @@ const PageSettingsDialog = ({
   const [submitted, setSubmitted] = useState(false);
   const directIncomplete = direct && (targetType === '' || targetId === '');
   const busy =
-    updateCategory.isPending || updatePage.isPending || updateDirect.isPending;
+    updateCategory.isPending ||
+    updatePage.isPending ||
+    updateDirect.isPending ||
+    updateKeywords.isPending;
 
   const save = async () => {
     setSubmitted(true);
@@ -79,6 +86,8 @@ const PageSettingsDialog = ({
           targetType: direct && targetType ? targetType : null,
           targetId: direct && targetId ? Number(targetId) : null,
         });
+      if (keywords.join('\n') !== (tag.autoKeywords ?? []).join('\n'))
+        await updateKeywords.mutateAsync({ id: tag.id, keywords });
       snackbar('저장했습니다.');
       onClose();
     } catch {
@@ -103,6 +112,9 @@ const PageSettingsDialog = ({
             groups={groups}
             defaultLabel={tag.title}
           />
+        </div>
+        <div className="border-t border-neutral-90 pt-3">
+          <KeywordsField value={keywords} onChange={setKeywords} />
         </div>
         <div className="flex flex-col gap-2 border-t border-neutral-90 pt-3">
           <FormControlLabel

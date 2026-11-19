@@ -55,6 +55,12 @@ const BlogCreatePage = () => {
           <ProgramCategoryDraftField
             value={programCategoryIds}
             onChange={setProgramCategoryIds}
+            autoTagInput={{
+              title: editingValue.title ?? '',
+              blogTagNames: editingValue.tagList.flatMap((t) =>
+                t.title ? [t.title] : [],
+              ),
+            }}
           />
 
           <div className="flex gap-5">

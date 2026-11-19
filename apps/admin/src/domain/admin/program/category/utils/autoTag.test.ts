@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   cleanTitle,
+  matchByKeywords,
+  planAutoFill,
   suggestTags,
   tagsToAdd,
   type AutoTagRule,
@@ -99,5 +101,27 @@ describe('suggestTags', () => {
   it('더할 것만 고르고 있는 태그는 그대로 둔다', () => {
     const suggestions = suggestTags({ title: '이력서·자소서 클래스' }, rules);
     expect(tagsToAdd(suggestions, [1, 99]).map((s) => s.tagId)).toEqual([2]);
+  });
+});
+
+describe('planAutoFill', () => {
+  const products = [
+    { key: 'a', input: { title: '이력서 챌린지 3기' } },
+    { key: 'b', input: { title: '자소서·이력서 클래스' } },
+    { key: 'c', input: { title: '네트워킹 특강' } },
+  ];
+  it('더할 태그만 고르고, 이미 다 있거나 추천이 없는 상품은 뺀다', () => {
+    const current: Record<string, number[]> = { a: [1], b: [1], c: [] };
+    const plan = planAutoFill(products, rules, (p) => current[p.key]);
+    expect(
+      plan.map((r) => [r.product.key, r.adds.map((s) => s.tagId)]),
+    ).toEqual([['b', [2]]]);
+  });
+
+  it('키워드 미리보기는 그 키워드로 제목이 잡히는 상품만 센다', () => {
+    expect(matchByKeywords(products, ['자소서']).map((p) => p.key)).toEqual([
+      'b',
+    ]);
+    expect(matchByKeywords(products, []).length).toBe(0);
   });
 });

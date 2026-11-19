@@ -138,3 +138,11 @@ export const moveAmong = (
   if (neighbor === undefined) return ids;
   return ids.map((v) => (v === id ? neighbor : v === neighbor ? id : v));
 };
+
+/** 자동 태그 규칙: 태그마다 이름과 키워드 */
+export const autoTagRulesOf = (groups: ProgramCategoryGroup[]) =>
+  tagsOf(groups).map(({ tag }) => ({
+    id: tag.id,
+    title: tag.title,
+    keywords: tag.autoKeywords ?? [],
+  }));

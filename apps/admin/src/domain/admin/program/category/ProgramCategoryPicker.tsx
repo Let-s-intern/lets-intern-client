@@ -1,7 +1,8 @@
 import { Button, Checkbox, FormControlLabel } from '@mui/material';
 import { useState } from 'react';
 import { useAdminProgramCategoryGroupsQuery } from './programCategoryApi';
-import { filterRowsOf, tagsOf } from './utils/tagUtils';
+import { suggestTags, tagsToAdd, type AutoTagInput } from './utils/autoTag';
+import { autoTagRulesOf, filterRowsOf, tagsOf } from './utils/tagUtils';
 
 interface ProgramCategoryPickerProps {
   /** 아직 모르면 undefined. 그동안은 체크를 막는다 */
@@ -9,6 +10,8 @@ interface ProgramCategoryPickerProps {
   onToggle: (id: number) => void;
   /** 펼쳤을 때 체크박스 위에 붙는 안내 */
   note: string;
+  /** 추천 태그를 낼 상품 정보 (제목·챌린지 구분·블로그 태그 등) */
+  autoTagInput?: AutoTagInput;
 }
 
 /**
@@ -20,11 +23,20 @@ const ProgramCategoryPicker = ({
   selectedIds,
   onToggle,
   note,
+  autoTagInput,
 }: ProgramCategoryPickerProps) => {
   const { data: groups = [] } = useAdminProgramCategoryGroupsQuery();
   const [expanded, setExpanded] = useState(false);
   const tags = tagsOf(groups);
   const selected = tags.filter(({ tag }) => selectedIds?.includes(tag.id));
+  // 추천 중 아직 안 고른 것. 누르면 더한다. 고른 태그를 빼는 일은 없다
+  const recommended =
+    autoTagInput && selectedIds
+      ? tagsToAdd(
+          suggestTags(autoTagInput, autoTagRulesOf(groups)),
+          selectedIds,
+        )
+      : [];
   // 분류가 아닌 예전 랜딩 섹션 연결. 고르지 않고 그대로 둔다
   const legacyCount = (selectedIds ?? []).filter(
     (id) => !tags.some(({ tag }) => tag.id === id),
@@ -60,6 +72,24 @@ const ProgramCategoryPicker = ({
           {expanded ? '접기' : '수정'}
         </Button>
       </div>
+
+      {recommended.length > 0 && (
+        <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+          <span className="text-xxsmall12 text-neutral-40">추천 태그</span>
+          {recommended.map((s) => (
+            <button
+              key={s.tagId}
+              type="button"
+              onClick={() => onToggle(s.tagId)}
+              title={s.reasons.join(' · ')}
+              className="rounded-full border border-dashed border-primary/60 px-2 py-0.5 text-xxsmall12 text-primary hover:bg-primary/5"
+            >
+              + {s.tagTitle}
+              <span className="ml-1 text-neutral-40">{s.reasons[0]}</span>
+            </button>
+          ))}
+        </div>
+      )}
 
       {selected.length > 0 && (
         <ul className="mt-1 flex flex-col text-xxsmall12 text-neutral-40">

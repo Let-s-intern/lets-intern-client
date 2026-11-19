@@ -136,3 +136,37 @@ export const suggestTags = (
 /** 이미 붙은 태그는 빼고 더할 것만. 있는 태그는 절대 빼지 않는다 */
 export const tagsToAdd = (suggestions: TagSuggestion[], current: number[]) =>
   suggestions.filter((s) => !current.includes(s.tagId));
+
+export interface AutoFillRow<P> {
+  product: P;
+  adds: TagSuggestion[];
+}
+
+/**
+ * 일괄 채우기 계획: 상품마다 추천 중 아직 없는 태그만. 더할 게 없는 상품은 뺀다.
+ * currentOf 는 그 상품에 지금 붙은 태그 id
+ */
+export const planAutoFill = <P extends { input: AutoTagInput }>(
+  products: P[],
+  rules: AutoTagRule[],
+  currentOf: (product: P) => number[],
+): AutoFillRow<P>[] =>
+  products
+    .map((product) => ({
+      product,
+      adds: tagsToAdd(suggestTags(product.input, rules), currentOf(product)),
+    }))
+    .filter((row) => row.adds.length > 0);
+
+/** 키워드 미리보기: 이 키워드만으로 제목에서 잡히는 상품 */
+export const matchByKeywords = <P extends { input: AutoTagInput }>(
+  products: P[],
+  keywords: string[],
+) =>
+  products.filter(
+    (p) =>
+      suggestTags(
+        { title: p.input.title, blogTagNames: p.input.blogTagNames },
+        [{ id: -1, title: '', keywords }],
+      ).length > 0,
+  );

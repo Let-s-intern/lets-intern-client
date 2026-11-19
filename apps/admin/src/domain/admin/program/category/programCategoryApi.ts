@@ -78,6 +78,8 @@ const programCategoryItemSchema = programCategorySchema.extend({
   menuOrder: z.number().nullish(),
   heroTitle: z.string().nullish(),
   heroDescription: z.string().nullish(),
+  /** 자동 태그 키워드 (서버 LC-3626) */
+  autoKeywords: z.array(z.string()).nullish(),
 });
 
 /** 노출 위치. LANDING 은 /category/{키} 랜딩, PROGRAM_FILTER 는 전체 프로그램 필터 한 줄 */
@@ -637,3 +639,33 @@ export const useMigrateLandings = () => {
     },
   });
 };
+
+/** PUT 태그 자동 키워드 (통째로) /api/v1/admin/program-category/{id}/keywords */
+export const useUpdateTagKeywords = () =>
+  useInvalidatingMutation(
+    ({ id, keywords }: { id: number; keywords: string[] }) =>
+      axios.put(`/admin/program-category/${id}/keywords`, { keywords }),
+  );
+
+/** 상품 하나의 태그 id 를 읽는다 (일괄 채우기에서 더하기 직전에 지금 값을 다시 본다) */
+export const fetchProgramCategoryIds = async (
+  programType: ProgramCategoryTargetType,
+  programId: number,
+) => {
+  const res = await axios.get('/admin/program-category/program', {
+    params: { programType, programId },
+  });
+  return programCategoryIdsSchema.parse(res.data.data).programCategoryIdList;
+};
+
+/** 태그 하나에 연결된 상품 (어드민) */
+export const tagTargetsQueryOptions = (tagId: number) => ({
+  queryKey: [programCategoryTargetsQueryKey, tagId],
+  queryFn: async () => {
+    const res = await axios.get(`/admin/program-category/${tagId}/targets`);
+    return z
+      .object({ targetList: z.array(programCategoryTargetSchema) })
+      .parse(res.data.data).targetList;
+  },
+  refetchOnWindowFocus: false,
+});
