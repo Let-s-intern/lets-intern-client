@@ -12,7 +12,7 @@ interface ChallengeApplySheetState {
   plan: ChallengePricePlan | null;
   open: (plan?: ChallengePricePlan | null) => void;
   close: () => void;
-  setPlan: (plan: ChallengePricePlan) => void;
+  setPlan: (plan: ChallengePricePlan | null) => void;
   /** '템플릿으로 혼자' 선택 여부. 가격·하단 바·상세 본문이 가이드북으로 바뀐다 (LC-3631) */
   isTemplateMode: boolean;
   setTemplateMode: (isTemplateMode: boolean) => void;
