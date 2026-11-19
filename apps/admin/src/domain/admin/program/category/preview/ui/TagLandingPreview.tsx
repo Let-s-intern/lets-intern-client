@@ -5,6 +5,7 @@ import {
 } from '../../programCategoryApi';
 import { siteMenuOf } from '../../utils/tagUtils';
 import LandingPreview, { type PreviewHighlight } from './LandingPreview';
+import LegacyLandingPreview, { legacyLandingOf } from './LegacyLandingPreview';
 
 /** 분류 랜딩을 사이트와 같은 공개 API 로 받아 그린다. 저장된 설정 기준이다 */
 const TagLandingPreview = ({
@@ -25,13 +26,23 @@ const TagLandingPreview = ({
     );
   if (isLoading)
     return <p className="text-xsmall14 text-neutral-40">불러오는 중…</p>;
-  if (!data)
+  if (!data) {
+    const legacy = legacyLandingOf(groups, tag.slug);
+    if (legacy)
+      return (
+        <LegacyLandingPreview
+          group={legacy}
+          groups={groups}
+          slug={tag.slug}
+          highlight={highlight}
+        />
+      );
     return (
       <p className="text-xsmall14 text-neutral-40">
-        보이는 섹션이 없어 사이트에서는 예전 랜딩(있다면) 또는 &quot;준비
-        중&quot; 화면이 보여요.
+        보이는 섹션이 없어 사이트에서는 &quot;준비 중&quot; 화면이 보여요.
       </p>
     );
+  }
   return (
     <LandingPreview
       slug={tag.slug}

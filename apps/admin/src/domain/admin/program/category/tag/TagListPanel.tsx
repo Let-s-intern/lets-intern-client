@@ -88,6 +88,7 @@ const RowBlock = ({
               isFirst={index === 0}
               isLast={index === row.categoryList.length - 1}
               renameLabel="분류 이름"
+              stacked
               onRename={(title) => actions.renameCategory(tag.id, title)}
               onToggleVisible={(isVisible) =>
                 actions.toggleCategory(tag.id, isVisible)

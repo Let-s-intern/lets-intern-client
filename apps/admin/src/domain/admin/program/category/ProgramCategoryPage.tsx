@@ -82,7 +82,11 @@ const ProgramCategoryPage = () => {
       {isLoading ? (
         <p className="mt-4">loading...</p>
       ) : tab === 'tags' ? (
-        <TagTab groups={groups} actions={actions} />
+        <TagTab
+          groups={groups}
+          actions={actions}
+          onGoCheck={() => setTab('check')}
+        />
       ) : (
         <CheckTab groups={groups} />
       )}

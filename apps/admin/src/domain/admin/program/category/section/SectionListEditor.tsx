@@ -11,6 +11,7 @@ import {
 } from '../programCategoryApi';
 import CompactRow from '../ui/CompactRow';
 import { tagLabelOf } from '../utils/tagUtils';
+import { legacyLandingOf } from '../preview/ui/LegacyLandingPreview';
 import SectionForm from './SectionForm';
 import {
   describeCondition,
@@ -84,8 +85,9 @@ const SectionListEditor = ({
     return (
       <div className="flex flex-col items-start gap-2 rounded-xs bg-neutral-95 p-4">
         <p className="text-xsmall14 text-neutral-20">
-          아직 섹션이 없어요. 기본 섹션(대표 챌린지 · LIVE·VOD · 자료집 · 1:1
-          멘토링 · 블로그)으로 시작하거나 직접 추가하세요.
+          {tag.slug && legacyLandingOf(groups, tag.slug)
+            ? '아직 섹션이 없어 사이트에는 예전 랜딩이 보여요. 점검 탭에서 옮기면 예전 섹션이 여기로 들어와요. 새로 시작하려면 기본 섹션을 만드세요.'
+            : '아직 섹션이 없어요. 기본 섹션(대표 챌린지 · LIVE·VOD · 자료집 · 1:1 멘토링 · 블로그)으로 시작하거나 직접 추가하세요.'}
         </p>
         <div className="flex gap-2">
           <Button
