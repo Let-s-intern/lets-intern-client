@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import type { CategoryActions } from '../hooks/useCategoryActions';
-import type { ProgramCategoryGroup } from '../programCategoryApi';
+import {
+  useAllLandingsQuery,
+  type ProgramCategoryGroup,
+} from '../programCategoryApi';
 import { legacyLandingGroupsOf, tagsOf } from '../utils/tagUtils';
 import TagListPanel from './TagListPanel';
 import TagPageEditor from './TagPageEditor';
@@ -16,8 +19,22 @@ const TagTab = ({
   /** 점검 탭으로 (예전 랜딩 옮기기) */
   onGoCheck: () => void;
 }) => {
-  const legacyCount = legacyLandingGroupsOf(groups).length;
   const tags = tagsOf(groups);
+  const { bySlug, isLoading } = useAllLandingsQuery(
+    tags.map(({ tag }) => tag.slug).filter((s): s is string => Boolean(s)),
+  );
+  // 같은 주소의 분류에 섹션이 생겼으면 이미 옮긴 것이라 세지 않는다
+  const legacyCount = isLoading
+    ? 0
+    : legacyLandingGroupsOf(groups).filter((g) => {
+        const slugs = [
+          g.slug,
+          ...(g.placements ?? []).map((p) =>
+            p.placementType === 'LANDING' ? p.slug : null,
+          ),
+        ].filter((s): s is string => Boolean(s));
+        return slugs.length > 0 && !slugs.some((s) => bySlug.get(s));
+      }).length;
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const selected =
     tags.find(({ tag }) => tag.id === selectedId)?.tag ?? tags[0]?.tag;
