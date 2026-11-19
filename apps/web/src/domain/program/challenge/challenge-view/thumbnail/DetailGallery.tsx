@@ -120,13 +120,22 @@ const ReviewCardSlide = ({
   </div>
 );
 
-/** 미리보기 줄의 후기 카드 칸 */
-const ReviewCardThumb = ({ imageSrc }: { imageSrc?: string | null }) => (
-  <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-neutral-10">
+/** 미리보기 줄의 후기 카드 칸. 후기 건수까지 보인다 */
+const ReviewCardThumb = ({
+  imageSrc,
+  totalCount,
+}: {
+  imageSrc?: string | null;
+  totalCount: number;
+}) => (
+  <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden bg-neutral-10 leading-tight">
     <BlurredFill src={imageSrc} compact />
     <div className="absolute inset-0 bg-neutral-0/55" />
     <span className="relative text-xxsmall12 font-semibold text-white">
       후기
+    </span>
+    <span className="relative text-xxsmall12 font-semibold text-white">
+      {totalCount.toLocaleString()}건
     </span>
   </div>
 );
@@ -164,12 +173,13 @@ const DetailGallery = ({
   const slide = (i: number, compact = false) => {
     if (i === 0)
       return <MainSlide main={main} imageSrc={imageSrc} compact={compact} />;
+    const totalCount = data?.totalCount ?? reviews.length;
     return compact ? (
-      <ReviewCardThumb imageSrc={imageSrc} />
+      <ReviewCardThumb imageSrc={imageSrc} totalCount={totalCount} />
     ) : (
       <ReviewCardSlide
         reviews={reviews}
-        totalCount={data?.totalCount ?? reviews.length}
+        totalCount={totalCount}
         imageSrc={imageSrc}
       />
     );
