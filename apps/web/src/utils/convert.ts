@@ -91,9 +91,7 @@ export const challengeTypeToDisplay: Record<ChallengeType, string> = {
 
 export const challengeTypes: ChallengeType[] = [
   'CAREER_START',
-  'DOCUMENT_PREPARATION',
   'MEETING_PREPARATION',
-  'ETC',
   'PERSONAL_STATEMENT',
   'PORTFOLIO',
   'PERSONAL_STATEMENT_LARGE_CORP',
@@ -102,6 +100,8 @@ export const challengeTypes: ChallengeType[] = [
   'HR',
   'PM',
   'APTITUDE',
+  'DOCUMENT_PREPARATION',
+  'ETC',
 ];
 
 export const programStatusToText: Record<string, string> = {
