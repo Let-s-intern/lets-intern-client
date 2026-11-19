@@ -67,20 +67,16 @@ function ApplyPriceCard({
     paymentPrice,
   } = price;
 
-  const passDiscountPercent =
-    paymentPrice > 0 && passPrice !== null
-      ? Math.round(((paymentPrice - passPrice) / paymentPrice) * 100)
-      : 0;
-
   return (
-    // 왼쪽 옵션 카드와 높이를 맞춘다. 금액 영역이 남는 높이를 차지해 버튼·패스 카드가 아래에 붙는다
-    <div className="flex h-full flex-col gap-3 md:gap-4">
-      <div className="flex flex-col bg-white py-2 md:flex-1 md:px-4">
-        <p className="text-small18 font-bold text-neutral-0">최종 결제 금액</p>
+    <div className="flex flex-col gap-3 md:gap-4">
+      <div className="flex flex-col bg-white py-2 md:px-5">
+        <p className="text-small18 font-bold text-neutral-0 md:text-medium22">
+          결제 금액
+        </p>
 
-        <div className="mt-2 flex flex-col gap-2 text-xsmall16 text-neutral-20">
+        <div className="mt-3 flex flex-col gap-2 text-xsmall16 text-neutral-20">
           <div className="flex items-center justify-between">
-            <span className="text-xsmall14 text-neutral-30">정가</span>
+            <span className="text-neutral-30">정가</span>
             <span>{regularPrice.toLocaleString()}원</span>
           </div>
           {discountAmount !== 0 && (
@@ -99,7 +95,10 @@ function ApplyPriceCard({
           )}
         </div>
 
-        <div className="mt-3 border-t border-neutral-80 pt-3 text-right">
+        <div className="mt-3 flex items-center justify-between border-t border-neutral-80 pt-3">
+          <span className="text-xsmall16 text-neutral-20">
+            지금 결제할 금액
+          </span>
           <strong className="text-medium24 font-bold text-primary md:text-xlarge28">
             {paymentPrice.toLocaleString()}원
           </strong>
@@ -112,30 +111,26 @@ function ApplyPriceCard({
         <button
           type="button"
           onClick={() => setIsPassModalOpen(true)}
-          className="pass_benefit_card flex items-center justify-between gap-3 rounded-md bg-primary-5 px-4 py-5 text-left"
+          className="pass_benefit_card flex flex-col gap-2 rounded-xs bg-primary-5 px-4 py-3 text-left"
         >
-          <span className="text-xsmall16 font-semibold text-primary md:text-small18">
-            {passPrice === 0
-              ? '올인원 패스 구독하고 무료로 참여하기'
-              : '올인원 패스 구독하고 참여하기'}
+          <span className="w-fit rounded-xxs bg-primary px-2 py-0.5 text-xxsmall12 font-semibold text-white">
+            ALL-IN-ONE PASS
           </span>
-          <span className="flex shrink-0 flex-col items-end">
-            {passDiscountPercent > 0 && (
-              <span className="text-xxsmall12">
-                {/* 100% 는 정가 취소선만으로 충분해 비율을 숨긴다 */}
-                {passDiscountPercent < 100 && (
-                  <span className="font-semibold text-system-error">
-                    {passDiscountPercent}%{' '}
-                  </span>
-                )}
-                <span className="text-neutral-40 line-through">
-                  {paymentPrice.toLocaleString()}원
-                </span>
-              </span>
-            )}
-            <strong className="text-medium22 font-bold text-primary md:text-medium24">
-              {passPrice.toLocaleString()}원
-            </strong>
+          <span className="flex w-full items-center justify-between gap-3">
+            <span className="text-xsmall14 text-neutral-0">
+              올인원 패스 회원은{' '}
+              {passPrice === 0 ? (
+                <strong className="font-bold text-primary">무료</strong>
+              ) : (
+                <strong className="font-bold text-primary">
+                  {passPrice.toLocaleString()}원
+                </strong>
+              )}
+              {passPrice === 0 ? '로' : '에'} 참여 가능!
+            </span>
+            <span className="shrink-0 text-xsmall14 font-medium text-primary">
+              패스 혜택 보기 &gt;
+            </span>
           </span>
         </button>
       )}
