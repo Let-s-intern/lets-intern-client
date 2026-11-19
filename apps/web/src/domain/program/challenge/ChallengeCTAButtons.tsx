@@ -21,10 +21,13 @@ const ChallengeCTAButtons = ({
   challenge,
   challengeId,
   challengeVersionId,
+  hasFollowPanel = false,
 }: {
   challenge: ChallengeIdPrimitive;
   challengeId: string;
   challengeVersionId: number | null;
+  /** 오른쪽 따라오는 신청 패널이 있는 상세. 1025px 이상에서는 하단 플로팅을 숨긴다 */
+  hasFollowPanel?: boolean;
 }) => {
   const { isLoggedIn } = useAuthStore();
   const { isOpen, plan, close, isTemplateMode } = useChallengeApplySheetStore();
@@ -88,19 +91,21 @@ const ChallengeCTAButtons = ({
     <>
       {!isOpen && (
         <>
-          <DesktopApplyCTA
-            program={{
-              ...challenge,
-              title: desktopTitle,
-              beginning: challenge.beginning
-                ? dayjs(challenge.beginning)
-                : null,
-              deadline: challenge.deadline ? dayjs(challenge.deadline) : null,
-            }}
-            onApplyClick={handleOpen}
-            onNotiClick={() => setIsNotiOpen(true)}
-            isAlreadyApplied={isAlreadyApplied}
-          />
+          <div className={hasFollowPanel ? 'min-[1025px]:hidden' : undefined}>
+            <DesktopApplyCTA
+              program={{
+                ...challenge,
+                title: desktopTitle,
+                beginning: challenge.beginning
+                  ? dayjs(challenge.beginning)
+                  : null,
+                deadline: challenge.deadline ? dayjs(challenge.deadline) : null,
+              }}
+              onApplyClick={handleOpen}
+              onNotiClick={() => setIsNotiOpen(true)}
+              isAlreadyApplied={isAlreadyApplied}
+            />
+          </div>
           <MobileApplyCTA
             program={{
               ...challenge,
