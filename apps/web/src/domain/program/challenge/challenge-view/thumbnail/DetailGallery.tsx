@@ -10,9 +10,9 @@ import { ReactNode, useState } from 'react';
 import { maskName, pickReviewExcerpt } from './reviewExcerpt';
 
 /** 후기 카드에 쌓을 후기 수 */
-const REVIEW_ROW_COUNT = 3;
+const REVIEW_ROW_COUNT = 5;
 /** 답변이 빈 후기를 걸러도 3개가 남도록 조금 더 받는다 */
-const REVIEW_FETCH_SIZE = 6;
+const REVIEW_FETCH_SIZE = 10;
 /** 후기 섹션 id. 기본·포트폴리오 화면은 challenge-review, 마케팅·HR·PM 화면은 reviews */
 const REVIEW_SECTION_IDS = ['challenge-review', 'reviews'];
 
@@ -61,7 +61,7 @@ const MainSlide = ({
   </div>
 );
 
-/** 어둡게 깐 대표 이미지 위에 후기 3개를 쌓은 카드. 기수·버전은 보이지 않는다 */
+/** 어둡게 깐 대표 이미지 위에 후기 5개를 쌓은 카드 한 장. 기수·버전은 보이지 않는다 */
 const ReviewCardSlide = ({
   reviews,
   totalCount,
@@ -74,7 +74,7 @@ const ReviewCardSlide = ({
   <div className="relative h-full w-full overflow-hidden bg-neutral-10">
     <BlurredFill src={imageSrc} />
     <div className="absolute inset-0 bg-neutral-0/55" />
-    <div className="relative flex h-full flex-col justify-center gap-3 px-11 py-5 md:gap-4 md:px-14 md:py-8">
+    <div className="relative flex h-full flex-col justify-center gap-2 px-11 py-3 md:gap-3 md:px-14 md:py-6">
       <p className="flex items-baseline justify-center gap-2 text-white">
         <span className="text-xsmall16 font-bold md:text-small20">
           수강생들의 솔직 후기
@@ -83,13 +83,13 @@ const ReviewCardSlide = ({
           누적 {totalCount.toLocaleString()}건
         </span>
       </p>
-      <ul className="flex flex-col gap-2 md:gap-3">
+      <ul className="flex flex-col gap-1.5 md:gap-2">
         {reviews.map((review) => (
           <li
             key={review.reviewId}
-            className="flex items-center gap-2.5 rounded-[12px] bg-white p-2.5 md:gap-3 md:rounded-[16px] md:p-3.5"
+            className="flex items-center gap-2 rounded-[10px] bg-white px-2 py-1.5 md:gap-3 md:rounded-[14px] md:px-3 md:py-2"
           >
-            <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-[8px] bg-neutral-90 md:h-16 md:w-16 md:rounded-[10px]">
+            <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-[6px] bg-neutral-90 md:h-12 md:w-12 md:rounded-[8px]">
               {imageSrc && (
                 <img
                   src={imageSrc}
@@ -98,11 +98,11 @@ const ReviewCardSlide = ({
                 />
               )}
             </div>
-            <div className="flex min-w-0 flex-col gap-0.5 md:gap-1">
-              <span className="text-xxsmall12 text-neutral-40">
+            <div className="flex min-w-0 flex-col md:gap-0.5">
+              <span className="text-[10px] text-neutral-40 md:text-xxsmall12">
                 {maskName(review.name)}
               </span>
-              <p className="line-clamp-2 whitespace-pre-line text-xxsmall12 leading-snug text-neutral-0 md:text-xsmall14">
+              <p className="line-clamp-1 text-xxsmall12 leading-snug text-neutral-0 md:line-clamp-2 md:text-xsmall14">
                 {pickReviewExcerpt(review.itemList)}
               </p>
             </div>
