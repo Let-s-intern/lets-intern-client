@@ -81,8 +81,8 @@ const ChallengePortfolioView: React.FC<{
           />
         </div>
 
-        {/* 데스크톱은 본문 오른쪽에 신청 패널이 따라온다 (스마트스토어형). 모바일은 하단 바 */}
-        <div className="flex w-full lg:gap-8 lg:pr-10">
+        {/* 1025px 이상은 본문 오른쪽에 신청 패널이 따라온다 (스마트스토어형). 1024px 까지는 하단 플로팅 */}
+        <div className="flex w-full min-[1025px]:gap-8 min-[1025px]:pr-10">
           <div className="min-w-0 flex-1">
             <TemplateModeBody challengeType={challenge.challengeType}>
               <ProgramChallengePortfolioDetailNavigation
@@ -304,7 +304,7 @@ const ChallengePortfolioView: React.FC<{
               <ChallengeInfoBottom challenge={challengeTransformed} />
             </TemplateModeBody>
           </div>
-          <div className="hidden w-[320px] shrink-0 pt-6 lg:block">
+          <div className="hidden w-[320px] shrink-0 pt-6 min-[1025px]:block">
             <FollowApplyPanel
               challenge={challengeTransformed}
               challengeId={id}

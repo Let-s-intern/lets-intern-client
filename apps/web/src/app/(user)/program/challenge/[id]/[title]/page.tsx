@@ -101,6 +101,13 @@ const Page = async ({
   // 버전 값을 덮는 곳은 여기 한 곳이다. View 는 이 사본만 받는다
   const challenge = applyChallengeVersion(fetchedChallenge, route.version);
 
+  // 마케팅·HR·PM 상세는 따라오는 신청 패널이 없어 하단 플로팅을 그대로 쓴다
+  const followPanelless =
+    (parseInt(id) > MARKETING_ID_THRESHOLD &&
+      challenge.challengeType === 'MARKETING') ||
+    challenge.challengeType === 'HR' ||
+    challenge.challengeType === 'PM';
+
   return (
     <>
       <ChallengeScrollToTop />
@@ -123,6 +130,7 @@ const Page = async ({
         challenge={challenge}
         challengeId={id}
         challengeVersionId={route.version?.challengeVersionId ?? null}
+        hasFollowPanel={!followPanelless}
       />
     </>
   );
