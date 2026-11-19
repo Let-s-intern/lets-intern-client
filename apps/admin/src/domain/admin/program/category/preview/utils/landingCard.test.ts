@@ -11,8 +11,14 @@ const of = (...types: string[]) => types.map((targetType) => ({ targetType }));
 
 describe('getSectionKind (웹과 같은 기준)', () => {
   it('정한 표시 방식은 그대로', () => {
-    expect(getSectionKind(of('LIVE_MENTORING'), 'CARDS')).toBe('program');
+    expect(getSectionKind(of('LIVE_MENTORING'), 'BLOG')).toBe('blog');
     expect(getSectionKind(of('LIVE'), 'FEATURED')).toBe('challenge');
+  });
+  it('카드 목록은 대표 카드가 되지 않고, 멘토링만·블로그만이면 전용 카드', () => {
+    expect(getSectionKind(of('CHALLENGE'), 'CARDS')).toBe('program');
+    expect(getSectionKind(of('LIVE_MENTORING'), 'CARDS')).toBe('mentoring');
+    expect(getSectionKind(of('BLOG', 'BLOG'), 'CARDS')).toBe('blog');
+    expect(getSectionKind(of('BLOG', 'LIVE'), 'CARDS')).toBe('program');
   });
   it('자동이면 한 유형일 때만 그 유형 모양', () => {
     expect(getSectionKind(of('CHALLENGE', 'CHALLENGE'), 'AUTO')).toBe(

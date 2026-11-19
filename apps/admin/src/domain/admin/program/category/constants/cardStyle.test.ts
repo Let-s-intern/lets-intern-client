@@ -25,14 +25,16 @@ describe('카드 모양', () => {
     expect(displayTypeToSend('FEATURED', 'FEATURED')).toBeUndefined();
   });
 
-  it('카드 목록은 AUTO, 대표 상품은 FEATURED 로 보낸다', () => {
-    expect(displayTypeToSend('FEATURED', 'CARDS')).toBe('AUTO');
+  it('카드 목록은 CARDS, 대표 상품은 FEATURED 로 보낸다', () => {
+    expect(displayTypeToSend('FEATURED', 'CARDS')).toBe('CARDS');
     expect(displayTypeToSend('BLOG', 'FEATURED')).toBe('FEATURED');
   });
 
   it('예전 고정 값을 알아본다', () => {
     expect(isLegacyFixedStyle('MENTOR')).toBe(true);
-    expect(isLegacyFixedStyle('AUTO')).toBe(false);
+    expect(isLegacyFixedStyle('AUTO')).toBe(true);
+    expect(isLegacyFixedStyle('CARDS')).toBe(false);
+    expect(isLegacyFixedStyle(null)).toBe(false);
     expect(isLegacyFixedStyle('FEATURED')).toBe(false);
   });
 });

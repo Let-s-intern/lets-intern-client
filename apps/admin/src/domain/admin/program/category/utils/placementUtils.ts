@@ -84,6 +84,21 @@ export const moveAmong = (
   return ids.map((v) => (v === id ? neighbor : v === neighbor ? id : v));
 };
 
+/**
+ * 방금 만든 노출 목록 찾기. 생성 API 가 id 를 주지 않아서,
+ * 만들기 전 목록(before)에 없던 것 중 같은 이름에서 id 가 가장 큰 것을 고른다
+ */
+export const findCreatedGroup = (
+  before: ProgramCategoryGroup[],
+  after: ProgramCategoryGroup[],
+  title: string,
+) => {
+  const known = new Set(before.map((g) => g.id));
+  return after
+    .filter((g) => g.title === title && !known.has(g.id))
+    .sort((a, b) => b.id - a.id)[0];
+};
+
 export interface LandingPage {
   group: ProgramCategoryGroup;
   /** group.placements 안의 위치. 저장할 때 이 자리만 바꾼다 */

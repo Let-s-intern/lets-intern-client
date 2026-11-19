@@ -16,16 +16,20 @@ const PageAddressField = ({
   required = false,
   showErrors = false,
   helperText,
+  externalError,
 }: {
   value: string;
   onChange: (value: string) => void;
   required?: boolean;
   showErrors?: boolean;
   helperText?: string;
+  /** 칸 밖에서 판단한 오류 (예: 이미 쓰는 주소). showErrors 일 때만 보인다 */
+  externalError?: string;
 }) => {
   const [touched, setTouched] = useState(false);
   const error =
-    touched || showErrors ? pageAddressError(value, required) : undefined;
+    (touched || showErrors ? pageAddressError(value, required) : undefined) ??
+    (showErrors ? externalError : undefined);
   return (
     <TextField
       size="small"

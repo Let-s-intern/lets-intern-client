@@ -63,7 +63,7 @@ describe('SectionEditor 카드 모양', () => {
     });
   });
 
-  it('대표 상품에서 카드 목록으로 바꾸면 AUTO 를 보낸다', async () => {
+  it('대표 상품에서 카드 목록으로 바꾸면 CARDS 를 보낸다', async () => {
     render(
       <SectionEditor
         category={section('FEATURED')}
@@ -74,7 +74,9 @@ describe('SectionEditor 카드 모양', () => {
     fireEvent.click(screen.getByRole('radio', { name: /카드 목록/ }));
     fireEvent.click(screen.getByRole('button', { name: '저장' }));
     await waitFor(() => expect(mutateAsync).toHaveBeenCalled());
-    expect(mutateAsync.mock.calls[0][0]).toMatchObject({ displayType: 'AUTO' });
+    expect(mutateAsync.mock.calls[0][0]).toMatchObject({
+      displayType: 'CARDS',
+    });
   });
 
   it('선택지는 둘뿐이다', () => {

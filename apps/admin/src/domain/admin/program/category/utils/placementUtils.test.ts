@@ -8,6 +8,7 @@ import {
   draftsWith,
   draftsWithout,
   filterRowsOf,
+  findCreatedGroup,
   isDraftInvalid,
   landingPagesOf,
   menuDestinationOf,
@@ -215,5 +216,28 @@ describe('productExposuresOf', () => {
       '전체 프로그램 필터 › 이력서 랜딩 › 챌린지',
       '전체 프로그램 필터 › 서류 › 이력서',
     ]);
+  });
+});
+
+describe('findCreatedGroup', () => {
+  const g = (id: number, title: string): ProgramCategoryGroup => ({
+    id,
+    title,
+    sortOrder: 0,
+    isVisible: true,
+    categoryList: [],
+  });
+  it('전에 없던 같은 이름 목록 중 id 가 가장 큰 것을 고른다', () => {
+    const before = [g(1, '이력서')];
+    const after = [
+      g(1, '이력서'),
+      g(5, '이력서'),
+      g(7, '이력서'),
+      g(9, '면접'),
+    ];
+    expect(findCreatedGroup(before, after, '이력서')?.id).toBe(7);
+  });
+  it('못 찾으면 undefined', () => {
+    expect(findCreatedGroup([g(1, 'a')], [g(1, 'a')], 'a')).toBeUndefined();
   });
 });

@@ -55,12 +55,14 @@ const KIND_OF_DISPLAY: Partial<
   Record<ProgramCategoryDisplayType, SectionKind>
 > = {
   FEATURED: 'challenge',
-  CARDS: 'program',
   MENTOR: 'mentoring',
   BLOG: 'blog',
 };
 
-/** 표시 방식을 정했으면 그대로, 자동이면 상품이 전부 한 유형일 때만 그 유형 모양 */
+/**
+ * 표시 방식을 정했으면 그대로, 자동·카드 목록이면 상품이 전부 한 유형일 때만 그 유형 모양.
+ * 카드 목록은 대표 카드로 바꾸지 않는다 (웹 #2765)
+ */
 export const getSectionKind = (
   targets: { targetType?: string }[],
   displayType?: ProgramCategoryDisplayType | null,
@@ -69,7 +71,7 @@ export const getSectionKind = (
   if (fixed) return fixed;
   const types = new Set(targets.map((t) => t.targetType));
   if (types.size === 1) {
-    if (types.has('CHALLENGE')) return 'challenge';
+    if (types.has('CHALLENGE') && displayType !== 'CARDS') return 'challenge';
     if (types.has('LIVE_MENTORING')) return 'mentoring';
     if (types.has('BLOG')) return 'blog';
   }
