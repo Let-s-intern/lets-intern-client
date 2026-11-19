@@ -87,6 +87,7 @@ export const challengeTypeSchema = z.enum([
   'EXPERIENCE_SUMMARY',
   'HR',
   'PM',
+  'APTITUDE',
 ]);
 
 export type ChallengeType = z.infer<typeof challengeTypeSchema>;

@@ -67,6 +67,7 @@ export const challengeTypeToText: Record<ChallengeType, string> = {
   EXPERIENCE_SUMMARY: '경험 정리',
   HR: 'HR',
   PM: 'PM',
+  APTITUDE: '인적성',
 };
 
 export const challengeTypeToDisplay: Record<ChallengeType, string> = {
@@ -81,6 +82,7 @@ export const challengeTypeToDisplay: Record<ChallengeType, string> = {
   EXPERIENCE_SUMMARY: '경험 정리 챌린지',
   HR: 'HR',
   PM: 'PM',
+  APTITUDE: '인적성 챌린지',
 };
 
 export const challengeTypes: ChallengeType[] = [
@@ -95,6 +97,7 @@ export const challengeTypes: ChallengeType[] = [
   'EXPERIENCE_SUMMARY',
   'HR',
   'PM',
+  'APTITUDE',
 ];
 
 export const programStatusToText: Record<string, string> = {
