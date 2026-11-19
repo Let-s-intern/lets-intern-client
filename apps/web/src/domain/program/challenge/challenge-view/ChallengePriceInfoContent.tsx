@@ -181,7 +181,7 @@ function ChallengePriceInfoContent({
   const discountPercentage = Math.round((discountAmount / regularPrice) * 100);
   const finalPrice = sellingPrice - deposit; // 최종 금액 (환급 금액 미포함)
 
-  // 올인원패스 혜택 — 권한 보유 시 패스회원가 노출(LIGHT 제외).
+  // 올인원패스 혜택 — 권한 보유 시 패스회원가 노출(LIGHT 는 0원).
   // 패스회원가 = max(플랜 판매가 − BASIC 판매가, 0), useChallengePassBenefit와 동일 규칙.
   const params = useParams();
   const challengeId = typeof params?.id === 'string' ? params.id : '';
@@ -195,9 +195,7 @@ function ChallengePriceInfoContent({
     0,
   );
   const activePassPrice =
-    active === 'LIGHT'
-      ? undefined
-      : Math.max(sellingPrice - basicSellingPrice, 0);
+    active === 'LIGHT' ? 0 : Math.max(sellingPrice - basicSellingPrice, 0);
   const isPassApplied = hasPrivilege && activePassPrice !== undefined;
   const passFinalPrice = activePassPrice ?? sellingPrice;
   const membershipDiscount = isPassApplied
