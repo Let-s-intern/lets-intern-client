@@ -114,10 +114,18 @@ const SectionListEditor = ({
           <li key={d.key}>
             <CompactRow
               title={d.title || '(제목 없음)'}
-              caption={`${CARD_STYLE_LABEL[cardStyleOf(d.displayType)]} · ${describeCondition(
-                d,
-                (id) => labelOf.get(id)?.split(' > ').pop() ?? `#${id}`,
-              )}`}
+              caption={[
+                CARD_STYLE_LABEL[cardStyleOf(d.displayType)],
+                describeCondition(
+                  d,
+                  (id) => labelOf.get(id)?.split(' > ').pop() ?? `#${id}`,
+                ),
+                d.targetList.length > 0
+                  ? `직접 ${d.targetList.length}개`
+                  : null,
+              ]
+                .filter(Boolean)
+                .join(' · ')}
               active={openKey === d.key}
               onClick={() => setOpenKey((k) => (k === d.key ? null : d.key))}
               isVisible={d.isVisible}

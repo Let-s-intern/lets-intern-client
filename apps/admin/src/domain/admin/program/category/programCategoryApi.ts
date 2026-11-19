@@ -440,8 +440,17 @@ const sectionSchema = z.object({
   pinnedTargetId: z.number().nullish(),
   sortOrder: z.number(),
   isVisible: z.boolean(),
+  /** 직접 고른 상품. 순서대로 조건 결과보다 앞에 보인다 */
+  targetList: z
+    .array(z.object({ targetType: targetTypeSchema, targetId: z.number() }))
+    .nullish(),
 });
 export type ProgramCategorySection = z.infer<typeof sectionSchema>;
+
+export interface SectionTargetRef {
+  targetType: ProgramCategoryTargetType;
+  targetId: number;
+}
 
 export interface ProgramCategorySectionInput {
   title: string;
@@ -453,6 +462,8 @@ export interface ProgramCategorySectionInput {
   pinnedTargetType: ProgramCategoryTargetType | null;
   pinnedTargetId: number | null;
   isVisible: boolean;
+  /** 직접 고른 상품. 태그 연결은 만들지 않는다 */
+  targetList: SectionTargetRef[];
 }
 
 const sectionsQueryKey = 'adminProgramCategorySections';
@@ -597,6 +608,8 @@ const migrationSchema = z.object({
     }),
   ),
   duplicateTagTitleList: z.array(z.string()),
+  missingTagSlugList: z.array(z.string()).nullish(),
+  directMappingNote: z.string().nullish(),
 });
 export type LandingMigrationReport = z.infer<typeof migrationSchema>;
 

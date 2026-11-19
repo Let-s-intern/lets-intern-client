@@ -58,6 +58,18 @@ const Report = ({ report }: { report: LandingMigrationReport }) => (
         )}
       </div>
     ))}
+    {(report.missingTagSlugList ?? []).length > 0 && (
+      <p className="text-xxsmall12 text-red-500">
+        같은 주소의 태그가 없어 옮기지 못한 주소:{' '}
+        {report.missingTagSlugList?.join(', ')} · 그 주소로 태그를 만든 뒤 다시
+        실행하면 옮겨져요.
+      </p>
+    )}
+    {report.directMappingNote && (
+      <p className="text-xxsmall12 text-neutral-40">
+        {report.directMappingNote}
+      </p>
+    )}
     {report.duplicateTagTitleList.length > 0 && (
       <p className="text-xxsmall12 text-neutral-40">
         이름이 겹치는 분류: {report.duplicateTagTitleList.join(', ')} (합치지

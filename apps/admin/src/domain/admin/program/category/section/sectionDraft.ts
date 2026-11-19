@@ -30,6 +30,10 @@ export const fromSection = (s: ProgramCategorySection): SectionDraft => ({
   pinnedTargetType: s.pinnedTargetType ?? null,
   pinnedTargetId: s.pinnedTargetId ?? null,
   isVisible: s.isVisible,
+  targetList: (s.targetList ?? []).map(({ targetType, targetId }) => ({
+    targetType,
+    targetId,
+  })),
 });
 
 /** 새 섹션. 조건은 이 페이지 분류 하나, 유형은 비움(모든 유형) */
@@ -44,6 +48,7 @@ export const newSection = (tagId: number): SectionDraft => ({
   pinnedTargetType: null,
   pinnedTargetId: null,
   isVisible: true,
+  targetList: [],
 });
 
 export const withCardStyle = (
@@ -74,7 +79,8 @@ export const toSectionInput = ({
 
 export const sectionError = (d: SectionDraft) => {
   if (!d.title.trim()) return '섹션 제목을 넣어 주세요';
-  if (d.tagIds.length === 0) return '조건에 분류를 하나 이상 넣어 주세요';
+  if (d.tagIds.length === 0 && d.targetList.length === 0)
+    return '태그 조건이나 직접 고른 상품을 하나 이상 넣어 주세요';
   return undefined;
 };
 
@@ -90,9 +96,9 @@ export const describeCondition = (
   d: Pick<SectionDraft, 'tagIds' | 'matchMode' | 'targetTypes'>,
   tagTitleOf: (id: number) => string,
 ) => {
+  if (d.tagIds.length === 0) return '태그 조건 없음';
   const joiner = d.matchMode === 'ALL' ? ' 그리고 ' : ' 또는 ';
-  const tags =
-    d.tagIds.length > 0 ? d.tagIds.map(tagTitleOf).join(joiner) : '분류 없음';
+  const tags = d.tagIds.map(tagTitleOf).join(joiner);
   const types =
     d.targetTypes.length > 0
       ? d.targetTypes.map((t) => programCategoryTargetTypeLabel[t]).join('·')

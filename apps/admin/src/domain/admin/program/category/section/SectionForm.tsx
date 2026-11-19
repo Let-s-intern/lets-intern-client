@@ -8,6 +8,7 @@ import DirectTargetPicker from '../ui/DirectTargetPicker';
 import DisplayTypePicker from '../ui/DisplayTypePicker';
 import { tagLabelOf } from '../utils/tagUtils';
 import ConditionEditor from './ConditionEditor';
+import ManualTargetPicker from './ManualTargetPicker';
 import {
   describeCondition,
   withCardStyle,
@@ -55,12 +56,31 @@ const SectionForm = ({
 
       <div className="flex flex-col gap-2">
         <span className={label}>보여 줄 상품</span>
-        <ConditionEditor value={value} onChange={set} groups={groups} />
         <p className="text-xxsmall12 text-neutral-40">
-          → {describeCondition(value, (id) => labelOf.get(id) ?? `#${id}`)}{' '}
-          상품이 이 섹션에 자동으로 모여요. 상품은 각 상품 수정 화면에서 분류를
-          고르면 들어와요.
+          직접 고른 상품이 고른 순서대로 먼저, 그다음 태그 조건에 맞는 상품이
+          보여요. 둘 중 하나만 써도 돼요.
         </p>
+        <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
+          <div className="flex min-w-0 flex-col gap-2 rounded-xs bg-white p-3">
+            <span className={label}>태그로 고르기</span>
+            <ConditionEditor value={value} onChange={set} groups={groups} />
+            <p className="text-xxsmall12 text-neutral-40">
+              {value.tagIds.length > 0
+                ? `→ ${describeCondition(value, (id) => labelOf.get(id) ?? `#${id}`)} 상품이 자동으로 모여요. 상품 수정 화면에서 태그를 고르면 들어와요.`
+                : '태그를 고르지 않으면 직접 고른 상품만 보여요.'}
+            </p>
+          </div>
+          <div className="flex min-w-0 flex-col gap-2 rounded-xs bg-white p-3">
+            <span className={label}>직접 고르기</span>
+            <ManualTargetPicker
+              value={value.targetList}
+              onChange={(targetList) => set({ targetList })}
+            />
+            <p className="text-xxsmall12 text-neutral-40">
+              이 섹션에만 보여요. /program 필터에는 영향이 없어요.
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="flex flex-col gap-2">
@@ -81,7 +101,8 @@ const SectionForm = ({
         <div className="flex flex-col gap-2">
           <span className={label}>큰 카드에 보일 상품</span>
           <p className="text-xxsmall12 text-neutral-40">
-            비워 두면 조건에 맞는 상품 중 마감이 가장 가까운 것이 보여요.
+            비워 두면 직접 고른 첫 상품, 없으면 조건에 맞는 상품 중 마감이 가장
+            가까운 것이 보여요.
           </p>
           <div className="flex flex-wrap items-start gap-2">
             <DirectTargetPicker

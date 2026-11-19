@@ -72,9 +72,40 @@ describe('섹션 초안', () => {
     expect(toSectionInput(d)).not.toHaveProperty('key');
   });
 
-  it('제목과 조건 분류가 있어야 한다', () => {
+  it('제목이 있고, 태그 조건이나 직접 고른 상품 중 하나는 있어야 한다', () => {
     expect(sectionError({ ...newSection(1), title: ' ' })).toBeDefined();
     expect(sectionError({ ...newSection(1), tagIds: [] })).toBeDefined();
+    expect(
+      sectionError({
+        ...newSection(1),
+        tagIds: [],
+        targetList: [{ targetType: 'VOD', targetId: 3 }],
+      }),
+    ).toBeUndefined();
     expect(sectionError(newSection(1))).toBeUndefined();
+  });
+
+  it('직접 고른 상품은 순서대로 보내고, 태그가 없으면 조건 없음으로 적는다', () => {
+    const d = {
+      ...newSection(1),
+      tagIds: [],
+      targetList: [
+        { targetType: 'VOD' as const, targetId: 3 },
+        { targetType: 'CHALLENGE' as const, targetId: 1 },
+      ],
+    };
+    expect(toSectionInput(d).targetList).toEqual(d.targetList);
+    expect(describeCondition(d, titleOf)).toBe('태그 조건 없음');
+    expect(
+      fromSection({
+        id: 1,
+        title: 's',
+        tagIds: [],
+        targetTypes: [],
+        sortOrder: 0,
+        isVisible: true,
+        targetList: [{ targetType: 'BLOG', targetId: 5 }],
+      }).targetList,
+    ).toEqual([{ targetType: 'BLOG', targetId: 5 }]);
   });
 });
