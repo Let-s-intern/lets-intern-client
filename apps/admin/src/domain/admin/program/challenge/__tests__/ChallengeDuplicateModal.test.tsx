@@ -48,7 +48,7 @@ describe('ChallengeDuplicateModal', () => {
     expect(getChallenge).toHaveBeenCalledWith(418);
   });
 
-  it('버전 있는 이력서는 제목에 [ ] 가 없어도 썸네일 자동 생성이 켜진다', async () => {
+  it('버전 있는 이력서는 제목에 [ ] 와 기수가 없어도 썸네일 자동 생성이 켜진다', async () => {
     getChallenge.mockResolvedValue({
       challengeType: 'CAREER_START',
       versionList: [{ challengeVersionId: 39, title: '대학생 Ver.' }],
@@ -56,7 +56,7 @@ describe('ChallengeDuplicateModal', () => {
 
     renderModal();
     await waitFor(() => expect(getChallenge).toHaveBeenCalled());
-    typeTitle('이력서 챌린지 10기');
+    typeTitle('이력서 챌린지');
 
     await waitFor(() => expect(thumbnailCheckbox()).toBeEnabled());
     expect(screen.getByText(/버전마다/)).toBeInTheDocument();
@@ -71,16 +71,14 @@ describe('ChallengeDuplicateModal', () => {
     renderModal();
     await waitFor(() => expect(getChallenge).toHaveBeenCalled());
 
-    typeTitle('포트폴리오 완성 챌린지');
-    expect(
-      await screen.findByText('제목에 기수(ex. 32기)가 없습니다.'),
-    ).toBeInTheDocument();
-    expect(thumbnailCheckbox()).toBeDisabled();
-
     typeTitle('포트폴리오 완성 챌린지 43기');
     expect(
       await screen.findByText('제목에 주차(ex. 2주)가 없습니다.'),
     ).toBeInTheDocument();
+    expect(thumbnailCheckbox()).toBeDisabled();
+
+    typeTitle('포트폴리오 2주 완성 챌린지');
+    await waitFor(() => expect(thumbnailCheckbox()).toBeEnabled());
 
     fireEvent.click(
       screen.getByRole('checkbox', { name: '이전 내용 그대로 가져오기' }),
