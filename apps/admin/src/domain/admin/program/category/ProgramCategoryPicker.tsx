@@ -27,11 +27,13 @@ const ProgramCategoryPicker = ({
 }: ProgramCategoryPickerProps) => {
   const { data: groups = [] } = useAdminProgramCategoryGroupsQuery();
   const [expanded, setExpanded] = useState(false);
+  // 추천은 버튼을 눌렀을 때만 계산해 보여 준다. 저절로 뜨거나 체크되지 않는다
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const tags = tagsOf(groups);
   const selected = tags.filter(({ tag }) => selectedIds?.includes(tag.id));
   // 추천 중 아직 안 고른 것. 누르면 더한다. 고른 태그를 빼는 일은 없다
   const recommended =
-    autoTagInput && selectedIds
+    showSuggestions && autoTagInput && selectedIds
       ? tagsToAdd(
           suggestTags(autoTagInput, autoTagRulesOf(groups)),
           selectedIds,
@@ -64,18 +66,43 @@ const ProgramCategoryPicker = ({
             </span>
           ))
         )}
+        {autoTagInput && (
+          <Button
+            size="small"
+            sx={{ ml: 'auto' }}
+            className="program_category_auto_suggest"
+            onClick={() => setShowSuggestions((prev) => !prev)}
+          >
+            {showSuggestions ? '추천 닫기' : '태그 자동 추천'}
+          </Button>
+        )}
         <Button
           size="small"
-          sx={{ ml: 'auto' }}
+          sx={autoTagInput ? undefined : { ml: 'auto' }}
           onClick={() => setExpanded((prev) => !prev)}
         >
           {expanded ? '접기' : '수정'}
         </Button>
       </div>
 
+      {showSuggestions && recommended.length === 0 && (
+        <p className="mt-1.5 text-xxsmall12 text-neutral-40">
+          더 붙일 추천 태그가 없어요.
+        </p>
+      )}
+
       {recommended.length > 0 && (
         <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
           <span className="text-xxsmall12 text-neutral-40">추천 태그</span>
+          {recommended.length > 1 && (
+            <button
+              type="button"
+              onClick={() => recommended.forEach((s) => onToggle(s.tagId))}
+              className="rounded-full bg-primary px-2 py-0.5 text-xxsmall12 text-white"
+            >
+              모두 추가
+            </button>
+          )}
           {recommended.map((s) => (
             <button
               key={s.tagId}
