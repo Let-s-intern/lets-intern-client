@@ -155,26 +155,28 @@ function ApplyOptionCard({
   return (
     <div className="flex h-full flex-col gap-5 rounded-md bg-primary-5 px-4 py-5 md:px-5">
       {showModeSelect && (
-        <OptionGroup title="진행 방식 선택">
+        <OptionGroup title="진행 방식">
           <div className="flex flex-col gap-2.5 md:flex-row md:gap-4">
             <OptionButton
               selected={mode === 'LIVE'}
               onClick={() => onChangeMode('LIVE')}
             >
               <span className="text-xsmall16 font-bold">
-                렛츠커리어와 실시간으로 함께
+                매일 미션으로 완성하기(챌린지)
               </span>
               <span className="mt-1.5 text-xxsmall12 text-neutral-40">
-                매일 미션 · 멘토 피드백 · 가이드북 포함
+                미션과 피드백으로 꾸준히
               </span>
             </OptionButton>
             <OptionButton
               selected={mode === 'TEMPLATE'}
               onClick={() => onChangeMode('TEMPLATE')}
             >
-              <span className="text-xsmall16 font-bold">템플릿으로 혼자</span>
+              <span className="text-xsmall16 font-bold">
+                가이드 따라 완성하기(가이드북)
+              </span>
               <span className="mt-1.5 text-xxsmall12 text-neutral-40">
-                PDF + 템플릿 즉시 다운로드
+                내 속도에 맞춰 혼자서
               </span>
             </OptionButton>
           </div>
@@ -182,7 +184,7 @@ function ApplyOptionCard({
       )}
 
       {targetOptions.length > 1 && (
-        <OptionGroup title="참여 대상">
+        <OptionGroup title="현재 나의 상황">
           <div className="flex flex-col gap-2.5 md:flex-row md:gap-4">
             {targetOptions.map((option) => (
               <OptionLink
@@ -199,7 +201,7 @@ function ApplyOptionCard({
       )}
 
       {startDateOptions.length > 0 && (
-        <OptionGroup title="시작일 선택">
+        <OptionGroup title="챌린지 시작일">
           <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-3">
             {startDateOptions.map((option) => (
               <OptionLink
@@ -219,7 +221,7 @@ function ApplyOptionCard({
                     </span>
                   )}
                 </span>
-                <span className="mt-2.5 whitespace-nowrap text-xsmall16 font-bold">
+                <span className="mt-2.5 text-xsmall16 font-bold">
                   {formatDateWithDay(option.startDate)}
                 </span>
                 <span className="mt-1 text-xxsmall12 text-neutral-40">
