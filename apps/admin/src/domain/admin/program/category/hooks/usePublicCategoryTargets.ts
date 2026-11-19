@@ -7,6 +7,16 @@ const targetSchema = z.object({
   targetId: z.number(),
   title: z.string(),
   thumbnail: z.string().nullish(),
+  // 아래는 미리보기 카드용. 웹 랜딩이 받는 것과 같다
+  shortDesc: z.string().nullish(),
+  startDate: z.string().nullish(),
+  endDate: z.string().nullish(),
+  deadline: z.string().nullish(),
+  challengeType: z.string().nullish(),
+  price: z.number().nullish(),
+  durations: z.array(z.number()).nullish(),
+  mentorCompany: z.string().nullish(),
+  mentorJob: z.string().nullish(),
   categoryIds: z.array(z.number()),
 });
 

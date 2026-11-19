@@ -2,12 +2,10 @@ import { Button } from '@mui/material';
 import { useState } from 'react';
 import { siteUrl } from '../constants/webMenu';
 import type { CategoryActions } from '../hooks/useCategoryActions';
-import {
-  displayTypeLabel,
-  type ProgramCategoryGroup,
-} from '../programCategoryApi';
+import { CARD_STYLE_LABEL, cardStyleOf } from '../constants/cardStyle';
+import type { ProgramCategoryGroup } from '../programCategoryApi';
 import CategoryRowList from '../ui/CategoryRowList';
-import LandingPreview from '../ui/LandingPreview';
+import LandingPreview from '../preview/ui/LandingPreview';
 import SectionEditor from '../ui/SectionEditor';
 import {
   landingPagesOf,
@@ -92,7 +90,7 @@ const LandingPageEditor = ({
           editorHasProducts
           itemLabel="섹션"
           caption={(c) =>
-            `${displayTypeLabel[c.displayType ?? 'AUTO']} · 상품 ${c.programCount}`
+            `${CARD_STYLE_LABEL[cardStyleOf(c.displayType)]} · 상품 ${c.programCount}`
           }
           renderEditor={(category, onDone) => (
             <SectionEditor
@@ -107,6 +105,7 @@ const LandingPageEditor = ({
       ) : (
         <LandingPreview
           group={page.group}
+          slug={page.slug}
           mergeChallenges={page.mergeChallenges}
         />
       )}

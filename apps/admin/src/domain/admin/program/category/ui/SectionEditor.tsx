@@ -15,11 +15,12 @@ import {
 } from '../constants/wording';
 import ProgramCategoryTargetList from '../ProgramCategoryTargetList';
 import {
+  displayTypeLabel,
   useUpdateProgramCategory,
   type ProgramCategory,
-  type ProgramCategoryDisplayType,
   type ProgramCategoryGroup,
 } from '../programCategoryApi';
+import { cardStyleOf, type CardStyle } from '../constants/cardStyle';
 import AdvancedArea from './AdvancedArea';
 import DisplayTypePicker from './DisplayTypePicker';
 
@@ -41,9 +42,9 @@ const SectionEditor = ({
   const { snackbar } = useAdminSnackbar();
   const update = useUpdateProgramCategory();
   const [title, setTitle] = useState(category.title);
-  const [displayType, setDisplayType] = useState<ProgramCategoryDisplayType>(
-    category.displayType ?? 'AUTO',
-  );
+  // 저장 값(AUTO·MENTOR·BLOG 포함)은 둘 중 하나로 보인다. 고른 것이 처음과 다를 때만 보낸다
+  const initialStyle = cardStyleOf(category.displayType);
+  const [cardStyle, setCardStyle] = useState<CardStyle>(initialStyle);
   const [description, setDescription] = useState(category.description ?? '');
   const [sources, setSources] = useState<number[]>(
     category.sourceCategoryIds ?? [],
@@ -60,7 +61,7 @@ const SectionEditor = ({
       await update.mutateAsync({
         id: category.id,
         title: trimmedTitle !== category.title ? trimmedTitle : undefined,
-        displayType,
+        displayType: cardStyle !== initialStyle ? cardStyle : undefined,
         description,
         sourceCategoryIdList: sources,
       });
@@ -96,7 +97,16 @@ const SectionEditor = ({
 
       <div className="flex flex-col gap-2">
         <span className={fieldLabel}>카드 모양</span>
-        <DisplayTypePicker value={displayType} onChange={setDisplayType} />
+        <DisplayTypePicker value={cardStyle} onChange={setCardStyle} />
+        {category.displayType &&
+          category.displayType !== 'FEATURED' &&
+          category.displayType !== 'CARDS' &&
+          cardStyle === initialStyle && (
+            <p className="text-xxsmall12 text-neutral-40">
+              예전에 &quot;{displayTypeLabel[category.displayType]}&quot;(으)로
+              저장된 섹션입니다. 바꾸지 않으면 그대로 둡니다.
+            </p>
+          )}
       </div>
 
       <div className="flex flex-col gap-1">

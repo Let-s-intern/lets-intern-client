@@ -9,8 +9,10 @@ import { productExposuresOf } from '../utils/placementUtils';
 
 /**
  * 상품마다 어디에 보이는지. 노출 위치가 붙은 목록의 보이는 카테고리를 한 번에 조회한다.
- * 펼쳤을 때만 그려지므로 그때 부른다
+ * 길면 앞의 30개만 보이고 검색으로 좁힌다
  */
+const MAX_ROWS = 30;
+
 const ExposureTable = ({ groups }: { groups: ProgramCategoryGroup[] }) => {
   const placed = groups.filter(
     (g) => g.isVisible && (g.placements ?? []).length > 0,
@@ -38,7 +40,7 @@ const ExposureTable = ({ groups }: { groups: ProgramCategoryGroup[] }) => {
         className="w-72 rounded-xs border border-neutral-80 px-2 py-1 text-xsmall14"
       />
       <ul className="flex flex-col gap-1 text-xsmall14">
-        {exposures.map((e) => (
+        {exposures.slice(0, MAX_ROWS).map((e) => (
           <li key={e.key}>
             <span className="text-neutral-40">
               [
@@ -51,6 +53,11 @@ const ExposureTable = ({ groups }: { groups: ProgramCategoryGroup[] }) => {
             <span className="text-neutral-40"> → {e.places.join(' / ')}</span>
           </li>
         ))}
+        {exposures.length > MAX_ROWS && (
+          <li className="text-xxsmall12 text-neutral-40">
+            외 {exposures.length - MAX_ROWS}개 · 제목으로 찾아 좁히세요
+          </li>
+        )}
         {exposures.length === 0 && (
           <li className="text-neutral-40">해당하는 상품이 없습니다.</li>
         )}

@@ -5,14 +5,14 @@ import AdvancedGroupsTab from './advanced/AdvancedGroupsTab';
 import ProgramFilterTab from './filter/ProgramFilterTab';
 import { useCategoryActions } from './hooks/useCategoryActions';
 import LandingPagesTab from './landing/LandingPagesTab';
-import PlacementOverviewTab from './overview/PlacementOverviewTab';
+import CheckTab from './overview/CheckTab';
 import { useAdminProgramCategoryGroupsQuery } from './programCategoryApi';
 import ProgramCategoryApiGuideDialog from './ProgramCategoryApiGuideDialog';
 
 const PAGE_TABS = [
   { key: 'landing', label: '카테고리 랜딩 페이지' },
   { key: 'filter', label: '전체 프로그램 필터' },
-  { key: 'overview', label: '노출 위치별 확인' },
+  { key: 'check', label: '점검' },
   { key: 'advanced', label: '고급 설정' },
 ] as const;
 
@@ -77,7 +77,7 @@ const ProgramCategoryPage = () => {
           {tab === 'filter' && (
             <ProgramFilterTab groups={groups} actions={actions} />
           )}
-          {tab === 'overview' && <PlacementOverviewTab groups={groups} />}
+          {tab === 'check' && <CheckTab groups={groups} />}
           {tab === 'advanced' && (
             <AdvancedGroupsTab groups={groups} actions={actions} />
           )}

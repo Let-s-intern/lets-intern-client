@@ -1,8 +1,8 @@
 import { useState } from 'react';
+import { CARD_STYLE_LABEL } from '../constants/cardStyle';
 import { SOURCES_LABEL } from '../constants/wording';
 import type { CategoryActions } from '../hooks/useCategoryActions';
 import {
-  displayTypeLabel,
   programCategoryTargetTypeLabel,
   type ProgramCategory,
   type ProgramCategoryGroup,
@@ -44,9 +44,7 @@ const AdvancedGroupsTab = ({
   const categoryCaption = (category: ProgramCategory) =>
     [
       category.slug ? `/category/${category.slug}` : null,
-      category.displayType && category.displayType !== 'AUTO'
-        ? displayTypeLabel[category.displayType]
-        : null,
+      category.displayType === 'FEATURED' ? CARD_STYLE_LABEL.FEATURED : null,
       (category.sourceCategoryIds ?? []).length > 0
         ? `${SOURCES_LABEL}: ${(category.sourceCategoryIds ?? [])
             .map((id) => categoryTitleOf.get(id) ?? `#${id}`)
