@@ -17,6 +17,7 @@ import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import { getProgramPathname } from '@/utils/url';
 import Image from 'next/image';
 import ChallengeThumbnail from './thumbnail/ChallengeThumbnail';
+import DetailGallery from './thumbnail/DetailGallery';
 import {
   getChallengeDisplayTitle,
   resolveChallengeThumbnail,
@@ -333,33 +334,38 @@ const ChallengeBasicInfo = ({
               : 'duration-200 lg:top-6',
           )}
         >
-          <div
-            className="relative aspect-[4/3] w-full overflow-hidden rounded-xs"
+          <DetailGallery
+            challengeType={challenge.challengeType}
             style={styles.thumbnailStyle}
-          >
-            {/* 기수·버전이 박힌 등록 썸네일 대신 유형별 기본 썸네일. 기본 이미지가 없는 유형만 등록 썸네일 */}
-            {defaultThumbnail ? (
-              <ChallengeThumbnail
-                challengeType={challenge.challengeType}
-                title={challenge.title ?? ''}
-                displayTitle={getChallengeDisplayTitle(challenge.title ?? '')}
-              />
-            ) : (
-              (challenge.thumbnail || challenge.desktopThumbnail) && (
-                <Image
-                  className="object-contain"
-                  src={
-                    (challenge.thumbnail ||
-                      challenge.desktopThumbnail) as string
-                  }
-                  alt={`${challenge.title} 썸네일`}
-                  fill={true}
-                  sizes="(min-width: 1024px) 550px, 100vw"
-                  priority
-                />
-              )
-            )}
-          </div>
+            main={
+              <div className="relative h-full w-full">
+                {/* 기수·버전이 박힌 등록 썸네일 대신 유형별 기본 썸네일. 기본 이미지가 없는 유형만 등록 썸네일 */}
+                {defaultThumbnail ? (
+                  <ChallengeThumbnail
+                    challengeType={challenge.challengeType}
+                    title={challenge.title ?? ''}
+                    displayTitle={getChallengeDisplayTitle(
+                      challenge.title ?? '',
+                    )}
+                  />
+                ) : (
+                  (challenge.thumbnail || challenge.desktopThumbnail) && (
+                    <Image
+                      className="object-contain"
+                      src={
+                        (challenge.thumbnail ||
+                          challenge.desktopThumbnail) as string
+                      }
+                      alt={`${challenge.title} 썸네일`}
+                      fill={true}
+                      sizes="(min-width: 1024px) 550px, 100vw"
+                      priority
+                    />
+                  )
+                )}
+              </div>
+            }
+          />
 
           <div className="mt-4 flex flex-col gap-2 md:mt-6 md:gap-3">
             <h1 className="text-medium22 font-bold text-neutral-0 md:text-xlarge28">
