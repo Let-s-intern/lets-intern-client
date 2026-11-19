@@ -421,7 +421,7 @@ describe('ChallengeVersionSection', () => {
       );
     });
 
-    it('템플릿이 없거나 기수가 없어 만들 수 없으면 직접 올리라고 안내한다', async () => {
+    it('템플릿이 없거나 주차가 없어 만들 수 없으면 직접 올리라고 안내한다', async () => {
       generateVersionThumbnail.mockResolvedValueOnce(null);
       render(
         <BaseHarness
@@ -437,7 +437,7 @@ describe('ChallengeVersionSection', () => {
 
       expect(
         await screen.findByText(
-          '자동 생성 템플릿이 없는 유형이거나 챌린지 제목에 기수(N기)가 없습니다. 직접 올려주세요.',
+          '자동 생성 템플릿이 없는 유형이거나 챌린지 제목에 주차(N주)가 없습니다. 직접 올려주세요.',
         ),
       ).toBeInTheDocument();
       expect(list()[0].thumbnail).toBe('');
