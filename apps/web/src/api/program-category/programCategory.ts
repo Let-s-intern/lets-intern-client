@@ -42,6 +42,13 @@ const placementSchema = z.object({
   slug: z.string().nullish(),
   mergeChallenges: z.boolean().nullish(),
   matchMode: z.enum(['ANY', 'ALL', 'GROUP']).nullish(),
+  // 랜딩만. GNB 메뉴와 상단 문구 (서버 LC-3626 부터, 이전 응답에는 없다)
+  menuGroup: z.string().nullish(),
+  menuLabel: z.string().nullish(),
+  menuOrder: z.number().nullish(),
+  showInMenu: z.boolean().nullish(),
+  heroTitle: z.string().nullish(),
+  heroDescription: z.string().nullish(),
 });
 export type ProgramCategoryPlacement = z.infer<typeof placementSchema>;
 export type PublicProgramCategory = z.infer<typeof categorySchema>;
@@ -88,6 +95,35 @@ export const useFilterProgramCategoryGroupsQuery = () =>
         .parse(res.data.data).programCategoryGroupList;
     },
     staleTime: 5 * 60 * 1000,
+  });
+
+const landingMenuItemSchema = z.object({
+  slug: z.string(),
+  menuGroup: z.string().nullish(),
+  menuLabel: z.string().nullish(),
+  menuOrder: z.number().nullish(),
+});
+export type LandingMenuItem = z.infer<typeof landingMenuItemSchema>;
+
+/**
+ * GET /program-category/menu — GNB "프로그램 카테고리" 메뉴. 어드민이 메뉴에 보이기로 한 랜딩만 메뉴 순서대로.
+ * 서버가 아직 이 API 를 모르면(404 등) 빈 목록으로 두고 고정 메뉴를 쓴다
+ */
+export const useLandingMenuQuery = () =>
+  useQuery({
+    queryKey: ['programCategoryLandingMenu'],
+    queryFn: async (): Promise<LandingMenuItem[]> => {
+      try {
+        const res = await axios.get('/program-category/menu');
+        return z
+          .object({ menuList: z.array(landingMenuItemSchema) })
+          .parse(res.data.data).menuList;
+      } catch {
+        return [];
+      }
+    },
+    staleTime: 5 * 60 * 1000,
+    retry: false,
   });
 
 /** GET /program-category/slug/{slug} — 랜딩 한 페이지(노출 목록 하나) */

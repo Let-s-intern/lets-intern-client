@@ -43,6 +43,11 @@ jest.mock('@/hooks/useProgramCategoryNav', () => ({
 jest.mock('@/domain/career-journey/useJourneyHref', () => ({
   useJourneyHrefMap: () => ({}),
 }));
+// 사이드 메뉴 구조. 메뉴 API 를 부르지 않게 고정 메뉴로 둔다
+jest.mock('@/domain/career-journey/useJourneyGroups', () => ({
+  useJourneyGroups: () =>
+    jest.requireActual('@/domain/career-journey/journeyNav').JOURNEY_GROUPS,
+}));
 jest.mock('@/hooks/useScrollDirection', () => ({
   __esModule: true,
   default: () => 'UP',
