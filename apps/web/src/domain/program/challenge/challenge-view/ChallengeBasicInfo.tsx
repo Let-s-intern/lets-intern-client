@@ -337,6 +337,10 @@ const ChallengeBasicInfo = ({
           <DetailGallery
             challengeType={challenge.challengeType}
             style={styles.thumbnailStyle}
+            imageSrc={
+              defaultThumbnail?.src ??
+              (challenge.thumbnail || challenge.desktopThumbnail)
+            }
             main={
               <div className="relative h-full w-full">
                 {/* 기수·버전이 박힌 등록 썸네일 대신 유형별 기본 썸네일. 기본 이미지가 없는 유형만 등록 썸네일 */}
