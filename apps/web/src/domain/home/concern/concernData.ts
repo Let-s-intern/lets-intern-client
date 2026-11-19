@@ -23,7 +23,7 @@ export interface Concern {
 export const CONCERNS: Concern[] = [
   {
     id: 'experience',
-    label: '스펙 정리',
+    label: '경험정리',
     headline: '경험이 정리가\n안 돼요',
     keywords: '경험정리',
     panelTitle: '어떤 경험부터 정리할까요?',

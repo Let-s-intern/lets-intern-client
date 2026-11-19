@@ -13,6 +13,7 @@ import ReviewSection from '@/domain/home/review/ReviewSectionClient';
 import { HomeChattingProvider } from '@/domain/home/hero/HomeChattingContext';
 import HomeHero from '@/domain/home/hero/HomeHero';
 import PassBenefitSection from '@/domain/home/pass-benefit/PassBenefitSection';
+import HomeMentoringSection from '@/domain/home/mentoring/HomeMentoringSection';
 
 export default function HomeScreen() {
   return (
@@ -23,6 +24,7 @@ export default function HomeScreen() {
         <ConcernSection />
         <MainBannerSection />
         <PassBenefitSection />
+        <HomeMentoringSection />
         <AsyncBoundary pendingFallback={null}>
           <ReviewSection />
         </AsyncBoundary>

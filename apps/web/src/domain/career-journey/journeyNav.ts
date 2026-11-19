@@ -17,7 +17,7 @@ export interface JourneyGroup {
 }
 
 export const JOURNEY_GROUPS: JourneyGroup[] = [
-  { label: '스펙 정리', items: [{ label: '경험정리', slug: 'experience' }] },
+  { label: '경험정리', items: [{ label: '경험정리', slug: 'experience' }] },
   {
     label: '서류 작성',
     items: [

@@ -15,7 +15,7 @@ import {
  */
 const WEB_MENU: { group: string; items: { slug: string; label: string }[] }[] =
   [
-    { group: '스펙 정리', items: [{ slug: 'experience', label: '경험정리' }] },
+    { group: '경험정리', items: [{ slug: 'experience', label: '경험정리' }] },
     {
       group: '서류 작성',
       items: [
