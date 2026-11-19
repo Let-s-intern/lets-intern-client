@@ -47,11 +47,11 @@ const targetTypeSchema = z.enum([
 
 /** 랜딩 섹션 표시 방식. 서버 ProgramCategoryDisplayType 과 같다 */
 export const displayTypeLabel = {
-  AUTO: '자동 (상품 유형대로)',
-  FEATURED: '큰 카드 하나',
-  CARDS: '카드 줄',
-  MENTOR: '멘토 카드 줄',
-  BLOG: '블로그 카드 줄',
+  AUTO: '자동 (상품 유형에 맞춰)',
+  FEATURED: '큰 카드 1장',
+  CARDS: '카드 목록',
+  MENTOR: '멘토 카드',
+  BLOG: '블로그 카드',
 } as const;
 export type ProgramCategoryDisplayType = keyof typeof displayTypeLabel;
 
