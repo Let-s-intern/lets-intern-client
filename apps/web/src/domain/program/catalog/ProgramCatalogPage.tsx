@@ -26,7 +26,7 @@ const PAGE_SIZE = 12;
 
 /**
  * 전체 프로그램 목록. 어드민 노출 분류(필터용)에 걸린 상품을 한 번에 받아 그린다.
- * 필터를 안 고르면 모든 필터용 카테고리의 상품, 고르면 match=GROUP 으로 좁힌다.
+ * 필터를 안 고르면 모든 필터용 카테고리의 상품, 고르면 고른 태그 중 하나라도 맞는 상품(match=ANY).
  * 챌린지는 기수·버전과 관계없이 한 장이다
  */
 const ProgramCatalogPage = () => {
@@ -46,7 +46,7 @@ const ProgramCatalogPage = () => {
   const hasCategory = query.categoryIds.length > 0;
   const { data: targets = [], isLoading } = useProgramCategoryTargetsQuery(
     hasCategory ? query.categoryIds : allCategoryIds,
-    hasCategory ? 'GROUP' : 'ANY',
+    'ANY',
   );
   const list = useMemo(
     () => filterCatalogTargets(targets, query.type, undefined, query.status),
