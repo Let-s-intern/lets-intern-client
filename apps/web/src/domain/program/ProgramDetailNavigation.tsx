@@ -1,10 +1,11 @@
 'use client';
 
 import useProgramScrollDirectionStyle from '@/hooks/useProgramScrollDirectionStyle';
+import useSectionAnchorNav from '@/hooks/useSectionAnchorNav';
 import { twMerge } from '@/lib/twMerge';
 import { ChallengeType, challengeTypeSchema } from '@/schema';
 import { ProgramType } from '@/types/common';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { challengeColors } from './challenge/challengeColors';
 
 const { CAREER_START, PORTFOLIO, EXPERIENCE_SUMMARY, ETC } =
@@ -61,8 +62,9 @@ const ProgramDetailNavigation = ({
   const isLive = programType === 'live';
   const navItems = isLive ? liveNavigateItems : challengeNavigateItems;
 
-  const [activeSection, setActiveSection] = useState<string>(
-    isLive ? liveNavigateItems[0].to : challengeNavigateItems[0].to,
+  const { active: activeSection, scrollTo: handleScroll } = useSectionAnchorNav(
+    navItems.map((navItem) => navItem.to),
+    isReady,
   );
 
   const scrollStyleClassName = useProgramScrollDirectionStyle();
@@ -81,53 +83,6 @@ const ProgramDetailNavigation = ({
         return challengeColors._14BCFF;
     }
   }, [challengeType]);
-
-  useEffect(() => {
-    if (!isReady || typeof window === 'undefined') return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id);
-          }
-        });
-      },
-      {
-        root: null,
-        rootMargin: '-50% 0px -50% 0px',
-        threshold: 0,
-      },
-    );
-
-    navItems.forEach((navItem) => {
-      const target = document.getElementById(navItem.to);
-      if (target) {
-        observer.observe(target);
-      }
-    });
-
-    return () => {
-      navItems.forEach((navItem) => {
-        const target = document.getElementById(navItem.to);
-        if (target) {
-          observer.unobserve(target);
-        }
-      });
-    };
-  }, [navItems, isReady]);
-
-  const handleScroll = (id: string) => {
-    const target = document.getElementById(id);
-    if (target) {
-      const elementPosition = target.getBoundingClientRect().top;
-      const offsetPosition = elementPosition - 70;
-      window.scrollBy({
-        top: offsetPosition,
-        behavior: 'smooth',
-      });
-    }
-  };
 
   return (
     <nav

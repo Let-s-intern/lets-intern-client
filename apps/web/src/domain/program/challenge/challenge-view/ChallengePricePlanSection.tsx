@@ -36,7 +36,7 @@ const PricePlanCard = memo(function PricePlanCard({
   paragraphStyle,
 }: CardProps) {
   return (
-    <div className="w-72 rounded-sm bg-white px-5 py-7 text-left text-neutral-0 md:flex-1">
+    <div className="w-72 rounded-sm bg-white px-5 py-7 text-left text-neutral-0 md:flex-1 min-[1025px]:w-auto min-[1025px]:min-w-0 min-[1025px]:px-4">
       <h4 className="mb-6 text-xsmall16 font-bold md:text-small20">{title}</h4>
       <p
         style={paragraphStyle}
@@ -117,7 +117,7 @@ function ChallengePricePlanSection({ challengeType, priceInfoList }: Props) {
   } = getChallengeOptionPriceInfo(priceInfoList);
 
   return (
-    <section className="w-full bg-neutral-90 px-5 pb-[8.75rem] pt-[6.25rem] text-center lg:px-0">
+    <section className="w-full bg-neutral-90 px-5 pb-[8.75rem] pt-[6.25rem] text-center lg:px-0 min-[1025px]:px-8">
       <SectionHeader className="mb-6 md:mb-14">가격 플랜</SectionHeader>
       <SectionSubHeader className="mb-1 md:mb-3" style={subHeaderStyle}>
         취준 비용 부담은 낮추고, 퀄리티는 높이고
@@ -127,8 +127,8 @@ function ChallengePricePlanSection({ challengeType, priceInfoList }: Props) {
         <br className="md:hidden" /> 선택할 수 있어요!
       </SectionMainHeader>
       {/* 좌우 슬라이드 */}
-      <div className="-mx-5 overflow-x-auto px-5 md:max-w-[1000px] lg:mx-auto lg:px-0">
-        <div className="flex min-w-fit items-center gap-3">
+      <div className="-mx-5 overflow-x-auto px-5 md:max-w-[1000px] lg:mx-auto lg:px-0 min-[1025px]:px-8">
+        <div className="flex min-w-fit items-center gap-3 min-[1025px]:min-w-0 min-[1025px]:items-stretch">
           {lightPriceInfo && (
             <PricePlanCard
               paragraphStyle={paragraphStyle}

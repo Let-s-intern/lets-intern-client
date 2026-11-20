@@ -4,6 +4,7 @@ import { useProgramApplicationQuery } from '@/api/application';
 import dayjs from '@/lib/dayjs';
 import { ChallengeIdPrimitive } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
+import { useMediaQuery } from '@mui/material';
 import { useEffect, useState } from 'react';
 import NotiToast from './NotiToast';
 import {
@@ -33,6 +34,7 @@ const ChallengeCTAButtons = ({
   const { isOpen, plan, close, isTemplateMode } = useChallengeApplySheetStore();
   const { guidebook } = useTemplateGuidebook(challenge.challengeType);
   const openApply = useOpenChallengeApply();
+  const isDesktop = useMediaQuery('(min-width:1025px)');
 
   const [isNotiOpen, setIsNotiOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -136,6 +138,8 @@ const ChallengeCTAButtons = ({
         // 상단에서 고른 플랜으로 시트를 다시 초기화한다
         key={plan ?? 'default'}
         initialPlan={plan}
+        // 신청 패널이 있는 데스크톱은 플랜을 이미 골랐으니 시트 없이 바로 신청 페이지로 간다
+        applyImmediately={hasFollowPanel && isDesktop}
         isOpen={isOpen}
         challenge={challenge}
         challengeId={challengeId}

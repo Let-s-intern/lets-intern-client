@@ -19,7 +19,9 @@ function CheckList({
       <div>
         <RxCheckbox color={checkboxColor} size={isDesktop ? 36 : 24} />
       </div>
-      <div className="flex flex-col md:flex-row md:gap-1">{children}</div>
+      <div className="flex min-w-0 flex-col md:flex-row md:flex-wrap md:gap-x-1">
+        {children}
+      </div>
     </div>
   );
 }

@@ -13,7 +13,7 @@ const won = (value: number) => `${value.toLocaleString()}원`;
 const PlanPrice = ({ option }: { option: PlanOption }) => (
   <span className="flex shrink-0 flex-col items-end gap-1">
     {option.discountPercentage > 0 && (
-      <span className="text-xsmall14">
+      <span className="text-xxsmall12">
         <span className="font-semibold text-system-error">
           {option.discountPercentage}%
         </span>{' '}
@@ -22,7 +22,7 @@ const PlanPrice = ({ option }: { option: PlanOption }) => (
         </span>
       </span>
     )}
-    <span className="text-small18 font-bold text-neutral-0">
+    <span className="text-xsmall16 font-bold text-neutral-0">
       {won(option.sellingPrice)}
     </span>
     {option.passPrice !== null && (
@@ -68,38 +68,51 @@ function PlanSelectCard({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-2">
+      <div
+        className={twMerge(
+          'flex flex-col gap-2',
+          // 상단 신청 영역은 진행 방식 카드와 같은 옅은 색 면. 따라오는 패널(compact)은 그대로
+          !compact &&
+            'rounded-md bg-[var(--apply-tint,#F5F6FF)] px-4 py-5 md:px-5',
+        )}
+      >
         <p className="text-xsmall16 font-bold text-neutral-0">
           프로그램 옵션 선택 (필수)
           <span className="text-system-error">*</span>
         </p>
         <div className="flex flex-col">
-          <button
-            type="button"
-            aria-expanded={isOpen}
-            onClick={() => setIsOpen((prev) => !prev)}
-            className={twMerge(
-              'challenge_plan_select flex items-center justify-between gap-2 rounded-xs border bg-white px-4 py-3 text-left text-xsmall16',
-              isOpen
-                ? 'rounded-b-none border-primary bg-primary-5'
-                : 'border-neutral-80',
-            )}
-          >
-            <span className={selected ? 'text-neutral-0' : 'text-neutral-50'}>
-              {selected ? selected.title : '플랜을 선택해 주세요'}
-            </span>
-            <ChevronDown
-              size={20}
+          {compact && (
+            <button
+              type="button"
+              aria-expanded={isOpen}
+              onClick={() => setIsOpen((prev) => !prev)}
               className={twMerge(
-                'shrink-0 transition-transform',
-                isOpen && 'rotate-180',
+                'challenge_plan_select flex items-center justify-between gap-2 rounded-xs border bg-white px-4 py-3 text-left text-xsmall16',
+                isOpen
+                  ? 'rounded-b-none border-primary bg-primary-5'
+                  : 'border-neutral-80',
               )}
-            />
-          </button>
-          {isOpen && (
+            >
+              <span className={selected ? 'text-neutral-0' : 'text-neutral-50'}>
+                {selected ? selected.title : '플랜을 선택해 주세요'}
+              </span>
+              <ChevronDown
+                size={20}
+                className={twMerge(
+                  'shrink-0 transition-transform',
+                  isOpen && 'rotate-180',
+                )}
+              />
+            </button>
+          )}
+          {(!compact || isOpen) && (
             <ul
               role="radiogroup"
-              className="flex flex-col rounded-b-xs border border-t-0 border-neutral-80 bg-white"
+              className={
+                compact
+                  ? 'flex flex-col rounded-b-xs border border-t-0 border-neutral-80 bg-white'
+                  : 'flex flex-col gap-2.5'
+              }
             >
               {options.map((option) => {
                 const checked = option.plan === selectedPlan;
@@ -113,20 +126,32 @@ function PlanSelectCard({
                         onSelect(option.plan);
                         setIsOpen(false);
                       }}
-                      className="challenge_plan_option flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-neutral-95"
+                      className={twMerge(
+                        'challenge_plan_option flex w-full items-center gap-3 px-4 py-3 text-left',
+                        compact
+                          ? 'hover:bg-neutral-95'
+                          : twMerge(
+                              'rounded-xs border bg-white',
+                              checked
+                                ? 'border-[color:var(--apply-accent,#4D55F5)]'
+                                : 'border-transparent hover:border-neutral-70',
+                            ),
+                      )}
                       data-plan={option.plan}
                     >
                       <span
                         className={twMerge(
                           'flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2',
-                          checked ? 'border-primary' : 'border-neutral-80',
+                          checked
+                            ? 'border-[color:var(--apply-accent,#4D55F5)]'
+                            : 'border-neutral-80',
                         )}
                       >
                         {checked && (
-                          <span className="h-2.5 w-2.5 rounded-full bg-primary" />
+                          <span className="h-2.5 w-2.5 rounded-full bg-[var(--apply-accent,#4D55F5)]" />
                         )}
                       </span>
-                      <span className="min-w-0 flex-1 text-xsmall16 text-neutral-10">
+                      <span className="min-w-0 flex-1 whitespace-nowrap text-xsmall14 text-neutral-10">
                         {option.title}
                       </span>
                       <PlanPrice option={option} />
@@ -139,23 +164,22 @@ function PlanSelectCard({
         </div>
       </div>
 
-      {selected && (
-        <div className="flex flex-col gap-1 rounded-xs border border-neutral-85 bg-neutral-95 px-4 py-3">
-          <div className="flex items-start justify-between gap-2">
-            <span className="text-xsmall16 text-neutral-10">
-              {selected.title}
-            </span>
+      {compact && selected && (
+        <div className="flex items-center justify-between gap-2 text-xsmall14 text-neutral-30">
+          <span className="min-w-0 truncate">
+            선택한 플랜{' '}
+            <strong className="text-neutral-0">{selected.title}</strong>
+          </span>
+          <span className="flex shrink-0 items-center gap-1 font-semibold text-neutral-0">
+            {won(selected.sellingPrice)}
             <button
               type="button"
               aria-label="선택한 플랜 빼기"
               onClick={() => onSelect(null)}
-              className="shrink-0 text-neutral-40"
+              className="rounded-full p-0.5 text-neutral-40 hover:text-neutral-10"
             >
-              <X size={18} />
+              <X size={14} />
             </button>
-          </div>
-          <span className="self-end text-xsmall16 font-bold text-neutral-0">
-            {won(selected.sellingPrice)}
           </span>
         </div>
       )}
@@ -177,12 +201,16 @@ function PlanSelectCard({
       {passHref && passPrice !== null && (
         <Link
           href={passHref}
-          className="pass_benefit_card flex items-center justify-between gap-3 rounded-xs bg-primary-5 px-4 py-3 text-xsmall14"
+          className="pass_benefit_card flex items-center justify-between gap-3 rounded-xs bg-[var(--apply-tint,#F5F6FF)] px-4 py-3 text-xsmall14"
         >
           <span className="text-neutral-10">
-            올인원 패스 회원은{' '}
-            <strong className="font-bold text-primary">{won(passPrice)}</strong>{' '}
-            참여
+            <span className="whitespace-nowrap">올인원 패스 회원은</span>{' '}
+            <span className="whitespace-nowrap">
+              <strong className="font-bold text-primary">
+                {won(passPrice)}
+              </strong>{' '}
+              참여
+            </span>
           </span>
           <span className="flex shrink-0 items-center font-medium text-primary">
             패스 혜택 보기

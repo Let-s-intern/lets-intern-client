@@ -27,7 +27,7 @@ const DifferentCard = ({
 
   return (
     <div
-      className="flex w-full flex-col gap-x-[50px] gap-y-6 rounded-md border p-4 pb-[26px] text-black md:flex-row md:items-center md:px-10 md:pt-6"
+      className="flex w-full flex-col gap-x-[50px] gap-y-6 rounded-md border p-4 pb-[26px] text-black md:flex-row md:items-center md:px-10 md:pt-6 min-[1025px]:flex-col min-[1025px]:items-stretch min-[1025px]:gap-x-0 min-[1025px]:px-8"
       style={{
         backgroundColor: styles.primaryLightColor,
         borderColor: styles.borderColor,
@@ -37,7 +37,7 @@ const DifferentCard = ({
         <img
           src={isDesktop ? imageUrl.desktop : imageUrl.mobile}
           alt="different"
-          className="w-full rounded-t-md md:w-[288px] md:rounded-md lg:w-[464px] lg:translate-y-[26px] lg:rounded-b-none"
+          className="w-full rounded-t-md md:w-[288px] md:rounded-md lg:w-[464px] lg:translate-y-[26px] lg:rounded-b-none min-[1025px]:mx-auto min-[1025px]:w-full min-[1025px]:max-w-[464px] min-[1025px]:translate-y-0 min-[1025px]:rounded-md"
         />
       )}
       <div className="flex w-full flex-col gap-y-3">

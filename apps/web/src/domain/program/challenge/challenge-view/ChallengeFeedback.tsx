@@ -79,7 +79,7 @@ export default function ChallengeFeedbackUI({
   const currentContent = content[challengeType];
 
   return (
-    <div className="flex w-full max-w-[1000px] flex-col px-5 pt-20 md:px-10 md:pt-40 lg:px-0">
+    <div className="flex w-full max-w-[1000px] flex-col px-5 pt-20 md:px-10 md:pt-40 lg:px-0 min-[1025px]:px-8">
       {/* Hero Section */}
       <section className="bg-primary py-28 pt-14 text-center">
         <div className="mb-2 md:mb-3">

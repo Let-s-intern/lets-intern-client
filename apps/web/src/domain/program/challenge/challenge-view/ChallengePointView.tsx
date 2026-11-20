@@ -303,7 +303,7 @@ const ChallengePointView = ({
           )}
 
           {/* 본문 */}
-          <div className="relative z-10 px-5 py-16 md:py-32 lg:px-0">
+          <div className="relative z-10 px-5 py-16 md:py-32 lg:px-0 min-[1025px]:px-8">
             <Heading2>
               잠깐, 다른 커리어 고민이 있으신가요?
               <br /> 커리어 단계에 맞는 프로그램을
@@ -311,7 +311,7 @@ const ChallengePointView = ({
             </Heading2>
             <ProgramRecommendSlider
               buttonStyle={{ backgroundColor: styles.buttonBgColor }}
-              className="-mx-5 mt-8 max-w-[1000px] px-5 md:mx-auto md:mt-16 lg:px-0"
+              className="-mx-5 mt-8 max-w-[1000px] px-5 md:mx-auto md:mt-16 lg:px-0 min-[1025px]:px-8"
               list={slideList}
               trailingSlide={curationTrailingSlide}
             />
@@ -327,7 +327,7 @@ const ChallengePointView = ({
             backgroundColor: styles.darkColor,
           }}
         >
-          <div className="flex w-full max-w-[1000px] flex-col px-5 py-[60px] md:px-10 md:py-[120px] lg:px-0">
+          <div className="flex w-full max-w-[1000px] flex-col px-5 py-[60px] md:px-10 md:py-[120px] lg:px-0 min-[1025px]:px-8">
             <div className="flex w-full flex-col md:items-center">
               <p
                 className="text-xsmall16 font-bold md:text-small20"
@@ -350,7 +350,7 @@ const ChallengePointView = ({
               >
                 {weekText} 과정
               </div>
-              <div className="flex flex-col gap-5 rounded-b-md bg-white px-4 py-[30px] md:flex-row md:justify-between md:gap-0 md:pb-[30px] md:pt-9 lg:px-7">
+              <div className="flex flex-col gap-5 rounded-b-md bg-white px-4 py-[30px] md:flex-row md:justify-between md:gap-0 md:pb-[30px] md:pt-9 lg:px-7 min-[1025px]:grid min-[1025px]:grid-cols-3 min-[1025px]:gap-x-4 min-[1025px]:gap-y-6">
                 {progress.map((item) => (
                   <ProgressItem
                     key={item.index}
@@ -360,7 +360,8 @@ const ChallengePointView = ({
                 ))}
               </div>
             </div>
-            <div className="flex flex-col gap-3 md:flex-row">
+            {/* 1025px 이상은 신청 패널 때문에 본문이 좁아져 박스를 세로로 쌓는다 */}
+            <div className="flex flex-col gap-3 md:flex-row min-[1025px]:flex-col">
               <Box className="md:flex-1">
                 {programSchedule.map((item) => (
                   <BoxItem key={item.title} title={item.title}>

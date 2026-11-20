@@ -13,6 +13,7 @@ import TemplateApplyButton from '../template-guidebook/TemplateApplyButton';
 import ApplyOptionCard from './apply-header/ApplyOptionCard';
 import ApplyPriceCard from './apply-header/ApplyPriceCard';
 import PassPromoStrip from './apply-header/PassPromoStrip';
+import { getApplyAccentStyle } from './apply-header/applyAccent';
 import PlanSelectCard from './apply-header/PlanSelectCard';
 import ChallengeThumbnail from './thumbnail/ChallengeThumbnail';
 import DetailGallery from './thumbnail/DetailGallery';
@@ -130,7 +131,10 @@ const ChallengeBasicInfo = ({
   );
 
   return (
-    <div className="flex w-full flex-col">
+    <div
+      className="flex w-full flex-col"
+      style={getApplyAccentStyle(challenge.challengeType)}
+    >
       {passHref && (
         <PassPromoStrip
           passHref={passHref}
@@ -146,7 +150,7 @@ const ChallengeBasicInfo = ({
        * 스마트스토어형 상단. 데스크톱은 왼쪽 이미지·제목을 고정하고 오른쪽 옵션·가격이 스크롤을 따라 움직인다.
        * 헤더가 위로 스크롤할 때만 다시 나타나므로 고정 위치도 그에 맞춘다.
        */}
-      <div className="mt-6 flex flex-col gap-6 md:mt-10 lg:grid lg:grid-cols-2 lg:items-start lg:gap-[60px]">
+      <div className="mt-6 flex flex-col gap-6 md:mt-10 lg:grid lg:grid-cols-[1fr_1px_1fr] lg:items-start lg:gap-10 lg:px-8">
         <div
           className={twMerge(
             'flex flex-col transition-[top] lg:sticky',
@@ -191,24 +195,27 @@ const ChallengeBasicInfo = ({
               </div>
             }
           />
-
-          <div className="mt-4 flex flex-col gap-2 md:mt-6 md:gap-3">
-            <h1 className="text-medium22 font-bold text-neutral-0 md:text-xlarge28">
-              {challenge.title}
-            </h1>
-            {challenge.shortDesc && (
-              <p className="text-xsmall14 text-neutral-30 md:text-xsmall16">
-                {challenge.shortDesc}
-              </p>
-            )}
-          </div>
         </div>
 
-        <div className="flex flex-col gap-6 md:gap-8">
+        {/* 이미지와 신청 영역 사이 구분선 */}
+        <div
+          aria-hidden
+          className="hidden w-px self-stretch bg-neutral-85 lg:block"
+        />
+
+        <div className="flex flex-col gap-3 md:gap-4">
           <div className="flex flex-col gap-3">
-            <h2 className="text-small18 font-bold text-neutral-0 md:text-medium22">
-              나에게 맞는 프로그램 선택하기
-            </h2>
+            {/* 제목·한 줄 소개는 "나에게 맞는 프로그램 선택하기" 자리에 둔다 */}
+            <div className="flex flex-col gap-1.5 md:gap-2">
+              <h1 className="text-medium22 font-bold text-neutral-0 md:text-xlarge28">
+                {challenge.title}
+              </h1>
+              {challenge.shortDesc && (
+                <p className="text-xsmall14 text-neutral-30 md:text-xsmall16">
+                  {challenge.shortDesc}
+                </p>
+              )}
+            </div>
             <ApplyOptionCard
               showModeSelect={guidebook !== null}
               mode={showTemplate ? 'TEMPLATE' : 'LIVE'}
@@ -217,37 +224,40 @@ const ChallengeBasicInfo = ({
               startDateOptions={startDateOptions}
             />
           </div>
-          {showTemplate && guidebook ? (
-            <ApplyPriceCard
-              price={priceSummary}
-              applyButton={
-                <TemplateApplyButton
-                  guidebookId={guidebook.id}
-                  title={guidebook.title}
-                />
-              }
-              passHref={passHref}
-              passPrice={passPrice}
-              membershipId={
-                (openPrivilege?.openCount ?? 0) === 1
-                  ? (openPrivilege?.membershipId ?? null)
-                  : null
-              }
-            />
-          ) : (
-            // 챌린지 시작일까지 고른 뒤 플랜을 고른다. 시작일은 지금 보는 기수가 기본으로 골라져 있다
-            startDateOptions.some((option) => option.selected) && (
-              <PlanSelectCard
-                options={planOptions}
-                selectedPlan={selectedPlan}
-                onSelect={setSheetPlan}
-                applyState={applyState}
-                onApply={(plan) => openApply(plan)}
+          {/* 1024px 까지는 옵션 선택·신청을 하단 플로팅 바(시트)로만 한다 */}
+          <div className="hidden min-[1025px]:block">
+            {showTemplate && guidebook ? (
+              <ApplyPriceCard
+                price={priceSummary}
+                applyButton={
+                  <TemplateApplyButton
+                    guidebookId={guidebook.id}
+                    title={guidebook.title}
+                  />
+                }
                 passHref={passHref}
-                passPrice={selectedPlanPassPrice}
+                passPrice={passPrice}
+                membershipId={
+                  (openPrivilege?.openCount ?? 0) === 1
+                    ? (openPrivilege?.membershipId ?? null)
+                    : null
+                }
               />
-            )
-          )}
+            ) : (
+              // 챌린지 시작일까지 고른 뒤 플랜을 고른다. 시작일은 지금 보는 기수가 기본으로 골라져 있다
+              startDateOptions.some((option) => option.selected) && (
+                <PlanSelectCard
+                  options={planOptions}
+                  selectedPlan={selectedPlan}
+                  onSelect={setSheetPlan}
+                  applyState={applyState}
+                  onApply={(plan) => openApply(plan)}
+                  passHref={passHref}
+                  passPrice={selectedPlanPassPrice}
+                />
+              )
+            )}
+          </div>
         </div>
       </div>
     </div>

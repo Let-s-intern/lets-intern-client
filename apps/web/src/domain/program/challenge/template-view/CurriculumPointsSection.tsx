@@ -55,7 +55,7 @@ function CurriculumPointsSection({ config, content }: Props) {
   const curriculumCards = getCurriculumCards?.(lectureCount);
 
   return (
-    <section className="flex w-full flex-col items-center pb-[70px] pt-[50px] text-center md:overflow-x-hidden md:pb-[82px] md:pt-[141px]">
+    <section className="flex w-full flex-col items-center break-keep pb-[70px] pt-[50px] text-center md:overflow-x-hidden md:pb-[82px] md:pt-[141px]">
       <MainTitle className="flex flex-col items-center">
         {getTitle(weekText)}
       </MainTitle>

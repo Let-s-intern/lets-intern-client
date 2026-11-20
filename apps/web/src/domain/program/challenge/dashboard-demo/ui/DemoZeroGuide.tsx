@@ -1,17 +1,22 @@
 import MissionFileLink from '@/domain/challenge/my-challenge/mission/guide/MissionFileLink';
 import MissionHeaderSection from '@/domain/challenge/my-challenge/mission/guide/MissionHeaderSection';
+import { ReactNode } from 'react';
 import { DEMO_ZERO_MISSION, DemoSchedule } from '../data/demoMock';
 
 interface Props {
   schedule: DemoSchedule;
   onLocked: () => void;
+  /** 미션 설명 카드 위쪽에 붙는 안내 말풍선 */
+  guideTip?: ReactNode;
+  /** OT 영상 위에 붙는 안내 말풍선 */
+  videoTip?: ReactNode;
 }
 
 /**
  * MissionGuideZeroSection 의 복사본. 원본은 자료를 누르면 열람 기록 API 를 부르고 새 창을 연다.
  * 체험에서는 자료와 OT 영상을 잠금 안내로 돌린다.
  */
-const DemoZeroGuide = ({ schedule, onLocked }: Props) => (
+const DemoZeroGuide = ({ schedule, onLocked, guideTip, videoTip }: Props) => (
   <div className="flex flex-col gap-3">
     <MissionHeaderSection
       selectedMissionTh={schedule.th}
@@ -19,7 +24,8 @@ const DemoZeroGuide = ({ schedule, onLocked }: Props) => (
       missionStartDate={schedule.startDate}
       missionEndDate={schedule.endDate}
     />
-    <section className="flex flex-col gap-5 rounded-xs border border-neutral-80 px-4 py-4">
+    <section className="relative flex flex-col gap-5 rounded-xs border border-neutral-80 px-4 py-4">
+      {guideTip}
       <p className="whitespace-pre-wrap text-xsmall14 text-neutral-0 md:text-xsmall16">
         {DEMO_ZERO_MISSION.description}
       </p>
@@ -54,7 +60,8 @@ const DemoZeroGuide = ({ schedule, onLocked }: Props) => (
         </div>
       </section>
 
-      <section className="flex flex-col gap-3">
+      <section className="relative flex flex-col gap-3">
+        {videoTip}
         <h3 className="text-lg font-semibold text-neutral-0">OT 영상</h3>
         <button
           type="button"

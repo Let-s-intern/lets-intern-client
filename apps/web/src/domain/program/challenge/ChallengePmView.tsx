@@ -4,7 +4,7 @@ import { parseChallengeContent } from '@/domain/program/challenge/utils/parseCha
 import { ChallengeIdPrimitive } from '@/schema';
 import { ChallengeContent } from '@/types/interface';
 import { useMemo } from 'react';
-import ChallengeBasicInfoSection from './challenge-view/ChallengeBasicInfoSection';
+import ChallengeApplyLayout from './ChallengeApplyLayout';
 import FreeTemplateLayout from './challenge-view/FreeTemplateLayout';
 import {
   pmCheckListConfig,
@@ -39,8 +39,7 @@ const ChallengePmView = ({ challenge }: Props) => {
   );
 
   return (
-    <div className="w-full">
-      <ChallengeBasicInfoSection challenge={challenge} />
+    <ChallengeApplyLayout challenge={challenge}>
       {content?.isFreeTemplate ? (
         <FreeTemplateLayout freeContent={content.freeContent} />
       ) : (
@@ -74,7 +73,7 @@ const ChallengePmView = ({ challenge }: Props) => {
           <FAQSection challenge={challenge} />
         </>
       )}
-    </div>
+    </ChallengeApplyLayout>
   );
 };
 

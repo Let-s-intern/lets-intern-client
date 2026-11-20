@@ -54,8 +54,11 @@ const ChallengeInfoBottom = ({
     installmentMonths && priceInfo
       ? Math.round(totalPrice / installmentMonths)
       : null;
+  // 할부 정보를 못 받았거나 무이자 개월이 없으면(null) 월 금액 줄 전체를 숨긴다. 받는 중에는 자리만 보인다
   const showMonthlyPrice =
-    priceInfo && totalPrice + (priceInfo.refund ?? 0) >= 50000;
+    priceInfo &&
+    totalPrice + (priceInfo.refund ?? 0) >= 50000 &&
+    (isLoading || !!installmentMonths);
   const regularPrice = (priceInfo?.price ?? 0) + (priceInfo?.refund ?? 0); // 정가
 
   const styles = useMemo(() => {
@@ -117,7 +120,7 @@ const ChallengeInfoBottom = ({
       : formatFullDateTime(challenge.endDate, true);
 
   return (
-    <section className="flex w-full max-w-[1000px] flex-col gap-y-8 px-5 pb-8 md:gap-y-[70px] md:px-10 md:pb-[130px] lg:px-0">
+    <section className="flex w-full max-w-[1000px] flex-col gap-y-8 px-5 pb-8 md:gap-y-[70px] md:px-10 md:pb-[130px] lg:px-0 min-[1025px]:px-8">
       <Heading2>모집개요</Heading2>
       <div
         className="flex w-full flex-col gap-3 md:flex-row"
@@ -270,7 +273,7 @@ const ChallengeInfoBottom = ({
                   <p className="text-xsmall14 text-neutral-30">
                     {isLoading
                       ? '무이자 할부 시'
-                      : `${banks.join(', ')} ${installmentMonths}개월 무이자 할부 시`}
+                      : `${banks.length > 0 ? `${banks.join(', ')} ` : ''}${installmentMonths}개월 무이자 할부 시`}
                   </p>
                 </div>
               )}

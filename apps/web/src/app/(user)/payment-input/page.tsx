@@ -472,7 +472,8 @@ const PaymentInputContent = () => {
             <hr className="bg-neutral-85" />
 
             {programApplicationData.programType === 'challenge' &&
-              !isLoading && (
+              !isLoading &&
+              !!months && (
                 <div className="flex items-start gap-2.5 px-3 text-primary">
                   <CreditCardIcon className="h-auto w-5" />
                   <p className="text-xsmall14 font-medium">

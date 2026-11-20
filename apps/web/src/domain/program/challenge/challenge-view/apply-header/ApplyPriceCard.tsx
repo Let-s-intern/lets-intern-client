@@ -111,7 +111,7 @@ function ApplyPriceCard({
         <button
           type="button"
           onClick={() => setIsPassModalOpen(true)}
-          className="pass_benefit_card flex flex-col gap-2 rounded-xs bg-primary-5 px-4 py-3 text-left"
+          className="pass_benefit_card flex flex-col gap-2 rounded-xs bg-[var(--apply-tint,#F5F6FF)] px-4 py-3 text-left"
         >
           <span className="w-fit rounded-xxs bg-primary px-2 py-0.5 text-xxsmall12 font-semibold text-white">
             ALL-IN-ONE PASS

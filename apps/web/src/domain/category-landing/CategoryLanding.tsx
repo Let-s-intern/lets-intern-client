@@ -8,9 +8,19 @@ import {
 import { useMembershipNavEntry } from '@/common/layout/header/useMembershipNavEntry';
 import { findJourneyItem } from '@/domain/career-journey/landingMenu';
 import { useJourneyGroups } from '@/domain/career-journey/useJourneyGroups';
+import useScrollDirection from '@/hooks/useScrollDirection';
 import clsx from 'clsx';
 import Link from 'next/link';
-import { Fragment, useMemo, useState } from 'react';
+import { usePathname } from 'next/navigation';
+import {
+  Fragment,
+  MouseEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { getSectionEyebrow, getSectionKind } from './landingCard';
 import { LANDING_CONTENT } from './landingContent';
 import { resolveLandingHero } from './landingHero';
@@ -20,6 +30,11 @@ import PassBanner from './ui/PassBanner';
 import ReviewSection from './ui/ReviewSection';
 
 const REVIEW_ANCHOR = 'section-review';
+
+/** 전체 헤더 높이(NavBar 의 FULL_NAVBAR_HEIGHT_OFFSET 과 같다). 데스크톱 155, 모바일 84 */
+const HEADER_HEIGHT_DESKTOP = 155;
+const HEADER_HEIGHT_MOBILE = 84;
+const ANCHOR_GAP = 12;
 
 /**
  * 카테고리 랜딩. 어드민 노출 분류의 랜딩용 노출 목록(slug)을 불러,
@@ -53,6 +68,13 @@ const CategoryLanding = ({ slug }: { slug: string }) => {
   const { href: passHref } = useMembershipNavEntry();
   // 누른 탭을 선택 표시한다. 누르기 전에는 첫 탭
   const [activeTab, setActiveTab] = useState<string | null>(null);
+  const pathname = usePathname();
+  // 아래로 내리면 헤더가 숨으니 앵커 바는 맨 위로 올라붙고, 위로 올리면 헤더 아래에 붙는다
+  const scrollDirection = useScrollDirection(pathname);
+  const anchorRef = useRef<HTMLElement>(null);
+  // 탭을 눌러 이동하는 동안은 스크롤 위치로 선택 탭을 바꾸지 않는다 (밑줄이 오가며 깜빡였다)
+  const isAnchorScrollingRef = useRef(false);
+  const anchorCleanupRef = useRef<(() => void) | null>(null);
 
   const journeyGroups = useJourneyGroups();
   const menu = findJourneyItem(journeyGroups, slug);
@@ -90,6 +112,94 @@ const CategoryLanding = ({ slug }: { slug: string }) => {
   }));
   if (content?.review && tabs.length > 0)
     tabs.splice(reviewIndex, 0, { key: REVIEW_ANCHOR, label: '수강생 후기' });
+  const tabKeys = tabs.map((tab) => tab.key).join('|');
+
+  const headerHeight = () =>
+    window.matchMedia('(min-width: 1024px)').matches
+      ? HEADER_HEIGHT_DESKTOP
+      : HEADER_HEIGHT_MOBILE;
+
+  /** 앵커 바에 가리지 않는 위치. 올라갈 때는 헤더가 다시 나오니 그만큼도 비운다 */
+  const anchorOffset = (goingUp: boolean) =>
+    (anchorRef.current?.offsetHeight ?? 48) +
+    ANCHOR_GAP +
+    (goingUp ? headerHeight() : 0);
+
+  // 탭을 누르면 해당 섹션으로 부드럽게 이동한다
+  const handleTabClick = (
+    event: MouseEvent<HTMLAnchorElement>,
+    key: string,
+  ) => {
+    const target = document.getElementById(key);
+    if (!target) return;
+    event.preventDefault();
+    anchorCleanupRef.current?.();
+    setActiveTab(key);
+    isAnchorScrollingRef.current = true;
+
+    const targetTop = () => target.getBoundingClientRect().top + window.scrollY;
+    const goingUp = targetTop() < window.scrollY;
+    const destination = () => Math.max(0, targetTop() - anchorOffset(goingUp));
+    const reduceMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    ).matches;
+    window.scrollTo({
+      top: destination(),
+      behavior: reduceMotion ? 'auto' : 'smooth',
+    });
+    window.history.replaceState(null, '', `#${key}`);
+
+    // 스크롤이 잠깐 멈추면 도착한 것으로 보고 잠금을 푼다
+    let timer = 0;
+    const finish = () => {
+      window.removeEventListener('scroll', onScroll);
+      isAnchorScrollingRef.current = false;
+      anchorCleanupRef.current = null;
+      if (Math.abs(window.scrollY - destination()) > 4) {
+        window.scrollTo({ top: destination(), behavior: 'auto' });
+      }
+    };
+    const onScroll = () => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(finish, 140);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    anchorCleanupRef.current = () => {
+      window.clearTimeout(timer);
+      window.removeEventListener('scroll', onScroll);
+      isAnchorScrollingRef.current = false;
+    };
+    onScroll();
+  };
+
+  // 스크롤 위치에 따라 지금 보는 섹션 탭을 표시한다
+  const updateActiveTab = useCallback(() => {
+    if (isAnchorScrollingRef.current) return;
+    const keys = tabKeys ? tabKeys.split('|') : [];
+    if (keys.length === 0) return;
+    const line = (anchorRef.current?.getBoundingClientRect().bottom ?? 0) + 24;
+    let current = keys[0];
+    for (const key of keys) {
+      const el = document.getElementById(key);
+      if (el && el.getBoundingClientRect().top <= line) current = key;
+    }
+    setActiveTab(current);
+  }, [tabKeys]);
+
+  useEffect(() => () => anchorCleanupRef.current?.(), []);
+
+  useEffect(() => {
+    let frame = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(updateActiveTab);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, [updateActiveTab]);
 
   if (!isLoading && useLegacy && (isError || !group)) {
     return (
@@ -130,13 +240,19 @@ const CategoryLanding = ({ slug }: { slug: string }) => {
       </header>
 
       {sections.length > 0 && (
-        <nav className="sticky top-0 z-10 -mx-5 mt-10 flex overflow-x-auto border-b border-neutral-80 bg-white px-5 scrollbar-hide md:mx-0 md:px-0">
+        <nav
+          ref={anchorRef}
+          className={clsx(
+            'sticky z-20 -mx-5 mt-10 flex overflow-x-auto border-b border-neutral-80 bg-white px-5 transition-[top] duration-300 scrollbar-hide md:mx-0 md:px-0',
+            scrollDirection === 'DOWN' ? 'top-0' : 'top-[84px] lg:top-[155px]',
+          )}
+        >
           {/* 탭은 짧게 상품 유형으로 쓴다 (시안: 챌린지 / LIVE · VOD 클래스 / 무료 자료집 / … / 수강생 후기 / 블로그) */}
           {tabs.map((tab) => (
             <a
               key={tab.key}
               href={`#${tab.key}`}
-              onClick={() => setActiveTab(tab.key)}
+              onClick={(event) => handleTabClick(event, tab.key)}
               className={clsx(
                 'category_landing_tab -mb-px shrink-0 whitespace-nowrap border-b-2 px-4 py-3 text-xsmall14 hover:text-neutral-0 md:flex-1 md:text-center md:text-xsmall16',
                 (activeTab ?? tabs[0].key) === tab.key

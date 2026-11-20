@@ -1,4 +1,5 @@
 import { DemoSchedule } from '../data/demoMock';
+import type { RenderDemoTip } from './DashboardDemo';
 import DemoMissionCalendar from './DemoMissionCalendar';
 import DemoZeroGuide from './DemoZeroGuide';
 import DemoZeroSubmit from './DemoZeroSubmit';
@@ -6,16 +7,19 @@ import DemoZeroSubmit from './DemoZeroSubmit';
 interface Props {
   schedules: DemoSchedule[];
   onLocked: () => void;
+  /** 지금 순서의 안내 말풍선만 그린다 */
+  renderTip: RenderDemoTip;
 }
 
 /** 실제 나의 미션(me/page.tsx)에서 0회차를 고른 상태 */
-const DemoMyMissionView = ({ schedules, onLocked }: Props) => {
+const DemoMyMissionView = ({ schedules, onLocked, renderTip }: Props) => {
   const zeroMission = schedules[0];
 
   return (
     <main className="px-5 py-8 md:py-0 md:pl-8 md:pr-0">
       <h2 className="text-medium22 font-semibold">나의 미션</h2>
-      <section className="mt-6">
+      <section className="relative mt-6">
+        {renderTip(0, 'bottom')}
         <div className="flex items-center gap-2 rounded-xxs bg-primary-5 px-3 py-3">
           <img src="/icons/check-star-primary.svg" alt="" className="h-6 w-6" />
           <span className="flex-1 text-xsmall16 font-semibold text-primary">
@@ -31,8 +35,13 @@ const DemoMyMissionView = ({ schedules, onLocked }: Props) => {
         />
       </section>
       <div className="mt-10 flex flex-col gap-6">
-        <DemoZeroGuide schedule={zeroMission} onLocked={onLocked} />
-        <DemoZeroSubmit />
+        <DemoZeroGuide
+          schedule={zeroMission}
+          onLocked={onLocked}
+          guideTip={renderTip(1, 'bottom')}
+          videoTip={renderTip(2)}
+        />
+        <DemoZeroSubmit tip={renderTip(3)} />
       </div>
     </main>
   );

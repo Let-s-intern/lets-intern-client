@@ -20,6 +20,7 @@ import ChallengeIntroEditorContent from './challenge-view/ChallengeIntroEditorCo
 import ChallengeIntroPortfolio from './challenge-view/ChallengeIntroPortfolio';
 import ChallengePricePlanSection from './challenge-view/ChallengePricePlanSection';
 import ChallengeResult from './challenge-view/ChallengeResult';
+import ChallengeApplyLayout from './ChallengeApplyLayout';
 import FreeTemplateLayout from './challenge-view/FreeTemplateLayout';
 import PortfolioFeedbackInfo from './portfolio-view/PortfolioFeedbackInfo';
 import PortfolioIntroCheckList from './portfolio-view/PortfolioIntroCheckList';
@@ -31,7 +32,6 @@ import ProgramChallengePortfolioDetailNavigation, {
 } from './portfolio-view/ProgramChallengePortfolioDetailNavigation';
 import PortfolioIntroWhySection from './portfolio-view/challenge-portfolio-view/PortfolioIntroWhySection';
 import PortfolioWorriesSection from './portfolio-view/challenge-portfolio-view/PortfolioWorriesSection';
-import DashboardDemo from './dashboard-demo/ui/DashboardDemo';
 import TemplateModeBody from './template-guidebook/TemplateModeBody';
 import { useChallengeDetailView } from './useChallengeDetailView';
 
@@ -55,24 +55,15 @@ const ChallengePortfolioView: React.FC<{
 
   if (receivedContent.isFreeTemplate) {
     return (
-      <div className="flex w-full flex-col">
-        <div className="flex w-full flex-col items-center">
-          <div className="flex w-full max-w-[1160px] flex-col px-5 pb-10 pt-6 md:gap-y-5 md:px-10 md:py-[60px] xl:px-0">
-            <ChallengeBasicInfo
-              challengeId={id}
-              challenge={challengeTransformed}
-              activeChallengeList={activeChallengeList?.challengeList}
-            />
-          </div>
-          <FreeTemplateLayout freeContent={receivedContent.freeContent} />
-        </div>
-      </div>
+      <ChallengeApplyLayout challenge={challenge}>
+        <FreeTemplateLayout freeContent={receivedContent.freeContent} />
+      </ChallengeApplyLayout>
     );
   }
 
   return (
     <div className="flex w-full flex-col">
-      <div className="flex w-full flex-col items-center">
+      <div className="flex w-full flex-col items-center overflow-x-clip">
         <div className="flex w-full max-w-[1160px] flex-col px-5 pb-10 pt-6 md:gap-y-5 md:px-10 md:py-[60px] xl:px-0">
           <ChallengeBasicInfo
             challengeId={id}
@@ -82,7 +73,7 @@ const ChallengePortfolioView: React.FC<{
         </div>
 
         {/* 1025px 이상은 본문 오른쪽에 신청 패널이 따라온다 (스마트스토어형). 1024px 까지는 하단 플로팅 */}
-        <div className="flex w-full min-[1025px]:gap-8 min-[1025px]:pr-10">
+        <div className="mx-auto flex w-full max-w-[1160px] min-[1025px]:gap-8 min-[1025px]:px-10 xl:px-0">
           <div className="min-w-0 flex-1">
             <TemplateModeBody challengeType={challenge.challengeType}>
               <ProgramChallengePortfolioDetailNavigation
@@ -96,7 +87,8 @@ const ChallengePortfolioView: React.FC<{
                 id={PROGRAM_INTRO_ID}
                 className="flex w-full flex-col items-center overflow-x-hidden"
               >
-                <DashboardDemo />
+                {/* 대시보드 미리보기는 일단 숨긴다. 되살릴 때 이 주석을 풀고 import 를 쓴다 */}
+                {/* <DashboardDemo /> — import './dashboard-demo/ui/DashboardDemo' */}
                 {/* LEXICAL */}
                 {/* 상세설명 렉시컬에서 인트로 렉시컬로 변경 */}
                 <ChallengeIntroEditorContent challenge={challenge} />
@@ -228,7 +220,7 @@ const ChallengePortfolioView: React.FC<{
                 {/* 차별점 */}
                 {/* <div
                 id={CHALLENGE_DIFFERENT_ID}
-                className="challenge_difference flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0"
+                className="challenge_difference flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0 min-[1025px]:px-8"
               >
                 <ChallengeDifferent
                   isResumeTemplate={isResumeTemplate}
@@ -257,12 +249,12 @@ const ChallengePortfolioView: React.FC<{
                   </section>
                 )}
 
-                <section className="-mb-20 mt-10 flex w-full max-w-[1000px] flex-col items-center px-5 md:-mb-40 md:gap-y-40 md:px-10 lg:px-0">
+                <section className="-mb-20 mt-10 flex w-full max-w-[1000px] flex-col items-center px-5 md:-mb-40 md:gap-y-40 md:px-10 lg:px-0 min-[1025px]:px-8">
                   <ChallengeBrand challengeType={challenge.challengeType} />
                 </section>
 
                 {/* <div className="flex w-full flex-col items-center py-[70px] md:py-[110px]">
-                <section className="flex w-full max-w-[1000px] flex-col items-center gap-y-[70px] px-5 md:gap-y-40 md:px-10 lg:px-0">
+                <section className="flex w-full max-w-[1000px] flex-col items-center gap-y-[70px] px-5 md:gap-y-40 md:px-10 lg:px-0 min-[1025px]:px-8">
                   <Heading2 className="text-small20 md:text-center md:text-xlarge28">
                     취업 준비의 든든한 지원군,
                     <Break />
@@ -304,7 +296,7 @@ const ChallengePortfolioView: React.FC<{
               <ChallengeInfoBottom challenge={challengeTransformed} />
             </TemplateModeBody>
           </div>
-          <div className="hidden w-[320px] shrink-0 pt-6 min-[1025px]:block">
+          <div className="hidden w-[320px] shrink-0 pt-28 min-[1025px]:block">
             <FollowApplyPanel
               challenge={challengeTransformed}
               challengeId={id}

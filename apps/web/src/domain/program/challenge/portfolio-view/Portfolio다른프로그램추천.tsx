@@ -297,7 +297,7 @@ const Portfolio다른프로그램추천 = ({
           )}
 
           {/* 본문 */}
-          <div className="relative z-10 px-5 py-16 md:py-32 lg:px-0">
+          <div className="relative z-10 px-5 py-16 md:py-32 lg:px-0 min-[1025px]:px-8">
             <Heading2>
               잠깐, 다른 커리어 고민이 있으신가요?
               <br /> 커리어 단계에 맞춰 미리
@@ -305,7 +305,7 @@ const Portfolio다른프로그램추천 = ({
             </Heading2>
             <ProgramRecommendSlider
               buttonStyle={{ backgroundColor: styles.buttonBgColor }}
-              className="-mx-5 mt-8 max-w-[1000px] px-5 md:mx-auto md:mt-16 lg:px-0"
+              className="-mx-5 mt-8 max-w-[1000px] px-5 md:mx-auto md:mt-16 lg:px-0 min-[1025px]:px-8"
               list={slideList}
               trailingSlide={curationTrailingSlide}
             />
@@ -321,7 +321,7 @@ const Portfolio다른프로그램추천 = ({
             backgroundColor: styles.darkColor,
           }}
         >
-          <div className="flex w-full max-w-[1000px] flex-col px-5 py-[60px] md:px-10 md:py-[120px] lg:px-0">
+          <div className="flex w-full max-w-[1000px] flex-col px-5 py-[60px] md:px-10 md:py-[120px] lg:px-0 min-[1025px]:px-8">
             <div className="flex w-full flex-col md:items-center">
               <p
                 className="text-xsmall16 font-bold md:text-small20"
@@ -391,7 +391,7 @@ const Portfolio다른프로그램추천 = ({
             </div>
           </div>
 
-          <div className="mb-8 flex w-full max-w-[1000px] flex-col px-5 pt-[60px] md:mb-16 md:px-10 md:pt-[120px] lg:px-0">
+          <div className="mb-8 flex w-full max-w-[1000px] flex-col px-5 pt-[60px] md:mb-16 md:px-10 md:pt-[120px] lg:px-0 min-[1025px]:px-8">
             <p className="mx-auto flex w-fit items-center gap-3 rounded-md bg-[#111C3F] px-3.5 py-2.5 font-bold text-white md:text-medium24">
               <Image
                 unoptimized
@@ -403,8 +403,8 @@ const Portfolio다른프로그램추천 = ({
               <span>{weekText} 여정 한 번에 보기</span>
             </p>
           </div>
-          <div className="mb-16 w-screen md:mb-36">
-            <div className="custom-scrollbar flex w-full gap-5 overflow-x-auto px-[max(1.5rem,calc((100vw-1000px)/2))] pb-4">
+          <div className="mb-16 w-full md:mb-36">
+            <div className="custom-scrollbar flex w-full gap-5 overflow-x-auto pb-4">
               {[
                 {
                   step: 'Step 1',

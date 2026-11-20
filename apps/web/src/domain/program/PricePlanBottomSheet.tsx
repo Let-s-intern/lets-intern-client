@@ -29,7 +29,13 @@ import useProgramStore from '@/store/useProgramStore';
 import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
 import { Checkbox, FormControlLabel, RadioGroup } from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { ComponentProps, useCallback, useMemo, useState } from 'react';
+import {
+  ComponentProps,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import BaseButton from '../../common/button/BaseButton';
 import { OptionFormRadioControlLabel } from '../../common/ControlLabel';
 import OptionDropdown from '../../common/dropdown/OptionDropdown';
@@ -212,6 +218,7 @@ function PricePlanBottomSheet({
   showMembershipBenefit = false,
   onFreeApply,
   initialPlan,
+  applyImmediately = false,
 }: {
   challenge: ChallengeIdPrimitive;
   challengeId: string;
@@ -233,6 +240,11 @@ function PricePlanBottomSheet({
   }) => void;
   /** 상세 상단에서 고른 플랜. 이 챌린지에 없는 플랜이면 무시한다 */
   initialPlan?: ChallengePricePlan | null;
+  /**
+   * 시트를 보이지 않고 열리자마자 고른 플랜으로 신청 페이지로 바로 간다.
+   * 데스크톱은 상단·오른쪽 패널에서 이미 플랜을 골라서 시트를 한 번 더 거칠 필요가 없다
+   */
+  applyImmediately?: boolean;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -514,6 +526,15 @@ function PricePlanBottomSheet({
     shouldPassB2BParam,
     onFreeApply,
   ]);
+
+  // 신청 정보가 오면 시트를 거치지 않고 바로 신청 페이지로 간다
+  useEffect(() => {
+    if (!applyImmediately || !isOpen || !application) return;
+    handleApply();
+    onClose();
+  }, [applyImmediately, isOpen, application, handleApply, onClose]);
+
+  if (applyImmediately) return null;
 
   return (
     <>

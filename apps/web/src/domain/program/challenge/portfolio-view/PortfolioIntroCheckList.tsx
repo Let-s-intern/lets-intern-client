@@ -102,7 +102,7 @@ function PortfolioIntroCheckList({
   const checkList = PORTFOLIO_CHECK_LIST;
 
   return (
-    <section className="flex w-full max-w-[1000px] flex-col px-5 py-20 md:px-10 md:pb-[140px] md:pt-[130px] lg:px-0">
+    <section className="flex w-full max-w-[1000px] flex-col px-5 py-20 md:px-10 md:pb-[140px] md:pt-[130px] lg:px-0 min-[1025px]:px-8">
       <div className="mb-16 md:mb-20">
         <SuperTitle
           className="mb-3 md:text-center"

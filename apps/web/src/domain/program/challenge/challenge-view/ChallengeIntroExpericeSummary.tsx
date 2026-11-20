@@ -33,7 +33,7 @@ const ChallengeIntroExpericeSummary = ({
   return (
     <section className="flex w-full flex-col md:items-center">
       <div className="flex w-full flex-col items-center bg-neutral-90">
-        <div className="flex w-full max-w-[1000px] flex-col gap-y-10 px-5 py-20 md:gap-y-[60px] md:px-10 md:py-[120px] lg:px-0">
+        <div className="flex w-full max-w-[1000px] flex-col gap-y-10 px-5 py-20 md:gap-y-[60px] md:px-10 md:py-[120px] lg:px-0 min-[1025px]:px-8">
           <div className="flex w-full flex-col gap-y-3 md:gap-y-[30px]">
             <Heading2>
               200명의 합격자가 입을 모아 강조한 <br className="md:hidden" />
@@ -71,7 +71,7 @@ const ChallengeIntroExpericeSummary = ({
         </div>
       </div>
       <div className="flex w-full flex-col bg-neutral-95 md:items-center">
-        <div className="flex w-full max-w-[1000px] flex-col gap-y-[50px] px-5 py-[70px] md:gap-y-20 md:px-10 md:py-[120px] lg:px-0">
+        <div className="flex w-full max-w-[1000px] flex-col gap-y-[50px] px-5 py-[70px] md:gap-y-20 md:px-10 md:py-[120px] lg:px-0 min-[1025px]:px-8">
           <div className="flex w-full flex-col gap-y-3 md:items-center">
             <p className="text-xsmall16 font-bold text-[#F26646] md:text-small20">
               취업 성공 전략

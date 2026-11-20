@@ -11,7 +11,6 @@ import { ChallengeIdPrimitive, challengeTypeSchema } from '@/schema';
 import LexicalContent from '@/common/lexical/LexicalContent';
 import MoreReviewButton from '@/domain/review/ui/MoreReviewButton';
 import ChallengeDetailBlogReviewSection from './ChallengeDetailBlogReviewSection';
-import DashboardDemo from './dashboard-demo/ui/DashboardDemo';
 import ProgramDetailNavigation, {
   CHALLENGE_DIFFERENT_ID,
   PROGRAM_CURRICULUM_ID,
@@ -32,6 +31,7 @@ import ChallengeIntroPortfolio from './challenge-view/ChallengeIntroPortfolio';
 import ChallengePointView from './challenge-view/ChallengePointView';
 import ChallengePricePlanSection from './challenge-view/ChallengePricePlanSection';
 import ChallengeSummarySection from './challenge-view/ChallengeSummarySection';
+import ChallengeApplyLayout from './ChallengeApplyLayout';
 import FreeTemplateLayout from './challenge-view/FreeTemplateLayout';
 import TemplateModeBody from './template-guidebook/TemplateModeBody';
 import { useChallengeDetailView } from './useChallengeDetailView';
@@ -60,26 +60,15 @@ const ChallengeView: React.FC<{
 
   if (receivedContent.isFreeTemplate) {
     return (
-      <div className="flex w-full flex-col">
-        <div className="flex w-full flex-col items-center">
-          <div className="flex w-full max-w-[1160px] flex-col px-5 pb-10 pt-6 md:gap-y-5 md:px-10 md:py-[60px] xl:px-0">
-            <ChallengeBasicInfo
-              challengeId={id}
-              challenge={challengeTransformed}
-              activeChallengeList={activeChallengeList?.challengeList}
-            />
-          </div>
-          <div className="flex w-full flex-col items-center overflow-x-hidden">
-            <FreeTemplateLayout freeContent={receivedContent.freeContent} />
-          </div>
-        </div>
-      </div>
+      <ChallengeApplyLayout challenge={challenge}>
+        <FreeTemplateLayout freeContent={receivedContent.freeContent} />
+      </ChallengeApplyLayout>
     );
   }
 
   return (
     <div className="flex w-full flex-col">
-      <div className="flex w-full flex-col items-center">
+      <div className="flex w-full flex-col items-center overflow-x-clip">
         <div className="flex w-full max-w-[1160px] flex-col px-5 pb-10 pt-6 md:gap-y-5 md:px-10 md:py-[60px] xl:px-0">
           <ChallengeBasicInfo
             challengeId={id}
@@ -89,7 +78,8 @@ const ChallengeView: React.FC<{
         </div>
 
         {/* 1025px 이상은 본문 오른쪽에 신청 패널이 따라온다 (스마트스토어형). 1024px 까지는 하단 플로팅 */}
-        <div className="flex w-full min-[1025px]:gap-8 min-[1025px]:pr-10">
+        {/* 헤더와 같은 1160px 가운데 정렬 — 본문 폭은 줄이고 패널은 본문 쪽으로 붙인다 */}
+        <div className="mx-auto flex w-full max-w-[1160px] min-[1025px]:gap-8 min-[1025px]:px-10 xl:px-0">
           <div className="min-w-0 flex-1">
             <TemplateModeBody challengeType={challenge.challengeType}>
               <ProgramDetailNavigation
@@ -104,12 +94,13 @@ const ChallengeView: React.FC<{
                   id={PROGRAM_INTRO_ID}
                   className="challenge_program flex w-full flex-col items-center"
                 >
-                  <DashboardDemo />
+                  {/* 대시보드 미리보기는 일단 숨긴다. 되살릴 때 이 주석을 풀고 import 를 쓴다 */}
+                  {/* <DashboardDemo /> — import './dashboard-demo/ui/DashboardDemo' */}
                   {/* 인트로 (최상단) */}
                   {receivedContent.intro?.root &&
                     typeof receivedContent.intro.root === 'object' &&
                     'type' in receivedContent.intro.root && (
-                      <section className="mx-auto flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0">
+                      <section className="mx-auto flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0 min-[1025px]:px-8">
                         <LexicalContent node={receivedContent.intro.root} />
                       </section>
                     )}
@@ -138,7 +129,7 @@ const ChallengeView: React.FC<{
                   {receivedContent.mainDescription?.root &&
                     typeof receivedContent.mainDescription.root === 'object' &&
                     'type' in receivedContent.mainDescription.root && (
-                      <section className="flex w-full max-w-[1000px] flex-col px-5 pt-20 md:px-10 md:pt-40 lg:px-0">
+                      <section className="flex w-full max-w-[1000px] flex-col px-5 pt-20 md:px-10 md:pt-40 lg:px-0 min-[1025px]:px-8">
                         <LexicalContent
                           node={receivedContent.mainDescription.root}
                         />
@@ -206,7 +197,7 @@ const ChallengeView: React.FC<{
                 {/* 차별점 */}
                 <div
                   id={CHALLENGE_DIFFERENT_ID}
-                  className="challenge_difference flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0"
+                  className="challenge_difference flex w-full max-w-[1000px] flex-col px-5 md:px-10 lg:px-0 min-[1025px]:px-8"
                 >
                   <ChallengeDifferent
                     isResumeTemplate={isResumeTemplate}
@@ -264,7 +255,7 @@ const ChallengeView: React.FC<{
               </div>
             </TemplateModeBody>
           </div>
-          <div className="hidden w-[320px] shrink-0 pt-6 min-[1025px]:block">
+          <div className="hidden w-[320px] shrink-0 pt-28 min-[1025px]:block">
             <FollowApplyPanel
               challenge={challengeTransformed}
               challengeId={id}

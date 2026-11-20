@@ -92,7 +92,7 @@ function ChallengeCurriculum({
   const title = `기초부터 결과물까지 가져가는 완벽한\n${challengeTitle} 커리큘럼`;
 
   return (
-    <div className="flex w-full max-w-[1000px] flex-col px-5 py-20 md:items-center md:py-32 md:pb-36 lg:px-0">
+    <div className="flex w-full max-w-[1000px] flex-col px-5 py-20 md:items-center md:py-32 md:pb-36 lg:px-0 min-[1025px]:px-8">
       <SuperTitle className="mb-6 md:mb-12" style={styles.superTitleStyle}>
         커리큘럼
       </SuperTitle>
