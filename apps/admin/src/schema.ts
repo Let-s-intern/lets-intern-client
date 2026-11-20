@@ -87,6 +87,8 @@ export const challengeTypeSchema = z.enum([
   'EXPERIENCE_SUMMARY',
   'HR',
   'PM',
+  'APTITUDE',
+  'SNS_CONTENT',
 ]);
 
 export type ChallengeType = z.infer<typeof challengeTypeSchema>;
@@ -1846,6 +1848,11 @@ export const challengeApplicationsSchema = z
             .number()
             .nullish()
             .transform((val) => val ?? 0),
+          // 멤버십 혜택으로 신청한 건. 서버 배포 전 응답은 필드가 없다 (LC-3643)
+          isMembershipApplied: z
+            .boolean()
+            .nullish()
+            .transform((val) => val ?? false),
         }),
         optionPriceSum: z.number().nullable().optional(),
         optionDiscountPriceSum: z.number().nullable().optional(),
@@ -1894,6 +1901,11 @@ export const liveApplicationsSchema = z
         // 서버는 이미 내려주고 있었는데 스키마에 없어 버려지고 있었다.
         // 환불 전체·부분 판별에 필요하다.
         originalPrice: z.number().nullable().optional(),
+        // 멤버십 혜택으로 신청한 건. 서버 배포 전 응답은 필드가 없다 (LC-3643)
+        isMembershipApplied: z
+          .boolean()
+          .nullish()
+          .transform((val) => val ?? false),
       }),
     ),
   })
@@ -1931,6 +1943,11 @@ export const guidebookApplicationsSchema = z
         programPrice: z.number().nullable().optional(),
         programDiscount: z.number().nullable().optional(),
         originalPrice: z.number().nullable().optional(),
+        // 멤버십 혜택으로 신청한 건. 서버 배포 전 응답은 필드가 없다 (LC-3643)
+        isMembershipApplied: z
+          .boolean()
+          .nullish()
+          .transform((val) => val ?? false),
       }),
     ),
   })

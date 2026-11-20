@@ -54,6 +54,27 @@ const renderRow = (
 const fullButton = () => screen.getByRole('button', { name: '환불' });
 const partialButton = () => screen.getByRole('button', { name: '부분환불' });
 
+describe('TableRow 결제금액 (LC-3643)', () => {
+  it('멤버십 신청은 결제금액을 멤버십(금액) 으로 보여준다', () => {
+    renderRow(application({ isMembershipApplied: true, finalPrice: 0 }));
+
+    expect(screen.getByText('멤버십(0원)')).toBeInTheDocument();
+  });
+
+  it('멤버십으로 추가금을 낸 신청은 괄호에 낸 금액을 보여준다', () => {
+    renderRow(application({ isMembershipApplied: true, finalPrice: 30000 }));
+
+    expect(screen.getByText('멤버십(30,000원)')).toBeInTheDocument();
+  });
+
+  it('일반 결제는 금액만 보여준다', () => {
+    renderRow(application({ isMembershipApplied: false }));
+
+    expect(screen.getByText('330,000원')).toBeInTheDocument();
+    expect(screen.queryByText(/멤버십/)).not.toBeInTheDocument();
+  });
+});
+
 describe('TableRow 환불 액션', () => {
   it('전체 환불과 부분 환불을 각각 누를 수 있다', () => {
     // 두 요청이 서로 다르다. 전체는 금액을 보내지 않고 서버가 실결제액을 쓴다.

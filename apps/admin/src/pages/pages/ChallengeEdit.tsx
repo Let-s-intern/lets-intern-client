@@ -516,6 +516,10 @@ const ChallengeEdit: React.FC = () => {
           <ProgramCategoryField
             targetType="CHALLENGE"
             targetId={Number(challengeIdString)}
+            autoTagInput={{
+              title: input.title ?? challenge?.title ?? '',
+              challengeType: input.challengeType ?? challenge?.challengeType,
+            }}
           />
         </div>
 

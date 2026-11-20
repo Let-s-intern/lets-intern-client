@@ -1,6 +1,8 @@
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import { useEffect, useRef, useState } from 'react';
+import { useProductSearch } from './hooks/useProductSearch';
 import ProgramCategoryPicker from './ProgramCategoryPicker';
+import type { AutoTagInput } from './utils/autoTag';
 import {
   useProgramCategoryIdsQuery,
   usePutProgramCategoriesOfTarget,
@@ -10,6 +12,11 @@ import {
 interface ProgramCategoryFieldProps {
   targetType: ProgramCategoryTargetType;
   targetId: number;
+  /**
+   * 추천 태그용 상품 정보. 제목을 비우면 상품 검색으로 찾아 쓴다(챌린지·LIVE·VOD·가이드북·패스).
+   * 챌린지 구분·블로그 태그처럼 화면이 아는 값은 넘겨 준다
+   */
+  autoTagInput?: Partial<AutoTagInput>;
 }
 
 /**
@@ -18,7 +25,14 @@ interface ProgramCategoryFieldProps {
 const ProgramCategoryField = ({
   targetType,
   targetId,
+  autoTagInput,
 }: ProgramCategoryFieldProps) => {
+  const { data: found } = useProductSearch(
+    autoTagInput?.title ? '' : targetType,
+    String(targetId),
+  );
+  const title =
+    autoTagInput?.title || found?.find((p) => p.id === targetId)?.title || '';
   const { snackbar } = useAdminSnackbar();
   const { data: savedIds } = useProgramCategoryIdsQuery(targetType, targetId);
   const putCategories = usePutProgramCategoriesOfTarget(targetType, targetId);
@@ -67,6 +81,7 @@ const ProgramCategoryField = ({
       selectedIds={selectedIds}
       onToggle={toggle}
       note="체크하면 바로 저장됩니다."
+      autoTagInput={{ ...autoTagInput, title }}
     />
   );
 };

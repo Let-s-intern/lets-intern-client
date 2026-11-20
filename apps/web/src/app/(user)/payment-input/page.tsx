@@ -101,6 +101,23 @@ const PaymentInputContent = () => {
         (challengeBasicPriceInfo?.discount ?? 0)
       : Infinity;
 
+  // 정률 쿠폰의 기준 금액. 서버는 고른 플랜의 정가 - 할인에만 %를 곱하고 옵션 금액은 넣지 않는다.
+  // 스토어의 price·discount 는 옵션까지 합친 값이라, 그대로 쓰면 옵션 플랜에서 할인이 커져 서버가 금액 불일치로 거절한다
+  const challengeSelectedPriceInfo =
+    programApplicationData.programType === 'challenge' &&
+    program &&
+    'priceInfo' in program &&
+    Array.isArray(program.priceInfo)
+      ? (program.priceInfo as ChallengePriceInfo[]).find(
+          (info) => info.priceId === programApplicationData.priceId,
+        )
+      : null;
+  const couponSalePrice = challengeSelectedPriceInfo
+    ? (challengeSelectedPriceInfo.price ?? 0) -
+      (challengeSelectedPriceInfo.discount ?? 0)
+    : (programApplicationData.price ?? 0) -
+      (programApplicationData.discount ?? 0);
+
   // 챌린지 버전 (LC-3247). 상세 페이지의 버전으로 고정돼 들어온다. LIGHT 면 버전이 없다 (설계안 D1)
   const versionList =
     program && 'versionList' in program ? program.versionList : [];
@@ -138,8 +155,13 @@ const PaymentInputContent = () => {
   const isLetsconOfflineLive =
     programApplicationData.programType === 'live' &&
     programApplicationData.programId === LETSCON_OFFLINE_LIVE_ID;
+  // 패스 혜택 할인을 받으면 쿠폰은 쓸 수 없다. 서버는 패스 권한이 있으면 쿠폰을 빼고 금액을 계산해,
+  // 화면에서 쿠폰까지 빼면 결제 금액이 어긋나 INVALID_PRICE 로 거절된다
+  const hasPassDiscount = (programApplicationData.membershipDiscount ?? 0) > 0;
   const showCouponSection =
-    (!isCouponDisabledType || hasB2BParam) && !isLetsconOfflineLive;
+    (!isCouponDisabledType || hasB2BParam) &&
+    !isLetsconOfflineLive &&
+    !hasPassDiscount;
   // 협찬 전용 코드(YAIREWARD 등)는 묶인 챌린지 타입 결제에서만 보인다 (LC-3611).
   // 챌린지가 아니면 challengeType 이 '' 라 묶인 코드가 전부 빠진다
   const blockedCouponCodes = getBlockedCouponCodes(challengeType);
@@ -440,10 +462,7 @@ const PaymentInputContent = () => {
                 setCoupon={setCoupon}
                 programType={programApplicationData.programType ?? 'live'}
                 maxAmount={maxCouponAmount}
-                salePrice={
-                  (programApplicationData.price ?? 0) -
-                  (programApplicationData.discount ?? 0)
-                }
+                salePrice={couponSalePrice}
                 // [LC-3219-MEMBERSHIP] 시즌 종료 시 이 줄을 지운다. 담당자 임성빈
                 allowFullDiscount={!isMembership}
                 blockedCouponCodes={blockedCouponCodes}

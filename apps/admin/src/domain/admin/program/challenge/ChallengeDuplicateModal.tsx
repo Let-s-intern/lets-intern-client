@@ -27,6 +27,8 @@ import {
 } from './utils/duplicateThumbnail';
 import { THUMBNAIL_TYPE_LABELS } from './utils/generateThumbnail';
 
+import CopiedTagsNote from '@/domain/admin/program/category/ui/CopiedTagsNote';
+
 interface Props {
   isOpen: boolean;
   sourceChallenge: {
@@ -152,6 +154,7 @@ const ChallengeDuplicateModal = ({
         <h2 className="mb-5 text-small18 font-semibold">
           [{sourceChallenge.title}] 복제하기
         </h2>
+        <CopiedTagsNote challengeId={sourceChallenge.id} />
 
         <div className="flex flex-col gap-4">
           <FormControlLabel

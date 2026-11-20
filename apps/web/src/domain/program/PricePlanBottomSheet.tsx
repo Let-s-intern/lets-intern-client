@@ -354,7 +354,7 @@ function PricePlanBottomSheet({
         ? passPrices.STANDARD
         : pricePlan === PREMIUM
           ? passPrices.PREMIUM
-          : undefined; // LIGHT 제외
+          : passPrices.LIGHT;
 
   const normalTotal = Math.max(
     finalPriceInfo.regularPrice - finalPriceInfo.discountPrice,
@@ -553,6 +553,7 @@ function PricePlanBottomSheet({
                   priceProps={{
                     regularPrice: lightRegularPrice,
                     discountAmount: lightDiscountAmount,
+                    passPrice: passPrices.LIGHT,
                     hasPrivilege,
                     showPassPrice,
                   }}
