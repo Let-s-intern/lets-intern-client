@@ -1,5 +1,6 @@
 'use client';
 
+import { twMerge } from '@/lib/twMerge';
 import { ReactNode, useState } from 'react';
 import PassBenefitModal from './PassBenefitModal';
 
@@ -25,16 +26,21 @@ export const ApplyButton = ({
   state,
   label,
   onClick,
+  className,
 }: {
   state: ApplyButtonState;
   label: string;
   onClick: () => void;
+  className?: string;
 }) => (
   <button
     type="button"
     disabled={state !== 'OPEN'}
     onClick={onClick}
-    className="apply_button w-full rounded-md bg-primary px-6 py-3 text-small18 font-medium text-white disabled:bg-neutral-80 disabled:text-neutral-40"
+    className={twMerge(
+      'apply_button w-full rounded-md bg-primary px-6 py-3 text-small18 font-medium text-white disabled:bg-neutral-80 disabled:text-neutral-40',
+      className,
+    )}
   >
     {state === 'OPEN' ? label : APPLY_BUTTON_TEXT[state]}
   </button>

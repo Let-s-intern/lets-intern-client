@@ -44,13 +44,13 @@ const FollowApplyPanel = ({
     <aside
       style={getApplyAccentStyle(challenge.challengeType)}
       className={twMerge(
-        'challenge_follow_panel sticky flex max-h-[calc(100vh-72px)] flex-col gap-4 overflow-y-auto rounded-md border border-neutral-85 bg-white p-5 transition-[top]',
+        'challenge_follow_panel sticky flex max-h-[calc(100vh-72px)] flex-col gap-4 overflow-y-auto rounded-md border border-neutral-85 bg-white p-5 shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-[top]',
         scrollDirection === 'UP'
           ? 'top-[179px] duration-300'
           : 'top-10 duration-200',
       )}
     >
-      <p className="line-clamp-2 text-xsmall16 font-bold text-neutral-0">
+      <p className="line-clamp-2 break-keep text-small18 font-bold leading-snug text-neutral-0">
         {challenge.title}
       </p>
 
