@@ -80,6 +80,7 @@ const FollowApplyPanel = ({
             onApply={(plan) => openApply(plan)}
             passHref={passHref}
             passPrice={selectedPlanPassPrice}
+            priceSummary={priceSummary}
           />
         )
       )}

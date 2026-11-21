@@ -9,6 +9,7 @@ import useAuthStore from '@/store/useAuthStore';
 import { logoutAndRefreshPage } from '@/utils/auth';
 import { usePathname, useRouter } from 'next/navigation';
 import GlobalNavItem from './GlobalNavItem';
+import { useHeaderSearchStore } from './HeaderSearchWatcher';
 import LoginLink from './LoginLink';
 import LogoLink from './LogoLink';
 import MembershipNavLabel from './MembershipNavLabel';
@@ -33,6 +34,7 @@ function GlobalNavTopBar({
 }: Props) {
   const router = useRouter();
   const pathname = usePathname(); // for nextjs pathname change detect
+  const programType = useHeaderSearchStore((state) => state.type);
 
   const { isLoggedIn } = useAuthStore();
   const { data: isAdmin } = useGetUserAdmin({
@@ -97,7 +99,12 @@ function GlobalNavTopBar({
         <GlobalNavItem
           className={twMerge(
             'mr-6 hidden h-9 items-center border-b-[1.5px] border-transparent lg:flex',
-            pathname.startsWith(membershipNav.activePath) && 'border-neutral-0',
+            // 열린 패스가 없을 때의 대체 링크(/program)는 전체 프로그램 목록과 겹친다.
+            // 챌린지 상세 같은 /program 아래 모든 페이지에 밑줄이 붙지 않게 패스 필터일 때만 켠다
+            (membershipNav.isOpen
+              ? pathname.startsWith(membershipNav.activePath)
+              : pathname === '/program' && programType === 'MEMBERSHIP') &&
+              'border-neutral-0',
           )}
           href={membershipNav.href}
           isNew

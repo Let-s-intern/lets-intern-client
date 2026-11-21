@@ -11,6 +11,7 @@ import {
   AI_CHAT_QUERY_MAX_LENGTH,
 } from './constants/aiChat';
 import useAiChat from './hooks/useAiChat';
+import type { AiChatItem } from './types/aiChat';
 import ChatPanel from './ui/ChatPanel';
 import PanelView from './ui/PanelView';
 
@@ -25,6 +26,14 @@ interface AiChatProps {
    */
   mobileHeightClassName?: string;
   desktopHeightClassName?: string;
+  /** AI 가 추천한 상품이 바뀔 때마다 호출된다. 추천이 없어지면 빈 배열. 아래 목록과 연동할 때 쓴다 */
+  onRecommend?: (items: AiChatItem[]) => void;
+  /** 입력창 placeholder 를 고정한다. 없으면 예시를 돌린다 */
+  placeholder?: string;
+  /** 보내기 버튼에 글자를 쓴다. 없으면 화살표 아이콘 */
+  submitLabel?: string;
+  /** 입력창 아래 "이렇게 물어보세요" 예시 질문. 누르면 바로 묻는다 */
+  suggestions?: string[];
 }
 
 /** 입력이 비어 있는 동안 placeholder 예시를 돌린다 */
@@ -50,9 +59,16 @@ const AiChat = ({
   onAsk,
   mobileHeightClassName,
   desktopHeightClassName,
+  placeholder: fixedPlaceholder,
+  submitLabel,
+  suggestions,
+  onRecommend,
 }: AiChatProps) => {
   const [query, setQuery] = useState('');
-  const placeholder = useRotatingPlaceholder(!query);
+  const rotatingPlaceholder = useRotatingPlaceholder(
+    !query && !fixedPlaceholder,
+  );
+  const placeholder = fixedPlaceholder ?? rotatingPlaceholder;
   const { turns, isPending, start, followUp, reset } = useAiChat();
   const isChatting = turns.length > 0;
 
@@ -76,6 +92,11 @@ const AiChat = ({
   // 패널은 마지막으로 답이 온 턴 기준. 그 턴이 도구를 쓰지 않았으면 닫는다
   const lastDone = turns.findLast((turn) => turn.status === 'done');
   const panel = lastDone?.result?.panel ?? null;
+
+  const recommended = panel?.type === 'recommend' ? panel.items : null;
+  useEffect(() => {
+    onRecommend?.(recommended ?? []);
+  }, [recommended, onRecommend]);
 
   return (
     <div className="flex w-full flex-col items-center">
@@ -109,12 +130,41 @@ const AiChat = ({
           type="submit"
           disabled={!query.trim() || isPending}
           aria-label="물어보기"
-          className="ai_chat_submit flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-white disabled:opacity-40 md:h-11 md:w-11"
+          className={twMerge(
+            'ai_chat_submit flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-white disabled:opacity-40 md:h-11 md:w-11',
+            submitLabel &&
+              'w-auto gap-1 px-4 text-xsmall14 font-semibold md:w-auto md:px-5',
+          )}
           data-text={query}
         >
+          {submitLabel}
           <ArrowUp size={20} />
         </button>
       </form>
+
+      {suggestions && !isChatting && (
+        <div className="mt-4 flex w-full max-w-[600px] flex-wrap items-center gap-2">
+          <span className="text-xsmall14 text-neutral-30">
+            이렇게 물어보세요
+          </span>
+          {suggestions.map((text) => (
+            <button
+              key={text}
+              type="button"
+              disabled={isPending}
+              onClick={() => {
+                setQuery(text);
+                start(text);
+                onAsk?.();
+              }}
+              className="ai_chat_suggestion rounded-full border border-neutral-80 bg-white px-3 py-1.5 text-xsmall14 text-neutral-20 hover:border-neutral-60"
+              data-text={text}
+            >
+              {text}
+            </button>
+          ))}
+        </div>
+      )}
 
       {isChatting && !panel && (
         <div

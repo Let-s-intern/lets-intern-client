@@ -31,7 +31,7 @@ function PassPromoStrip({ passHref, membershipId }: Props) {
     // 띠배너: 상세 안쪽 여백을 되감아 헤더 바로 아래, 화면 가로 전체에 붙인다
     <Link
       href={passHref}
-      className="relative left-1/2 -mt-6 mb-6 block w-screen -translate-x-1/2 border-y border-primary-20 bg-primary-5 px-5 py-3 md:-mt-[60px] md:mb-10 md:px-10 md:py-3.5"
+      className="relative left-1/2 -mt-6 mb-6 block w-screen -translate-x-1/2 border-y border-primary-20 bg-primary-5 px-5 py-3 md:-mt-[56px] md:mb-10 md:px-10 md:py-3.5"
     >
       <div className="mx-auto flex w-full max-w-[1160px] flex-col gap-2 md:flex-row md:items-center md:gap-4">
         <span className="w-fit shrink-0 rounded-xxs bg-primary px-2 py-1 text-xxsmall12 font-semibold text-white">

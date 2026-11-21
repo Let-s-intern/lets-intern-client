@@ -254,6 +254,7 @@ const ChallengeBasicInfo = ({
                   onApply={(plan) => openApply(plan)}
                   passHref={passHref}
                   passPrice={selectedPlanPassPrice}
+                  priceSummary={priceSummary}
                 />
               )
             )}

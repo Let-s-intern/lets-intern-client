@@ -57,14 +57,14 @@ interface Props {
   membershipId: number | null;
 }
 
-function ApplyPriceCard({
+/** 결제 금액 표: 정가 · 할인 · 미션 환급 · 지금 결제할 금액 */
+export function PriceBreakdown({
   price,
-  applyButton,
-  passHref,
-  passPrice,
-  membershipId,
-}: Props) {
-  const [isPassModalOpen, setIsPassModalOpen] = useState(false);
+  compact = false,
+}: {
+  price: PriceSummary;
+  compact?: boolean;
+}) {
   const {
     regularPrice,
     discountAmount,
@@ -74,42 +74,82 @@ function ApplyPriceCard({
   } = price;
 
   return (
-    <div className="flex flex-col gap-3 md:gap-4">
-      <div className="flex flex-col bg-white py-2 md:px-5">
-        <p className="text-small18 font-bold text-neutral-0 md:text-medium22">
-          결제 금액
-        </p>
+    <div
+      className={twMerge(
+        'flex flex-col bg-white',
+        compact ? 'text-xsmall14' : 'py-2 md:px-5',
+      )}
+    >
+      <p
+        className={twMerge(
+          'font-bold text-neutral-0',
+          compact ? 'text-small18' : 'text-small18 md:text-medium22',
+        )}
+      >
+        결제 금액
+      </p>
 
-        <div className="mt-3 flex flex-col gap-2 text-xsmall16 text-neutral-20">
+      <div
+        className={twMerge(
+          'mt-3 flex flex-col gap-2 text-neutral-20',
+          !compact && 'text-xsmall16',
+        )}
+      >
+        <div className="flex items-center justify-between">
+          <span className="text-neutral-30">정가</span>
+          <span>{regularPrice.toLocaleString()}원</span>
+        </div>
+        {discountAmount !== 0 && (
           <div className="flex items-center justify-between">
-            <span className="text-neutral-30">정가</span>
-            <span>{regularPrice.toLocaleString()}원</span>
+            <span className="font-semibold text-system-error">
+              {discountPercentage}% 할인
+            </span>
+            <span>-{discountAmount.toLocaleString()}원</span>
           </div>
-          {discountAmount !== 0 && (
-            <div className="flex items-center justify-between">
-              <span className="font-semibold text-system-error">
-                {discountPercentage}% 할인
-              </span>
-              <span>-{discountAmount.toLocaleString()}원</span>
-            </div>
-          )}
-          {deposit > 0 && (
-            <div className="flex items-center justify-between rounded-xxs bg-[#FFEFED] px-3 py-2">
-              <span>모든 미션 수행 시, 환급</span>
-              <span>-{deposit.toLocaleString()}원</span>
-            </div>
-          )}
-        </div>
-
-        <div className="mt-3 flex items-center justify-between border-t border-neutral-80 pt-3">
-          <span className="text-xsmall16 text-neutral-20">
-            지금 결제할 금액
-          </span>
-          <strong className="text-medium24 font-bold text-primary md:text-xlarge28">
-            {paymentPrice.toLocaleString()}원
-          </strong>
-        </div>
+        )}
+        {deposit > 0 && (
+          <div className="flex items-center justify-between rounded-xxs bg-[#FFEFED] px-3 py-2">
+            <span>모든 미션 수행 시, 환급</span>
+            <span>-{deposit.toLocaleString()}원</span>
+          </div>
+        )}
       </div>
+
+      <div className="mt-3 flex items-center justify-between border-t border-neutral-80 pt-3">
+        <span
+          className={twMerge(
+            'text-neutral-20',
+            compact ? 'text-xsmall14' : 'text-xsmall16',
+          )}
+        >
+          지금 결제할 금액
+        </span>
+        <strong
+          className={twMerge(
+            'font-bold text-primary',
+            compact ? 'text-medium22' : 'text-medium24 md:text-xlarge28',
+          )}
+        >
+          {paymentPrice.toLocaleString()}원
+        </strong>
+      </div>
+    </div>
+  );
+}
+
+function ApplyPriceCard({
+  price,
+  applyButton,
+  passHref,
+  passPrice,
+  membershipId,
+}: Props) {
+  const [isPassModalOpen, setIsPassModalOpen] = useState(false);
+  const { paymentPrice } = price;
+
+  return (
+    <div className="flex flex-col gap-3 md:gap-4">
+      <PriceBreakdown price={price} />
 
       {applyButton}
 
@@ -117,7 +157,7 @@ function ApplyPriceCard({
         <button
           type="button"
           onClick={() => setIsPassModalOpen(true)}
-          className="pass_benefit_card flex flex-col gap-2 rounded-xs bg-[var(--apply-tint,#F5F6FF)] px-4 py-3 text-left"
+          className="pass_benefit_card flex flex-col gap-2 rounded-xs bg-[#F5F6FF] px-4 py-3 text-left"
         >
           <span className="w-fit rounded-xxs bg-primary px-2 py-0.5 text-xxsmall12 font-semibold text-white">
             ALL-IN-ONE PASS

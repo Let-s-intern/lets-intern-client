@@ -5,7 +5,12 @@ import type { ChallengePricePlan } from '@/schema';
 import { ChevronDown, ChevronRight, X } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
-import { ApplyButton, type ApplyButtonState } from './ApplyPriceCard';
+import {
+  ApplyButton,
+  PriceBreakdown,
+  type ApplyButtonState,
+  type PriceSummary,
+} from './ApplyPriceCard';
 import type { PlanOption } from './planOptions';
 
 const won = (value: number) => `${value.toLocaleString()}원`;
@@ -45,6 +50,8 @@ interface Props {
   passPrice: number | null;
   /** 따라오는 패널처럼 좁은 곳에서 쓸 때 */
   compact?: boolean;
+  /** 고른 플랜의 결제 금액 표 */
+  priceSummary?: PriceSummary;
 }
 
 /**
@@ -60,6 +67,7 @@ function CompactPlanSelect({
   onApply,
   passHref,
   passPrice,
+  priceSummary,
 }: Omit<Props, 'compact'>) {
   const [showHint, setShowHint] = useState(false);
   const selected = options.find((option) => option.plan === selectedPlan);
@@ -134,32 +142,30 @@ function CompactPlanSelect({
         )}
       </div>
 
-      <div className="flex items-center justify-between border-t border-neutral-80 pt-3">
-        <span className="text-xsmall16 font-semibold text-neutral-10">
-          총 결제 금액
-        </span>
-        <strong className="text-medium22 font-bold text-primary">
-          {won(selected?.sellingPrice ?? 0)}
-        </strong>
-      </div>
+      {priceSummary && <PriceBreakdown compact price={priceSummary} />}
 
       {passHref && passPrice !== null && (
         <Link
           href={passHref}
-          className="pass_benefit_card flex items-center justify-between gap-3 rounded-xs bg-[var(--apply-tint,#F5F6FF)] px-4 py-3 text-xsmall14"
+          className="pass_benefit_card flex flex-col gap-2 rounded-xs bg-[#F5F6FF] px-4 py-3 text-left"
         >
-          <span className="text-neutral-10">
-            <span className="whitespace-nowrap">올인원 패스 회원은</span>{' '}
-            <span className="whitespace-nowrap">
-              <strong className="font-bold text-primary">
-                {won(passPrice)}
-              </strong>{' '}
-              참여
-            </span>
+          <span className="w-fit rounded-xxs bg-primary px-2 py-0.5 text-xxsmall12 font-semibold text-white">
+            ALL-IN-ONE PASS
           </span>
-          <span className="flex shrink-0 items-center font-medium text-primary">
-            패스 혜택 보기
-            <ChevronRight size={16} />
+          <span className="flex w-full items-center justify-between gap-3 text-xsmall14">
+            <span className="text-neutral-0">
+              <span className="whitespace-nowrap">올인원 패스 회원은</span>{' '}
+              <span className="whitespace-nowrap">
+                <strong className="font-bold text-primary">
+                  {won(passPrice)}
+                </strong>{' '}
+                참여
+              </span>
+            </span>
+            <span className="flex shrink-0 items-center whitespace-nowrap font-medium text-primary">
+              패스 혜택 보기
+              <ChevronRight size={16} />
+            </span>
           </span>
         </Link>
       )}
@@ -199,6 +205,7 @@ function FullPlanSelectCard({
   passHref,
   passPrice,
   compact = false,
+  priceSummary,
 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const selected = options.find((option) => option.plan === selectedPlan);
@@ -323,37 +330,41 @@ function FullPlanSelectCard({
         </div>
       )}
 
-      <div className="flex items-center justify-between border-t border-neutral-80 pt-3">
-        <span className="text-xsmall16 font-semibold text-neutral-10">
-          총 결제 금액
-        </span>
-        <strong
-          className={twMerge(
-            'font-bold text-primary',
-            compact ? 'text-medium22' : 'text-medium24 md:text-xlarge28',
-          )}
-        >
-          {won(selected?.sellingPrice ?? 0)}
-        </strong>
-      </div>
+      {priceSummary ? (
+        <PriceBreakdown price={priceSummary} />
+      ) : (
+        <div className="flex items-center justify-between border-t border-neutral-80 pt-3">
+          <span className="text-xsmall16 font-semibold text-neutral-10">
+            총 결제 금액
+          </span>
+          <strong className="text-medium24 font-bold text-primary md:text-xlarge28">
+            {won(selected?.sellingPrice ?? 0)}
+          </strong>
+        </div>
+      )}
 
       {passHref && passPrice !== null && (
         <Link
           href={passHref}
-          className="pass_benefit_card flex items-center justify-between gap-3 rounded-xs bg-[var(--apply-tint,#F5F6FF)] px-4 py-3 text-xsmall14"
+          className="pass_benefit_card flex flex-col gap-2 rounded-xs bg-[#F5F6FF] px-4 py-3 text-left"
         >
-          <span className="text-neutral-10">
-            <span className="whitespace-nowrap">올인원 패스 회원은</span>{' '}
-            <span className="whitespace-nowrap">
-              <strong className="font-bold text-primary">
-                {won(passPrice)}
-              </strong>{' '}
-              참여
-            </span>
+          <span className="w-fit rounded-xxs bg-primary px-2 py-0.5 text-xxsmall12 font-semibold text-white">
+            ALL-IN-ONE PASS
           </span>
-          <span className="flex shrink-0 items-center font-medium text-primary">
-            패스 혜택 보기
-            <ChevronRight size={16} />
+          <span className="flex w-full items-center justify-between gap-3 text-xsmall14">
+            <span className="text-neutral-0">
+              <span className="whitespace-nowrap">올인원 패스 회원은</span>{' '}
+              <span className="whitespace-nowrap">
+                <strong className="font-bold text-primary">
+                  {won(passPrice)}
+                </strong>{' '}
+                참여
+              </span>
+            </span>
+            <span className="flex shrink-0 items-center whitespace-nowrap font-medium text-primary">
+              패스 혜택 보기
+              <ChevronRight size={16} />
+            </span>
           </span>
         </Link>
       )}

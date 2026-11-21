@@ -7,6 +7,7 @@ let mockPathname = '/';
 
 jest.mock('next/navigation', () => ({
   usePathname: () => mockPathname,
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 // 모바일 Swiper 블록만 그리도록 모바일 폭으로 고정한다.

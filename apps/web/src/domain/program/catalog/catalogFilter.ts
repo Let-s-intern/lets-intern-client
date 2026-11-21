@@ -3,6 +3,7 @@ import type {
   ProgramCategoryTargetType,
   PublicProgramCategoryGroup,
 } from '@/api/program-category/programCategory';
+import { SHOW_LIVE_MENTORING_NAV } from '@/domain/live-mentoring/constants';
 import dayjs from '@/lib/dayjs';
 
 export const CATEGORY_QUERY_KEY = 'categoryId';
@@ -22,7 +23,7 @@ export type CatalogStatus = 'PROCEEDING' | 'PREV' | 'POST';
  * 상품 유형 칩. "전체" 없이 하나씩 고르고 기본은 챌린지.
  * 가이드북(챌린지 안의 선택지)·무료 자료집은 목록에서 뺀다 (prd-프로그램-목록-필터-개편 4장)
  */
-export const CATALOG_TYPES: {
+const ALL_CATALOG_TYPES: {
   key: ProgramCategoryTargetType;
   label: string;
 }[] = [
@@ -33,6 +34,11 @@ export const CATALOG_TYPES: {
   { key: 'MEMBERSHIP', label: '올인원 패스' },
 ];
 
+export const CATALOG_TYPES = ALL_CATALOG_TYPES.filter(
+  // 멘토링 출시 전에는 유형 칩과 목록에서 뺀다 (live-mentoring/constants.ts)
+  (type) => SHOW_LIVE_MENTORING_NAV || type.key !== 'LIVE_MENTORING',
+);
+
 export const DEFAULT_CATALOG_TYPE: ProgramCategoryTargetType = 'CHALLENGE';
 
 /** 목록에 보이지 않는 유형. 블로그는 상품이 아니다 */
@@ -40,6 +46,7 @@ const HIDDEN_TYPES: ProgramCategoryTargetType[] = [
   'GUIDEBOOK',
   'BLOG',
   'MAGNET',
+  ...(SHOW_LIVE_MENTORING_NAV ? [] : (['LIVE_MENTORING'] as const)),
 ];
 
 /** 예전 `?jobCategory=` 링크 → 노출 분류 키(slug) */

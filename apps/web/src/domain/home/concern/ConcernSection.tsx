@@ -130,12 +130,10 @@ const ConcernSection = () => {
   const selected = CONCERNS[selectedIndex];
   const theme = THEME[selected.id];
 
+  const fixedActions = selected.fixedAction ? [selected.fixedAction] : [];
   const actions = selected.chips
-    ? [
-        selected.actions[chipIndex] ?? selected.actions[0],
-        ...(selected.fixedAction ? [selected.fixedAction] : []),
-      ]
-    : selected.actions;
+    ? [selected.actions[chipIndex] ?? selected.actions[0], ...fixedActions]
+    : [...selected.actions, ...fixedActions];
 
   useEffect(() => {
     if (!isAutoPlaying) return;
@@ -193,7 +191,7 @@ const ConcernSection = () => {
               <span className="mt-5 whitespace-pre-line text-xsmall16 font-bold leading-snug text-neutral-0 md:text-small18">
                 {concern.headline}
               </span>
-              <span className="mt-auto pt-6 text-xxsmall12 text-neutral-30 md:text-xsmall14">
+              <span className="mt-auto break-keep pt-6 text-xxsmall12 text-neutral-30 md:text-xsmall14">
                 {concern.keywords}
               </span>
               {isSelected && isAutoPlaying && (

@@ -82,7 +82,11 @@ export const useChallengeApplyPanel = ({
     }
     return candidates.reduce((min, cur) => (cur[1] < min[1] ? cur : min))[0];
   }, [challenge.priceInfo]);
-  const livePrice = useChallengePlanPrice(challenge.priceInfo, cheapestPlan);
+  const selectedPlan = useChallengeApplySheetStore((state) => state.plan);
+  const livePrice = useChallengePlanPrice(
+    challenge.priceInfo,
+    selectedPlan ?? cheapestPlan,
+  );
 
   const { guidebook } = useTemplateGuidebook(challenge.challengeType);
 
@@ -218,7 +222,6 @@ export const useChallengeApplyPanel = ({
         paymentPrice: livePrice.sellingPrice,
       };
 
-  const selectedPlan = useChallengeApplySheetStore((state) => state.plan);
   const planOptions = buildPlanOptions(
     challenge.priceInfo,
     showPassPrice ? passPrices : null,

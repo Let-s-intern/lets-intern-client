@@ -1,3 +1,5 @@
+import { SHOW_LIVE_MENTORING_NAV } from '@/domain/live-mentoring/constants';
+
 /**
  * 고민 패널의 카드 하나 = 취준 여정 카테고리 하나 (domain/career-journey/journeyNav.ts 의 slug).
  * 이동은 메뉴와 같다: 어드민이 지정한 바로 갈 상품이 있으면 상세, 없으면 카테고리 랜딩
@@ -25,6 +27,18 @@ export interface Concern {
   /** 칩으로 고른 카드 옆에 늘 함께 두는 카드 */
   fixedAction?: ConcernAction;
 }
+
+/** 직무 특화·면접 패널이 함께 쓰는 1:1 LIVE 멘토링 카드. 멘토링 출시 전에는 두지 않는다 */
+const LIVE_MENTORING_ACTION: ConcernAction | undefined = SHOW_LIVE_MENTORING_NAV
+  ? {
+      title: '1:1 LIVE 멘토링',
+      quote: '"현직자에게 직접 물어보고 싶어요"',
+      meta: '현직자 1:1 LIVE 멘토링 · 30분/60분',
+      cta: 'LIVE 멘토링 시작하기',
+      slug: 'live-mentoring',
+      href: '/live-mentoring',
+    }
+  : undefined;
 
 export const CONCERNS: Concern[] = [
   {
@@ -115,6 +129,7 @@ export const CONCERNS: Concern[] = [
         slug: 'interview',
       },
     ],
+    fixedAction: LIVE_MENTORING_ACTION,
   },
   {
     id: 'job',
@@ -147,13 +162,6 @@ export const CONCERNS: Concern[] = [
       },
     ],
     chips: true,
-    fixedAction: {
-      title: '1:1 LIVE 멘토링',
-      quote: '"현직자에게 직접 물어보고 싶어요"',
-      meta: '현직자 1:1 LIVE 멘토링 · 30분/60분',
-      cta: 'LIVE 멘토링 시작하기',
-      slug: 'live-mentoring',
-      href: '/live-mentoring',
-    },
+    fixedAction: LIVE_MENTORING_ACTION,
   },
 ];
