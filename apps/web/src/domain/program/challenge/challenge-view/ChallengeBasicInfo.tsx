@@ -208,7 +208,7 @@ const ChallengeBasicInfo = ({
             {/* 제목·한 줄 소개는 "나에게 맞는 프로그램 선택하기" 자리에 둔다 */}
             <div className="flex flex-col gap-1.5 md:gap-2">
               <h1 className="text-medium22 font-bold text-neutral-0 md:text-xlarge28">
-                {challenge.title}
+                {getChallengeDisplayTitle(challenge.title ?? '')}
               </h1>
               {challenge.shortDesc && (
                 <p className="text-xsmall14 text-neutral-30 md:text-xsmall16">

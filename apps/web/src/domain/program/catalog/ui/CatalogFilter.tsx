@@ -51,7 +51,7 @@ const Row = ({
 }) => (
   <div className="flex flex-col gap-3 md:gap-5">
     <h2 className="text-1-semibold text-neutral-0">{label}</h2>
-    <div className="flex flex-wrap gap-x-4 gap-y-3 md:flex-col">{children}</div>
+    <div className="grid grid-cols-2 gap-x-4 gap-y-3 md:flex md:flex-col">{children}</div>
   </div>
 );
 

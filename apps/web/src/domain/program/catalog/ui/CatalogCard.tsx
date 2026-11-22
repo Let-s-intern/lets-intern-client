@@ -170,7 +170,8 @@ const CatalogCard = ({
       )}
       {period && (
         <p className="text-xxsmall12 text-neutral-30">
-          진행기간 <span className="text-primary">{period}</span>
+          <span className="block md:inline">진행기간</span>{' '}
+          <span className="whitespace-nowrap text-primary">{period}</span>
         </p>
       )}
       <span

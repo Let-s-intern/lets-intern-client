@@ -61,9 +61,18 @@ function PassUpsellCard({ challengeId, paidAmount }: Props) {
         )}
         {extraAmount !== null && (
           <div className="flex items-center justify-between gap-4 border-t border-neutral-90 px-1 pt-5">
-            <span className="text-xsmall16 font-medium text-neutral-0">
-              패스로 변경한다면?
-            </span>
+            <div className="flex flex-col gap-1">
+              <span className="text-xsmall16 font-medium text-neutral-0">
+                패스로 변경한다면?
+              </span>
+              <Link
+                href={passHref}
+                className="pass_upgrade_result_link flex items-center gap-0.5 text-xsmall14 font-semibold text-primary"
+              >
+                올인원 패스 혜택 보기
+                <LuChevronRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+            </div>
             <strong className="text-small20 font-bold text-primary">
               +{extraAmount.toLocaleString()}원
             </strong>
@@ -73,8 +82,7 @@ function PassUpsellCard({ challengeId, paidAmount }: Props) {
           href={passHref}
           className="pass_upgrade_result flex w-full items-center justify-center gap-1 rounded-[8px] bg-primary px-6 py-3 text-xsmall16 font-semibold text-white"
         >
-          올인원 패스 자세히 보기
-          <LuChevronRight className="h-4 w-4" aria-hidden="true" />
+          올인원 패스로 변경하기
         </Link>
       </div>
     </div>

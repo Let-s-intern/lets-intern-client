@@ -23,6 +23,7 @@ import CouponSection, {
 } from '@/domain/program/program-detail/apply/section/CouponSection';
 import MotiveAnswerSection from '@/domain/program/program-detail/apply/section/MotiveAnswerSection';
 import PaymentSubmitSection from '@/domain/program/program-detail/apply/section/PaymentSubmitSection';
+import PassFloatingBanner from '@/domain/program/pass-upgrade/PassFloatingBanner';
 import PassUpgradeSection from '@/domain/program/pass-upgrade/PassUpgradeSection';
 import PriceSection from '@/domain/program/program-detail/apply/section/PriceSection';
 import UserInputSection from '@/domain/program/program-detail/apply/section/UserInputSection';
@@ -512,7 +513,6 @@ const PaymentInputContent = () => {
             !programApplicationData.membershipDiscount && (
               <PassUpgradeSection
                 challengeId={programApplicationData.programId ?? 0}
-                paymentAmount={totalPrice}
               />
             )}
           {/* [TODO] 제목 포함 조건 지워야 함 */}
@@ -543,6 +543,15 @@ const PaymentInputContent = () => {
         onSubmit={onPaymentClick}
         buttonText={buttonText}
         disabled={!isFormValid}
+        floatingSlot={
+          programApplicationData.programType === 'challenge' &&
+          !isMembership &&
+          !programApplicationData.membershipDiscount ? (
+            <PassFloatingBanner
+              challengeId={programApplicationData.programId ?? 0}
+            />
+          ) : undefined
+        }
       />
     </div>
   );

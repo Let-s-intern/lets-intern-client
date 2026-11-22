@@ -88,6 +88,11 @@ jest.mock('@/domain/program/pass-upgrade/PassUpgradeSection', () => ({
   default: () => null,
 }));
 
+jest.mock('@/domain/program/pass-upgrade/PassFloatingBanner', () => ({
+  __esModule: true,
+  default: () => null,
+}));
+
 jest.mock(
   '@/domain/program/program-detail/apply/section/PaymentSubmitSection',
   () => ({

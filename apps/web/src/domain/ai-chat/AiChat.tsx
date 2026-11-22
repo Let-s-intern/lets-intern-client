@@ -133,11 +133,13 @@ const AiChat = ({
           className={twMerge(
             'ai_chat_submit flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-white disabled:opacity-40 md:h-11 md:w-11',
             submitLabel &&
-              'w-auto gap-1 px-4 text-xsmall14 font-semibold md:w-auto md:px-5',
+              'text-xsmall14 font-semibold md:w-auto md:gap-1 md:px-5',
           )}
           data-text={query}
         >
-          {submitLabel}
+          {submitLabel && (
+            <span className="hidden md:inline">{submitLabel}</span>
+          )}
           <ArrowUp size={20} />
         </button>
       </form>

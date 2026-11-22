@@ -180,11 +180,12 @@ export const useChallengeApplyPanel = ({
       : 'OPEN';
 
   /* 올인원 패스: 열린 패스 링크와 이 플랜의 패스회원가 */
-  const { showPassPrice, passHref, passPrices } = useChallengePassBenefit({
-    challengeId: challengeId ?? '',
-    enabled: challengeId !== undefined,
-    prices: getChallengeOptionPriceInfo(challenge.priceInfo),
-  });
+  const { hasPrivilege, showPassPrice, passHref, passPrices } =
+    useChallengePassBenefit({
+      challengeId: challengeId ?? '',
+      enabled: challengeId !== undefined,
+      prices: getChallengeOptionPriceInfo(challenge.priceInfo),
+    });
   const { data: openPrivilege } = useGetOpenMembershipPrivilege();
   // 템플릿 모드: 열린 패스에 가이드북 권한이 있으면 패스로 0원에 받을 수 있다
   const { data: guidebookPrivilege } = useGetMembershipPrivilege(
@@ -221,6 +222,17 @@ export const useChallengeApplyPanel = ({
         deposit: livePrice.deposit,
         paymentPrice: livePrice.sellingPrice,
       };
+
+  // 패스 결제자는 서버가 이용료를 패스 회원가로 계산하고 보증금은 면제한다 (정가·할인은 그대로, 패스 혜택 할인 줄이 더해진다)
+  if (!showTemplate && hasPrivilege) {
+    const memberPrice = passPrices[selectedPlan ?? cheapestPlan] ?? 0;
+    priceSummary.passDiscount = Math.max(
+      livePrice.sellingPrice - memberPrice,
+      0,
+    );
+    priceSummary.deposit = 0;
+    priceSummary.paymentPrice = memberPrice;
+  }
 
   const planOptions = buildPlanOptions(
     challenge.priceInfo,

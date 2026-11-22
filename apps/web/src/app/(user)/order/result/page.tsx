@@ -202,8 +202,15 @@ const PaymentResultContent = () => {
   // 신청 내역 카드의 행. 데이터가 있는 것만 그린다
   const summaryRows: { label: string; value: string }[] = [];
   if (isChallenge) {
+    summaryRows.push({
+      label: '진행 방식',
+      value: '매일 미션으로 완성하기(챌린지)',
+    });
     if (challengeVersionTitle) {
-      summaryRows.push({ label: '진행 방식', value: challengeVersionTitle });
+      summaryRows.push({
+        label: '참여 대상',
+        value: challengeVersionTitle.replace(/\s*Ver\.?$/i, ''),
+      });
     }
     if (programStartDate) {
       summaryRows.push({

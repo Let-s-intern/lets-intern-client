@@ -15,6 +15,8 @@ export interface PriceSummary {
   deposit: number;
   /** 실제 결제 금액 */
   paymentPrice: number;
+  /** 올인원 패스 회원이면 패스 혜택으로 빠지는 금액. 일반 회원이면 없다 */
+  passDiscount?: number;
 }
 
 const APPLY_BUTTON_TEXT: Record<Exclude<ApplyButtonState, 'OPEN'>, string> = {
@@ -71,7 +73,9 @@ export function PriceBreakdown({
     discountPercentage,
     deposit,
     paymentPrice,
+    passDiscount,
   } = price;
+  const isPassMember = passDiscount !== undefined;
 
   return (
     <div
@@ -107,6 +111,12 @@ export function PriceBreakdown({
             <span>-{discountAmount.toLocaleString()}원</span>
           </div>
         )}
+        {isPassMember && passDiscount > 0 && (
+          <div className="flex items-center justify-between">
+            <span className="font-semibold text-primary">패스 혜택 할인</span>
+            <span>-{passDiscount.toLocaleString()}원</span>
+          </div>
+        )}
         {deposit > 0 && (
           <div className="flex items-center justify-between rounded-xxs bg-[#FFEFED] px-3 py-2">
             <span>모든 미션 수행 시, 환급</span>
@@ -122,7 +132,7 @@ export function PriceBreakdown({
             compact ? 'text-xsmall14' : 'text-xsmall16',
           )}
         >
-          지금 결제할 금액
+          {isPassMember ? '올인원 패스 회원 결제 금액' : '지금 결제할 금액'}
         </span>
         <strong
           className={twMerge(
