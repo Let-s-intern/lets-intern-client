@@ -2,11 +2,9 @@ import { ChallengeType, ChallengeVersion } from '@/schema';
 
 import { autoProgramTitle } from '../ChallengeVersionSection';
 import {
-  extractGeneration,
-  extractVersion,
   extractWeek,
   generateAndUploadThumbnail,
-  resolveThumbnailImage,
+  THUMBNAIL_IMAGES,
   WEEK_TITLE_TEMPLATES,
 } from './generateThumbnail';
 
@@ -14,7 +12,6 @@ export type ThumbnailBlockReason =
   | 'COPY_CONTENT'
   | 'LOADING'
   | 'UNSUPPORTED_TYPE'
-  | 'NO_GENERATION'
   | 'NO_WEEK';
 
 export const THUMBNAIL_BLOCK_REASON_TEXT: Record<ThumbnailBlockReason, string> =
@@ -23,7 +20,6 @@ export const THUMBNAIL_BLOCK_REASON_TEXT: Record<ThumbnailBlockReason, string> =
       '"이전 내용 그대로 가져오기"를 선택하면 기존 썸네일을 그대로 씁니다.',
     LOADING: '챌린지 정보를 불러오는 중입니다.',
     UNSUPPORTED_TYPE: '자동 생성을 지원하지 않는 챌린지 유형입니다.',
-    NO_GENERATION: '제목에 기수(ex. 32기)가 없습니다.',
     NO_WEEK: '제목에 주차(ex. 2주)가 없습니다.',
   };
 
@@ -44,23 +40,14 @@ export const getThumbnailBlockReason = ({
   copyContent,
   challengeType,
   title,
-  versionTitles,
 }: {
   copyContent: boolean;
   challengeType: ChallengeType | null;
   title: string;
-  versionTitles: string[];
 }): ThumbnailBlockReason | null => {
   if (copyContent) return 'COPY_CONTENT';
   if (challengeType === null) return 'LOADING';
-  // 이력서처럼 Ver 전용 이미지만 있는 유형이 있어 배너 문구까지 봐야 지원 여부가 정해진다
-  const isSupported = getThumbnailTitles(title, versionTitles).every(
-    (thumbnailTitle) =>
-      resolveThumbnailImage(challengeType, extractVersion(thumbnailTitle)) !==
-      null,
-  );
-  if (!isSupported) return 'UNSUPPORTED_TYPE';
-  if (extractGeneration(title) === null) return 'NO_GENERATION';
+  if (!THUMBNAIL_IMAGES[challengeType]) return 'UNSUPPORTED_TYPE';
   if (challengeType in WEEK_TITLE_TEMPLATES && extractWeek(title) === null)
     return 'NO_WEEK';
   return null;

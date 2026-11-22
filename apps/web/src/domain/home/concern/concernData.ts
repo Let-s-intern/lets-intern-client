@@ -45,7 +45,7 @@ export const CONCERNS: Concern[] = [
     id: 'experience',
     label: '경험정리',
     headline: '경험이 정리가\n안 돼요',
-    keywords: '경험정리',
+    keywords: '경험 정리 · 역량 키워드',
     panelTitle: '경험정리, 뭐부터 해야할까요?',
     panelDescription: '서류를 쓰기 전, 내 경험을 역량 키워드로 먼저 정리해요.',
     actions: [
@@ -62,7 +62,7 @@ export const CONCERNS: Concern[] = [
     id: 'document',
     label: '서류 작성',
     headline: '서류를 어떻게\n써야 할지 모르겠어요',
-    keywords: '이력서 · 자기소개서 · 포트폴리오',
+    keywords: '이력서 · 자소서 · 포트폴리오',
     panelTitle: '어떤 서류를 준비하고 있나요?',
     panelDescription: '지원 서류 3종 중 지금 준비할 서류를 선택해보세요.',
     actions: [
@@ -93,7 +93,7 @@ export const CONCERNS: Concern[] = [
     id: 'large-corp',
     label: '대기업',
     headline: '대기업 공채가\n처음이에요',
-    keywords: '대기업 자기소개서 · 인적성',
+    keywords: '대기업 자소서 · 인적성',
     panelTitle: '대기업 취업, 무엇부터 준비해야 할까요?',
     panelDescription: '자소서부터 인적성까지, 필요한 준비를 시작해보세요.',
     actions: [
@@ -117,7 +117,7 @@ export const CONCERNS: Concern[] = [
     id: 'interview',
     label: '면접',
     headline: '면접만 가면\n떨어져요',
-    keywords: '면접',
+    keywords: '예상 질문 · 답변 준비',
     panelTitle: '면접, 어떻게 준비해야 할까요?',
     panelDescription: '답변 준비부터 실전 연습까지 차근차근 시작해보세요.',
     actions: [

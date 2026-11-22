@@ -134,7 +134,7 @@ function ChallengeVersionSection({
     if (!challengeType || !version?.title.trim()) return;
     setThumbnailStatus((prev) => ({ ...prev, [index]: 'loading' }));
     try {
-      // 복제 모달과 같은 생성기. 제목의 [버전명] 으로 Ver 배너, N기 로 기수 배지를 그린다
+      // 복제 모달과 같은 생성기. 기수·버전명은 그리지 않고 배경과 주차 제목만 넣는다
       const url = await generateAndUploadThumbnail(
         challengeType,
         autoProgramTitle(version.title, challengeTitle),
@@ -333,10 +333,10 @@ function ChallengeVersionSection({
                       {thumbnailStatus[index] === 'loading'
                         ? '버전 썸네일을 만드는 중입니다.'
                         : thumbnailStatus[index] === 'unsupported'
-                          ? '자동 생성 템플릿이 없는 유형이거나 챌린지 제목에 기수(N기)가 없습니다. 직접 올려주세요.'
+                          ? '자동 생성 템플릿이 없는 유형이거나 챌린지 제목에 주차(N주)가 없습니다. 직접 올려주세요.'
                           : thumbnailStatus[index] === 'error'
                             ? '썸네일을 자동으로 만들지 못했습니다. 직접 올려주세요.'
-                            : '챌린지 복제와 같은 템플릿에 버전명 배너와 기수를 넣어 자동으로 만듭니다. 직접 올리면 그 이미지를 씁니다.'}
+                            : '챌린지 복제와 같은 템플릿으로 자동으로 만듭니다. 기수와 버전명은 들어가지 않습니다. 직접 올리면 그 이미지를 씁니다.'}
                     </Typography>
                   </div>
                   <div className="grid grid-cols-2 gap-3">

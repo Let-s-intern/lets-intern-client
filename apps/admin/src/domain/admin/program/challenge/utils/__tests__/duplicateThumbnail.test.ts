@@ -24,7 +24,7 @@ beforeEach(() => {
   generateAndUploadThumbnail.mockReset();
 });
 
-const base = { copyContent: false, versionTitles: [] as string[] };
+const base = { copyContent: false };
 
 describe('getThumbnailBlockReason', () => {
   it('이전 내용 그대로 가져오기를 켜면 제목과 상관없이 막힌다', () => {
@@ -54,35 +54,24 @@ describe('getThumbnailBlockReason', () => {
     ).toBe('UNSUPPORTED_TYPE');
   });
 
-  it('버전 없는 이력서는 제목에 [ ] 가 없으면 지원하지 않는다', () => {
+  it('이력서는 제목에 [ ] 가 없어도 만들 수 있다', () => {
     expect(
       getThumbnailBlockReason({
         ...base,
         challengeType: 'CAREER_START',
         title: '이력서 챌린지 10기',
-      }),
-    ).toBe('UNSUPPORTED_TYPE');
-  });
-
-  it('버전 있는 이력서는 제목에 [ ] 가 없어도 버전명으로 만들 수 있다', () => {
-    expect(
-      getThumbnailBlockReason({
-        copyContent: false,
-        challengeType: 'CAREER_START',
-        title: '이력서 챌린지 10기',
-        versionTitles: ['대학생 Ver.', '인턴 Ver.'],
       }),
     ).toBeNull();
   });
 
-  it('기수가 없으면 막힌다', () => {
+  it('제목에 기수가 없어도 막히지 않는다', () => {
     expect(
       getThumbnailBlockReason({
         ...base,
         challengeType: 'EXPERIENCE_SUMMARY',
-        title: '경험정리 챌린지',
+        title: '기필코 경험정리 챌린지',
       }),
-    ).toBe('NO_GENERATION');
+    ).toBeNull();
   });
 
   it('자기소개서·포트폴리오는 주차가 없으면 막힌다', () => {
@@ -91,7 +80,6 @@ describe('getThumbnailBlockReason', () => {
         ...base,
         challengeType: 'PORTFOLIO',
         title: '포트폴리오 완성 챌린지 43기',
-        versionTitles: ['대학생 Ver.'],
       }),
     ).toBe('NO_WEEK');
     expect(
