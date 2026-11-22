@@ -12,7 +12,7 @@ import {
   MessagesSquare,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 
 import { CONCERNS, ConcernAction } from './concernData';
 import styles from './ConcernSection.module.css';
@@ -193,8 +193,14 @@ const ConcernSection = () => {
               <span className="mt-3 whitespace-pre-line break-keep text-xsmall16 font-bold leading-snug text-neutral-0 md:text-small18">
                 {concern.headline}
               </span>
-              <span className="mt-auto break-keep pt-4 text-xxsmall12 text-neutral-30 md:text-xsmall14">
-                {concern.keywords}
+              {/* 키워드 중간에서 줄이 바뀌지 않게, 항목 사이에서만 넘긴다 */}
+              <span className="mt-auto pt-4 text-xxsmall12 text-neutral-30 md:text-xsmall14">
+                {concern.keywords.split(' · ').map((keyword, i) => (
+                  <Fragment key={keyword}>
+                    {i > 0 && ' · '}
+                    <span className="whitespace-nowrap">{keyword}</span>
+                  </Fragment>
+                ))}
               </span>
               {isSelected && isAutoPlaying && (
                 <span
