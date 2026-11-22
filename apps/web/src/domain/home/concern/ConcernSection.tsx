@@ -101,7 +101,9 @@ const ActionCard = ({
 }) => (
   <li className="relative z-10 flex flex-col rounded-[16px] border border-white/80 bg-white/70 p-5 shadow-[0_4px_20px_rgba(0,0,0,0.04)] backdrop-blur-sm md:p-6">
     <h4 className="text-small18 font-bold text-neutral-0">{action.title}</h4>
-    <p className="mt-3 text-xsmall14 text-neutral-20">{action.quote}</p>
+    <p className="mt-3 break-keep text-xsmall14 text-neutral-20">
+      {action.quote}
+    </p>
     <p className="mt-1 text-xxsmall12 text-neutral-40">{action.meta}</p>
     <Link
       href={href}
@@ -130,12 +132,10 @@ const ConcernSection = () => {
   const selected = CONCERNS[selectedIndex];
   const theme = THEME[selected.id];
 
+  const fixedActions = selected.fixedAction ? [selected.fixedAction] : [];
   const actions = selected.chips
-    ? [
-        selected.actions[chipIndex] ?? selected.actions[0],
-        ...(selected.fixedAction ? [selected.fixedAction] : []),
-      ]
-    : selected.actions;
+    ? [selected.actions[chipIndex] ?? selected.actions[0], ...fixedActions]
+    : [...selected.actions, ...fixedActions];
 
   useEffect(() => {
     if (!isAutoPlaying) return;
@@ -163,7 +163,7 @@ const ConcernSection = () => {
     >
       <div
         role="tablist"
-        className="-mx-5 flex gap-2 overflow-x-auto px-5 scrollbar-hide md:mx-0 md:grid md:grid-cols-5 md:gap-3 md:overflow-visible md:px-0"
+        className="grid grid-cols-2 gap-2 md:grid-cols-5 md:gap-3"
       >
         {CONCERNS.map((concern) => {
           const { icon: Icon, text, border, bar } = THEME[concern.id];
@@ -176,7 +176,7 @@ const ConcernSection = () => {
               aria-selected={isSelected}
               onClick={() => handleSelect(concern.id)}
               className={twMerge(
-                'concern_tab relative flex min-h-[168px] min-w-[160px] flex-col overflow-hidden rounded-[14px] border-2 border-neutral-90 bg-white p-4 text-left transition-colors md:min-h-[200px] md:min-w-0 md:p-5',
+                'concern_tab relative flex min-h-[132px] min-w-0 flex-col overflow-hidden rounded-[14px] border-2 border-neutral-90 bg-white p-4 text-left transition-colors last:col-span-2 md:min-h-[200px] md:p-5 md:last:col-span-1',
                 isSelected && border,
               )}
               data-text={concern.label}
@@ -190,11 +190,11 @@ const ConcernSection = () => {
                 <Icon size={16} />
                 {concern.label}
               </span>
-              <span className="mt-5 whitespace-pre-line text-xsmall16 font-bold leading-snug text-neutral-0 md:text-small18">
+              <span className="mt-3 whitespace-pre-line break-keep text-xsmall16 font-bold leading-snug text-neutral-0 md:text-small18">
                 {concern.headline}
               </span>
               {/* 키워드 중간에서 줄이 바뀌지 않게, 항목 사이에서만 넘긴다 */}
-              <span className="mt-auto pt-6 text-xxsmall12 text-neutral-30 md:text-xsmall14">
+              <span className="mt-auto pt-4 text-xxsmall12 text-neutral-30 md:text-xsmall14">
                 {concern.keywords.split(' · ').map((keyword, i) => (
                   <Fragment key={keyword}>
                     {i > 0 && ' · '}
@@ -255,16 +255,16 @@ const ConcernSection = () => {
             >
               {selected.label}
             </span>
-            <h3 className="mt-1 text-small18 font-bold text-neutral-0 md:text-small20">
+            <h3 className="mt-1 break-keep text-small18 font-bold text-neutral-0 md:text-small20">
               {selected.panelTitle}
             </h3>
           </div>
-          <p className="text-xsmall14 text-neutral-30 md:text-xsmall16">
+          <p className="break-keep text-xsmall14 text-neutral-30 md:text-xsmall16">
             {selected.panelDescription}
           </p>
         </div>
         {selected.chips && (
-          <div className="relative z-10 mt-5 flex gap-2 md:mt-6">
+          <div className="relative z-10 mt-5 flex flex-wrap gap-2 md:mt-6">
             {selected.actions.map((action, index) => (
               <button
                 key={action.slug}

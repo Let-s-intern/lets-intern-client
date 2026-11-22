@@ -9,6 +9,7 @@ import {
   DEFAULT_CATALOG_TYPE,
 } from '../catalogFilter';
 
+/** 멘토링 목록 사이드바와 같은 체크박스 줄 */
 const Chip = ({
   selected,
   label,
@@ -22,15 +23,22 @@ const Chip = ({
     type="button"
     onClick={onClick}
     aria-pressed={selected}
-    className={clsx(
-      'program_catalog_filter shrink-0 whitespace-nowrap rounded-full border px-3.5 py-1.5 text-xsmall14',
-      selected
-        ? 'border-primary bg-primary-5 font-semibold text-primary'
-        : 'border-neutral-80 text-neutral-20 hover:border-neutral-60',
-    )}
+    className="program_catalog_filter flex shrink-0 items-center gap-2 text-left md:gap-3"
     data-text={label}
   >
-    {label}
+    <img
+      className="w-6 shrink-0"
+      src={`/icons/${selected ? 'checkbox-fill.svg' : 'checkbox-fill-none.svg'}`}
+      alt=""
+    />
+    <span
+      className={clsx(
+        'whitespace-nowrap text-xsmall16',
+        selected ? 'font-semibold text-neutral-0' : 'text-neutral-35',
+      )}
+    >
+      {label}
+    </span>
   </button>
 );
 
@@ -41,11 +49,9 @@ const Row = ({
   label: string;
   children: React.ReactNode;
 }) => (
-  <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-6">
-    <span className="w-24 shrink-0 text-xsmall14 font-semibold text-neutral-10">
-      {label}
-    </span>
-    <div className="-mx-5 flex gap-2 overflow-x-auto px-5 scrollbar-hide md:mx-0 md:flex-wrap md:overflow-visible md:px-0">
+  <div className="flex flex-col gap-3 md:gap-5">
+    <h2 className="text-1-semibold text-neutral-0">{label}</h2>
+    <div className="grid grid-cols-2 gap-x-4 gap-y-3 md:flex md:flex-col">
       {children}
     </div>
   </div>
@@ -58,8 +64,8 @@ interface CatalogFilterProps {
 }
 
 /**
- * 노출 목록마다 한 줄(어드민 노출 분류의 필터용 목록), 마지막 줄은 상품 유형.
- * 같은 줄 안은 하나라도, 줄끼리는 전부 맞아야 한다 (match=GROUP)
+ * 분류 태그 한 줄, 그 아래 프로그램 유형 한 줄.
+ * 태그는 여러 개 고르면 하나라도 맞는 상품을 보인다 (match=ANY)
  */
 const CatalogFilter = ({ groups, query, onChange }: CatalogFilterProps) => {
   const toggleCategory = (id: number) =>
@@ -73,25 +79,23 @@ const CatalogFilter = ({ groups, query, onChange }: CatalogFilterProps) => {
     onChange({ ...query, type });
   const hasFilter =
     query.categoryIds.length > 0 || query.type !== DEFAULT_CATALOG_TYPE;
-  const rows = groups
-    .filter((group) => group.categoryList.length > 0)
-    .map((group) => (
-      <Row key={group.id} label={group.title}>
-        {group.categoryList.map((category) => (
-          <Chip
-            key={category.id}
-            label={category.title}
-            selected={query.categoryIds.includes(category.id)}
-            onClick={() => toggleCategory(category.id)}
-          />
-        ))}
-      </Row>
-    ));
+  // 분류 줄은 나누지 않고 태그만 한 줄로. 줄 순서·줄 안 순서는 어드민을 따른다
+  const tags = groups.flatMap((group) => group.categoryList);
 
   return (
-    <div className="flex flex-col gap-4 rounded-md border border-neutral-85 px-5 py-5 md:px-6">
-      {/* 순서: 첫 노출 목록(서류) → 프로그램 유형 → 나머지(관심 직무). 노출 목록 순서는 어드민을 따른다 */}
-      {rows.slice(0, 1)}
+    <aside className="flex flex-col gap-8 md:w-[200px] md:shrink-0">
+      {tags.length > 0 && (
+        <Row label="분류">
+          {tags.map((category) => (
+            <Chip
+              key={category.id}
+              label={category.title}
+              selected={query.categoryIds.includes(category.id)}
+              onClick={() => toggleCategory(category.id)}
+            />
+          ))}
+        </Row>
+      )}
       <Row label="프로그램 유형">
         {CATALOG_TYPES.map((type) => (
           <Chip
@@ -102,7 +106,6 @@ const CatalogFilter = ({ groups, query, onChange }: CatalogFilterProps) => {
           />
         ))}
       </Row>
-      {rows.slice(1)}
       {hasFilter && (
         <button
           type="button"
@@ -114,7 +117,7 @@ const CatalogFilter = ({ groups, query, onChange }: CatalogFilterProps) => {
           필터 초기화
         </button>
       )}
-    </div>
+    </aside>
   );
 };
 

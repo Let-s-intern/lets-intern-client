@@ -84,7 +84,7 @@ const SidebarButton = ({
   return (
     <button
       type="button"
-      className="flex flex-col items-start gap-1 rounded-xs px-[30px] py-5"
+      className="flex shrink-0 flex-col items-start gap-1 rounded-xs px-[30px] py-5 min-[1025px]:px-5 min-[1025px]:py-3"
       style={
         active
           ? { backgroundColor: lightAccentColor, color: primaryColor }
@@ -128,8 +128,8 @@ function DesktopCurriculums({
   if (!activeGroup) return null;
 
   return (
-    <div className="hidden w-full max-w-[1262px] items-stretch overflow-hidden rounded-sm bg-white md:flex">
-      <div className="flex min-w-fit max-w-[413px] flex-1 shrink-0 flex-col gap-[10px] border-r border-neutral-80 px-8 py-[30px]">
+    <div className="hidden w-full max-w-[1262px] items-stretch overflow-hidden rounded-sm bg-white md:flex min-[1025px]:flex-col">
+      <div className="flex min-w-fit max-w-[413px] flex-1 shrink-0 flex-col gap-[10px] border-r border-neutral-80 px-8 py-[30px] min-[1025px]:max-w-none min-[1025px]:flex-none min-[1025px]:flex-row min-[1025px]:overflow-x-auto min-[1025px]:border-b min-[1025px]:border-r-0 min-[1025px]:px-5 min-[1025px]:py-4">
         {sidebarList.map((item, index) => (
           <SidebarButton
             key={index}
@@ -143,7 +143,7 @@ function DesktopCurriculums({
           />
         ))}
       </div>
-      <div className="h-[634px] min-w-0 flex-1 shrink-0 flex-col gap-3 overflow-y-auto overflow-x-hidden px-8 pb-11 pt-10">
+      <div className="h-[634px] min-w-0 flex-1 shrink-0 flex-col gap-3 overflow-y-auto overflow-x-hidden px-8 pb-11 pt-10 min-[1025px]:h-auto min-[1025px]:overflow-y-visible">
         <CurriculumContent
           weekGroup={activeGroup}
           accentColor={lightAccentColor}

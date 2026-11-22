@@ -10,6 +10,8 @@ interface PaymentSubmitSectionProps {
   buttonText: string;
   /** 폼 무효·위젯 미준비 등 외부 사유로 결제를 막을지 여부 */
   disabled?: boolean;
+  /** 모바일 하단 고정 영역 위에 띄울 안내 (예: 올인원 패스 배너) */
+  floatingSlot?: React.ReactNode;
 }
 
 /**
@@ -23,6 +25,7 @@ const PaymentSubmitSection = ({
   onSubmit,
   buttonText,
   disabled = false,
+  floatingSlot,
 }: PaymentSubmitSectionProps) => {
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [attemptedPay, setAttemptedPay] = useState(false);
@@ -74,6 +77,7 @@ const PaymentSubmitSection = ({
   // (content를 두 번 렌더하면 대화형 요소가 DOM에 중복돼 a11y·크기 문제가 생김).
   return (
     <div className="fixed bottom-0 left-0 right-0 rounded-t-lg bg-white px-5 pb-[calc(env(safe-area-inset-bottom)+10px)] pt-3 shadow-05 md:static md:mx-5 md:rounded-none md:bg-transparent md:px-0 md:pb-0 md:pt-0 md:shadow-none">
+      {floatingSlot}
       {content}
     </div>
   );

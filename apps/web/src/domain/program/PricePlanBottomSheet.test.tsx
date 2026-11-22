@@ -63,6 +63,16 @@ jest.mock('@/domain/program/challenge/ui/FeedbackMentoringLink', () => ({
   default: () => null,
 }));
 
+// 올인원패스 권한. 테스트마다 바꿔 끼운다
+let mockHasPrivilege = false;
+
+jest.mock('@/domain/all-in-one-pass/api/privilege', () => ({
+  useGetMembershipPrivilege: () => ({
+    data: { hasPrivilege: mockHasPrivilege },
+  }),
+  useGetOpenMembershipPrivilege: () => ({ data: undefined }),
+}));
+
 const PRICE_BASE = {
   title: '',
   description: '',
@@ -151,6 +161,52 @@ beforeEach(() => {
   storeState = {};
   mockApplication = makeApplication();
   mockChallengePriceType = 'CHARGE';
+  mockHasPrivilege = false;
+});
+
+describe('PricePlanBottomSheet — 올인원패스 회원가', () => {
+  it('패스 회원은 LIGHT 도 0원으로 담는다 (서버는 패스 권한이면 플랜과 관계없이 이용료를 0원으로 계산한다)', () => {
+    mockHasPrivilege = true;
+    mockApplication = {
+      ...makeApplication(),
+      priceList: [
+        { priceId: 1, challengePricePlanType: 'BASIC' },
+        { priceId: 2, challengePricePlanType: 'STANDARD' },
+        { priceId: 4, challengePricePlanType: 'LIGHT' },
+      ],
+    };
+    const challenge = makeChallenge([]);
+    challenge.priceInfo.push({
+      ...PRICE_BASE,
+      priceId: 4,
+      price: 50000,
+      discount: 11000,
+      challengePricePlanType: 'LIGHT',
+      title: '라이트 플랜',
+    } as unknown as ChallengeIdPrimitive['priceInfo'][number]);
+    render(
+      <PricePlanBottomSheet
+        challenge={challenge}
+        challengeId="406"
+        challengeVersionId={null}
+        isOpen
+        onClose={jest.fn()}
+        showMembershipBenefit
+      />,
+    );
+
+    // LIGHT 가 있으면 기본 선택이 LIGHT 다
+    fireEvent.click(screen.getByRole('button', { name: '신청하기' }));
+
+    expect(setProgramApplicationForm).toHaveBeenCalledWith(
+      expect.objectContaining({
+        priceId: 4,
+        totalPrice: 0,
+        membershipDiscount: 39000,
+        isFree: true,
+      }),
+    );
+  });
 });
 
 describe('PricePlanBottomSheet — 버전 고정 (LC-3247)', () => {

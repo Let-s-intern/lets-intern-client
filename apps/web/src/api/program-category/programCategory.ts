@@ -42,6 +42,13 @@ const placementSchema = z.object({
   slug: z.string().nullish(),
   mergeChallenges: z.boolean().nullish(),
   matchMode: z.enum(['ANY', 'ALL', 'GROUP']).nullish(),
+  // 랜딩만. GNB 메뉴와 상단 문구 (서버 LC-3626 부터, 이전 응답에는 없다)
+  menuGroup: z.string().nullish(),
+  menuLabel: z.string().nullish(),
+  menuOrder: z.number().nullish(),
+  showInMenu: z.boolean().nullish(),
+  heroTitle: z.string().nullish(),
+  heroDescription: z.string().nullish(),
 });
 export type ProgramCategoryPlacement = z.infer<typeof placementSchema>;
 export type PublicProgramCategory = z.infer<typeof categorySchema>;
@@ -90,13 +97,84 @@ export const useFilterProgramCategoryGroupsQuery = () =>
     staleTime: 5 * 60 * 1000,
   });
 
-/** GET /program-category/slug/{slug} — 랜딩 한 페이지(노출 목록 하나) */
-export const useProgramCategoryGroupBySlugQuery = (slug: string) =>
+const landingMenuItemSchema = z.object({
+  slug: z.string(),
+  menuGroup: z.string().nullish(),
+  menuLabel: z.string().nullish(),
+  menuOrder: z.number().nullish(),
+});
+export type LandingMenuItem = z.infer<typeof landingMenuItemSchema>;
+
+/**
+ * GET /program-category/menu — GNB "프로그램 카테고리" 메뉴. 어드민이 메뉴에 보이기로 한 랜딩만 메뉴 순서대로.
+ * 서버가 아직 이 API 를 모르면(404 등) 빈 목록으로 두고 고정 메뉴를 쓴다
+ */
+export const useLandingMenuQuery = () =>
+  useQuery({
+    queryKey: ['programCategoryLandingMenu'],
+    queryFn: async (): Promise<LandingMenuItem[]> => {
+      try {
+        const res = await axios.get('/program-category/menu');
+        return z
+          .object({ menuList: z.array(landingMenuItemSchema) })
+          .parse(res.data.data).menuList;
+      } catch {
+        return [];
+      }
+    },
+    staleTime: 5 * 60 * 1000,
+    retry: false,
+  });
+
+/** GET /program-category/slug/{slug} — 예전 랜딩 한 페이지(노출 목록 하나). 새 분류 랜딩이 없을 때만 부른다 */
+export const useProgramCategoryGroupBySlugQuery = (
+  slug: string,
+  enabled = true,
+) =>
   useQuery({
     queryKey: ['programCategoryGroupBySlug', slug],
     queryFn: async () => {
       const res = await axios.get(`/program-category/slug/${slug}`);
       return groupSchema.parse(res.data.data);
+    },
+    enabled,
+    retry: false,
+  });
+
+const categoryLandingSchema = z.object({
+  page: z.object({
+    id: z.number(),
+    title: z.string(),
+    slug: z.string().nullish(),
+    heroTitle: z.string().nullish(),
+    heroDescription: z.string().nullish(),
+  }),
+  sectionList: z.array(
+    z.object({
+      id: z.number(),
+      title: z.string(),
+      description: z.string().nullish(),
+      displayType: sectionDisplayTypeSchema.nullish(),
+      targetList: z.array(targetSchema),
+    }),
+  ),
+});
+export type CategoryLandingData = z.infer<typeof categoryLandingSchema>;
+
+/**
+ * GET /program-category/landing/{slug} — 프로그램 분류 랜딩(서버 LC-3626). 섹션마다 조건에 맞는 상품이 풀려 온다.
+ * 분류에 섹션이 없거나 서버가 아직 모르면 null 이고, 그때는 예전 랜딩(slug 조회)으로 대신한다
+ */
+export const useCategoryLandingQuery = (slug: string) =>
+  useQuery({
+    queryKey: ['programCategoryLanding', slug],
+    queryFn: async (): Promise<CategoryLandingData | null> => {
+      try {
+        const res = await axios.get(`/program-category/landing/${slug}`);
+        return categoryLandingSchema.parse(res.data.data);
+      } catch {
+        return null;
+      }
     },
     retry: false,
   });

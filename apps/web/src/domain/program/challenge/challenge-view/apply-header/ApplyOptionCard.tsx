@@ -14,8 +14,8 @@ const optionClassName = (
   twMerge(
     'flex flex-1 flex-col items-start rounded-sm border bg-white px-4 py-3 text-left transition-colors',
     selected
-      ? 'border-primary text-neutral-0 ring-1 ring-primary'
-      : 'border-neutral-85 text-neutral-30 hover:border-neutral-60',
+      ? 'border-[color:var(--apply-accent,#4D55F5)] text-neutral-0'
+      : 'border-transparent text-neutral-30 hover:border-neutral-70',
     disabled &&
       'cursor-not-allowed border-neutral-85 bg-neutral-95 text-neutral-60 ring-0 hover:border-neutral-85',
     className,
@@ -153,7 +153,7 @@ function ApplyOptionCard({
   const isTemplate = mode === 'TEMPLATE';
 
   return (
-    <div className="flex h-full flex-col gap-5 rounded-md bg-primary-5 px-4 py-5 md:px-5">
+    <div className="flex h-full flex-col gap-5 rounded-md bg-[var(--apply-tint,#F5F6FF)] px-4 py-5 md:px-5">
       {showModeSelect && (
         <OptionGroup title="진행 방식">
           <div className="flex flex-col gap-2.5 md:flex-row md:gap-4">
@@ -202,7 +202,7 @@ function ApplyOptionCard({
 
       {startDateOptions.length > 0 && (
         <OptionGroup title="챌린지 시작일">
-          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-3">
+          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:gap-3">
             {startDateOptions.map((option) => (
               <OptionLink
                 key={option.key}
@@ -221,10 +221,10 @@ function ApplyOptionCard({
                     </span>
                   )}
                 </span>
-                <span className="mt-2.5 text-xsmall16 font-bold">
+                <span className="mt-2.5 whitespace-nowrap text-xsmall16 font-bold">
                   {formatDateWithDay(option.startDate)}
                 </span>
-                <span className="mt-1 text-xxsmall12 text-neutral-40">
+                <span className="mt-1 whitespace-nowrap text-xxsmall12 text-neutral-40">
                   {dayjs(option.endDate).format('YYYY년 M월 D일')} 종료
                 </span>
               </OptionLink>

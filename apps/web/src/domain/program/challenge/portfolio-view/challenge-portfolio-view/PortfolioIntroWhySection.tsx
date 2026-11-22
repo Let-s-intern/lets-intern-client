@@ -11,7 +11,7 @@ const PortfolioIntroWhySection: React.FC<{ weekText: string }> = ({
 }) => {
   return (
     <div className="flex w-full flex-col items-center overflow-x-hidden bg-gradient-to-t from-[#F0F4FF] to-white">
-      <section className="flex w-full max-w-[1000px] flex-col px-5 pt-20 md:px-10 md:pt-40 lg:px-0">
+      <section className="flex w-full max-w-[1000px] flex-col px-5 pt-20 md:px-10 md:pt-40 lg:px-0 min-[1025px]:px-8">
         <Heading2 className="text-small20 md:text-center md:text-xlarge28">
           <span className="text-[#4A76FF]">포트폴리오</span>, 시간 많이 들여야
           할 정도로 중요한가요?
@@ -125,7 +125,7 @@ const PortfolioIntroWhySection: React.FC<{ weekText: string }> = ({
           서류·최종 합격까지 성공했어요!
         </p>
 
-        <div className="mb-20 mt-8 grid grid-cols-1 gap-4 md:mb-40 md:mt-8 md:grid-cols-2 md:gap-6">
+        <div className="mb-20 mt-8 grid grid-cols-1 gap-4 md:mb-40 md:mt-8 md:grid-cols-2 md:gap-6 min-[1025px]:grid-cols-1">
           {[
             {
               title: '그로스 PM',
@@ -148,7 +148,7 @@ const PortfolioIntroWhySection: React.FC<{ weekText: string }> = ({
                 <h3 className="text-small18 font-bold md:text-medium24">
                   {item.title}
                 </h3>
-                <p className="text-xsmall14 font-medium text-neutral-40 md:text-small18">
+                <p className="break-keep text-xsmall14 font-medium text-neutral-40 md:text-small18">
                   {item.content}
                 </p>
               </div>

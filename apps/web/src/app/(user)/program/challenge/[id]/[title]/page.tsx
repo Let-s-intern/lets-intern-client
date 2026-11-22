@@ -123,6 +123,7 @@ const Page = async ({
         challenge={challenge}
         challengeId={id}
         challengeVersionId={route.version?.challengeVersionId ?? null}
+        hasFollowPanel
       />
     </>
   );

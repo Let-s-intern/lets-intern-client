@@ -27,6 +27,8 @@ import {
 } from './utils/duplicateThumbnail';
 import { THUMBNAIL_TYPE_LABELS } from './utils/generateThumbnail';
 
+import CopiedTagsNote from '@/domain/admin/program/category/ui/CopiedTagsNote';
+
 interface Props {
   isOpen: boolean;
   sourceChallenge: {
@@ -68,7 +70,6 @@ const ChallengeDuplicateModal = ({
     copyContent,
     challengeType,
     title,
-    versionTitles: versions.map((version) => version.title),
   });
   const isThumbnailEnabled = thumbnailBlockReason === null;
 
@@ -152,6 +153,7 @@ const ChallengeDuplicateModal = ({
         <h2 className="mb-5 text-small18 font-semibold">
           [{sourceChallenge.title}] 복제하기
         </h2>
+        <CopiedTagsNote challengeId={sourceChallenge.id} />
 
         <div className="flex flex-col gap-4">
           <FormControlLabel
@@ -237,24 +239,16 @@ const ChallengeDuplicateModal = ({
                 </p>
               )}
               <p className="-mt-1 ml-8 text-xs text-gray-400">
-                * <strong>기수가 포함된 제목</strong> 입력 시 활성화됩니다. (ex.
-                포트폴리오 1주 완성 챌린지 32기)
-                <br />* 자기소개서, 포트폴리오 챌린지는{' '}
-                <strong>주차도 함께</strong> 입력해야 합니다.
+                * 자기소개서, 포트폴리오 챌린지는{' '}
+                <strong>주차가 포함된 제목</strong> 입력 시 활성화됩니다. (ex.
+                포트폴리오 1주 완성 챌린지)
                 <br />* <strong>{SUPPORTED_TYPE_LABELS}</strong> 챌린지만
                 가능합니다.
-                {hasVersions ? (
+                <br />* 기수와 버전명은 썸네일에 들어가지 않습니다.
+                {hasVersions && (
                   <>
-                    <br />* 버전마다 <strong>[버전명] 챌린지 제목</strong>으로
-                    썸네일을 만들고, 버전명이 우측 상단 배너로 들어갑니다.
-                  </>
-                ) : (
-                  <>
-                    <br />* 제목 앞 <strong>[ ] 안의 문구</strong>가 우측 상단
-                    배너로 들어갑니다. 없으면 배너 없이 생성됩니다. (ex.
-                    [인턴·실무 경험자 Ver.])
-                    <br />* 이력서 챌린지는 <strong>[ ] 문구가 있어야</strong>
-                    가능합니다.
+                    <br />* 버전이 있으면 버전마다 같은 템플릿으로 썸네일을
+                    만듭니다.
                   </>
                 )}
               </p>

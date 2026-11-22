@@ -1,17 +1,18 @@
 import clsx from 'clsx';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 
 /**
  * MissionSubmitZeroSection 의 복사본. 원본은 출석·목표 저장 API 에 묶여 있다.
  * 입력은 해 볼 수 있게 두고, 제출만 막는다.
  */
-const DemoZeroSubmit = () => {
+const DemoZeroSubmit = ({ tip }: { tip?: ReactNode }) => {
   const [goal, setGoal] = useState('');
   const [isNoticeVisible, setIsNoticeVisible] = useState(false);
   const hasContent = goal.trim().length > 0;
 
   return (
-    <section>
+    <section className="relative">
+      {tip}
       <h2 className="mb-6 text-small18 font-bold text-neutral-0">
         미션 제출하기
       </h2>

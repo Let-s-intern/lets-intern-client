@@ -99,7 +99,7 @@ function ChallengeFaq({
   return (
     <section
       id={PROGRAM_FAQ_ID}
-      className="challenge_faq flex w-full max-w-[1000px] flex-col px-5 py-20 pt-20 md:items-center md:px-10 md:py-40 lg:px-0"
+      className="challenge_faq flex w-full max-w-[1000px] flex-col px-5 py-20 pt-20 md:items-center md:px-10 md:py-40 lg:px-0 min-[1025px]:px-8"
     >
       <SuperTitle
         className="mb-6 text-neutral-45 md:mb-12"
@@ -113,7 +113,7 @@ function ChallengeFaq({
       <Heading2 className="mb-10 md:mb-20">{title}</Heading2>
 
       {/* 카테고리 */}
-      <div className="mb-8 flex max-w-[900px] flex-wrap items-center justify-center gap-x-2.5 gap-y-3 md:mb-20">
+      <div className="mb-8 flex w-full max-w-[800px] flex-wrap items-center justify-center gap-x-2 gap-y-2 md:mb-14 md:gap-x-2.5">
         {categoryList?.map((category, index) => (
           <FaqCategory
             key={category}
@@ -153,15 +153,17 @@ function FaqCategory({
   selectedStyle?: CSSProperties;
 }) {
   return (
-    <div
+    <button
+      type="button"
+      aria-pressed={selected}
       className={twMerge(
-        'min-w-16 cursor-pointer rounded-full border border-neutral-70 px-5 py-2 text-center text-xxsmall12 font-semibold text-neutral-45 md:min-w-36 md:py-4 md:text-medium22',
+        'cursor-pointer whitespace-nowrap rounded-full border border-neutral-80 bg-white px-4 py-2 text-center text-xsmall14 font-semibold text-neutral-45 transition-colors hover:border-neutral-60 md:px-5 md:py-2.5 md:text-xsmall16',
       )}
       style={selected ? selectedStyle : undefined}
       onClick={onClick}
     >
       {children}
-    </div>
+    </button>
   );
 }
 

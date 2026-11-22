@@ -10,21 +10,28 @@ function FaqDropdown({ faq }: { faq: Faq }) {
   return (
     <div
       key={faq.id}
-      className="overflow-hidden rounded-xxs border border-neutral-80"
+      className="overflow-hidden rounded-sm border border-neutral-80 bg-white"
     >
-      <div className="flex items-center justify-between bg-neutral-100 p-5">
-        <span className="text-xsmall14 font-semibold text-neutral-0 md:text-medium22">
+      <button
+        type="button"
+        aria-expanded={isOpen}
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex w-full items-center justify-between gap-4 bg-neutral-100 p-5 text-left transition-colors hover:bg-neutral-95"
+      >
+        <span className="break-keep text-xsmall14 font-semibold text-neutral-0 md:text-small20">
           {faq.question}
         </span>
         <IoIosArrowDown
-          className={twMerge('cursor-pointer', isOpen && 'rotate-180')}
+          className={twMerge(
+            'shrink-0 transition-transform',
+            isOpen && 'rotate-180',
+          )}
           size={24}
           color="#7A7D84"
-          onClick={() => setIsOpen(!isOpen)}
         />
-      </div>
+      </button>
       {isOpen && (
-        <div className="border-t border-neutral-80 px-5 py-3 text-xxsmall12 text-neutral-35 md:text-small18">
+        <div className="break-keep border-t border-neutral-80 bg-neutral-95 px-5 py-4 text-xsmall14 leading-relaxed text-neutral-35 md:text-small18">
           {faq.answer}
         </div>
       )}

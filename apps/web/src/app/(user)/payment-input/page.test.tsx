@@ -23,7 +23,15 @@ jest.mock('@/api/program', () => ({
         challengeType: 'PORTFOLIO',
         priceInfo: [
           {
+            priceId: 1,
             challengePricePlanType: 'BASIC',
+            price: 100000,
+            refund: 0,
+            discount: 10000,
+          },
+          {
+            priceId: 2,
+            challengePricePlanType: 'PREMIUM',
             price: 100000,
             refund: 0,
             discount: 10000,
@@ -76,6 +84,11 @@ jest.mock(
 
 // 패스 업그레이드 구좌는 패스 API 를 부르므로 결제 금액 계산 테스트에서는 뺀다
 jest.mock('@/domain/program/pass-upgrade/PassUpgradeSection', () => ({
+  __esModule: true,
+  default: () => null,
+}));
+
+jest.mock('@/domain/program/pass-upgrade/PassFloatingBanner', () => ({
   __esModule: true,
   default: () => null,
 }));
@@ -227,6 +240,32 @@ describe('payment-input 합계 (LC-3438)', () => {
 
     // 상한 = 베이직 정가 + 보증금 - 할인, 기준 금액 = 정가 - 할인
     expect(screen.getByTestId('coupon-max')).toHaveTextContent('90000');
+    expect(screen.getByTestId('coupon-sale')).toHaveTextContent('90000');
+  });
+
+  it('패스 혜택 할인이 있으면 쿠폰을 쓸 수 없다 (서버는 패스 권한이면 쿠폰을 빼고 계산한다)', () => {
+    setProgramApplicationForm({
+      ...BASE_FORM,
+      membershipDiscount: 90000,
+      totalPrice: 0,
+    });
+    render(<PaymentInputPage />);
+
+    expect(screen.queryByTestId('coupon-sale')).not.toBeInTheDocument();
+  });
+
+  it('옵션이 붙은 플랜도 쿠폰 적용 기준 금액은 옵션을 뺀 이용료 판매가다', () => {
+    // 스토어의 price·discount 는 옵션까지 합친 플랜 금액이다 (정가 100,000 + 옵션 95,000, 할인 10,000 + 15,000)
+    setProgramApplicationForm({
+      ...BASE_FORM,
+      priceId: 2,
+      price: 195000,
+      discount: 25000,
+      totalPrice: 170000,
+    });
+    render(<PaymentInputPage />);
+
+    // 서버는 고른 플랜의 정가 - 할인에만 정률 쿠폰을 곱한다
     expect(screen.getByTestId('coupon-sale')).toHaveTextContent('90000');
   });
 

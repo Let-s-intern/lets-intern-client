@@ -11,8 +11,8 @@ import { useParams } from 'next/navigation';
 
 /**
  * 선택한 플랜의 정가·할인·환급·최종 금액.
- * 올인원패스 권한 보유 시 패스회원가 = max(플랜 판매가 − BASIC 판매가, 0) (LIGHT 제외),
- * useChallengePassBenefit 와 같은 규칙이다.
+ * 올인원패스 권한 보유 시 패스회원가 = max(플랜 판매가 − BASIC 판매가, 0) (LIGHT 는 0원),
+ * useChallengePassBenefit 와 같은 규칙이다. 서버는 패스 권한이 있으면 플랜과 관계없이 0원으로 계산한다.
  */
 export const useChallengePlanPrice = (
   priceInfoList: ChallengePriceInfo[] | ChallengeIdSchema['priceInfo'],
@@ -60,9 +60,7 @@ export const useChallengePlanPrice = (
     0,
   );
   const activePassPrice =
-    plan === 'LIGHT'
-      ? undefined
-      : Math.max(sellingPrice - basicSellingPrice, 0);
+    plan === 'LIGHT' ? 0 : Math.max(sellingPrice - basicSellingPrice, 0);
   const isPassApplied = hasPrivilege && activePassPrice !== undefined;
   const passFinalPrice = activePassPrice ?? sellingPrice;
   const membershipDiscount = isPassApplied
@@ -79,7 +77,7 @@ export const useChallengePlanPrice = (
     showDeposit,
     isPassApplied,
     membershipDiscount,
-    /** 패스회원가 (LIGHT 는 판매가 그대로) */
+    /** 패스회원가 (LIGHT 는 0원) */
     passFinalPrice,
     /** 화면에 보여줄 최종 결제 금액 */
     finalPrice: isPassApplied ? passFinalPrice : finalPrice,

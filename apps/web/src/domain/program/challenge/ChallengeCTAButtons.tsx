@@ -4,6 +4,7 @@ import { useProgramApplicationQuery } from '@/api/application';
 import dayjs from '@/lib/dayjs';
 import { ChallengeIdPrimitive } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
+import { useMediaQuery } from '@mui/material';
 import { useEffect, useState } from 'react';
 import NotiToast from './NotiToast';
 import {
@@ -21,15 +22,19 @@ const ChallengeCTAButtons = ({
   challenge,
   challengeId,
   challengeVersionId,
+  hasFollowPanel = false,
 }: {
   challenge: ChallengeIdPrimitive;
   challengeId: string;
   challengeVersionId: number | null;
+  /** 오른쪽 따라오는 신청 패널이 있는 상세. 1025px 이상에서는 하단 플로팅을 숨긴다 */
+  hasFollowPanel?: boolean;
 }) => {
   const { isLoggedIn } = useAuthStore();
   const { isOpen, plan, close, isTemplateMode } = useChallengeApplySheetStore();
   const { guidebook } = useTemplateGuidebook(challenge.challengeType);
   const openApply = useOpenChallengeApply();
+  const isDesktop = useMediaQuery('(min-width:1025px)');
 
   const [isNotiOpen, setIsNotiOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -88,19 +93,21 @@ const ChallengeCTAButtons = ({
     <>
       {!isOpen && (
         <>
-          <DesktopApplyCTA
-            program={{
-              ...challenge,
-              title: desktopTitle,
-              beginning: challenge.beginning
-                ? dayjs(challenge.beginning)
-                : null,
-              deadline: challenge.deadline ? dayjs(challenge.deadline) : null,
-            }}
-            onApplyClick={handleOpen}
-            onNotiClick={() => setIsNotiOpen(true)}
-            isAlreadyApplied={isAlreadyApplied}
-          />
+          <div className={hasFollowPanel ? 'min-[1025px]:hidden' : undefined}>
+            <DesktopApplyCTA
+              program={{
+                ...challenge,
+                title: desktopTitle,
+                beginning: challenge.beginning
+                  ? dayjs(challenge.beginning)
+                  : null,
+                deadline: challenge.deadline ? dayjs(challenge.deadline) : null,
+              }}
+              onApplyClick={handleOpen}
+              onNotiClick={() => setIsNotiOpen(true)}
+              isAlreadyApplied={isAlreadyApplied}
+            />
+          </div>
           <MobileApplyCTA
             program={{
               ...challenge,
@@ -131,6 +138,8 @@ const ChallengeCTAButtons = ({
         // 상단에서 고른 플랜으로 시트를 다시 초기화한다
         key={plan ?? 'default'}
         initialPlan={plan}
+        // 신청 패널이 있는 데스크톱은 플랜을 이미 골랐으니 시트 없이 바로 신청 페이지로 간다
+        applyImmediately={hasFollowPanel && isDesktop}
         isOpen={isOpen}
         challenge={challenge}
         challengeId={challengeId}

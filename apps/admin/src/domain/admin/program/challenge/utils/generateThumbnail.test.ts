@@ -1,106 +1,110 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import {
-  extractVersion,
-  fitVerFontSize,
-  resolveThumbnailImage,
-} from './generateThumbnail';
+import { drawThumbnailOnCanvas } from './generateThumbnail';
 
-describe('extractVersion', () => {
-  it('제목 앞 대괄호 안의 문구를 그대로 반환한다', () => {
-    expect(
-      extractVersion('[인턴·실무 경험자 Ver.] 기필코 경험정리 가이드북 30기'),
-    ).toBe('인턴·실무 경험자 Ver.');
-  });
+vi.mock('@/api/file', () => ({ uploadFile: vi.fn() }));
 
-  it('Ver 표기가 소문자거나 마침표가 없어도 적힌 대로 반환한다', () => {
-    expect(extractVersion('[대기업 ver] 4주 완성 자기소개서 챌린지 30기')).toBe(
-      '대기업 ver',
-    );
-    expect(extractVersion('[스타트업 Ver] 면접 준비 7일 끝장 챌린지 7기')).toBe(
-      '스타트업 Ver',
-    );
-  });
+const ctx = {
+  drawImage: vi.fn(),
+  fillText: vi.fn(),
+  roundRect: vi.fn(),
+  fill: vi.fn(),
+  beginPath: vi.fn(),
+  measureText: vi.fn(() => ({ width: 100 })),
+};
+const loadedSrcs: string[] = [];
 
-  it('Ver 이 없는 대괄호도 그대로 반환한다', () => {
-    expect(extractVersion('[특별판] 기필코 경험정리 챌린지 12기')).toBe(
-      '특별판',
-    );
-  });
+class FakeImage {
+  onload: (() => void) | null = null;
+  onerror: (() => void) | null = null;
+  set src(value: string) {
+    loadedSrcs.push(value);
+    queueMicrotask(() => this.onload?.());
+  }
+}
 
-  it('대괄호가 없으면 null 을 반환한다', () => {
-    expect(extractVersion('기필코 경험정리 챌린지 30기')).toBeNull();
-  });
-
-  it('대괄호가 비어 있거나 공백뿐이면 null 을 반환한다', () => {
-    expect(extractVersion('[] 기필코 경험정리 챌린지 30기')).toBeNull();
-    expect(extractVersion('[   ] 기필코 경험정리 챌린지 30기')).toBeNull();
-  });
-
-  it('대괄호가 여러 개면 첫 번째만 쓴다', () => {
-    expect(extractVersion('[대기업 Ver.] [재모집] 자소서 챌린지 30기')).toBe(
-      '대기업 Ver.',
-    );
-  });
-
-  it('앞뒤 공백은 다듬는다', () => {
-    expect(extractVersion('[  대기업 Ver.  ] 자소서 챌린지 30기')).toBe(
-      '대기업 Ver.',
-    );
+beforeEach(() => {
+  loadedSrcs.length = 0;
+  vi.clearAllMocks();
+  vi.stubGlobal('Image', FakeImage);
+  const createElement = document.createElement.bind(document);
+  vi.spyOn(document, 'createElement').mockImplementation((tag: string) => {
+    if (tag !== 'canvas') return createElement(tag);
+    return {
+      width: 0,
+      height: 0,
+      getContext: () => ctx,
+      toBlob: (cb: (blob: Blob) => void) => cb(new Blob(['png'])),
+    } as unknown as HTMLCanvasElement;
   });
 });
 
-// 배너 최대 폭 802.2px(캔버스 1146의 70%), 좌우 패딩 각 48 → 텍스트 한계 706.2px
-describe('fitVerFontSize', () => {
-  it('한계 폭 이내면 기본 크기 64를 유지한다', () => {
-    expect(fitVerFontSize(545)).toBe(64);
-    expect(fitVerFontSize(706)).toBe(64);
-  });
-
-  it('한계 폭을 넘으면 들어갈 때까지 줄인다', () => {
-    expect(fitVerFontSize(1000)).toBe(45);
-    expect(fitVerFontSize(1400)).toBe(32);
-  });
-
-  it('줄인 크기로 다시 재면 한계 폭 안에 들어온다', () => {
-    for (const textWidth of [800, 1000, 1400, 2400]) {
-      const fontSize = fitVerFontSize(textWidth);
-      expect((textWidth * fontSize) / 64).toBeLessThanOrEqual(706.2);
-    }
-  });
+afterEach(() => {
+  vi.unstubAllGlobals();
+  vi.restoreAllMocks();
 });
 
-describe('resolveThumbnailImage', () => {
-  it('Ver 가 있으면 그래픽이 작은 전용 이미지를 쓴다', () => {
-    expect(
-      resolveThumbnailImage('EXPERIENCE_SUMMARY', '인턴·실무 경험자 Ver.'),
-    ).toBe('/images/challenge-thumbnail-experience-summary-ver.png');
-    expect(resolveThumbnailImage('PORTFOLIO', '1~3년차 주니어 Ver.')).toBe(
-      '/images/challenge-thumbnail-portfolio-ver.png',
+describe('drawThumbnailOnCanvas', () => {
+  it('제목에 기수가 없어도 만든다', async () => {
+    const blob = await drawThumbnailOnCanvas(
+      'EXPERIENCE_SUMMARY',
+      '기필코 경험정리 챌린지',
     );
+    expect(blob).toBeInstanceOf(Blob);
   });
 
-  it('Ver 가 없으면 기존 이미지를 쓴다', () => {
-    expect(resolveThumbnailImage('EXPERIENCE_SUMMARY', null)).toBe(
-      '/images/challenge-thumbnail-experience-summary.png',
+  it('기수 배지와 Ver 배너를 그리지 않고 배경만 그린다', async () => {
+    await drawThumbnailOnCanvas(
+      'EXPERIENCE_SUMMARY',
+      '[인턴·실무 경험자 Ver.] 기필코 경험정리 챌린지 42기',
     );
+    expect(ctx.drawImage).toHaveBeenCalledTimes(1);
+    expect(ctx.roundRect).not.toHaveBeenCalled();
+    expect(ctx.fillText).not.toHaveBeenCalled();
   });
 
-  it('Ver 전용 이미지가 없는 타입은 Ver 가 있어도 기존 이미지를 쓴다', () => {
-    expect(
-      resolveThumbnailImage('PERSONAL_STATEMENT_LARGE_CORP', '대기업 Ver.'),
-    ).toBe('/images/challenge-thumbnail-personal-statement-large-corp.png');
+  it('버전명이 있어도 일반 배경 이미지를 쓴다', async () => {
+    await drawThumbnailOnCanvas(
+      'PORTFOLIO',
+      '[대학생 Ver.] 포트폴리오 2주 완성 챌린지 30기',
+    );
+    expect(loadedSrcs).toEqual(['/images/challenge-thumbnail-portfolio.png']);
   });
 
-  it('이력서는 Ver 가 있을 때만 생성 대상이다', () => {
-    expect(resolveThumbnailImage('CAREER_START', '대학생, 무경력자 Ver')).toBe(
+  it('이력서는 버전명이 없어도 Ver 이미지를 배경으로 배너 없이 만든다', async () => {
+    const blob = await drawThumbnailOnCanvas('CAREER_START', '이력서 챌린지');
+    expect(blob).toBeInstanceOf(Blob);
+    expect(loadedSrcs).toEqual([
       '/images/challenge-thumbnail-career-start-ver.png',
-    );
-    expect(resolveThumbnailImage('CAREER_START', null)).toBeNull();
+    ]);
+    expect(ctx.roundRect).not.toHaveBeenCalled();
+    expect(ctx.fillText).not.toHaveBeenCalled();
   });
 
-  it('지원하지 않는 타입은 null 이다', () => {
-    expect(resolveThumbnailImage('MARKETING', 'Live 세미나 전용')).toBeNull();
-    expect(resolveThumbnailImage('MARKETING', null)).toBeNull();
+  it('자기소개서·포트폴리오는 주차 제목만 그린다', async () => {
+    await drawThumbnailOnCanvas(
+      'PERSONAL_STATEMENT',
+      '[대기업 Ver.] 자기소개서 2주 완성 챌린지 36기',
+    );
+    expect(ctx.fillText).toHaveBeenCalledTimes(1);
+    expect(ctx.fillText).toHaveBeenCalledWith(
+      '자기소개서 2주 완성 챌린지',
+      expect.any(Number),
+      expect.any(Number),
+    );
+    expect(ctx.roundRect).not.toHaveBeenCalled();
+  });
+
+  it('자기소개서·포트폴리오는 주차가 없으면 만들지 않는다', async () => {
+    expect(
+      await drawThumbnailOnCanvas('PORTFOLIO', '포트폴리오 완성 챌린지 43기'),
+    ).toBeNull();
+  });
+
+  it('지원하지 않는 유형은 만들지 않는다', async () => {
+    expect(
+      await drawThumbnailOnCanvas('MARKETING', '마케팅 챌린지 10기'),
+    ).toBeNull();
+    expect(loadedSrcs).toEqual([]);
   });
 });

@@ -28,7 +28,7 @@ export const navData = [
         url: '/review/challenge',
       },
       {
-        name: '노출 분류',
+        name: '프로그램 분류',
         url: '/program-category',
       },
     ],

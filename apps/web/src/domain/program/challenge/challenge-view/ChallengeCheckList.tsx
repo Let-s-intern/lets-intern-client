@@ -164,7 +164,7 @@ function ChallengeCheckList({
   }, [challengeType]);
 
   return (
-    <section className="flex w-full max-w-[1000px] flex-col px-5 py-20 md:px-10 md:pb-[140px] md:pt-[130px] lg:px-0">
+    <section className="flex w-full max-w-[1000px] flex-col px-5 py-20 md:px-10 md:pb-[140px] md:pt-[130px] lg:px-0 min-[1025px]:px-8">
       <div className="mb-16 md:mb-20">
         <SuperTitle
           className="mb-3 md:text-center"
@@ -192,12 +192,12 @@ function ChallengeCheckList({
             className="flex w-full flex-col gap-6 md:items-center md:gap-10"
           >
             <Box
-              className="relative flex w-full max-w-[860px] flex-col py-6 text-small18 font-bold md:flex-row md:justify-center md:gap-1 md:p-10 md:text-medium24"
+              className="relative flex w-full max-w-[860px] flex-col py-6 text-small18 font-bold md:flex-row md:flex-wrap md:justify-center md:gap-x-1 md:p-10 md:text-medium24"
               style={styles.boxStyle}
             >
               <Badge style={styles.badgeStyle}>Check {index + 1}</Badge>
               {item.title.map((ele) => (
-                <span key={ele} className="shrink-0">
+                <span key={ele} className="break-keep md:text-center">
                   {ele}
                 </span>
               ))}
@@ -214,7 +214,7 @@ function ChallengeCheckList({
                   {group.map((ele) => (
                     <span
                       key={ele}
-                      className="shrink-0 text-xsmall14 font-semibold text-neutral-35 xs:text-xsmall16 md:text-small20"
+                      className="break-keep text-xsmall14 font-semibold text-neutral-35 xs:text-xsmall16 md:text-small20"
                     >
                       {ele}
                     </span>
@@ -223,12 +223,12 @@ function ChallengeCheckList({
               ))}
             </div>
             <OutlinedBox
-              className="flex w-full max-w-[860px] flex-col items-center md:p-10 lg:flex-row lg:justify-center lg:gap-1"
+              className="flex w-full max-w-[860px] flex-col items-center md:p-10 lg:flex-row lg:flex-wrap lg:justify-center lg:gap-x-1"
               style={styles.outlinedBoxStyle}
             >
               {item.solution.map((ele) => (
                 <span
-                  className="shrink-0 text-center text-xsmall16 font-semibold md:text-medium24"
+                  className="break-keep text-center text-xsmall16 font-semibold md:text-medium24"
                   key={ele}
                 >
                   {ele}

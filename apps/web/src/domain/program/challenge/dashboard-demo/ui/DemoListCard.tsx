@@ -1,21 +1,25 @@
 import clsx from 'clsx';
 import { ChevronRight } from 'lucide-react';
+import { ReactNode } from 'react';
 
 interface Props {
   title: string;
   items: { id: number; title: string }[];
   onLocked: () => void;
   className?: string;
+  /** 카드 위에 붙는 안내 말풍선 */
+  tip?: ReactNode;
 }
 
 /** 대시보드의 공지사항·챌린지 가이드 카드 모양. 실제 카드는 외부 링크로 나가서 복사했다. */
-const DemoListCard = ({ title, items, onLocked, className }: Props) => (
+const DemoListCard = ({ title, items, onLocked, className, tip }: Props) => (
   <section
     className={clsx(
-      'flex flex-col gap-3 rounded-xs border border-[#E4E4E7] p-4',
+      'relative flex flex-col gap-3 rounded-xs border border-[#E4E4E7] p-4',
       className,
     )}
   >
+    {tip}
     <div className="flex items-center justify-between">
       <h2 className="font-semibold text-[#4A495C]">{title}</h2>
       <button

@@ -21,6 +21,8 @@ const CHALLENGE_TYPE_CLASS: Record<ChallengeType, string> = {
   EXPERIENCE_SUMMARY: 'bg-[#E4F6E4] text-[#2E8B39]',
   HR: 'bg-[#DEF3F7] text-[#1287A0]',
   PM: 'bg-[#FCE6E6] text-[#C43A3A]',
+  APTITUDE: 'bg-[#F1EBE2] text-[#8A6534]',
+  SNS_CONTENT: 'bg-[#FCE7F3] text-[#9D174D]',
 };
 
 /** 막대 색상 클래스 (챌린지는 타입별, 그 외는 유형별) */

@@ -27,7 +27,7 @@ const ProgramDetailReviewItem = ({
     typeof review.score === 'number' && typeof review.npsScore === 'number';
 
   return (
-    <div className="flex h-[340px] w-[300px] flex-col md:h-[366px] md:w-[371px]">
+    <div className="flex h-[340px] w-[300px] flex-col md:h-[366px] md:w-[371px] min-[1025px]:w-full min-[1025px]:min-w-0 min-[1025px]:flex-1">
       {type !== 'live' && (
         <div
           className="line-clamp-2 flex w-full rounded-t-[10px] px-[22px] py-4 text-white md:text-small18"
@@ -58,11 +58,11 @@ const ProgramDetailReviewItem = ({
         </p>
       </div>
       <div className="flex w-full grow flex-col gap-y-2 rounded-[10px] border-[1.5px] border-t-0 border-neutral-85 bg-white px-[22px] pt-7">
-        <div className="flex w-full items-center gap-x-2">
-          <span className="text-xsmall14 font-medium text-neutral-45 md:text-xsmall16">
+        <div className="flex w-full items-center gap-x-2 min-[1025px]:flex-col min-[1025px]:items-start min-[1025px]:gap-x-0 min-[1025px]:gap-y-0.5">
+          <span className="whitespace-nowrap text-xsmall14 font-medium text-neutral-45 md:text-xsmall16">
             {maskingName(review.name)}
           </span>
-          <p className="line-clamp-1 text-xsmall14 font-semibold text-neutral-30 md:text-xsmall16">{`${review.programName} 수강`}</p>
+          <p className="line-clamp-1 w-full break-keep text-xsmall14 font-semibold text-neutral-30 md:text-xsmall16">{`${review.programName} 수강`}</p>
         </div>
         <p
           className={`${type === 'live' ? 'line-clamp-4' : 'line-clamp-2'} w-full break-words text-xsmall14 text-neutral-35 md:text-xsmall16`}
