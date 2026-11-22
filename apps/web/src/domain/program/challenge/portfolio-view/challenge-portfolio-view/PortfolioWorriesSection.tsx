@@ -5,7 +5,7 @@ import MainTitle from '../../ui/MainTitle';
 
 const PortfolioWorriesSection: React.FC = () => {
   return (
-    <section className="w-full bg-[#4A76FF] px-5 py-20 md:px-10 md:py-32 lg:px-0">
+    <section className="w-full bg-[#4A76FF] px-5 py-20 md:px-10 md:py-32 lg:px-0 min-[1025px]:px-8">
       <div className="mb-[30px] flex flex-col items-start gap-2 md:mb-[50px] md:items-center md:gap-3">
         <SectionSubHeader className="text-left font-normal text-white md:text-center">
           이젠 진짜 만들기 시작해야하는데...

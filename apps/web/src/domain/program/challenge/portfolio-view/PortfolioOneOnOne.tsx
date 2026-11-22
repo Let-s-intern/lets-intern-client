@@ -171,7 +171,7 @@ const PortfolioOneOnOne = ({
         </p>
 
         <div
-          className="-mx-5 flex w-fit flex-col gap-y-4 overflow-x-auto px-5 md:-mx-10 md:px-10 lg:px-0"
+          className="-mx-5 flex w-fit flex-col gap-y-4 overflow-x-auto px-5 md:-mx-10 md:px-10 lg:px-0 min-[1025px]:px-8"
           style={{ color: styles.primaryColor }}
         >
           {(challengeType === EXPERIENCE_SUMMARY || challengeType === ETC) && (

@@ -15,7 +15,7 @@ const TrendItem = ({
   imageAlt: string;
 }) => (
   <div>
-    <div className="mb-8 md:mb-20 md:flex md:items-center md:justify-between">
+    <div className="mb-8 break-keep md:mb-20 md:flex md:items-center md:justify-between min-[1025px]:mb-14 min-[1025px]:flex-col min-[1025px]:items-stretch min-[1025px]:gap-6">
       <div className="md:flex md:gap-3">
         <CircularBox className="mb-2 h-5 w-5 shrink-0 bg-primary text-xsmall14 font-semibold md:mt-0.5 md:h-8 md:w-8 md:text-small20">
           {number}
@@ -25,7 +25,11 @@ const TrendItem = ({
           <Paragraph>{description}</Paragraph>
         </div>
       </div>
-      <img src={imageSrc} alt={imageAlt} />
+      <img
+        src={imageSrc}
+        alt={imageAlt}
+        className="max-w-full min-[1025px]:mx-auto"
+      />
     </div>
   </div>
 );

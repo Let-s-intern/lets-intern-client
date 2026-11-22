@@ -120,7 +120,7 @@ const TestimonialCarousel: React.FC<Props> = ({
         </Swiper>
       </div>
       {/* 데스크탑: 3개 고정 */}
-      <div className="mx-auto hidden w-full max-w-[1160px] gap-3 px-[60px] md:flex lg:px-0">
+      <div className="mx-auto hidden w-full max-w-[1160px] gap-3 px-[60px] md:flex lg:px-0 min-[1025px]:px-8">
         {displayedReviews.map((item, idx) => {
           const hasScore =
             typeof item.score === 'number' && typeof item.npsScore === 'number';

@@ -125,7 +125,7 @@ function OverviewSection({ config, content }: Props) {
 
   return (
     <section
-      className="flex w-full flex-col items-center px-5 pt-[60px] md:mb-16 md:px-10 md:pt-[120px] lg:px-0"
+      className="flex w-full flex-col items-center px-5 pt-[60px] md:mb-16 md:px-10 md:pt-[120px] lg:px-0 min-[1025px]:px-8"
       style={{ backgroundColor }}
     >
       <div className="mb-8 flex w-full max-w-[1000px] flex-col md:mb-16">
@@ -137,8 +137,8 @@ function OverviewSection({ config, content }: Props) {
           <span>{weekText} 여정 한 번에 보기</span>
         </p>
       </div>
-      <div className="mb-16 w-screen md:mb-36">
-        <div className="custom-scrollbar flex w-full gap-5 overflow-x-auto px-[max(1.5rem,calc((100vw-1000px)/2))] pb-4">
+      <div className="mb-16 w-full md:mb-36">
+        <div className="custom-scrollbar flex w-full gap-5 overflow-x-auto pb-4">
           {OVERVIEW_STEPS.map((item, index) => (
             <StepCard
               key={index}

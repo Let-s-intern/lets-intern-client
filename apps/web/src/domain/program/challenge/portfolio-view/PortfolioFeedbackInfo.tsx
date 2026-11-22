@@ -48,7 +48,7 @@ const PortfolioFeedbackInfo = () => {
     <div className="flex w-full flex-col items-center">
       {/* 피드백 리뷰 */}
       <div className="flex w-full flex-col items-center bg-neutral-90">
-        <section className="flex w-full max-w-[1000px] flex-col px-5 py-20 md:px-10 md:pb-[140px] md:pt-[130px] lg:px-0">
+        <section className="flex w-full max-w-[1000px] flex-col px-5 py-20 md:px-10 md:pb-[140px] md:pt-[130px] lg:px-0 min-[1025px]:px-8">
           <div className="mb-16 md:mb-20">
             {/* <SuperTitle className="mb-3 md:text-center">
 
@@ -105,7 +105,7 @@ const PortfolioFeedbackInfo = () => {
 
       {/* 피드백 안내 (라이브 멘토링) */}
       <div className="flex w-full flex-col items-center">
-        <section className="flex w-full max-w-[1000px] flex-col px-5 py-20 md:px-10 md:pb-[140px] md:pt-[130px] lg:px-0">
+        <section className="flex w-full max-w-[1000px] flex-col px-5 py-20 md:px-10 md:pb-[140px] md:pt-[130px] lg:px-0 min-[1025px]:px-8">
           <div className="mb-6 md:mb-20">
             <SuperTitle className="mb-3 text-[#4A76FF] md:text-center">
               피드백 제공
@@ -157,7 +157,7 @@ const PortfolioFeedbackInfo = () => {
       </div>
       {/* 피드백 옵션 일정 안내 */}
       <div className="flex w-full flex-col items-center bg-neutral-90">
-        <section className="flex w-full max-w-[1000px] flex-col px-5 py-20 md:px-10 md:pb-[140px] md:pt-[130px] lg:px-0">
+        <section className="flex w-full max-w-[1000px] flex-col px-5 py-20 md:px-10 md:pb-[140px] md:pt-[130px] lg:px-0 min-[1025px]:px-8">
           <div className="mb-16 md:mb-20">
             <SuperTitle className="mb-3 text-[#4A76FF] md:text-center">
               옵션 일정

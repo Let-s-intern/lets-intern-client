@@ -23,6 +23,8 @@ import CouponSection, {
 } from '@/domain/program/program-detail/apply/section/CouponSection';
 import MotiveAnswerSection from '@/domain/program/program-detail/apply/section/MotiveAnswerSection';
 import PaymentSubmitSection from '@/domain/program/program-detail/apply/section/PaymentSubmitSection';
+import PassFloatingBanner from '@/domain/program/pass-upgrade/PassFloatingBanner';
+import PassUpgradeSection from '@/domain/program/pass-upgrade/PassUpgradeSection';
 import PriceSection from '@/domain/program/program-detail/apply/section/PriceSection';
 import UserInputSection from '@/domain/program/program-detail/apply/section/UserInputSection';
 import {
@@ -407,6 +409,11 @@ const PaymentInputContent = () => {
               ? program.accessMethod
               : undefined
           }
+          challengeType={
+            programApplicationData.programType === 'challenge'
+              ? challengeType || null
+              : undefined
+          }
         />
         {program && 'deadline' in program && program.deadline ? (
           <div className="-mx-5 mb-10 mt-8 flex items-center justify-center gap-2 bg-primary-10 px-2.5 py-5 text-xsmall14 lg:mx-0 lg:rounded-sm">
@@ -466,7 +473,8 @@ const PaymentInputContent = () => {
             <hr className="bg-neutral-85" />
 
             {programApplicationData.programType === 'challenge' &&
-              !isLoading && (
+              !isLoading &&
+              !!months && (
                 <div className="flex items-start gap-2.5 px-3 text-primary">
                   <CreditCardIcon className="h-auto w-5" />
                   <p className="text-xsmall14 font-medium">
@@ -500,6 +508,13 @@ const PaymentInputContent = () => {
               <span>{totalPrice.toLocaleString()}원</span>
             </div>
           </div>
+          {programApplicationData.programType === 'challenge' &&
+            !isMembership &&
+            !programApplicationData.membershipDiscount && (
+              <PassUpgradeSection
+                challengeId={programApplicationData.programId ?? 0}
+              />
+            )}
           {/* [TODO] 제목 포함 조건 지워야 함 */}
           {!isLoading &&
             programApplicationData.programType === 'challenge' &&
@@ -528,6 +543,15 @@ const PaymentInputContent = () => {
         onSubmit={onPaymentClick}
         buttonText={buttonText}
         disabled={!isFormValid}
+        floatingSlot={
+          programApplicationData.programType === 'challenge' &&
+          !isMembership &&
+          !programApplicationData.membershipDiscount ? (
+            <PassFloatingBanner
+              challengeId={programApplicationData.programId ?? 0}
+            />
+          ) : undefined
+        }
       />
     </div>
   );

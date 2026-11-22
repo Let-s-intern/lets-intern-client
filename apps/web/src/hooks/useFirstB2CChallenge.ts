@@ -9,9 +9,6 @@ const {
   PERSONAL_STATEMENT,
   PERSONAL_STATEMENT_LARGE_CORP,
   PORTFOLIO,
-  MARKETING,
-  HR,
-  PM,
 } = challengeTypeSchema.enum;
 
 /**
@@ -61,33 +58,5 @@ export function useIntroSectionB2CChallenges() {
     personalStatement,
     personalStatementLargeCorp,
     portfolio,
-  };
-}
-
-/**
- * 네비게이션에서 사용할 수 있는 모든 챌린지 타입의 첫 번째 B2C 챌린지를 찾는 훅
- * React 훅 규칙을 준수하기 위해 각 타입별로 개별적으로 호출
- */
-export function useNavB2CChallenges() {
-  const experienceSummary = useFirstB2CChallenge(EXPERIENCE_SUMMARY);
-  const resume = useFirstB2CChallenge(CAREER_START);
-  const personalStatement = useFirstB2CChallenge(PERSONAL_STATEMENT);
-  const personalStatementLargeCorp = useFirstB2CChallenge(
-    PERSONAL_STATEMENT_LARGE_CORP,
-  );
-  const portfolio = useFirstB2CChallenge(PORTFOLIO);
-  const marketing = useFirstB2CChallenge(MARKETING);
-  const hr = useFirstB2CChallenge(HR);
-  const pm = useFirstB2CChallenge(PM);
-
-  return {
-    experienceSummary,
-    resume,
-    personalStatement,
-    personalStatementLargeCorp,
-    portfolio,
-    marketing,
-    hr,
-    pm,
   };
 }

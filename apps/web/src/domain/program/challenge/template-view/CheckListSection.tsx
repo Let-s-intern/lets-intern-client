@@ -59,7 +59,7 @@ function CheckListSection({ config }: Props) {
       className="flex flex-col items-center pb-[70px] pt-[50px] text-center md:pb-[142px] md:pt-[88px]"
       style={{ backgroundColor }}
     >
-      <div className="flex w-full max-w-[320px] flex-col md:max-w-[1000px] md:px-10 lg:px-0">
+      <div className="flex w-full max-w-[320px] flex-col md:max-w-[1000px] md:px-10 lg:px-0 min-[1025px]:px-8">
         <div className="flex w-full flex-col gap-16 md:gap-32 md:px-16">
           {items.map((item, index) => (
             <div

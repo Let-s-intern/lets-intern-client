@@ -125,12 +125,14 @@ describe('MentorCard', () => {
     ).toHaveLength(1);
   });
 
-  it('프로필 이미지가 없으면 브랜드 컬러 배경에 제목 텍스트를 노출한다', () => {
+  it('프로필 이미지가 없으면 그라데이션 배경(로고 워터마크)에 제목 텍스트를 노출한다', () => {
     const { container } = render(
       <MentorCard opening={makeOpening({ mentorProfileImage: null })} />,
     );
     expect(screen.queryByAltText('자소서장인')).not.toBeInTheDocument();
-    expect(container.querySelector('.bg-primary')).not.toBeNull();
+    expect(
+      container.querySelector('img[src="/logo/logo-simple.svg"]'),
+    ).not.toBeNull();
     expect(
       screen.getAllByText(
         '비전공자에서 PM인턴 - 신입 공채까지 직무 전환 전략은?',

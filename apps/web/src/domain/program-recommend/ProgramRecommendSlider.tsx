@@ -70,10 +70,10 @@ function ProgramRecommendSlider({
         {list.map((item) => (
           <div
             key={item.id}
-            className="flex w-[262px] flex-col items-center md:w-[312px]"
+            className="flex w-[262px] flex-col items-center md:w-[312px] min-[1025px]:w-[236px]"
           >
             <div
-              className="aspect-[4/3] h-[12rem] w-full overflow-hidden rounded-sm bg-neutral-50 md:h-[15rem]"
+              className="aspect-[4/3] h-[12rem] w-full overflow-hidden rounded-sm bg-neutral-50 md:h-[15rem] min-[1025px]:h-[11.5rem]"
               style={{
                 backgroundImage: `url(${item.backgroundImage})`,
                 backgroundSize: 'cover',
@@ -82,7 +82,7 @@ function ProgramRecommendSlider({
             >
               <div className="h-2/3 w-full bg-gradient-to-b from-[#161E31]/40 to-[#161E31]/0 px-5 pt-3">
                 <span
-                  className="block w-fit text-xsmall16 font-semibold text-white md:text-small18"
+                  className="block w-fit text-xsmall16 font-semibold text-white md:text-small18 min-[1025px]:text-xsmall16"
                   style={TEXT_SHADOW_STYLE}
                 >
                   {item.title}
@@ -92,7 +92,7 @@ function ProgramRecommendSlider({
 
             <button
               className={twMerge(
-                'program_recommend mt-3 w-full rounded-xs bg-primary py-3 text-xsmall16 text-white md:mt-4 md:py-4 md:text-small18',
+                'program_recommend mt-3 w-full rounded-xs bg-primary py-3 text-xsmall16 text-white md:mt-4 md:py-4 md:text-small18 min-[1025px]:py-3 min-[1025px]:text-xsmall16',
                 buttonClassName,
               )}
               data-url={item.to}
@@ -110,10 +110,10 @@ function ProgramRecommendSlider({
         {trailingSlide && (
           <div
             key={trailingSlide.id ?? 'trailing-slide'}
-            className="flex w-[262px] flex-col items-center md:w-[312px]"
+            className="flex w-[262px] flex-col items-center md:w-[312px] min-[1025px]:w-[236px]"
           >
             <div
-              className="aspect-[4/3] h-[12rem] w-full overflow-hidden rounded-sm bg-neutral-50 md:h-[15rem]"
+              className="aspect-[4/3] h-[12rem] w-full overflow-hidden rounded-sm bg-neutral-50 md:h-[15rem] min-[1025px]:h-[11.5rem]"
               style={{
                 backgroundImage: `url(${trailingSlide.backgroundImage})`,
                 backgroundSize: 'cover',
@@ -122,7 +122,7 @@ function ProgramRecommendSlider({
             >
               <div className="h-2/3 w-full bg-gradient-to-b from-[#161E31]/40 to-[#161E31]/0 px-5 pt-3">
                 <span
-                  className="block w-fit text-xsmall16 font-semibold text-white md:text-small18"
+                  className="block w-fit text-xsmall16 font-semibold text-white md:text-small18 min-[1025px]:text-xsmall16"
                   style={TEXT_SHADOW_STYLE}
                 >
                   {trailingSlide.title}
@@ -132,7 +132,7 @@ function ProgramRecommendSlider({
 
             <button
               className={twMerge(
-                'program_recommend mt-3 w-full rounded-xs bg-primary py-3 text-xsmall16 text-white md:mt-4 md:py-4 md:text-small18',
+                'program_recommend mt-3 w-full rounded-xs bg-primary py-3 text-xsmall16 text-white md:mt-4 md:py-4 md:text-small18 min-[1025px]:py-3 min-[1025px]:text-xsmall16',
                 trailingSlide.buttonClassName,
               )}
               data-url={trailingSlide.to}

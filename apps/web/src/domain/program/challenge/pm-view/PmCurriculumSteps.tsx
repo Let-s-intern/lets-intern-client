@@ -16,7 +16,7 @@ type LectureData = {
 
 const InstructorCard = ({ lecture }: { lecture: LectureData }) => (
   <div
-    className="relative flex h-[260px] w-full min-w-[320px] flex-col overflow-hidden rounded-xl p-0 lg:w-[340px]"
+    className="relative flex h-[260px] w-full max-w-[340px] flex-col overflow-hidden rounded-xl p-0"
     style={{ background: PM_GRADIENT_BG }}
   >
     <div className="absolute right-0 top-0 z-0 pr-[19px] pt-8">
@@ -72,7 +72,7 @@ export const PmSeminar = ({ lectures }: SeminarProps) => {
         />
       </div>
       {hasLectures && (
-        <div className="mx-auto grid w-full max-w-[1060px] grid-cols-1 place-items-center justify-center gap-5 lg:grid-cols-3">
+        <div className="mx-auto grid w-full max-w-[1060px] grid-cols-1 place-items-center justify-center gap-5 min-[1025px]:grid-cols-2">
           {lectures.map((lecture, index) => (
             <InstructorCard key={index} lecture={lecture} />
           ))}

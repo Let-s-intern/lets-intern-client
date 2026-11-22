@@ -69,7 +69,7 @@ function IntroFeaturesSection({ config, content }: Props) {
   return (
     <section
       id="intro"
-      className="flex scroll-mt-[56px] flex-col items-center pb-[70px] pt-[50px] text-center md:scroll-mt-[60px] md:pb-[82px] md:pt-[141px]"
+      className="flex scroll-mt-[56px] flex-col items-center break-keep pb-[70px] pt-[50px] text-center md:scroll-mt-[60px] md:pb-[82px] md:pt-[141px]"
     >
       <div className="flex flex-col">
         <SectionHeader className="mb-6 w-full text-left md:mb-[42px] md:text-center">

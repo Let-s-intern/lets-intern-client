@@ -52,7 +52,7 @@ type Template = {
 
 function ChallengeIntroPortfolio({ weekText }: { weekText: string }) {
   return (
-    <section className="w-full bg-[#F3F7FF] px-5 py-20 md:px-10 md:py-32 lg:px-0">
+    <section className="w-full bg-[#F3F7FF] px-5 py-20 md:px-10 md:py-32 lg:px-0 min-[1025px]:px-8">
       <div className="mb-20 md:mb-52">
         <Heading2 className="mb-3 md:mb-8">
           포트폴리오, 어떻게 시작해야 하나요? <br />

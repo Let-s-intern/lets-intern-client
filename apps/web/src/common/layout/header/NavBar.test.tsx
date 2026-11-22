@@ -7,6 +7,7 @@ let mockPathname = '/';
 
 jest.mock('next/navigation', () => ({
   usePathname: () => mockPathname,
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 // 모바일 Swiper 블록만 그리도록 모바일 폭으로 고정한다.
@@ -38,6 +39,15 @@ jest.mock('@/api/user/user', () => ({
 jest.mock('@/hooks/useProgramCategoryNav', () => ({
   __esModule: true,
   default: () => [],
+}));
+// 사이드 메뉴의 취준 여정 링크. 노출 분류 API 를 부르지 않게 랜딩 주소로 고정한다
+jest.mock('@/domain/career-journey/useJourneyHref', () => ({
+  useJourneyHrefMap: () => ({}),
+}));
+// 사이드 메뉴 구조. 메뉴 API 를 부르지 않게 고정 메뉴로 둔다
+jest.mock('@/domain/career-journey/useJourneyGroups', () => ({
+  useJourneyGroups: () =>
+    jest.requireActual('@/domain/career-journey/journeyNav').JOURNEY_GROUPS,
 }));
 jest.mock('@/hooks/useScrollDirection', () => ({
   __esModule: true,

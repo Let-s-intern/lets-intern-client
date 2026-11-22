@@ -15,7 +15,7 @@ import useAuthStore from '@/store/useAuthStore';
 import { buildCrossAppUrl } from '@/common/utils/crossAppUrl';
 import { useMediaQuery } from '@mui/material';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { Fragment, Suspense, useState } from 'react';
 import 'swiper/css';
 import 'swiper/css/free-mode';
 import { FreeMode } from 'swiper/modules';
@@ -23,12 +23,17 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import ExternalNavList from './ExternalNavList';
 import GlobalNavItem from './GlobalNavItem';
 import GlobalNavTopBar from './GlobalNavTopBar';
+import HeaderSearchWatcher, {
+  useHeaderSearchStore,
+} from './HeaderSearchWatcher';
 import MembershipNavLabel from './MembershipNavLabel';
 import { useMembershipNavEntry } from './useMembershipNavEntry';
 import NavOverlay from './NavOverlay';
 import ServiceToggle from './ServiceToggle';
 import SideNavContainer from './SideNavContainer';
 import SideNavItem from './SideNavItem';
+import { useJourneyGroups } from '@/domain/career-journey/useJourneyGroups';
+import { useJourneyHrefMap } from '@/domain/career-journey/useJourneyHref';
 import Spacer from './Spacer';
 import {
   SHOW_LIVE_MENTORING_HEADER_NAV,
@@ -72,7 +77,11 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const activeLink = useActiveLink(pathname);
+  // 멘토링 목록(/program?catalog=mentoring)은 멘토 메뉴로 켠다. 쿼리는 경로에 없어서 따로 읽는다
+  const catalog = useHeaderSearchStore((state) => state.catalog);
+  const activeLink = useActiveLink(pathname, {
+    mentoringCatalog: catalog === 'mentoring',
+  });
   // [레거시 · 삭제 예정] 서류 피드백 REPORT 메뉴용 목록.
   // 1:1 라이브 멘토링 상품이 이 흐름을 대체하므로 삭제 대상.
   // TODO(1:1 라이브 멘토링): 아래 서류 피드백 REPORT 메뉴 블록들과 함께 제거할 것.
@@ -117,9 +126,11 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
   ];
 
   const programCategoryLists = useProgramCategoryNav();
+  const journeyHrefMap = useJourneyHrefMap();
+  const journeyGroups = useJourneyGroups();
   // href가 있는 프로그램만 필터링
   const programCategoryWithHref = programCategoryLists.filter(
-    (item) => !!item.href,
+    (item) => !!item.href || item.isHeader,
   );
 
   // 사이드바 열리면 스크롤 제한
@@ -127,6 +138,9 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
 
   return (
     <header className={props.className}>
+      <Suspense fallback={null}>
+        <HeaderSearchWatcher />
+      </Suspense>
       {/* 상단 네비게이션 바 */}
       <div
         className={twMerge(
@@ -194,6 +208,7 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
                     className="text-xsmall14"
                     isNew
                     href="/program?catalog=mentoring"
+                    active={activeLink === 'MENTORING_CATALOG'}
                   >
                     1:1 LIVE 멘토링
                   </GlobalNavItem>
@@ -283,7 +298,12 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
                   className="text-xsmall16"
                   isNew
                   href="/mentors"
-                  active={activeLink === 'MENTORS'}
+                  // 대기업 멘토관·1:1 LIVE 멘토링은 이 드롭다운의 하위 항목이라 부모도 같이 켠다
+                  active={
+                    activeLink === 'MENTORS' ||
+                    activeLink === 'BIGFIRM' ||
+                    activeLink === 'MENTORING_CATALOG'
+                  }
                   subNavList={[
                     { children: '대기업 멘토관', href: '/bigfirm' },
                     {
@@ -349,6 +369,7 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
               <GlobalNavItem
                 className="text-xsmall16"
                 href="/pass-certification"
+                active={activeLink === 'PASS_CERTIFICATION'}
                 isNew
               >
                 합격 인증
@@ -383,6 +404,25 @@ const NavBar = ({ isLoginPage, disableFixed, ...props }: NavBarProps) => {
         </SideNavItem>
         <hr className="h-0.5 bg-neutral-80" aria-hidden="true" />
         <SideNavItem href="/program">전체 프로그램</SideNavItem>
+        {/* 취준 여정 카테고리. 드롭다운과 같은 구조로, 회색 제목은 누르지 않는다 */}
+        {journeyGroups.map((group, index) => (
+          <Fragment key={group.label ?? `journey-${index}`}>
+            {group.label && (
+              <span className="px-5 pt-2 text-xxsmall12 font-medium text-neutral-50">
+                {group.label}
+              </span>
+            )}
+            {group.items.map((item) => (
+              <SideNavItem
+                key={item.slug}
+                href={journeyHrefMap[item.slug]}
+                className="pl-3"
+              >
+                {item.label}
+              </SideNavItem>
+            ))}
+          </Fragment>
+        ))}
         {/* 1:1 LIVE 멘토링과 멘토 소개는 한 벌로 켜고 끈다(LC-3281). */}
         {SHOW_LIVE_MENTORING_NAV && (
           <>

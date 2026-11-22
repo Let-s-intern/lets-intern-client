@@ -20,7 +20,7 @@ const ChallengeDetailBlogReviewSection = ({
 
   return (
     <section className="flex w-full flex-col items-center bg-neutral-95 pb-[70px] pt-[30px] md:pb-[200px] md:pt-[100px]">
-      <div className="mb-6 w-full max-w-[1137px] px-5 md:mb-[70px] md:px-10 lg:px-0">
+      <div className="mb-6 w-full max-w-[1137px] px-5 md:mb-[70px] md:px-10 lg:px-0 min-[1025px]:px-8">
         <div className="relative mb-3 flex items-start justify-between md:mb-7 md:block">
           <Heading2 className="text-small20 md:text-center md:text-xlarge28">
             참여자들의

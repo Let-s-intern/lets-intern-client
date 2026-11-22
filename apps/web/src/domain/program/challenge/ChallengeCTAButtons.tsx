@@ -4,7 +4,7 @@ import { useProgramApplicationQuery } from '@/api/application';
 import dayjs from '@/lib/dayjs';
 import { ChallengeIdPrimitive } from '@/schema';
 import useAuthStore from '@/store/useAuthStore';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useMediaQuery } from '@mui/material';
 import { useEffect, useState } from 'react';
 import NotiToast from './NotiToast';
 import {
@@ -13,21 +13,29 @@ import {
 } from '../../../common/button/ApplyCTA';
 import NotiModal from '@/domain/program/program-detail/button/NotiModal';
 import PricePlanBottomSheet from '../PricePlanBottomSheet';
+import { useOpenChallengeApply } from './hooks/useOpenChallengeApply';
+import GuidebookCTAButtons from '../guidebook/ui/GuidebookCTAButtons';
+import { useTemplateGuidebook } from './template-guidebook/useTemplateGuidebook';
+import { useChallengeApplySheetStore } from './store/useChallengeApplySheetStore';
 
 const ChallengeCTAButtons = ({
   challenge,
   challengeId,
   challengeVersionId,
+  hasFollowPanel = false,
 }: {
   challenge: ChallengeIdPrimitive;
   challengeId: string;
   challengeVersionId: number | null;
+  /** 오른쪽 따라오는 신청 패널이 있는 상세. 1025px 이상에서는 하단 플로팅을 숨긴다 */
+  hasFollowPanel?: boolean;
 }) => {
   const { isLoggedIn } = useAuthStore();
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const { isOpen, plan, close, isTemplateMode } = useChallengeApplySheetStore();
+  const { guidebook } = useTemplateGuidebook(challenge.challengeType);
+  const openApply = useOpenChallengeApply();
+  const isDesktop = useMediaQuery('(min-width:1025px)');
 
-  const [isOpen, setIsOpen] = useState(false);
   const [isNotiOpen, setIsNotiOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
@@ -43,46 +51,63 @@ const ChallengeCTAButtons = ({
     }
   }, [isLoggedIn, refetch]);
 
+  // 다른 챌린지로 이동하면 시트 상태를 비운다
+  useEffect(
+    () => () =>
+      useChallengeApplySheetStore.setState({
+        isOpen: false,
+        plan: null,
+        isTemplateMode: false,
+      }),
+    [],
+  );
+
+  // 하단 바에는 시작일만 보인다. 결제 금액은 오른쪽 신청 영역에 있다
+  const desktopTitle = [
+    challenge.title,
+    challenge.startDate
+      ? `${dayjs(challenge.startDate).format('M/D')} 시작`
+      : null,
+    plan === 'LIGHT' ? '템플릿' : '챌린지',
+  ]
+    .filter(Boolean)
+    .join(' · ');
+
   /** 이미 신청했는지 체크하는 정보 */
   const isAlreadyApplied = application?.applied ?? false;
 
-  const handleOpen = () => {
-    if (!isLoggedIn) {
-      // 현재 URL의 전체 경로와 쿼리 파라미터를 포함하여 로그인 후 리다이렉트 URL 생성
-      // window.location.pathname을 사용해야 title이 포함된 전체 경로를 가져올 수 있음
-      const currentPath = window.location.pathname;
-      const currentSearch = searchParams.toString();
-      const redirectUrl = currentSearch
-        ? `${currentPath}?${currentSearch}`
-        : currentPath;
+  const handleOpen = () => openApply();
 
-      router.push(`/login?redirect=${encodeURIComponent(redirectUrl)}`);
-
-      return;
-    }
-
-    if (!isOpen) {
-      setIsOpen(true);
-      return;
-    }
-  };
+  // 템플릿으로 혼자: 하단 바도 가이드북 제목·금액·결제로 바꾼다 (LC-3631)
+  if (isTemplateMode && guidebook) {
+    return (
+      <GuidebookCTAButtons
+        guidebookId={String(guidebook.id)}
+        title={guidebook.title}
+        price={guidebook.price - guidebook.discount}
+      />
+    );
+  }
 
   return (
     <>
       {!isOpen && (
         <>
-          <DesktopApplyCTA
-            program={{
-              ...challenge,
-              beginning: challenge.beginning
-                ? dayjs(challenge.beginning)
-                : null,
-              deadline: challenge.deadline ? dayjs(challenge.deadline) : null,
-            }}
-            onApplyClick={handleOpen}
-            onNotiClick={() => setIsNotiOpen(true)}
-            isAlreadyApplied={isAlreadyApplied}
-          />
+          <div className={hasFollowPanel ? 'min-[1025px]:hidden' : undefined}>
+            <DesktopApplyCTA
+              program={{
+                ...challenge,
+                title: desktopTitle,
+                beginning: challenge.beginning
+                  ? dayjs(challenge.beginning)
+                  : null,
+                deadline: challenge.deadline ? dayjs(challenge.deadline) : null,
+              }}
+              onApplyClick={handleOpen}
+              onNotiClick={() => setIsNotiOpen(true)}
+              isAlreadyApplied={isAlreadyApplied}
+            />
+          </div>
           <MobileApplyCTA
             program={{
               ...challenge,
@@ -110,11 +135,16 @@ const ChallengeCTAButtons = ({
       <NotiToast isVisible={showToast} onClose={() => setShowToast(false)} />
       {/* 가격 플랜 선택 바텀 시트 */}
       <PricePlanBottomSheet
+        // 상단에서 고른 플랜으로 시트를 다시 초기화한다
+        key={plan ?? 'default'}
+        initialPlan={plan}
+        // 신청 패널이 있는 데스크톱은 플랜을 이미 골랐으니 시트 없이 바로 신청 페이지로 간다
+        applyImmediately={hasFollowPanel && isDesktop}
         isOpen={isOpen}
         challenge={challenge}
         challengeId={challengeId}
         challengeVersionId={challengeVersionId}
-        onClose={() => setIsOpen(false)}
+        onClose={close}
         showMembershipBenefit
       />
     </>

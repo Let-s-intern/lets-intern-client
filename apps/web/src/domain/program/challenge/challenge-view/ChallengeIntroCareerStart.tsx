@@ -85,7 +85,7 @@ const ChallengeIntroCareerStart = ({
   return (
     <section className="flex w-full flex-col md:items-center">
       <div className="flex w-full flex-col items-center bg-neutral-90">
-        <div className="flex w-full max-w-[1000px] flex-col gap-y-10 px-5 py-20 md:gap-y-[60px] md:px-10 md:py-[120px] lg:px-0">
+        <div className="flex w-full max-w-[1000px] flex-col gap-y-10 px-5 py-20 md:gap-y-[60px] md:px-10 md:py-[120px] lg:px-0 min-[1025px]:px-8">
           <div className="flex w-full flex-col gap-y-3 md:gap-y-[30px]">
             <Heading2 className="md:flex md:flex-col md:items-center">
               <div className="mb-1 flex w-fit flex-col gap-2.5 xs:flex-row xs:items-center">

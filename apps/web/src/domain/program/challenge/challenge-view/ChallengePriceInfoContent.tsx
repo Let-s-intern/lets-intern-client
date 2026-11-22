@@ -1,6 +1,5 @@
 'use client';
 
-import { useGetMembershipPrivilege } from '@/domain/all-in-one-pass/api/privilege';
 import { useInstallmentPayment } from '@/hooks/useInstallmentPayment';
 import { twMerge } from '@/lib/twMerge';
 import {
@@ -9,9 +8,8 @@ import {
   ChallengePricePlan,
   ChallengeType,
 } from '@/schema';
-import getChallengeOptionPriceInfo from '@/utils/getChallengeOptionPriceInfo';
-import { useParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
+import { useChallengePlanPrice } from '../hooks/useChallengePlanPrice';
 import FeedbackMentoringLink from '../ui/FeedbackMentoringLink';
 import { DEFAULT_COLOR } from '../utils/getChallengeThemeColor';
 
@@ -122,86 +120,21 @@ function ChallengePriceInfoContent({
     (item) => item.challengePricePlanType === 'BASIC',
   );
 
-  const deposit = active === 'LIGHT' ? 0 : (basicPriceInfo?.refund ?? 0); // 환급 (보증금) 라이트는 보증금 없음
   const activeDescription =
     priceInfoList.find((item) => item.challengePricePlanType === active)
       ?.description ?? '';
 
   const {
-    basicRegularPrice,
-    basicDiscountAmount,
-    standardRegularPrice,
-    standardDiscountAmount,
-    premiumRegularPrice,
-    premiumDiscountAmount,
-    lightRegularPrice,
-    lightDiscountAmount,
-  } = getChallengeOptionPriceInfo(priceInfoList);
-
-  const { regularPrice, discountAmount, sellingPrice } = useMemo(() => {
-    switch (active) {
-      case 'LIGHT':
-        return {
-          regularPrice: lightRegularPrice,
-          discountAmount: lightDiscountAmount,
-          sellingPrice: lightRegularPrice - lightDiscountAmount,
-        };
-      case 'STANDARD':
-        return {
-          regularPrice: standardRegularPrice,
-          discountAmount: standardDiscountAmount,
-          sellingPrice: standardRegularPrice - standardDiscountAmount,
-        };
-      case 'PREMIUM':
-        return {
-          regularPrice: premiumRegularPrice,
-          discountAmount: premiumDiscountAmount,
-          sellingPrice: premiumRegularPrice - premiumDiscountAmount,
-        };
-      // BASIC
-      default:
-        return {
-          regularPrice: basicRegularPrice,
-          discountAmount: basicDiscountAmount,
-          sellingPrice: basicRegularPrice - basicDiscountAmount,
-        };
-    }
-  }, [
-    active,
-    basicRegularPrice,
-    basicDiscountAmount,
-    standardRegularPrice,
-    standardDiscountAmount,
-    premiumRegularPrice,
-    premiumDiscountAmount,
-    lightRegularPrice,
-    lightDiscountAmount,
-  ]);
-
-  const discountPercentage = Math.round((discountAmount / regularPrice) * 100);
-  const finalPrice = sellingPrice - deposit; // 최종 금액 (환급 금액 미포함)
-
-  // 올인원패스 혜택 — 권한 보유 시 패스회원가 노출(LIGHT 는 0원).
-  // 패스회원가 = max(플랜 판매가 − BASIC 판매가, 0), useChallengePassBenefit와 동일 규칙.
-  const params = useParams();
-  const challengeId = typeof params?.id === 'string' ? params.id : '';
-  const { data: privilege } = useGetMembershipPrivilege(
-    'CHALLENGE',
-    challengeId ? Number(challengeId) : -1,
-  );
-  const hasPrivilege = !!challengeId && (privilege?.hasPrivilege ?? false);
-  const basicSellingPrice = Math.max(
-    basicRegularPrice - basicDiscountAmount,
-    0,
-  );
-  const activePassPrice =
-    active === 'LIGHT' ? 0 : Math.max(sellingPrice - basicSellingPrice, 0);
-  const isPassApplied = hasPrivilege && activePassPrice !== undefined;
-  const passFinalPrice = activePassPrice ?? sellingPrice;
-  const membershipDiscount = isPassApplied
-    ? Math.max(sellingPrice - passFinalPrice, 0)
-    : 0;
-  const showDeposit = deposit !== 0 && !isPassApplied; // 권한 시 보증금 면제 → 환급 숨김
+    regularPrice,
+    discountAmount,
+    discountPercentage,
+    deposit,
+    showDeposit,
+    isPassApplied,
+    membershipDiscount,
+    finalPrice,
+    displaySellingPrice,
+  } = useChallengePlanPrice(priceInfoList, active);
 
   const plans = useMemo(() => {
     const standardPriceInfo = priceInfoList.find(
@@ -303,8 +236,8 @@ function ChallengePriceInfoContent({
 
         {/* 최종 결제 금액 */}
         <FinalPriceInfo
-          finalPrice={isPassApplied ? passFinalPrice : finalPrice}
-          sellingPrice={isPassApplied ? passFinalPrice : sellingPrice}
+          finalPrice={finalPrice}
+          sellingPrice={displaySellingPrice}
           themeColor={themeColor}
         />
       </div>

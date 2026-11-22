@@ -164,7 +164,7 @@ function ChallengeResult({
       className="flex w-full flex-col items-center"
       style={styles.sectionStyle}
     >
-      <div className="flex w-full max-w-[1000px] flex-col gap-y-10 px-5 py-20 md:gap-y-20 md:pb-[150px] md:pt-[140px] lg:px-0">
+      <div className="flex w-full max-w-[1000px] flex-col gap-y-10 px-5 py-20 md:gap-y-20 md:pb-[150px] md:pt-[140px] lg:px-0 min-[1025px]:px-8">
         <div className="flex w-full flex-col gap-y-3 md:items-center">
           <SuperTitle className="mb-1" style={styles.superTitleStyle}>
             {isResumeTemplate

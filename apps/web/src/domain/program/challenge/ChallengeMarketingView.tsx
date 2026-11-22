@@ -8,7 +8,7 @@ import MarketingSummarySection from '@/domain/program/challenge/marketing-view/M
 import { parseChallengeContent } from '@/domain/program/challenge/utils/parseChallengeContent';
 import { ChallengeIdPrimitive } from '@/schema';
 import { useMemo } from 'react';
-import ChallengeBasicInfoSection from './challenge-view/ChallengeBasicInfoSection';
+import ChallengeApplyLayout from './ChallengeApplyLayout';
 import FreeTemplateLayout from './challenge-view/FreeTemplateLayout';
 import MarketingApplicationStrategySection from './marketing-view/MarketingApplicationStrategySection';
 import MarketingChallengeCalendar from './marketing-view/MarketingChallengeCalendar';
@@ -31,8 +31,7 @@ const ChallengeMarketingView = ({ challenge }: Props) => {
   const weekText = content?.challengePoint?.weekText ?? '4주';
 
   return (
-    <div className="w-full">
-      <ChallengeBasicInfoSection challenge={challenge} />
+    <ChallengeApplyLayout challenge={challenge}>
       {content?.isFreeTemplate ? (
         <FreeTemplateLayout freeContent={content.freeContent} />
       ) : (
@@ -71,7 +70,7 @@ const ChallengeMarketingView = ({ challenge }: Props) => {
           <ChallengeRecruitmentInfoSection challenge={challenge} />
         </>
       )}
-    </div>
+    </ChallengeApplyLayout>
   );
 };
 

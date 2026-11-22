@@ -1,5 +1,6 @@
 import { PaymentDetailType } from '@/api/payment/paymentSchema';
 import dayjs from '@/lib/dayjs';
+import OrderChallengeThumbnail from './OrderChallengeThumbnail';
 
 const convertDateFormat = (dateString: string) => {
   return dayjs(dateString).format('YYYY.MM.DD');
@@ -26,6 +27,7 @@ const OrderProgramInfo = ({
   accessMethod,
   mentoringPlan,
   vodPassRows,
+  challengeType,
 }: {
   thumbnail?: ProgramInfo['thumbnail'];
   title?: ProgramInfo['title'];
@@ -41,6 +43,11 @@ const OrderProgramInfo = ({
    * 이용권 조회가 실패했으면 비어 있고, 그 경우 제목만 보인다.
    */
   vodPassRows?: { label: string; value: string }[];
+  /**
+   * 챌린지 구분. 넘기면 챌린지 썸네일을 기수·버전 없는 유형별 기본 썸네일로 그린다.
+   * 넘기지 않는 화면은 등록 썸네일 그대로다
+   */
+  challengeType?: string | null;
 }) => {
   const isGuidebook = programType?.toString().toLowerCase() === 'guidebook';
   const isVod = programType?.toString().toLowerCase() === 'vod';
@@ -58,7 +65,15 @@ const OrderProgramInfo = ({
     <div className="flex w-full flex-col items-start justify-center gap-y-6">
       <div className="font-semibold text-neutral-0">프로그램 정보</div>
       <div className="flex w-full items-start justify-center gap-x-4">
-        {thumbnail ? (
+        {challengeType !== undefined ? (
+          <div className="h-[97px] w-[137px] shrink-0 overflow-hidden rounded-sm bg-neutral-90">
+            <OrderChallengeThumbnail
+              title={title ?? ''}
+              challengeType={challengeType}
+              fallbackSrc={thumbnail}
+            />
+          </div>
+        ) : thumbnail ? (
           <img
             className="h-[97px] w-[137px] rounded-sm object-cover"
             src={thumbnail}

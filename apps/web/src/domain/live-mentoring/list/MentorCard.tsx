@@ -9,6 +9,15 @@ import {
 } from '../constants';
 import { imagePlaceholderTitle } from '../utils/profileDisplay';
 
+/** 썸네일이 없을 때 쓰는 배경. 멘토 번호로 정해 같은 멘토는 늘 같은 색이다 */
+const FALLBACK_GRADIENTS = [
+  'linear-gradient(135deg, #FF6A1A 0%, #FF9A4D 100%)',
+  'linear-gradient(135deg, #4D55F5 0%, #7B82FF 100%)',
+  'linear-gradient(135deg, #1DB36B 0%, #4FD39A 100%)',
+  'linear-gradient(135deg, #13A6E0 0%, #52CBF6 100%)',
+  'linear-gradient(135deg, #2B2F8F 0%, #4D55F5 100%)',
+];
+
 interface MentorCardProps {
   opening: LiveMentoringOpening;
 }
@@ -41,8 +50,18 @@ const MentorCard = ({ opening }: MentorCardProps) => {
       {/* 썸네일 — 썸네일(없으면 프로필 이미지)이 있으면 흰 배경 위 이미지, 없으면 브랜드 컬러 배경 + 제목 텍스트 */}
       <div
         className={`relative aspect-[540/421] overflow-hidden rounded-sm md:rounded-xs ${
-          cardImage ? 'bg-white' : 'bg-primary'
+          cardImage ? 'bg-white' : ''
         }`}
+        style={
+          cardImage
+            ? undefined
+            : {
+                background:
+                  FALLBACK_GRADIENTS[
+                    opening.mentorId % FALLBACK_GRADIENTS.length
+                  ],
+              }
+        }
       >
         {cardImage && (
           <img
@@ -60,13 +79,25 @@ const MentorCard = ({ opening }: MentorCardProps) => {
         )}
 
         {!cardImage && (
-          <p
-            className={`relative line-clamp-3 px-4 pb-4 text-small18 font-bold text-white ${
-              badge ? 'pt-11' : 'pt-4'
-            }`}
-          >
-            {opening.title ?? imagePlaceholderTitle(nickname)}
-          </p>
+          <>
+            {/* 뒤에 깔리는 연한 로고 */}
+            <img
+              src="/logo/logo-simple.svg"
+              alt=""
+              aria-hidden
+              className="pointer-events-none absolute -right-6 -top-4 w-[58%] opacity-[0.14] brightness-0 invert"
+            />
+            {/* 아래 시간·가격 바와 겹치지 않게 바 높이만큼 비운다 */}
+            <div
+              className={`relative flex h-full flex-col justify-center overflow-hidden px-4 pb-12 md:px-5 md:pb-14 ${
+                badge ? 'pt-11' : 'pt-4'
+              }`}
+            >
+              <p className="line-clamp-3 break-keep text-small18 font-bold leading-snug text-white">
+                {opening.title ?? imagePlaceholderTitle(nickname)}
+              </p>
+            </div>
+          </>
         )}
 
         {/*
@@ -84,7 +115,7 @@ const MentorCard = ({ opening }: MentorCardProps) => {
         </div>
       </div>
 
-      <h2 className="text-1-semibold line-clamp-2 text-xsmall14 md:text-xsmall16">
+      <h2 className="text-1-semibold line-clamp-2 break-keep text-xsmall14 md:text-xsmall16">
         {opening.title ?? `${nickname}의 1:1 멘토링`}
       </h2>
 

@@ -1,121 +1,27 @@
-import { useGetActiveChallenge } from '@/api/challenge/challenge';
 import { SubNavItemProps } from '@/common/layout/header/SubNavItem';
-import { ActiveChallengeResponse, challengeTypeSchema } from '@/schema';
-import { useNavB2CChallenges } from './useFirstB2CChallenge';
-import { SHOW_LIVE_MENTORING_HEADER_NAV } from '@/domain/live-mentoring/constants';
+import { useJourneyGroups } from '@/domain/career-journey/useJourneyGroups';
+import { useJourneyHrefMap } from '@/domain/career-journey/useJourneyHref';
 
-const {
-  EXPERIENCE_SUMMARY,
-  CAREER_START,
-  PERSONAL_STATEMENT,
-  PERSONAL_STATEMENT_LARGE_CORP,
-  PORTFOLIO,
-  MARKETING,
-  HR,
-  PM,
-} = challengeTypeSchema.enum;
+/**
+ * GNB "프로그램 카테고리" 드롭다운. 상품 이름 나열 대신 취준 여정(단계 → 고민) 순서로 보여 준다.
+ * 회색 제목은 누르지 않고, 항목은 랜딩(또는 어드민이 지정한 상세)으로 간다.
+ * 메뉴는 어드민 노출 분류의 랜딩 메뉴 값으로 만들고, 없으면 고정 메뉴를 쓴다
+ */
+export default function useProgramCategoryNav(): SubNavItemProps[] {
+  const hrefMap = useJourneyHrefMap();
+  const journeyGroups = useJourneyGroups();
 
-export default function useProgramCategoryNav() {
-  const { data: activePersonalStatement } =
-    useGetActiveChallenge(PERSONAL_STATEMENT);
-  const { data: activePersonalStatementLargeCorp } = useGetActiveChallenge(
-    PERSONAL_STATEMENT_LARGE_CORP,
-  );
-  const { data: activeMarketing } = useGetActiveChallenge(MARKETING);
-  const { data: activePortfolio } = useGetActiveChallenge(PORTFOLIO);
-  const { data: activeExperienceSummary } =
-    useGetActiveChallenge(EXPERIENCE_SUMMARY);
-  const { data: activeResume } = useGetActiveChallenge(CAREER_START);
-  const { data: activeHr } = useGetActiveChallenge(HR);
-  const { data: activePm } = useGetActiveChallenge(PM);
-  // 새로운 훅을 사용하여 각 타입별 첫 번째 B2C 챌린지 가져오기
-  const {
-    experienceSummary,
-    resume,
-    personalStatement,
-    personalStatementLargeCorp,
-    portfolio,
-    marketing,
-    hr,
-    pm,
-  } = useNavB2CChallenges();
-
-  const getProgramHref = (
-    activeData?: ActiveChallengeResponse,
-    b2cChallenge?: { href: string },
-  ): string | undefined => {
-    // 1. 활성 챌린지가 있는 경우
-    const activeId = activeData?.challengeList?.[0]?.id;
-
-    if (activeId !== undefined) {
-      return `/program/challenge/${activeId}`;
-    }
-
-    // 2. 활성 챌린지가 없는 경우, 첫 번째 B2C 챌린지 사용
-    return b2cChallenge?.href;
-  };
-
-  const programCategoryLists: SubNavItemProps[] = [
-    /*
-      1:1 LIVE 멘토링은 헤더 메뉴와 같은 헤더 플래그로 연다.
-      `/live-mentoring` 은 이 주소로 리다이렉트만 하므로 목적지인
-      `/program?catalog=mentoring` 을 바로 가리켜 한 번 튕기지 않게 한다.
-    */
-    ...(SHOW_LIVE_MENTORING_HEADER_NAV
-      ? [{ children: '1:1 LIVE 멘토링', href: `/program?catalog=mentoring` }]
-      : []),
-    {
-      children: '전체 프로그램',
-      href: `/program`,
-    },
-    {
-      children: '경험정리 챌린지',
-      href: getProgramHref(activeExperienceSummary, experienceSummary),
-    },
-    {
-      children: '이력서 완성 챌린지',
-      href: getProgramHref(activeResume, resume),
-    },
-    {
-      children: '자기소개서 완성 챌린지',
-      href: getProgramHref(activePersonalStatement, personalStatement),
-    },
-    {
-      children: '포트폴리오 완성 챌린지',
-      href: getProgramHref(activePortfolio, portfolio),
-    },
-    {
-      children: '마케팅 서류 완성 챌린지',
-      href: getProgramHref(activeMarketing, marketing),
-    },
-    {
-      children: 'HR/인사 직무 챌린지',
-      href: getProgramHref(activeHr, hr),
-    },
-    {
-      children: 'PM 직무 챌린지',
-      href: getProgramHref(activePm, pm),
-    },
-    {
-      children: '대기업 완성 챌린지',
-      href: getProgramHref(
-        activePersonalStatementLargeCorp,
-        personalStatementLargeCorp,
-      ),
-    },
-    {
-      children: '무료 세미나',
-      href: '/program?type=LIVE',
-    },
-    {
-      children: '취준위키 VOD',
-      href: '/program?type=VOD',
-    },
-    {
-      children: '가이드북',
-      href: '/program?type=GUIDEBOOK',
-    },
+  return [
+    { children: '전체', href: '/program' },
+    ...journeyGroups.flatMap((group) => [
+      ...(group.label
+        ? [{ children: group.label, isHeader: true } as SubNavItemProps]
+        : []),
+      ...group.items.map((item) => ({
+        children: item.label,
+        href: hrefMap[item.slug],
+        className: group.label ? 'pl-5 font-semibold' : 'font-semibold',
+      })),
+    ]),
   ];
-
-  return programCategoryLists;
 }
