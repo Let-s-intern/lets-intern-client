@@ -118,7 +118,7 @@ const ReviewSection = ({
   return (
     <section id={anchorId} className="scroll-mt-28 py-10 md:py-14">
       <div className="flex items-end justify-between gap-4">
-        <div>
+        <div className="min-w-0">
           <h2 className="text-small20 font-bold text-neutral-0 md:text-medium24">
             {title}
           </h2>

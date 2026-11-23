@@ -5,7 +5,6 @@ import {
   useProgramCategoryTargetsQuery,
 } from '@/api/program-category/programCategory';
 import AiChat from '@/domain/ai-chat/AiChat';
-import { Sparkles } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
 import type { AiChatItem } from '@/domain/ai-chat/types/aiChat';
@@ -22,7 +21,7 @@ import CatalogCard from './ui/CatalogCard';
 import CatalogFilter from './ui/CatalogFilter';
 import LoadMoreSentinel from './ui/LoadMoreSentinel';
 
-/** AI 맞춤 탐색 입력창 아래 예시 질문 */
+/** 탐색 입력창 아래 예시 질문 */
 const AI_SUGGESTIONS = [
   '경험 정리가 어려워요',
   '면접 준비가 필요해요',
@@ -112,11 +111,7 @@ const ProgramCatalogPage = () => {
   return (
     <div className="flex flex-col gap-8 px-5 md:gap-10 md:px-0">
       <section className="flex flex-col items-center">
-        <p className="flex items-center gap-1 text-xsmall14 font-semibold text-primary">
-          <Sparkles size={14} aria-hidden />
-          AI 맞춤 탐색
-        </p>
-        <h2 className="mt-1 text-center text-small20 font-bold text-neutral-0 md:text-medium24">
+        <h2 className="text-center text-small20 font-bold text-neutral-0 md:text-medium24">
           어떤 멘토의 도움이 필요하세요?
         </h2>
         <p className="mt-2 break-keep text-center text-xsmall14 text-neutral-30">

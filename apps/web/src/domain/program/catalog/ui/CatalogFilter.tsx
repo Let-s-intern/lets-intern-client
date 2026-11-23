@@ -3,6 +3,8 @@ import type {
   PublicProgramCategoryGroup,
 } from '@/api/program-category/programCategory';
 import clsx from 'clsx';
+import { ChevronDown } from 'lucide-react';
+import { useState } from 'react';
 import {
   CATALOG_TYPES,
   CatalogQuery,
@@ -81,42 +83,71 @@ const CatalogFilter = ({ groups, query, onChange }: CatalogFilterProps) => {
     query.categoryIds.length > 0 || query.type !== DEFAULT_CATALOG_TYPE;
   // 분류 줄은 나누지 않고 태그만 한 줄로. 줄 순서·줄 안 순서는 어드민을 따른다
   const tags = groups.flatMap((group) => group.categoryList);
+  // 모바일은 체크박스가 목록을 한참 밀어내서 필터 버튼 아래로 접어 둔다. 데스크톱은 늘 펼친 사이드바
+  const [isOpen, setIsOpen] = useState(false);
+  const filterCount =
+    query.categoryIds.length + (query.type !== DEFAULT_CATALOG_TYPE ? 1 : 0);
 
   return (
-    <aside className="flex flex-col gap-8 md:w-[200px] md:shrink-0">
-      {tags.length > 0 && (
-        <Row label="분류">
-          {tags.map((category) => (
+    <aside className="flex flex-col gap-4 md:w-[200px] md:shrink-0 md:gap-8">
+      <button
+        type="button"
+        onClick={() => setIsOpen((open) => !open)}
+        aria-expanded={isOpen}
+        className="flex items-center justify-between rounded-xs border border-neutral-85 px-4 py-3 text-xsmall16 font-semibold text-neutral-0 md:hidden"
+      >
+        <span>
+          필터
+          {filterCount > 0 && (
+            <span className="ml-1 text-primary">{filterCount}</span>
+          )}
+        </span>
+        <ChevronDown
+          size={20}
+          className={clsx('transition-transform', isOpen && 'rotate-180')}
+        />
+      </button>
+      <div
+        className={clsx('flex-col gap-8 md:flex', isOpen ? 'flex' : 'hidden')}
+      >
+        {tags.length > 0 && (
+          <Row label="분류">
+            {tags.map((category) => (
+              <Chip
+                key={category.id}
+                label={category.title}
+                selected={query.categoryIds.includes(category.id)}
+                onClick={() => toggleCategory(category.id)}
+              />
+            ))}
+          </Row>
+        )}
+        <Row label="프로그램 유형">
+          {CATALOG_TYPES.map((type) => (
             <Chip
-              key={category.id}
-              label={category.title}
-              selected={query.categoryIds.includes(category.id)}
-              onClick={() => toggleCategory(category.id)}
+              key={type.key}
+              label={type.label}
+              selected={query.type === type.key}
+              onClick={() => selectType(type.key)}
             />
           ))}
         </Row>
-      )}
-      <Row label="프로그램 유형">
-        {CATALOG_TYPES.map((type) => (
-          <Chip
-            key={type.key}
-            label={type.label}
-            selected={query.type === type.key}
-            onClick={() => selectType(type.key)}
-          />
-        ))}
-      </Row>
-      {hasFilter && (
-        <button
-          type="button"
-          onClick={() =>
-            onChange({ ...query, categoryIds: [], type: DEFAULT_CATALOG_TYPE })
-          }
-          className="self-end text-xsmall14 text-neutral-40 underline"
-        >
-          필터 초기화
-        </button>
-      )}
+        {hasFilter && (
+          <button
+            type="button"
+            onClick={() =>
+              onChange({
+                ...query,
+                categoryIds: [],
+                type: DEFAULT_CATALOG_TYPE,
+              })
+            }
+            className="self-end text-xsmall14 text-neutral-40 underline"
+          >
+            필터 초기화
+          </button>
+        )}
+      </div>
     </aside>
   );
 };

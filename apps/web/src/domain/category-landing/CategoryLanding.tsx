@@ -214,8 +214,9 @@ const CategoryLanding = ({ slug }: { slug: string }) => {
     );
   }
 
+  // break-keep: 모바일에서 단어 중간("하나로", "솔직", "무료")이 끊기지 않게 랜딩 전체에 건다
   return (
-    <div className="mx-auto w-full max-w-[1120px] px-5 pb-20 xl:px-0">
+    <div className="mx-auto w-full max-w-[1120px] break-keep px-5 pb-20 xl:px-0">
       <nav
         className="mt-6 text-xxsmall12 text-neutral-40"
         aria-label="breadcrumb"

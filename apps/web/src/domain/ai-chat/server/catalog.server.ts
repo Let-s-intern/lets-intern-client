@@ -250,7 +250,33 @@ export async function getCatalog(): Promise<CatalogItem[]> {
         `/blog?page=1&size=${BLOG_CATALOG_SIZE}`,
       ),
     ]);
-  const programRows = programData?.programList ?? [];
+  // 같은 챌린지의 버전 행(대학생·무경력자 Ver., 인턴·실무 경험자 Ver.)은 하나로 합친다.
+  // 합친 행은 버전 없이 챌린지 상세로 보내고, 제목 앞 [… Ver.] 도 뗀다
+  const versionCount = new Map<string, number>();
+  for (const { programInfo: p } of programData?.programList ?? []) {
+    const id = `${p.programType}:${p.id}`;
+    versionCount.set(id, (versionCount.get(id) ?? 0) + 1);
+  }
+  const programRows = (programData?.programList ?? [])
+    .filter(
+      ({ programInfo: p }, index, rows) =>
+        rows.findIndex(
+          (r) =>
+            r.programInfo.programType === p.programType &&
+            r.programInfo.id === p.id,
+        ) === index,
+    )
+    .map((row): ProgramRow => {
+      const p = row.programInfo;
+      if ((versionCount.get(`${p.programType}:${p.id}`) ?? 0) < 2) return row;
+      return {
+        programInfo: {
+          ...p,
+          title: p.title?.replace(/^\[[^\]]*Ver\.\]\s*/, ''),
+          challengeVersionId: null,
+        },
+      };
+    });
 
   // 버전 행은 같은 프로그램 id 를 공유하므로 상세 조회는 한 번만 한다
   const priceByProgram = new Map<string, Promise<AiChatPrice | null>>();

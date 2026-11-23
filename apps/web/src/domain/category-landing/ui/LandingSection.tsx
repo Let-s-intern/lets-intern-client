@@ -58,7 +58,7 @@ const LandingSection = ({
         {getSectionEyebrow(targets, kind)}
       </p>
       <div className="mt-1 flex items-end justify-between gap-4">
-        <div>
+        <div className="min-w-0">
           <h2 className="text-small20 font-bold text-neutral-0 md:text-medium24">
             {title}
           </h2>
