@@ -11,6 +11,7 @@ import {
   type ApplyButtonState,
   type PriceSummary,
 } from './ApplyPriceCard';
+import { useChallengeApplySheetStore } from '../../store/useChallengeApplySheetStore';
 import type { PlanOption } from './planOptions';
 
 const won = (value: number) => `${value.toLocaleString()}원`;
@@ -69,6 +70,7 @@ function CompactPlanSelect({
   passPrice,
   priceSummary,
 }: Omit<Props, 'compact'>) {
+  const openNoti = useChallengeApplySheetStore((state) => state.openNoti);
   const [showHint, setShowHint] = useState(false);
   const selected = options.find((option) => option.plan === selectedPlan);
 
@@ -173,6 +175,7 @@ function CompactPlanSelect({
       <ApplyButton
         state={applyState}
         label="신청하기"
+        onNotify={openNoti}
         onClick={() => {
           if (!selected) {
             setShowHint(true);
@@ -207,6 +210,7 @@ function FullPlanSelectCard({
   compact = false,
   priceSummary,
 }: Props) {
+  const openNoti = useChallengeApplySheetStore((state) => state.openNoti);
   const [isOpen, setIsOpen] = useState(false);
   const selected = options.find((option) => option.plan === selectedPlan);
 
@@ -372,6 +376,7 @@ function FullPlanSelectCard({
       <ApplyButton
         state={applyState}
         label="신청하기"
+        onNotify={openNoti}
         onClick={() => {
           if (!selected) {
             setIsOpen(true);

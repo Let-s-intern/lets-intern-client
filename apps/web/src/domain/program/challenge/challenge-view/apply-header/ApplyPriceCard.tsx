@@ -28,25 +28,40 @@ export const ApplyButton = ({
   state,
   label,
   onClick,
+  onNotify,
   className,
 }: {
   state: ApplyButtonState;
   label: string;
   onClick: () => void;
+  /** 있으면 마감 상태에서 막힌 버튼 대신 출시 알림 신청 버튼을 보인다 */
+  onNotify?: () => void;
   className?: string;
-}) => (
-  <button
-    type="button"
-    disabled={state !== 'OPEN'}
-    onClick={onClick}
-    className={twMerge(
-      'apply_button w-full rounded-md bg-primary px-6 py-3 text-small18 font-medium text-white disabled:bg-neutral-80 disabled:text-neutral-40',
-      className,
-    )}
-  >
-    {state === 'OPEN' ? label : APPLY_BUTTON_TEXT[state]}
-  </button>
-);
+}) =>
+  state === 'CLOSED' && onNotify ? (
+    <button
+      type="button"
+      onClick={onNotify}
+      className={twMerge(
+        'early_button w-full rounded-md bg-primary px-6 py-3 text-small18 font-medium text-white',
+        className,
+      )}
+    >
+      출시알림신청
+    </button>
+  ) : (
+    <button
+      type="button"
+      disabled={state !== 'OPEN'}
+      onClick={onClick}
+      className={twMerge(
+        'apply_button w-full rounded-md bg-primary px-6 py-3 text-small18 font-medium text-white disabled:bg-neutral-80 disabled:text-neutral-40',
+        className,
+      )}
+    >
+      {state === 'OPEN' ? label : APPLY_BUTTON_TEXT[state]}
+    </button>
+  );
 
 interface Props {
   price: PriceSummary;

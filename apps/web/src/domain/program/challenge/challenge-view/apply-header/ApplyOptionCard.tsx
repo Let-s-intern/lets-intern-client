@@ -123,6 +123,13 @@ export interface TargetOption {
   href: string;
 }
 
+/** 진행 방식 카드 위의 상품 유형 뱃지 */
+const ModeBadge = ({ children }: { children: ReactNode }) => (
+  <span className="mb-1.5 w-fit rounded-xxs bg-[var(--apply-tint,#F5F6FF)] px-1.5 py-0.5 text-xxsmall12 font-semibold text-[color:var(--apply-accent,#4D55F5)]">
+    {children}
+  </span>
+);
+
 /** 모집 마감까지 3일 이내면 마감 임박 */
 const isClosingSoon = (deadline: string | null) => {
   if (!deadline) return false;
@@ -161,8 +168,9 @@ function ApplyOptionCard({
               selected={mode === 'LIVE'}
               onClick={() => onChangeMode('LIVE')}
             >
+              <ModeBadge>챌린지</ModeBadge>
               <span className="text-xsmall16 font-bold">
-                매일 미션으로 완성하기(챌린지)
+                매일 미션으로 완성하기
               </span>
               <span className="mt-1.5 text-xxsmall12 text-neutral-40">
                 미션과 피드백으로 꾸준히
@@ -172,8 +180,9 @@ function ApplyOptionCard({
               selected={mode === 'TEMPLATE'}
               onClick={() => onChangeMode('TEMPLATE')}
             >
+              <ModeBadge>가이드북</ModeBadge>
               <span className="text-xsmall16 font-bold">
-                가이드 따라 완성하기(가이드북)
+                가이드 따라 완성하기
               </span>
               <span className="mt-1.5 text-xxsmall12 text-neutral-40">
                 내 속도에 맞춰 혼자서

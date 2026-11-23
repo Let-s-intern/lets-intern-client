@@ -22,6 +22,10 @@ interface ChallengeApplySheetState {
    */
   keepScroll: boolean;
   keepScrollOnNextPage: () => void;
+  /** 출시 알림 신청 모달. 마감된 챌린지의 신청 영역과 하단 CTA 가 같은 모달을 연다 */
+  isNotiOpen: boolean;
+  openNoti: () => void;
+  closeNoti: () => void;
 }
 
 export const useChallengeApplySheetStore = create<ChallengeApplySheetState>(
@@ -36,5 +40,8 @@ export const useChallengeApplySheetStore = create<ChallengeApplySheetState>(
     setTemplateMode: (isTemplateMode) => set({ isTemplateMode }),
     keepScroll: false,
     keepScrollOnNextPage: () => set({ keepScroll: true }),
+    isNotiOpen: false,
+    openNoti: () => set({ isNotiOpen: true }),
+    closeNoti: () => set({ isNotiOpen: false }),
   }),
 );

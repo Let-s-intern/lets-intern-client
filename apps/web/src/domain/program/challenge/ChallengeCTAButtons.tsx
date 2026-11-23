@@ -36,7 +36,10 @@ const ChallengeCTAButtons = ({
   const openApply = useOpenChallengeApply();
   const isDesktop = useMediaQuery('(min-width:1025px)');
 
-  const [isNotiOpen, setIsNotiOpen] = useState(false);
+  // 마감된 챌린지는 오른쪽 신청 영역에서도 같은 출시 알림 모달을 연다
+  const isNotiOpen = useChallengeApplySheetStore((state) => state.isNotiOpen);
+  const openNoti = useChallengeApplySheetStore((state) => state.openNoti);
+  const closeNoti = useChallengeApplySheetStore((state) => state.closeNoti);
   const [showToast, setShowToast] = useState(false);
 
   const { data: application, refetch } = useProgramApplicationQuery(
@@ -58,6 +61,7 @@ const ChallengeCTAButtons = ({
         isOpen: false,
         plan: null,
         isTemplateMode: false,
+        isNotiOpen: false,
       }),
     [],
   );
@@ -104,7 +108,7 @@ const ChallengeCTAButtons = ({
                 deadline: challenge.deadline ? dayjs(challenge.deadline) : null,
               }}
               onApplyClick={handleOpen}
-              onNotiClick={() => setIsNotiOpen(true)}
+              onNotiClick={openNoti}
               isAlreadyApplied={isAlreadyApplied}
             />
           </div>
@@ -117,7 +121,7 @@ const ChallengeCTAButtons = ({
               deadline: challenge.deadline ? dayjs(challenge.deadline) : null,
             }}
             onApplyClick={handleOpen}
-            onNotiClick={() => setIsNotiOpen(true)}
+            onNotiClick={openNoti}
             isAlreadyApplied={isAlreadyApplied}
           />
         </>
@@ -125,7 +129,7 @@ const ChallengeCTAButtons = ({
       {/* 출시 알림 신청 모달 */}
       <NotiModal
         isOpen={isNotiOpen}
-        onClose={() => setIsNotiOpen(false)}
+        onClose={closeNoti}
         onSuccess={() => setShowToast(true)}
         programTypeList={['CHALLENGE']}
         challengeTypeList={
