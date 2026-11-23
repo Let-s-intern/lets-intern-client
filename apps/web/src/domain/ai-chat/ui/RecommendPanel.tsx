@@ -16,7 +16,7 @@ const RecommendPanel = ({ items }: { items: AiChatItem[] }) => {
   return (
     <div className="flex min-h-0 flex-col md:h-full">
       <h3 className="text-xsmall16 font-bold text-neutral-0 md:text-small18">
-        AI 추천 프로그램
+        추천 프로그램
       </h3>
       <ul className="mt-3 flex min-h-0 flex-col gap-2.5 md:flex-1 md:overflow-y-auto">
         {sorted.map((item) => (

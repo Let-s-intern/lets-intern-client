@@ -80,15 +80,21 @@ const FeaturedChallenge = ({ target }: { target: ProgramCategoryTarget }) => {
 export const PassFreeNotice = ({ passHref }: { passHref: string }) => (
   <Link
     href={passHref}
-    className="category_landing_pass_notice flex items-center justify-between rounded-xs bg-primary-5 px-4 py-3 text-xsmall14"
+    className="category_landing_pass_notice flex flex-col gap-2 rounded-xs bg-primary-5 px-4 py-3 text-xsmall14 md:flex-row md:items-center md:justify-between"
   >
-    <span className="flex items-center gap-2">
-      <span className="rounded-full bg-primary px-2 py-0.5 text-xxsmall12 font-semibold text-white">
+    {/* 문장을 한 덩어리로 감싼다. 감싸지 않으면 flex 가 "무료" 앞뒤를 따로 떼어 놓는다 */}
+    <span className="flex flex-wrap items-center gap-2">
+      <span className="whitespace-nowrap rounded-full bg-primary px-2 py-0.5 text-xxsmall12 font-semibold text-white">
         ALL-IN-ONE PASS
       </span>
-      올인원 패스 회원은 <span className="text-primary">무료</span>로 참여 가능!
+      <span>
+        올인원 패스 회원은 <span className="text-primary">무료</span>로 참여
+        가능!
+      </span>
     </span>
-    <span className="text-primary">패스 혜택 보기 ›</span>
+    <span className="shrink-0 self-end text-primary md:self-auto">
+      패스 혜택 보기 ›
+    </span>
   </Link>
 );
 

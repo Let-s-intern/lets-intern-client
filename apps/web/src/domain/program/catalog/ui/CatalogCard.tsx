@@ -105,7 +105,7 @@ const CatalogCard = ({
       >
         {recommended && (
           <span className="absolute right-2 top-2 z-10 rounded-xxs bg-primary px-2 py-0.5 text-xxsmall12 font-semibold text-white">
-            AI 추천
+            추천
           </span>
         )}
         {target.targetType === 'CHALLENGE' ? (

@@ -62,11 +62,6 @@ const ChatPanel = ({
 
   return (
     <div className="flex h-full min-h-0 flex-col rounded-md border border-primary-15 bg-primary-5">
-      <div className="flex items-center gap-2 border-b border-primary-15 px-4 py-3 text-xsmall14 font-semibold text-neutral-0 md:px-5">
-        <Sparkles size={16} className="text-primary" />
-        렛츠커리어 AI 상담
-      </div>
-
       <div
         ref={scrollRef}
         className="relative flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 py-4 md:px-5"

@@ -12,6 +12,7 @@ import {
   MessagesSquare,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Fragment, useEffect, useState } from 'react';
 
 import { CONCERNS, ConcernAction } from './concernData';
@@ -128,6 +129,7 @@ const ConcernSection = () => {
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   // 카드 이동처: 어드민이 지정한 바로 갈 상품이 있으면 상세, 없으면 카테고리 랜딩
   const hrefMap = useJourneyHrefMap();
+  const router = useRouter();
   const selectedIndex = CONCERNS.findIndex((c) => c.id === selectedId);
   const selected = CONCERNS[selectedIndex];
   const theme = THEME[selected.id];
@@ -146,6 +148,13 @@ const ConcernSection = () => {
   }, [isAutoPlaying, selectedIndex]);
 
   const handleSelect = (id: string) => {
+    // 모바일은 패널이 카드 아래로 밀려 보이지 않으니 카테고리 랜딩으로 바로 보낸다.
+    // 하위 분류가 여럿이면 첫 번째로 간다
+    if (window.matchMedia('(max-width: 767px)').matches) {
+      const action = CONCERNS.find((c) => c.id === id)?.actions[0];
+      if (action) router.push(action.href ?? hrefMap[action.slug]);
+      return;
+    }
     setIsAutoPlaying(false);
     setSelectedId(id);
   };
