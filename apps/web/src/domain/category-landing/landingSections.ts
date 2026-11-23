@@ -14,20 +14,29 @@ export interface LandingSectionData {
   targets: ProgramCategoryTarget[];
 }
 
+/** 끝난 LIVE 클래스. 진행 종료 시각이 지났으면 랜딩에 두지 않는다 */
+const isEndedLive = (target: ProgramCategoryTarget, now: Date) =>
+  target.targetType === 'LIVE' &&
+  !!target.endDate &&
+  new Date(target.endDate) < now;
+
 /**
  * 랜딩 섹션. 새 분류 랜딩(섹션마다 서버가 상품을 풀어 줌)이 있으면 그것을,
- * 없으면 예전 랜딩(노출 목록의 카테고리 = 섹션, 상품은 다중 조회)을 쓴다. 상품이 없는 섹션은 숨긴다
+ * 없으면 예전 랜딩(노출 목록의 카테고리 = 섹션, 상품은 다중 조회)을 쓴다.
+ * 끝난 LIVE 클래스는 빼고, 그래서 상품이 없어진 섹션도 숨긴다
  */
 export const landingSectionsOf = ({
   landing,
   group,
   groupTargets,
   content,
+  now = new Date(),
 }: {
   landing: CategoryLandingData | null | undefined;
   group: PublicProgramCategoryGroup | undefined;
   groupTargets: ProgramCategoryTarget[];
   content: LandingContent | undefined;
+  now?: Date;
 }): LandingSectionData[] => {
   const sections: LandingSectionData[] = landing
     ? landing.sectionList.map((s) => ({
@@ -50,5 +59,10 @@ export const landingSectionsOf = ({
           t.categoryIds.includes(category.id),
         ),
       }));
-  return sections.filter((s) => s.targets.length > 0);
+  return sections
+    .map((s) => ({
+      ...s,
+      targets: s.targets.filter((t) => !isEndedLive(t, now)),
+    }))
+    .filter((s) => s.targets.length > 0);
 };
