@@ -71,4 +71,44 @@ describe('landingSectionsOf', () => {
       [31, '어드민 설명', 1],
     ]);
   });
+
+  it('끝난 LIVE 클래스는 숨기고, 다 숨겨진 섹션도 숨긴다', () => {
+    const live = (id: number, endDate: string): ProgramCategoryTarget => ({
+      targetType: 'LIVE',
+      targetId: id,
+      title: `라이브${id}`,
+      categoryIds: [],
+      endDate,
+    });
+    const landing: CategoryLandingData = {
+      page: { id: 10, title: '포트폴리오', slug: 'portfolio' },
+      sectionList: [
+        {
+          id: 1,
+          title: '클래스',
+          displayType: 'CARDS',
+          targetList: [
+            live(102, '2026-08-08T20:00:00'),
+            target(7, []),
+            live(123, '2026-11-28T21:00:00'),
+          ],
+        },
+        {
+          id: 2,
+          title: '끝난 클래스만',
+          displayType: 'CARDS',
+          targetList: [live(108, '2026-09-09T20:00:00')],
+        },
+      ],
+    };
+    const sections = landingSectionsOf({
+      landing,
+      group: undefined,
+      groupTargets: [],
+      content: undefined,
+      now: new Date('2026-11-23T12:00:00'),
+    });
+    expect(sections.map((s) => s.id)).toEqual([1]);
+    expect(sections[0].targets.map((t) => t.targetId)).toEqual([7, 123]);
+  });
 });

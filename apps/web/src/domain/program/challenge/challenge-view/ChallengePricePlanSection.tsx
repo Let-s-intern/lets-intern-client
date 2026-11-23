@@ -40,7 +40,7 @@ const PricePlanCard = memo(function PricePlanCard({
       <h4 className="mb-6 text-xsmall16 font-bold md:text-small20">{title}</h4>
       <p
         style={paragraphStyle}
-        className="mb-[52px] min-h-28 whitespace-pre-line rounded-xxs bg-[#F1F4FF] px-3 py-5 text-xsmall14 font-medium md:text-small18"
+        className="mb-[52px] min-h-28 whitespace-pre-line break-keep rounded-xxs bg-[#F1F4FF] px-3 py-5 text-xsmall14 font-medium md:text-small18 min-[1025px]:text-xsmall16"
       >
         {description}
       </p>
