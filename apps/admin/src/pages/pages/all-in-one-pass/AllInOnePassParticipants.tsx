@@ -27,7 +27,7 @@ export default function AllInOnePassParticipants() {
     usePaginationModelWithSearchParams({ defaultPage: 0, defaultPageSize: 20 });
 
   const { data, isLoading, error } = useGetActivePassParticipantsQuery({
-    page: paginationModel.page,
+    page: paginationModel.page + 1,
     size: paginationModel.pageSize,
   });
   const list = data?.list ?? [];
