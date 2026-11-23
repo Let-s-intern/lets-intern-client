@@ -344,7 +344,7 @@ const Portfolio다른프로그램추천 = ({
               >
                 {weekText} 과정
               </div>
-              <div className="flex flex-col gap-5 rounded-b-md bg-white px-4 py-[30px] md:flex-row md:justify-between md:gap-0 md:pb-[30px] md:pt-9 lg:px-7">
+              <div className="flex flex-col gap-5 rounded-b-md bg-white px-4 py-[30px] md:flex-row md:justify-between md:gap-0 md:pb-[30px] md:pt-9 lg:px-7 min-[1025px]:grid min-[1025px]:grid-cols-3 min-[1025px]:gap-x-4 min-[1025px]:gap-y-6">
                 {progress.map((item) => (
                   <ProgressItem
                     key={item.index}
@@ -354,7 +354,8 @@ const Portfolio다른프로그램추천 = ({
                 ))}
               </div>
             </div>
-            <div className="flex flex-col gap-3 md:flex-row">
+            {/* 1025px 이상은 신청 패널 때문에 본문이 좁아져 박스를 세로로 쌓는다 */}
+            <div className="flex flex-col gap-3 md:flex-row min-[1025px]:flex-col">
               <Box className="md:flex-1">
                 {programSchedule.map((item) => (
                   <BoxItem key={item.title} title={item.title}>
