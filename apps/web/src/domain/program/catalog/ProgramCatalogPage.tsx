@@ -9,6 +9,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
 import type { AiChatItem } from '@/domain/ai-chat/types/aiChat';
 import clsx from 'clsx';
+import { ChevronDown } from 'lucide-react';
 import {
   CATALOG_STATUSES,
   CatalogQuery,
@@ -101,6 +102,11 @@ const ProgramCatalogPage = () => {
   const [paging, setPaging] = useState({ search, count: PAGE_SIZE });
   const visibleCount = paging.search === search ? paging.count : PAGE_SIZE;
 
+  // 모바일 필터는 목록 개수 옆 버튼으로 접어 둔다. 데스크톱은 왼쪽 사이드바
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const filterCount =
+    query.categoryIds.length + (query.type !== DEFAULT_CATALOG_TYPE ? 1 : 0);
+
   const handleChange = (next: CatalogQuery) => {
     const nextSearch = toCatalogSearch(next);
     router.replace(nextSearch ? `${pathname}?${nextSearch}` : pathname, {
@@ -114,7 +120,7 @@ const ProgramCatalogPage = () => {
         <h2 className="text-center text-small20 font-bold text-neutral-0 md:text-medium24">
           어떤 멘토의 도움이 필요하세요?
         </h2>
-        <p className="mt-2 break-keep text-center text-xsmall14 text-neutral-30">
+        <p className="mt-2 hidden break-keep text-center md:block text-xsmall14 text-neutral-30">
           상황을 알려주시면 관련 프로그램과 추천 이유를 함께 보여드려요.
         </p>
         <AiChat
@@ -127,7 +133,13 @@ const ProgramCatalogPage = () => {
 
       {/* 필터는 왼쪽, 목록은 오른쪽. 모바일은 위아래로 쌓는다 */}
       <div className="flex flex-col gap-8 md:flex-row md:items-start md:gap-10">
-        <CatalogFilter groups={groups} query={query} onChange={handleChange} />
+        <div className="hidden md:block">
+          <CatalogFilter
+            groups={groups}
+            query={query}
+            onChange={handleChange}
+          />
+        </div>
         <section className="min-w-0 flex-1">
           <nav className="mb-5 flex gap-5 border-b border-neutral-85">
             {CATALOG_STATUSES.map((tab) => (
@@ -146,10 +158,40 @@ const ProgramCatalogPage = () => {
               </button>
             ))}
           </nav>
-          <p className="text-xsmall14 text-neutral-30">
-            프로그램{' '}
-            <span className="font-semibold text-primary">{list.length}</span>개
-          </p>
+          <div className="flex items-center justify-between">
+            <p className="text-xsmall14 text-neutral-30">
+              프로그램{' '}
+              <span className="font-semibold text-primary">{list.length}</span>
+              개
+            </p>
+            <button
+              type="button"
+              onClick={() => setIsFilterOpen((open) => !open)}
+              aria-expanded={isFilterOpen}
+              className="flex items-center gap-1 rounded-full border border-neutral-85 px-3 py-1.5 text-xsmall14 font-semibold text-neutral-0 md:hidden"
+            >
+              필터
+              {filterCount > 0 && (
+                <span className="text-primary">{filterCount}</span>
+              )}
+              <ChevronDown
+                size={16}
+                className={clsx(
+                  'transition-transform',
+                  isFilterOpen && 'rotate-180',
+                )}
+              />
+            </button>
+          </div>
+          {isFilterOpen && (
+            <div className="mt-4 rounded-md bg-neutral-95 p-4 md:hidden">
+              <CatalogFilter
+                groups={groups}
+                query={query}
+                onChange={handleChange}
+              />
+            </div>
+          )}
           {isLoading ? (
             <p className="py-20 text-center text-xsmall14 text-neutral-40">
               불러오는 중…
