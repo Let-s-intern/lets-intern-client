@@ -104,6 +104,162 @@ describe('suggestTags', () => {
   });
 });
 
+describe('suggestTags 설명', () => {
+  it('설명에만 있으면 설명 이유로 추천하고 설명으로만 잡혔다고 표시한다', () => {
+    expect(
+      suggestTags(
+        { title: '취업 준비 클래스', description: '자소서 첨삭까지 한 번에' },
+        rules,
+      ),
+    ).toEqual([
+      {
+        tagId: 2,
+        tagTitle: '자기소개서',
+        reasons: ["설명에 '자소서'"],
+        descriptionOnly: true,
+      },
+    ]);
+  });
+
+  it('제목과 설명 둘 다 잡히면 이유가 둘이고 설명으로만은 아니다', () => {
+    const [suggestion] = suggestTags(
+      { title: '자소서 챌린지', description: '자소서 완성' },
+      rules,
+    );
+    expect(suggestion.reasons).toEqual(["제목에 '자소서'", "설명에 '자소서'"]);
+    expect(suggestion.descriptionOnly).toBeFalsy();
+  });
+
+  it('설명으로 잡힌 태그에 챌린지 구분 이유가 있으면 설명으로만은 아니다', () => {
+    const [suggestion] = suggestTags(
+      {
+        title: '취업 챌린지',
+        description: '이력서를 만들어요',
+        challengeType: 'CAREER_START',
+      },
+      rules,
+    );
+    expect(suggestion.reasons).toEqual([
+      "설명에 '이력서'",
+      '챌린지 구분: 이력서',
+    ]);
+    expect(suggestion.descriptionOnly).toBeFalsy();
+  });
+
+  it('블로그 태그·멘토링 분류 이유가 있어도 설명으로만은 아니다', () => {
+    expect(
+      suggestTags(
+        {
+          title: '글',
+          description: '면접 후기',
+          blogTagNames: ['면접'],
+        },
+        rules,
+      )[0].descriptionOnly,
+    ).toBeFalsy();
+    expect(
+      suggestTags(
+        {
+          title: '멘토링',
+          description: '면접 연습',
+          mentoringCategories: ['INTERVIEW'],
+        },
+        rules,
+      )[0].descriptionOnly,
+    ).toBeFalsy();
+  });
+
+  it('설명에는 기수·버전 표기를 떼지 않는다', () => {
+    expect(
+      titles({ title: '클래스', description: '[대기업 Ver.] 안내' }),
+    ).toEqual(['대기업']);
+  });
+
+  it('설명에도 영문 키워드 경계 규칙이 적용된다', () => {
+    expect(titles({ title: '클래스', description: 'HRD 담당자용' })).toEqual(
+      [],
+    );
+    expect(titles({ title: '클래스', description: 'HR 직무 소개' })).toEqual([
+      'HR',
+    ]);
+  });
+
+  it('설명이 비었거나 null 이면 제목만 본 결과와 같다', () => {
+    const base = suggestTags({ title: '2주 안에 자소서 끝내기' }, rules);
+    expect(
+      suggestTags(
+        { title: '2주 안에 자소서 끝내기', description: null },
+        rules,
+      ),
+    ).toEqual(base);
+    expect(
+      suggestTags({ title: '2주 안에 자소서 끝내기', description: '' }, rules),
+    ).toEqual(base);
+  });
+});
+
+describe('suggestTags 축약어 사전', () => {
+  const aliasRules: AutoTagRule[] = [
+    { id: 3, title: '포트폴리오', keywords: ['포트폴리오'] },
+    { id: 2, title: '자기소개서', keywords: ['자기소개서', '자소서'] },
+    { id: 20, title: '포트폴리오2', keywords: ['포트폴리오2'] },
+  ];
+
+  it('제목에 축약어가 있으면 태그를 추천하고 이유를 찾은 말로 낸다', () => {
+    expect(suggestTags({ title: '포폴 완성 클래스' }, aliasRules)).toEqual([
+      { tagId: 3, tagTitle: '포트폴리오', reasons: ["제목에 '포폴'"] },
+    ]);
+  });
+
+  it('태그 이름이 정확히 같을 때만 적용한다', () => {
+    const result = suggestTags({ title: '포폴 클래스' }, aliasRules);
+    expect(result.map((s) => s.tagId)).toEqual([3]);
+    expect(
+      suggestTags({ title: '포폴 클래스' }, [
+        { id: 20, title: '포트폴리오2', keywords: [] },
+      ]),
+    ).toEqual([]);
+  });
+
+  it('자동 키워드에 같은 말이 이미 있어도 이유가 중복되지 않는다', () => {
+    const [suggestion] = suggestTags({ title: '자소서 챌린지' }, aliasRules);
+    expect(suggestion.reasons).toEqual(["제목에 '자소서'"]);
+  });
+
+  it('자동 키워드와 축약어가 다르면 이유가 각각 난다', () => {
+    const [suggestion] = suggestTags(
+      { title: '포트폴리오 말고 포폴' },
+      aliasRules,
+    );
+    expect(suggestion.reasons).toEqual([
+      "제목에 '포트폴리오'",
+      "제목에 '포폴'",
+    ]);
+  });
+
+  it('설명에서도 축약어를 잡고, 설명으로만 잡히면 표시한다', () => {
+    expect(
+      suggestTags(
+        { title: '취업 클래스', description: '포폴 첨삭' },
+        aliasRules,
+      ),
+    ).toEqual([
+      {
+        tagId: 3,
+        tagTitle: '포트폴리오',
+        reasons: ["설명에 '포폴'"],
+        descriptionOnly: true,
+      },
+    ]);
+  });
+
+  it('키워드 미리보기용 호출(태그 이름 없음)에는 사전이 끼지 않는다', () => {
+    expect(
+      matchByKeywords([{ input: { title: '포폴 클래스' } }], ['포트폴리오']),
+    ).toEqual([]);
+  });
+});
+
 describe('planAutoFill', () => {
   const products = [
     { key: 'a', input: { title: '이력서 챌린지 3기' } },

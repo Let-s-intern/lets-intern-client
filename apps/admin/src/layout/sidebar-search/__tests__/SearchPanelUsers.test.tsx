@@ -204,6 +204,18 @@ describe('SearchPanel 유저 묶음', () => {
     expect(screen.queryByText('멘토')).not.toBeInTheDocument();
   });
 
+  it('이름과 마스킹 이메일이 같은 두 계정은 유저 번호로 구분해 둘 다 보인다', async () => {
+    users = [
+      userInfo(10925, '임성빈', 'dev@test.com', false),
+      userInfo(10949, '임성빈', 'dka@test.com', true),
+    ];
+    renderPanel();
+    type('임성빈');
+
+    expect(await findUserHeader('#10925 · d***@test.com')).toBeDefined();
+    expect(await findUserHeader('#10949 · d***@test.com')).toContain('멘토');
+  });
+
   it('멘토는 배지를 달고 멘토 상세까지 셋을 둔다. 키보드로 하위 항목을 골라 이동한다', async () => {
     users = [userInfo(30, '이멘토', 'lee@test.com', true)];
     const onSelect = renderPanel();

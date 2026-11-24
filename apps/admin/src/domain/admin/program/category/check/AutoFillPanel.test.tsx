@@ -33,6 +33,14 @@ vi.mock('@/utils/axios', () => ({
                     challengeType: 'CAREER_START',
                     tagIds: [10],
                   },
+                  // 설명에만 자소서가 있어 기본 체크 해제
+                  {
+                    targetType: 'LIVE',
+                    targetId: 4,
+                    title: '취업 특강',
+                    shortDesc: '자소서 첨삭까지',
+                    tagIds: [],
+                  },
                   {
                     targetType: 'BLOG',
                     targetId: 7,
@@ -115,6 +123,40 @@ describe('자동 태그 채우기', () => {
       programType: 'BLOG',
       programId: 7,
       programCategoryIdList: [99, 11],
+    });
+  });
+
+  it('설명으로만 잡힌 태그는 체크 해제로 나오고 선택 개수에서 빠지며, 체크하면 더해진다', async () => {
+    put.mockClear();
+    render(
+      <QueryClientProvider client={new QueryClient()}>
+        <AutoFillPanel groups={groups} />
+      </QueryClientProvider>,
+    );
+    fireEvent.click(screen.getByRole('button', { name: '자동 태그 채우기' }));
+    expect(await screen.findByText('취업 특강')).toBeTruthy();
+    expect(screen.getByText("설명에 '자소서'")).toBeTruthy();
+    expect(screen.getAllByText('설명 기준')).toHaveLength(1);
+
+    const checkbox = (label: string) =>
+      screen.getByText(label).closest('label')!.querySelector('input')!;
+    // 제목·구분·블로그 태그로 잡힌 항목은 기본 체크
+    expect(checkbox('+ 이력서').checked).toBe(true);
+    const descriptionOnly = screen
+      .getByText("설명에 '자소서'")
+      .closest('label')!
+      .querySelector('input')!;
+    expect(descriptionOnly.checked).toBe(false);
+    expect(screen.getByRole('button', { name: '2개 더하기' })).toBeTruthy();
+
+    fireEvent.click(descriptionOnly);
+    expect(descriptionOnly.checked).toBe(true);
+    fireEvent.click(screen.getByRole('button', { name: '3개 더하기' }));
+    await waitFor(() => expect(put).toHaveBeenCalledTimes(3));
+    expect(put.mock.calls.map((c) => (c as unknown[])[1])).toContainEqual({
+      programType: 'LIVE',
+      programId: 4,
+      programCategoryIdList: [11],
     });
   });
 });

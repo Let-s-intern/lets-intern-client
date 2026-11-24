@@ -1,6 +1,8 @@
 import { useState, type ReactNode } from 'react';
+import { useAllProducts } from '../hooks/useAllProducts';
 import { usePublicCategoryTargets } from '../hooks/usePublicCategoryTargets';
 import {
+  programCategoryTargetTypeLabel,
   useAllLandingsQuery,
   type ProgramCategoryGroup,
   type ProgramCategoryLanding,
@@ -15,6 +17,10 @@ import {
 } from '../utils/tagUtils';
 import AutoFillPanel from './AutoFillPanel';
 import MigrationPanel from './MigrationPanel';
+import {
+  NO_PLACE_REASON_LABEL,
+  productsWithoutPlaceOf,
+} from './noPlaceProducts';
 import { productPlacesOf } from './productPlaces';
 import VisualDialog, { type Visual } from './VisualDialog';
 
@@ -30,11 +36,14 @@ const Problem = ({
   hint,
   items,
   onOpen,
+  extra,
 }: {
   title: string;
   hint: string;
   items: ProblemItem[] | null;
   onOpen: (visual: Visual) => void;
+  /** 제목 아래에 항상 붙는 조절 항목 */
+  extra?: ReactNode;
 }) => (
   <div className="py-3">
     <p className="text-xsmall14 font-semibold text-neutral-0">
@@ -51,6 +60,7 @@ const Problem = ({
             : '없음'}
       </span>
     </p>
+    {extra}
     {items && items.length > 0 && (
       <>
         <p className="text-xxsmall12 text-neutral-40">{hint}</p>
@@ -76,6 +86,77 @@ const Problem = ({
     )}
   </div>
 );
+
+/**
+ * 노출을 켰는데 사이트 어디에도 안 나오는 상품. 보기만 한다.
+ * 서버가 노출 여부를 아직 안 주면(옛 응답) 그리지 않는다
+ */
+const NoPlaceProblem = ({
+  groups,
+  landings,
+  landingsLoading,
+  onOpen,
+}: {
+  groups: ProgramCategoryGroup[];
+  landings: Map<string, ProgramCategoryLanding | null>;
+  landingsLoading: boolean;
+  onOpen: (visual: Visual) => void;
+}) => {
+  const tags = tagsOf(groups);
+  const { data: products } = useAllProducts();
+  const { data: filterTargets } = usePublicCategoryTargets(
+    tags.map(({ tag }) => tag.id),
+    false,
+  );
+  const [includeEnded, setIncludeEnded] = useState(false);
+  if (!products?.some((p) => p.isVisible != null)) return null;
+
+  const items: ProblemItem[] | null =
+    landingsLoading || !filterTargets
+      ? null
+      : productsWithoutPlaceOf({
+          products,
+          places: productPlacesOf(tags, landings, filterTargets),
+          includeEnded,
+          now: new Date(),
+        }).map((row) => {
+          const text = `${row.title} · ${programCategoryTargetTypeLabel[row.targetType]} · ${NO_PLACE_REASON_LABEL[row.reason]}`;
+          return {
+            key: row.key,
+            content: row.editPath ? (
+              <a
+                href={row.editPath}
+                target="_blank"
+                rel="noreferrer"
+                className="underline-offset-2 hover:underline"
+              >
+                {text}
+              </a>
+            ) : (
+              text
+            ),
+          };
+        });
+
+  return (
+    <Problem
+      title="노출인데 사이트에 안 나오는 상품"
+      hint="필터와 분류 페이지 어디에도 없어요. 줄을 누르면 수정 화면이 새 탭으로 열려요. 일괄 자동 태그로 채울 수 있는 상품은 위쪽에서 처리하세요."
+      items={items}
+      onOpen={onOpen}
+      extra={
+        <label className="mt-0.5 flex w-fit items-center gap-1 text-xxsmall12 text-neutral-30">
+          <input
+            type="checkbox"
+            checked={includeEnded}
+            onChange={(e) => setIncludeEnded(e.target.checked)}
+          />
+          종료된 상품도 보기
+        </label>
+      }
+    />
+  );
+};
 
 /** 상품별 노출 위치. 제목으로 찾고, 위치를 누르면 그 화면에서 상품을 짚어 보여 준다 */
 const ProductPlaceList = ({
@@ -264,6 +345,12 @@ const CheckTab = ({ groups }: { groups: ProgramCategoryGroup[] }) => {
           title="상품이 없는 필터 버튼"
           hint="/program 필터에서 눌러도 결과가 비어 있어요."
           items={emptyButtons}
+          onOpen={setVisual}
+        />
+        <NoPlaceProblem
+          groups={groups}
+          landings={bySlug}
+          landingsLoading={isLoading}
           onOpen={setVisual}
         />
         <Problem

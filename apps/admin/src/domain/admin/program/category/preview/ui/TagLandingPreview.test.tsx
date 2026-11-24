@@ -7,7 +7,8 @@ import TagLandingPreview from './TagLandingPreview';
 vi.mock('@/utils/axios', () => ({
   default: {
     get: vi.fn(async (url: string) => {
-      if (url.startsWith('/program-category/landing/')) throw new Error('404');
+      if (url.startsWith('/admin/program-category/landing/'))
+        throw new Error('404');
       if (url === '/program-category/targets')
         return {
           data: {
