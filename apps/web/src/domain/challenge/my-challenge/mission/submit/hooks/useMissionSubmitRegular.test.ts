@@ -144,3 +144,33 @@ describe('useMissionSubmitRegular — 수정 저장 연타', () => {
     expect(result.current.isSubmitting).toBe(false);
   });
 });
+
+describe('useMissionSubmitRegular — 소감 글자수 제출 조건', () => {
+  const withReview = (review: string) =>
+    setup({
+      id: 77,
+      link: 'https://example.com',
+      status: 'PRESENT',
+      submitted: false,
+      comments: null,
+      result: null,
+      review,
+    });
+
+  it('공백 포함 9자면 제출할 수 없다', () => {
+    expect(withReview('가'.repeat(9)).current.canSubmit).toBe(false);
+  });
+
+  it('공백 포함 10자면 제출할 수 있다', () => {
+    expect(withReview('가'.repeat(10)).current.canSubmit).toBe(true);
+    expect(withReview('가나다 라마바 사아자').current.canSubmit).toBe(true);
+  });
+
+  it('500자면 제출할 수 있다', () => {
+    expect(withReview('가'.repeat(500)).current.canSubmit).toBe(true);
+  });
+
+  it('공백만 10자면 제출할 수 없다', () => {
+    expect(withReview(' '.repeat(10)).current.canSubmit).toBe(false);
+  });
+});
