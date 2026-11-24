@@ -2,39 +2,20 @@ import {
   useAdminChallengeMentorListQuery,
   useAdminUserMentorListQuery,
 } from '@/api/mentor/mentor';
-import SelectFormControl from '@/domain/admin/program/ui/form/SelectFormControl';
 import Heading2 from '@/domain/admin/ui/heading/Heading2';
-import {
-  Checkbox,
-  ListItemText,
-  MenuItem,
-  SelectChangeEvent,
-} from '@mui/material';
+import { Autocomplete, Checkbox, TextField } from '@mui/material';
 import { useParams } from 'react-router-dom';
-import { useState } from 'react';
-
-const SelectedMentorNames = ({ selected }: { selected: number[] }) => {
-  const { data } = useAdminUserMentorListQuery();
-
-  return (
-    <>
-      {selected
-        .map((id) => {
-          const target = data?.mentorList.find((mentor) => mentor.id === id);
-          return target?.name;
-        })
-        .join(', ')}
-    </>
-  );
-};
+import { useMemo, useState } from 'react';
 
 const useMentorSelect = () => {
   const params = useParams<{ challengeId: string }>();
   const { challengeId } = params;
   const { data: challengeData } = useAdminChallengeMentorListQuery(challengeId);
 
-  const defaultMentorIds =
-    challengeData?.mentorList.map((item) => item.userId) ?? [];
+  const defaultMentorIds = useMemo(
+    () => challengeData?.mentorList.map((item) => item.userId) ?? [],
+    [challengeData],
+  );
 
   // 사용자가 고르기 전에는 서버 목록을 그대로 보여 주고, 고른 뒤에는 그 값을 유지한다
   const [pickedMentorIds, setSelectedMentorIds] = useState<number[] | null>(
@@ -57,8 +38,19 @@ function ChallengeMentorRegistrationSection({ onChange }: Props) {
   const { data: userData } = useAdminUserMentorListQuery();
   const { selectedMentorIds, setSelectedMentorIds } = useMentorSelect();
 
-  const handleChange = (e: SelectChangeEvent<number[]>) => {
-    const ids = e.target.value as number[];
+  const mentorList = useMemo(() => userData?.mentorList ?? [], [userData]);
+  // Autocomplete 는 value 참조가 바뀔 때마다 입력창을 비우므로 참조를 유지한다
+  const selectedMentors = useMemo(
+    () => mentorList.filter((mentor) => selectedMentorIds.includes(mentor.id)),
+    [mentorList, selectedMentorIds],
+  );
+
+  const handleChange = (_: unknown, mentors: typeof mentorList) => {
+    // 전체 목록에 없는 기존 멘토는 화면에는 없지만 선택에서 빠지지 않게 유지한다
+    const hiddenIds = selectedMentorIds.filter(
+      (id) => !mentorList.some((mentor) => mentor.id === id),
+    );
+    const ids = [...hiddenIds, ...mentors.map((mentor) => mentor.id)];
     setSelectedMentorIds(ids);
     if (onChange) onChange(ids);
   };
@@ -71,24 +63,31 @@ function ChallengeMentorRegistrationSection({ onChange }: Props) {
           *챌린지 생성 후 멘토 등록이 가능합니다.
         </span>
       )}
-      <SelectFormControl<number[]>
-        labelId="multiple-mentor-checkbox-label"
-        label="멘토 목록"
+      <Autocomplete
         multiple
-        value={selectedMentorIds}
-        renderValue={(selected) => <SelectedMentorNames selected={selected} />}
-        onChange={handleChange}
+        size="small"
+        fullWidth
+        disableCloseOnSelect
         disabled={!challengeId}
-      >
-        {userData?.mentorList.map((item) => (
-          <MenuItem key={item.id} value={item.id}>
-            <Checkbox
-              checked={selectedMentorIds.some((id) => id === item.id)}
-            />
-            <ListItemText primary={`${item.id} ${item.name}`} />
-          </MenuItem>
-        ))}
-      </SelectFormControl>
+        options={mentorList}
+        value={selectedMentors}
+        getOptionLabel={(mentor) => `${mentor.id} ${mentor.name}`}
+        isOptionEqualToValue={(option, value) => option.id === value.id}
+        onChange={handleChange}
+        noOptionsText="검색 결과가 없습니다"
+        renderOption={(props, mentor, { selected }) => {
+          const { key, ...optionProps } = props;
+          return (
+            <li key={key} {...optionProps}>
+              <Checkbox checked={selected} sx={{ mr: 1 }} />
+              {`${mentor.id} ${mentor.name}`}
+            </li>
+          );
+        }}
+        renderInput={(params) => (
+          <TextField {...params} label="멘토 목록 (이름 또는 id 검색)" />
+        )}
+      />
     </section>
   );
 }
