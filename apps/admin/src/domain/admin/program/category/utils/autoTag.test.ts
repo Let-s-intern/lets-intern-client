@@ -104,6 +104,100 @@ describe('suggestTags', () => {
   });
 });
 
+describe('suggestTags 설명', () => {
+  it('설명에만 있으면 설명 이유로 추천하고 설명으로만 잡혔다고 표시한다', () => {
+    expect(
+      suggestTags(
+        { title: '취업 준비 클래스', description: '자소서 첨삭까지 한 번에' },
+        rules,
+      ),
+    ).toEqual([
+      {
+        tagId: 2,
+        tagTitle: '자기소개서',
+        reasons: ["설명에 '자소서'"],
+        descriptionOnly: true,
+      },
+    ]);
+  });
+
+  it('제목과 설명 둘 다 잡히면 이유가 둘이고 설명으로만은 아니다', () => {
+    const [suggestion] = suggestTags(
+      { title: '자소서 챌린지', description: '자소서 완성' },
+      rules,
+    );
+    expect(suggestion.reasons).toEqual(["제목에 '자소서'", "설명에 '자소서'"]);
+    expect(suggestion.descriptionOnly).toBeFalsy();
+  });
+
+  it('설명으로 잡힌 태그에 챌린지 구분 이유가 있으면 설명으로만은 아니다', () => {
+    const [suggestion] = suggestTags(
+      {
+        title: '취업 챌린지',
+        description: '이력서를 만들어요',
+        challengeType: 'CAREER_START',
+      },
+      rules,
+    );
+    expect(suggestion.reasons).toEqual([
+      "설명에 '이력서'",
+      '챌린지 구분: 이력서',
+    ]);
+    expect(suggestion.descriptionOnly).toBeFalsy();
+  });
+
+  it('블로그 태그·멘토링 분류 이유가 있어도 설명으로만은 아니다', () => {
+    expect(
+      suggestTags(
+        {
+          title: '글',
+          description: '면접 후기',
+          blogTagNames: ['면접'],
+        },
+        rules,
+      )[0].descriptionOnly,
+    ).toBeFalsy();
+    expect(
+      suggestTags(
+        {
+          title: '멘토링',
+          description: '면접 연습',
+          mentoringCategories: ['INTERVIEW'],
+        },
+        rules,
+      )[0].descriptionOnly,
+    ).toBeFalsy();
+  });
+
+  it('설명에는 기수·버전 표기를 떼지 않는다', () => {
+    expect(
+      titles({ title: '클래스', description: '[대기업 Ver.] 안내' }),
+    ).toEqual(['대기업']);
+  });
+
+  it('설명에도 영문 키워드 경계 규칙이 적용된다', () => {
+    expect(titles({ title: '클래스', description: 'HRD 담당자용' })).toEqual(
+      [],
+    );
+    expect(titles({ title: '클래스', description: 'HR 직무 소개' })).toEqual([
+      'HR',
+    ]);
+  });
+
+  it('설명이 비었거나 null 이면 제목만 본 결과와 같다', () => {
+    const base = suggestTags({ title: '2주 안에 자소서 끝내기' }, rules);
+    expect(
+      suggestTags(
+        { title: '2주 안에 자소서 끝내기', description: null },
+        rules,
+      ),
+    ).toEqual(base);
+    expect(
+      suggestTags({ title: '2주 안에 자소서 끝내기', description: '' }, rules),
+    ).toEqual(base);
+  });
+});
+
 describe('planAutoFill', () => {
   const products = [
     { key: 'a', input: { title: '이력서 챌린지 3기' } },

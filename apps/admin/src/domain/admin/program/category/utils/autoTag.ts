@@ -25,6 +25,8 @@ export interface TagSuggestion {
   tagId: number;
   tagTitle: string;
   reasons: string[];
+  /** 설명에서만 잡혔다. 제목·구분·멘토링 분류·블로그 태그 이유가 없을 때만 참이고, 아니면 키 자체가 없다 */
+  descriptionOnly?: boolean;
 }
 
 /** 챌린지 구분 → 태그 이름 */
@@ -92,17 +94,22 @@ export const suggestTags = (
   rules: AutoTagRule[],
 ): TagSuggestion[] => {
   const title = cleanTitle(input.title ?? '');
+  const description = input.description ?? '';
   const reasonsByTag = new Map<number, string[]>();
-  const add = (tagId: number, reason: string) => {
+  const nonDescriptionTagIds = new Set<number>();
+  const add = (tagId: number, reason: string, fromDescription = false) => {
     const list = reasonsByTag.get(tagId) ?? [];
     if (!list.includes(reason)) list.push(reason);
     reasonsByTag.set(tagId, list);
+    if (!fromDescription) nonDescriptionTagIds.add(tagId);
   };
   const byTitle = (name: string) => rules.filter((r) => r.title === name);
 
   rules.forEach((rule) => {
     rule.keywords.forEach((k) => {
       if (containsKeyword(title, k)) add(rule.id, `제목에 '${k.trim()}'`);
+      if (containsKeyword(description, k))
+        add(rule.id, `설명에 '${k.trim()}'`, true);
       (input.blogTagNames ?? []).forEach((tagName) => {
         if (containsKeyword(tagName, k))
           add(rule.id, `블로그 태그 '${tagName}'`);
@@ -132,6 +139,7 @@ export const suggestTags = (
       tagId: r.id,
       tagTitle: r.title,
       reasons: reasonsByTag.get(r.id)!,
+      ...(nonDescriptionTagIds.has(r.id) ? {} : { descriptionOnly: true }),
     }));
 };
 
