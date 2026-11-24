@@ -65,6 +65,11 @@ const TableRow = ({
   // 취소(환불)한 신청은 줄 색으로 구분하고 수정을 막는다.
   const isCanceled = attendanceItem.attendance.isCanceled ?? false;
 
+  const optionLabels =
+    attendanceItem.optionTitles.length > 0
+      ? attendanceItem.optionTitles
+      : attendanceItem.optionCodes;
+
   return (
     <div
       className={clsx('flex w-full', {
@@ -119,16 +124,14 @@ const TableRow = ({
         {attendanceItem.attendance.email}
       </div>
 
-      {/* 옵션 코드 */}
+      {/* 옵션명 (구버전 응답이면 옵션 코드로 대체) */}
       <div
         className={clsx(
           'my-auto overflow-hidden text-ellipsis border-r border-[#D9D9D9] py-3 text-center text-sm',
           cellWidthList[4],
         )}
       >
-        {attendanceItem.optionCodes.length > 0
-          ? attendanceItem.optionCodes.join(', ')
-          : '-'}
+        {optionLabels.length > 0 ? optionLabels.join(', ') : '-'}
       </div>
 
       {/* 제출현황 */}

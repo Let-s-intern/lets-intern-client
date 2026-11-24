@@ -1094,6 +1094,8 @@ export const attendances = z
           isCanceled: z.boolean().nullable().optional(),
         }),
         optionCodes: z.array(z.string()),
+        /** 서버가 아직 내려주지 않는 구버전 응답이면 빈 배열 */
+        optionTitles: z.array(z.string()).optional().default([]),
       }),
     ),
   })
@@ -1101,8 +1103,9 @@ export const attendances = z
     return {
       ...data,
       attendanceList: data.attendanceList.map(
-        ({ attendance, optionCodes }) => ({
+        ({ attendance, optionCodes, optionTitles }) => ({
           optionCodes,
+          optionTitles,
           attendance: {
             ...attendance,
             createDate: attendance.createDate
