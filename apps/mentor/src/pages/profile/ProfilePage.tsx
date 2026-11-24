@@ -287,7 +287,10 @@ export default function ProfilePage() {
              * 둬서 DB 의 NULL 이 ''로 바뀌지 않게 한다.
              */
             introduction: introduction || (savedIntroduction ? '' : null),
-            profileImgUrl: formData.profileImgUrl || null,
+            /* 프로필 이미지도 한줄소개와 같다. 저장돼 있던 이미지를 지웠으면 빈 문자열, 원래 없었으면 null. */
+            profileImgUrl:
+              formData.profileImgUrl ||
+              (savedFormData.profileImgUrl ? '' : null),
             description: detailContent || null,
           }).then(
             () => ({ kind: 'ok' }) as const,
@@ -373,6 +376,7 @@ export default function ProfilePage() {
     formData,
     introduction,
     savedIntroduction,
+    savedFormData.profileImgUrl,
     detailContent,
     hashTagIds,
     patchUser,
