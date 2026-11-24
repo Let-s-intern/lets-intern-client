@@ -36,8 +36,11 @@ const useMentorSelect = () => {
   const defaultMentorIds =
     challengeData?.mentorList.map((item) => item.userId) ?? [];
 
-  const [selectedMentorIds, setSelectedMentorIds] =
-    useState<number[]>(defaultMentorIds);
+  // 사용자가 고르기 전에는 서버 목록을 그대로 보여 주고, 고른 뒤에는 그 값을 유지한다
+  const [pickedMentorIds, setSelectedMentorIds] = useState<number[] | null>(
+    null,
+  );
+  const selectedMentorIds = pickedMentorIds ?? defaultMentorIds;
 
   return {
     selectedMentorIds,
