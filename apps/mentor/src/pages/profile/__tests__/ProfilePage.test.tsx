@@ -323,6 +323,58 @@ describe('ProfilePage 한줄소개', () => {
 });
 
 /*
+ * 프로필 이미지 삭제 회귀 테스트.
+ *
+ * 삭제 버튼은 profileImgUrl 을 ''로 바꾸는데, 저장이 그걸 null 로 바꿔 보내서 서버가 "바꾸지
+ * 않음"으로 받았다. 삭제가 저장되지 않던 문제다. 한줄소개와 같은 방식으로 맞춘다.
+ */
+describe('ProfilePage 프로필 이미지', () => {
+  it('저장돼 있던 이미지를 삭제하고 저장하면 빈 문자열을 보낸다', async () => {
+    USER = {
+      ...BASE_USER,
+      profileImgUrl: 'https://cdn.example.com/profile.png',
+    } as unknown as typeof BASE_USER;
+    renderPage();
+
+    fireEvent.click(screen.getByRole('button', { name: '삭제' }));
+    fireEvent.click(saveButton());
+
+    await waitFor(() => expect(patchUserMock).toHaveBeenCalledTimes(1));
+    expect(patchUserMock.mock.calls[0][0].profileImgUrl).toBe('');
+  });
+
+  it('원래 이미지가 없으면 다른 칸만 고쳐도 null 로 보낸다', async () => {
+    renderPage();
+
+    fireEvent.change(screen.getByDisplayValue('쥬디'), {
+      target: { value: '새 활동명' },
+    });
+    fireEvent.click(saveButton());
+
+    await waitFor(() => expect(patchUserMock).toHaveBeenCalledTimes(1));
+    expect(patchUserMock.mock.calls[0][0].profileImgUrl).toBeNull();
+  });
+
+  it('이미지를 그대로 두면 저장된 주소를 보낸다', async () => {
+    USER = {
+      ...BASE_USER,
+      profileImgUrl: 'https://cdn.example.com/profile.png',
+    } as unknown as typeof BASE_USER;
+    renderPage();
+
+    fireEvent.change(screen.getByDisplayValue('쥬디'), {
+      target: { value: '새 활동명' },
+    });
+    fireEvent.click(saveButton());
+
+    await waitFor(() => expect(patchUserMock).toHaveBeenCalledTimes(1));
+    expect(patchUserMock.mock.calls[0][0].profileImgUrl).toBe(
+      'https://cdn.example.com/profile.png',
+    );
+  });
+});
+
+/*
   회귀 테스트 — 저장한 상세페이지 본문이 새로고침 후에도 보여야 한다.
 
   LC-3266 에서 에디터 초기값을 페이지 상태(savedDetailContent)로 넘기게 바꿨는데,
