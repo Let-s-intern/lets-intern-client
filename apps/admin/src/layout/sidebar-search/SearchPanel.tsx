@@ -143,7 +143,7 @@ export default function SearchPanel({
                 </span>
               ) : null}
               <span className="text-[13px] text-[#9AA4B2]">
-                {user.maskedEmail}
+                #{user.id} · {user.maskedEmail}
               </span>
             </div>
           ),
