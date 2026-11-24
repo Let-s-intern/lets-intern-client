@@ -23,7 +23,7 @@ type ListQueryData = Record<string, unknown>;
  * 공지, 가이드 순서를 저장한다. 놓은 순서를 목록 캐시에 먼저 반영하고(낙관적 갱신),
  * PUT 이 실패하면 캐시를 원래대로 돌리고 알림을 띄운다. 성공하면 목록을 다시 불러온다.
  */
-export const useReorderChallengeItems = <T extends { id: number }>({
+export const useReorderChallengeItems = <T extends { id?: number }>({
   target,
   challengeId,
   queryKey,

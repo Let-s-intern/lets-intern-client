@@ -11,7 +11,6 @@ import {
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import clsx from 'clsx';
 import { useState } from 'react';
 import { FaEdit } from 'react-icons/fa';
 import { FaTrashCan } from 'react-icons/fa6';
@@ -24,6 +23,11 @@ import {
 import axios from '@/utils/axios';
 import RoundedBox from '../box/RoundedBox';
 import SectionHeading from '../heading/SectionHeading';
+import { useReorderChallengeItems } from '../hooks/useReorderChallengeItems';
+import SortableList from '../ui/SortableList';
+
+// 순서를 바꾸려면 전체 목록이 필요하다. 서버 Pageable 기본 최대(2000) 안쪽의 넉넉한 값
+const NOTICE_LIST_SIZE = 1000;
 
 const NoticeSection = ({ className }: { className?: string }) => {
   const { currentChallenge } = useAdminCurrentChallenge();
@@ -43,7 +47,6 @@ const NoticeSection = ({ className }: { className?: string }) => {
     mode: 'create',
   });
 
-  const [pageNum, setPageNum] = useState<number>(1);
   const [editingNotice, setCreatingNotice] = useState<CreateChallengeNoticeReq>(
     {
       title: '',
@@ -52,18 +55,20 @@ const NoticeSection = ({ className }: { className?: string }) => {
     },
   );
 
+  const noticesQueryKey = [
+    'challenge',
+    currentChallenge?.id,
+    'notices',
+    { page: 1, size: NOTICE_LIST_SIZE },
+  ];
+
   const { data, refetch } = useQuery({
     enabled: Boolean(currentChallenge?.id),
-    queryKey: [
-      'challenge',
-      currentChallenge?.id,
-      'notices',
-      { page: pageNum, size: 5 },
-    ],
+    queryKey: noticesQueryKey,
     queryFn: async () => {
       const res = await axios.get(
         `/challenge/${currentChallenge?.id}/notices`,
-        { params: { page: pageNum, size: 5 } },
+        { params: { page: 1, size: NOTICE_LIST_SIZE } },
       );
       return challengeNotices.parse(res.data.data);
     },
@@ -71,7 +76,13 @@ const NoticeSection = ({ className }: { className?: string }) => {
 
   const notices = data?.challengeNoticeList ?? [];
 
-  const pageInfo = data?.pageInfo;
+  const reorderNoticesMutation = useReorderChallengeItems<
+    (typeof notices)[number]
+  >({
+    target: 'notice',
+    challengeId: currentChallenge?.id,
+    queryKey: noticesQueryKey,
+  });
 
   const createNoticeMutation = useMutation({
     mutationFn: (values: CreateChallengeNoticeReq) => {
@@ -122,9 +133,12 @@ const NoticeSection = ({ className }: { className?: string }) => {
               새 공지 등록
             </Button>
           </div>
-          <ul className="flex flex-col gap-2">
-            {notices.map((notice) => (
-              <li key={notice.id} className="flex items-center">
+          <SortableList
+            items={notices}
+            disabled={reorderNoticesMutation.isPending}
+            onReorder={reorderNoticesMutation.mutate}
+            renderItem={(notice) => (
+              <>
                 <Link to={notice.link ?? ''} className="flex-1">
                   {notice.title}
                 </Link>
@@ -159,31 +173,9 @@ const NoticeSection = ({ className }: { className?: string }) => {
                 <span>
                   {notice.createDate?.format('YYYY-MM-DD') ?? '날짜 없음'}
                 </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="flex items-center justify-center">
-          <div className="mt-10 flex items-center gap-3 justify-self-center rounded-full border px-3 py-1 text-sm">
-            {pageInfo &&
-              Array.from(
-                { length: pageInfo.totalPages },
-                (_, index) => index + 1,
-              ).map((pageNum) => (
-                <span
-                  key={pageNum}
-                  className={clsx('cursor-pointer', {
-                    'font-medium': pageNum === pageInfo.pageNum,
-                  })}
-                  onClick={() => {
-                    setPageNum(pageNum);
-                  }}
-                >
-                  {pageNum}
-                </span>
-              ))}
-          </div>
+              </>
+            )}
+          />
         </div>
       </RoundedBox>
 
