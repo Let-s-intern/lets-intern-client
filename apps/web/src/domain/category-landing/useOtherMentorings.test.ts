@@ -21,4 +21,10 @@ describe('랜딩 멘토링 섹션', () => {
       ),
     ).toEqual([3, 1, 2, 4]);
   });
+
+  it('열린 멘토링 목록에 없는 연결 멘토링(비노출)은 뺀다', () => {
+    expect(
+      appendOtherMentorings([m(12), m(3)], [m(2), m(3)]).map((t) => t.targetId),
+    ).toEqual([3, 2]);
+  });
 });
