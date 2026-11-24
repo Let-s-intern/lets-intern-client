@@ -9,6 +9,7 @@ import ChallengeOptionSection from '@/domain/admin/program/challenge/ChallengeOp
 import ChallengeDescriptionTabs from '@/domain/admin/program/challenge/ChallengeDescriptionTabs';
 import ChallengeEditorActionBar from '@/domain/admin/program/challenge/ChallengeEditorActionBar';
 import { useLeaveGuard } from '@/domain/admin/program/challenge/hooks/useLeaveGuard';
+import { getDefaultScheduleInput } from '@/domain/admin/program/challenge/utils/scheduleDefaultTime';
 import ChallengeVersionSection, {
   ChallengeVersionDraft,
 } from '@/domain/admin/program/challenge/ChallengeVersionSection';
@@ -67,8 +68,7 @@ const initialInput: Omit<CreateChallengeReq, 'desc'> = {
   chatLink: '',
   chatPassword: '',
   criticalNotice: '',
-  deadline: dayjs().format('YYYY-MM-DDTHH:mm'),
-  endDate: dayjs().format('YYYY-MM-DDTHH:mm'),
+  ...getDefaultScheduleInput(),
   faqInfo: [],
   participationCount: 0,
   programTypeInfo: [],
@@ -89,7 +89,6 @@ const initialInput: Omit<CreateChallengeReq, 'desc'> = {
     },
   ],
   shortDesc: '',
-  startDate: dayjs().format('YYYY-MM-DDTHH:mm'),
   thumbnail: '',
   desktopThumbnail: '',
   title: '',
