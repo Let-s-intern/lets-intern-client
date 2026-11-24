@@ -21,7 +21,7 @@ import type { LiveMentorSort } from '@/api/live-mentoring/liveMentoring';
  *
  * 출시할 때 이 값을 `true` 로 바꾸면 된다.
  */
-export const SHOW_LIVE_MENTORING_NAV = false;
+export const SHOW_LIVE_MENTORING_NAV = true;
 
 /**
  * 메인 헤더(GNB)에만 1:1 LIVE 멘토링과 렛츠커리어 멘토를 먼저 연다.
