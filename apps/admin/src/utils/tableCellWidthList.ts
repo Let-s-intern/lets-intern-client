@@ -12,12 +12,12 @@
 //  1  제출일자     11%  (154) ─ "YYYY-MM-DD HH:mm" 16자
 //  2  이름          6%  (84)  ─ 한글 3~4자
 //  3  메일         13%  (182) ─ ellipsis 전제, 길면 잘림
-//  4  옵션 코드     8%  (112) ─ 짧은 코드 1~2개
+//  4  옵션명       10%  (140) ─ 옵션명 1~2개, 길면 줄바꿈
 //  5  제출현황(드롭)  7%  (98)  ─ "확인중 ▼" 버튼
 //  6  미션(링크)    4%  (56)  ─ "확인" 작은 링크
 //  7  확인여부(드롭)  7%  (98)  ─ "확인 완료 ▼" 버튼
 //  8  코멘트       14%  (196) ─ 자유 텍스트
-//  9  미션 소감    21% (294) ─ 가장 긴 자유 텍스트
+//  9  미션 소감    19% (266) ─ 가장 긴 자유 텍스트
 // 10  노출 여부     5%  (70)  ─ MUI Switch 58px + 여유
 //                  합계 100%
 export const challengeSubmitDetailCellWidthList = [
@@ -25,11 +25,11 @@ export const challengeSubmitDetailCellWidthList = [
   'w-[11%] shrink-0',
   'w-[6%] shrink-0',
   'w-[13%] shrink-0',
-  'w-[8%] shrink-0',
+  'w-[10%] shrink-0',
   'w-[7%] shrink-0',
   'w-[4%] shrink-0',
   'w-[7%] shrink-0',
   'w-[14%] shrink-0',
-  'w-[21%] shrink-0',
+  'w-[19%] shrink-0',
   'w-[5%] shrink-0',
 ];

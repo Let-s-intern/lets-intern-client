@@ -76,7 +76,7 @@ const TableHead = ({
           cellWidthList[4],
         )}
       >
-        옵션 코드
+        옵션명
       </div>
       <StatusFilter
         cellWidthListIndex={5}
