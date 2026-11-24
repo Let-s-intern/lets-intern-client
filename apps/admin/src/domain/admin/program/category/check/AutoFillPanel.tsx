@@ -16,7 +16,7 @@ import {
   putProgramCategoriesOfTarget,
   type ProgramCategoryGroup,
 } from '../programCategoryApi';
-import { planAutoFill } from '../utils/autoTag';
+import { planAutoFill, type TagSuggestion } from '../utils/autoTag';
 import { autoTagRulesOf } from '../utils/tagUtils';
 
 const keyOf = (p: { targetType?: string; targetId?: number }) =>
@@ -41,21 +41,21 @@ const AutoFillDialog = ({
       data ? planAutoFill(data, autoTagRulesOf(groups), (p) => p.tagIds) : [],
     [data, groups],
   );
-  // 기본은 모두 고름. 고른 것을 "상품키:태그id" 로 둔다
-  const [unchecked, setUnchecked] = useState<Set<string>>(new Set());
+  // 기본은 모두 고르되 설명으로만 잡힌 태그는 고르지 않는다. 사용자가 기본값을 뒤집은 것을 "상품키:태그id" 로 둔다
+  const [flipped, setFlipped] = useState<Set<string>>(new Set());
   const [applying, setApplying] = useState<{
     done: number;
     total: number;
   } | null>(null);
   const pickKey = (p: AutoTagProduct, tagId: number) => `${keyOf(p)}:${tagId}`;
+  const isChecked = (p: AutoTagProduct, a: TagSuggestion) =>
+    !a.descriptionOnly !== flipped.has(pickKey(p, a.tagId));
   const selectedCount = plan.reduce(
-    (n, r) =>
-      n +
-      r.adds.filter((a) => !unchecked.has(pickKey(r.product, a.tagId))).length,
+    (n, r) => n + r.adds.filter((a) => isChecked(r.product, a)).length,
     0,
   );
   const toggle = (k: string) =>
-    setUnchecked((prev) => {
+    setFlipped((prev) => {
       const next = new Set(prev);
       if (next.has(k)) next.delete(k);
       else next.add(k);
@@ -67,7 +67,7 @@ const AutoFillDialog = ({
       .map((r) => ({
         product: r.product,
         tagIds: r.adds
-          .filter((a) => !unchecked.has(pickKey(r.product, a.tagId)))
+          .filter((a) => isChecked(r.product, a))
           .map((a) => a.tagId),
       }))
       .filter((r) => r.tagIds.length > 0);
@@ -112,7 +112,7 @@ const AutoFillDialog = ({
         <p className="text-xxsmall12 text-neutral-40">
           태그 키워드·챌린지 구분·블로그 해시태그·멘토링 분류로 더할 태그만
           골랐어요. 이미 있는 태그는 빼고 보여 주고, 있는 태그를 지우지는
-          않아요.
+          않아요. 설명으로만 찾은 태그는 기본으로 체크하지 않아요.
         </p>
         {isLoading ? (
           <p className="text-xsmall14 text-neutral-40">상품을 불러오는 중…</p>
@@ -138,13 +138,18 @@ const AutoFillDialog = ({
                       >
                         <Checkbox
                           size="small"
-                          checked={!unchecked.has(k)}
+                          checked={isChecked(product, a)}
                           onChange={() => toggle(k)}
                         />
                         <span className="font-semibold">+ {a.tagTitle}</span>
                         <span className="text-xxsmall12 text-neutral-40">
                           {a.reasons.join(' · ')}
                         </span>
+                        {a.descriptionOnly && (
+                          <span className="rounded-xs bg-neutral-95 px-1.5 text-xxsmall12 text-neutral-30">
+                            설명 기준
+                          </span>
+                        )}
                       </label>
                     );
                   })}
