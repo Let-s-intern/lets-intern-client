@@ -557,12 +557,12 @@ export type ProgramCategoryLanding = z.infer<typeof landingSchema>;
 
 const landingQueryKey = 'adminProgramCategoryLanding';
 
-/** 공개 분류 랜딩 조회 옵션. 섹션이 없으면 서버가 404 를 주므로 null 로 둔다 */
+/** 어드민 분류 랜딩 조회 옵션. 숨긴 분류도 준다. 섹션이 없으면 서버가 404 를 주므로 null 로 둔다 */
 export const landingQueryOptions = (slug: string | null | undefined) => ({
   queryKey: [landingQueryKey, slug],
   queryFn: async (): Promise<ProgramCategoryLanding | null> => {
     try {
-      const res = await axios.get(`/program-category/landing/${slug}`);
+      const res = await axios.get(`/admin/program-category/landing/${slug}`);
       return landingSchema.parse(res.data.data);
     } catch {
       return null;
@@ -572,7 +572,7 @@ export const landingQueryOptions = (slug: string | null | undefined) => ({
   refetchOnWindowFocus: false,
 });
 
-/** GET 공개 분류 랜딩 /api/v1/program-category/landing/{slug}. 사이트와 같은 결과다 */
+/** GET 어드민 분류 랜딩 /api/v1/admin/program-category/landing/{slug}. 공개 랜딩과 같은 모양이고 숨긴 분류도 준다 */
 export const useProgramCategoryLandingQuery = (
   slug: string | null | undefined,
 ) => useQuery(landingQueryOptions(slug));

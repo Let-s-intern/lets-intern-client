@@ -44,8 +44,18 @@ const landing = {
 vi.mock('@/utils/axios', () => ({
   default: {
     get: vi.fn(async (url: string) => {
-      if (url === '/program-category/landing/resume')
+      if (url === '/admin/program-category/landing/resume')
         return { data: { data: landing } };
+      if (url === '/admin/program-category/landing/secret')
+        return {
+          data: {
+            data: {
+              ...landing,
+              page: { ...landing.page, id: 11, title: '숨긴', slug: 'secret' },
+              sectionList: [landing.sectionList[0]],
+            },
+          },
+        };
       if (url === '/program-category/targets')
         return {
           data: {
@@ -90,10 +100,10 @@ const groups: ProgramCategoryGroup[] = [
   },
 ];
 
-const renderTab = () =>
+const renderTab = (tabGroups: ProgramCategoryGroup[] = groups) =>
   render(
     <QueryClientProvider client={new QueryClient()}>
-      <CheckTab groups={groups} />
+      <CheckTab groups={tabGroups} />
     </QueryClientProvider>,
   );
 
@@ -123,5 +133,35 @@ describe('점검 탭', () => {
     });
     expect(marked.closest('[data-highlight="section"]')).not.toBeNull();
     expect(within(dialog).queryByText('이 상품')).toBeNull();
+  });
+
+  it('어드민 조회로 랜딩이 오는 숨긴 분류는 섹션이 없는 분류 페이지로 내지 않고, 404 인 분류만 낸다', async () => {
+    const tag = (
+      id: number,
+      title: string,
+      slug: string,
+      isVisible: boolean,
+    ) => ({
+      id,
+      title,
+      sortOrder: id,
+      isVisible,
+      programCount: 1,
+      slug,
+    });
+    renderTab([
+      {
+        ...groups[0],
+        categoryList: [
+          tag(10, '이력서', 'resume', true),
+          tag(11, '숨긴', 'secret', false),
+          tag(12, '빈', 'empty', true),
+        ],
+      },
+    ]);
+
+    expect(await screen.findByText('빈 · /category/empty')).toBeTruthy();
+    expect(screen.queryByText('숨긴 · /category/secret')).toBeNull();
+    expect(screen.queryByText('이력서 · /category/resume')).toBeNull();
   });
 });
