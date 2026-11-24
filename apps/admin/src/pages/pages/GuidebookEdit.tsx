@@ -107,6 +107,7 @@ const GuidebookEdit: React.FC = () => {
         <ProgramCategoryField
           targetType="GUIDEBOOK"
           targetId={Number(guidebookIdString)}
+          autoTagInput={{ description: input.shortDesc }}
         />
       </div>
 

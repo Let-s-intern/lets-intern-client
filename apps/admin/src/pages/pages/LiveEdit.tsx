@@ -205,6 +205,7 @@ const LiveEdit: React.FC = () => {
         <ProgramCategoryField
           targetType="LIVE"
           targetId={Number(liveIdString)}
+          autoTagInput={{ description: input.shortDesc ?? live.shortDesc }}
         />
       </section>
 

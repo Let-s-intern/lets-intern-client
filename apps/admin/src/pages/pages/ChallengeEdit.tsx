@@ -519,6 +519,7 @@ const ChallengeEdit: React.FC = () => {
             autoTagInput={{
               title: input.title ?? challenge?.title ?? '',
               challengeType: input.challengeType ?? challenge?.challengeType,
+              description: input.shortDesc ?? challenge?.shortDesc,
             }}
           />
         </div>

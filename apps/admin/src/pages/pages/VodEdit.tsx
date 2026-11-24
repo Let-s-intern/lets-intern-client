@@ -111,7 +111,11 @@ const VodEdit: React.FC = () => {
       </div>
 
       <div className="mb-6">
-        <ProgramCategoryField targetType="VOD" targetId={Number(vodIdString)} />
+        <ProgramCategoryField
+          targetType="VOD"
+          targetId={Number(vodIdString)}
+          autoTagInput={{ description: input.shortDesc }}
+        />
       </div>
 
       <div className="mb-6">

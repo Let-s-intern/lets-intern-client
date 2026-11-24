@@ -31,6 +31,7 @@ vi.mock('./programCategoryApi', () => ({
             sortOrder: 0,
             isVisible: true,
             programCount: 0,
+            autoKeywords: ['마케팅'],
           },
           {
             id: 11,
@@ -96,5 +97,19 @@ describe('ProgramCategoryField 연타', () => {
 
     await finishSave();
     expect(calls).toHaveLength(2);
+  });
+
+  it('수정 화면이 넘긴 한 줄 설명으로 추천 태그를 낸다', () => {
+    render(
+      <ProgramCategoryField
+        targetType="LIVE"
+        targetId={1}
+        autoTagInput={{ title: '취업 특강', description: '마케팅 직무 소개' }}
+      />,
+    );
+    fireEvent.click(screen.getByRole('button', { name: '태그 자동 추천' }));
+
+    expect(screen.getByRole('button', { name: /\+ 마케팅/ })).toBeTruthy();
+    expect(screen.getByText("설명에 '마케팅'")).toBeTruthy();
   });
 });
