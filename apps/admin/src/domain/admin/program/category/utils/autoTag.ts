@@ -66,6 +66,15 @@ export const MENTORING_CATEGORY_TAGS: Record<string, string[]> = {
 };
 
 /**
+ * 내장 축약어 사전. 키는 태그 이름(정확히 같을 때만), 값은 그 태그의 축약어.
+ * 태그의 자동 키워드와 합쳐 찾는다. 서버 기본 키워드·저장된 autoKeywords 와는 따로 둔다
+ */
+export const TAG_ALIASES: Record<string, string[]> = {
+  포트폴리오: ['포폴'],
+  자기소개서: ['자소서'],
+};
+
+/**
  * 기수·버전 표기를 뗀 제목. "[인턴 Ver.] 포트폴리오 챌린지 58기" → "포트폴리오 챌린지".
  * "Ver." 안의 말이 키워드로 잡히지 않게 한다
  */
@@ -106,7 +115,14 @@ export const suggestTags = (
   const byTitle = (name: string) => rules.filter((r) => r.title === name);
 
   rules.forEach((rule) => {
-    rule.keywords.forEach((k) => {
+    const keywords = [
+      ...new Set(
+        [...rule.keywords, ...(TAG_ALIASES[rule.title] ?? [])].map((k) =>
+          k.trim(),
+        ),
+      ),
+    ];
+    keywords.forEach((k) => {
       if (containsKeyword(title, k)) add(rule.id, `제목에 '${k.trim()}'`);
       if (containsKeyword(description, k))
         add(rule.id, `설명에 '${k.trim()}'`, true);

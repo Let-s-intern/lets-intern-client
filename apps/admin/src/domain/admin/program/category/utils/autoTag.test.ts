@@ -198,6 +198,68 @@ describe('suggestTags 설명', () => {
   });
 });
 
+describe('suggestTags 축약어 사전', () => {
+  const aliasRules: AutoTagRule[] = [
+    { id: 3, title: '포트폴리오', keywords: ['포트폴리오'] },
+    { id: 2, title: '자기소개서', keywords: ['자기소개서', '자소서'] },
+    { id: 20, title: '포트폴리오2', keywords: ['포트폴리오2'] },
+  ];
+
+  it('제목에 축약어가 있으면 태그를 추천하고 이유를 찾은 말로 낸다', () => {
+    expect(suggestTags({ title: '포폴 완성 클래스' }, aliasRules)).toEqual([
+      { tagId: 3, tagTitle: '포트폴리오', reasons: ["제목에 '포폴'"] },
+    ]);
+  });
+
+  it('태그 이름이 정확히 같을 때만 적용한다', () => {
+    const result = suggestTags({ title: '포폴 클래스' }, aliasRules);
+    expect(result.map((s) => s.tagId)).toEqual([3]);
+    expect(
+      suggestTags({ title: '포폴 클래스' }, [
+        { id: 20, title: '포트폴리오2', keywords: [] },
+      ]),
+    ).toEqual([]);
+  });
+
+  it('자동 키워드에 같은 말이 이미 있어도 이유가 중복되지 않는다', () => {
+    const [suggestion] = suggestTags({ title: '자소서 챌린지' }, aliasRules);
+    expect(suggestion.reasons).toEqual(["제목에 '자소서'"]);
+  });
+
+  it('자동 키워드와 축약어가 다르면 이유가 각각 난다', () => {
+    const [suggestion] = suggestTags(
+      { title: '포트폴리오 말고 포폴' },
+      aliasRules,
+    );
+    expect(suggestion.reasons).toEqual([
+      "제목에 '포트폴리오'",
+      "제목에 '포폴'",
+    ]);
+  });
+
+  it('설명에서도 축약어를 잡고, 설명으로만 잡히면 표시한다', () => {
+    expect(
+      suggestTags(
+        { title: '취업 클래스', description: '포폴 첨삭' },
+        aliasRules,
+      ),
+    ).toEqual([
+      {
+        tagId: 3,
+        tagTitle: '포트폴리오',
+        reasons: ["설명에 '포폴'"],
+        descriptionOnly: true,
+      },
+    ]);
+  });
+
+  it('키워드 미리보기용 호출(태그 이름 없음)에는 사전이 끼지 않는다', () => {
+    expect(
+      matchByKeywords([{ input: { title: '포폴 클래스' } }], ['포트폴리오']),
+    ).toEqual([]);
+  });
+});
+
 describe('planAutoFill', () => {
   const products = [
     { key: 'a', input: { title: '이력서 챌린지 3기' } },
