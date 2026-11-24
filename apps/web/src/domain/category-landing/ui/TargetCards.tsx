@@ -10,6 +10,15 @@ import {
 } from '../landingCard';
 import ChallengeThumbnail from './ChallengeThumbnail';
 
+/** 멘토링 썸네일이 없을 때 쓰는 배경. 멘토 목록 카드와 같은 색을 멘토 번호로 고른다 */
+const MENTOR_FALLBACK_GRADIENTS = [
+  'linear-gradient(135deg, #FF6A1A 0%, #FF9A4D 100%)',
+  'linear-gradient(135deg, #4D55F5 0%, #7B82FF 100%)',
+  'linear-gradient(135deg, #1DB36B 0%, #4FD39A 100%)',
+  'linear-gradient(135deg, #13A6E0 0%, #52CBF6 100%)',
+  'linear-gradient(135deg, #2B2F8F 0%, #4D55F5 100%)',
+];
+
 const hrefOf = (target: ProgramCategoryTarget) =>
   getTargetHref(target.targetType, target.targetId, {
     title: target.title,
@@ -91,14 +100,41 @@ export const MentorTargetCard = ({
     data-type={target.targetType}
     data-id={target.targetId}
   >
-    <div className="relative aspect-[5/4] w-full overflow-hidden rounded-xs bg-neutral-95">
-      {target.thumbnail && (
+    <div
+      className="relative aspect-[5/4] w-full overflow-hidden rounded-xs bg-neutral-95"
+      style={
+        target.thumbnail
+          ? undefined
+          : {
+              background:
+                MENTOR_FALLBACK_GRADIENTS[
+                  (target.mentorId ?? target.targetId) %
+                    MENTOR_FALLBACK_GRADIENTS.length
+                ],
+            }
+      }
+    >
+      {target.thumbnail ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={target.thumbnail}
           alt=""
           className="h-full w-full object-cover"
         />
+      ) : (
+        <>
+          <img
+            src="/logo/logo-simple.svg"
+            alt=""
+            aria-hidden
+            className="pointer-events-none absolute -right-6 -top-4 w-[58%] opacity-[0.14] brightness-0 invert"
+          />
+          <div className="relative flex h-full flex-col justify-center overflow-hidden px-4 pb-10 pt-9">
+            <p className="line-clamp-3 break-keep text-small18 font-bold leading-snug text-white">
+              {target.title}
+            </p>
+          </div>
+        </>
       )}
       {(target.mentorCompany || target.mentorJob) && (
         <span className="absolute left-2 top-2 max-w-[90%] truncate rounded-xxs bg-neutral-0/80 px-1.5 py-0.5 text-xxsmall12 font-semibold text-white">

@@ -13,6 +13,15 @@ import Link from 'next/link';
 /** 홈에 보이는 멘토링 수. 데스크톱 한 줄 */
 const HOME_MENTORING_COUNT = 4;
 
+/** 썸네일이 없을 때 쓰는 배경. 멘토 목록 카드와 같은 색을 멘토 번호로 고른다 */
+const FALLBACK_GRADIENTS = [
+  'linear-gradient(135deg, #FF6A1A 0%, #FF9A4D 100%)',
+  'linear-gradient(135deg, #4D55F5 0%, #7B82FF 100%)',
+  'linear-gradient(135deg, #1DB36B 0%, #4FD39A 100%)',
+  'linear-gradient(135deg, #13A6E0 0%, #52CBF6 100%)',
+  'linear-gradient(135deg, #2B2F8F 0%, #4D55F5 100%)',
+];
+
 const MentoringCard = ({ opening }: { opening: LiveMentoringOpening }) => {
   const nickname = opening.mentorNickname ?? '멘토';
   const badge = careerBadgeLabel(opening.representativeCareer);
@@ -25,7 +34,21 @@ const MentoringCard = ({ opening }: { opening: LiveMentoringOpening }) => {
       className="home_mentoring_card flex flex-col gap-3"
       data-id={opening.liveMentoringId}
     >
-      <div className="relative aspect-[540/421] overflow-hidden rounded-xs bg-primary">
+      <div
+        className={`relative aspect-[540/421] overflow-hidden rounded-xs ${
+          image ? 'bg-white' : ''
+        }`}
+        style={
+          image
+            ? undefined
+            : {
+                background:
+                  FALLBACK_GRADIENTS[
+                    opening.mentorId % FALLBACK_GRADIENTS.length
+                  ],
+              }
+        }
+      >
         {image ? (
           // 썸네일 출처가 여러 버킷이라 next/image 도메인 설정에 묶지 않는다
           // eslint-disable-next-line @next/next/no-img-element
@@ -35,9 +58,23 @@ const MentoringCard = ({ opening }: { opening: LiveMentoringOpening }) => {
             className="absolute inset-0 h-full w-full object-cover"
           />
         ) : (
-          <p className="line-clamp-3 px-4 pt-11 text-small18 font-bold text-white">
-            {title}
-          </p>
+          <>
+            <img
+              src="/logo/logo-simple.svg"
+              alt=""
+              aria-hidden
+              className="pointer-events-none absolute -right-6 -top-4 w-[58%] opacity-[0.14] brightness-0 invert"
+            />
+            <div
+              className={`relative flex h-full flex-col justify-center overflow-hidden px-4 pb-12 md:px-5 md:pb-14 ${
+                badge ? 'pt-11' : 'pt-4'
+              }`}
+            >
+              <p className="line-clamp-3 break-keep text-small18 font-bold leading-snug text-white">
+                {title}
+              </p>
+            </div>
+          </>
         )}
         {badge && (
           <span className="absolute left-2 top-2 max-w-[90%] truncate rounded-xs bg-neutral-0/80 px-2.5 py-1 text-xxsmall10 font-semibold text-static-100 md:text-xxsmall12">
