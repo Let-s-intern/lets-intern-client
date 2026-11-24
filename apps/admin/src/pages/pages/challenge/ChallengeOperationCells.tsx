@@ -48,6 +48,11 @@ const TYPE_BADGE_CLASS: Record<string, string> = {
   LIVE_FEEDBACK: 'ml-1 rounded px-1.5 py-0.5 text-xs bg-red-100 text-red-700',
 };
 
+/** 옵션명(title)을 우선 보여주고, 없거나 공백이면 옵션 코드를 보여준다. */
+const getOptionLabel = (
+  option?: { title?: string | null; code?: string | null } | null,
+) => option?.title?.trim() || option?.code;
+
 /** 피드백 미션 여부 renderCell  */
 const ChallengeOptionRenderCell = (
   params: GridRenderCellParams<Row, any, any, GridTreeNodeWithRender>,
@@ -73,7 +78,7 @@ const ChallengeOptionRenderCell = (
       value={params.value ?? NO_OPTION_ID}
       renderValue={() => (
         <>
-          {option?.code ?? '없음'}
+          {getOptionLabel(option) ?? '없음'}
           {option?.type && (
             <span className={TYPE_BADGE_CLASS[option.type]}>
               {TYPE_LABEL[option.type]}
@@ -90,7 +95,7 @@ const ChallengeOptionRenderCell = (
           key={`option-${item.challengeOptionId}`}
           value={item.challengeOptionId}
         >
-          {item.code}
+          {getOptionLabel(item)}
           {item.type && (
             <span className={TYPE_BADGE_CLASS[item.type]}>
               {TYPE_LABEL[item.type]}
