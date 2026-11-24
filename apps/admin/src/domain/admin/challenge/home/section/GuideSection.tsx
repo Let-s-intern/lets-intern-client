@@ -23,6 +23,8 @@ import {
 import axios from '@/utils/axios';
 import RoundedBox from '../box/RoundedBox';
 import SectionHeading from '../heading/SectionHeading';
+import { useReorderChallengeItems } from '../hooks/useReorderChallengeItems';
+import SortableList from '../ui/SortableList';
 
 const GuideSection = ({ className }: { className?: string }) => {
   const { snackbar } = useAdminSnackbar();
@@ -48,14 +50,16 @@ const GuideSection = ({ className }: { className?: string }) => {
     link: '',
   });
 
+  const guidesQueryKey = [
+    'challenge',
+    currentChallenge?.id,
+    'guides',
+    // { page: pageNum, size: 5 },
+  ];
+
   const { data, refetch } = useQuery({
     enabled: Boolean(currentChallenge?.id),
-    queryKey: [
-      'challenge',
-      currentChallenge?.id,
-      'guides',
-      // { page: pageNum, size: 5 },
-    ],
+    queryKey: guidesQueryKey,
     queryFn: async () => {
       const res = await axios.get(`/challenge/${currentChallenge?.id}/guides`, {
         // params: { page: pageNum, size: 5 },
@@ -65,6 +69,14 @@ const GuideSection = ({ className }: { className?: string }) => {
   });
 
   const guides = data?.challengeGuideList ?? [];
+
+  const reorderGuidesMutation = useReorderChallengeItems<
+    (typeof guides)[number]
+  >({
+    target: 'guide',
+    challengeId: currentChallenge?.id,
+    queryKey: guidesQueryKey,
+  });
 
   const createGuideMutation = useMutation({
     mutationFn: (values: CreateChallengeGuideReq) => {
@@ -108,9 +120,12 @@ const GuideSection = ({ className }: { className?: string }) => {
               새 가이드 등록
             </Button>
           </div>
-          <ul className="flex flex-col gap-2">
-            {guides.map((guide) => (
-              <li key={guide.id} className="flex items-center">
+          <SortableList
+            items={guides}
+            disabled={reorderGuidesMutation.isPending}
+            onReorder={reorderGuidesMutation.mutate}
+            renderItem={(guide) => (
+              <>
                 <Link to={guide.link ?? ''} className="flex-1">
                   {guide.title}
                 </Link>
@@ -144,9 +159,9 @@ const GuideSection = ({ className }: { className?: string }) => {
                 <span>
                   {guide.createDate?.format('YYYY-MM-DD') ?? '날짜 없음'}
                 </span>
-              </li>
-            ))}
-          </ul>
+              </>
+            )}
+          />
         </div>
 
         {/* <div className="flex items-center justify-center">
