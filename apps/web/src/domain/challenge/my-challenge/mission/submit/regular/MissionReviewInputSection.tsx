@@ -1,6 +1,8 @@
 import { clsx } from 'clsx';
-
-const REVIEW_MAX_LENGTH = 300;
+import {
+  REVIEW_MAX_LENGTH,
+  REVIEW_MIN_LENGTH,
+} from '../constants/missionReview';
 
 interface MissionReviewSectionProps {
   value: string;
@@ -22,6 +24,8 @@ export const MissionReviewInputSection = ({
     }
     onChange(e);
   };
+
+  const isShort = value.length > 0 && value.length < REVIEW_MIN_LENGTH;
 
   return (
     <section>
@@ -45,8 +49,19 @@ export const MissionReviewInputSection = ({
         disabled={disabled}
         maxLength={REVIEW_MAX_LENGTH}
       />
-      <div className="mt-1 text-right text-xxsmall12 text-neutral-50">
-        {value.length}/{REVIEW_MAX_LENGTH}
+      <div className="mt-1 flex items-start justify-between gap-2 text-xxsmall12">
+        <p className={isShort ? 'text-system-error' : 'text-neutral-50'}>
+          공백 포함 {REVIEW_MIN_LENGTH}자 이상 {REVIEW_MAX_LENGTH}자 이하로
+          작성해 주세요
+        </p>
+        <span
+          className={clsx(
+            'shrink-0',
+            isShort ? 'text-system-error' : 'text-neutral-50',
+          )}
+        >
+          {value.length}/{REVIEW_MAX_LENGTH}
+        </span>
       </div>
     </section>
   );
