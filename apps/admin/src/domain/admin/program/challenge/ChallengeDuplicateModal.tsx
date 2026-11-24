@@ -59,6 +59,7 @@ const ChallengeDuplicateModal = ({
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
   const [generateThumbnail, setGenerateThumbnail] = useState(false);
   const [copyDashboard, setCopyDashboard] = useState(false);
+  const [copyFeedbackMissions, setCopyFeedbackMissions] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [challengeType, setChallengeType] = useState<ChallengeType | null>(
     null,
@@ -92,6 +93,7 @@ const ChallengeDuplicateModal = ({
     setStartDate(null);
     setGenerateThumbnail(false);
     setCopyDashboard(false);
+    setCopyFeedbackMissions(true);
     setChallengeType(null);
     setVersions([]);
     onClose();
@@ -136,6 +138,7 @@ const ChallengeDuplicateModal = ({
         desktopThumbnail: thumbnailUrl,
         copyContent,
         copyDashboard,
+        copyFeedbackMissions: copyDashboard && copyFeedbackMissions,
         versionThumbnails,
       });
       onSuccess();
@@ -258,10 +261,23 @@ const ChallengeDuplicateModal = ({
                 <Checkbox
                   checked={copyDashboard}
                   disabled={copyContent}
-                  onChange={(e) => setCopyDashboard(e.target.checked)}
+                  onChange={(e) => {
+                    setCopyDashboard(e.target.checked);
+                    if (e.target.checked) setCopyFeedbackMissions(true);
+                  }}
                 />
               }
               label="대시보드 함께 복제"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={copyDashboard && copyFeedbackMissions}
+                  disabled={copyContent || !copyDashboard}
+                  onChange={(e) => setCopyFeedbackMissions(e.target.checked)}
+                />
+              }
+              label="피드백 미션 여부 함께 복제"
             />
           </div>
         </div>
