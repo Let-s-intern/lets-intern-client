@@ -26,6 +26,7 @@ import {
   THUMBNAIL_BLOCK_REASON_TEXT,
 } from './utils/duplicateThumbnail';
 import { THUMBNAIL_TYPE_LABELS } from './utils/generateThumbnail';
+import { withEndTime, withStartTime } from './utils/scheduleDefaultTime';
 
 import CopiedTagsNote from '@/domain/admin/program/category/ui/CopiedTagsNote';
 
@@ -200,6 +201,7 @@ const ChallengeDuplicateModal = ({
                   disabled={copyContent}
                   value={deadline}
                   onChange={setDeadline}
+                  referenceDate={withEndTime(dayjs())}
                   minDateTime={beginning ?? dayjs()}
                   slotProps={dateTimePickerSlotProps}
                 />
@@ -215,6 +217,7 @@ const ChallengeDuplicateModal = ({
                 disabled={copyContent}
                 value={startDate}
                 onChange={setStartDate}
+                referenceDate={withStartTime(dayjs())}
                 minDateTime={dayjs()}
                 slotProps={dateTimePickerSlotProps}
               />

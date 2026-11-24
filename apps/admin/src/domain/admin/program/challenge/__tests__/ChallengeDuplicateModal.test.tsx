@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import ChallengeDuplicateModal from '../ChallengeDuplicateModal';
 
@@ -89,5 +89,77 @@ describe('ChallengeDuplicateModal', () => {
     expect(
       await screen.findByText(/이전 내용 그대로 가져오기"를 선택하면/),
     ).toBeInTheDocument();
+  });
+});
+
+describe('ChallengeDuplicateModal 일정 기본 시각', () => {
+  // 달력에서 고를 수 있는 미래 날짜가 되도록 오늘을 고정한다
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-11-10T09:00:00'));
+    getChallenge.mockResolvedValue({
+      challengeType: 'EXPERIENCE_SUMMARY',
+      versionList: [],
+    });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  // 입력칸은 제목, 모집 시작일, 모집 종료일, 챌린지 시작일 순서다
+  const dateInput = (label: '모집 종료일' | '챌린지 시작일') =>
+    screen.getAllByRole<HTMLInputElement>('textbox')[
+      label === '모집 종료일' ? 2 : 3
+    ];
+
+  // 달력 버튼은 모집 시작일, 모집 종료일, 챌린지 시작일 순서다
+  const pickDay = (label: '모집 종료일' | '챌린지 시작일', day: string) => {
+    fireEvent.click(
+      screen.getAllByRole('button', { name: /Choose date/ })[
+        label === '모집 종료일' ? 1 : 2
+      ],
+    );
+    fireEvent.click(screen.getByRole('gridcell', { name: day }));
+  };
+
+  it('날짜 칸은 비워 둔 채로 시작한다', async () => {
+    renderModal();
+    await waitFor(() => expect(getChallenge).toHaveBeenCalled());
+
+    expect(dateInput('모집 종료일')).toHaveValue('');
+    expect(dateInput('챌린지 시작일')).toHaveValue('');
+  });
+
+  it('모집 종료일을 처음 고르면 23:59 가 붙는다', async () => {
+    renderModal();
+    await waitFor(() => expect(getChallenge).toHaveBeenCalled());
+
+    pickDay('모집 종료일', '20');
+
+    expect(dateInput('모집 종료일')).toHaveValue('2026.11.20(Fr) 23:59');
+  });
+
+  it('챌린지 시작일을 처음 고르면 11:00 이 붙는다', async () => {
+    renderModal();
+    await waitFor(() => expect(getChallenge).toHaveBeenCalled());
+
+    pickDay('챌린지 시작일', '20');
+
+    expect(dateInput('챌린지 시작일')).toHaveValue('2026.11.20(Fr) 11:00');
+  });
+
+  it('처음 고른 뒤에 바꾼 시각과 날짜는 그대로 유지된다', async () => {
+    renderModal();
+    await waitFor(() => expect(getChallenge).toHaveBeenCalled());
+    pickDay('모집 종료일', '20');
+
+    fireEvent.change(dateInput('모집 종료일'), {
+      target: { value: '2026.11.20(Fr) 18:30' },
+    });
+    expect(dateInput('모집 종료일')).toHaveValue('2026.11.20(Fr) 18:30');
+
+    pickDay('모집 종료일', '25');
+    expect(dateInput('모집 종료일')).toHaveValue('2026.11.25(We) 18:30');
   });
 });
