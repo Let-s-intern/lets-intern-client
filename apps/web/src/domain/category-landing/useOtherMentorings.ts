@@ -36,11 +36,16 @@ export const useAllMentoringTargets = (enabled: boolean) =>
     staleTime: 5 * 60 * 1000,
   });
 
-/** 연결된 멘토링을 앞에 그대로 두고, 아직 없는 멘토링을 뒤에 붙인다 */
+/**
+ * 연결된 멘토링을 앞에 두고, 아직 없는 멘토링을 뒤에 붙인다.
+ * 랜딩 응답은 멘토링 상태를 보지 않아 비노출 멘토링도 오므로, 열린 멘토링 목록(all)에 있는 것만 남긴다
+ */
 export const appendOtherMentorings = (
   related: ProgramCategoryTarget[],
   all: ProgramCategoryTarget[],
 ) => {
-  const seen = new Set(related.map((t) => t.targetId));
-  return [...related, ...all.filter((t) => !seen.has(t.targetId))];
+  const openIds = new Set(all.map((t) => t.targetId));
+  const openRelated = related.filter((t) => openIds.has(t.targetId));
+  const seen = new Set(openRelated.map((t) => t.targetId));
+  return [...openRelated, ...all.filter((t) => !seen.has(t.targetId))];
 };
