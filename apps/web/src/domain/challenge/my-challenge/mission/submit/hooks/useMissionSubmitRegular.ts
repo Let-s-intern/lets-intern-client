@@ -10,6 +10,7 @@ import { AttendanceResult, AttendanceStatus } from '@/schema';
 import { useMissionStore } from '@/store/useMissionStore';
 import { BONUS_MISSION_TH } from '@/utils/constants';
 import { useEffect, useState } from 'react';
+import { REVIEW_MIN_LENGTH } from '../constants/missionReview';
 import { useSubmitLock } from './useSubmitLock';
 
 const FIRST_THIRD_RATIO = 1 / 3;
@@ -257,9 +258,12 @@ export function useMissionSubmitRegular({
   };
 
   const preQuestionValid = !hasFeedback || preQuestionValue.trim().length > 0;
+  const reviewValid =
+    textareaValue.trim().length > 0 &&
+    textareaValue.length >= REVIEW_MIN_LENGTH;
   const baseSubmitValid = !currentSelectedMission?.missionInfo?.missionType
-    ? isLinkVerified && textareaValue.trim().length > 0
-    : selectedExperienceIds.length >= 3 && textareaValue.trim().length > 0;
+    ? isLinkVerified && reviewValid
+    : selectedExperienceIds.length >= 3 && reviewValid;
   const canSubmit = baseSubmitValid && preQuestionValid;
 
   const handleLinkChange = (link: string) => {
