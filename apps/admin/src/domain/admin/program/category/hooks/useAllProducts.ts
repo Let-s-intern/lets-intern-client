@@ -12,6 +12,10 @@ export interface AutoTagProduct {
   input: AutoTagInput;
   /** 지금 붙은 태그 id */
   tagIds: number[];
+  /** 노출 여부. 서버가 아직 안 주면 undefined */
+  isVisible?: boolean | null;
+  /** 종료일시. 서버가 아직 안 주면 undefined */
+  endDate?: string | null;
 }
 
 const candidatesSchema = z.object({
@@ -29,6 +33,9 @@ const candidatesSchema = z.object({
       ]),
       targetId: z.number(),
       title: z.string().nullish(),
+      shortDesc: z.string().nullish(),
+      isVisible: z.boolean().nullish(),
+      endDate: z.string().nullish(),
       challengeType: z.string().nullish(),
       blogCategory: z.string().nullish(),
       blogTagNames: z.array(z.string()).nullish(),
@@ -49,8 +56,11 @@ export const fetchAllProducts = async (): Promise<AutoTagProduct[]> => {
     targetId: c.targetId,
     title: c.title ?? '',
     tagIds: c.tagIds ?? [],
+    isVisible: c.isVisible,
+    endDate: c.endDate,
     input: {
       title: c.title ?? '',
+      description: c.shortDesc,
       challengeType: c.challengeType,
       blogTagNames: c.blogTagNames ?? [],
       mentoringCategories: c.mentoringCategories ?? [],

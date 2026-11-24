@@ -5,6 +5,8 @@
 
 export interface AutoTagInput {
   title: string;
+  /** 한 줄 설명 */
+  description?: string | null;
   /** 챌린지 구분 (마그넷도 챌린지 구분을 가진다) */
   challengeType?: string | null;
   /** 블로그 태그 이름들 (예: 자소서). 블로그 카테고리는 태그와 바로 이어지지 않아 쓰지 않는다 */
