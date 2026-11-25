@@ -126,3 +126,28 @@ describe('ConditionalLayout — 멘토 모집 화면 (LC-3529)', () => {
     );
   });
 });
+
+describe('ConditionalLayout — 가이드북 구매 팝업 (LC-3677)', () => {
+  it.each([
+    '/guidebook/purchase/12',
+    '/guidebook/purchase/12/result',
+    '/guidebook/purchase/12/fail',
+  ])(
+    '%s 에서 NavBar·Footer·채널톡·바텀바 없이 children만 렌더한다',
+    (pathname) => {
+      mockPathname = pathname;
+
+      render(
+        <ConditionalLayout>
+          <div data-testid="purchase-content">구매</div>
+        </ConditionalLayout>,
+      );
+
+      expect(screen.getByTestId('purchase-content')).toBeInTheDocument();
+      expect(screen.queryByTestId('navbar')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('footer')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('channel-talk')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('bottom-nav')).not.toBeInTheDocument();
+    },
+  );
+});
