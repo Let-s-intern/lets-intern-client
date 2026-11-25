@@ -5,6 +5,7 @@ import ProgramContentPriceSection from '@/domain/admin/program/ProgramContentPri
 import ProgramContentThumbnailSection from '@/domain/admin/program/ProgramContentThumbnailSection';
 import ProgramContentUrlFileSection from '@/domain/admin/program/ProgramContentUrlFileSection';
 import { useGuidebookForm } from '@/domain/admin/program/guidebook/hooks/useGuidebookForm';
+import { getGuidebookImportErrorMessage } from '@/domain/admin/program/guidebook/utils/guidebookImportError';
 import {
   buildCreateGuidebookReq,
   guidebookToFormInput,
@@ -13,7 +14,7 @@ import FormSection from '@/domain/admin/program/ui/FormSection';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import { getGuidebookIdSchema } from '@/schema';
+import { guidebookImportSchema } from '@/schema';
 import { Button, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useCallback, useState } from 'react';
@@ -62,7 +63,7 @@ const GuidebookCreate: React.FC = () => {
             variant="outlined"
             onClick={() => {
               try {
-                const guidebook = getGuidebookIdSchema.parse(
+                const guidebook = guidebookImportSchema.parse(
                   JSON.parse(importJsonString),
                 );
                 const importedInput = guidebookToFormInput(guidebook);
@@ -81,8 +82,8 @@ const GuidebookCreate: React.FC = () => {
                   setImportJsonString('');
                   setImportProcessing(false);
                 }, 200);
-              } catch {
-                snackbar('Import 실패');
+              } catch (error) {
+                snackbar(getGuidebookImportErrorMessage(error));
               }
             }}
           >
