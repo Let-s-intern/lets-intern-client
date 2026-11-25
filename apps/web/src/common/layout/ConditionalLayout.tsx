@@ -37,7 +37,18 @@ const ConditionalLayout = ({ children }: ConditionalLayoutProps) => {
   // VOD 이용권 단독 구매는 링크로 바로 여는 작은 창이다. 렛츠커리어 헤더·푸터 없이 카드만 보인다.
   const isVodPassPurchasePage = pathname.startsWith('/vod-pass/purchase');
 
-  if (isSsoLoginPage || isVodPassPurchasePage) {
+  // 가이드북 구매는 오공고 등 외부 화면이 팝업으로 여는 작은 창이다(LC-3677). VOD 구매와 같이 빈 레이아웃이다.
+  const isGuidebookPurchasePage = pathname.startsWith('/guidebook/purchase/');
+
+  // 오공고 마이페이지가 iframe 으로 넣는 구매한 가이드북 목록(LC-3677). 목록만 보이도록 빈 레이아웃이다.
+  const isGuidebookListEmbedPage = pathname === '/guidebook/my';
+
+  if (
+    isSsoLoginPage ||
+    isVodPassPurchasePage ||
+    isGuidebookPurchasePage ||
+    isGuidebookListEmbedPage
+  ) {
     return <div>{children}</div>;
   }
 
