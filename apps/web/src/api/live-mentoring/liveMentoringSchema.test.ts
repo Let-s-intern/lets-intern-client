@@ -665,3 +665,21 @@ describe('liveMentoringEntrySchema — reviewId', () => {
     expect(() => liveMentoringEntrySchema.parse(entry)).toThrow();
   });
 });
+
+describe('liveMentoringEntrySchema — attachmentFileList', () => {
+  it('목록이 없는 응답(서버 배포 전)도 파싱한다', () => {
+    const parsed = liveMentoringEntrySchema.parse(makeEntry());
+    expect(parsed.attachmentFileList).toBeUndefined();
+  });
+
+  it('목록이 있으면 그대로 파싱한다', () => {
+    const attachmentFileList = [
+      { fileId: 1, fileName: 'a.pdf', url: 'https://cdn.test/a.pdf' },
+      { fileId: 2, fileName: 'b.docx', url: 'https://cdn.test/b.docx' },
+    ];
+    const parsed = liveMentoringEntrySchema.parse(
+      makeEntry({ attachmentType: 'FILE', attachmentFileList }),
+    );
+    expect(parsed.attachmentFileList).toEqual(attachmentFileList);
+  });
+});

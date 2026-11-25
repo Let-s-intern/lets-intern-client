@@ -71,7 +71,7 @@ describe('QuestionSection — 나중에 작성하기', () => {
       deferred: true,
       content: '',
       attachmentType: 'NONE',
-      fileId: null,
+      files: [],
       url: '',
       mentorShareAgreed: false,
     });
@@ -143,7 +143,9 @@ describe('QuestionSection — 파일 업로드', () => {
       },
     );
 
-    await waitFor(() => expect(latest.fileId).toBe(9001));
+    await waitFor(() =>
+      expect(latest.files).toEqual([{ fileId: 9001, fileName: 'resume.pdf' }]),
+    );
     expect(uploadMock).toHaveBeenCalledWith({
       file,
       type: 'LIVE_MENTORING',
@@ -152,7 +154,7 @@ describe('QuestionSection — 파일 업로드', () => {
     expect(await screen.findByText('resume.pdf')).toBeInTheDocument();
   });
 
-  it('업로드가 실패하면 fileId 를 채우지 않고 안내를 남긴다', async () => {
+  it('업로드가 실패하면 파일을 담지 않고 안내를 남긴다', async () => {
     uploadMock.mockRejectedValue(new Error('500'));
     render(<Harness />);
 
@@ -172,7 +174,85 @@ describe('QuestionSection — 파일 업로드', () => {
         '파일 업로드에 실패했습니다. 다시 시도해 주세요.',
       ),
     ).toBeInTheDocument();
-    expect(latest.fileId).toBeNull();
+    expect(latest.files).toEqual([]);
+  });
+
+  const fileInput = () =>
+    screen
+      .getByLabelText('멘토링 질문 작성')
+      .closest('section')!
+      .querySelector('input[type=file]') as HTMLInputElement;
+
+  it('여러 파일을 한 번에 고를 수 있고 올린 순서대로 담는다', async () => {
+    uploadMock.mockResolvedValueOnce(1).mockResolvedValueOnce(2);
+    render(<Harness />);
+
+    expect(fileInput()).toHaveAttribute('multiple');
+    fireEvent.click(screen.getByRole('radio', { name: /파일 첨부/ }));
+    fireEvent.change(fileInput(), {
+      target: {
+        files: [new File(['x'], 'a.pdf'), new File(['y'], 'b.docx')],
+      },
+    });
+
+    await waitFor(() => expect(latest.files).toHaveLength(2));
+    expect(latest.files.map((file) => file.fileId)).toEqual([1, 2]);
+    expect(screen.getByText('a.pdf')).toBeInTheDocument();
+    expect(screen.getByText('b.docx')).toBeInTheDocument();
+    expect(screen.getByText('2/5')).toBeInTheDocument();
+  });
+
+  it('개별로 지울 수 있다', async () => {
+    uploadMock.mockResolvedValueOnce(1).mockResolvedValueOnce(2);
+    render(<Harness />);
+
+    fireEvent.click(screen.getByRole('radio', { name: /파일 첨부/ }));
+    fireEvent.change(fileInput(), {
+      target: { files: [new File(['x'], 'a.pdf'), new File(['y'], 'b.pdf')] },
+    });
+    await waitFor(() => expect(latest.files).toHaveLength(2));
+
+    fireEvent.click(screen.getByRole('button', { name: 'a.pdf 삭제' }));
+
+    expect(latest.files).toEqual([{ fileId: 2, fileName: 'b.pdf' }]);
+    expect(screen.queryByText('a.pdf')).toBeNull();
+  });
+
+  it('5개를 넘기면 남은 자리만큼만 올리고 안내한다', async () => {
+    uploadMock.mockImplementation(async ({ file }: { file: File }) =>
+      Number(file.name.replace(/\D/g, '')),
+    );
+    render(<Harness />);
+
+    fireEvent.click(screen.getByRole('radio', { name: /파일 첨부/ }));
+    fireEvent.change(fileInput(), {
+      target: {
+        files: [1, 2, 3, 4, 5, 6, 7].map((n) => new File(['x'], `f${n}.pdf`)),
+      },
+    });
+
+    await waitFor(() => expect(latest.files).toHaveLength(5));
+    expect(uploadMock).toHaveBeenCalledTimes(5);
+    expect(
+      screen.getByText('첨부 파일은 최대 5개까지 올릴 수 있어요.'),
+    ).toBeInTheDocument();
+  });
+
+  it('일부만 실패하면 성공한 파일은 담고 안내를 남긴다', async () => {
+    uploadMock.mockResolvedValueOnce(1).mockRejectedValueOnce(new Error('500'));
+    render(<Harness />);
+
+    fireEvent.click(screen.getByRole('radio', { name: /파일 첨부/ }));
+    fireEvent.change(fileInput(), {
+      target: { files: [new File(['x'], 'a.pdf'), new File(['y'], 'b.pdf')] },
+    });
+
+    await waitFor(() => expect(latest.files).toHaveLength(1));
+    expect(
+      await screen.findByText(
+        '파일 업로드에 실패했습니다. 다시 시도해 주세요.',
+      ),
+    ).toBeInTheDocument();
   });
 });
 

@@ -1,9 +1,10 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 
-import { uploadFileForId } from '@/api/file';
+import { useFileAttachments } from '../hooks/useFileAttachments';
 import {
+  MAX_ATTACHMENT_FILES,
   QUESTION_CONTENT_MAX,
   QUESTION_URL_MAX,
   type QuestionInput,
@@ -39,12 +40,15 @@ const QuestionSection = ({
   deferralAllowed,
 }: QuestionSectionProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [fileName, setFileName] = useState<string | null>(null);
-  const [uploadError, setUploadError] = useState<string | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
 
   const patch = (partial: Partial<QuestionInput>) =>
     onChange({ ...value, ...partial });
+
+  const { isUploading, message, upload, remove, clearMessage } =
+    useFileAttachments({
+      files: value.files,
+      onChange: (files) => patch({ attachmentType: 'FILE', files, url: '' }),
+    });
 
   const handleDeferredChange = (deferred: boolean) => {
     // disabled 만으로 막지 않는다. 그 속성이 빠지는 날 조용히 뚫린다.
@@ -54,33 +58,15 @@ const QuestionSection = ({
       return;
     }
     // 접을 때 값을 함께 비운다. 남겨 두면 쓴 적 없는 질문이 신청에 실린다.
-    setFileName(null);
-    setUploadError(null);
+    clearMessage();
     onChange({
       deferred: true,
       content: '',
       attachmentType: 'NONE',
-      fileId: null,
+      files: [],
       url: '',
       mentorShareAgreed: false,
     });
-  };
-
-  const handleFileSelect = async (file: File | undefined) => {
-    if (!file) return;
-    setUploadError(null);
-    setIsUploading(true);
-    try {
-      // `LIVE_MENTORING` 은 Push 2 의 2.1 에서 zod enum 에 넣었다. 없으면 여기서 터진다.
-      const fileId = await uploadFileForId({ file, type: 'LIVE_MENTORING' });
-      setFileName(file.name);
-      patch({ attachmentType: 'FILE', fileId, url: '' });
-    } catch {
-      setFileName(null);
-      setUploadError('파일 업로드에 실패했습니다. 다시 시도해 주세요.');
-    } finally {
-      setIsUploading(false);
-    }
   };
 
   return (
@@ -167,8 +153,13 @@ const QuestionSection = ({
                 ref={fileInputRef}
                 type="file"
                 accept={ACCEPTED_FILE_TYPES}
+                multiple
                 className="hidden"
-                onChange={(event) => handleFileSelect(event.target.files?.[0])}
+                onChange={(event) => {
+                  upload(Array.from(event.target.files ?? []));
+                  // 같은 파일을 지웠다가 다시 고를 수 있게 비운다.
+                  event.target.value = '';
+                }}
               />
               <button
                 type="button"
@@ -178,17 +169,35 @@ const QuestionSection = ({
               >
                 {isUploading ? '업로드 중…' : '파일 업로드'}
               </button>
-              {fileName && (
-                <span className="text-xxsmall12 text-neutral-40">
-                  {fileName}
-                </span>
-              )}
-              {uploadError && (
+              <span className="text-xxsmall12 text-neutral-45">
+                {value.files.length}/{MAX_ATTACHMENT_FILES}
+              </span>
+              {message && (
                 <span className="text-xxsmall12 text-system-error">
-                  {uploadError}
+                  {message}
                 </span>
               )}
             </div>
+            {value.files.length > 0 && (
+              <ul className="flex flex-col gap-1 pl-6">
+                {value.files.map((file) => (
+                  <li
+                    key={file.fileId}
+                    className="flex items-center gap-2 text-xxsmall12 text-neutral-40"
+                  >
+                    <span>{file.fileName}</span>
+                    <button
+                      type="button"
+                      aria-label={`${file.fileName} 삭제`}
+                      onClick={() => remove(file.fileId)}
+                      className="text-neutral-45 underline"
+                    >
+                      삭제
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
 
             <label className="flex cursor-pointer items-center gap-2 text-xsmall14 text-neutral-0">
               <input
@@ -196,8 +205,8 @@ const QuestionSection = ({
                 name="live-mentoring-attachment"
                 checked={value.attachmentType === 'URL'}
                 onChange={() => {
-                  setFileName(null);
-                  patch({ attachmentType: 'URL', fileId: null });
+                  clearMessage();
+                  patch({ attachmentType: 'URL', files: [] });
                 }}
                 className="h-4 w-4 accent-primary"
               />
