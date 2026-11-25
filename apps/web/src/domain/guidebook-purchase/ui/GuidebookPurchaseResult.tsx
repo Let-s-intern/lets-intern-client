@@ -13,6 +13,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { postGuidebookPurchase } from '../api';
 import { buildPurchasePath, RETURN_URL_PARAM } from '../utils/purchasePath';
+import { notifyPurchaseSuccess } from '../utils/purchaseWindow';
 import GuidebookPurchaseCard from './GuidebookPurchaseCard';
 import PurchaseCloseButton from './PurchaseCloseButton';
 
@@ -68,6 +69,7 @@ export default function GuidebookPurchaseResult({
     postGuidebookPurchase(guidebookId, body)
       .then(() => {
         setState('success');
+        notifyPurchaseSuccess(guidebookId, searchParams.get(RETURN_URL_PARAM));
         queryClient.invalidateQueries({
           queryKey: [useProgramApplicationQueryKey],
         });

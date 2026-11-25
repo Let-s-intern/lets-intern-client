@@ -23,3 +23,24 @@ export const closePurchaseWindow = (
     if (!win.closed) win.location.assign(safeUrl);
   }, CLOSE_WAIT_MS);
 };
+
+/** 오공고 등 연 쪽이 받는 메시지의 type. 신호일 뿐이고 구매 여부의 근거로 삼지 않는다 */
+export const PURCHASE_MESSAGE_TYPE = 'letscareer:guidebook-purchase';
+
+/**
+ * 신청이 끝나면 연 창에 성공을 알린다. targetOrigin 은 검증된 returnUrl 의 origin 이라 '*' 를 쓰지
+ * 않는다. 결제 도중 창 연결이 끊기면(opener 없음) 보내지 않고, 받는 쪽도 이 신호에 기대지 않는다.
+ */
+export const notifyPurchaseSuccess = (
+  guidebookId: number,
+  returnUrl: string | null,
+  win: Pick<Window, 'opener'> = window,
+) => {
+  const safeUrl = parseReturnUrl(returnUrl);
+  if (!safeUrl || !win.opener) return;
+
+  win.opener.postMessage(
+    { type: PURCHASE_MESSAGE_TYPE, status: 'success', guidebookId },
+    new URL(safeUrl).origin,
+  );
+};

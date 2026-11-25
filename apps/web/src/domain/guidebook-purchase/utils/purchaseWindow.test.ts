@@ -1,4 +1,8 @@
-import { closePurchaseWindow } from './purchaseWindow';
+import {
+  closePurchaseWindow,
+  notifyPurchaseSuccess,
+  PURCHASE_MESSAGE_TYPE,
+} from './purchaseWindow';
 
 const RETURN_URL = 'https://ogonggo.co.kr/reports/fnb';
 
@@ -50,5 +54,35 @@ describe('closePurchaseWindow', () => {
 
     expect(win.close).toHaveBeenCalled();
     expect(win.location.assign).not.toHaveBeenCalled();
+  });
+});
+
+describe('notifyPurchaseSuccess', () => {
+  it('연 창에 성공을 보내고 targetOrigin 은 검증된 returnUrl 의 origin 이다', () => {
+    const postMessage = jest.fn();
+
+    notifyPurchaseSuccess(12, RETURN_URL, { opener: { postMessage } });
+
+    expect(postMessage).toHaveBeenCalledWith(
+      { type: PURCHASE_MESSAGE_TYPE, status: 'success', guidebookId: 12 },
+      'https://ogonggo.co.kr',
+    );
+  });
+
+  it('연결이 끊겨 opener 가 없으면 보내지 않는다', () => {
+    expect(() =>
+      notifyPurchaseSuccess(12, RETURN_URL, { opener: null }),
+    ).not.toThrow();
+  });
+
+  it.each([
+    ['허용 목록에 없는 주소', 'https://evil.com/phish'],
+    ['returnUrl 없음', null],
+  ])('%s 로는 보내지 않는다', (_name, returnUrl) => {
+    const postMessage = jest.fn();
+
+    notifyPurchaseSuccess(12, returnUrl, { opener: { postMessage } });
+
+    expect(postMessage).not.toHaveBeenCalled();
   });
 });

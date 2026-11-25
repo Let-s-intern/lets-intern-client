@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { postGuidebookPurchase } from '../api';
+import { notifyPurchaseSuccess } from '../utils/purchaseWindow';
 import GuidebookPurchaseResult from './GuidebookPurchaseResult';
 
 const mockReplace = jest.fn();
@@ -17,6 +18,9 @@ jest.mock('@/api/application', () => ({
   useProgramApplicationQueryKey: 'useProgramApplicationQueryKey',
 }));
 jest.mock('../api', () => ({ postGuidebookPurchase: jest.fn() }));
+jest.mock('../utils/purchaseWindow', () => ({
+  notifyPurchaseSuccess: jest.fn(),
+}));
 jest.mock('@/common/loading/LoadingContainer', () => ({
   __esModule: true,
   default: () => null,
@@ -127,5 +131,22 @@ describe('GuidebookPurchaseResult', () => {
 
     expect(await screen.findByText('결제 실패')).toBeInTheDocument();
     expect(postGuidebookPurchase).not.toHaveBeenCalled();
+  });
+
+  it('신청에 성공하면 연 창에 성공을 알리고, 새로고침한 완료 화면은 알리지 않는다', async () => {
+    mockParams = new URLSearchParams(paidParams);
+    const { unmount } = render(<GuidebookPurchaseResult guidebookId={12} />);
+    await screen.findByText('결제가 완료되었어요');
+    expect(notifyPurchaseSuccess).toHaveBeenCalledWith(
+      12,
+      'https://ogonggo.co.kr/r',
+    );
+    unmount();
+
+    jest.mocked(notifyPurchaseSuccess).mockClear();
+    mockParams = new URLSearchParams(`${paidParams}&postDone=true`);
+    render(<GuidebookPurchaseResult guidebookId={12} />);
+    await screen.findByText('결제가 완료되었어요');
+    expect(notifyPurchaseSuccess).not.toHaveBeenCalled();
   });
 });
