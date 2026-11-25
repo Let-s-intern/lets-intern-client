@@ -143,7 +143,7 @@ describe('useOrderSubmit — 제출 가능 조건', () => {
         deferred: false,
         content: '질문',
         attachmentType: 'FILE',
-        fileId: 9001,
+        files: [{ fileId: 9001, fileName: 'resume.pdf' }],
         url: '',
         mentorShareAgreed: false,
       },
@@ -176,7 +176,7 @@ describe('useOrderSubmit — 신청 생성', () => {
         deferred: false,
         content: '이력서 피드백 부탁드립니다',
         attachmentType: 'URL',
-        fileId: null,
+        files: [],
         url: 'https://example.test/resume',
         mentorShareAgreed: true,
       },
@@ -209,7 +209,7 @@ describe('useOrderSubmit — 신청 생성', () => {
         deferred: false,
         content: '질문',
         attachmentType: 'FILE',
-        fileId: 9001,
+        files: [{ fileId: 9001, fileName: 'resume.pdf' }],
         url: 'https://leftover.test',
         mentorShareAgreed: true,
       },
@@ -219,7 +219,50 @@ describe('useOrderSubmit — 신청 생성', () => {
 
     const question = mutate.mock.calls[0][0].question;
     expect(question.fileId).toBe(9001);
+    expect(question.fileIdList).toEqual([9001]);
     expect(question.url).toBeNull();
+  });
+
+  /* 옛 서버는 fileId 만 읽는다. 목록과 함께 첫 파일을 같이 보낸다. */
+  it('파일이 여러 개면 fileIdList 로 보내고 fileId 에는 첫 파일을 싣는다', () => {
+    const { result } = setup({
+      question: {
+        deferred: false,
+        content: '질문',
+        attachmentType: 'FILE',
+        files: [
+          { fileId: 11, fileName: 'a.pdf' },
+          { fileId: 12, fileName: 'b.docx' },
+        ],
+        url: '',
+        mentorShareAgreed: true,
+      },
+    });
+
+    act(() => result.current.submit());
+
+    const question = mutate.mock.calls[0][0].question;
+    expect(question.fileId).toBe(11);
+    expect(question.fileIdList).toEqual([11, 12]);
+  });
+
+  it('URL 첨부면 fileIdList 를 보내지 않는다', () => {
+    const { result } = setup({
+      question: {
+        deferred: false,
+        content: '질문',
+        attachmentType: 'URL',
+        files: [{ fileId: 11, fileName: 'a.pdf' }],
+        url: 'https://example.test/resume',
+        mentorShareAgreed: true,
+      },
+    });
+
+    act(() => result.current.submit());
+
+    const question = mutate.mock.calls[0][0].question;
+    expect(question.fileId).toBeNull();
+    expect(question.fileIdList).toBeUndefined();
   });
 
   it('성공하면 서버가 계산한 금액으로 결제 위젯에 넘긴다', async () => {

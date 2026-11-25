@@ -96,7 +96,15 @@ export function useOrderSubmit({
         deferred: question.deferred,
         content: question.deferred ? null : question.content,
         attachmentType: question.attachmentType,
-        fileId: question.attachmentType === 'FILE' ? question.fileId : null,
+        // 옛 서버는 `fileId` 만 읽는다. 첫 파일을 같이 실어 둔다.
+        fileId:
+          question.attachmentType === 'FILE'
+            ? (question.files[0]?.fileId ?? null)
+            : null,
+        fileIdList:
+          question.attachmentType === 'FILE'
+            ? question.files.map((file) => file.fileId)
+            : undefined,
         url: question.attachmentType === 'URL' ? question.url : null,
         mentorShareAgreed: question.mentorShareAgreed,
       },

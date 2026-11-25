@@ -531,6 +531,19 @@ export const liveMentoringReservationDetailSchema = z.object({
    * `attachmentType` 은 그대로 오므로 화면은 "냈지만 동의하지 않았다" 를 구분해 안내한다.
    */
   attachmentUrl: z.string().nullable(),
+  /**
+   * 파일 첨부 목록(최대 5개). 서버 배포 전·옛 데이터에는 없다 — 없거나 비면
+   * `attachmentUrl` 하나로 그린다. 동의하지 않은 건은 서버가 비워 내린다.
+   */
+  attachmentFileList: z
+    .array(
+      z.object({
+        fileId: z.number(),
+        fileName: z.string(),
+        url: z.string(),
+      }),
+    )
+    .nullish(),
   /** 첨부를 멘토에게 전달하는 데 동의했는지. 질문 본문은 이 동의와 무관하다. */
   mentorShareAgreed: z.boolean(),
   /**

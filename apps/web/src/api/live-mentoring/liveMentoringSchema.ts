@@ -369,6 +369,16 @@ export type LiveMentoringAttachmentType = z.infer<
   typeof liveMentoringAttachmentTypeSchema
 >;
 
+/** 파일 첨부 한 개 — `url` 은 서버가 서명한 내려받기 주소다. */
+export const liveMentoringAttachmentFileSchema = z.object({
+  fileId: z.number(),
+  fileName: z.string(),
+  url: z.string(),
+});
+export type LiveMentoringAttachmentFile = z.infer<
+  typeof liveMentoringAttachmentFileSchema
+>;
+
 /**
  * 신청 상태 — 백엔드 `LiveMentoringApplicationStatus`.
  *
@@ -419,7 +429,10 @@ export const createLiveMentoringApplicationRequestSchema = z.object({
     /* 나중에 작성하기(`deferred: true`)면 비어 있다. 서버도 필수로 보지 않는다. */
     content: z.string().max(5000).nullish(),
     attachmentType: liveMentoringAttachmentTypeSchema,
+    /** 옛 서버용. `fileIdList` 의 첫 번째 값을 같이 보낸다. */
     fileId: z.number().nullish(),
+    /** 첨부가 파일일 때만 보낸다. 최대 5개. 둘 다 오면 서버는 이쪽을 쓴다. */
+    fileIdList: z.array(z.number()).max(5).nullish(),
     url: z.string().max(2048).nullish(),
     mentorShareAgreed: z.boolean(),
   }),
@@ -566,6 +579,8 @@ export const liveMentoringQuestionSchema = z.object({
   attachmentType: liveMentoringAttachmentTypeSchema,
   fileId: z.number().nullable(),
   attachmentUrl: z.string().nullable(),
+  /** 서버 배포 전·옛 데이터에는 없다. 없거나 비면 `attachmentUrl` 하나로 읽는다. */
+  attachmentFileList: z.array(liveMentoringAttachmentFileSchema).nullish(),
   mentorShareAgreed: z.boolean(),
   reservationStartAt: z.string().nullable(),
   editable: z.boolean(),
@@ -583,6 +598,7 @@ export const updateLiveMentoringQuestionRequestSchema = z.object({
   content: z.string().max(5000).nullish(),
   attachmentType: liveMentoringAttachmentTypeSchema,
   fileId: z.number().nullish(),
+  fileIdList: z.array(z.number()).max(5).nullish(),
   url: z.string().max(2048).nullish(),
   mentorShareAgreed: z.boolean(),
 });
@@ -666,6 +682,8 @@ export const liveMentoringEntrySchema = z.object({
    * (서버 `GetLiveMentoringEntryResponseDto.from` 규칙).
    */
   attachmentUrl: z.string().nullable(),
+  /** 서버 배포 전·옛 데이터에는 없다. 없거나 비면 `attachmentUrl` 하나로 읽는다. */
+  attachmentFileList: z.array(liveMentoringAttachmentFileSchema).nullish(),
   mentorStatus: liveMentoringSessionAttendanceSchema,
   menteeStatus: liveMentoringSessionAttendanceSchema,
   meetingUrl: z.string().nullable(),

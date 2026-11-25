@@ -208,6 +208,65 @@ describe('AdminLiveMentoringParticipantTable', () => {
     ).toBeInTheDocument();
   });
 
+  it('파일이 여럿이면 요약에 개수를 붙이고 파일마다 링크를 연다', () => {
+    mockList([
+      {
+        ...participant,
+        questionDeferred: false,
+        questionContent: '면접 꼬리질문을 봐 주세요',
+        attachmentType: 'FILE',
+        attachmentUrl: 'https://files.example.com/a.pdf',
+        attachmentFileList: [
+          {
+            fileId: 1,
+            fileName: 'a.pdf',
+            url: 'https://files.example.com/a.pdf',
+          },
+          {
+            fileId: 2,
+            fileName: 'b.docx',
+            url: 'https://files.example.com/b.docx',
+          },
+        ],
+        mentorShareAgreed: true,
+      },
+    ]);
+    render(<AdminLiveMentoringParticipantTable />);
+
+    expect(screen.getByText('질문 있음 · 파일 첨부 2개')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: '보기' }));
+
+    expect(screen.getByRole('link', { name: 'a.pdf' })).toHaveAttribute(
+      'href',
+      'https://files.example.com/a.pdf',
+    );
+    expect(screen.getByRole('link', { name: 'b.docx' })).toHaveAttribute(
+      'href',
+      'https://files.example.com/b.docx',
+    );
+  });
+
+  it('파일이 하나뿐인 응답은 예전과 같은 문구로 보인다', () => {
+    mockList([
+      {
+        ...participant,
+        questionContent: '질문',
+        attachmentType: 'FILE',
+        attachmentUrl: 'https://files.example.com/a.pdf',
+      },
+    ]);
+    render(<AdminLiveMentoringParticipantTable />);
+
+    expect(screen.getByText('질문 있음 · 파일 첨부')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: '보기' }));
+
+    expect(
+      screen.getByRole('link', { name: '첨부 파일 열기' }),
+    ).toHaveAttribute('href', 'https://files.example.com/a.pdf');
+  });
+
   it('서버가 제출 내역을 아직 내려주지 않으면 질문 없음으로 보인다', () => {
     mockList([participant]);
     render(<AdminLiveMentoringParticipantTable />);

@@ -8,6 +8,16 @@ import type { LiveMentoringAttachmentType } from '@/api/live-mentoring/liveMento
  */
 export const FULL_DISCOUNT = -1;
 
+/** 올려 둔 첨부 파일 한 개. `url` 은 서버에 이미 있는 파일일 때만 있다. */
+export interface AttachedFile {
+  fileId: number;
+  fileName: string;
+  url?: string;
+}
+
+/** 서버 검증과 같은 값이다. 파일 첨부는 이 개수까지 올릴 수 있다. */
+export const MAX_ATTACHMENT_FILES = 5;
+
 /**
  * 결제 페이지에서 받는 멘토 질문 입력값.
  *
@@ -19,8 +29,8 @@ export interface QuestionInput {
   deferred: boolean;
   content: string;
   attachmentType: LiveMentoringAttachmentType;
-  /** `uploadFileForId` 가 돌려준 파일 id. 첨부가 파일일 때만 채운다. */
-  fileId: number | null;
+  /** `uploadFileForId` 가 돌려준 파일들. 첨부가 파일일 때만 채운다. */
+  files: AttachedFile[];
   url: string;
   mentorShareAgreed: boolean;
 }
@@ -34,7 +44,7 @@ export const EMPTY_QUESTION: QuestionInput = {
   deferred: false,
   content: '',
   attachmentType: 'NONE',
-  fileId: null,
+  files: [],
   url: '',
   mentorShareAgreed: false,
 };

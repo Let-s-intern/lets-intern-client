@@ -367,6 +367,38 @@ describe('LiveMentoringEntryPage', () => {
       expect(link).not.toHaveAttribute('target');
     });
 
+    it('파일 첨부가 여러 개면 파일마다 저장 링크를 낸다', async () => {
+      await openAsMentor({
+        attachmentType: 'FILE',
+        attachmentUrl: 'https://cdn.test/a.pdf',
+        attachmentFileList: [
+          { fileId: 1, fileName: 'a.pdf', url: 'https://cdn.test/a.pdf' },
+          { fileId: 2, fileName: 'b.docx', url: 'https://cdn.test/b.docx' },
+        ],
+      });
+
+      const first = screen.getByRole('link', { name: 'a.pdf' });
+      const second = screen.getByRole('link', { name: 'b.docx' });
+      expect(first).toHaveAttribute('href', 'https://cdn.test/a.pdf');
+      expect(second).toHaveAttribute('href', 'https://cdn.test/b.docx');
+      expect(first).not.toHaveAttribute('target');
+      expect(
+        screen.queryByRole('link', { name: '첨부 파일 저장' }),
+      ).not.toBeInTheDocument();
+    });
+
+    it('attachmentFileList 가 비어 있으면 attachmentUrl 하나로 그린다', async () => {
+      await openAsMentor({
+        attachmentType: 'FILE',
+        attachmentUrl: 'https://cdn.test/a.pdf',
+        attachmentFileList: [],
+      });
+
+      expect(
+        screen.getByRole('link', { name: '첨부 파일 저장' }),
+      ).toHaveAttribute('href', 'https://cdn.test/a.pdf');
+    });
+
     /*
       첨부가 있는데 url 이 없는 것은 멘티가 공유에 동의하지 않아 서버가 가린 경우다.
       "없음"으로 적으면 내지 않은 것으로 읽혀 멘토가 멘티에게 잘못 문의하게 된다.

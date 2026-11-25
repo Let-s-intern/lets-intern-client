@@ -167,6 +167,26 @@ describe('adminLiveMentoringReservationSchema', () => {
     expect(parsed.questionContent).toBeNull();
   });
 
+  it('첨부 파일 목록이 없는 응답(서버 배포 전)도 파싱된다', () => {
+    const parsed = adminLiveMentoringReservationSchema.parse(makeReservation());
+    expect(parsed.attachmentFileList).toBeUndefined();
+  });
+
+  it('첨부 파일 목록이 있으면 그대로 파싱한다', () => {
+    const attachmentFileList = [
+      { fileId: 1, fileName: 'a.pdf', url: 'https://files.example.com/a.pdf' },
+      {
+        fileId: 2,
+        fileName: 'b.docx',
+        url: 'https://files.example.com/b.docx',
+      },
+    ];
+    const parsed = adminLiveMentoringReservationSchema.parse(
+      makeReservation({ attachmentType: 'FILE', attachmentFileList }),
+    );
+    expect(parsed.attachmentFileList).toEqual(attachmentFileList);
+  });
+
   it('목록 응답은 reservationList 와 pageInfo 를 갖는다', () => {
     const parsed = adminLiveMentoringReservationListSchema.parse({
       reservationList: [makeReservation()],

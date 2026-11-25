@@ -50,7 +50,7 @@ export const validateQuestionInput = (
     return '멘토에게 궁금한 점을 작성하거나 `나중에 작성하기` 를 선택해 주세요.';
   }
 
-  if (question.attachmentType === 'FILE' && question.fileId === null) {
+  if (question.attachmentType === 'FILE' && question.files.length === 0) {
     return '첨부할 파일을 업로드해 주세요.';
   }
 

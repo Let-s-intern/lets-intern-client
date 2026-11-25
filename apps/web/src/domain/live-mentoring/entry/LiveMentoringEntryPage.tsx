@@ -247,6 +247,7 @@ export default function LiveMentoringEntryPage({ applicationId, role }: Props) {
             questionContent={entry?.questionContent}
             attachmentType={entry?.attachmentType}
             attachmentUrl={entry?.attachmentUrl}
+            attachmentFileList={entry?.attachmentFileList}
             onClose={() => setIsSubmissionOpen(false)}
           />
         ))}

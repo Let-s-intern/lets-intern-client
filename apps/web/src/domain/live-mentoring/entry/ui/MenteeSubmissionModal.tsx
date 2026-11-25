@@ -2,7 +2,10 @@
 
 import { useEffect } from 'react';
 
-import type { LiveMentoringAttachmentType } from '@/api/live-mentoring/liveMentoringSchema';
+import type {
+  LiveMentoringAttachmentFile,
+  LiveMentoringAttachmentType,
+} from '@/api/live-mentoring/liveMentoringSchema';
 import { isOpenableUrl } from '../utils/url';
 
 interface Props {
@@ -12,6 +15,8 @@ interface Props {
   questionContent?: string | null;
   attachmentType?: LiveMentoringAttachmentType;
   attachmentUrl?: string | null;
+  /** 없거나 비면 `attachmentUrl` 하나로 그린다(서버 배포 전·옛 데이터). */
+  attachmentFileList?: LiveMentoringAttachmentFile[] | null;
   onClose: () => void;
 }
 
@@ -34,6 +39,7 @@ const MenteeSubmissionModal = ({
   questionContent,
   attachmentType = 'NONE',
   attachmentUrl,
+  attachmentFileList,
   onClose,
 }: Props) => {
   useEffect(() => {
@@ -57,6 +63,10 @@ const MenteeSubmissionModal = ({
   */
   const openableUrl =
     attachmentUrl && isOpenableUrl(attachmentUrl) ? attachmentUrl : null;
+  const fileList =
+    attachmentType === 'FILE' && attachmentFileList?.length
+      ? attachmentFileList
+      : null;
 
   return (
     <div
@@ -119,6 +129,29 @@ const MenteeSubmissionModal = ({
             <p className="text-xsmall14 text-neutral-45">
               첨부한 파일이 없습니다.
             </p>
+          ) : fileList ? (
+            /* 파일은 저장이다. 아래 단일 링크와 같은 이유로 새 탭으로 열지 않는다. */
+            <ul className="flex flex-col gap-1">
+              {fileList.map((file) =>
+                isOpenableUrl(file.url) ? (
+                  <li key={file.fileId}>
+                    <a
+                      href={file.url}
+                      className="text-xsmall14 font-medium text-primary underline"
+                    >
+                      {file.fileName}
+                    </a>
+                  </li>
+                ) : (
+                  <li
+                    key={file.fileId}
+                    className="text-xsmall14 text-neutral-45"
+                  >
+                    {file.fileName} (열 수 없는 주소)
+                  </li>
+                ),
+              )}
+            </ul>
           ) : openableUrl ? (
             /*
               파일은 저장, 링크는 새 탭이다. 저장을 만드는 것은 `download` 속성이

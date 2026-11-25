@@ -149,6 +149,73 @@ describe('QuestionModal — 시안 3-2 (작성됨)', () => {
     expect(link).not.toHaveAttribute('target');
   });
 
+  it('낸 파일이 여럿이면 목록으로 보이고 각각 저장 링크가 있다', () => {
+    renderModal(
+      makeQuestion({
+        attachmentType: 'FILE',
+        fileId: 7,
+        attachmentUrl: 'https://cdn.test/a.pdf',
+        attachmentFileList: [
+          { fileId: 7, fileName: 'a.pdf', url: 'https://cdn.test/a.pdf' },
+          { fileId: 8, fileName: 'b.docx', url: 'https://cdn.test/b.docx' },
+        ],
+      }),
+    );
+
+    expect(screen.getByRole('link', { name: 'a.pdf 저장' })).toHaveAttribute(
+      'href',
+      'https://cdn.test/a.pdf',
+    );
+    expect(screen.getByRole('link', { name: 'b.docx 저장' })).toHaveAttribute(
+      'href',
+      'https://cdn.test/b.docx',
+    );
+    expect(screen.getByText('2/5')).toBeInTheDocument();
+  });
+
+  it('하나를 지우고 저장하면 남은 id 만 fileIdList 로 보낸다', async () => {
+    renderModal(
+      makeQuestion({
+        attachmentType: 'FILE',
+        fileId: 7,
+        attachmentUrl: 'https://cdn.test/a.pdf',
+        attachmentFileList: [
+          { fileId: 7, fileName: 'a.pdf', url: 'https://cdn.test/a.pdf' },
+          { fileId: 8, fileName: 'b.docx', url: 'https://cdn.test/b.docx' },
+        ],
+      }),
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'a.pdf 삭제' }));
+    fireEvent.click(saveButton());
+
+    await waitFor(() => expect(mutate).toHaveBeenCalledTimes(1));
+    expect(mutate.mock.calls[0][0]).toMatchObject({
+      attachmentType: 'FILE',
+      fileId: 8,
+      fileIdList: [8],
+    });
+  });
+
+  it('읽기 전용이면 삭제 버튼이 없다', () => {
+    renderModal(
+      makeQuestion({
+        attachmentType: 'FILE',
+        fileId: 7,
+        attachmentUrl: 'https://cdn.test/a.pdf',
+        attachmentFileList: [
+          { fileId: 7, fileName: 'a.pdf', url: 'https://cdn.test/a.pdf' },
+        ],
+      }),
+      { readOnly: true },
+    );
+
+    expect(screen.queryByRole('button', { name: 'a.pdf 삭제' })).toBeNull();
+    expect(
+      screen.getByRole('link', { name: 'a.pdf 저장' }),
+    ).toBeInTheDocument();
+  });
+
   it('쓴 내용이 채워져 있고 버튼이 수정 취소 / 수정하기다', () => {
     renderModal(makeQuestion());
 

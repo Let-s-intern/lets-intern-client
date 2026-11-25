@@ -2,15 +2,17 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-import { uploadFileForId } from '@/api/file';
 import {
   useLiveMentoringQuestionQuery,
   useUpdateLiveMentoringQuestionMutation,
 } from '@/api/live-mentoring/liveMentoring';
-import type { LiveMentoringAttachmentType } from '@/api/live-mentoring/liveMentoringSchema';
+import type { LiveMentoringQuestion } from '@/api/live-mentoring/liveMentoringSchema';
+import { useFileAttachments } from '../order/hooks/useFileAttachments';
 import {
+  MAX_ATTACHMENT_FILES,
   QUESTION_CONTENT_MAX,
   QUESTION_URL_MAX,
+  type AttachedFile,
   type QuestionInput,
 } from '../order/types';
 import { validateQuestionInput } from '../order/utils';
@@ -24,6 +26,26 @@ const formatEditDeadline = (deadline: string): string => {
 import { readServerError } from '../utils/serverError';
 
 const ACCEPTED_FILE_TYPES = '.pdf,.doc,.docx';
+
+/**
+ * 이미 낸 파일 목록. `attachmentFileList` 가 없거나 비면 예전처럼 `fileId` 와
+ * `attachmentUrl` 한 쌍을 파일 하나로 읽는다(서버 배포 전·옛 데이터).
+ */
+const toAttachedFiles = (question: LiveMentoringQuestion): AttachedFile[] => {
+  if (question.attachmentFileList?.length) {
+    return question.attachmentFileList;
+  }
+  if (question.attachmentType === 'FILE' && question.fileId !== null) {
+    return [
+      {
+        fileId: question.fileId,
+        fileName: '제출한 파일',
+        url: question.attachmentUrl ?? undefined,
+      },
+    ];
+  }
+  return [];
+};
 
 interface QuestionModalProps {
   applicationId: number;
@@ -52,9 +74,6 @@ const QuestionModal = ({
   const updateQuestion = useUpdateLiveMentoringQuestionMutation(applicationId);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [fileName, setFileName] = useState<string | null>(null);
-  const [uploadError, setUploadError] = useState<string | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [draft, setDraft] = useState<QuestionInput | null>(null);
 
@@ -72,7 +91,7 @@ const QuestionModal = ({
       deferred: false,
       content: question.content ?? '',
       attachmentType: question.attachmentType,
-      fileId: question.fileId,
+      files: toAttachedFiles(question),
       url: question.attachmentUrl ?? '',
       mentorShareAgreed: question.mentorShareAgreed,
     });
@@ -94,20 +113,11 @@ const QuestionModal = ({
   const patch = (partial: Partial<QuestionInput>) =>
     setDraft((prev) => (prev ? { ...prev, ...partial } : prev));
 
-  const handleFileSelect = async (file: File | undefined) => {
-    if (!file) return;
-    setUploadError(null);
-    setIsUploading(true);
-    try {
-      const fileId = await uploadFileForId({ file, type: 'LIVE_MENTORING' });
-      setFileName(file.name);
-      patch({ attachmentType: 'FILE', fileId, url: '' });
-    } catch {
-      setUploadError('파일 업로드에 실패했습니다. 다시 시도해 주세요.');
-    } finally {
-      setIsUploading(false);
-    }
-  };
+  const { isUploading, message, upload, remove, clearMessage } =
+    useFileAttachments({
+      files: draft?.files ?? [],
+      onChange: (files) => patch({ attachmentType: 'FILE', files, url: '' }),
+    });
 
   /*
     서버가 준 editable 이 최종 판정이다. readOnly 는 참여 중·종료 카드에서 열었을 때의
@@ -134,7 +144,15 @@ const QuestionModal = ({
         deferred: false,
         content: draft.content,
         attachmentType: draft.attachmentType,
-        fileId: draft.attachmentType === 'FILE' ? draft.fileId : null,
+        // 옛 서버는 `fileId` 만 읽는다. 첫 파일을 같이 실어 둔다.
+        fileId:
+          draft.attachmentType === 'FILE'
+            ? (draft.files[0]?.fileId ?? null)
+            : null,
+        fileIdList:
+          draft.attachmentType === 'FILE'
+            ? draft.files.map((file) => file.fileId)
+            : undefined,
         url: draft.attachmentType === 'URL' ? draft.url : null,
         mentorShareAgreed: draft.mentorShareAgreed,
       },
@@ -239,10 +257,13 @@ const QuestionModal = ({
                   ref={fileInputRef}
                   type="file"
                   accept={ACCEPTED_FILE_TYPES}
+                  multiple
                   className="hidden"
-                  onChange={(event) =>
-                    handleFileSelect(event.target.files?.[0])
-                  }
+                  onChange={(event) => {
+                    upload(Array.from(event.target.files ?? []));
+                    // 같은 파일을 지웠다가 다시 고를 수 있게 비운다.
+                    event.target.value = '';
+                  }}
                 />
                 <button
                   type="button"
@@ -254,35 +275,56 @@ const QuestionModal = ({
                 >
                   {isUploading ? '업로드 중…' : '파일 업로드'}
                 </button>
-                {fileName && (
-                  <span className="text-xxsmall12 text-neutral-40">
-                    {fileName}
-                  </span>
-                )}
-                {/*
-                  이미 낸 파일을 여기서 다시 받아 본다. 예전에는 업로드 직후의 이름만
-                  남아 무엇을 냈는지 확인할 방법이 없었다. 주소는 서버가 준다 — 파일
-                  첨부의 주소는 신청이 아니라 File 에 있어 화면이 만들 수 없다.
-
-                  저장을 만드는 것은 `download` 속성이 아니라 서버가 서명 URL 에 실은
-                  `Content-Disposition: attachment` 다. 교차 출처 링크의 `download` 는
-                  브라우저가 무시하므로 붙여도 pdf 가 그냥 열린다. 새 탭으로 열지 않는
-                  것도 그래서다 — 첨부 응답은 문서를 그리지 않아 빈 탭만 남는다.
-                */}
-                {draft.attachmentType === 'FILE' && question?.attachmentUrl && (
-                  <a
-                    href={question.attachmentUrl}
-                    className="text-xxsmall12 text-primary underline"
-                  >
-                    제출한 파일 저장
-                  </a>
-                )}
-                {uploadError && (
+                <span className="text-xxsmall12 text-neutral-45">
+                  {draft.files.length}/{MAX_ATTACHMENT_FILES}
+                </span>
+                {message && (
                   <span className="text-xxsmall12 text-system-error">
-                    {uploadError}
+                    {message}
                   </span>
                 )}
               </div>
+              {/*
+                이미 낸 파일을 여기서 다시 받아 본다. 주소는 서버가 준다 — 파일 첨부의
+                주소는 신청이 아니라 File 에 있어 화면이 만들 수 없다. 방금 올린 파일은
+                아직 주소가 없어 이름만 보인다.
+
+                저장을 만드는 것은 `download` 속성이 아니라 서버가 서명 URL 에 실은
+                `Content-Disposition: attachment` 다. 교차 출처 링크의 `download` 는
+                브라우저가 무시하므로 붙여도 pdf 가 그냥 열린다. 새 탭으로 열지 않는
+                것도 그래서다 — 첨부 응답은 문서를 그리지 않아 빈 탭만 남는다.
+              */}
+              {draft.attachmentType === 'FILE' && draft.files.length > 0 && (
+                <ul className="flex flex-col gap-1 pl-6">
+                  {draft.files.map((file) => (
+                    <li
+                      key={file.fileId}
+                      className="flex items-center gap-2 text-xxsmall12 text-neutral-40"
+                    >
+                      <span>{file.fileName}</span>
+                      {file.url && (
+                        <a
+                          href={file.url}
+                          aria-label={`${file.fileName} 저장`}
+                          className="text-primary underline"
+                        >
+                          저장
+                        </a>
+                      )}
+                      {canEdit && (
+                        <button
+                          type="button"
+                          aria-label={`${file.fileName} 삭제`}
+                          onClick={() => remove(file.fileId)}
+                          className="text-neutral-45 underline"
+                        >
+                          삭제
+                        </button>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
 
               <label className="flex items-center gap-2 text-xsmall14 text-neutral-0">
                 <input
@@ -291,8 +333,8 @@ const QuestionModal = ({
                   checked={draft.attachmentType === 'URL'}
                   disabled={!canEdit}
                   onChange={() => {
-                    setFileName(null);
-                    patch({ attachmentType: 'URL', fileId: null });
+                    clearMessage();
+                    patch({ attachmentType: 'URL', files: [] });
                   }}
                   className="h-4 w-4 accent-primary"
                 />
