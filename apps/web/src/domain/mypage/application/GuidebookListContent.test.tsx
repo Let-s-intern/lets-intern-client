@@ -92,4 +92,30 @@ describe('GuidebookListContent', () => {
     render(<GuidebookListContent />);
     expect(mockQueryEnabled).toBe(true);
   });
+
+  it('비로그인이면 목록을 요청하지 않고 새 탭으로 여는 로그인 링크를 보인다', () => {
+    mockAuth = { isLoggedIn: false, isInitialized: true };
+
+    render(<GuidebookListContent />);
+
+    expect(screen.getByText('로그인이 필요해요')).toBeInTheDocument();
+    const link = screen.getByRole('link', { name: '새 탭에서 로그인하기' });
+    expect(link).toHaveAttribute('target', '_blank');
+    expect(link).toHaveAttribute('rel', expect.stringContaining('noopener'));
+    expect(link).toHaveAttribute(
+      'href',
+      '/login?redirect=%2Fmypage%2Fapplication',
+    );
+    expect(mockQueryEnabled).toBe(false);
+    expect(screen.queryByTestId('guidebook-section')).toBeNull();
+  });
+
+  it('로그인 상태를 복원하기 전에는 로그인 안내를 보이지 않는다', () => {
+    mockAuth = { isLoggedIn: false, isInitialized: false };
+
+    render(<GuidebookListContent />);
+
+    expect(screen.queryByText('로그인이 필요해요')).toBeNull();
+    expect(screen.getByTestId('loading')).toBeInTheDocument();
+  });
 });
