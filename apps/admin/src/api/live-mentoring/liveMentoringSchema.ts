@@ -147,6 +147,16 @@ export type LiveMentoringAttachmentType = z.infer<
 const submissionAttachmentShape = {
   attachmentType: liveMentoringAttachmentTypeSchema.nullish(),
   attachmentUrl: z.string().nullish(),
+  /** 파일 첨부 목록(최대 5개). 없거나 비면 `attachmentUrl` 하나로 읽는다. */
+  attachmentFileList: z
+    .array(
+      z.object({
+        fileId: z.number(),
+        fileName: z.string(),
+        url: z.string(),
+      }),
+    )
+    .nullish(),
   mentorShareAgreed: z.boolean().nullish(),
 };
 

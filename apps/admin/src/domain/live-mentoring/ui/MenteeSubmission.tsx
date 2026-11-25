@@ -6,7 +6,10 @@ import {
   DialogTitle,
 } from '@mui/material';
 
-import type { LiveMentoringAttachmentType } from '@/api/live-mentoring/liveMentoringSchema';
+import type {
+  AdminLiveMentoringReservation,
+  LiveMentoringAttachmentType,
+} from '@/api/live-mentoring/liveMentoringSchema';
 
 /** 멘티 제출 내역. 예약 상세(`LiveMentoringDetailBody`)와 참여자 표가 같은 값으로 그린다. */
 export interface MenteeSubmissionValue {
@@ -14,6 +17,8 @@ export interface MenteeSubmissionValue {
   questionContent?: string | null;
   attachmentType?: LiveMentoringAttachmentType | null;
   attachmentUrl?: string | null;
+  /** 파일 첨부 목록. 없거나 비면 `attachmentUrl` 하나로 읽는다. */
+  attachmentFileList?: AdminLiveMentoringReservation['attachmentFileList'];
   mentorShareAgreed?: boolean | null;
 }
 
@@ -39,12 +44,16 @@ export const submissionSummary = (value: MenteeSubmissionValue): string => {
     : value.questionDeferred
       ? '나중에 작성'
       : '질문 없음';
+  const fileCount = value.attachmentFileList?.length ?? 0;
   const hasAttachment =
     value.attachmentType != null &&
     value.attachmentType !== 'NONE' &&
-    Boolean(value.attachmentUrl);
+    (Boolean(value.attachmentUrl) || fileCount > 0);
+  // 파일이 하나뿐이면 예전 문구 그대로 두고, 둘 이상일 때만 개수를 붙인다.
+  const count =
+    value.attachmentType === 'FILE' && fileCount > 1 ? ` ${fileCount}개` : '';
   return hasAttachment
-    ? `${question} · ${ATTACHMENT_TYPE_LABELS[value.attachmentType as LiveMentoringAttachmentType]} 첨부`
+    ? `${question} · ${ATTACHMENT_TYPE_LABELS[value.attachmentType as LiveMentoringAttachmentType]} 첨부${count}`
     : question;
 };
 
@@ -60,8 +69,13 @@ export const MenteeSubmissionContent = ({
   value: MenteeSubmissionValue;
 }) => {
   const attachmentType = value.attachmentType ?? 'NONE';
+  const fileList =
+    attachmentType === 'FILE' && value.attachmentFileList?.length
+      ? value.attachmentFileList
+      : null;
   const hasAttachment =
-    attachmentType !== 'NONE' && Boolean(value.attachmentUrl);
+    attachmentType !== 'NONE' &&
+    (Boolean(fileList) || Boolean(value.attachmentUrl));
 
   return (
     <div className="flex flex-col gap-4 text-xsmall14">
@@ -78,7 +92,22 @@ export const MenteeSubmissionContent = ({
         <span className="text-xxsmall12 font-medium text-neutral-40">
           첨부 ({ATTACHMENT_TYPE_LABELS[attachmentType]})
         </span>
-        {hasAttachment ? (
+        {fileList ? (
+          <ul className="flex flex-col gap-1">
+            {fileList.map((file) => (
+              <li key={file.fileId}>
+                <a
+                  href={file.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="break-all text-primary underline"
+                >
+                  {file.fileName}
+                </a>
+              </li>
+            ))}
+          </ul>
+        ) : hasAttachment ? (
           <a
             href={value.attachmentUrl as string}
             target="_blank"
