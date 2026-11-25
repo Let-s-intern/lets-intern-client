@@ -151,3 +151,33 @@ describe('ConditionalLayout — 가이드북 구매 팝업 (LC-3677)', () => {
     },
   );
 });
+
+describe('ConditionalLayout — 구매한 가이드북 목록 임베드 (LC-3677)', () => {
+  it('/guidebook/my 에서 NavBar·Footer·채널톡·바텀바 없이 children만 렌더한다', () => {
+    mockPathname = '/guidebook/my';
+
+    render(
+      <ConditionalLayout>
+        <div data-testid="list-content">목록</div>
+      </ConditionalLayout>,
+    );
+
+    expect(screen.getByTestId('list-content')).toBeInTheDocument();
+    expect(screen.queryByTestId('navbar')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('footer')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('channel-talk')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('bottom-nav')).not.toBeInTheDocument();
+  });
+
+  it('/guidebook/my 아래의 다른 경로는 렛츠커리어 헤더를 그대로 쓴다', () => {
+    mockPathname = '/guidebook/my/other';
+
+    render(
+      <ConditionalLayout>
+        <div>다른 화면</div>
+      </ConditionalLayout>,
+    );
+
+    expect(screen.getByTestId('navbar')).toBeInTheDocument();
+  });
+});
