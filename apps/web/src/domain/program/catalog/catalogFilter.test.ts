@@ -4,6 +4,7 @@ import type {
 } from '@/api/program-category/programCategory';
 import dayjs from '@/lib/dayjs';
 import {
+  CATALOG_TYPES,
   filterCatalogTargets,
   getCatalogTitle,
   getRecruitStatus,
@@ -49,10 +50,10 @@ describe('전체 프로그램 주소 필터', () => {
     expect(q).toEqual({ categoryIds: [3], type: 'VOD', status: null });
   });
 
-  it('예전 jobCategory 링크를 노출 분류로 옮기고, 가이드북 유형은 무시한다', () => {
+  it('예전 jobCategory 링크를 노출 분류로 옮기고, classification 은 무시한다', () => {
     const q = parseCatalogQuery(
       new URLSearchParams(
-        'jobCategory=MARKETING&jobCategory=LARGE_COMPANY&type=GUIDEBOOK&classification=ONE',
+        'jobCategory=MARKETING&jobCategory=LARGE_COMPANY&classification=ONE',
       ),
       groups,
     );
@@ -93,10 +94,36 @@ describe('전체 프로그램 목록', () => {
     expect(getRecruitStatus(upcoming, now)).toBe('UPCOMING');
   });
 
-  it('가이드북·블로그·무료 자료집은 어떤 유형을 골라도 안 나온다', () => {
-    for (const hidden of ['GUIDEBOOK', 'BLOG', 'MAGNET'] as const) {
+  it('블로그·무료 자료집은 어떤 유형을 골라도 안 나온다', () => {
+    for (const hidden of ['BLOG', 'MAGNET'] as const) {
       expect(filterCatalogTargets([target(hidden)], hidden, now)).toEqual([]);
     }
+  });
+
+  it('가이드북 유형을 고르면 가이드북만 나오고, 챌린지 목록에는 섞이지 않는다', () => {
+    const guidebook = target('GUIDEBOOK', { targetId: 5 });
+    const challenge = target('CHALLENGE', { targetId: 6 });
+    expect(
+      filterCatalogTargets([guidebook, challenge], 'GUIDEBOOK', now).map(
+        (t) => t.targetId,
+      ),
+    ).toEqual([5]);
+    expect(
+      filterCatalogTargets([guidebook, challenge], 'CHALLENGE', now).map(
+        (t) => t.targetId,
+      ),
+    ).toEqual([6]);
+  });
+
+  it('가이드북 칩은 VOD 뒤에 있고, type=GUIDEBOOK 주소를 받아 되돌린다', () => {
+    const keys = CATALOG_TYPES.map((t) => t.key);
+    expect(keys.indexOf('GUIDEBOOK')).toBe(keys.indexOf('VOD') + 1);
+    expect(
+      parseCatalogQuery(new URLSearchParams('type=GUIDEBOOK'), groups).type,
+    ).toBe('GUIDEBOOK');
+    expect(toCatalogSearch({ categoryIds: [], type: 'GUIDEBOOK' })).toBe(
+      'type=GUIDEBOOK',
+    );
   });
 
   it('유형을 안 고르면 챌린지, 기본값은 주소에 안 남는다', () => {

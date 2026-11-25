@@ -21,7 +21,8 @@ export type CatalogStatus = 'PROCEEDING' | 'PREV' | 'POST';
 
 /**
  * 상품 유형 칩. "전체" 없이 하나씩 고르고 기본은 챌린지.
- * 가이드북(챌린지 안의 선택지)·무료 자료집은 목록에서 뺀다 (prd-프로그램-목록-필터-개편 4장)
+ * 무료 자료집은 목록에서 뺀다. 가이드북은 챌린지 안의 선택지이면서 독립 상품이기도 해서
+ * 2026-11-25 에 칩으로 되살렸다 (prd-프로그램-목록-필터-개편 4장의 결정을 되돌림)
  */
 const ALL_CATALOG_TYPES: {
   key: ProgramCategoryTargetType;
@@ -30,6 +31,7 @@ const ALL_CATALOG_TYPES: {
   { key: 'CHALLENGE', label: '챌린지' },
   { key: 'LIVE', label: 'LIVE 클래스' },
   { key: 'VOD', label: 'VOD 클래스' },
+  { key: 'GUIDEBOOK', label: '가이드북' },
   { key: 'LIVE_MENTORING', label: '1:1 LIVE 멘토링' },
   { key: 'MEMBERSHIP', label: '올인원 패스' },
 ];
@@ -43,7 +45,6 @@ export const DEFAULT_CATALOG_TYPE: ProgramCategoryTargetType = 'CHALLENGE';
 
 /** 목록에 보이지 않는 유형. 블로그는 상품이 아니다 */
 const HIDDEN_TYPES: ProgramCategoryTargetType[] = [
-  'GUIDEBOOK',
   'BLOG',
   'MAGNET',
   ...(SHOW_LIVE_MENTORING_NAV ? [] : (['LIVE_MENTORING'] as const)),
@@ -65,7 +66,7 @@ export interface CatalogQuery {
 /**
  * 주소의 필터를 읽는다. 없는 카테고리 id 는 버린다.
  * 예전 링크도 받는다: `?jobCategory=MARKETING` 은 마케팅 카테고리로,
- * `?type=GUIDEBOOK` 과 `?classification=` 은 무시한다
+ * `?classification=` 은 무시한다
  */
 export const parseCatalogQuery = (
   params: URLSearchParams,
