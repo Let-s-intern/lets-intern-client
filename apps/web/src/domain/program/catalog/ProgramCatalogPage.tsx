@@ -120,7 +120,7 @@ const ProgramCatalogPage = () => {
         <h2 className="text-center text-small20 font-bold text-neutral-0 md:text-medium24">
           어떤 멘토의 도움이 필요하세요?
         </h2>
-        <p className="mt-2 hidden break-keep text-center md:block text-xsmall14 text-neutral-30">
+        <p className="mt-2 hidden break-keep text-center text-xsmall14 text-neutral-30 md:block">
           상황을 알려주시면 관련 프로그램과 추천 이유를 함께 보여드려요.
         </p>
         <AiChat

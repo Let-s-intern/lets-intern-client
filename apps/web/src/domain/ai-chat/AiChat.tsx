@@ -144,30 +144,31 @@ const AiChat = ({
         </button>
       </form>
 
-      {suggestions && !isChatting && (
-        // 모바일은 칩이 두 줄로 쌓여 목록을 밀어내지 않게 한 줄 가로 스크롤
-        <div className="-mx-5 mt-4 flex w-[calc(100%+2.5rem)] max-w-[600px] items-center gap-2 overflow-x-auto px-5 scrollbar-hide md:mx-0 md:w-full md:flex-wrap md:px-0">
-          <span className="shrink-0 whitespace-nowrap text-xsmall14 text-neutral-30">
-            이렇게 물어보세요
-          </span>
-          {suggestions.map((text) => (
-            <button
-              key={text}
-              type="button"
-              disabled={isPending}
-              onClick={() => {
-                setQuery(text);
-                start(text);
-                onAsk?.();
-              }}
-              className="ai_chat_suggestion shrink-0 whitespace-nowrap rounded-full border border-neutral-80 bg-white px-3 py-1.5 text-xsmall14 text-neutral-20 hover:border-neutral-60"
-              data-text={text}
-            >
-              {text}
-            </button>
-          ))}
-        </div>
-      )}
+      {suggestions &&
+        !isChatting && (
+          // 모바일은 칩이 두 줄로 쌓여 목록을 밀어내지 않게 한 줄 가로 스크롤
+          <div className="-mx-5 mt-4 flex w-[calc(100%+2.5rem)] max-w-[600px] items-center gap-2 overflow-x-auto px-5 scrollbar-hide md:mx-0 md:w-full md:flex-wrap md:px-0">
+            <span className="shrink-0 whitespace-nowrap text-xsmall14 text-neutral-30">
+              이렇게 물어보세요
+            </span>
+            {suggestions.map((text) => (
+              <button
+                key={text}
+                type="button"
+                disabled={isPending}
+                onClick={() => {
+                  setQuery(text);
+                  start(text);
+                  onAsk?.();
+                }}
+                className="ai_chat_suggestion shrink-0 whitespace-nowrap rounded-full border border-neutral-80 bg-white px-3 py-1.5 text-xsmall14 text-neutral-20 hover:border-neutral-60"
+                data-text={text}
+              >
+                {text}
+              </button>
+            ))}
+          </div>
+        )}
 
       {isChatting && !panel && (
         <div
