@@ -29,7 +29,7 @@ export const initialGuidebookInput: ContentProgramFormInput = {
 
 // 가이드북 데이터로 폼 입력값 변환
 export const guidebookToFormInput = (
-  guidebook: GuidebookIdSchema,
+  guidebook: Omit<GuidebookIdSchema, 'id'>,
 ): ContentProgramFormInput => ({
   title: guidebook.title ?? '',
   shortDesc: guidebook.shortDesc ?? '',

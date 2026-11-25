@@ -697,6 +697,11 @@ export const getGuidebookIdSchema = z.object({
 
 export type GuidebookIdSchema = z.infer<typeof getGuidebookIdSchema>;
 
+/** 가이드북 생성 화면 Import 용. 새로 만든 JSON 에는 id 가 없으므로 id 만 선택으로 받는다 */
+export const guidebookImportSchema = getGuidebookIdSchema.extend({
+  id: z.number().optional(),
+});
+
 /** GET /api/v1/guidebooks/{guidebookId} 가이드북 상세 조회 (사용자) */
 export const getPublicGuidebookSchema = z.object({
   id: z.number(),
