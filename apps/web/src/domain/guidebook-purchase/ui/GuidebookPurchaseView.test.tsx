@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { loadTossPayments } from '@tosspayments/tosspayments-sdk';
 import GuidebookPurchaseView from './GuidebookPurchaseView';
 
 const mockReplace = jest.fn();
@@ -34,8 +35,9 @@ jest.mock('@/store/useAuthStore', () => ({
   __esModule: true,
   default: () => mockAuth,
 }));
+let mockUser: unknown;
 jest.mock('@/api/user/user', () => ({
-  useUserQuery: () => ({ data: undefined }),
+  useUserQuery: () => ({ data: mockUser }),
 }));
 jest.mock('@/api/program', () => ({
   useProgramQuery: () => ({ type: 'guidebook', query: mockGuidebook }),
@@ -68,6 +70,7 @@ describe('GuidebookPurchaseView', () => {
       isError: false,
     };
     mockApplication.data = paidApplication;
+    mockUser = undefined;
   });
 
   it('비로그인이면 로그인 후 이 구매 화면으로 돌아오게 보낸다', async () => {
@@ -168,5 +171,49 @@ describe('GuidebookPurchaseView', () => {
     expect(
       screen.queryByRole('button', { name: '무료로 신청하기' }),
     ).toBeNull();
+  });
+
+  it('결제 성공·실패 주소가 결과·실패 경로이고 priceId 와 returnUrl 을 그대로 넘긴다', async () => {
+    const requestPayment = jest.fn();
+    jest.mocked(loadTossPayments).mockResolvedValue({
+      widgets: () => ({
+        setAmount: jest.fn(),
+        renderPaymentMethods: async () => ({
+          getSelectedPaymentMethod: async () => ({ code: 'CARD' }),
+        }),
+        renderAgreement: jest.fn(),
+        requestPayment,
+      }),
+    } as never);
+    mockUser = {
+      id: 'user-1',
+      name: '홍길동',
+      email: 'a@b.c',
+      phoneNum: '010',
+    };
+    mockSearch = new URLSearchParams({ returnUrl: 'https://ogonggo.co.kr/r' });
+
+    render(<GuidebookPurchaseView guidebookId={12} />);
+
+    const pay = screen.getByRole('button', { name: '990원 결제하기' });
+    await waitFor(() => expect(pay).toBeEnabled());
+    await userEvent.click(pay);
+
+    const { successUrl, failUrl, orderId, orderName } =
+      requestPayment.mock.calls[0][0];
+    expect(orderId).toBe('letsabc1');
+    expect(orderName).toBe('산업 리포트');
+
+    const success = new URL(successUrl);
+    expect(success.pathname).toBe('/guidebook/purchase/12/result');
+    expect(success.searchParams.get('priceId')).toBe('7');
+    expect(success.searchParams.get('paymentMethodKey')).toBe('CARD');
+    expect(success.searchParams.get('returnUrl')).toBe(
+      'https://ogonggo.co.kr/r',
+    );
+
+    const fail = new URL(failUrl);
+    expect(fail.pathname).toBe('/guidebook/purchase/12/fail');
+    expect(fail.searchParams.get('returnUrl')).toBe('https://ogonggo.co.kr/r');
   });
 });
