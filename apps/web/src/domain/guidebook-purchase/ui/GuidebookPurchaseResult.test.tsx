@@ -100,4 +100,32 @@ describe('GuidebookPurchaseResult', () => {
       queryKey: ['useProgramApplicationQueryKey'],
     });
   });
+
+  it('0원 신청은 결제 키 없이 신청하고 신청 완료 문구를 보인다', async () => {
+    mockParams = new URLSearchParams(freeParams);
+
+    render(<GuidebookPurchaseResult guidebookId={12} />);
+
+    expect(await screen.findByText('신청이 완료되었어요')).toBeInTheDocument();
+    expect(postGuidebookPurchase).toHaveBeenCalledWith(12, {
+      paymentInfo: {
+        couponId: null,
+        priceId: 7,
+        paymentKey: null,
+        orderId: 'order1',
+        amount: '0',
+      },
+    });
+  });
+
+  it('free 쿼리라도 금액이 0이 아니면 신청하지 않는다', async () => {
+    mockParams = new URLSearchParams(
+      'priceId=7&orderId=order1&amount=990&free=true',
+    );
+
+    render(<GuidebookPurchaseResult guidebookId={12} />);
+
+    expect(await screen.findByText('결제 실패')).toBeInTheDocument();
+    expect(postGuidebookPurchase).not.toHaveBeenCalled();
+  });
 });

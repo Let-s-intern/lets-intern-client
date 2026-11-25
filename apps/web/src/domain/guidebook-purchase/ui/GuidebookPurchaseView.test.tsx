@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import GuidebookPurchaseView from './GuidebookPurchaseView';
 
 const mockReplace = jest.fn();
@@ -10,20 +11,20 @@ let mockGuidebook: unknown = {
   isLoading: false,
   isError: false,
 };
-const mockApplication: { data: unknown; isLoading: boolean; isError: boolean } =
-  {
-    data: {
-      applied: false,
-      price: {
-        priceId: 7,
-        price: 1000,
-        discount: 10,
-        guideBookPriceType: 'CHARGE',
-      },
-    },
-    isLoading: false,
-    isError: false,
-  };
+const paidApplication = {
+  applied: false,
+  price: {
+    priceId: 7,
+    price: 1000,
+    discount: 10,
+    guideBookPriceType: 'CHARGE',
+  },
+};
+const mockApplication = {
+  data: paidApplication as unknown,
+  isLoading: false,
+  isError: false,
+};
 
 jest.mock('next/navigation', () => ({
   useRouter: () => ({ replace: mockReplace, push: mockPush }),
@@ -66,6 +67,7 @@ describe('GuidebookPurchaseView', () => {
       isLoading: false,
       isError: false,
     };
+    mockApplication.data = paidApplication;
   });
 
   it('비로그인이면 로그인 후 이 구매 화면으로 돌아오게 보낸다', async () => {
@@ -120,5 +122,36 @@ describe('GuidebookPurchaseView', () => {
       screen.getByText('상품 정보를 불러오지 못했어요.'),
     ).toBeInTheDocument();
     expect(screen.queryByRole('button')).toBeNull();
+  });
+
+  it('0원이면 토스 위젯 대신 무료 신청 버튼을 보이고, 결제 키 없이 결과 화면으로 보낸다', async () => {
+    mockApplication.data = {
+      applied: false,
+      price: {
+        priceId: 7,
+        price: 1000,
+        discount: 1000,
+        guideBookPriceType: 'FREE',
+      },
+    };
+    mockSearch = new URLSearchParams({ returnUrl: 'https://ogonggo.co.kr/r' });
+
+    render(<GuidebookPurchaseView guidebookId={12} />);
+
+    expect(screen.getByText('무료')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /결제하기/ })).toBeNull();
+    await userEvent.click(
+      screen.getByRole('button', { name: '무료로 신청하기' }),
+    );
+
+    const url = new URL(mockPush.mock.calls[0][0], 'https://x.test');
+    expect(url.pathname).toBe('/guidebook/purchase/12/result');
+    expect(Object.fromEntries(url.searchParams)).toEqual({
+      priceId: '7',
+      orderId: 'letsabc1',
+      amount: '0',
+      free: 'true',
+      returnUrl: 'https://ogonggo.co.kr/r',
+    });
   });
 });

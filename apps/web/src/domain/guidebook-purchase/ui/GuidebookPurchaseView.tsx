@@ -143,6 +143,38 @@ const GuidebookPaidPayment = ({ product }: { product: PurchaseProduct }) => {
   );
 };
 
+// 0원이면 토스를 거치지 않고 결과 화면이 바로 신청한다(결제 키 없이)
+const GuidebookFreeApply = ({ product }: { product: PurchaseProduct }) => {
+  const router = useRouter();
+  const orderId = useRef(generateOrderId());
+
+  const handleApply = () => {
+    router.push(
+      buildPurchasePath({
+        guidebookId: product.guidebookId,
+        step: 'result',
+        returnUrl: product.returnUrl,
+        params: {
+          priceId: String(product.priceId),
+          orderId: orderId.current,
+          amount: '0',
+          free: 'true',
+        },
+      }),
+    );
+  };
+
+  return (
+    <button
+      type="button"
+      className={PRIMARY_BUTTON_CLASS}
+      onClick={handleApply}
+    >
+      무료로 신청하기
+    </button>
+  );
+};
+
 export default function GuidebookPurchaseView({
   guidebookId,
 }: {
@@ -203,7 +235,11 @@ export default function GuidebookPurchaseView({
           title={title}
           amount={amount}
         />
-        <GuidebookPaidPayment product={product} />
+        {amount === 0 ? (
+          <GuidebookFreeApply product={product} />
+        ) : (
+          <GuidebookPaidPayment product={product} />
+        )}
       </>
     );
   };
