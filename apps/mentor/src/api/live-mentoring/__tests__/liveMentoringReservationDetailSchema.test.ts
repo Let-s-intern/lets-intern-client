@@ -52,6 +52,24 @@ describe('liveMentoringReservationDetailSchema', () => {
     expect(parsed.questionUpdatedAt).toBeNull();
   });
 
+  it('attachmentFileList 가 없어도 통과한다 — 서버 배포 전 응답', () => {
+    const parsed = liveMentoringReservationDetailSchema.parse(DETAIL);
+    expect(parsed.attachmentFileList).toBeUndefined();
+  });
+
+  it('attachmentFileList 가 있으면 그대로 파싱한다', () => {
+    const attachmentFileList = [
+      { fileId: 1, fileName: 'a.pdf', url: 'https://cdn.test/a.pdf' },
+      { fileId: 2, fileName: 'b.docx', url: 'https://cdn.test/b.docx' },
+    ];
+    const parsed = liveMentoringReservationDetailSchema.parse({
+      ...DETAIL,
+      attachmentType: 'FILE',
+      attachmentFileList,
+    });
+    expect(parsed.attachmentFileList).toEqual(attachmentFileList);
+  });
+
   it('동의하지 않은 건은 attachmentUrl 이 null 로 온다', () => {
     const parsed = liveMentoringReservationDetailSchema.parse({
       ...DETAIL,

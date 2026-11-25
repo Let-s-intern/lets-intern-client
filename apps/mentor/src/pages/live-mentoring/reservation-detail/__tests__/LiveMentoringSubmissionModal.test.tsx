@@ -340,6 +340,43 @@ describe('LiveMentoringSubmissionModal — 첨부 4분기 (PRD 4.7)', () => {
     expect(screen.queryByTestId('attachment-embed')).not.toBeInTheDocument();
   });
 
+  it('FILE 이 여러 개면 파일마다 저장하기 링크를 낸다', () => {
+    mockDetail({
+      attachmentType: 'FILE',
+      attachmentUrl: 'https://cdn.test/a.pdf',
+      attachmentFileList: [
+        { fileId: 1, fileName: 'a.pdf', url: 'https://cdn.test/a.pdf' },
+        { fileId: 2, fileName: 'b.docx', url: 'https://cdn.test/b.docx' },
+      ],
+      mentorShareAgreed: true,
+    });
+    renderModal(91005);
+
+    const first = screen.getByRole('link', { name: 'a.pdf 저장' });
+    const second = screen.getByRole('link', { name: 'b.docx 저장' });
+    expect(first).toHaveAttribute('href', 'https://cdn.test/a.pdf');
+    expect(second).toHaveAttribute('href', 'https://cdn.test/b.docx');
+    expect(first).not.toHaveAttribute('target');
+    expect(
+      screen.queryByRole('link', { name: '저장하기' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('attachmentFileList 가 비어 있으면 attachmentUrl 하나로 그린다', () => {
+    mockDetail({
+      attachmentType: 'FILE',
+      attachmentUrl: 'https://cdn.test/a.pdf',
+      attachmentFileList: [],
+      mentorShareAgreed: true,
+    });
+    renderModal(91005);
+
+    expect(screen.getByRole('link', { name: '저장하기' })).toHaveAttribute(
+      'href',
+      'https://cdn.test/a.pdf',
+    );
+  });
+
   it('FILE 인데 주소가 오지 않으면 링크 대신 안내를 남긴다', () => {
     mockDetail({
       attachmentType: 'FILE',

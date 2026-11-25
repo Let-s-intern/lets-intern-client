@@ -202,9 +202,15 @@ const AttachmentSection = ({
 }) => {
   const [isEmbedOpen, setIsEmbedOpen] = useState(true);
 
-  const { attachmentType, attachmentUrl, mentorShareAgreed, menteeName } =
-    detail;
-  const showEmbed = isNotionUrl(attachmentUrl);
+  const {
+    attachmentType,
+    attachmentUrl,
+    attachmentFileList,
+    mentorShareAgreed,
+    menteeName,
+  } = detail;
+  // 노션 임베드는 URL 첨부에만 둔다. 파일 주소는 서명 URL 이라 임베드할 이유가 없다.
+  const showEmbed = attachmentType === 'URL' && isNotionUrl(attachmentUrl);
 
   const renderBody = () => {
     if (attachmentType === 'NONE') {
@@ -224,6 +230,31 @@ const AttachmentSection = ({
       `attachmentUrl` 에 파일 주소를 채워 보낸다(공유 동의한 건만). 갈리는 것은
       링크의 생김새뿐이라 아래 링크 경로를 그대로 탄다.
      */
+
+    // 파일이 여러 개면 파일마다 저장 링크를 낸다. 목록이 없거나 비면 아래의 단일 링크다.
+    if (attachmentType === 'FILE' && attachmentFileList?.length) {
+      return (
+        <ul className="flex flex-col gap-2">
+          {attachmentFileList.map((file) => (
+            <li
+              key={file.fileId}
+              className="flex flex-wrap items-center gap-2 text-sm text-neutral-700"
+            >
+              <span className="break-all">{file.fileName}</span>
+              {isOpenableUrl(file.url) && (
+                <a
+                  href={file.url}
+                  aria-label={`${file.fileName} 저장`}
+                  className={feedbackModalDesign.panelEntryButton}
+                >
+                  저장하기
+                </a>
+              )}
+            </li>
+          ))}
+        </ul>
+      );
+    }
 
     // 주소가 비었거나 http(s) 가 아니면 링크를 만들지 않는다. 링크로 만드는 순간
     // 스킴이 그대로 실행되므로, 여는 대신 못 연다고 알린다.
