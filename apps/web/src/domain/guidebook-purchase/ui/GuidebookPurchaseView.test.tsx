@@ -154,4 +154,19 @@ describe('GuidebookPurchaseView', () => {
       returnUrl: 'https://ogonggo.co.kr/r',
     });
   });
+
+  it('이미 구매했으면 결제 위젯 대신 안내와 확인하기를 보인다', () => {
+    mockApplication.data = { ...paidApplication, applied: true };
+
+    render(<GuidebookPurchaseView guidebookId={12} />);
+
+    expect(screen.getByText('이미 구매했어요.')).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: '확인하기' }),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /결제하기/ })).toBeNull();
+    expect(
+      screen.queryByRole('button', { name: '무료로 신청하기' }),
+    ).toBeNull();
+  });
 });

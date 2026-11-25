@@ -15,6 +15,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { buildPurchasePath, RETURN_URL_PARAM } from '../utils/purchasePath';
 import GuidebookPurchaseCard from './GuidebookPurchaseCard';
+import PurchaseCloseButton from './PurchaseCloseButton';
 
 const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY || '';
 
@@ -216,6 +217,14 @@ export default function GuidebookPurchaseView({
     }
     if (guidebookQuery.isError || applicationQuery.isError) {
       return <Notice>상품 정보를 불러오지 못했어요.</Notice>;
+    }
+    if (application?.applied) {
+      return (
+        <>
+          <Notice>이미 구매했어요.</Notice>
+          <PurchaseCloseButton label="확인하기" />
+        </>
+      );
     }
     if (!payInfo) {
       return <Notice>지금은 구매할 수 없는 상품이에요.</Notice>;
