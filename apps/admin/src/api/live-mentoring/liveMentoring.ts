@@ -52,6 +52,21 @@ export const useAdminLiveMentoringListQuery = ({
   });
 };
 
+/**
+ * GET /admin/live-mentoring?keyword= — 상품 제목, 멘토 이름, 멘토 닉네임으로 찾는다(서버가 대소문자 없이 포함 검색).
+ * 메뉴 검색 패널이 입력마다 부르므로 요청을 취소할 수 있게 signal 을 받는다.
+ */
+export const fetchAdminLiveMentorings = async (
+  keyword: string,
+  signal?: AbortSignal,
+) => {
+  const res = await axios.get(ADMIN_PATH, {
+    params: { keyword, page: 1, size: 5 },
+    signal,
+  });
+  return adminLiveMentoringListSchema.parse(res.data.data).liveMentoringList;
+};
+
 /** 강제 종료는 목록 화면에서만 쓰므로 성공 시 목록 전체를 무효화한다. */
 const useAdminLiveMentoringMutation = <TVariables>(
   request: (variables: TVariables) => Promise<unknown>,

@@ -14,6 +14,7 @@ import { twMerge } from '@/lib/twMerge';
 
 import { matchEntries, splitHighlight } from './matchEntries';
 import type { SearchEntry } from './searchEntries';
+import { useLiveMentoringSearch } from './useLiveMentoringSearch';
 import { useMagnetSearch } from './useMagnetSearch';
 import { useProgramSearch } from './useProgramSearch';
 import { useUserSearch } from './useUserSearch';
@@ -87,6 +88,7 @@ export default function SearchPanel({
   const userSearch = useUserSearch(query, debouncedQuery);
   const programSearch = useProgramSearch(query, debouncedQuery);
   const magnetSearch = useMagnetSearch(query, debouncedQuery);
+  const liveMentoringSearch = useLiveMentoringSearch(query, debouncedQuery);
 
   const blocks = useMemo<Block[]>(() => {
     if (isEmptyQuery) {
@@ -270,6 +272,58 @@ export default function SearchPanel({
         });
       }
     }
+    if (liveMentoringSearch.status !== 'idle') {
+      list.push({
+        kind: 'heading',
+        key: 'h-live-mentoring',
+        text: '1:1 멘토링',
+      });
+      liveMentoringSearch.liveMentorings.forEach((item) => {
+        list.push({
+          kind: 'header',
+          key: `live-mentoring-${item.id}`,
+          group: 'live-mentoring',
+          node: (
+            <div className="flex items-center gap-2">
+              <span className="text-[15px] font-semibold text-white">
+                <Highlight text={item.title} query={query} />
+              </span>
+              <span className="text-[13px] text-[#9AA4B2]">
+                #{item.id}
+                {item.summary ? ` · ${item.summary}` : null}
+              </span>
+            </div>
+          ),
+        });
+        item.destinations.forEach((entry) =>
+          list.push({
+            kind: 'option',
+            key: `live-mentoring-${item.id}-${entry.path}`,
+            entry,
+            isNested: true,
+          }),
+        );
+      });
+      if (liveMentoringSearch.status === 'loading') {
+        list.push({
+          kind: 'note',
+          key: 'live-mentoring-loading',
+          text: '1:1 멘토링 찾는 중…',
+        });
+      } else if (liveMentoringSearch.status === 'error') {
+        list.push({
+          kind: 'note',
+          key: 'live-mentoring-error',
+          text: '1:1 멘토링을 불러오지 못했습니다',
+        });
+      } else if (liveMentoringSearch.liveMentorings.length === 0) {
+        list.push({
+          kind: 'note',
+          key: 'live-mentoring-empty',
+          text: '일치하는 1:1 멘토링이 없습니다',
+        });
+      }
+    }
     return list;
   }, [
     isEmptyQuery,
@@ -277,6 +331,7 @@ export default function SearchPanel({
     userSearch,
     programSearch,
     magnetSearch,
+    liveMentoringSearch,
     query,
   ]);
 
