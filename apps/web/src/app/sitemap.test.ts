@@ -11,8 +11,14 @@ describe('sitemap', () => {
   beforeEach(() => {
     process.env.NEXT_PUBLIC_SITE_URL = 'https://www.letscareer.co.kr';
     mockFetchJson.mockImplementation(
-      async (_url: string, init: { parse: (data: unknown) => unknown }) =>
-        init.parse({
+      async (url: string, init: { parse: (data: unknown) => unknown }) => {
+        if (url.includes('/live-mentoring')) {
+          // 같은 멘토가 개설을 두 번 열면 목록에 두 번 나온다
+          return init.parse({
+            openingList: [{ mentorId: 7 }, { mentorId: 7 }, { mentorId: 9 }],
+          });
+        }
+        return init.parse({
           magnetList: [
             { id: 59, title: '렛츠콘 자료집', lastModifiedDate: null },
           ],
@@ -31,7 +37,8 @@ describe('sitemap', () => {
               lastModifiedDate: null,
             },
           ],
-        }),
+        });
+      },
     );
   });
 
@@ -63,8 +70,45 @@ describe('sitemap', () => {
       'https://www.letscareer.co.kr/program',
       'https://www.letscareer.co.kr/blog/list',
       'https://www.letscareer.co.kr/library/list',
+      'https://www.letscareer.co.kr/mentors',
+      'https://www.letscareer.co.kr/bigfirm',
     ]);
     expect(errorSpy).toHaveBeenCalled();
+    errorSpy.mockRestore();
+  });
+
+  it('판매 중인 멘토링 상세를 멘토당 한 번만 넣는다', async () => {
+    const urls = (await sitemap()).map((entry) => entry.url);
+
+    expect(urls).toEqual(
+      expect.arrayContaining([
+        'https://www.letscareer.co.kr/mentors',
+        'https://www.letscareer.co.kr/bigfirm',
+      ]),
+    );
+    expect(urls.filter((url) => url.includes('/live-mentoring/'))).toEqual([
+      'https://www.letscareer.co.kr/live-mentoring/7',
+      'https://www.letscareer.co.kr/live-mentoring/9',
+    ]);
+  });
+
+  it('멘토링 목록만 실패하면 나머지 주소는 그대로 낸다', async () => {
+    mockFetchJson.mockImplementation(
+      async (url: string, init: { parse: (data: unknown) => unknown }) => {
+        if (url.includes('/live-mentoring')) throw new Error('500');
+        return init.parse({
+          magnetList: [],
+          blogList: [{ id: 10, title: '글', lastModifiedDate: null }],
+          programList: [],
+        });
+      },
+    );
+    const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+    const urls = (await sitemap()).map((entry) => entry.url);
+
+    expect(urls.some((url) => url.includes('/blog/10/'))).toBe(true);
+    expect(urls.some((url) => url.includes('/live-mentoring/'))).toBe(false);
     errorSpy.mockRestore();
   });
 
