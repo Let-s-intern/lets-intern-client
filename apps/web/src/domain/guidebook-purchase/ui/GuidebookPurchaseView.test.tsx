@@ -451,5 +451,106 @@ describe('GuidebookPurchaseView', () => {
         screen.getByRole('button', { name: '무료로 신청하기' }),
       ).toBeInTheDocument();
     });
+
+    describe('토스 금액과 주소', () => {
+      const setAmount = jest.fn();
+      const requestPayment = jest.fn();
+
+      beforeEach(() => {
+        setAmount.mockReset();
+        requestPayment.mockReset();
+        jest.mocked(loadTossPayments).mockResolvedValue({
+          widgets: () => ({
+            setAmount,
+            renderPaymentMethods: async () => ({
+              getSelectedPaymentMethod: async () => ({ code: 'CARD' }),
+            }),
+            renderAgreement: jest.fn(),
+            requestPayment,
+          }),
+        } as never);
+        mockUser = {
+          id: 'user-1',
+          name: '홍길동',
+          email: 'a@b.c',
+          phoneNum: '010',
+        };
+      });
+
+      it('쿠폰을 고르면 토스 위젯 금액을 할인된 금액으로 맞춘다', async () => {
+        render(<GuidebookPurchaseView guidebookId={12} />);
+        await waitFor(() =>
+          expect(setAmount).toHaveBeenCalledWith({
+            currency: 'KRW',
+            value: 990,
+          }),
+        );
+        await waitFor(() =>
+          expect(
+            screen.getByRole('button', { name: '990원 결제하기' }),
+          ).toBeEnabled(),
+        );
+
+        await userEvent.click(
+          screen.getByRole('button', { name: '쿠폰 300원' }),
+        );
+
+        await waitFor(() =>
+          expect(setAmount).toHaveBeenLastCalledWith({
+            currency: 'KRW',
+            value: 690,
+          }),
+        );
+        expect(setAmount).toHaveBeenCalledTimes(2);
+      });
+
+      it('결제하면 성공 주소에 couponId 와 할인된 금액이 담긴다', async () => {
+        render(<GuidebookPurchaseView guidebookId={12} />);
+        await waitFor(() =>
+          expect(
+            screen.getByRole('button', { name: '990원 결제하기' }),
+          ).toBeEnabled(),
+        );
+        await userEvent.click(
+          screen.getByRole('button', { name: '쿠폰 300원' }),
+        );
+
+        const pay = screen.getByRole('button', { name: '690원 결제하기' });
+        await userEvent.click(pay);
+
+        const { successUrl, failUrl } = requestPayment.mock.calls[0][0];
+        expect(new URL(successUrl).searchParams.get('couponId')).toBe('3');
+        expect(new URL(failUrl).searchParams.get('couponId')).toBe('3');
+        expect(setAmount).toHaveBeenLastCalledWith({
+          currency: 'KRW',
+          value: 690,
+        });
+      });
+
+      it('쿠폰이 없으면 성공 주소에 couponId 가 없다', async () => {
+        render(<GuidebookPurchaseView guidebookId={12} />);
+        const pay = screen.getByRole('button', { name: '990원 결제하기' });
+        await waitFor(() => expect(pay).toBeEnabled());
+        await userEvent.click(pay);
+
+        const { successUrl } = requestPayment.mock.calls[0][0];
+        expect(new URL(successUrl).searchParams.has('couponId')).toBe(false);
+      });
+
+      it('전액할인으로 무료 신청하면 이동 주소에 couponId 와 0원이 담긴다', async () => {
+        render(<GuidebookPurchaseView guidebookId={12} />);
+
+        await userEvent.click(screen.getByRole('button', { name: '쿠폰 전액' }));
+        await userEvent.click(
+          screen.getByRole('button', { name: '무료로 신청하기' }),
+        );
+
+        const url = new URL(mockPush.mock.calls[0][0], 'https://x.test');
+        expect(url.pathname).toBe('/guidebook/purchase/12/result');
+        expect(url.searchParams.get('couponId')).toBe('4');
+        expect(url.searchParams.get('amount')).toBe('0');
+        expect(url.searchParams.get('free')).toBe('true');
+      });
+    });
   });
 });

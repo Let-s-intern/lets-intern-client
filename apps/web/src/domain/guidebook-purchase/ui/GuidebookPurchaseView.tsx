@@ -31,8 +31,13 @@ interface PurchaseProduct {
   title: string;
   priceId: number;
   amount: number;
+  couponId: number | null;
   returnUrl: string | null;
 }
+
+// 쿠폰이 있을 때만 주소에 couponId 를 싣는다. 없으면 쿠폰 도입 전 주소와 같다
+const couponParams = (couponId: number | null): Record<string, string> =>
+  couponId === null ? {} : { couponId: String(couponId) };
 
 const PRIMARY_BUTTON_CLASS =
   'text-1.125-medium block w-full rounded-md bg-primary px-6 py-3 font-medium text-neutral-100 disabled:opacity-50';
@@ -92,10 +97,12 @@ const GuidebookPaidPayment = ({ product }: { product: PurchaseProduct }) => {
   const [ready, setReady] = useState(false);
   const tossInitialized = useRef(false);
   const orderId = useRef(generateOrderId());
+  const appliedAmount = useRef(product.amount);
 
   useEffect(() => {
     if (!user || tossInitialized.current) return;
     tossInitialized.current = true;
+    appliedAmount.current = product.amount;
     (async () => {
       const tossPayments = await loadTossPayments(clientKey);
       const w = tossPayments.widgets({
@@ -116,10 +123,20 @@ const GuidebookPaidPayment = ({ product }: { product: PurchaseProduct }) => {
     })();
   }, [user, product.amount]);
 
+  // 위젯은 한 번만 만든다. 쿠폰으로 금액이 바뀌면 위젯 금액만 맞춘다
+  useEffect(() => {
+    if (!widgets || appliedAmount.current === product.amount) return;
+    appliedAmount.current = product.amount;
+    widgets.setAmount({ currency: 'KRW', value: product.amount });
+  }, [widgets, product.amount]);
+
   const handlePay = async () => {
     if (!widgets) return;
     const paymentMethod = await methods?.getSelectedPaymentMethod();
-    const params = { priceId: String(product.priceId) };
+    const params = {
+      priceId: String(product.priceId),
+      ...couponParams(product.couponId),
+    };
     const toUrl = (step: 'result' | 'fail') =>
       window.location.origin +
       buildPurchasePath({
@@ -176,6 +193,7 @@ const GuidebookFreeApply = ({ product }: { product: PurchaseProduct }) => {
         returnUrl: product.returnUrl,
         params: {
           priceId: String(product.priceId),
+          ...couponParams(product.couponId),
           orderId: orderId.current,
           amount: '0',
           free: 'true',
@@ -233,7 +251,7 @@ const GuidebookPurchaseOffer = ({
   // 쿠폰은 혜택이 없고 금액이 있을 때만 쓴다
   const canUseCoupon = baseAmount > 0;
   const amount = Math.max(baseAmount - coupon.price, 0);
-  const payProduct = { ...product, amount };
+  const payProduct = { ...product, amount, couponId: coupon.id };
   return (
     <>
       <ProductSummary
@@ -318,6 +336,7 @@ export default function GuidebookPurchaseView({
       title,
       priceId: payInfo.priceId,
       amount,
+      couponId: null,
       returnUrl: searchParams.get(RETURN_URL_PARAM),
     };
     return (
