@@ -217,15 +217,16 @@ const GuidebookPurchaseOffer = ({
     );
   }
 
-  const amount = product.amount;
-  const payProduct = product;
+  const hasPrivilege = privilegeQuery.data.hasPrivilege;
+  const amount = hasPrivilege ? 0 : product.amount;
+  const payProduct = { ...product, amount };
   return (
     <>
       <ProductSummary
         thumbnail={thumbnail}
         title={product.title}
         amount={amount}
-        benefitFree={false}
+        benefitFree={hasPrivilege && product.amount > 0}
       />
       {amount === 0 ? (
         <GuidebookFreeApply product={payProduct} />
