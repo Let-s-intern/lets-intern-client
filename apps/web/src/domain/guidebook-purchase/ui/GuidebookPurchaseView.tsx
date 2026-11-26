@@ -5,6 +5,7 @@ import { useProgramApplicationQuery } from '@/api/application';
 import { useProgramQuery } from '@/api/program';
 import { useUserQuery } from '@/api/user/user';
 import LoadingContainer from '@/common/loading/LoadingContainer';
+import { useGetMembershipPrivilege } from '@/domain/all-in-one-pass/api/privilege';
 import { generateOrderId, getPayInfo } from '@/lib/order';
 import useAuthStore from '@/store/useAuthStore';
 import {
@@ -38,14 +39,18 @@ const Notice = ({ children }: { children: string }) => (
   <p className="py-10 text-center text-xsmall14 text-neutral-30">{children}</p>
 );
 
+const BENEFIT_FREE_LABEL = '올인원패스 혜택으로 무료';
+
 const ProductSummary = ({
   thumbnail,
   title,
   amount,
+  benefitFree,
 }: {
   thumbnail?: string | null;
   title: string;
   amount: number;
+  benefitFree: boolean;
 }) => (
   <div className="flex items-center gap-3">
     {thumbnail && (
@@ -58,7 +63,11 @@ const ProductSummary = ({
     <span className="min-w-0">
       <span className="block text-xsmall14 font-medium">{title}</span>
       <span className="mt-0.5 block text-xsmall14 font-semibold text-neutral-0">
-        {amount === 0 ? '무료' : `${amount.toLocaleString()}원`}
+        {benefitFree
+          ? BENEFIT_FREE_LABEL
+          : amount === 0
+            ? '무료'
+            : `${amount.toLocaleString()}원`}
       </span>
     </span>
   </div>
@@ -176,6 +185,57 @@ const GuidebookFreeApply = ({ product }: { product: PurchaseProduct }) => {
   );
 };
 
+// 혜택 조회는 로그인 뒤 이 컴포넌트가 뜰 때만 한다. 비로그인 응답(false)이 캐시에 남지 않게 한다
+const GuidebookPurchaseOffer = ({
+  product,
+  thumbnail,
+}: {
+  product: PurchaseProduct;
+  thumbnail?: string | null;
+}) => {
+  const privilegeQuery = useGetMembershipPrivilege(
+    'GUIDEBOOK',
+    product.guidebookId,
+  );
+
+  // isFetching: 결과 화면에서 돌아올 때 캐시된 값을 그대로 쓰지 않고 새 응답을 기다린다
+  if (privilegeQuery.isPending || privilegeQuery.isFetching) {
+    return <LoadingContainer className="py-10" />;
+  }
+  if (privilegeQuery.isError) {
+    return (
+      <>
+        <Notice>구매 정보를 불러오지 못했어요</Notice>
+        <button
+          type="button"
+          className={PRIMARY_BUTTON_CLASS}
+          onClick={() => privilegeQuery.refetch()}
+        >
+          다시 불러오기
+        </button>
+      </>
+    );
+  }
+
+  const amount = product.amount;
+  const payProduct = product;
+  return (
+    <>
+      <ProductSummary
+        thumbnail={thumbnail}
+        title={product.title}
+        amount={amount}
+        benefitFree={false}
+      />
+      {amount === 0 ? (
+        <GuidebookFreeApply product={payProduct} />
+      ) : (
+        <GuidebookPaidPayment product={payProduct} />
+      )}
+    </>
+  );
+};
+
 export default function GuidebookPurchaseView({
   guidebookId,
 }: {
@@ -238,18 +298,10 @@ export default function GuidebookPurchaseView({
       returnUrl: searchParams.get(RETURN_URL_PARAM),
     };
     return (
-      <>
-        <ProductSummary
-          thumbnail={guidebook?.thumbnail}
-          title={title}
-          amount={amount}
-        />
-        {amount === 0 ? (
-          <GuidebookFreeApply product={product} />
-        ) : (
-          <GuidebookPaidPayment product={product} />
-        )}
-      </>
+      <GuidebookPurchaseOffer
+        product={product}
+        thumbnail={guidebook?.thumbnail}
+      />
     );
   };
 
