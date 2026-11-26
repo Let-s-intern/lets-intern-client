@@ -327,7 +327,7 @@ describe('GuidebookPurchaseView', () => {
     const requestPayment = jest.fn();
     jest.mocked(loadTossPayments).mockResolvedValue({
       widgets: () => ({
-        setAmount: jest.fn(),
+        setAmount: jest.fn().mockResolvedValue(undefined),
         renderPaymentMethods: async () => ({
           getSelectedPaymentMethod: async () => ({ code: 'CARD' }),
         }),
@@ -453,11 +453,11 @@ describe('GuidebookPurchaseView', () => {
     });
 
     describe('토스 금액과 주소', () => {
-      const setAmount = jest.fn();
+      const setAmount = jest.fn().mockResolvedValue(undefined);
       const requestPayment = jest.fn();
 
       beforeEach(() => {
-        setAmount.mockReset();
+        setAmount.mockReset().mockResolvedValue(undefined);
         requestPayment.mockReset();
         jest.mocked(loadTossPayments).mockResolvedValue({
           widgets: () => ({
@@ -502,6 +502,35 @@ describe('GuidebookPurchaseView', () => {
           }),
         );
         expect(setAmount).toHaveBeenCalledTimes(2);
+      });
+
+      it('위젯 금액 반영이 끝나기 전에는 결제 버튼이 눌리지 않는다', async () => {
+        render(<GuidebookPurchaseView guidebookId={12} />);
+        await waitFor(() =>
+          expect(
+            screen.getByRole('button', { name: '990원 결제하기' }),
+          ).toBeEnabled(),
+        );
+
+        let finish: () => void = () => {};
+        setAmount.mockReturnValueOnce(
+          new Promise<void>((resolve) => {
+            finish = resolve;
+          }),
+        );
+        await userEvent.click(
+          screen.getByRole('button', { name: '쿠폰 300원' }),
+        );
+
+        expect(
+          screen.getByRole('button', { name: '690원 결제하기' }),
+        ).toBeDisabled();
+        finish();
+        await waitFor(() =>
+          expect(
+            screen.getByRole('button', { name: '690원 결제하기' }),
+          ).toBeEnabled(),
+        );
       });
 
       it('결제하면 성공 주소에 couponId 와 할인된 금액이 담긴다', async () => {

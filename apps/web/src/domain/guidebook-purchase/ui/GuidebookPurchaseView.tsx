@@ -95,6 +95,8 @@ const GuidebookPaidPayment = ({ product }: { product: PurchaseProduct }) => {
     null,
   );
   const [ready, setReady] = useState(false);
+  // 위젯에 실제로 반영된 금액. 쿠폰으로 금액이 바뀌고 반영이 끝나기 전에는 결제를 막는다
+  const [syncedAmount, setSyncedAmount] = useState(product.amount);
   const tossInitialized = useRef(false);
   const orderId = useRef(generateOrderId());
   const appliedAmount = useRef(product.amount);
@@ -127,7 +129,11 @@ const GuidebookPaidPayment = ({ product }: { product: PurchaseProduct }) => {
   useEffect(() => {
     if (!widgets || appliedAmount.current === product.amount) return;
     appliedAmount.current = product.amount;
-    widgets.setAmount({ currency: 'KRW', value: product.amount });
+    const amount = product.amount;
+    widgets
+      .setAmount({ currency: 'KRW', value: amount })
+      .then(() => setSyncedAmount(amount))
+      .catch(console.error);
   }, [widgets, product.amount]);
 
   const handlePay = async () => {
@@ -171,7 +177,7 @@ const GuidebookPaidPayment = ({ product }: { product: PurchaseProduct }) => {
       <button
         type="button"
         className={PRIMARY_BUTTON_CLASS}
-        disabled={!ready}
+        disabled={!ready || syncedAmount !== product.amount}
         onClick={handlePay}
       >
         {product.amount.toLocaleString()}원 결제하기
