@@ -39,8 +39,15 @@ const toApplicationBody = (
   if (!orderId || !amount || !Number.isFinite(priceId)) return null;
   if (isFree ? amount !== '0' : !paymentKey) return null;
 
+  // 쿠폰을 쓰지 않았거나 숫자가 아니면 쿠폰 없이 신청한다
+  const rawCouponId = searchParams.get('couponId');
+  const couponId =
+    rawCouponId !== null && /^\d+$/.test(rawCouponId)
+      ? Number(rawCouponId)
+      : null;
+
   return {
-    paymentInfo: { couponId: null, priceId, paymentKey, orderId, amount },
+    paymentInfo: { couponId, priceId, paymentKey, orderId, amount },
   };
 };
 
