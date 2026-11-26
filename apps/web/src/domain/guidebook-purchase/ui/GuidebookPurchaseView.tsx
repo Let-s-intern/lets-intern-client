@@ -8,6 +8,7 @@ import LoadingContainer from '@/common/loading/LoadingContainer';
 import { useGetMembershipPrivilege } from '@/domain/all-in-one-pass/api/privilege';
 import { generateOrderId, getPayInfo } from '@/lib/order';
 import useAuthStore from '@/store/useAuthStore';
+import { ICouponForm } from '@/types/interface';
 import {
   loadTossPayments,
   WidgetPaymentMethodWidget,
@@ -15,6 +16,7 @@ import {
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { buildPurchasePath, RETURN_URL_PARAM } from '../utils/purchasePath';
+import GuidebookCouponSection from './GuidebookCouponSection';
 import GuidebookPurchaseCard from './GuidebookPurchaseCard';
 import PurchaseCloseButton from './PurchaseCloseButton';
 
@@ -45,11 +47,14 @@ const ProductSummary = ({
   thumbnail,
   title,
   amount,
+  originalAmount,
   benefitFree,
 }: {
   thumbnail?: string | null;
   title: string;
   amount: number;
+  // 쿠폰으로 깎이기 전 금액. 쿠폰을 쓰는 중에만 넘긴다
+  originalAmount?: number;
   benefitFree: boolean;
 }) => (
   <div className="flex items-center gap-3">
@@ -62,6 +67,11 @@ const ProductSummary = ({
     )}
     <span className="min-w-0">
       <span className="block text-xsmall14 font-medium">{title}</span>
+      {originalAmount !== undefined && (
+        <span className="mt-0.5 block text-xsmall14 text-neutral-45 line-through">
+          {originalAmount.toLocaleString()}원
+        </span>
+      )}
       <span className="mt-0.5 block text-xsmall14 font-semibold text-neutral-0">
         {benefitFree
           ? BENEFIT_FREE_LABEL
@@ -197,6 +207,7 @@ const GuidebookPurchaseOffer = ({
     'GUIDEBOOK',
     product.guidebookId,
   );
+  const [coupon, setCoupon] = useState<ICouponForm>({ id: null, price: 0 });
 
   // isFetching: 결과 화면에서 돌아올 때 캐시된 값을 그대로 쓰지 않고 새 응답을 기다린다
   if (privilegeQuery.isPending || privilegeQuery.isFetching) {
@@ -218,7 +229,10 @@ const GuidebookPurchaseOffer = ({
   }
 
   const hasPrivilege = privilegeQuery.data.hasPrivilege;
-  const amount = hasPrivilege ? 0 : product.amount;
+  const baseAmount = hasPrivilege ? 0 : product.amount;
+  // 쿠폰은 혜택이 없고 금액이 있을 때만 쓴다
+  const canUseCoupon = baseAmount > 0;
+  const amount = Math.max(baseAmount - coupon.price, 0);
   const payProduct = { ...product, amount };
   return (
     <>
@@ -226,8 +240,16 @@ const GuidebookPurchaseOffer = ({
         thumbnail={thumbnail}
         title={product.title}
         amount={amount}
+        originalAmount={coupon.id !== null ? baseAmount : undefined}
         benefitFree={hasPrivilege && product.amount > 0}
       />
+      {canUseCoupon && (
+        <GuidebookCouponSection
+          amount={baseAmount}
+          selectedCouponId={coupon.id}
+          onChange={setCoupon}
+        />
+      )}
       {amount === 0 ? (
         <GuidebookFreeApply product={payProduct} />
       ) : (
