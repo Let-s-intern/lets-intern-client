@@ -22,6 +22,7 @@ import {
   liveMentoringRefundPreviewSchema,
   liveMentoringSlotListSchema,
   type LiveMentoringSessionAttendance,
+  type LiveMentorDetail,
   myLiveMentoringApplicationListSchema,
 } from './liveMentoringSchema';
 
@@ -148,6 +149,8 @@ export const useMentorOpenLiveMentoringQuery = (mentorId: number | string) => {
  */
 export const useLiveMentorDetailQuery = (
   mentorId: number | string | null | undefined,
+  /** 서버가 먼저 받아 둔 응답. 있으면 첫 HTML 에 본문이 들어간다. */
+  initialData?: LiveMentorDetail,
 ) => {
   return useQuery({
     queryKey: [...LIVE_MENTOR_DETAIL_QUERY_KEY, { mentorId }],
@@ -156,6 +159,7 @@ export const useLiveMentorDetailQuery = (
       return liveMentorDetailSchema.parse(res.data.data);
     },
     enabled: !!mentorId,
+    initialData,
   });
 };
 

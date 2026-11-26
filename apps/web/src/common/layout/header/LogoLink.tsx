@@ -7,7 +7,7 @@ interface Props {
 
 function LogoLink({ className }: Props) {
   return (
-    <h1 className={twMerge('h-5 text-transparent md:h-[24px]', className)}>
+    <div className={twMerge('h-5 text-transparent md:h-[24px]', className)}>
       <HybridLink href="/">
         <img
           src="/logo/horizontal-logo.svg"
@@ -16,7 +16,7 @@ function LogoLink({ className }: Props) {
         />
         렛츠커리어
       </HybridLink>
-    </h1>
+    </div>
   );
 }
 
