@@ -85,7 +85,15 @@ export default function GuidebookPurchaseResult({
       })
       .catch((error) => {
         console.error(error);
-        setFailure(getPurchaseFailure(error));
+        const reason = getPurchaseFailure(error);
+        if (reason === 'PRICE_CHANGED') {
+          // 혜택 값이 바뀌었다. 구매 화면으로 돌아오면 캐시를 쓰지 않고 다시 조회한다.
+          // 키는 all-in-one-pass/api/privilege.ts 의 useGetMembershipPrivilege 와 같아야 한다
+          queryClient.invalidateQueries({
+            queryKey: ['membershipPrivilege', 'GUIDEBOOK', guidebookId],
+          });
+        }
+        setFailure(reason);
         setState('fail');
       });
   }, [guidebookId, queryClient, router, searchParams]);

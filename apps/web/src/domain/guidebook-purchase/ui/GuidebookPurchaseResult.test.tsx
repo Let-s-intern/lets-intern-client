@@ -129,6 +129,34 @@ describe('GuidebookPurchaseResult', () => {
     expect(url.searchParams.get('returnUrl')).toBe('https://ogonggo.co.kr/r');
   });
 
+  it('가격이 어긋나면 돌아온 구매 화면이 다시 조회하도록 혜택 조회 캐시를 무효화한다', async () => {
+    mockParams = new URLSearchParams(freeParams);
+    jest
+      .mocked(postGuidebookPurchase)
+      .mockRejectedValue({ status: 400, code: 'INVALID_PRICE' });
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+
+    render(<GuidebookPurchaseResult guidebookId={12} />);
+
+    await screen.findByText('가격 정보가 바뀌었어요. 다시 시도해 주세요');
+    expect(mockInvalidate).toHaveBeenCalledWith({
+      queryKey: ['membershipPrivilege', 'GUIDEBOOK', 12],
+    });
+  });
+
+  it('다른 실패는 혜택 조회 캐시를 건드리지 않는다', async () => {
+    mockParams = new URLSearchParams(paidParams);
+    jest
+      .mocked(postGuidebookPurchase)
+      .mockRejectedValue({ status: 409, code: 'CONFLICT_APPLICATION' });
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+
+    render(<GuidebookPurchaseResult guidebookId={12} />);
+
+    await screen.findByText('이미 구매했어요');
+    expect(mockInvalidate).not.toHaveBeenCalled();
+  });
+
   it('그 밖의 오류(다른 코드, 네트워크 오류)는 기존 실패 문구를 보인다', async () => {
     jest.spyOn(console, 'error').mockImplementation(() => {});
     for (const error of [
