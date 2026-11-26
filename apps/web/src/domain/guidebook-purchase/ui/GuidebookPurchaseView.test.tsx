@@ -27,6 +27,19 @@ const mockApplication = {
   isError: false,
 };
 
+const mockRefetch = jest.fn();
+const privilegeResult = (hasPrivilege: boolean) => ({
+  data: { hasPrivilege },
+  isPending: false,
+  isFetching: false,
+  isError: false,
+  refetch: mockRefetch,
+});
+let mockPrivilege: Record<string, unknown> = privilegeResult(false);
+
+jest.mock('@/domain/all-in-one-pass/api/privilege', () => ({
+  useGetMembershipPrivilege: () => mockPrivilege,
+}));
 jest.mock('next/navigation', () => ({
   useRouter: () => ({ replace: mockReplace, push: mockPush }),
   useSearchParams: () => mockSearch,
@@ -71,6 +84,47 @@ describe('GuidebookPurchaseView', () => {
     };
     mockApplication.data = paidApplication;
     mockUser = undefined;
+    mockPrivilege = privilegeResult(false);
+    mockRefetch.mockClear();
+  });
+
+  it('혜택 조회 중에는 결제 위젯과 신청 버튼 없이 로딩을 보인다', () => {
+    mockPrivilege = {
+      data: undefined,
+      isPending: true,
+      isFetching: true,
+      isError: false,
+      refetch: mockRefetch,
+    };
+
+    render(<GuidebookPurchaseView guidebookId={12} />);
+
+    expect(screen.getByTestId('loading')).toBeInTheDocument();
+    expect(screen.queryByRole('button')).toBeNull();
+  });
+
+  it('혜택 조회가 실패하면 결제 위젯을 열지 않고 안내와 다시 불러오기를 보인다', async () => {
+    mockPrivilege = {
+      data: undefined,
+      isPending: false,
+      isFetching: false,
+      isError: true,
+      refetch: mockRefetch,
+    };
+
+    render(<GuidebookPurchaseView guidebookId={12} />);
+
+    expect(
+      screen.getByText('구매 정보를 불러오지 못했어요'),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /결제하기/ })).toBeNull();
+    expect(
+      screen.queryByRole('button', { name: '무료로 신청하기' }),
+    ).toBeNull();
+    await userEvent.click(
+      screen.getByRole('button', { name: '다시 불러오기' }),
+    );
+    expect(mockRefetch).toHaveBeenCalledTimes(1);
   });
 
   it('비로그인이면 로그인 후 이 구매 화면으로 돌아오게 보낸다', async () => {
@@ -156,6 +210,75 @@ describe('GuidebookPurchaseView', () => {
       free: 'true',
       returnUrl: 'https://ogonggo.co.kr/r',
     });
+  });
+
+  it('혜택이 있으면 위젯 없이 혜택 문구와 무료 신청 버튼을 보이고, 0원 무료 신청으로 보낸다', async () => {
+    mockPrivilege = privilegeResult(true);
+    mockSearch = new URLSearchParams({ returnUrl: 'https://ogonggo.co.kr/r' });
+
+    render(<GuidebookPurchaseView guidebookId={12} />);
+
+    expect(screen.getByText('올인원패스 혜택으로 무료')).toBeInTheDocument();
+    expect(screen.queryByText('990원')).toBeNull();
+    expect(screen.queryByRole('button', { name: /결제하기/ })).toBeNull();
+    await userEvent.click(
+      screen.getByRole('button', { name: '무료로 신청하기' }),
+    );
+
+    const url = new URL(mockPush.mock.calls[0][0], 'https://x.test');
+    expect(url.pathname).toBe('/guidebook/purchase/12/result');
+    expect(url.searchParams.get('amount')).toBe('0');
+    expect(url.searchParams.get('free')).toBe('true');
+    expect(url.searchParams.get('returnUrl')).toBe('https://ogonggo.co.kr/r');
+  });
+
+  it('혜택이 없으면 결제 위젯 흐름이 그대로이고 혜택 문구가 없다', () => {
+    render(<GuidebookPurchaseView guidebookId={12} />);
+
+    expect(screen.queryByText('올인원패스 혜택으로 무료')).toBeNull();
+    expect(
+      screen.getByRole('button', { name: '990원 결제하기' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: '무료로 신청하기' }),
+    ).toBeNull();
+  });
+
+  it('가격이 원래 0원이면 혜택이 있어도 무료만 보이고 혜택 문구는 없다', () => {
+    mockPrivilege = privilegeResult(true);
+    mockApplication.data = {
+      applied: false,
+      price: {
+        priceId: 7,
+        price: 1000,
+        discount: 1000,
+        guideBookPriceType: 'FREE',
+      },
+    };
+
+    render(<GuidebookPurchaseView guidebookId={12} />);
+
+    expect(screen.getByText('무료')).toBeInTheDocument();
+    expect(screen.queryByText('올인원패스 혜택으로 무료')).toBeNull();
+  });
+
+  it('이미 구매했으면 혜택을 확인하지 않고 안내를 보인다', () => {
+    mockPrivilege = privilegeResult(true);
+    mockApplication.data = { ...paidApplication, applied: true };
+
+    render(<GuidebookPurchaseView guidebookId={12} />);
+
+    expect(screen.getByText('이미 구매했어요.')).toBeInTheDocument();
+    expect(screen.queryByText('올인원패스 혜택으로 무료')).toBeNull();
+  });
+
+  it('돌아온 구매 화면은 캐시된 혜택 값을 쓰지 않고 새 조회가 끝날 때까지 로딩을 보인다', () => {
+    mockPrivilege = { ...privilegeResult(true), isFetching: true };
+
+    render(<GuidebookPurchaseView guidebookId={12} />);
+
+    expect(screen.getByTestId('loading')).toBeInTheDocument();
+    expect(screen.queryByRole('button')).toBeNull();
   });
 
   it('이미 구매했으면 결제 위젯 대신 안내와 확인하기를 보인다', () => {
