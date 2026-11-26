@@ -1,4 +1,22 @@
 # https://www.robotstxt.org/robotstxt.html
+# 이름을 지정한 크롤러는 `*` 그룹을 상속하지 않는다. 그래서 그룹마다 Disallow 를 같이 적는다.
+
 User-agent: *
-Disallow:
+Disallow: /mypage
+Disallow: /order
+Disallow: /payment
+Disallow: /payment-input
+Disallow: /live-mentoring/order
+
+# AI 검색·인용용 크롤러. 학습용(GPTBot, ClaudeBot, Google-Extended)은 따로 규칙을 두지 않는다.
+User-agent: OAI-SearchBot
+User-agent: PerplexityBot
+User-agent: Claude-SearchBot
+Allow: /
+Disallow: /mypage
+Disallow: /order
+Disallow: /payment
+Disallow: /payment-input
+Disallow: /live-mentoring/order
+
 Sitemap: https://www.letscareer.co.kr/sitemap.xml
