@@ -7,6 +7,7 @@ import {
   within,
 } from '@testing-library/react';
 
+import type { LiveMentorDetail } from '@/api/live-mentoring/liveMentoringSchema';
 import axios from '@/utils/axios';
 import { useOrderDraftStore } from '../order/hooks/useOrderDraft';
 import LiveMentoringDetailPage from './LiveMentoringDetailPage';
@@ -261,6 +262,27 @@ beforeEach(() => {
 });
 
 describe('LiveMentoringDetailPage', () => {
+  it('서버가 준 initialData 가 있으면 첫 HTML 에 제목과 가격이 들어 있다 (SEO)', () => {
+    // jsdom 에 TextEncoder 가 없어 서버 렌더러를 쓸 때만 채워 넣는다
+    Object.assign(global, { TextEncoder: require('util').TextEncoder });
+    const { renderToString } = require('react-dom/server');
+    const client = new QueryClient();
+    const html: string = renderToString(
+      <QueryClientProvider client={client}>
+        <LiveMentoringDetailPage
+          mentorId="3"
+          initialData={detail().data.data as unknown as LiveMentorDetail}
+        />
+      </QueryClientProvider>,
+    );
+
+    expect(html).toContain('포폴메이커 멘토의 1:1 멘토링');
+    expect(html).toContain('60,000원');
+    expect(html).not.toContain('불러오는 중');
+    // 페이지의 H1 은 멘토링 제목 하나다
+    expect(html.match(/<h1/g)).toHaveLength(1);
+  });
+
   it('편집 섹션(소개·유형·전략·영상·결과사례)과 고정 섹션을 렌더한다', async () => {
     mockApis(detail());
     renderDetail();

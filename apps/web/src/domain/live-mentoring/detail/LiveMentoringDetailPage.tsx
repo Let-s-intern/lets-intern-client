@@ -42,6 +42,11 @@ import DetailSection from './DetailSection';
 interface LiveMentoringDetailPageProps {
   mentorId: string;
   /**
+   * 서버 컴포넌트가 먼저 받아 둔 상세 응답. 넘기면 첫 HTML 에 멘토 정보와 가격이
+   * 텍스트로 들어가 검색 크롤러가 읽는다. 슬롯·후기는 지금처럼 클라이언트에서 부른다.
+   */
+  initialData?: LiveMentorDetail;
+  /**
    * 멘토가 지금 편집 중인 상세 템플릿. 넘어오면 서버가 준 것 대신 이걸로 그린다.
    *
    * 멘토 앱의 설정 화면이 이 페이지를 iframe 으로 띄우고 편집 중인 값을 `postMessage`
@@ -75,10 +80,14 @@ type LiveMentoringDetailPageTemplate = LiveMentorDetail['template'];
  */
 const LiveMentoringDetailPage = ({
   mentorId,
+  initialData,
   previewTemplate,
   isPreview = false,
 }: LiveMentoringDetailPageProps) => {
-  const { data, isLoading, isError } = useLiveMentorDetailQuery(mentorId);
+  const { data, isLoading, isError } = useLiveMentorDetailQuery(
+    mentorId,
+    initialData,
+  );
   // 상세 응답에는 기간도 슬롯도 없다. 진행기간은 예약 가능 슬롯에서 만든다.
   // 상세와 굳이 하나로 합치지 않는다 — 슬롯 조회가 늦거나 실패해도 본문은 그대로 뜬다.
   const { data: slots } = useLiveMentorSlotsQuery(mentorId);

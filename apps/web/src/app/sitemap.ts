@@ -28,8 +28,23 @@ const sitemapResponseSchema = z.object({
   ),
 });
 
+/** 열려 있는 멘토링의 멘토 id 만 쓴다. 나머지 필드가 바뀌어도 사이트맵이 깨지지 않게 최소만 읽는다 */
+const mentoringOpeningListSchema = z.object({
+  openingList: z.array(z.object({ mentorId: z.number() })),
+});
+
 /** 목록 페이지. 상세 주소는 서버가 공개 조건으로 골라준 것만 넣는다 */
-const STATIC_PATHS = ['/', '/program', '/blog/list', '/library/list'];
+const STATIC_PATHS = [
+  '/',
+  '/program',
+  '/blog/list',
+  '/library/list',
+  '/mentors',
+  '/bigfirm',
+];
+
+/** 서버 `max-page-size` 기본값 — 열려 있는 개설 전체를 한 페이지로 받는다 */
+const ALL_OPENINGS_SIZE = 2000;
 
 const toLastModified = (date: string | null) =>
   date ? new Date(date) : undefined;
@@ -51,9 +66,36 @@ async function fetchSitemapPages() {
   }
 }
 
+/**
+ * 판매 중인 멘토링 상세(`/live-mentoring/{mentorId}`)의 멘토 id. 같은 멘토가 개설을
+ * 여러 번 열 수 있어 중복을 걷는다. 실패해도 다른 주소는 그대로 나간다
+ */
+async function fetchMentoringMentorIds(): Promise<number[]> {
+  try {
+    const { openingList } = await fetchJson(
+      `${process.env.NEXT_PUBLIC_SERVER_API}/live-mentoring?page=1&size=${ALL_OPENINGS_SIZE}`,
+      {
+        code: 'SITEMAP_MENTORING_FETCH_FAILED',
+        displayMessage: '멘토링 목록 조회에 실패했습니다.',
+        parse: (data) => mentoringOpeningListSchema.parse(data),
+      },
+    );
+    return [...new Set(openingList.map((opening) => opening.mentorId))];
+  } catch (error) {
+    console.error(
+      '[sitemap] 멘토링 목록 조회 실패, 멘토링 상세를 뺍니다',
+      error,
+    );
+    return [];
+  }
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = getCanonicalSiteUrl();
-  const { magnetList, blogList, programList } = await fetchSitemapPages();
+  const [{ magnetList, blogList, programList }, mentorIds] = await Promise.all([
+    fetchSitemapPages(),
+    fetchMentoringMentorIds(),
+  ]);
 
   return [
     ...STATIC_PATHS.map((path) => ({ url: `${siteUrl}${path}` })),
@@ -74,6 +116,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...magnetList.map((magnet) => ({
       url: siteUrl + getLibraryPathname(magnet),
       lastModified: toLastModified(magnet.lastModifiedDate),
+    })),
+    ...mentorIds.map((mentorId) => ({
+      url: `${siteUrl}/live-mentoring/${mentorId}`,
     })),
   ];
 }
