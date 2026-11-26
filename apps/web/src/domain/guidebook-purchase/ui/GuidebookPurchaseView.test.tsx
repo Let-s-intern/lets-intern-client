@@ -83,13 +83,13 @@ jest.mock('./GuidebookCouponSection', () => ({
       <button onClick={() => onChange({ id: 3, price: 300 })}>
         쿠폰 300원
       </button>
-      <button onClick={() => onChange({ id: 4, price: 990 })}>
-        쿠폰 전액
-      </button>
+      <button onClick={() => onChange({ id: 4, price: 990 })}>쿠폰 전액</button>
       <button onClick={() => onChange({ id: 5, price: 2000 })}>
         쿠폰 초과
       </button>
-      <button onClick={() => onChange({ id: null, price: 0 })}>쿠폰 끄기</button>
+      <button onClick={() => onChange({ id: null, price: 0 })}>
+        쿠폰 끄기
+      </button>
     </div>
   ),
 }));
@@ -540,7 +540,9 @@ describe('GuidebookPurchaseView', () => {
       it('전액할인으로 무료 신청하면 이동 주소에 couponId 와 0원이 담긴다', async () => {
         render(<GuidebookPurchaseView guidebookId={12} />);
 
-        await userEvent.click(screen.getByRole('button', { name: '쿠폰 전액' }));
+        await userEvent.click(
+          screen.getByRole('button', { name: '쿠폰 전액' }),
+        );
         await userEvent.click(
           screen.getByRole('button', { name: '무료로 신청하기' }),
         );
