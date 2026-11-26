@@ -27,7 +27,9 @@ const mentor = {
   template: { intro: { affiliation: 'CJ 올리브영 | 온사이트마케터' } },
 };
 
-const params = (mentorId: string) => ({ params: Promise.resolve({ mentorId }) });
+const params = (mentorId: string) => ({
+  params: Promise.resolve({ mentorId }),
+});
 
 beforeEach(() => {
   mockFetchDetail.mockReset();

@@ -5,7 +5,9 @@ import {
   type MentoringSeoInput,
 } from './seo';
 
-const input = (overrides: Partial<MentoringSeoInput> = {}): MentoringSeoInput => ({
+const input = (
+  overrides: Partial<MentoringSeoInput> = {},
+): MentoringSeoInput => ({
   title: '현직 마케팅팀장의 1:1 피드백',
   categories: ['PERSONAL_STATEMENT', 'CAREER_COFFEE_CHAT'],
   durations: [30, 60],

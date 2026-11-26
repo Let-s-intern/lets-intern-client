@@ -84,7 +84,10 @@ const LiveMentoringDetailPage = ({
   previewTemplate,
   isPreview = false,
 }: LiveMentoringDetailPageProps) => {
-  const { data, isLoading, isError } = useLiveMentorDetailQuery(mentorId, initialData);
+  const { data, isLoading, isError } = useLiveMentorDetailQuery(
+    mentorId,
+    initialData,
+  );
   // 상세 응답에는 기간도 슬롯도 없다. 진행기간은 예약 가능 슬롯에서 만든다.
   // 상세와 굳이 하나로 합치지 않는다 — 슬롯 조회가 늦거나 실패해도 본문은 그대로 뜬다.
   const { data: slots } = useLiveMentorSlotsQuery(mentorId);

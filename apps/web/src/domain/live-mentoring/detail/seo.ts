@@ -11,7 +11,9 @@ export type MentoringSeoInput = Pick<
   'title' | 'categories' | 'durations' | 'durationPrices' | 'price'
 > & {
   profile: Pick<LiveMentorDetail['profile'], 'nickname'>;
-  template: { intro: Pick<LiveMentorDetail['template']['intro'], 'affiliation'> };
+  template: {
+    intro: Pick<LiveMentorDetail['template']['intro'], 'affiliation'>;
+  };
 };
 
 /** 사용자가 검색하는 말로 푼 주제 이름. 화면 라벨(`CATEGORY_LABELS`)과 다르다. */
@@ -61,6 +63,6 @@ export const buildMentoringDescription = (input: MentoringSeoInput): string => {
   const tail = [durations, price === null ? '' : `${formatPrice(price)}부터`]
     .filter(Boolean)
     .join(', ');
-  const body = `${who(input)}${affiliationLabel(input) ? ' 현직자' : ''}와 줌에서 화면을 함께 보며 ${topics} 1:1 실시간 피드백.`;
+  const body = `${who(input)}${affiliationLabel(input) ? ' 현직자' : ''}와 줌에서 화면을 함께 보며 1:1 실시간 피드백. 주제: ${topics}.`;
   return tail ? `${body} ${tail}.` : body;
 };
