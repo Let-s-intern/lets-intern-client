@@ -66,6 +66,33 @@ jest.mock('@/utils/random', () => ({
 jest.mock('@tosspayments/tosspayments-sdk', () => ({
   loadTossPayments: jest.fn(),
 }));
+// 쿠폰 영역 자체는 GuidebookCouponSection.test 에서 본다. 여기서는 부모와 오가는 값만 본다
+jest.mock('./GuidebookCouponSection', () => ({
+  __esModule: true,
+  default: ({
+    amount,
+    selectedCouponId,
+    onChange,
+  }: {
+    amount: number;
+    selectedCouponId: number | null;
+    onChange: (coupon: { id: number | null; price: number }) => void;
+  }) => (
+    <div data-testid="coupon-section" data-amount={amount}>
+      <span>선택 {String(selectedCouponId)}</span>
+      <button onClick={() => onChange({ id: 3, price: 300 })}>
+        쿠폰 300원
+      </button>
+      <button onClick={() => onChange({ id: 4, price: 990 })}>쿠폰 전액</button>
+      <button onClick={() => onChange({ id: 5, price: 2000 })}>
+        쿠폰 초과
+      </button>
+      <button onClick={() => onChange({ id: null, price: 0 })}>
+        쿠폰 끄기
+      </button>
+    </div>
+  ),
+}));
 jest.mock('@/common/loading/LoadingContainer', () => ({
   __esModule: true,
   default: () => <div data-testid="loading" />,
@@ -300,7 +327,7 @@ describe('GuidebookPurchaseView', () => {
     const requestPayment = jest.fn();
     jest.mocked(loadTossPayments).mockResolvedValue({
       widgets: () => ({
-        setAmount: jest.fn(),
+        setAmount: jest.fn().mockResolvedValue(undefined),
         renderPaymentMethods: async () => ({
           getSelectedPaymentMethod: async () => ({ code: 'CARD' }),
         }),
@@ -338,5 +365,223 @@ describe('GuidebookPurchaseView', () => {
     const fail = new URL(failUrl);
     expect(fail.pathname).toBe('/guidebook/purchase/12/fail');
     expect(fail.searchParams.get('returnUrl')).toBe('https://ogonggo.co.kr/r');
+  });
+
+  describe('쿠폰', () => {
+    it('혜택이 없고 금액이 있으면 정가 - 할인 금액을 기준으로 쿠폰 영역을 그린다', () => {
+      render(<GuidebookPurchaseView guidebookId={12} />);
+
+      expect(screen.getByTestId('coupon-section')).toHaveAttribute(
+        'data-amount',
+        '990',
+      );
+    });
+
+    it('혜택 보유 계정에는 쿠폰 영역이 없다', () => {
+      mockPrivilege = privilegeResult(true);
+
+      render(<GuidebookPurchaseView guidebookId={12} />);
+
+      expect(screen.queryByTestId('coupon-section')).toBeNull();
+    });
+
+    it('원래 0원인 상품에는 쿠폰 영역이 없다', () => {
+      mockApplication.data = {
+        applied: false,
+        price: {
+          priceId: 7,
+          price: 1000,
+          discount: 1000,
+          guideBookPriceType: 'FREE',
+        },
+      };
+
+      render(<GuidebookPurchaseView guidebookId={12} />);
+
+      expect(screen.queryByTestId('coupon-section')).toBeNull();
+    });
+
+    it('쿠폰을 고르면 결제 버튼과 요약 금액이 할인된 값으로 바뀌고, 해제하면 돌아온다', async () => {
+      render(<GuidebookPurchaseView guidebookId={12} />);
+
+      await userEvent.click(screen.getByRole('button', { name: '쿠폰 300원' }));
+
+      expect(
+        screen.getByRole('button', { name: '690원 결제하기' }),
+      ).toBeInTheDocument();
+      expect(screen.getByText('690원')).toBeInTheDocument();
+      expect(screen.getByText('990원')).toBeInTheDocument();
+      expect(screen.getByText('선택 3')).toBeInTheDocument();
+
+      await userEvent.click(screen.getByRole('button', { name: '쿠폰 끄기' }));
+
+      expect(
+        screen.getByRole('button', { name: '990원 결제하기' }),
+      ).toBeInTheDocument();
+      expect(screen.queryByText('690원')).toBeNull();
+    });
+
+    it('전액할인 쿠폰이면 결제 위젯 대신 무료 신청 버튼을 보이고, 해제하면 결제 버튼으로 돌아온다', async () => {
+      render(<GuidebookPurchaseView guidebookId={12} />);
+
+      await userEvent.click(screen.getByRole('button', { name: '쿠폰 전액' }));
+
+      expect(
+        screen.getByRole('button', { name: '무료로 신청하기' }),
+      ).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /결제하기/ })).toBeNull();
+      expect(screen.getByText('무료')).toBeInTheDocument();
+      expect(screen.getByTestId('coupon-section')).toBeInTheDocument();
+
+      await userEvent.click(screen.getByRole('button', { name: '쿠폰 끄기' }));
+
+      expect(
+        screen.getByRole('button', { name: '990원 결제하기' }),
+      ).toBeInTheDocument();
+    });
+
+    it('할인액이 금액보다 커도 결제 금액은 0 아래로 내려가지 않는다', async () => {
+      render(<GuidebookPurchaseView guidebookId={12} />);
+
+      await userEvent.click(screen.getByRole('button', { name: '쿠폰 초과' }));
+
+      expect(screen.getByText('무료')).toBeInTheDocument();
+      expect(screen.queryByText(/-/)).toBeNull();
+      expect(
+        screen.getByRole('button', { name: '무료로 신청하기' }),
+      ).toBeInTheDocument();
+    });
+
+    describe('토스 금액과 주소', () => {
+      const setAmount = jest.fn().mockResolvedValue(undefined);
+      const requestPayment = jest.fn();
+
+      beforeEach(() => {
+        setAmount.mockReset().mockResolvedValue(undefined);
+        requestPayment.mockReset();
+        jest.mocked(loadTossPayments).mockResolvedValue({
+          widgets: () => ({
+            setAmount,
+            renderPaymentMethods: async () => ({
+              getSelectedPaymentMethod: async () => ({ code: 'CARD' }),
+            }),
+            renderAgreement: jest.fn(),
+            requestPayment,
+          }),
+        } as never);
+        mockUser = {
+          id: 'user-1',
+          name: '홍길동',
+          email: 'a@b.c',
+          phoneNum: '010',
+        };
+      });
+
+      it('쿠폰을 고르면 토스 위젯 금액을 할인된 금액으로 맞춘다', async () => {
+        render(<GuidebookPurchaseView guidebookId={12} />);
+        await waitFor(() =>
+          expect(setAmount).toHaveBeenCalledWith({
+            currency: 'KRW',
+            value: 990,
+          }),
+        );
+        await waitFor(() =>
+          expect(
+            screen.getByRole('button', { name: '990원 결제하기' }),
+          ).toBeEnabled(),
+        );
+
+        await userEvent.click(
+          screen.getByRole('button', { name: '쿠폰 300원' }),
+        );
+
+        await waitFor(() =>
+          expect(setAmount).toHaveBeenLastCalledWith({
+            currency: 'KRW',
+            value: 690,
+          }),
+        );
+        expect(setAmount).toHaveBeenCalledTimes(2);
+      });
+
+      it('위젯 금액 반영이 끝나기 전에는 결제 버튼이 눌리지 않는다', async () => {
+        render(<GuidebookPurchaseView guidebookId={12} />);
+        await waitFor(() =>
+          expect(
+            screen.getByRole('button', { name: '990원 결제하기' }),
+          ).toBeEnabled(),
+        );
+
+        let finish: () => void = () => {};
+        setAmount.mockReturnValueOnce(
+          new Promise<void>((resolve) => {
+            finish = resolve;
+          }),
+        );
+        await userEvent.click(
+          screen.getByRole('button', { name: '쿠폰 300원' }),
+        );
+
+        expect(
+          screen.getByRole('button', { name: '690원 결제하기' }),
+        ).toBeDisabled();
+        finish();
+        await waitFor(() =>
+          expect(
+            screen.getByRole('button', { name: '690원 결제하기' }),
+          ).toBeEnabled(),
+        );
+      });
+
+      it('결제하면 성공 주소에 couponId 와 할인된 금액이 담긴다', async () => {
+        render(<GuidebookPurchaseView guidebookId={12} />);
+        await waitFor(() =>
+          expect(
+            screen.getByRole('button', { name: '990원 결제하기' }),
+          ).toBeEnabled(),
+        );
+        await userEvent.click(
+          screen.getByRole('button', { name: '쿠폰 300원' }),
+        );
+
+        const pay = screen.getByRole('button', { name: '690원 결제하기' });
+        await userEvent.click(pay);
+
+        const { successUrl, failUrl } = requestPayment.mock.calls[0][0];
+        expect(new URL(successUrl).searchParams.get('couponId')).toBe('3');
+        expect(new URL(failUrl).searchParams.get('couponId')).toBe('3');
+        expect(setAmount).toHaveBeenLastCalledWith({
+          currency: 'KRW',
+          value: 690,
+        });
+      });
+
+      it('쿠폰이 없으면 성공 주소에 couponId 가 없다', async () => {
+        render(<GuidebookPurchaseView guidebookId={12} />);
+        const pay = screen.getByRole('button', { name: '990원 결제하기' });
+        await waitFor(() => expect(pay).toBeEnabled());
+        await userEvent.click(pay);
+
+        const { successUrl } = requestPayment.mock.calls[0][0];
+        expect(new URL(successUrl).searchParams.has('couponId')).toBe(false);
+      });
+
+      it('전액할인으로 무료 신청하면 이동 주소에 couponId 와 0원이 담긴다', async () => {
+        render(<GuidebookPurchaseView guidebookId={12} />);
+
+        await userEvent.click(
+          screen.getByRole('button', { name: '쿠폰 전액' }),
+        );
+        await userEvent.click(
+          screen.getByRole('button', { name: '무료로 신청하기' }),
+        );
+
+        const url = new URL(mockPush.mock.calls[0][0], 'https://x.test');
+        expect(url.pathname).toBe('/guidebook/purchase/12/result');
+        expect(url.searchParams.get('couponId')).toBe('4');
+        expect(url.searchParams.get('amount')).toBe('0');
+        expect(url.searchParams.get('free')).toBe('true');
+      });
+    });
   });
 });

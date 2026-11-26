@@ -8,6 +8,7 @@ import LoadingContainer from '@/common/loading/LoadingContainer';
 import { useGetMembershipPrivilege } from '@/domain/all-in-one-pass/api/privilege';
 import { generateOrderId, getPayInfo } from '@/lib/order';
 import useAuthStore from '@/store/useAuthStore';
+import { ICouponForm } from '@/types/interface';
 import {
   loadTossPayments,
   WidgetPaymentMethodWidget,
@@ -15,6 +16,7 @@ import {
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { buildPurchasePath, RETURN_URL_PARAM } from '../utils/purchasePath';
+import GuidebookCouponSection from './GuidebookCouponSection';
 import GuidebookPurchaseCard from './GuidebookPurchaseCard';
 import PurchaseCloseButton from './PurchaseCloseButton';
 
@@ -29,8 +31,13 @@ interface PurchaseProduct {
   title: string;
   priceId: number;
   amount: number;
+  couponId: number | null;
   returnUrl: string | null;
 }
+
+// 쿠폰이 있을 때만 주소에 couponId 를 싣는다. 없으면 쿠폰 도입 전 주소와 같다
+const couponParams = (couponId: number | null): Record<string, string> =>
+  couponId === null ? {} : { couponId: String(couponId) };
 
 const PRIMARY_BUTTON_CLASS =
   'text-1.125-medium block w-full rounded-md bg-primary px-6 py-3 font-medium text-neutral-100 disabled:opacity-50';
@@ -45,11 +52,14 @@ const ProductSummary = ({
   thumbnail,
   title,
   amount,
+  originalAmount,
   benefitFree,
 }: {
   thumbnail?: string | null;
   title: string;
   amount: number;
+  // 쿠폰으로 깎이기 전 금액. 쿠폰을 쓰는 중에만 넘긴다
+  originalAmount?: number;
   benefitFree: boolean;
 }) => (
   <div className="flex items-center gap-3">
@@ -62,6 +72,11 @@ const ProductSummary = ({
     )}
     <span className="min-w-0">
       <span className="block text-xsmall14 font-medium">{title}</span>
+      {originalAmount !== undefined && (
+        <span className="mt-0.5 block text-xsmall14 text-neutral-45 line-through">
+          {originalAmount.toLocaleString()}원
+        </span>
+      )}
       <span className="mt-0.5 block text-xsmall14 font-semibold text-neutral-0">
         {benefitFree
           ? BENEFIT_FREE_LABEL
@@ -80,12 +95,16 @@ const GuidebookPaidPayment = ({ product }: { product: PurchaseProduct }) => {
     null,
   );
   const [ready, setReady] = useState(false);
+  // 위젯에 실제로 반영된 금액. 쿠폰으로 금액이 바뀌고 반영이 끝나기 전에는 결제를 막는다
+  const [syncedAmount, setSyncedAmount] = useState(product.amount);
   const tossInitialized = useRef(false);
   const orderId = useRef(generateOrderId());
+  const appliedAmount = useRef(product.amount);
 
   useEffect(() => {
     if (!user || tossInitialized.current) return;
     tossInitialized.current = true;
+    appliedAmount.current = product.amount;
     (async () => {
       const tossPayments = await loadTossPayments(clientKey);
       const w = tossPayments.widgets({
@@ -106,10 +125,24 @@ const GuidebookPaidPayment = ({ product }: { product: PurchaseProduct }) => {
     })();
   }, [user, product.amount]);
 
+  // 위젯은 한 번만 만든다. 쿠폰으로 금액이 바뀌면 위젯 금액만 맞춘다
+  useEffect(() => {
+    if (!widgets || appliedAmount.current === product.amount) return;
+    appliedAmount.current = product.amount;
+    const amount = product.amount;
+    widgets
+      .setAmount({ currency: 'KRW', value: amount })
+      .then(() => setSyncedAmount(amount))
+      .catch(console.error);
+  }, [widgets, product.amount]);
+
   const handlePay = async () => {
     if (!widgets) return;
     const paymentMethod = await methods?.getSelectedPaymentMethod();
-    const params = { priceId: String(product.priceId) };
+    const params = {
+      priceId: String(product.priceId),
+      ...couponParams(product.couponId),
+    };
     const toUrl = (step: 'result' | 'fail') =>
       window.location.origin +
       buildPurchasePath({
@@ -144,7 +177,7 @@ const GuidebookPaidPayment = ({ product }: { product: PurchaseProduct }) => {
       <button
         type="button"
         className={PRIMARY_BUTTON_CLASS}
-        disabled={!ready}
+        disabled={!ready || syncedAmount !== product.amount}
         onClick={handlePay}
       >
         {product.amount.toLocaleString()}원 결제하기
@@ -166,6 +199,7 @@ const GuidebookFreeApply = ({ product }: { product: PurchaseProduct }) => {
         returnUrl: product.returnUrl,
         params: {
           priceId: String(product.priceId),
+          ...couponParams(product.couponId),
           orderId: orderId.current,
           amount: '0',
           free: 'true',
@@ -197,6 +231,7 @@ const GuidebookPurchaseOffer = ({
     'GUIDEBOOK',
     product.guidebookId,
   );
+  const [coupon, setCoupon] = useState<ICouponForm>({ id: null, price: 0 });
 
   // isFetching: 결과 화면에서 돌아올 때 캐시된 값을 그대로 쓰지 않고 새 응답을 기다린다
   if (privilegeQuery.isPending || privilegeQuery.isFetching) {
@@ -218,16 +253,27 @@ const GuidebookPurchaseOffer = ({
   }
 
   const hasPrivilege = privilegeQuery.data.hasPrivilege;
-  const amount = hasPrivilege ? 0 : product.amount;
-  const payProduct = { ...product, amount };
+  const baseAmount = hasPrivilege ? 0 : product.amount;
+  // 쿠폰은 혜택이 없고 금액이 있을 때만 쓴다
+  const canUseCoupon = baseAmount > 0;
+  const amount = Math.max(baseAmount - coupon.price, 0);
+  const payProduct = { ...product, amount, couponId: coupon.id };
   return (
     <>
       <ProductSummary
         thumbnail={thumbnail}
         title={product.title}
         amount={amount}
+        originalAmount={coupon.id !== null ? baseAmount : undefined}
         benefitFree={hasPrivilege && product.amount > 0}
       />
+      {canUseCoupon && (
+        <GuidebookCouponSection
+          amount={baseAmount}
+          selectedCouponId={coupon.id}
+          onChange={setCoupon}
+        />
+      )}
       {amount === 0 ? (
         <GuidebookFreeApply product={payProduct} />
       ) : (
@@ -296,6 +342,7 @@ export default function GuidebookPurchaseView({
       title,
       priceId: payInfo.priceId,
       amount,
+      couponId: null,
       returnUrl: searchParams.get(RETURN_URL_PARAM),
     };
     return (

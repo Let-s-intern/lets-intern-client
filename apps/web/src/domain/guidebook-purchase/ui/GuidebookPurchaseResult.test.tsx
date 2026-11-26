@@ -232,4 +232,56 @@ describe('GuidebookPurchaseResult', () => {
     await screen.findByText('결제가 완료되었어요');
     expect(notifyPurchaseSuccess).not.toHaveBeenCalled();
   });
+
+  describe('쿠폰', () => {
+    it('유료 주소의 couponId 를 숫자로 신청 본문에 담는다', async () => {
+      mockParams = new URLSearchParams(`${paidParams}&couponId=3`);
+
+      render(<GuidebookPurchaseResult guidebookId={12} />);
+
+      await screen.findByText('결제가 완료되었어요');
+      expect(postGuidebookPurchase).toHaveBeenCalledWith(12, {
+        paymentInfo: {
+          couponId: 3,
+          priceId: 7,
+          paymentKey: 'key',
+          orderId: 'order1',
+          amount: '990',
+        },
+      });
+    });
+
+    it('무료 주소의 couponId 를 신청 본문에 담는다', async () => {
+      mockParams = new URLSearchParams(`${freeParams}&couponId=4`);
+
+      render(<GuidebookPurchaseResult guidebookId={12} />);
+
+      await screen.findByText('신청이 완료되었어요');
+      expect(postGuidebookPurchase).toHaveBeenCalledWith(12, {
+        paymentInfo: {
+          couponId: 4,
+          priceId: 7,
+          paymentKey: null,
+          orderId: 'order1',
+          amount: '0',
+        },
+      });
+    });
+
+    it.each(['', 'abc', '1.5', '-2'])(
+      'couponId 가 숫자가 아니면(%p) null 로 신청한다',
+      async (raw) => {
+        mockParams = new URLSearchParams(paidParams);
+        mockParams.set('couponId', raw);
+
+        render(<GuidebookPurchaseResult guidebookId={12} />);
+
+        await screen.findByText('결제가 완료되었어요');
+        expect(
+          jest.mocked(postGuidebookPurchase).mock.calls[0][1].paymentInfo
+            .couponId,
+        ).toBeNull();
+      },
+    );
+  });
 });
