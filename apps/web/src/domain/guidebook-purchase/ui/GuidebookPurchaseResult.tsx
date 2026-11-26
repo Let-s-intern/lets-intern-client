@@ -12,6 +12,10 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { postGuidebookPurchase } from '../api';
+import {
+  getPurchaseFailure,
+  type PurchaseFailure,
+} from '../utils/purchaseFailure';
 import { buildPurchasePath, RETURN_URL_PARAM } from '../utils/purchasePath';
 import { notifyPurchaseSuccess } from '../utils/purchaseWindow';
 import GuidebookPurchaseCard from './GuidebookPurchaseCard';
@@ -20,6 +24,7 @@ import PurchaseCloseButton from './PurchaseCloseButton';
 type ResultState = 'pending' | 'success' | 'fail';
 
 const DEFAULT_ERROR_MESSAGE = '결제가 완료되지 않았어요. 다시 시도해 주세요.';
+const PRICE_CHANGED_MESSAGE = '가격 정보가 바뀌었어요. 다시 시도해 주세요';
 
 /** 토스 성공 쿼리에서 신청 본문을 만든다. 필요한 값이 빠졌으면 null 이다 */
 const toApplicationBody = (
@@ -49,6 +54,7 @@ export default function GuidebookPurchaseResult({
   const queryClient = useQueryClient();
   const requested = useRef(false);
   const [state, setState] = useState<ResultState>('pending');
+  const [failure, setFailure] = useState<PurchaseFailure>('UNKNOWN');
   const isFree = searchParams.get('free') === 'true';
 
   useEffect(() => {
@@ -79,6 +85,7 @@ export default function GuidebookPurchaseResult({
       })
       .catch((error) => {
         console.error(error);
+        setFailure(getPurchaseFailure(error));
         setState('fail');
       });
   }, [guidebookId, queryClient, router, searchParams]);
@@ -91,10 +98,22 @@ export default function GuidebookPurchaseResult({
     );
   }
 
+  if (state === 'fail' && failure === 'ALREADY_APPLIED') {
+    return (
+      <GuidebookPurchaseCard title="이미 구매했어요">
+        <PurchaseCloseButton label="확인" />
+      </GuidebookPurchaseCard>
+    );
+  }
+
   if (state === 'fail') {
     return (
       <GuidebookPurchaseCard title="결제 실패">
-        <p className="text-xsmall14 text-neutral-30">{DEFAULT_ERROR_MESSAGE}</p>
+        <p className="text-xsmall14 text-neutral-30">
+          {failure === 'PRICE_CHANGED'
+            ? PRICE_CHANGED_MESSAGE
+            : DEFAULT_ERROR_MESSAGE}
+        </p>
         <Link
           href={buildPurchasePath({
             guidebookId,

@@ -94,6 +94,61 @@ describe('GuidebookPurchaseResult', () => {
     expect(url.searchParams.get('returnUrl')).toBe('https://ogonggo.co.kr/r');
   });
 
+  it('이미 신청한 가이드북(409 CONFLICT_APPLICATION)이면 이미 구매했어요와 확인 버튼만 보인다', async () => {
+    mockParams = new URLSearchParams(paidParams);
+    jest
+      .mocked(postGuidebookPurchase)
+      .mockRejectedValue({ status: 409, code: 'CONFLICT_APPLICATION' });
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+
+    render(<GuidebookPurchaseResult guidebookId={12} />);
+
+    expect(await screen.findByText('이미 구매했어요')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '확인' })).toBeInTheDocument();
+    expect(screen.queryByText('결제 실패')).toBeNull();
+    expect(screen.queryByRole('link', { name: '다시 시도하기' })).toBeNull();
+  });
+
+  it('가격이 어긋난(400 INVALID_PRICE) 신청은 안내와 returnUrl 을 유지한 구매 화면 링크를 보인다', async () => {
+    mockParams = new URLSearchParams(
+      `${freeParams}&returnUrl=https%3A%2F%2Fogonggo.co.kr%2Fr`,
+    );
+    jest
+      .mocked(postGuidebookPurchase)
+      .mockRejectedValue({ status: 400, code: 'INVALID_PRICE' });
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+
+    render(<GuidebookPurchaseResult guidebookId={12} />);
+
+    expect(
+      await screen.findByText('가격 정보가 바뀌었어요. 다시 시도해 주세요'),
+    ).toBeInTheDocument();
+    const back = screen.getByRole('link', { name: '다시 시도하기' });
+    const url = new URL(back.getAttribute('href') ?? '', 'https://x.test');
+    expect(url.pathname).toBe('/guidebook/purchase/12');
+    expect(url.searchParams.get('returnUrl')).toBe('https://ogonggo.co.kr/r');
+  });
+
+  it('그 밖의 오류(다른 코드, 네트워크 오류)는 기존 실패 문구를 보인다', async () => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    for (const error of [
+      { status: 500, code: 'API_ERROR' },
+      new Error('Network Error'),
+    ]) {
+      mockParams = new URLSearchParams(paidParams);
+      jest.mocked(postGuidebookPurchase).mockRejectedValue(error);
+
+      const { unmount } = render(<GuidebookPurchaseResult guidebookId={12} />);
+
+      expect(
+        await screen.findByText(
+          '결제가 완료되지 않았어요. 다시 시도해 주세요.',
+        ),
+      ).toBeInTheDocument();
+      unmount();
+    }
+  });
+
   it('신청에 성공하면 신청 조회 캐시를 비워 다음 구매 화면이 구매 상태를 읽게 한다', async () => {
     mockParams = new URLSearchParams(paidParams);
 
