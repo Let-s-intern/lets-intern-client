@@ -58,7 +58,9 @@ const withClient = (ui: React.ReactNode) => (
 );
 
 describe('UserInquirySection', () => {
-  beforeEach(() => get.mockReset());
+  beforeEach(() => {
+    get.mockReset();
+  });
 
   it('그 유저의 문의를 userId 로 조회해 목록으로 보인다', async () => {
     respond([
@@ -113,7 +115,9 @@ describe('UserInquirySection', () => {
 });
 
 describe('유저 상세의 문의 탭', () => {
-  beforeEach(() => get.mockReset());
+  beforeEach(() => {
+    get.mockReset();
+  });
 
   it('탭을 열기 전에는 조회하지 않고 열면 조회한다', async () => {
     respond([]);

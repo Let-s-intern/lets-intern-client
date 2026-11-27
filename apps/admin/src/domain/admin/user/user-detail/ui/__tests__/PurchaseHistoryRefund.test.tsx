@@ -95,7 +95,9 @@ const rowOf = (title: string) =>
   screen.getByRole('heading', { name: title }).closest('li') as HTMLElement;
 
 describe('구매·참여 이력의 환불 버튼', () => {
-  beforeEach(() => mutate.mockClear());
+  beforeEach(() => {
+    mutate.mockClear();
+  });
 
   it('환불 가능한 행에만 환불 버튼이 있다', () => {
     renderSection(data);
