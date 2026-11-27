@@ -156,3 +156,13 @@ export const buildRefundTarget = (
     ...(isVodPass ? { notice: VOD_PASS_REFUND_NOTICE } : {}),
   };
 };
+
+/**
+ * 올인원패스 수동 환불(이용 권한 회수) 대상인가.
+ * 이미 처리된 건과, 호출에 필요한 멤버십 id(`programId`)·신청 id 가 없는 건은 제외한다.
+ */
+export const canRevokeMembership = (item: UserApplicationDetailInfo) =>
+  isMembershipRow(item) &&
+  !item.isCanceled &&
+  item.programId != null &&
+  item.membershipApplicationId != null;

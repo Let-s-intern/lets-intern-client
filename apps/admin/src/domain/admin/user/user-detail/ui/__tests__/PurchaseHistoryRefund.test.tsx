@@ -1,7 +1,15 @@
 import type { UserAdminDetail } from '@/schema';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import PurchaseHistorySection from '../PurchaseHistorySection';
+
+const renderSection = (data: UserAdminDetail) =>
+  render(
+    <QueryClientProvider client={new QueryClient()}>
+      <PurchaseHistorySection data={data} />
+    </QueryClientProvider>,
+  );
 
 vi.mock('@/utils/axios', () => ({ default: {} }));
 vi.mock('@/utils/axiosV2', () => ({ default: {} }));
@@ -90,7 +98,7 @@ describe('구매·참여 이력의 환불 버튼', () => {
   beforeEach(() => mutate.mockClear());
 
   it('환불 가능한 행에만 환불 버튼이 있다', () => {
-    render(<PurchaseHistorySection data={data} />);
+    renderSection(data);
 
     expect(
       within(rowOf('환불 가능 챌린지')).getByRole('button', {
@@ -109,7 +117,7 @@ describe('구매·참여 이력의 환불 버튼', () => {
   });
 
   it('0원 결제는 전체 환불만 가능하다', () => {
-    render(<PurchaseHistorySection data={data} />);
+    renderSection(data);
 
     const row = within(rowOf('0원 챌린지'));
     expect(row.getByRole('button', { name: '전체 환불' })).toBeEnabled();
@@ -117,7 +125,7 @@ describe('구매·참여 이력의 환불 버튼', () => {
   });
 
   it('누르면 행 값으로 만든 RefundTarget 으로 모달이 열린다', () => {
-    render(<PurchaseHistorySection data={data} />);
+    renderSection(data);
 
     fireEvent.click(
       within(rowOf('환불 가능 챌린지')).getByRole('button', {
@@ -145,7 +153,7 @@ describe('구매·참여 이력의 환불 버튼', () => {
   });
 
   it('VOD 이용권은 안내 문구를 채운다', () => {
-    render(<PurchaseHistorySection data={data} />);
+    renderSection(data);
 
     fireEvent.click(
       within(rowOf('VOD 이용권 3개월')).getByRole('button', {
@@ -161,7 +169,7 @@ describe('구매·참여 이력의 환불 버튼', () => {
   });
 
   it('모달에서 실행하면 신청 id 로 환불을 요청한다', () => {
-    render(<PurchaseHistorySection data={data} />);
+    renderSection(data);
 
     fireEvent.click(
       within(rowOf('환불 가능 챌린지')).getByRole('button', {

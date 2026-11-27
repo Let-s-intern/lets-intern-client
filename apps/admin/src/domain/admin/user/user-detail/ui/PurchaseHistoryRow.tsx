@@ -18,10 +18,12 @@ interface Props {
     canPartialRefund: boolean;
     onRefund: (mode: RefundMode) => void;
   };
+  /** 올인원패스 행 중 아직 처리되지 않은 건에만 준다. 일반 환불과 달리 돈은 돌려주지 않는다. */
+  onRevoke?: () => void;
 }
 
 /** 신청 하나의 결제·기간 값. 상태는 색이 아니라 글자로 적는다. */
-const PurchaseHistoryRow = ({ item, status, refund }: Props) => (
+const PurchaseHistoryRow = ({ item, status, refund, onRevoke }: Props) => (
   <li className="rounded-xs border border-[#E4E4E7] p-4">
     <div className="flex items-start justify-between gap-x-4">
       <div>
@@ -90,6 +92,18 @@ const PurchaseHistoryRow = ({ item, status, refund }: Props) => (
           }
         >
           부분 환불
+        </button>
+      </div>
+    )}
+
+    {onRevoke && (
+      <div className="mt-3">
+        <button
+          type="button"
+          className="rounded-xs border border-red-500 px-3 py-1 text-sm text-red-600 hover:bg-red-50"
+          onClick={onRevoke}
+        >
+          이용 권한 회수(수동 환불)
         </button>
       </div>
     )}

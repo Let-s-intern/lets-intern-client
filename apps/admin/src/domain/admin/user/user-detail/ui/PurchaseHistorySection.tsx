@@ -1,16 +1,22 @@
+import { useRevokeParticipantMutation } from '@/api/all-in-one-pass/useParticipants';
 import { useAdminRefundMutation } from '@/api/adminRefund';
+import { UseUserDetailAdminQueryKey } from '@/api/user/user';
 import RefundModal, {
   type RefundMode,
   type RefundTarget,
 } from '@/domain/admin/program/program-user/ui/RefundModal';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import type { UserAdminDetail } from '@/schema';
+import type { UserAdminDetail, UserApplicationDetailInfo } from '@/schema';
+import { useQueryClient } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 import { useMemo, useState } from 'react';
 import {
   buildRefundTarget,
+  canRevokeMembership,
   resolveRowRefund,
   splitPurchaseHistory,
 } from '../utils/purchaseHistory';
+import MembershipRevokeDialog from './MembershipRevokeDialog';
 import PurchaseHistoryRow from './PurchaseHistoryRow';
 
 interface Props {
@@ -35,6 +41,32 @@ const PurchaseHistorySection = ({ data }: Props) => {
     },
     onError: (message) => snackbar(message),
   });
+
+  // 올인원패스는 환불 API 가 따로 없어 권한 회수 호출을 쓴다. 이 훅은 유저 상세를 무효화하지 않으므로 성공 뒤 여기서 한다.
+  const queryClient = useQueryClient();
+  const [revokeTarget, setRevokeTarget] =
+    useState<UserApplicationDetailInfo | null>(null);
+  const revokeMutation = useRevokeParticipantMutation(
+    revokeTarget?.programId ?? undefined,
+  );
+  const handleRevoke = () => {
+    if (!revokeTarget || revokeTarget.membershipApplicationId == null) return;
+    revokeMutation.mutate(revokeTarget.membershipApplicationId, {
+      onSuccess: () => {
+        setRevokeTarget(null);
+        queryClient.invalidateQueries({
+          queryKey: [UseUserDetailAdminQueryKey],
+        });
+        snackbar('이용 권한을 회수했습니다.');
+      },
+      onError: (error) =>
+        snackbar(
+          (isAxiosError<{ message?: string }>(error) &&
+            error.response?.data?.message) ||
+            '이용 권한 회수에 실패했습니다.',
+        ),
+    });
+  };
   const detailList = data.applicationDetailInfo;
   const { current, past } = useMemo(
     () => splitPurchaseHistory(detailList ?? []),
@@ -96,6 +128,11 @@ const PurchaseHistorySection = ({ data }: Props) => {
                           }
                         : undefined
                     }
+                    onRevoke={
+                      canRevokeMembership(item)
+                        ? () => setRevokeTarget(item)
+                        : undefined
+                    }
                   />
                 );
               })}
@@ -103,6 +140,14 @@ const PurchaseHistorySection = ({ data }: Props) => {
           )}
         </section>
       ))}
+      {revokeTarget && (
+        <MembershipRevokeDialog
+          programTitle={revokeTarget.programTitle ?? '올인원패스'}
+          isSubmitting={revokeMutation.isPending}
+          onConfirm={handleRevoke}
+          onClose={() => setRevokeTarget(null)}
+        />
+      )}
       {refundRequest && (
         <RefundModal
           target={refundRequest.target}
