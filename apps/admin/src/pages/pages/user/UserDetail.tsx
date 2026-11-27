@@ -1,7 +1,11 @@
 import { useUserDetailAdminQuery } from '@/api/user/user';
+import UserDetailTabs, {
+  UserDetailTabKey,
+} from '@/domain/admin/user/user-detail/ui/UserDetailTabs';
 import ActionButton from '@/domain/admin/ui/button/ActionButton';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import PersonalExperience from './PersonalExperience';
 import PersonalHistory from './PersonalHistory';
@@ -10,6 +14,7 @@ import PersonalInfo from './PersonalInfo';
 const UserDetail = () => {
   const params = useParams<{ userId: string }>();
   const navigate = useNavigate();
+  const [tab, setTab] = useState<UserDetailTabKey>('info');
 
   const { data, isLoading } = useUserDetailAdminQuery({
     userId: Number(params.userId || 0),
@@ -29,12 +34,19 @@ const UserDetail = () => {
           <Header>
             <Heading>커리어 DB</Heading>
           </Header>
-          <main className="flex w-full flex-col gap-y-8">
-            <div className="grid w-full grid-cols-2 flex-col gap-x-8 gap-y-4">
-              <PersonalInfo data={data} />
-              <PersonalHistory data={data} />
-            </div>
-            <PersonalExperience data={data} />
+          <UserDetailTabs value={tab} onChange={setTab} />
+          <main className="mt-6 flex w-full flex-col gap-y-8">
+            {tab === 'info' ? (
+              <>
+                <div className="grid w-full grid-cols-2 flex-col gap-x-8 gap-y-4">
+                  <PersonalInfo data={data} />
+                  <PersonalHistory data={data} />
+                </div>
+                <PersonalExperience data={data} />
+              </>
+            ) : (
+              <div>준비 중입니다.</div>
+            )}
           </main>
         </div>
       )}

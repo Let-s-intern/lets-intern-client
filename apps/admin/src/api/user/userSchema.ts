@@ -8,6 +8,8 @@ import {
   authProviderSchema,
   pageInfo,
   reportTypeSchema,
+  userApplicationDetailInfoSchema,
+  userLiveMentoringSubmissionSchema,
 } from '@/schema';
 import { z } from 'zod';
 
@@ -299,6 +301,10 @@ export const adminUserDetailSchema = z.object({
       programTitle: z.string(),
     }),
   ),
+  applicationDetailInfo: z.array(userApplicationDetailInfoSchema).nullish(),
+  liveMentoringSubmissionList: z
+    .array(userLiveMentoringSubmissionSchema)
+    .nullish(),
   userDocumentInfo: z
     .array(
       z.object({
