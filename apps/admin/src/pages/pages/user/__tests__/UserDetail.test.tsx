@@ -1,5 +1,6 @@
 import { userAdminDetailType } from '@/schema';
 import { adminUserDetailSchema } from '@/api/user/userSchema';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
@@ -83,11 +84,17 @@ describe('유저 상세 스키마', () => {
 describe('UserDetail', () => {
   const renderPage = () =>
     render(
-      <MemoryRouter initialEntries={['/users/7']}>
-        <Routes>
-          <Route path="/users/:userId" element={<UserDetail />} />
-        </Routes>
-      </MemoryRouter>,
+      <QueryClientProvider
+        client={
+          new QueryClient({ defaultOptions: { queries: { retry: false } } })
+        }
+      >
+        <MemoryRouter initialEntries={['/users/7']}>
+          <Routes>
+            <Route path="/users/:userId" element={<UserDetail />} />
+          </Routes>
+        </MemoryRouter>
+      </QueryClientProvider>,
     );
 
   it('새 필드가 없는 응답으로도 기본 정보 탭이 렌더된다', () => {
