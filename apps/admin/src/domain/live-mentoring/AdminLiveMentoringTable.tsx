@@ -11,6 +11,7 @@ import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import ConfirmActionDialog, {
   type PendingAction,
 } from './ui/ConfirmActionDialog';
+import PriceEditModal from './ui/PriceEditModal';
 import ThumbnailEditModal from './ui/ThumbnailEditModal';
 import {
   CATEGORY_LABELS,
@@ -68,6 +69,9 @@ const AdminLiveMentoringTable = ({
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
   const [thumbnailTarget, setThumbnailTarget] =
     useState<AdminLiveMentoring | null>(null);
+  const [priceTarget, setPriceTarget] = useState<AdminLiveMentoring | null>(
+    null,
+  );
 
   const { data, isLoading, isError } = useAdminLiveMentoringListQuery({
     opened,
@@ -265,20 +269,35 @@ const AdminLiveMentoringTable = ({
                       {row.hasDetailPage ? '있음' : '없음'}
                     </td>
                     <td className={`${bodyCellClass} whitespace-nowrap`}>
-                      {opening ? (
-                        <div className="flex flex-col gap-0.5">
-                          <span className="text-xs text-neutral-40">
-                            {durationPricesLabel(opening.durationPrices)}
-                          </span>
-                          {opening.closeReason && (
+                      <div className="flex flex-col items-start gap-1">
+                        {opening ? (
+                          <div className="flex flex-col gap-0.5">
                             <span className="text-xs text-neutral-40">
-                              {CLOSE_REASON_LABELS[opening.closeReason]}
+                              {durationPricesLabel(opening.durationPrices)}
+                            </span>
+                            {opening.closeReason && (
+                              <span className="text-xs text-neutral-40">
+                                {CLOSE_REASON_LABELS[opening.closeReason]}
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-neutral-40">없음</span>
+                        )}
+                        {row.priceOverrides &&
+                          row.priceOverrides.length > 0 && (
+                            <span className="rounded bg-primary-10 px-2 py-0.5 text-xs font-medium text-primary">
+                              가격 조정됨
                             </span>
                           )}
-                        </div>
-                      ) : (
-                        <span className="text-neutral-40">없음</span>
-                      )}
+                        <button
+                          type="button"
+                          onClick={() => setPriceTarget(row)}
+                          className="whitespace-nowrap text-xs text-primary underline"
+                        >
+                          가격 조정
+                        </button>
+                      </div>
                     </td>
                     <td className={`${bodyCellClass} whitespace-nowrap`}>
                       {formatDateTime(row.lastModifiedDate)}
@@ -344,6 +363,18 @@ const AdminLiveMentoringTable = ({
         onCancel={() => setPendingAction(null)}
         onConfirm={runPendingAction}
       />
+
+      {priceTarget && (
+        <PriceEditModal
+          key={priceTarget.liveMentoringId}
+          row={priceTarget}
+          onClose={() => setPriceTarget(null)}
+          onSaved={() => {
+            snackbar('가격을 저장했습니다.');
+            setPriceTarget(null);
+          }}
+        />
+      )}
 
       {thumbnailTarget && (
         <ThumbnailEditModal

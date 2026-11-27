@@ -12,6 +12,7 @@ import type { AdminLiveMentoring } from '@/api/live-mentoring/liveMentoringSchem
 const listQuery = vi.fn();
 const closeMock = vi.fn();
 const updateThumbnailMock = vi.fn();
+const updatePricesMock = vi.fn();
 const snackbarMock = vi.fn();
 
 vi.mock('@/api/live-mentoring/liveMentoring', () => ({
@@ -22,6 +23,10 @@ vi.mock('@/api/live-mentoring/liveMentoring', () => ({
   }),
   useUpdateAdminLiveMentoringThumbnailMutation: () => ({
     mutate: updateThumbnailMock,
+    isPending: false,
+  }),
+  useUpdateAdminLiveMentoringPricesMutation: () => ({
+    mutate: updatePricesMock,
     isPending: false,
   }),
 }));
@@ -96,6 +101,7 @@ afterEach(() => {
   listQuery.mockReset();
   closeMock.mockReset();
   updateThumbnailMock.mockReset();
+  updatePricesMock.mockReset();
   snackbarMock.mockReset();
 });
 
@@ -438,5 +444,66 @@ describe('AdminLiveMentoringTable — 썸네일', () => {
     expect(
       screen.getByRole('dialog', { name: '렛츠멘토 · 썸네일 수정' }),
     ).toBeInTheDocument();
+  });
+});
+
+describe('AdminLiveMentoringTable — 가격 조정', () => {
+  const adjustedRow: AdminLiveMentoring = {
+    ...approvedRow,
+    priceOverrides: [{ duration: 30, price: 35000 }],
+    defaultPrices: [
+      { duration: 30, price: 39000 },
+      { duration: 60, price: 69000 },
+    ],
+  };
+
+  it('조정된 멘토만 가격 열에 가격 조정됨을 표시한다', () => {
+    renderTable([adjustedRow, { ...draftRow, priceOverrides: [] }]);
+
+    expect(screen.getAllByText('가격 조정됨')).toHaveLength(1);
+    const adjustedCell = within(
+      screen.getByText('오픈멘토').closest('tr') as HTMLElement,
+    ).getAllByRole('cell')[6];
+    expect(adjustedCell).toHaveTextContent('가격 조정됨');
+    expect(adjustedCell).toHaveTextContent('30분 35,000원 / 60분 60,000원');
+  });
+
+  it('옛 응답처럼 priceOverrides 가 없으면 표시하지 않는다', () => {
+    renderTable([approvedRow]);
+
+    expect(screen.queryByText('가격 조정됨')).not.toBeInTheDocument();
+  });
+
+  it('열린 개설이 없는 멘토도 가격 조정을 누를 수 있다', () => {
+    renderTable([draftRow]);
+
+    fireEvent.click(screen.getByRole('button', { name: '가격 조정' }));
+
+    expect(
+      screen.getByRole('dialog', { name: '렛츠멘토 · 가격 조정' }),
+    ).toBeInTheDocument();
+  });
+
+  it('저장하면 서버에 보내고 안내 후 모달을 닫는다', () => {
+    updatePricesMock.mockImplementation((_vars, options) =>
+      options.onSuccess(),
+    );
+    renderTable([adjustedRow]);
+
+    fireEvent.click(screen.getByRole('button', { name: '가격 조정' }));
+    fireEvent.change(screen.getByLabelText('60분'), {
+      target: { value: '80000' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: '저장' }));
+
+    expect(updatePricesMock.mock.calls[0][0]).toEqual({
+      mentorId: 21,
+      prices: [
+        { duration: 30, price: 35000 },
+        { duration: 60, price: 80000 },
+      ],
+    });
+    expect(snackbarMock).toHaveBeenCalledWith('가격을 저장했습니다.');
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 });
