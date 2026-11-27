@@ -2,6 +2,8 @@ import '@testing-library/jest-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { ApiError } from '@letscareer/api';
+import { AxiosError } from 'axios';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -158,5 +160,88 @@ describe('ChallengeInquiryAnswerPage', () => {
         { answer: '서버에 달린 답변' },
       ),
     );
+  });
+
+  it('서버가 404 를 주면 문의를 찾을 수 없다는 문구와 목록 링크를 보인다', async () => {
+    // 공용 axios 는 응답 오류를 ApiError 로 다시 포장한다
+    get.mockRejectedValue(
+      new ApiError({
+        code: 'NOT_FOUND',
+        message: '없음',
+        status: 404,
+        endpoint: '/admin/challenge/3/questions/7',
+        method: 'GET',
+      }),
+    );
+
+    renderPage();
+
+    expect(
+      await screen.findByText(
+        '문의를 찾을 수 없습니다. 삭제됐거나 주소가 잘못됐습니다.',
+      ),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: '목록으로' })).toHaveAttribute(
+      'href',
+      '/challenge/inquiry',
+    );
+    expect(screen.queryByLabelText('답변 입력창')).not.toBeInTheDocument();
+  });
+
+  it('포장되지 않은 axios 404 도 같은 문구로 보인다', async () => {
+    get.mockRejectedValue(
+      new AxiosError('Not Found', 'ERR_BAD_REQUEST', undefined, undefined, {
+        status: 404,
+      } as never),
+    );
+
+    renderPage();
+
+    expect(
+      await screen.findByText(
+        '문의를 찾을 수 없습니다. 삭제됐거나 주소가 잘못됐습니다.',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('404 가 아닌 실패는 잠시 후 다시 시도하라는 문구와 목록 링크를 보인다', async () => {
+    get.mockRejectedValue(
+      new ApiError({
+        code: 'API_ERROR',
+        message: '서버 오류',
+        status: 500,
+        endpoint: '/admin/challenge/3/questions/7',
+        method: 'GET',
+      }),
+    );
+
+    renderPage();
+
+    expect(
+      await screen.findByText(
+        '문의를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.',
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText(
+        '문의를 찾을 수 없습니다. 삭제됐거나 주소가 잘못됐습니다.',
+      ),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: '목록으로' })).toHaveAttribute(
+      'href',
+      '/challenge/inquiry',
+    );
+  });
+
+  it('네트워크 오류처럼 응답이 없는 실패도 잠시 후 다시 시도하라는 문구를 보인다', async () => {
+    get.mockRejectedValue(new Error('Network Error'));
+
+    renderPage();
+
+    expect(
+      await screen.findByText(
+        '문의를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.',
+      ),
+    ).toBeInTheDocument();
   });
 });

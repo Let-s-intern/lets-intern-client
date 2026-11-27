@@ -4,8 +4,17 @@ import {
   useChallengeQuestionQuery,
 } from '@/api/challenge-question/challengeQuestion';
 import EditorApp from '@/common/lexical/EditorApp';
+import { ApiError } from '@letscareer/api';
+import { isAxiosError } from 'axios';
 import { useRef } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+
+// 공용 axios 는 응답 오류를 ApiError 로 다시 포장하지만, 토큰 오류 등 일부는 axios 오류 그대로다
+const getErrorStatus = (error: unknown) => {
+  if (error instanceof ApiError) return error.status;
+  if (isAxiosError(error)) return error.response?.status;
+  return undefined;
+};
 
 const ChallengeInquiryAnswerPage = () => {
   const { challengeId, questionId } = useParams<{
@@ -21,6 +30,7 @@ const ChallengeInquiryAnswerPage = () => {
 
   const {
     data: question,
+    error,
     isError,
     isPlaceholderData,
   } = useChallengeQuestionQuery(
@@ -50,7 +60,17 @@ const ChallengeInquiryAnswerPage = () => {
     if (isError) {
       return (
         <div className="px-12 pt-6 text-sm text-red-500">
-          문의 데이터를 불러올 수 없습니다. 목록에서 다시 접근해주세요.
+          <p>
+            {getErrorStatus(error) === 404
+              ? '문의를 찾을 수 없습니다. 삭제됐거나 주소가 잘못됐습니다.'
+              : '문의를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.'}
+          </p>
+          <Link
+            to="/challenge/inquiry"
+            className="mt-2 inline-block text-gray-600 underline"
+          >
+            목록으로
+          </Link>
         </div>
       );
     }
