@@ -1,7 +1,16 @@
 import { useUserDetailAdminQuery } from '@/api/user/user';
+import MentoringSubmissionSection from '@/domain/admin/user/user-detail/ui/MentoringSubmissionSection';
+import PurchaseHistorySection from '@/domain/admin/user/user-detail/ui/PurchaseHistorySection';
+import UserCouponSection from '@/domain/admin/user/user-detail/ui/UserCouponSection';
+import UserInquirySection from '@/domain/admin/user/user-detail/ui/UserInquirySection';
+import UserDetailTabs, {
+  UserDetailTabKey,
+} from '@/domain/admin/user/user-detail/ui/UserDetailTabs';
 import ActionButton from '@/domain/admin/ui/button/ActionButton';
 import Header from '@/domain/admin/ui/header/Header';
 import Heading from '@/domain/admin/ui/heading/Heading';
+import { UserAdminDetail } from '@/schema';
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import PersonalExperience from './PersonalExperience';
 import PersonalHistory from './PersonalHistory';
@@ -10,11 +19,40 @@ import PersonalInfo from './PersonalInfo';
 const UserDetail = () => {
   const params = useParams<{ userId: string }>();
   const navigate = useNavigate();
+  const [tab, setTab] = useState<UserDetailTabKey>('info');
 
   const { data, isLoading } = useUserDetailAdminQuery({
     userId: Number(params.userId || 0),
     enabled: params.userId !== undefined,
   });
+
+  // 선택된 탭만 그린다. 문의와 쿠폰은 그때서야 조회한다.
+  const renderPanel = (detail: UserAdminDetail) => {
+    switch (tab) {
+      case 'info':
+        return (
+          <>
+            <div className="grid w-full grid-cols-2 flex-col gap-x-8 gap-y-4">
+              <PersonalInfo data={detail} />
+              <PersonalHistory data={detail} />
+            </div>
+            <PersonalExperience data={detail} />
+          </>
+        );
+      case 'purchase':
+        return <PurchaseHistorySection data={detail} />;
+      case 'mentoring':
+        return (
+          <MentoringSubmissionSection
+            list={detail.liveMentoringSubmissionList}
+          />
+        );
+      case 'inquiry':
+        return <UserInquirySection userId={Number(params.userId)} />;
+      case 'coupon':
+        return <UserCouponSection userId={Number(params.userId)} />;
+    }
+  };
 
   return (
     <div className="py flex h-full w-full flex-col gap-y-8 p-8">
@@ -29,12 +67,9 @@ const UserDetail = () => {
           <Header>
             <Heading>커리어 DB</Heading>
           </Header>
-          <main className="flex w-full flex-col gap-y-8">
-            <div className="grid w-full grid-cols-2 flex-col gap-x-8 gap-y-4">
-              <PersonalInfo data={data} />
-              <PersonalHistory data={data} />
-            </div>
-            <PersonalExperience data={data} />
+          <UserDetailTabs value={tab} onChange={setTab} />
+          <main className="mt-6 flex w-full flex-col gap-y-8">
+            {renderPanel(data)}
           </main>
         </div>
       )}

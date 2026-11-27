@@ -5,6 +5,7 @@ import {
   activitySchema,
   categorySchema,
 } from './api/experience/experienceSchema';
+import { liveMentoringAttachmentTypeSchema } from './api/live-mentoring/liveMentoringSchema';
 
 export interface Pageable {
   page: number;
@@ -2113,6 +2114,66 @@ export const vodApplicationPriceType = z.object({
   vodPriceType: vodPriceTypeSchema,
 });
 
+/**
+ * 유저 상세의 구매·참여 이력 한 건(`applicationDetailInfo`).
+ * 서버 배포 전 응답에는 키가 없고, 유형마다 비는 값이 달라 전부 nullish 로 연다.
+ * 올인원패스 행은 `applicationId` 가 비고 `membershipApplicationId` 가 차며 `programId` 가 멤버십 id 다.
+ */
+export const userApplicationDetailInfoSchema = z.object({
+  applicationId: z.number().nullish(),
+  membershipApplicationId: z.number().nullish(),
+  programType: z.string().nullish(),
+  programId: z.number().nullish(),
+  programTitle: z.string().nullish(),
+  programStartDate: z.string().nullish(),
+  programEndDate: z.string().nullish(),
+  isCanceled: z.boolean().nullish(),
+  orderId: z.string().nullish(),
+  programPrice: z.number().nullish(),
+  couponName: z.string().nullish(),
+  couponDiscount: z.number().nullish(),
+  finalPrice: z.number().nullish(),
+  refundPrice: z.number().nullish(),
+  paymentCreateDate: z.string().nullish(),
+  challengePricePlanType: z.string().nullish(),
+  challengeVersionTitle: z.string().nullish(),
+  additionalPaidAmount: z.number().nullish(),
+  pendingManualRefundAmount: z.number().nullish(),
+});
+export type UserApplicationDetailInfo = z.infer<
+  typeof userApplicationDetailInfoSchema
+>;
+
+/** 유저 상세의 1:1 LIVE 멘토링 제출 내역 한 건(`liveMentoringSubmissionList`). 어드민 전용이라 공유 동의와 무관하게 첨부가 온다. */
+export const userLiveMentoringSubmissionSchema = z.object({
+  applicationId: z.number(),
+  productNameSnapshot: z.string().nullish(),
+  durationMinutesSnapshot: z.number().nullish(),
+  mentoringCategory: z.string().nullish(),
+  contactEmail: z.string().nullish(),
+  questionDeferred: z.boolean().nullish(),
+  questionContent: z.string().nullish(),
+  attachmentType: liveMentoringAttachmentTypeSchema.nullish(),
+  attachmentUrl: z.string().nullish(),
+  /** 파일 첨부 목록. 없거나 비면 `attachmentUrl` 하나로 읽는다. */
+  attachmentFileList: z
+    .array(
+      z.object({
+        fileId: z.number(),
+        fileName: z.string(),
+        url: z.string(),
+      }),
+    )
+    .nullish(),
+  mentorShareAgreed: z.boolean().nullish(),
+  reservationStartAt: z.string().nullish(),
+  reservationEndAt: z.string().nullish(),
+  status: z.string().nullish(),
+});
+export type UserLiveMentoringSubmission = z.infer<
+  typeof userLiveMentoringSubmissionSchema
+>;
+
 export const userAdminDetailType = z.object({
   userInfo: z.object({
     id: z.string(),
@@ -2143,6 +2204,10 @@ export const userAdminDetailType = z.object({
       programTitle: z.string(),
     }),
   ),
+  applicationDetailInfo: z.array(userApplicationDetailInfoSchema).nullish(),
+  liveMentoringSubmissionList: z
+    .array(userLiveMentoringSubmissionSchema)
+    .nullish(),
   userDocumentInfo: z
     .array(
       z.object({

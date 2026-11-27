@@ -1,3 +1,4 @@
+import { UseUserDetailAdminQueryKey } from '@/api/user/user';
 import axios from '@/utils/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
@@ -191,6 +192,7 @@ export const useAdminRefundMutation = ({
       queryClient.invalidateQueries({ queryKey: ['live'] });
       queryClient.invalidateQueries({ queryKey: ['guidebook'] });
       queryClient.invalidateQueries({ queryKey: ['vod'] });
+      queryClient.invalidateQueries({ queryKey: [UseUserDetailAdminQueryKey] });
       queryClient.invalidateQueries({ queryKey: [ADMIN_REFUND_HISTORY_KEY] });
       // 유저 탭은 어드민 환불 로그가 있는 건을 제외한다. 방금 실행한 건이 그 탭에서 빠진다.
       queryClient.invalidateQueries({ queryKey: [USER_REFUND_HISTORY_KEY] });
