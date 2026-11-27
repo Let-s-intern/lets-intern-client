@@ -38,13 +38,20 @@ export type LiveMentoringCloseReason = z.infer<
   typeof liveMentoringCloseReasonSchema
 >;
 
+/** 진행시간(분)별 가격 — 서버 `LiveMentoringDurationPriceVo`. */
+export const liveMentoringDurationPriceSchema = z.object({
+  duration: z.number(),
+  price: z.number(),
+});
+export type LiveMentoringDurationPrice = z.infer<
+  typeof liveMentoringDurationPriceSchema
+>;
+
 /** 현재 개설. 상태가 `OPEN` 인 개설만 담긴다. */
 export const adminCurrentOpeningSchema = z.object({
   openingId: z.number(),
   status: liveMentoringOpeningStatusSchema,
-  durationPrices: z.array(
-    z.object({ duration: z.number(), price: z.number() }),
-  ),
+  durationPrices: z.array(liveMentoringDurationPriceSchema),
   openedAt: z.string(),
   closedAt: z.string().nullable(),
   closeReason: liveMentoringCloseReasonSchema.nullable(),
@@ -77,6 +84,13 @@ export const adminLiveMentoringSchema = z.object({
   upcomingParticipantCount: z.number(),
   /** 멘토 단위. 멘토 페이지 후기 수(숨긴 후기 포함). 후기 탭의 "전체" 와 같다. */
   mentorReviewCount: z.number(),
+  /**
+   * 어드민이 정한 진행시간별 가격. 조정하지 않았으면 빈 목록이다.
+   * 서버 배포 전 응답에는 필드가 없어 optional 로 받는다.
+   */
+  priceOverrides: z.array(liveMentoringDurationPriceSchema).optional(),
+  /** 조정하지 않은 진행시간에 쓰이는 기본 가격. 옛 응답에는 없다. */
+  defaultPrices: z.array(liveMentoringDurationPriceSchema).optional(),
 });
 export type AdminLiveMentoring = z.infer<typeof adminLiveMentoringSchema>;
 
