@@ -1,4 +1,5 @@
 import { useUserDetailAdminQuery } from '@/api/user/user';
+import PurchaseHistorySection from '@/domain/admin/user/user-detail/ui/PurchaseHistorySection';
 import UserDetailTabs, {
   UserDetailTabKey,
 } from '@/domain/admin/user/user-detail/ui/UserDetailTabs';
@@ -44,6 +45,8 @@ const UserDetail = () => {
                 </div>
                 <PersonalExperience data={data} />
               </>
+            ) : tab === 'purchase' ? (
+              <PurchaseHistorySection data={data} />
             ) : (
               <div>준비 중입니다.</div>
             )}

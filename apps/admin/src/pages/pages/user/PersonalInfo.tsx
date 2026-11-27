@@ -86,20 +86,6 @@ const PersonalInfo = ({ data }: { data: UserAdminDetail }) => {
             {data.userInfo.major ? data.userInfo.major : '-'}
           </div>
         </div>
-        <div className="flex w-full flex-col gap-y-1">
-          <div>참여 프로그램 내역</div>
-          <div className="max-h-40 w-full overflow-auto rounded-xs border border-[#E4E4E7] px-4 py-3">
-            {data.applicationInfo.length < 1 ? (
-              <div>신청 내역이 없습니다.</div>
-            ) : (
-              data.applicationInfo.map((applicationInfo, idx) => (
-                <div key={data.userInfo.id + applicationInfo.programId + idx}>
-                  {applicationInfo.programTitle}
-                </div>
-              ))
-            )}
-          </div>
-        </div>
       </div>
     </div>
   );
