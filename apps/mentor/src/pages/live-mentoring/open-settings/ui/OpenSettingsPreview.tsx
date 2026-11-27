@@ -1,5 +1,3 @@
-import { getLowestPrice } from '@letscareer/mocks';
-
 import type { LiveMentoringSettings } from '@/api/live-mentoring/liveMentoringSchema';
 import {
   CATEGORY_LABELS,
@@ -7,6 +5,7 @@ import {
   careerBadgeLabel,
   durationsLabel,
   imagePlaceholderTitle,
+  lowestDurationPrice,
 } from '../../constants';
 
 interface OpenSettingsPreviewProps {
@@ -32,6 +31,7 @@ const OpenSettingsPreview = ({ settings }: OpenSettingsPreviewProps) => {
     thumbnail,
     categories,
     durations,
+    durationPrices,
     careers,
   } = settings;
   // 공개 카드와 같다 — 썸네일이 없으면 프로필 사진을 쓴다.
@@ -46,7 +46,7 @@ const OpenSettingsPreview = ({ settings }: OpenSettingsPreviewProps) => {
   // 편집 중에는 빈 문자열이 들어오므로 null 로 정규화해 공개 카드와 같은 폴백을 태운다.
   const cardTitle = title?.trim() ? title : null;
   const displayNickname = nickname ?? '멘토';
-  const price = getLowestPrice(durations);
+  const price = lowestDurationPrice(durations, durationPrices);
 
   return (
     <section className="rounded-xl border border-gray-200 bg-white p-5 md:p-6">

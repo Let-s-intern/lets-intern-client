@@ -54,7 +54,7 @@ export type LiveMentoringCloseReason = z.infer<
   typeof liveMentoringCloseReasonSchema
 >;
 
-/** 진행시간별 확정 가격. 가격은 서버 고정 정책이라 요청에 담지 않고 응답으로만 받는다. */
+/** 진행시간별 확정 가격. 가격은 서버가 정하므로(기본 가격 또는 어드민 조정값) 요청에 담지 않고 응답으로만 받는다. */
 export const liveMentoringDurationPriceSchema = z.object({
   duration: liveMentoringDurationSchema,
   price: z.number(),
@@ -322,6 +322,11 @@ export const liveMentoringSettingsSchema = z.object({
   categories: z.array(liveMentoringCategorySchema),
   /** 개설할 때 저장한 진행시간(다중). 한 번도 개설하지 않았으면 빈 배열. */
   durations: z.array(liveMentoringDurationSchema),
+  /**
+   * 진행시간별 적용 가격. 어드민이 조정하지 않은 진행시간은 기본 가격이 담긴다.
+   * 서버 배포 전 응답에는 필드가 없어 optional 이고, 그때는 클라이언트 고정값으로 폴백한다.
+   */
+  durationPrices: z.array(liveMentoringDurationPriceSchema).optional(),
 });
 export type LiveMentoringSettings = z.infer<typeof liveMentoringSettingsSchema>;
 
