@@ -1,4 +1,5 @@
 import { useUserDetailAdminQuery } from '@/api/user/user';
+import MentoringSubmissionSection from '@/domain/admin/user/user-detail/ui/MentoringSubmissionSection';
 import PurchaseHistorySection from '@/domain/admin/user/user-detail/ui/PurchaseHistorySection';
 import UserDetailTabs, {
   UserDetailTabKey,
@@ -47,6 +48,10 @@ const UserDetail = () => {
               </>
             ) : tab === 'purchase' ? (
               <PurchaseHistorySection data={data} />
+            ) : tab === 'mentoring' ? (
+              <MentoringSubmissionSection
+                list={data.liveMentoringSubmissionList}
+              />
             ) : (
               <div>준비 중입니다.</div>
             )}

@@ -6,7 +6,11 @@ import RefundModal, {
   type RefundTarget,
 } from '@/domain/admin/program/program-user/ui/RefundModal';
 import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
-import type { UserAdminDetail, UserApplicationDetailInfo } from '@/schema';
+import type {
+  UserAdminDetail,
+  UserApplicationDetailInfo,
+  UserLiveMentoringSubmission,
+} from '@/schema';
 import { useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import { useMemo, useState } from 'react';
@@ -17,6 +21,7 @@ import {
   splitPurchaseHistory,
 } from '../utils/purchaseHistory';
 import MembershipRevokeDialog from './MembershipRevokeDialog';
+import MentoringSubmissionDialog from './MentoringSubmissionDialog';
 import PurchaseHistoryRow from './PurchaseHistoryRow';
 
 interface Props {
@@ -41,6 +46,20 @@ const PurchaseHistorySection = ({ data }: Props) => {
     },
     onError: (message) => snackbar(message),
   });
+
+  // 1:1 멘토링 행은 신청 id 로 제출 내역을 붙인다.
+  const submissionByApplicationId = useMemo(
+    () =>
+      new Map(
+        (data.liveMentoringSubmissionList ?? []).map((submission) => [
+          submission.applicationId,
+          submission,
+        ]),
+      ),
+    [data.liveMentoringSubmissionList],
+  );
+  const [viewingSubmission, setViewingSubmission] =
+    useState<UserLiveMentoringSubmission | null>(null);
 
   // 올인원패스는 환불 API 가 따로 없어 권한 회수 호출을 쓴다. 이 훅은 유저 상세를 무효화하지 않으므로 성공 뒤 여기서 한다.
   const queryClient = useQueryClient();
@@ -107,6 +126,10 @@ const PurchaseHistorySection = ({ data }: Props) => {
             <ul className="mt-3 flex flex-col gap-y-3">
               {list.map(({ item, status }, idx) => {
                 const { canRefund, canPartialRefund } = resolveRowRefund(item);
+                const submission =
+                  item.applicationId == null
+                    ? undefined
+                    : submissionByApplicationId.get(item.applicationId);
                 return (
                   <PurchaseHistoryRow
                     key={`${item.applicationId ?? 'm'}-${item.membershipApplicationId ?? idx}`}
@@ -128,6 +151,11 @@ const PurchaseHistorySection = ({ data }: Props) => {
                           }
                         : undefined
                     }
+                    onViewSubmission={
+                      submission
+                        ? () => setViewingSubmission(submission)
+                        : undefined
+                    }
                     onRevoke={
                       canRevokeMembership(item)
                         ? () => setRevokeTarget(item)
@@ -140,6 +168,12 @@ const PurchaseHistorySection = ({ data }: Props) => {
           )}
         </section>
       ))}
+      {viewingSubmission && (
+        <MentoringSubmissionDialog
+          submission={viewingSubmission}
+          onClose={() => setViewingSubmission(null)}
+        />
+      )}
       {revokeTarget && (
         <MembershipRevokeDialog
           programTitle={revokeTarget.programTitle ?? '올인원패스'}

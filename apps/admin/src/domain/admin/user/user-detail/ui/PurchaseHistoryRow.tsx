@@ -20,10 +20,18 @@ interface Props {
   };
   /** 올인원패스 행 중 아직 처리되지 않은 건에만 준다. 일반 환불과 달리 돈은 돌려주지 않는다. */
   onRevoke?: () => void;
+  /** 1:1 멘토링 행 중 제출 내역이 있는 건에만 준다. */
+  onViewSubmission?: () => void;
 }
 
 /** 신청 하나의 결제·기간 값. 상태는 색이 아니라 글자로 적는다. */
-const PurchaseHistoryRow = ({ item, status, refund, onRevoke }: Props) => (
+const PurchaseHistoryRow = ({
+  item,
+  status,
+  refund,
+  onRevoke,
+  onViewSubmission,
+}: Props) => (
   <li className="rounded-xs border border-[#E4E4E7] p-4">
     <div className="flex items-start justify-between gap-x-4">
       <div>
@@ -92,6 +100,18 @@ const PurchaseHistoryRow = ({ item, status, refund, onRevoke }: Props) => (
           }
         >
           부분 환불
+        </button>
+      </div>
+    )}
+
+    {onViewSubmission && (
+      <div className="mt-3">
+        <button
+          type="button"
+          className="rounded-xs border border-neutral-300 px-3 py-1 text-sm hover:bg-neutral-50"
+          onClick={onViewSubmission}
+        >
+          제출 내역 보기
         </button>
       </div>
     )}
