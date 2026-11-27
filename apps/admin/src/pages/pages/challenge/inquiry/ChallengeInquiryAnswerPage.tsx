@@ -1,6 +1,7 @@
 import {
   ChallengeQuestionItem,
   useAnswerQuestionMutation,
+  useChallengeQuestionQuery,
 } from '@/api/challenge-question/challengeQuestion';
 import EditorApp from '@/common/lexical/EditorApp';
 import { useRef } from 'react';
@@ -14,11 +15,22 @@ const ChallengeInquiryAnswerPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const question = location.state?.question as
+  const stateQuestion = location.state?.question as
     | ChallengeQuestionItem
     | undefined;
 
-  const answerRef = useRef<string>(question?.answer ?? '');
+  const {
+    data: question,
+    isError,
+    isPlaceholderData,
+  } = useChallengeQuestionQuery(
+    Number(challengeId),
+    Number(questionId),
+    stateQuestion,
+  );
+
+  // 입력창을 건드리기 전에는 null 이다. 저장할 때 서버에 달린 답변을 그대로 보낸다
+  const answerRef = useRef<string | null>(null);
 
   const { mutate: saveAnswer, isPending } = useAnswerQuestionMutation();
 
@@ -28,16 +40,23 @@ const ChallengeInquiryAnswerPage = () => {
       {
         challengeId: Number(challengeId),
         questionId: Number(questionId),
-        answer: answerRef.current,
+        answer: answerRef.current ?? question?.answer ?? '',
       },
       { onSuccess: () => navigate('/challenge/inquiry') },
     );
   };
 
   if (!question) {
+    if (isError) {
+      return (
+        <div className="px-12 pt-6 text-sm text-red-500">
+          문의 데이터를 불러올 수 없습니다. 목록에서 다시 접근해주세요.
+        </div>
+      );
+    }
     return (
-      <div className="px-12 pt-6 text-sm text-red-500">
-        문의 데이터를 불러올 수 없습니다. 목록에서 다시 접근해주세요.
+      <div className="px-12 pt-6 text-sm text-gray-500">
+        문의를 불러오는 중입니다.
       </div>
     );
   }
@@ -99,12 +118,16 @@ const ChallengeInquiryAnswerPage = () => {
 
       <section className="mb-8">
         <p className="mb-1 text-xsmall14 font-medium text-gray-700">답변</p>
-        <EditorApp
-          initialEditorStateJsonString={question.answer ?? undefined}
-          onChange={(jsonString) => {
-            answerRef.current = jsonString;
-          }}
-        />
+        {/* 목록에서 넘긴 값은 오래됐을 수 있어, 서버 값이 확정된 뒤에 그린다 */}
+        {!isPlaceholderData && (
+          <EditorApp
+            key={question.id}
+            initialEditorStateJsonString={question.answer ?? undefined}
+            onChange={(jsonString) => {
+              answerRef.current = jsonString;
+            }}
+          />
+        )}
       </section>
 
       <footer className="flex justify-end gap-3">
@@ -116,7 +139,7 @@ const ChallengeInquiryAnswerPage = () => {
         </button>
         <button
           className="rounded bg-primary px-5 py-2 text-sm text-white disabled:opacity-50"
-          disabled={isPending}
+          disabled={isPending || isPlaceholderData}
           onClick={handleSave}
         >
           저장
