@@ -64,6 +64,30 @@ export const useAllChallengeQuestionsQuery = ({
   });
 };
 
+// placeholderQuestion 은 목록에서 넘겨 받은 첫 표시용 값이다. initialData 로 두면
+// 서버 값과 구분되지 않아서, 서버 응답이 오기 전까지 isPlaceholderData 로 구분한다.
+export const useChallengeQuestionQuery = (
+  challengeId: number,
+  questionId: number,
+  placeholderQuestion?: ChallengeQuestionItem,
+) => {
+  return useQuery({
+    queryKey: [
+      CHALLENGE_QUESTIONS_QUERY_KEY,
+      'detail',
+      challengeId,
+      questionId,
+    ],
+    queryFn: async () => {
+      const res = await axiosV2.get(
+        `/admin/challenge/${challengeId}/questions/${questionId}`,
+      );
+      return challengeQuestionItemSchema.parse(res.data.data);
+    },
+    placeholderData: placeholderQuestion,
+  });
+};
+
 export const useAnswerQuestionMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({

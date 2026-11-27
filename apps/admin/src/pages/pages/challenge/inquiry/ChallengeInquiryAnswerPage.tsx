@@ -1,10 +1,20 @@
 import {
   ChallengeQuestionItem,
   useAnswerQuestionMutation,
+  useChallengeQuestionQuery,
 } from '@/api/challenge-question/challengeQuestion';
 import EditorApp from '@/common/lexical/EditorApp';
+import { ApiError } from '@letscareer/api';
+import { isAxiosError } from 'axios';
 import { useRef } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+
+// 공용 axios 는 응답 오류를 ApiError 로 다시 포장하지만, 토큰 오류 등 일부는 axios 오류 그대로다
+const getErrorStatus = (error: unknown) => {
+  if (error instanceof ApiError) return error.status;
+  if (isAxiosError(error)) return error.response?.status;
+  return undefined;
+};
 
 const ChallengeInquiryAnswerPage = () => {
   const { challengeId, questionId } = useParams<{
@@ -14,11 +24,23 @@ const ChallengeInquiryAnswerPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const question = location.state?.question as
+  const stateQuestion = location.state?.question as
     | ChallengeQuestionItem
     | undefined;
 
-  const answerRef = useRef<string>(question?.answer ?? '');
+  const {
+    data: question,
+    error,
+    isError,
+    isPlaceholderData,
+  } = useChallengeQuestionQuery(
+    Number(challengeId),
+    Number(questionId),
+    stateQuestion,
+  );
+
+  // 입력창을 건드리기 전에는 null 이다. 저장할 때 서버에 달린 답변을 그대로 보낸다
+  const answerRef = useRef<string | null>(null);
 
   const { mutate: saveAnswer, isPending } = useAnswerQuestionMutation();
 
@@ -28,16 +50,33 @@ const ChallengeInquiryAnswerPage = () => {
       {
         challengeId: Number(challengeId),
         questionId: Number(questionId),
-        answer: answerRef.current,
+        answer: answerRef.current ?? question?.answer ?? '',
       },
       { onSuccess: () => navigate('/challenge/inquiry') },
     );
   };
 
   if (!question) {
+    if (isError) {
+      return (
+        <div className="px-12 pt-6 text-sm text-red-500">
+          <p>
+            {getErrorStatus(error) === 404
+              ? '문의를 찾을 수 없습니다. 삭제됐거나 주소가 잘못됐습니다.'
+              : '문의를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.'}
+          </p>
+          <Link
+            to="/challenge/inquiry"
+            className="mt-2 inline-block text-gray-600 underline"
+          >
+            목록으로
+          </Link>
+        </div>
+      );
+    }
     return (
-      <div className="px-12 pt-6 text-sm text-red-500">
-        문의 데이터를 불러올 수 없습니다. 목록에서 다시 접근해주세요.
+      <div className="px-12 pt-6 text-sm text-gray-500">
+        문의를 불러오는 중입니다.
       </div>
     );
   }
@@ -99,12 +138,16 @@ const ChallengeInquiryAnswerPage = () => {
 
       <section className="mb-8">
         <p className="mb-1 text-xsmall14 font-medium text-gray-700">답변</p>
-        <EditorApp
-          initialEditorStateJsonString={question.answer ?? undefined}
-          onChange={(jsonString) => {
-            answerRef.current = jsonString;
-          }}
-        />
+        {/* 목록에서 넘긴 값은 오래됐을 수 있어, 서버 값이 확정된 뒤에 그린다 */}
+        {!isPlaceholderData && (
+          <EditorApp
+            key={question.id}
+            initialEditorStateJsonString={question.answer ?? undefined}
+            onChange={(jsonString) => {
+              answerRef.current = jsonString;
+            }}
+          />
+        )}
       </section>
 
       <footer className="flex justify-end gap-3">
@@ -116,7 +159,7 @@ const ChallengeInquiryAnswerPage = () => {
         </button>
         <button
           className="rounded bg-primary px-5 py-2 text-sm text-white disabled:opacity-50"
-          disabled={isPending}
+          disabled={isPending || isPlaceholderData}
           onClick={handleSave}
         >
           저장
