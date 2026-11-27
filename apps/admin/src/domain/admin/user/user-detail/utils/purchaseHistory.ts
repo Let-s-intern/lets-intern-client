@@ -1,4 +1,6 @@
 import dayjs from '@/lib/dayjs';
+import type { RefundTarget } from '@/domain/admin/program/program-user/ui/RefundModal';
+import { resolveRefundableState } from '@/domain/admin/program/program-user/utils/refundState';
 import type { UserApplicationDetailInfo } from '@/schema';
 import type { Dayjs } from 'dayjs';
 
@@ -111,3 +113,46 @@ export const formatPeriod = (start?: string | null, end?: string | null) => {
 
 export const formatPaymentDate = (value?: string | null) =>
   value ? dayjs(value).format('YYYY-MM-DD HH:mm') : '-';
+
+const VOD_PASS_REFUND_NOTICE =
+  '환불하면 금액과 상관없이 이용권이 취소되어 시청이 중단됩니다.';
+
+/**
+ * 환불 버튼 노출 기준. 참여자 표와 같은 `resolveRefundableState` 를 쓴다.
+ * 신청 id 가 없는 행(올인원패스)은 이 환불 경로가 아니다.
+ */
+export const resolveRowRefund = (item: UserApplicationDetailInfo) => {
+  if (item.applicationId == null) {
+    return { canRefund: false, canPartialRefund: false };
+  }
+  const { canRefund, canPartialRefund } = resolveRefundableState({
+    isCanceled: item.isCanceled ?? false,
+    hasUser: true,
+    finalPrice: item.finalPrice ?? null,
+  });
+  return { canRefund, canPartialRefund };
+};
+
+/** 참여자 표(`TableRow`)가 `RefundTarget` 을 만드는 값과 같다. 신청자 정보는 유저 상세가 이미 가진다. */
+export const buildRefundTarget = (
+  item: UserApplicationDetailInfo,
+  user: Pick<RefundTarget, 'name' | 'email' | 'phoneNum'>,
+): RefundTarget => {
+  const isChallenge = item.programType === 'CHALLENGE';
+  const isVodPass = item.programType === 'VOD_PASS';
+  return {
+    applicationId: item.applicationId as number,
+    ...user,
+    programTitle: item.programTitle ?? programTypeLabel(item.programType),
+    orderId: item.orderId ?? '',
+    pricePlanType: isChallenge ? (item.challengePricePlanType ?? null) : null,
+    couponName: item.couponName ?? null,
+    couponDiscount: item.couponDiscount ?? null,
+    finalPrice: item.finalPrice ?? 0,
+    additionalPaidAmount: isChallenge ? (item.additionalPaidAmount ?? 0) : 0,
+    pendingManualRefundAmount: isChallenge
+      ? (item.pendingManualRefundAmount ?? 0)
+      : 0,
+    ...(isVodPass ? { notice: VOD_PASS_REFUND_NOTICE } : {}),
+  };
+};

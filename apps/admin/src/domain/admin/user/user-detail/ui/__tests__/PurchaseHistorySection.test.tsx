@@ -5,6 +5,9 @@ import PurchaseHistorySection from '../PurchaseHistorySection';
 
 vi.mock('@/utils/axios', () => ({ default: {} }));
 vi.mock('@/utils/axiosV2', () => ({ default: {} }));
+vi.mock('@/api/adminRefund', () => ({
+  useAdminRefundMutation: () => ({ mutate: vi.fn(), isPending: false }),
+}));
 
 const baseData = {
   userInfo: { id: '7', name: '김유저', email: 'u@test.com', phoneNum: '010' },

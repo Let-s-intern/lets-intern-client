@@ -1,3 +1,4 @@
+import type { RefundMode } from '@/domain/admin/program/program-user/ui/RefundModal';
 import type { UserApplicationDetailInfo } from '@/schema';
 import {
   formatCouponLabel,
@@ -12,10 +13,15 @@ import {
 interface Props {
   item: UserApplicationDetailInfo;
   status: PurchaseStatus;
+  /** 환불할 수 있는 행에만 준다. */
+  refund?: {
+    canPartialRefund: boolean;
+    onRefund: (mode: RefundMode) => void;
+  };
 }
 
 /** 신청 하나의 결제·기간 값. 상태는 색이 아니라 글자로 적는다. */
-const PurchaseHistoryRow = ({ item, status }: Props) => (
+const PurchaseHistoryRow = ({ item, status, refund }: Props) => (
   <li className="rounded-xs border border-[#E4E4E7] p-4">
     <div className="flex items-start justify-between gap-x-4">
       <div>
@@ -62,6 +68,31 @@ const PurchaseHistoryRow = ({ item, status }: Props) => (
         </>
       )}
     </dl>
+
+    {refund && (
+      <div className="mt-3 flex gap-x-2">
+        <button
+          type="button"
+          className="rounded-xs border border-red-500 px-3 py-1 text-sm text-red-600 hover:bg-red-50"
+          onClick={() => refund.onRefund('full')}
+        >
+          전체 환불
+        </button>
+        <button
+          type="button"
+          className="rounded-xs border border-red-500 px-3 py-1 text-sm text-red-600 hover:bg-red-50 disabled:border-neutral-300 disabled:text-neutral-400 disabled:hover:bg-transparent"
+          onClick={() => refund.onRefund('partial')}
+          disabled={!refund.canPartialRefund}
+          title={
+            refund.canPartialRefund
+              ? undefined
+              : '실결제액이 0원이라 나눌 금액이 없습니다.'
+          }
+        >
+          부분 환불
+        </button>
+      </div>
+    )}
   </li>
 );
 

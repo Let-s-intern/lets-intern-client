@@ -1,6 +1,16 @@
+import { useAdminRefundMutation } from '@/api/adminRefund';
+import RefundModal, {
+  type RefundMode,
+  type RefundTarget,
+} from '@/domain/admin/program/program-user/ui/RefundModal';
+import { useAdminSnackbar } from '@/hooks/useAdminSnackbar';
 import type { UserAdminDetail } from '@/schema';
-import { useMemo } from 'react';
-import { splitPurchaseHistory } from '../utils/purchaseHistory';
+import { useMemo, useState } from 'react';
+import {
+  buildRefundTarget,
+  resolveRowRefund,
+  splitPurchaseHistory,
+} from '../utils/purchaseHistory';
 import PurchaseHistoryRow from './PurchaseHistoryRow';
 
 interface Props {
@@ -12,6 +22,19 @@ interface Props {
  * 서버 배포 전 응답에는 상세가 없으므로 그때는 기존 제목 목록을 그대로 보인다.
  */
 const PurchaseHistorySection = ({ data }: Props) => {
+  const { snackbar } = useAdminSnackbar();
+  const [refundRequest, setRefundRequest] = useState<{
+    target: RefundTarget;
+    mode: RefundMode;
+  } | null>(null);
+  // 성공하면 훅이 유저 상세 쿼리를 무효화해 행이 환불·취소됨으로 바뀐다.
+  const refundMutation = useAdminRefundMutation({
+    onSuccess: (refundedAmount) => {
+      setRefundRequest(null);
+      snackbar(`${refundedAmount.toLocaleString()}원이 환불되었습니다.`);
+    },
+    onError: (message) => snackbar(message),
+  });
   const detailList = data.applicationDetailInfo;
   const { current, past } = useMemo(
     () => splitPurchaseHistory(detailList ?? []),
@@ -50,17 +73,50 @@ const PurchaseHistorySection = ({ data }: Props) => {
             </div>
           ) : (
             <ul className="mt-3 flex flex-col gap-y-3">
-              {list.map(({ item, status }, idx) => (
-                <PurchaseHistoryRow
-                  key={`${item.applicationId ?? 'm'}-${item.membershipApplicationId ?? idx}`}
-                  item={item}
-                  status={status}
-                />
-              ))}
+              {list.map(({ item, status }, idx) => {
+                const { canRefund, canPartialRefund } = resolveRowRefund(item);
+                return (
+                  <PurchaseHistoryRow
+                    key={`${item.applicationId ?? 'm'}-${item.membershipApplicationId ?? idx}`}
+                    item={item}
+                    status={status}
+                    refund={
+                      canRefund
+                        ? {
+                            canPartialRefund,
+                            onRefund: (mode) =>
+                              setRefundRequest({
+                                target: buildRefundTarget(item, {
+                                  name: data.userInfo.name,
+                                  email: data.userInfo.email,
+                                  phoneNum: data.userInfo.phoneNum,
+                                }),
+                                mode,
+                              }),
+                          }
+                        : undefined
+                    }
+                  />
+                );
+              })}
             </ul>
           )}
         </section>
       ))}
+      {refundRequest && (
+        <RefundModal
+          target={refundRequest.target}
+          mode={refundRequest.mode}
+          isSubmitting={refundMutation.isPending}
+          onSubmit={(body) =>
+            refundMutation.mutate({
+              applicationId: refundRequest.target.applicationId,
+              body,
+            })
+          }
+          onClose={() => setRefundRequest(null)}
+        />
+      )}
     </div>
   );
 };
