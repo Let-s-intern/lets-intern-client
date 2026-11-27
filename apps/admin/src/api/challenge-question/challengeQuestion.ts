@@ -48,16 +48,26 @@ export const useAllChallengeQuestionsQuery = ({
   answerStatus,
   page,
   size,
+  userId,
 }: {
   answerStatus?: AnswerStatus;
   page: number;
   size: number;
+  /** 주면 그 유저가 올린 문의만 조회한다. 유저 상세의 문의 탭이 쓴다 */
+  userId?: number;
 }) => {
   return useQuery({
-    queryKey: [CHALLENGE_QUESTIONS_QUERY_KEY, 'all', answerStatus, page, size],
+    queryKey: [
+      CHALLENGE_QUESTIONS_QUERY_KEY,
+      'all',
+      answerStatus,
+      page,
+      size,
+      userId,
+    ],
     queryFn: async () => {
       const res = await axiosV2.get('/admin/challenge/questions', {
-        params: { answerStatus, page: page - 1, size },
+        params: { answerStatus, page: page - 1, size, userId },
       });
       return challengeQuestionsResponseSchema.parse(res.data.data);
     },
