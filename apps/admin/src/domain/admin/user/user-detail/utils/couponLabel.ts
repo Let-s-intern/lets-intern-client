@@ -35,7 +35,7 @@ export const formatCouponPeriod = (coupon: UserCoupon) => {
 };
 
 export const isCouponExhausted = (coupon: UserCoupon) =>
-  coupon.isExhausted ??
+  coupon.exhausted ??
   (coupon.time != null && coupon.time >= 0 && coupon.remainTime === 0);
 
 export const formatCouponUsage = (coupon: UserCoupon) => {
@@ -63,4 +63,4 @@ export const resolveCouponState = (
 };
 
 export const formatCouponKind = (coupon: UserCoupon) =>
-  coupon.isRegistered == null ? '-' : coupon.isRegistered ? '등록형' : '발급형';
+  coupon.registered == null ? '-' : coupon.registered ? '등록형' : '발급형';

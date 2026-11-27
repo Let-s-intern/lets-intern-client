@@ -33,7 +33,7 @@ const coupon = (overrides: Record<string, unknown>) => ({
   remainTime: 2,
   startDate: '2000-01-01T00:00:00',
   endDate: '2999-12-31T23:59:59',
-  isRegistered: true,
+  registered: true,
   ...overrides,
 });
 
@@ -76,9 +76,7 @@ describe('UserCouponSection', () => {
   });
 
   it('서버가 소진 여부를 내려주면 그 값을 따른다', async () => {
-    respond([
-      coupon({ remainTime: 2, isExhausted: true, isRegistered: false }),
-    ]);
+    respond([coupon({ remainTime: 2, exhausted: true, registered: false })]);
     render(withClient(<UserCouponSection userId={7} />));
 
     expect(await screen.findByText('소진')).toBeInTheDocument();

@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 /**
  * 어드민 유저 상세의 보유 쿠폰 한 건. 사용자용 `MyCouponVo` 에 소진 여부와 등록형·발급형 구분을 더한 모양이다.
- * 어드민용 필드(`isExhausted`, `isRegistered`)는 서버 계약이 확정되기 전이라 nullish 로 받고,
+ * 어드민용 필드(`exhausted`, `registered`)는 서버(`AdminUserCouponVo`)가 내려주는 값이다. 배포 전 응답을 위해 nullish 로 받고,
  * 소진 여부는 없으면 `time`, `remainTime` 으로 계산한다. 새 필드가 없으면 구분 칸이 비어 보일 뿐 깨지지 않는다.
  */
 export const userCouponSchema = z.object({
@@ -23,9 +23,9 @@ export const userCouponSchema = z.object({
   remainTime: z.number().nullish(),
   startDate: z.string().nullish(),
   endDate: z.string().nullish(),
-  isExhausted: z.boolean().nullish(),
+  exhausted: z.boolean().nullish(),
   /** true 면 유저가 직접 등록한 쿠폰, false 면 결제·수강 이력으로 발급 대상이 된 쿠폰 */
-  isRegistered: z.boolean().nullish(),
+  registered: z.boolean().nullish(),
 });
 export type UserCoupon = z.infer<typeof userCouponSchema>;
 
