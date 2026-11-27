@@ -41,3 +41,24 @@ describe('OpenSettingsPreview — 카드 이미지', () => {
     );
   });
 });
+
+describe('OpenSettingsPreview — 가격', () => {
+  it('서버 적용 가격이 있으면 그 값을 보여준다', () => {
+    render(
+      <OpenSettingsPreview
+        settings={{
+          ...settings,
+          durationPrices: [{ duration: 30, price: 45000 }],
+        }}
+      />,
+    );
+
+    expect(screen.getByText('45,000원')).toBeInTheDocument();
+  });
+
+  it('서버 적용 가격이 없으면 고정값으로 폴백한다', () => {
+    render(<OpenSettingsPreview settings={settings} />);
+
+    expect(screen.getByText('39,000원')).toBeInTheDocument();
+  });
+});

@@ -83,3 +83,13 @@ export const durationPricesLabel = (
   durationPrices
     .map(({ duration, price }) => `${duration}분 ${formatPrice(price)}`)
     .join(' / ');
+
+/** 가격을 조정할 수 있는 진행시간(분). 서버 `LiveMentoringDuration`. */
+export const PRICE_DURATIONS = [30, 60] as const;
+
+/** 서버 검증 범위. 서버가 다시 검증하므로 저장 전 안내용이다. */
+export const MIN_DURATION_PRICE = 1_000;
+export const MAX_DURATION_PRICE: Record<number, number> = {
+  30: 100_000,
+  60: 200_000,
+};

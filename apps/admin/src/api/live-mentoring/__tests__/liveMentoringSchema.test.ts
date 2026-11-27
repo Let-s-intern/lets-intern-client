@@ -50,6 +50,33 @@ describe('adminLiveMentoringSchema', () => {
     expect('approvedByUserId' in parsed).toBe(false);
   });
 
+  it('priceOverrides·defaultPrices 가 없는 옛 응답도 파싱된다', () => {
+    const parsed = adminLiveMentoringSchema.parse(makeRow());
+    expect(parsed.priceOverrides).toBeUndefined();
+    expect(parsed.defaultPrices).toBeUndefined();
+  });
+
+  it('priceOverrides·defaultPrices 를 진행시간별 가격 목록으로 파싱한다', () => {
+    const parsed = adminLiveMentoringSchema.parse(
+      makeRow({
+        priceOverrides: [{ duration: 30, price: 45000 }],
+        defaultPrices: [
+          { duration: 30, price: 39000 },
+          { duration: 60, price: 69000 },
+        ],
+      }),
+    );
+    expect(parsed.priceOverrides).toEqual([{ duration: 30, price: 45000 }]);
+    expect(parsed.defaultPrices).toHaveLength(2);
+  });
+
+  it('조정값이 없으면 priceOverrides 는 빈 목록이다', () => {
+    const parsed = adminLiveMentoringSchema.parse(
+      makeRow({ priceOverrides: [], defaultPrices: [] }),
+    );
+    expect(parsed.priceOverrides).toEqual([]);
+  });
+
   it('응답에 approvedAt/approvedByUserId 가 섞여 와도 파싱은 성공한다(초과 필드는 무시)', () => {
     expect(() =>
       adminLiveMentoringSchema.parse(

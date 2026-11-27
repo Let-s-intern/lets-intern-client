@@ -224,6 +224,33 @@ describe('OpenSettingsSection — 진행시간(다중) → 최저가', () => {
     expect(screen.getAllByText('69,000원').length).toBeGreaterThan(0);
   });
 
+  it('서버가 내려준 적용 가격이 있으면 고정값 대신 그것을 쓴다', () => {
+    renderPage({
+      durations: [30],
+      durationPrices: [
+        { duration: 30, price: 45000 },
+        { duration: 60, price: 80000 },
+      ],
+    });
+    expect(screen.getAllByText('45,000원').length).toBeGreaterThan(0);
+    expect(screen.queryByText('39,000원')).not.toBeInTheDocument();
+
+    // 60분만 남기면 60분 적용 가격, 둘 다면 둘 중 낮은 가격.
+    fireEvent.click(screen.getByRole('button', { name: '60분' }));
+    expect(screen.getAllByText('45,000원').length).toBeGreaterThan(0);
+    fireEvent.click(screen.getByRole('button', { name: '30분' }));
+    expect(screen.getAllByText('80,000원').length).toBeGreaterThan(0);
+  });
+
+  it('적용 가격에 없는 진행시간은 고정값으로 폴백한다', () => {
+    renderPage({
+      durations: [30, 60],
+      durationPrices: [{ duration: 60, price: 80000 }],
+    });
+
+    expect(screen.getAllByText('39,000원').length).toBeGreaterThan(0);
+  });
+
   it('가격 입력 UI(number/text 가격 필드)가 없다', () => {
     renderPage();
     expect(screen.queryByLabelText('가격')).not.toBeInTheDocument();

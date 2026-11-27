@@ -4,11 +4,13 @@ import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 const patchMock = vi.fn().mockResolvedValue({ data: {} });
+const putMock = vi.fn().mockResolvedValue({ data: {} });
 const getMock = vi.fn();
 
 vi.mock('@/utils/axios', () => ({
   default: {
     patch: (...args: unknown[]) => patchMock(...args),
+    put: (...args: unknown[]) => putMock(...args),
     get: (...args: unknown[]) => getMock(...args),
   },
 }));
@@ -166,6 +168,44 @@ describe('liveMentoring API', () => {
     expect(patchMock).toHaveBeenCalledWith(
       '/admin/live-mentoring/mentors/7/thumbnail',
       { thumbnail: null },
+    );
+  });
+
+  it('가격 조정 훅은 멘토 id 로 prices 엔드포인트에 진행시간별 가격 목록을 PUT 한다', async () => {
+    const { result } = renderHook(
+      () => liveMentoringApi.useUpdateAdminLiveMentoringPricesMutation(),
+      { wrapper: createWrapper() },
+    );
+    const prices = [
+      { duration: 30, price: 45000 },
+      { duration: 60, price: 80000 },
+    ];
+
+    act(() => {
+      result.current.mutate({ mentorId: 7, prices });
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(putMock).toHaveBeenCalledWith(
+      '/admin/live-mentoring/mentors/7/prices',
+      { prices },
+    );
+  });
+
+  it('가격 조정 훅은 빈 목록도 그대로 보낸다(모든 조정 해제)', async () => {
+    const { result } = renderHook(
+      () => liveMentoringApi.useUpdateAdminLiveMentoringPricesMutation(),
+      { wrapper: createWrapper() },
+    );
+
+    act(() => {
+      result.current.mutate({ mentorId: 7, prices: [] });
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(putMock).toHaveBeenLastCalledWith(
+      '/admin/live-mentoring/mentors/7/prices',
+      { prices: [] },
     );
   });
 });

@@ -1,6 +1,5 @@
 import { useEffect, useState, type MutableRefObject } from 'react';
 import {
-  getLowestPrice,
   LIVE_MENTORING_CATEGORIES,
   LIVE_MENTORING_DURATIONS,
 } from '@letscareer/mocks';
@@ -22,6 +21,7 @@ import {
   CATEGORY_LABELS,
   formatCareerPeriod,
   formatPrice,
+  lowestDurationPrice,
   representativeCareerLabel,
 } from '../constants';
 import { type AutosaveResult } from '../useAutosave';
@@ -402,10 +402,15 @@ const OpenSettingsSection = ({
                   <p className="text-sm text-gray-600">
                     가격{' '}
                     <span className="font-semibold text-primary">
-                      {formatPrice(getLowestPrice(form.durations))}
+                      {formatPrice(
+                        lowestDurationPrice(
+                          form.durations,
+                          form.durationPrices,
+                        ),
+                      )}
                     </span>{' '}
                     <span className="text-xs text-gray-400">
-                      (가격은 서버 고정값이며 여러 개 선택 시 최저가로 노출)
+                      (가격은 운영팀이 정하며 여러 개 선택 시 최저가로 노출)
                     </span>
                   </p>
                   {noDurationSelected && (

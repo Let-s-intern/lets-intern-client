@@ -1,4 +1,10 @@
-import type { LiveMentoringCategory } from '@/api/live-mentoring/liveMentoringSchema';
+import { getPriceByDuration } from '@letscareer/mocks';
+
+import type {
+  LiveMentoringCategory,
+  LiveMentoringDuration,
+  LiveMentoringDurationPrice,
+} from '@/api/live-mentoring/liveMentoringSchema';
 
 /**
  * 카테고리 enum → 한글 라벨 (UI 레이어 정의).
@@ -75,6 +81,24 @@ export const durationLabel = (durationMin: number): string =>
 /** 가격 표시(원). 예: 35000 → "35,000원" */
 export const formatPrice = (price: number): string =>
   `${price.toLocaleString('ko-KR')}원`;
+
+/**
+ * 선택한 진행시간 중 최저가. 서버가 내려준 적용 가격(`durationPrices`)을 우선하고,
+ * 응답에 없는 진행시간(서버 배포 전 응답 포함)은 클라이언트 고정값으로 채운다.
+ */
+export const lowestDurationPrice = (
+  durations: LiveMentoringDuration[],
+  durationPrices?: LiveMentoringDurationPrice[],
+): number =>
+  durations.length === 0
+    ? 0
+    : Math.min(
+        ...durations.map(
+          (duration) =>
+            durationPrices?.find((item) => item.duration === duration)?.price ??
+            getPriceByDuration(duration),
+        ),
+      );
 
 /*
  * 아래 3개는 **웹 공개 카드와 픽셀 단위로 같은 미리보기**를 만들기 위한 포맷터다.

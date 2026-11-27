@@ -6,6 +6,7 @@ import {
   adminLiveMentoringParticipantListSchema,
   adminLiveMentoringReservationListSchema,
   type LiveMentoringAttendanceStatus,
+  type LiveMentoringDurationPrice,
 } from './liveMentoringSchema';
 
 /**
@@ -96,6 +97,23 @@ export const useUpdateAdminLiveMentoringThumbnailMutation = () =>
   useAdminLiveMentoringMutation(
     ({ mentorId, thumbnail }: { mentorId: number; thumbnail: string | null }) =>
       axios.patch(`${ADMIN_PATH}/mentors/${mentorId}/thumbnail`, { thumbnail }),
+  );
+
+/**
+ * PUT /admin/live-mentoring/mentors/{mentorId}/prices — 멘토별 가격 조정.
+ *
+ * 진행시간별 가격 목록을 통째로 보낸다. 목록에 없는 진행시간의 조정값은 서버가 지워
+ * 기본 가격으로 돌아가고, 빈 목록이면 조정을 모두 푼다.
+ */
+export const useUpdateAdminLiveMentoringPricesMutation = () =>
+  useAdminLiveMentoringMutation(
+    ({
+      mentorId,
+      prices,
+    }: {
+      mentorId: number;
+      prices: LiveMentoringDurationPrice[];
+    }) => axios.put(`${ADMIN_PATH}/mentors/${mentorId}/prices`, { prices }),
   );
 
 export const ADMIN_LIVE_MENTORING_RESERVATION_QUERY_KEY = [
